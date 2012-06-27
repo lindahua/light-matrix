@@ -4,3 +4,7 @@ bin/*
 build/*
 build-bench/*
 
+# Eclipse projects
+
+.project
+.cproject
