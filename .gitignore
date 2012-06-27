@@ -1,12 +1,6 @@
-# Compiled Object files
-*.slo
-*.lo
-*.o
+# binary files
 
-# Compiled Dynamic libraries
-*.so
+bin/*
+build/*
+build-bench/*
 
-# Compiled Static libraries
-*.lai
-*.la
-*.a
