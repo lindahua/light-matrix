@@ -103,72 +103,6 @@ namespace lmat
 	}; // end class IMatrixBase
 
 
-	// Basic properties
-
-	template<class Mat, typename T>
-	LMAT_ENSURE_INLINE
-	inline bool is_empty(const IMatrixXpr<Mat, T>& X)
-	{
-		return (has_dynamic_nrows<Mat>::value && X.nrows() == 0) ||
-			(has_dynamic_ncols<Mat>::value && X.ncolumns() == 0);
-	}
-
-	template<class Mat, typename T>
-	LMAT_ENSURE_INLINE
-	inline bool is_column(const IMatrixXpr<Mat, T>& X)
-	{
-		return ct_is_col<Mat>::value || X.ncolumns() == 1;
-	}
-
-	template<class Mat, typename T>
-	LMAT_ENSURE_INLINE
-	inline bool is_row(const IMatrixXpr<Mat, T>& X)
-	{
-		return ct_is_row<Mat>::value || X.nrows() == 1;
-	}
-
-	template<class Mat, typename T>
-	LMAT_ENSURE_INLINE
-	inline bool is_scalar(const IMatrixXpr<Mat, T>& X)
-	{
-		return is_column(X) && is_row(X);
-	}
-
-	template<class Mat, typename T>
-	LMAT_ENSURE_INLINE
-	inline bool is_vector(const IMatrixXpr<Mat, T>& X)
-	{
-		return is_column(X) || is_row(X);
-	}
-
-	template<class Mat1, typename T1, class Mat2, typename T2>
-	LMAT_ENSURE_INLINE
-	inline bool has_same_nrows(const IMatrixXpr<Mat1, T1>& A, const IMatrixXpr<Mat2, T2>& B)
-	{
-		return ct_has_same_nrows<Mat1, Mat2>::value || A.nrows() == B.nrows();
-	}
-
-	template<class Mat1, typename T1, class Mat2, typename T2>
-	LMAT_ENSURE_INLINE
-	inline bool has_same_ncolumns(const IMatrixXpr<Mat1, T1>& A, const IMatrixXpr<Mat2, T2>& B)
-	{
-		return ct_has_same_ncols<Mat1, Mat2>::value || A.ncolumns() == B.ncolumns();
-	}
-
-	template<class Mat1, typename T1, class Mat2, typename T2>
-	LMAT_ENSURE_INLINE
-	inline bool has_same_size(const IMatrixXpr<Mat1, T1>& A, const IMatrixXpr<Mat2, T2>& B)
-	{
-		return has_same_nrows(A, B) && has_same_ncolumns(A, B);
-	}
-
-	template<class Mat1, typename T1, class Mat2, typename T2>
-	LMAT_ENSURE_INLINE
-	inline void check_same_size(const IMatrixXpr<Mat1, T1>& A, const IMatrixXpr<Mat2, T2>& B, const char *msg)
-	{
-		check_arg(has_same_size(A, B), msg);
-	}
-
 	template<class Mat, typename T>
 	LMAT_ENSURE_INLINE
 	inline bool is_subscripts_in_range(const IMatrixXpr<Mat, T>& X, index_t i, index_t j)
@@ -185,7 +119,6 @@ namespace lmat
 				"Attempted to access element with subscripts out of valid range.");
 #endif
 	}
-
 
 
 	/**
@@ -351,7 +284,6 @@ namespace lmat
 			return colviews<Derived, range>::get(derived(), j, rgn.derived());
 		}
 
-
 		// row views
 
 		LMAT_ENSURE_INLINE
@@ -383,7 +315,6 @@ namespace lmat
 		{
 			return rowviews<Derived, range>::get(derived(), i, rgn.derived());
 		}
-
 
 		// sub-views
 
