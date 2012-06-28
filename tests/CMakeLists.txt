@@ -1,7 +1,7 @@
 # The CMakeLists file for Light-Matrix (Testing)
 
 cmake_minimum_required(VERSION 2.8)
-project(LightSIMD)
+project(LightMatrix)
 
 enable_testing()
 

@@ -89,7 +89,7 @@ namespace lmat
 
 	template<typename T, class Derived>
 	LMAT_ENSURE_INLINE
-	inline void copy(IArray<Derived, T>& a, const T* src)
+	inline void copy(const T* src, IArray<Derived, T>& a)
 	{
 		copy_mem(a.nelems(), src, a.ptr_begin());
 	}
@@ -619,6 +619,13 @@ namespace lmat
 		T m_arr[N];
 
 	}; // end class sarray
+
+	template<typename T, int N>
+	LMAT_ENSURE_INLINE
+	void swap(sarray<T, N>& a, sarray<T, N>& b)
+	{
+		a.swap(b);
+	}
 
 }
 
