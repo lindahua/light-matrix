@@ -15,6 +15,7 @@
 
 #include <light_mat/core/basic_defs.h>
 #include <map>
+#include <stdexcept>
 
 namespace lmat { namespace test {
 
