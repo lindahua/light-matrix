@@ -191,7 +191,7 @@ namespace lmat
 	struct mat_access
 	{
 		typedef typename matrix_traits<Mat>::value_type value_type;
-		typedef typename if_<is_readonly_mat<Mat>, const value_type, value_type> access_type;
+		typedef typename if_<is_readonly_mat<Mat>, const value_type, value_type>::type access_type;
 
 		typedef access_type* pointer;
 		typedef access_type& reference;

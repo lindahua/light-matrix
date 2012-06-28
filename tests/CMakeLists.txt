@@ -43,6 +43,7 @@ set(COMMON_BASIC_HS
     ${INC}/core/metaprog_base.h
     ${INC}/core/type_traits.h
     ${INC}/core/arg_check.h
+    ${INC}/core/range.h
     ${INC}/core/basic_defs.h)
     
 set(COMMON_ARRAY_HS
