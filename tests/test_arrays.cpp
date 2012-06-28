@@ -1,14 +1,14 @@
 /**
- * @file test_blocks.cpp
+ * @file test_array.cpp
  *
- * Unit testing for memory block classes.
+ * Unit testing for array classes.
  *
  * @author Dahua Lin
  */
 
 #include "test_base.h"
 
-#include <light_mat/core/block.h>
+#include <light_mat/core/array.h>
 #include "mon_alloc.h"
 
 using namespace lmat;
@@ -16,13 +16,13 @@ using namespace lmat::test;
 
 // explicit instantiation
 
-template class lmat::block<double, aligned_allocator<double> >;
-template class lmat::scoped_block<double, aligned_allocator<double> >;
-template class lmat::static_block<double, 4>;
+template class lmat::darray<double, aligned_allocator<double> >;
+template class lmat::scoped_array<double, aligned_allocator<double> >;
+template class lmat::sarray<double, 4>;
 
 
-typedef class lmat::block<int, monitored_allocator<int> > blk_t;
-typedef class lmat::scoped_block<int, monitored_allocator<int> > scblk_t;
+typedef class lmat::darray<int, monitored_allocator<int> > blk_t;
+typedef class lmat::scoped_array<int, monitored_allocator<int> > scblk_t;
 
 lmat::test::memory_allocation_monitor lmat::test::global_memory_allocation_monitor;
 
@@ -30,7 +30,7 @@ lmat::test::memory_allocation_monitor lmat::test::global_memory_allocation_monit
 
 #define ASSERT_NO_PENDING ASSERT_FALSE( global_memory_allocation_monitor.has_pending() );
 
-SIMPLE_CASE( blocks, constructs )
+SIMPLE_CASE( darray, constructs )
 {
 	ASSERT_NO_PENDING
 
@@ -77,13 +77,13 @@ SIMPLE_CASE( blocks, constructs )
 }
 
 
-BEGIN_TPACK( blocks )
-	ADD_SIMPLE_CASE( blocks, constructs )
+BEGIN_TPACK( darray )
+	ADD_SIMPLE_CASE( darray, constructs )
 END_TPACK
 
 
 BEGIN_MAIN_SUITE
-	ADD_TPACK( blocks )
+	ADD_TPACK( darray )
 END_MAIN_SUITE
 
 

@@ -44,25 +44,25 @@ set(COMMON_BASIC_HS
     ${INC}/core/type_traits.h
     ${INC}/core/basic_defs.h)
     
-set(COMMON_MEM_HS
+set(COMMON_ARRAY_HS
     ${INC}/core/mem_op.h
     ${INC}/core/mem_alloc.h
-    ${INC}/core/block.h)
+    ${INC}/core/array.h)
     
 set(CORE_HS
     ${COMMON_BASIC_HS}
-    ${COMMON_MEM_HS})
+    ${COMMON_ARRAY_HS})
 
 # Executables
 
 add_library(test_main STATIC test_main.cpp)
 
-add_executable(test_blocks ${CORE_HS} test_blocks.cpp)
+add_executable(test_arrays ${CORE_HS} test_arrays.cpp)
 
-target_link_libraries(test_blocks test_main)
+target_link_libraries(test_arrays test_main)
 
 set(ALL_EXECUTABLES 
-    test_blocks)
+    test_arrays)
     
 set_target_properties(${ALL_EXECUTABLES}
     PROPERTIES
@@ -71,7 +71,7 @@ set_target_properties(${ALL_EXECUTABLES}
 
 # Add Tests
 
-add_test(NAME blocks COMMAND test_blocks)
+add_test(NAME arrays COMMAND test_arrays)
 
 
 
