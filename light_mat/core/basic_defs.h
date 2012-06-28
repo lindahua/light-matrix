@@ -19,5 +19,6 @@
 #include <light_mat/core/lang_base.h>
 #include <light_mat/core/metaprog_base.h>
 #include <light_mat/core/type_traits.h>
+#include <light_mat/core/arg_check.h>
 
 #endif
