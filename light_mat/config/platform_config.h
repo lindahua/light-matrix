@@ -30,6 +30,7 @@
 
 	#define LMAT_USE_C11_STDLIB
 	#define LMAT_USE_STATIC_ASSERT
+	#define LMAT_HAS_NULLPTR
 
 #elif (defined(__GNUC__))
 
@@ -44,6 +45,10 @@
 		#define LMAT_USE_C11_STDLIB
 		#define LMAT_USE_STATIC_ASSERT
 
+		#if (__clang_major__ >= 3)
+			#define LMAT_HAS_NULLPTR
+		#endif
+
 	#else
 		#if ((__GNUC__ < 4) || (__GNUC__ == 4 && __GNUC_MINOR__ < 2))
 			#error GCC of version lower than 4.2.0 is not supported
@@ -53,6 +58,10 @@
 		#if (defined(__GXX_EXPERIMENTAL_CXX0X__))
 			#define LMAT_USE_C11_STDLIB
 			#define LMAT_USE_STATIC_ASSERT
+
+			#if (__GNUC__ == 4 && __GNUC_MINOR >= 6)
+				#define LMAT_HAS_NULLPTR
+			#endif
 		#endif
 	#endif
 

@@ -19,7 +19,7 @@
 namespace lmat
 {
 	template<typename T>
-	LMAT_ENSURE_INLINE inline size_t nbytes(size_t n)
+	LMAT_ENSURE_INLINE inline size_t nbytes(index_t n)
 	{
 		return static_cast<size_t>(n) * sizeof(T);
 	}
@@ -47,14 +47,14 @@ namespace lmat
 
 	template<typename T>
 	LMAT_ENSURE_INLINE
-	inline void mem_equal(const index_t n, const T *a, const T *b)
+	inline bool mem_equal(const index_t n, const T *a, const T *b)
 	{
 		return std::memcmp(a, b, nbytes<T>(n)) == 0;
 	}
 
 	template<typename T>
 	LMAT_ENSURE_INLINE
-	inline void mem_equal(const index_t n, const T *a, const T& v)
+	inline bool mem_equal(const index_t n, const T *a, const T& v)
 	{
 		for (index_t i = 0; i < n; ++i)
 			if (!(a[i] == v)) return false;

@@ -29,6 +29,12 @@
 
 #endif
 
+#ifdef LMAT_HAS_NULLPTR
+#define LMAT_NULL nullptr
+#else
+#define LMAT_NULL NULL
+#endif
+
 #define LMAT_CRTP_REF \
 		LMAT_ENSURE_INLINE const Derived& derived() const { return *(static_cast<const Derived*>(this)); } \
 		LMAT_ENSURE_INLINE Derived& derived() { return *(static_cast<Derived*>(this)); }
