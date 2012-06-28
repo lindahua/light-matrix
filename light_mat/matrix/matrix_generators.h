@@ -10,10 +10,11 @@
 #pragma once
 #endif
 
-#ifndef MATRIX_GENERATORS_H_
-#define MATRIX_GENERATORS_H_
+#ifndef LIGHTMAT_MATRIX_GENERATORS_H_
+#define LIGHTMAT_MATRIX_GENERATORS_H_
 
 #include <light_mat/matrix/matrix_concepts.h>
+#include <light_mat/core/mem_op.h>
 
 namespace lmat
 {
@@ -83,17 +84,20 @@ namespace lmat
 		void generate_to(const index_t m, const index_t n,
 				const index_t ldim, T *dst) const
 		{
-			if (n == 1 || ldim == m)
+			if (n == 1 || m == ldim)
 			{
 				copy_mem(m * n, m_src, dst);
+			}
+			else if (m == 1)
+			{
+				unpack_vec(n, m_src, dst, ldim);
 			}
 			else
 			{
 				const T *s = m_src;
-
 				for (index_t j = 0; j < n; ++j, s += m, dst += ldim)
 				{
-					copy_mem(m, s, dst);
+					copy_mem(m, src, dst);
 				}
 			}
 		}

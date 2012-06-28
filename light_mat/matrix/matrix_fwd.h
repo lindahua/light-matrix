@@ -79,26 +79,47 @@ namespace lmat
 
 	template<class Mat> struct mat_evaluator;
 
-	// forward declaration of useful memory operations
-
-	template<typename T, class LMat, class RMat>
-	inline bool is_equal(const IMatrixView<LMat, T>& A, const IMatrixView<RMat, T>& B);
-
-	template<typename T, class LMat, class RMat>
-	inline bool is_approx(const IMatrixView<LMat, T>& A, const IMatrixView<RMat, T>& B, const T& tol);
-
 	template<typename T, class SExpr, class DMat>
 	inline void evaluate_to(const IMatrixXpr<SExpr, T>& src, IDenseMatrix<DMat, T>& dst);
 
-	template<typename T, class SMat, class DMat>
-	inline void copy(const IMatrixView<SMat, T>& src, IDenseMatrix<DMat, T>& dst);
-
-	template<typename T, class DMat>
-	inline void fill(IDenseMatrix<DMat, T>& dst, const T& v);
-
-	template<typename T, class DMat>
-	inline void zero(IDenseMatrix<DMat, T>& dst);
 }
+
+// Useful macros
+
+#define LMAT_MATRIX_TYPEDEFS0(TName, prefix) \
+	typedef TName<double>   prefix##_f64; \
+	typedef TName<float>    prefix##_f32; \
+	typedef TName<int32_t>  prefix##_i32; \
+	typedef TName<uint32_t> prefix##_u32; \
+	typedef TName<int16_t>  prefix##_i16; \
+	typedef TName<uint16_t> prefix##_u16; \
+	typedef TName<int8_t>   prefix##_i8; \
+	typedef TName<uint8_t>  prefix##_u8; \
+	typedef TName<bool>     prefix##_bool;
+
+#define LMAT_MATRIX_TYPEDEFS1(TName, prefix, Dim) \
+	typedef TName<double,   Dim> prefix##_f64; \
+	typedef TName<float,    Dim> prefix##_f32; \
+	typedef TName<int32_t,  Dim> prefix##_i32; \
+	typedef TName<uint32_t, Dim> prefix##_u32; \
+	typedef TName<int16_t,  Dim> prefix##_i16; \
+	typedef TName<uint16_t, Dim> prefix##_u16; \
+	typedef TName<int8_t,   Dim> prefix##_i8; \
+	typedef TName<uint8_t,  Dim> prefix##_u8; \
+	typedef TName<bool,     Dim> prefix##_bool;
+
+#define LMAT_MATRIX_TYPEDEFS2(TName, prefix, RDim, CDim) \
+	typedef TName<double,   RDim, CDim> prefix##_f64; \
+	typedef TName<float,    RDim, CDim> prefix##_f32; \
+	typedef TName<int32_t,  RDim, CDim> prefix##_i32; \
+	typedef TName<uint32_t, RDim, CDim> prefix##_u32; \
+	typedef TName<int16_t,  RDim, CDim> prefix##_i16; \
+	typedef TName<uint16_t, RDim, CDim> prefix##_u16; \
+	typedef TName<int8_t,   RDim, CDim> prefix##_i8; \
+	typedef TName<uint8_t,  RDim, CDim> prefix##_u8; \
+	typedef TName<bool,     RDim, CDim> prefix##_bool;
 
 
 #endif
+
+
