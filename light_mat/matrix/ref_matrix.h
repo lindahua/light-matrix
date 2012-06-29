@@ -54,8 +54,8 @@ namespace lmat
 	};
 
 
-	template<typename T, int CTRows, int CTCols>
-	struct is_linear_accessible<cref_matrix<T, CTRows, CTCols> >
+	template<typename T, int CTRows, int CTCols, typename Align>
+	struct is_linear_accessible<cref_matrix<T, CTRows, CTCols, Align> >
 	{
 		static const bool value = true;
 	};
@@ -176,8 +176,8 @@ namespace lmat
 		static const bool value = is_percol_aligned_from_tag<Align>::value;
 	};
 
-	template<typename T, int CTRows, int CTCols>
-	struct is_linear_accessible<ref_matrix<T, CTRows, CTCols> >
+	template<typename T, int CTRows, int CTCols, typename Align>
+	struct is_linear_accessible<ref_matrix<T, CTRows, CTCols, Align> >
 	{
 		static const bool value = true;
 	};
