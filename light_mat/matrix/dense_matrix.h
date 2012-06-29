@@ -116,22 +116,26 @@ namespace lmat
 		{
 			if (this != &r)
 			{
-				assign_to(r, *this);
+				resize_to(r);
+				copy(r, *this);
 			}
+
 			return *this;
 		}
 
-		template<class Other>
-		LMAT_ENSURE_INLINE dense_matrix& operator = (const IMatrixView<Other, T>& r)
+		template<class RMat>
+		LMAT_ENSURE_INLINE dense_matrix& operator = (const IDenseMatrix<RMat, T>& r)
 		{
-			assign_to(r.derived(), *this);
+			resize_to(r);
+			copy(r, *this);
 			return *this;
 		}
 
 		template<class Expr>
 		LMAT_ENSURE_INLINE dense_matrix& operator = (const IMatrixXpr<Expr, T>& r)
 		{
-			assign_to(r.derived(), *this);
+			resize_to(r);
+			evaluate_to(r, *this);
 			return *this;
 		}
 
@@ -212,6 +216,14 @@ namespace lmat
 		}
 
 	private:
+		template<class RMat>
+		LMAT_ENSURE_INLINE void resize_to(const IMatrixXpr<RMat, T>& r)
+		{
+			if (!has_same_size(*this, r))
+				resize(r.nrows(), r.ncolumns());
+		}
+
+	private:
 		detail::dense_matrix_internal<T, CTRows, CTCols> m_internal;
 	};
 
@@ -269,13 +281,6 @@ namespace lmat
 			return *this;
 		}
 
-		template<class Other>
-		LMAT_ENSURE_INLINE dense_col& operator = (const IMatrixView<Other, T>& r)
-		{
-			base_mat_t::operator = (r.derived());
-			return *this;
-		}
-
 		template<class Expr>
 		LMAT_ENSURE_INLINE dense_col& operator = (const IMatrixXpr<Expr, T>& r)
 		{
@@ -318,13 +323,6 @@ namespace lmat
 		LMAT_ENSURE_INLINE dense_row& operator = (const base_mat_t& r)
 		{
 			base_mat_t::operator = (r);
-			return *this;
-		}
-
-		template<class Other>
-		LMAT_ENSURE_INLINE dense_row& operator = (const IMatrixView<Other, T>& r)
-		{
-			base_mat_t::operator = (r.derived());
 			return *this;
 		}
 

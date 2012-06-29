@@ -54,6 +54,19 @@ set(COMMON_ARRAY_HS
 set(CORE_HS
     ${COMMON_BASIC_HS}
     ${COMMON_ARRAY_HS})
+    
+set(MATRIX_BASE_HS
+    ${INC}/matrix/matrix_fwd.h 
+    ${INC}/matrix/matrix_meta.h
+    ${INC}/matrix/matrix_indexer.h
+    ${INC}/matrix/matrix_concepts.h
+    ${INC}/matrix/matrix_properties.h
+    ${INC}/matrix/matrix_check.h
+    ${INC}/matrix/matrix_generators.h
+    ${INC}/matrix/matrix_copy.h
+    ${INC}/matrix/bits/matrix_copy_internal.h
+    ${INC}/matrix/matrix_print.h
+    ${INC}/matrix/matrix_base.h)
 
 # Executables
 
@@ -61,10 +74,19 @@ add_library(test_main STATIC test_main.cpp)
 
 add_executable(test_arrays ${CORE_HS} test_arrays.cpp)
 
+add_executable(test_dense_mat ${MATRIX_BASE_HS} 
+    ${INC}/matrix/dense_matrix.h
+    ${INC}/matrix/bits/dense_matrix_internal.h
+    test_dense_mat.cpp)
+    
+
 target_link_libraries(test_arrays test_main)
+target_link_libraries(test_dense_mat test_main)
+
 
 set(ALL_EXECUTABLES 
-    test_arrays)
+    test_arrays
+    test_dense_mat)
     
 set_target_properties(${ALL_EXECUTABLES}
     PROPERTIES
@@ -74,6 +96,7 @@ set_target_properties(${ALL_EXECUTABLES}
 # Add Tests
 
 add_test(NAME arrays COMMAND test_arrays)
+add_test(NAME dense_mat COMMAND test_dense_mat)
 
 
 

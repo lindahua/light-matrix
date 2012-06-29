@@ -243,15 +243,8 @@ namespace lmat
 			return elem(i, j);
 		}
 
-
 	public:
-		typename transposed<Derived>::type T() const
-		{
-			return transposed<Derived>::get(derived());
-		}
-
-	public:
-
+/*
 		// column views
 
 		LMAT_ENSURE_INLINE
@@ -335,7 +328,7 @@ namespace lmat
 			return subviews<Derived, whole, whole>::get(derived(),
 					row_rgn.derived(), col_rgn.derived());
 		}
-
+*/
 	}; // end class IDenseMatrixBlock
 
 }

@@ -20,7 +20,7 @@ namespace lmat
 {
 
 	template<typename T>
-	class zero_gen : public IMatrixGenerator<zero_gen, T>
+	class zero_gen : public IMatrixGenerator<zero_gen<T>, T>
 	{
 	public:
 		LMAT_ENSURE_INLINE
@@ -42,13 +42,20 @@ namespace lmat
 
 	}; // end class zero_gen
 
+	template<typename T>
+	LMAT_ENSURE_INLINE
+	inline zero_gen<T> zeros()
+	{
+		return zero_gen<T>();
+	}
+
 
 	template<typename T>
-	class fill_gen : public IMatrixGenerator<fill_gen, T>
+	class fill_gen : public IMatrixGenerator<fill_gen<T>, T>
 	{
 	public:
 		LMAT_ENSURE_INLINE
-		fill_gen(const T& v) : m_val(v) { }
+		explicit fill_gen(const T& v) : m_val(v) { }
 
 		LMAT_ENSURE_INLINE
 		void generate_to(const index_t m, const index_t n,
@@ -72,13 +79,20 @@ namespace lmat
 
 	}; // end class fill_gen
 
+	template<typename T>
+	LMAT_ENSURE_INLINE
+	inline fill_gen<T> fill_value(const T& v)
+	{
+		return fill_gen<T>(v);
+	}
+
 
 	template<typename T>
-	class copy_gen : public IMatrixGenerator<copy_gen, T>
+	class copy_gen : public IMatrixGenerator<copy_gen<T>, T>
 	{
 	public:
 		LMAT_ENSURE_INLINE
-		copy_gen(const T *src) : m_src(src) { }
+		explicit copy_gen(const T *src) : m_src(src) { }
 
 		LMAT_ENSURE_INLINE
 		void generate_to(const index_t m, const index_t n,
@@ -97,7 +111,7 @@ namespace lmat
 				const T *s = m_src;
 				for (index_t j = 0; j < n; ++j, s += m, dst += ldim)
 				{
-					copy_mem(m, src, dst);
+					copy_mem(m, s, dst);
 				}
 			}
 		}
@@ -106,6 +120,14 @@ namespace lmat
 		const T *m_src;
 
 	}; // end class copy_gen
+
+
+	template<typename T>
+	LMAT_ENSURE_INLINE
+	inline copy_gen<T> copy_from(const T* src)
+	{
+		return copy_gen<T>(src);
+	}
 }
 
 
