@@ -25,9 +25,16 @@ namespace lmat { namespace detail {
 				const T *src, const index_t ldim_s,
 				      T *dst, const index_t ldim_d)
 		{
-			for (index_t j = 0; j < N; ++j, src+=ldim_s, dst+=ldim_d)
+			if (ldim_s == M && ldim_d == M)
 			{
-				copy_mem(M, src, dst);
+				copy_mem(M * N, src, dst);
+			}
+			else
+			{
+				for (index_t j = 0; j < N; ++j, src+=ldim_s, dst+=ldim_d)
+				{
+					copy_mem(M, src, dst);
+				}
 			}
 		}
 	};
