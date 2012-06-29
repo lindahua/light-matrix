@@ -26,17 +26,10 @@ static_assert(sizeof(lmat::mat23_f64) == sizeof(double) * 6, "Incorrect size for
 static_assert(sizeof(lmat::mat32_f64) == sizeof(double) * 6, "Incorrect size for fixed-size matrices");
 static_assert(sizeof(lmat::mat33_f64) == sizeof(double) * 9, "Incorrect size for fixed-size matrices");
 
-static_assert(lmat::is_base_of<
-		lmat::IMatrixXpr<lmat::dense_matrix<double>, double>,
-		lmat::dense_matrix<double> >::value, "Base verification failed.");
+static_assert(lmat::is_mat_xpr<lmat::dense_matrix<double> >::value, "Interface verification failed.");
+static_assert(lmat::is_mat_view<lmat::dense_matrix<double> >::value, "Interface verification failed.");
+static_assert(lmat::is_dense_mat<lmat::dense_matrix<double> >::value, "Interface verification failed.");
 
-static_assert(lmat::is_base_of<
-		lmat::IMatrixView<lmat::dense_matrix<double>, double>,
-		lmat::dense_matrix<double> >::value, "Base verification failed.");
-
-static_assert(lmat::is_base_of<
-		lmat::IDenseMatrix<lmat::dense_matrix<double>, double>,
-		lmat::dense_matrix<double> >::value, "Base verification failed.");
 #endif
 
 

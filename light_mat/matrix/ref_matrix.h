@@ -207,7 +207,7 @@ namespace lmat
 		}
 
 		template<class Mat>
-		LMAT_ENSURE_INLINE ref_matrix& operator = (const IDenseMatrix<Other, T>& r)
+		LMAT_ENSURE_INLINE ref_matrix& operator = (const IDenseMatrix<Mat, T>& r)
 		{
 			copy_from_mat(r);
 			return *this;
@@ -331,8 +331,8 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<typename T, int CTRows>
-	class cref_col: public cref_matrix<T, CTRows, 1>
+	template<typename T, int CTRows, typename Align>
+	class cref_col: public cref_matrix<T, CTRows, 1, Align>
 	{
 		typedef cref_matrix<T, CTRows, 1> base_mat_t;
 
@@ -344,8 +344,8 @@ namespace lmat
 		: base_mat_t(pdata, m, 1) { }
 	};
 
-	template<typename T, int CTRows>
-	class ref_col: public ref_matrix<T, CTRows, 1>
+	template<typename T, int CTRows, typename Align>
+	class ref_col: public ref_matrix<T, CTRows, 1, Align>
 	{
 		typedef ref_matrix<T, CTRows, 1> base_mat_t;
 
@@ -385,8 +385,8 @@ namespace lmat
 	};
 
 
-	template<typename T, int CTCols>
-	class cref_row: public cref_matrix<T, 1, CTCols>
+	template<typename T, int CTCols, typename Align>
+	class cref_row: public cref_matrix<T, 1, CTCols, Align>
 	{
 		typedef cref_matrix<T, 1, CTCols> base_mat_t;
 
@@ -398,8 +398,8 @@ namespace lmat
 		: base_mat_t(pdata, 1, n) { }
 	};
 
-	template<typename T, int CTCols>
-	class ref_row: public ref_matrix<T, 1, CTCols>
+	template<typename T, int CTCols, typename Align>
+	class ref_row: public ref_matrix<T, 1, CTCols, Align>
 	{
 		typedef ref_matrix<T, 1, CTCols> base_mat_t;
 
