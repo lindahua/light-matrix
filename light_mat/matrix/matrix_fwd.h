@@ -45,25 +45,43 @@ namespace lmat
 	template<class Derived, typename T> class IMatrixView;
 	template<class Derived, typename T> class IDenseMatrix;
 
+	// alignment tags
+
+	struct unaligned { };
+	struct base_aligned { };
+	struct percol_aligned { };
+
+	template<typename T>
+	struct is_align_tag { static const bool value = false; };
+
+	template<> struct is_align_tag<unaligned> { static const bool value = true; };
+	template<> struct is_align_tag<base_aligned> { static const bool value = true; };
+	template<> struct is_align_tag<percol_aligned> { static const bool value = true; };
+
 	// forward declaration of some important types
 
-	template<typename T, int CTRows=DynamicDim, int CTCols=DynamicDim> class dense_matrix; // guranteed to be aligned
-	template<typename T, int CTRows=DynamicDim> class dense_col;
-	template<typename T, int CTCols=DynamicDim> class dense_row;
+	template<typename T, int CTRows=DynamicDim, int CTCols=DynamicDim, typename Align=base_aligned>
+	class dense_matrix;
 
-	template<typename T, int RowDim=DynamicDim, int ColDim=DynamicDim> class cref_matrix;
-	template<typename T, int RowDim=DynamicDim, int ColDim=DynamicDim> class ref_matrix;
+	template<typename T, int CTRows=DynamicDim, typename Align=base_aligned> class dense_col;
+	template<typename T, int CTCols=DynamicDim, typename Align=base_aligned> class dense_row;
 
-	template<typename T, int RowDim=DynamicDim, int ColDim=DynamicDim> class aligned_cref_matrix;
-	template<typename T, int RowDim=DynamicDim, int ColDim=DynamicDim> class aligned_ref_matrix;
+	template<typename T, int RowDim=DynamicDim, int ColDim=DynamicDim, typename Align=unaligned>
+	class cref_matrix;
 
-	template<typename T, int CTRows=DynamicDim> class cref_col;
-	template<typename T, int CTRows=DynamicDim> class ref_col;
-	template<typename T, int CTCols=DynamicDim> class cref_row;
-	template<typename T, int CTCols=DynamicDim> class ref_row;
+	template<typename T, int RowDim=DynamicDim, int ColDim=DynamicDim, typename Align=unaligned>
+	class ref_matrix;
 
-	template<typename T, int CTRows=DynamicDim, int CTCols=DynamicDim> class cref_matrix_ex;
-	template<typename T, int CTRows=DynamicDim, int CTCols=DynamicDim> class ref_matrix_ex;
+	template<typename T, int CTRows=DynamicDim, typename Align=unaligned> class cref_col;
+	template<typename T, int CTRows=DynamicDim, typename Align=unaligned> class ref_col;
+	template<typename T, int CTCols=DynamicDim, typename Align=unaligned> class cref_row;
+	template<typename T, int CTCols=DynamicDim, typename Align=unaligned> class ref_row;
+
+	template<typename T, int CTRows=DynamicDim, int CTCols=DynamicDim, typename Align=unaligned>
+	class cref_matrix_ex;
+
+	template<typename T, int CTRows=DynamicDim, int CTCols=DynamicDim, typename Align=unaligned>
+	class ref_matrix_ex;
 
 	template<typename T, int CTRows=DynamicDim, int CTCols=DynamicDim> class cref_grid2d;
 	template<typename T, int CTRows=DynamicDim, int CTCols=DynamicDim> class ref_grid2d;

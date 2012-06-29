@@ -24,8 +24,8 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<typename T, int CTRows, int CTCols>
-	struct matrix_traits<dense_matrix<T, CTRows, CTCols> >
+	template<typename T, int CTRows, int CTCols, typename Align>
+	struct matrix_traits<dense_matrix<T, CTRows, CTCols, Align> >
 	{
 		static const int num_dimensions = 2;
 		static const int compile_time_num_rows = CTRows;
@@ -36,28 +36,45 @@ namespace lmat
 		typedef T value_type;
 	};
 
-	template<typename T, int CTRows, int CTCols>
-	struct has_continuous_layout<dense_matrix<T, CTRows, CTCols> >
+	template<typename T, int CTRows, int CTCols, typename Align>
+	struct has_continuous_layout<dense_matrix<T, CTRows, CTCols, Align> >
 	{
 		static const bool value = true;
 	};
 
-	template<typename T, int CTRows, int CTCols>
-	struct is_base_aligned<dense_matrix<T, CTRows, CTCols> >
+	template<typename T, int CTRows, int CTCols, typename Align>
+	struct is_base_aligned<dense_matrix<T, CTRows, CTCols, Align> >
 	{
 		static const bool value = true;
 	};
 
-	template<typename T, int CTRows, int CTCols>
-	struct is_linear_accessible<dense_matrix<T, CTRows, CTCols> >
+	template<typename T, int CTRows, int CTCols, typename Align>
+	struct is_percol_aligned<dense_matrix<T, CTRows, CTCols, Align> >
+	{
+		static const bool value = is_same<Align, percol_aligned>::value;
+	};
+
+	template<typename T, int CTRows, int CTCols, typename Align>
+	struct is_linear_accessible<dense_matrix<T, CTRows, CTCols, Align> >
 	{
 		static const bool value = true;
 	};
 
 
-	template<typename T, int CTRows, int CTCols>
-	class dense_matrix : public IDenseMatrix<dense_matrix<T, CTRows, CTCols>, T>
+	template<typename T, int CTRows, int CTCols, typename Align>
+	class dense_matrix : public IDenseMatrix<dense_matrix<T, CTRows, CTCols, Align>, T>
 	{
+#ifdef LMAT_USE_STATIC_ASSERT
+		static_assert(is_supported_matrix_value_type<T>::value,
+				"T must be a supported matrix value type.");
+
+		static_assert(CTRows >= 0 && CTCols >= 0,
+				"CTRows and CTCols must be non-negative numbers.");
+
+		static_assert(is_same<Align, base_aligned>::value || is_same<Align, percol_aligned>::value,
+				"Align must be either base_aligned or percol_aligned.");
+#endif
+
 	public:
 		LMAT_MAT_TRAITS_DEFS(T)
 
@@ -242,10 +259,10 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<typename T, int CTRows>
-	class dense_col : public dense_matrix<T, CTRows, 1>
+	template<typename T, int CTRows, typename Align>
+	class dense_col : public dense_matrix<T, CTRows, 1, Align>
 	{
-		typedef dense_matrix<T, CTRows, 1> base_mat_t;
+		typedef dense_matrix<T, CTRows, 1, Align> base_mat_t;
 
 	public:
 		LMAT_ENSURE_INLINE dense_col() : base_mat_t(CTRows, 1) { }
@@ -303,10 +320,10 @@ namespace lmat
 	};
 
 
-	template<typename T, int CTCols>
-	class dense_row : public dense_matrix<T, 1, CTCols>
+	template<typename T, int CTCols, typename Align>
+	class dense_row : public dense_matrix<T, 1, CTCols, Align>
 	{
-		typedef dense_matrix<T, 1, CTCols> base_mat_t;
+		typedef dense_matrix<T, 1, CTCols, Align> base_mat_t;
 
 	public:
 		LMAT_ENSURE_INLINE dense_row() : base_mat_t(1, CTCols) { }

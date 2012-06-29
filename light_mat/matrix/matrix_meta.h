@@ -211,6 +211,9 @@ namespace lmat
 	struct is_base_aligned { static const bool value = false; };
 
 	template<class Mat>
+	struct is_percol_aligned { static const bool value = false; };
+
+	template<class Mat>
 	struct is_linear_accessible { static const bool value = false; };
 }
 
