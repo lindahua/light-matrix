@@ -192,22 +192,29 @@ namespace lmat
 		{
 			if (this != &r)
 			{
-				assign_to(r, *this);
+				copy_from_mat(r);
 			}
 			return *this;
 		}
 
-		template<class Other>
-		LMAT_ENSURE_INLINE ref_matrix_ex& operator = (const IMatrixView<Other, T>& r)
+		template<class Mat>
+		LMAT_ENSURE_INLINE ref_matrix_ex& operator = (const IDenseMatrix<Mat, T>& r)
 		{
-			assign_to(r.derived(), *this);
+			copy_from_mat(r);
 			return *this;
 		}
 
 		template<class Expr>
 		LMAT_ENSURE_INLINE ref_matrix_ex& operator = (const IMatrixXpr<Expr, T>& r)
 		{
-			assign_to(r.derived(), *this);
+			evaluate_to(r, *this);
+			return *this;
+		}
+
+		template<class Gen>
+		LMAT_ENSURE_INLINE ref_matrix_ex& operator = (const IMatrixGenerator<Gen, T>& gen)
+		{
+			gen.generate_to(nrows(), ncolumns(), lead_dim(), ptr_data());
 			return *this;
 		}
 
@@ -270,6 +277,17 @@ namespace lmat
 		LMAT_ENSURE_INLINE reference operator[] (index_type i)
 		{
 			return m_internal.ptr_data()[detail::ref_ex_linear_offset(*this, i)];
+		}
+
+	private:
+		template<class Mat>
+		LMAT_ENSURE_INLINE
+		void copy_from_mat(const IDenseMatrix<Mat, T>& r)
+		{
+			if ( !(ptr_data() == r.ptr_data() && lead_dim() == r.lead_dim()) )
+			{
+				copy(r.derived(), *this);
+			}
 		}
 
 	private:

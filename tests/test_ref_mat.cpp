@@ -1,7 +1,7 @@
 /**
  * @file test_ref_mat.cpp
  *
- * Unit testing of ref_matrix
+ * Unit testing of cref_matrix and ref_matrix
  *
  * @author Dahua Lin
  */
@@ -17,12 +17,21 @@ using namespace lmat::test;
 
 // explicit instantiation
 
+template class lmat::cref_matrix<double, DynamicDim, DynamicDim>;
+template class lmat::cref_matrix<double, DynamicDim, 4>;
+template class lmat::cref_matrix<double, 3, DynamicDim>;
+template class lmat::cref_matrix<double, 3, 4>;
+
 template class lmat::ref_matrix<double, DynamicDim, DynamicDim>;
 template class lmat::ref_matrix<double, DynamicDim, 4>;
 template class lmat::ref_matrix<double, 3, DynamicDim>;
 template class lmat::ref_matrix<double, 3, 4>;
 
 #ifdef LMAT_USE_STATIC_ASSERT
+
+static_assert(lmat::is_mat_xpr<lmat::cref_matrix<double> >::value, "Interface verification failed.");
+static_assert(lmat::is_mat_view<lmat::cref_matrix<double> >::value, "Interface verification failed.");
+static_assert(lmat::is_dense_mat<lmat::cref_matrix<double> >::value, "Interface verification failed.");
 
 static_assert(lmat::is_mat_xpr<lmat::ref_matrix<double> >::value, "Interface verification failed.");
 static_assert(lmat::is_mat_view<lmat::ref_matrix<double> >::value, "Interface verification failed.");

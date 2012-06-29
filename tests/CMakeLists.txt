@@ -93,6 +93,7 @@ set(REF_MAT_HS
 add_executable(test_ref_mat ${REF_MAT_HS} test_ref_mat.cpp)
 add_executable(test_ref_col ${REF_MAT_HS} test_ref_col.cpp)
 add_executable(test_ref_row ${REF_MAT_HS} test_ref_row.cpp)
+add_executable(test_ref_mat_ex ${REF_MAT_HS} test_ref_mat_ex.cpp)
 
 # Link to test_main
 
@@ -105,6 +106,7 @@ target_link_libraries(test_dense_row test_main)
 target_link_libraries(test_ref_mat test_main)
 target_link_libraries(test_ref_col test_main)
 target_link_libraries(test_ref_row test_main)
+target_link_libraries(test_ref_mat_ex test_main)
 
 # Set output directories
 
@@ -115,7 +117,8 @@ set(ALL_EXECUTABLES
     test_dense_row
     test_ref_mat
     test_ref_col
-    test_ref_row)
+    test_ref_row
+    test_ref_mat_ex)
     
 set_target_properties(${ALL_EXECUTABLES}
     PROPERTIES
@@ -133,4 +136,6 @@ add_test(NAME dense_row COMMAND test_dense_row)
 add_test(NAME ref_mat COMMAND test_ref_mat)
 add_test(NAME ref_col COMMAND test_ref_col)
 add_test(NAME ref_row COMMAND test_ref_row)
+add_test(NAME ref_mat_ex COMMAND test_ref_mat_ex)
+
 
