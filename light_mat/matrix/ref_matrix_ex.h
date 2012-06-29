@@ -98,27 +98,32 @@ namespace lmat
 			return m_internal.ncolumns();
 		}
 
-		LMAT_ENSURE_INLINE const_pointer ptr_data() const
-		{
-			return m_internal.ptr_data();
-		}
-
 		LMAT_ENSURE_INLINE index_type lead_dim() const
 		{
 			return m_internal.lead_dim();
 		}
 
-		LMAT_ENSURE_INLINE index_type offset(index_type i, index_type j) const
+		LMAT_ENSURE_INLINE const_pointer ptr_data() const
+		{
+			return m_internal.ptr_data();
+		}
+
+		LMAT_ENSURE_INLINE const_pointer ptr_col(const index_type j) const
+		{
+			return ptr_data() + j * lead_dim();
+		}
+
+		LMAT_ENSURE_INLINE index_type offset(const index_type i, const index_type j) const
 		{
 			return matrix_indexer<CTRows, CTCols>::offset(lead_dim(), i, j);
 		}
 
-		LMAT_ENSURE_INLINE const_reference elem(index_type i, index_type j) const
+		LMAT_ENSURE_INLINE const_reference elem(const index_type i, const index_type j) const
 		{
 			return m_internal.ptr_data()[offset(i, j)];
 		}
 
-		LMAT_ENSURE_INLINE const_reference operator[] (index_type i) const
+		LMAT_ENSURE_INLINE const_reference operator[] (const index_type i) const
 		{
 			return m_internal.ptr_data()[detail::ref_ex_linear_offset(*this, i)];
 		}
@@ -239,6 +244,11 @@ namespace lmat
 			return m_internal.ncolumns();
 		}
 
+		LMAT_ENSURE_INLINE index_type lead_dim() const
+		{
+			return m_internal.lead_dim();
+		}
+
 		LMAT_ENSURE_INLINE const_pointer ptr_data() const
 		{
 			return m_internal.ptr_data();
@@ -249,32 +259,37 @@ namespace lmat
 			return m_internal.ptr_data();
 		}
 
-		LMAT_ENSURE_INLINE index_type lead_dim() const
+		LMAT_ENSURE_INLINE const_pointer ptr_col(const index_type j) const
 		{
-			return m_internal.lead_dim();
+			return ptr_data() + j * lead_dim();
 		}
 
-		LMAT_ENSURE_INLINE index_type offset(index_type i, index_type j) const
+		LMAT_ENSURE_INLINE pointer ptr_col(const index_type j)
+		{
+			return ptr_data() + j * lead_dim();
+		}
+
+		LMAT_ENSURE_INLINE index_type offset(const index_type i, const index_type j) const
 		{
 			return matrix_indexer<CTRows, CTCols>::offset(lead_dim(), i, j);
 		}
 
-		LMAT_ENSURE_INLINE const_reference elem(index_type i, index_type j) const
+		LMAT_ENSURE_INLINE const_reference elem(const index_type i, const index_type j) const
 		{
 			return m_internal.ptr_data()[offset(i, j)];
 		}
 
-		LMAT_ENSURE_INLINE reference elem(index_type i, index_type j)
+		LMAT_ENSURE_INLINE reference elem(const index_type i, const index_type j)
 		{
 			return m_internal.ptr_data()[offset(i, j)];
 		}
 
-		LMAT_ENSURE_INLINE const_reference operator[] (index_type i) const
+		LMAT_ENSURE_INLINE const_reference operator[] (const index_type i) const
 		{
 			return m_internal.ptr_data()[detail::ref_ex_linear_offset(*this, i)];
 		}
 
-		LMAT_ENSURE_INLINE reference operator[] (index_type i)
+		LMAT_ENSURE_INLINE reference operator[] (const index_type i)
 		{
 			return m_internal.ptr_data()[detail::ref_ex_linear_offset(*this, i)];
 		}
