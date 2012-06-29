@@ -37,6 +37,28 @@ namespace lmat { namespace test {
 		}
 	};
 
+
+	template<int N>
+	class N_case : public ltest::test_case
+	{
+		std::string m_name;
+
+	public:
+		N_case(const char *nam)
+		{
+			std::stringstream ss;
+			ss << nam << " [" << N << "]";
+			m_name = ss.str();
+		}
+
+		virtual ~N_case() { }
+
+		const char *name() const
+		{
+			return m_name.c_str();
+		}
+	};
+
 	template<int M, int N>
 	class MN_case : public ltest::test_case
 	{
@@ -75,7 +97,7 @@ namespace lmat { namespace test {
 #define SIMPLE_CASE( pname, tname ) \
 	class TCASE_CLASS(pname, tname) : public lmat::test::simple_case { \
 	public: \
-		TCASE_CLASS(pname, tname)() : simple_case( #tname ) { } \
+		TCASE_CLASS(pname, tname)() : lmat::test::simple_case( #tname ) { } \
 		virtual ~TCASE_CLASS(pname, tname)() { } \
 		virtual void run(); \
 	}; \
@@ -84,11 +106,26 @@ namespace lmat { namespace test {
 #define ADD_SIMPLE_CASE( pname, tname ) \
 		tpack->add( new TCASE_CLASS( pname, tname )()  );
 
+#define N_CASE( pname, tname ) \
+	template<int N> \
+	class TCASE_CLASS(pname, tname) : public lmat::test::N_case<N> { \
+	public: \
+		TCASE_CLASS(pname, tname)() : lmat::test::N_case<N>( #tname ) { } \
+		virtual ~TCASE_CLASS(pname, tname)() { } \
+		virtual void run(); \
+	}; \
+	template<int N> \
+	void TCASE_CLASS(pname, tname)<N>::run()
+
+#define ADD_N_CASE( pname, tname, n ) \
+		tpack->add( new TCASE_CLASS( pname, tname )<n>()  );
+
+
 #define MN_CASE( pname, tname ) \
 	template<int M, int N> \
 	class TCASE_CLASS(pname, tname) : public lmat::test::MN_case<M, N> { \
 	public: \
-		TCASE_CLASS(pname, tname)() : MN_case<M, N>( #tname ) { } \
+		TCASE_CLASS(pname, tname)() : lmat::test::MN_case<M, N>( #tname ) { } \
 		virtual ~TCASE_CLASS(pname, tname)() { } \
 		virtual void run(); \
 	}; \

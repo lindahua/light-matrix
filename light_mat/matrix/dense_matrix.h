@@ -287,6 +287,19 @@ namespace lmat
 			base_mat_t::operator = (r.derived());
 			return *this;
 		}
+
+	public:
+		LMAT_ENSURE_INLINE
+		void resize(index_t m, index_t n)
+		{
+			base_mat_t::resize(m, n);
+		}
+
+		LMAT_ENSURE_INLINE
+		void resize(index_t n)
+		{
+			base_mat_t::resize(n, 1);
+		}
 	};
 
 
@@ -331,6 +344,19 @@ namespace lmat
 		{
 			base_mat_t::operator = (r.derived());
 			return *this;
+		}
+
+	public:
+		LMAT_ENSURE_INLINE
+		void resize(index_t m, index_t n)
+		{
+			base_mat_t::resize(m, n);
+		}
+
+		LMAT_ENSURE_INLINE
+		void resize(index_t n)
+		{
+			base_mat_t::resize(1, n);
 		}
 	};
 

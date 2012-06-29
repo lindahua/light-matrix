@@ -20,22 +20,11 @@ template class lmat::dense_matrix<double, DynamicDim, 4>;
 template class lmat::dense_matrix<double, 3, DynamicDim>;
 template class lmat::dense_matrix<double, 3, 4>;
 
-template class lmat::dense_col<double, DynamicDim>;
-template class lmat::dense_col<double, 4>;
-
-template class lmat::dense_row<double, DynamicDim>;
-template class lmat::dense_row<double, 4>;
-
-
 #ifdef LMAT_USE_STATIC_ASSERT
 static_assert(sizeof(lmat::mat22_f64) == sizeof(double) * 4, "Incorrect size for fixed-size matrices");
 static_assert(sizeof(lmat::mat23_f64) == sizeof(double) * 6, "Incorrect size for fixed-size matrices");
 static_assert(sizeof(lmat::mat32_f64) == sizeof(double) * 6, "Incorrect size for fixed-size matrices");
 static_assert(sizeof(lmat::mat33_f64) == sizeof(double) * 9, "Incorrect size for fixed-size matrices");
-static_assert(sizeof(lmat::col2_f64) == sizeof(double) * 2, "Incorrect size for fixed-size matrices");
-static_assert(sizeof(lmat::col3_f64) == sizeof(double) * 3, "Incorrect size for fixed-size matrices");
-static_assert(sizeof(lmat::row2_f64) == sizeof(double) * 2, "Incorrect size for fixed-size matrices");
-static_assert(sizeof(lmat::row3_f64) == sizeof(double) * 3, "Incorrect size for fixed-size matrices");
 
 static_assert(lmat::is_base_of<
 		lmat::IMatrixXpr<lmat::dense_matrix<double>, double>,
@@ -205,9 +194,21 @@ MN_CASE( dense_mat, resize )
 	const index_t n3 = N == 0 ? 6 : N;
 
 	dense_matrix<double, M, N> a(m, n);
+
+	ASSERT_EQ(a.nrows(), m);
+	ASSERT_EQ(a.ncolumns(), n);
+	ASSERT_EQ(a.nelems(), m * n);
+	ASSERT_EQ(a.lead_dim(), m);
+
 	const double *p1 = a.ptr_data();
 
 	a.resize(m2, n2);
+
+	ASSERT_EQ(a.nrows(), m2);
+	ASSERT_EQ(a.ncolumns(), n2);
+	ASSERT_EQ(a.nelems(), m2 * n2);
+	ASSERT_EQ(a.lead_dim(), m2);
+
 	const double *p2 = a.ptr_data();
 
 	if (m2 * n2 == m * n)
@@ -220,6 +221,12 @@ MN_CASE( dense_mat, resize )
 	}
 
 	a.resize(m3, n3);
+
+	ASSERT_EQ(a.nrows(), m3);
+	ASSERT_EQ(a.ncolumns(), n3);
+	ASSERT_EQ(a.nelems(), m3 * n3);
+	ASSERT_EQ(a.lead_dim(), m3);
+
 	const double *p3 = a.ptr_data();
 
 	if (m2 * n2 == m3 * n3)
@@ -343,8 +350,14 @@ MN_CASE( dense_mat, swap )
 	const index_t m2 = M == 0 ? 6 : M;
 	const index_t n2 = N == 0 ? 5 : N;
 
-	dense_matrix<double, M, N> a(m, n);
-	dense_matrix<double, M, N> a2(m2, n2);
+	scoped_array<double> s(m * n);
+	for (index_t i = 0; i < m * n; ++i) s[i] = double(i + 2);
+
+	scoped_array<double> s2(m2 * n2);
+	for (index_t i = 0; i < m2 * n2; ++i) s2[i] = double(2 * i + 3);
+
+	dense_matrix<double, M, N> a(m, n, copy_from(s.ptr_begin()));
+	dense_matrix<double, M, N> a2(m2, n2, copy_from(s2.ptr_begin()));
 
 	const double *p = a.ptr_data();
 	const double *p2 = a2.ptr_data();
@@ -364,6 +377,14 @@ MN_CASE( dense_mat, swap )
 		ASSERT_EQ( a.ptr_data(), p2 );
 		ASSERT_EQ( a2.ptr_data(), p );
 	}
+	else
+	{
+		ASSERT_EQ( a.ptr_data(), p );
+		ASSERT_EQ( a2.ptr_data(), p2 );
+	}
+
+	ASSERT_VEC_EQ( m2 * n2, a, s2 );
+	ASSERT_VEC_EQ( m * n, a2, s );
 }
 
 

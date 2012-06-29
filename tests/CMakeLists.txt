@@ -74,19 +74,30 @@ add_library(test_main STATIC test_main.cpp)
 
 add_executable(test_arrays ${CORE_HS} test_arrays.cpp)
 
-add_executable(test_dense_mat ${MATRIX_BASE_HS} 
+set(DENSE_MAT_HS
+    ${MATRIX_BASE_HS}
     ${INC}/matrix/dense_matrix.h
-    ${INC}/matrix/bits/dense_matrix_internal.h
-    test_dense_mat.cpp)
-    
+    ${INC}/matrix/bits/dense_matrix_internal.h)
+
+add_executable(test_dense_mat ${DENSE_MAT_HS} test_dense_mat.cpp)
+add_executable(test_dense_col ${DENSE_MAT_HS} test_dense_col.cpp)
+add_executable(test_dense_row ${DENSE_MAT_HS} test_dense_row.cpp)   
+
+# Link to test_main
 
 target_link_libraries(test_arrays test_main)
-target_link_libraries(test_dense_mat test_main)
 
+target_link_libraries(test_dense_mat test_main)
+target_link_libraries(test_dense_col test_main)
+target_link_libraries(test_dense_row test_main)
+
+# Set output directories
 
 set(ALL_EXECUTABLES 
     test_arrays
-    test_dense_mat)
+    test_dense_mat
+    test_dense_col
+    test_dense_row)
     
 set_target_properties(${ALL_EXECUTABLES}
     PROPERTIES
@@ -96,8 +107,10 @@ set_target_properties(${ALL_EXECUTABLES}
 # Add Tests
 
 add_test(NAME arrays COMMAND test_arrays)
-add_test(NAME dense_mat COMMAND test_dense_mat)
 
+add_test(NAME dense_mat COMMAND test_dense_mat)
+add_test(NAME dense_col COMMAND test_dense_col)
+add_test(NAME dense_row COMMAND test_dense_row)
 
 
 
