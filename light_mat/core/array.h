@@ -74,12 +74,12 @@ namespace lmat
 
 		LMAT_ENSURE_INLINE const_reference operator[] (const index_type i) const
 		{
-			return derived().elem(i);
+			return derived().operator[](i);
 		}
 
 		LMAT_ENSURE_INLINE reference operator[] (const index_type i)
 		{
-			return derived().elem(i);
+			return derived().operator[](i);
 		}
 
 	}; // end class IBlock

@@ -274,7 +274,7 @@ namespace lmat
 		typename colviews<Derived, Range>::type
 		operator()(const IRange<Range>& rgn, const index_t j)
 		{
-			return colviews<Derived, range>::get(derived(), j, rgn.derived());
+			return colviews<Derived, Range>::get(derived(), j, rgn.derived());
 		}
 
 		// row views
@@ -298,7 +298,7 @@ namespace lmat
 		typename rowviews<Derived, Range>::const_type
 		operator()(const index_t i, const IRange<Range>& rgn) const
 		{
-			return rowviews<Derived, range>::get(derived(), i, rgn.derived());
+			return rowviews<Derived, Range>::get(derived(), i, rgn.derived());
 		}
 
 		template<class Range>
@@ -306,7 +306,7 @@ namespace lmat
 		typename rowviews<Derived, Range>::type
 		operator()(const index_t i, const IRange<Range>& rgn)
 		{
-			return rowviews<Derived, range>::get(derived(), i, rgn.derived());
+			return rowviews<Derived, Range>::get(derived(), i, rgn.derived());
 		}
 
 		// sub-views
@@ -316,7 +316,7 @@ namespace lmat
 		typename subviews<Derived, Range0, Range1>::const_type
 		operator()(const IRange<Range0>& row_rgn, const IRange<Range1>& col_rgn) const
 		{
-			return subviews<Derived, whole, whole>::get(derived(),
+			return subviews<Derived, Range0, Range1>::get(derived(),
 					row_rgn.derived(), col_rgn.derived());
 		}
 
@@ -325,7 +325,7 @@ namespace lmat
 		typename subviews<Derived, Range0, Range1>::type
 		operator()(const IRange<Range0>& row_rgn, const IRange<Range1>& col_rgn)
 		{
-			return subviews<Derived, whole, whole>::get(derived(),
+			return subviews<Derived, Range0, Range1>::get(derived(),
 					row_rgn.derived(), col_rgn.derived());
 		}
 
@@ -334,3 +334,5 @@ namespace lmat
 }
 
 #endif /* MATRIX_CONCEPTS_H_ */
+
+

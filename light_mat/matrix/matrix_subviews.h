@@ -250,14 +250,14 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		static const_type get(const Mat& mat, const range& rg, whole)
 		{
-			return const_type(mat + rg.begin_index(), rg.num(),
+			return const_type(mat.ptr_data() + rg.begin_index(), rg.num(),
 					mat.ncolumns(), mat.lead_dim());
 		}
 
 		LMAT_ENSURE_INLINE
 		static type get(Mat& mat, const range& rg, whole)
 		{
-			return type(mat + rg.begin_index(), rg.num(),
+			return type(mat.ptr_data() + rg.begin_index(), rg.num(),
 					mat.ncolumns(), mat.lead_dim());
 		}
 	};
