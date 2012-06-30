@@ -83,9 +83,6 @@ namespace lmat
 	template<typename T, int CTRows=DynamicDim, int CTCols=DynamicDim, typename Align=unaligned>
 	class ref_matrix_ex;
 
-	template<typename T, int CTRows=DynamicDim, int CTCols=DynamicDim> class cref_grid2d;
-	template<typename T, int CTRows=DynamicDim, int CTCols=DynamicDim> class ref_grid2d;
-
 	// auxiliary structures
 
 	template<class Mat, typename RowRange> struct colviews;
