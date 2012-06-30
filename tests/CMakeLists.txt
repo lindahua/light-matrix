@@ -139,7 +139,7 @@ target_link_libraries(test_mat_compare test_main)
 
 target_link_libraries(test_dense_eval test_main)
 target_link_libraries(test_mat_subviews test_main)
-
+    
 # Set output directories
 
 set(ALL_EXECUTABLES 

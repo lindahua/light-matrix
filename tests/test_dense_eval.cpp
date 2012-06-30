@@ -51,11 +51,10 @@ MN_CASE( mat_eval, ref_mat )
 
 	ASSERT_EQ( r.nrows(), m );
 	ASSERT_EQ( r.ncolumns(), n );
-	ASSERT_NE( r.ptr_data(), a.ptr_data() );
+	// ASSERT_NE( r.ptr_data(), a.ptr_data() );
 
 	ASSERT_MAT_EQ(m, n, a, r);
 }
-
 
 MN_CASE( mat_eval, ref_mat_ex )
 {
@@ -75,7 +74,6 @@ MN_CASE( mat_eval, ref_mat_ex )
 
 	ASSERT_MAT_EQ(m, n, a, r);
 }
-
 
 BEGIN_TPACK( dense_mat_eval )
 	ADD_MN_CASE( mat_eval, dense_mat, 0, 0 );
