@@ -24,4 +24,6 @@
 #include <light_mat/matrix/matrix_compare.h>
 #include <light_mat/matrix/matrix_print.h>
 
+#include <light_mat/matrix/matrix_subviews.h>
+
 #endif 

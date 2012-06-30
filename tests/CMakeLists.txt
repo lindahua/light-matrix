@@ -51,10 +51,6 @@ set(COMMON_ARRAY_HS
     ${INC}/core/mem_alloc.h
     ${INC}/core/array.h)
     
-set(CORE_HS
-    ${COMMON_BASIC_HS}
-    ${COMMON_ARRAY_HS})
-    
 set(MATRIX_BASE_HS
     ${INC}/matrix/matrix_fwd.h 
     ${INC}/matrix/matrix_meta.h
@@ -68,7 +64,26 @@ set(MATRIX_BASE_HS
     ${INC}/matrix/bits/matrix_copy_internal.h
     ${INC}/matrix/bits/matrix_compare_internal.h
     ${INC}/matrix/matrix_print.h
+    ${INC}/matrix/matrix_subviews.h
     ${INC}/matrix/matrix_base.h)
+    
+set(MATRIX_CLASS_HS
+    ${INC}/matrix/dense_matrix.h
+    ${INC}/matrix/ref_matrix.h
+    ${INC}/matrix/ref_matrix_ex.h
+    ${INC}/matrix/bits/dense_matrix_internal.h
+    ${INC}/matrix/bits/ref_matrix_internal.h 
+    ${INC}/matrix/bits/ref_matrix_ex_internal.h
+    )
+    
+set(CORE_HS
+    ${COMMON_BASIC_HS}
+    ${COMMON_ARRAY_HS})
+    
+set(MATRIX_HS
+    ${CORE_HS}
+    ${MATRIX_BASE_HS}
+    ${MATRIX_CLASS_HS})    
 
 # Executables
 
@@ -77,6 +92,7 @@ add_library(test_main STATIC test_main.cpp)
 add_executable(test_arrays ${CORE_HS} test_arrays.cpp)
 
 set(DENSE_MAT_HS
+    ${CORE_HS}
     ${MATRIX_BASE_HS}
     ${INC}/matrix/dense_matrix.h
     ${INC}/matrix/bits/dense_matrix_internal.h)
@@ -86,6 +102,7 @@ add_executable(test_dense_col ${DENSE_MAT_HS} test_dense_col.cpp)
 add_executable(test_dense_row ${DENSE_MAT_HS} test_dense_row.cpp)  
 
 set(REF_MAT_HS
+    ${CORE_HS}
     ${MATRIX_BASE_HS}
     ${INC}/matrix/ref_matrix.h
     ${INC}/matrix/ref_matrix_ex.h

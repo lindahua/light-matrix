@@ -244,19 +244,19 @@ namespace lmat
 		}
 
 	public:
-/*
+
 		// column views
 
 		LMAT_ENSURE_INLINE
 		typename colviews<Derived, whole>::const_type
-		column(index_type j) const
+		column(const index_type j) const
 		{
 			return colviews<Derived, whole>::get(derived(), j, whole());
 		}
 
 		LMAT_ENSURE_INLINE
 		typename colviews<Derived, whole>::type
-		column(index_type j)
+		column(const index_type j)
 		{
 			return colviews<Derived, whole>::get(derived(), j, whole());
 		}
@@ -264,7 +264,7 @@ namespace lmat
 		template<class Range>
 		LMAT_ENSURE_INLINE
 		typename colviews<Derived, Range>::const_type
-		V(const IRange<Range>& rgn, const index_t j) const
+		operator()(const IRange<Range>& rgn, const index_t j) const
 		{
 			return colviews<Derived, Range>::get(derived(), j, rgn.derived());
 		}
@@ -272,7 +272,7 @@ namespace lmat
 		template<class Range>
 		LMAT_ENSURE_INLINE
 		typename colviews<Derived, Range>::type
-		V(const IRange<Range>& rgn, const index_t j)
+		operator()(const IRange<Range>& rgn, const index_t j)
 		{
 			return colviews<Derived, range>::get(derived(), j, rgn.derived());
 		}
@@ -281,14 +281,14 @@ namespace lmat
 
 		LMAT_ENSURE_INLINE
 		typename rowviews<Derived, whole>::const_type
-		row(index_type i) const
+		row(const index_type i) const
 		{
 			return rowviews<Derived, whole>::get(derived(), i, whole());
 		}
 
 		LMAT_ENSURE_INLINE
 		typename rowviews<Derived, whole>::type
-		row(index_type i)
+		row(const index_type i)
 		{
 			return rowviews<Derived, whole>::get(derived(), i, whole());
 		}
@@ -296,7 +296,7 @@ namespace lmat
 		template<class Range>
 		LMAT_ENSURE_INLINE
 		typename rowviews<Derived, Range>::const_type
-		V(const index_t i, const IRange<Range>& rgn) const
+		operator()(const index_t i, const IRange<Range>& rgn) const
 		{
 			return rowviews<Derived, range>::get(derived(), i, rgn.derived());
 		}
@@ -304,7 +304,7 @@ namespace lmat
 		template<class Range>
 		LMAT_ENSURE_INLINE
 		typename rowviews<Derived, Range>::type
-		V(const index_t i, const IRange<Range>& rgn)
+		operator()(const index_t i, const IRange<Range>& rgn)
 		{
 			return rowviews<Derived, range>::get(derived(), i, rgn.derived());
 		}
@@ -314,7 +314,7 @@ namespace lmat
 		template<class Range0, class Range1>
 		LMAT_ENSURE_INLINE
 		typename subviews<Derived, Range0, Range1>::const_type
-		V(const IRange<Range0>& row_rgn, const IRange<Range1>& col_rgn) const
+		operator()(const IRange<Range0>& row_rgn, const IRange<Range1>& col_rgn) const
 		{
 			return subviews<Derived, whole, whole>::get(derived(),
 					row_rgn.derived(), col_rgn.derived());
@@ -323,12 +323,12 @@ namespace lmat
 		template<class Range0, class Range1>
 		LMAT_ENSURE_INLINE
 		typename subviews<Derived, Range0, Range1>::type
-		V(const IRange<Range0>& row_rgn, const IRange<Range1>& col_rgn)
+		operator()(const IRange<Range0>& row_rgn, const IRange<Range1>& col_rgn)
 		{
 			return subviews<Derived, whole, whole>::get(derived(),
 					row_rgn.derived(), col_rgn.derived());
 		}
-*/
+
 	}; // end class IDenseMatrixBlock
 
 }
