@@ -69,11 +69,10 @@ set(MATRIX_BASE_HS
     
 set(MATRIX_CLASS_HS
     ${INC}/matrix/dense_matrix.h
+    ${INC}/matrix/bits/dense_matrix_internal.h
     ${INC}/matrix/ref_matrix.h
     ${INC}/matrix/ref_matrix_ex.h
-    ${INC}/matrix/bits/dense_matrix_internal.h
-    ${INC}/matrix/bits/ref_matrix_internal.h 
-    ${INC}/matrix/bits/ref_matrix_ex_internal.h
+    ${INC}/matrix/const_matrix.h
     ${INC}/matrix/matrix_classes.h
     )
     
@@ -106,9 +105,7 @@ set(REF_MAT_HS
     ${CORE_HS}
     ${MATRIX_BASE_HS}
     ${INC}/matrix/ref_matrix.h
-    ${INC}/matrix/ref_matrix_ex.h
-    ${INC}/matrix/bits/ref_matrix_internal.h 
-    ${INC}/matrix/bits/ref_matrix_ex_internal.h)
+    ${INC}/matrix/ref_matrix_ex.h)
     
 add_executable(test_ref_mat ${REF_MAT_HS} test_ref_mat.cpp)
 add_executable(test_ref_col ${REF_MAT_HS} test_ref_col.cpp)

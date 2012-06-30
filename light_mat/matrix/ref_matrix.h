@@ -13,7 +13,7 @@
 #ifndef LIGHTMAT_REF_MATRIX_H_
 #define LIGHTMAT_REF_MATRIX_H_
 
-#include "bits/ref_matrix_internal.h"
+#include <light_mat/matrix/matrix_base.h>
 
 namespace lmat
 {
@@ -75,7 +75,7 @@ namespace lmat
 
 		LMAT_ENSURE_INLINE
 		cref_matrix(const T* pdata, index_type m, index_type n)
-		: m_internal(pdata, m, n)
+		: m_data(pdata), m_shape(m, n)
 		{
 		}
 
@@ -85,7 +85,7 @@ namespace lmat
 	public:
 		LMAT_ENSURE_INLINE index_type nelems() const
 		{
-			return m_internal.nelems();
+			return m_shape.nelems();
 		}
 
 		LMAT_ENSURE_INLINE size_type size() const
@@ -95,27 +95,27 @@ namespace lmat
 
 		LMAT_ENSURE_INLINE index_type nrows() const
 		{
-			return m_internal.nrows();
+			return m_shape.nrows();
 		}
 
 		LMAT_ENSURE_INLINE index_type ncolumns() const
 		{
-			return m_internal.ncolumns();
+			return m_shape.ncolumns();
 		}
 
 		LMAT_ENSURE_INLINE index_type lead_dim() const
 		{
-			return m_internal.lead_dim();
+			return m_shape.nrows();
 		}
 
 		LMAT_ENSURE_INLINE const_pointer ptr_data() const
 		{
-			return m_internal.ptr_data();
+			return m_data;
 		}
 
 		LMAT_ENSURE_INLINE const_pointer ptr_col(const index_type j) const
 		{
-			return ptr_data() + j * lead_dim();
+			return m_data + j * lead_dim();
 		}
 
 		LMAT_ENSURE_INLINE index_type offset(const index_type i, const index_type j) const
@@ -125,16 +125,17 @@ namespace lmat
 
 		LMAT_ENSURE_INLINE const_reference elem(const index_type i, const index_type j) const
 		{
-			return m_internal.ptr_data()[offset(i, j)];
+			return m_data[offset(i, j)];
 		}
 
 		LMAT_ENSURE_INLINE const_reference operator[] (const index_type i) const
 		{
-			return m_internal.ptr_data()[i];
+			return m_data[i];
 		}
 
 	private:
-		detail::ref_matrix_internal<const T, CTRows, CTCols> m_internal;
+		const T *m_data;
+		matrix_shape<CTRows, CTCols> m_shape;
 
 	}; // end class cref_matrix
 
@@ -192,7 +193,7 @@ namespace lmat
 	public:
 		LMAT_ENSURE_INLINE
 		ref_matrix(T* pdata, index_type m, index_type n)
-		: m_internal(pdata, m, n)
+		: m_data(pdata), m_shape(m, n)
 		{
 		}
 
@@ -230,7 +231,7 @@ namespace lmat
 	public:
 		LMAT_ENSURE_INLINE index_type nelems() const
 		{
-			return m_internal.nelems();
+			return m_shape.nelems();
 		}
 
 		LMAT_ENSURE_INLINE size_type size() const
@@ -240,37 +241,37 @@ namespace lmat
 
 		LMAT_ENSURE_INLINE index_type nrows() const
 		{
-			return m_internal.nrows();
+			return m_shape.nrows();
 		}
 
 		LMAT_ENSURE_INLINE index_type ncolumns() const
 		{
-			return m_internal.ncolumns();
+			return m_shape.ncolumns();
 		}
 
 		LMAT_ENSURE_INLINE index_type lead_dim() const
 		{
-			return m_internal.lead_dim();
+			return m_shape.nrows();
 		}
 
 		LMAT_ENSURE_INLINE const_pointer ptr_data() const
 		{
-			return m_internal.ptr_data();
+			return m_data;
 		}
 
 		LMAT_ENSURE_INLINE pointer ptr_data()
 		{
-			return m_internal.ptr_data();
+			return m_data;
 		}
 
 		LMAT_ENSURE_INLINE const_pointer ptr_col(const index_type j) const
 		{
-			return ptr_data() + j * lead_dim();
+			return m_data + j * lead_dim();
 		}
 
 		LMAT_ENSURE_INLINE pointer ptr_col(const index_type j)
 		{
-			return ptr_data() + j * lead_dim();
+			return m_data + j * lead_dim();
 		}
 
 		LMAT_ENSURE_INLINE index_type offset(const index_type i, const index_type j) const
@@ -280,22 +281,22 @@ namespace lmat
 
 		LMAT_ENSURE_INLINE const_reference elem(const index_type i, const index_type j) const
 		{
-			return m_internal.ptr_data()[offset(i, j)];
+			return m_data[offset(i, j)];
 		}
 
 		LMAT_ENSURE_INLINE reference elem(const index_type i, const index_type j)
 		{
-			return m_internal.ptr_data()[offset(i, j)];
+			return m_data[offset(i, j)];
 		}
 
 		LMAT_ENSURE_INLINE const_reference operator[] (const index_type i) const
 		{
-			return m_internal.ptr_data()[i];
+			return m_data[i];
 		}
 
 		LMAT_ENSURE_INLINE reference operator[] (const index_type i)
 		{
-			return m_internal.ptr_data()[i];
+			return m_data[i];
 		}
 
 	private:
@@ -320,7 +321,8 @@ namespace lmat
 		}
 
 	private:
-		detail::ref_matrix_internal<T, CTRows, CTCols> m_internal;
+		T *m_data;
+		matrix_shape<CTRows, CTCols> m_shape;
 
 	}; // end ref_matrix
 
