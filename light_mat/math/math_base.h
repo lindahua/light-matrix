@@ -48,32 +48,32 @@ namespace lmat { namespace math {
 
 	// additional functions
 
-	LMAT_ENSURE_INLINE int32_t  sqr(int32_t  x) { return x * x; }
-	LMAT_ENSURE_INLINE uint32_t sqr(uint32_t x) { return x * x; }
-	LMAT_ENSURE_INLINE float    sqr(float    x) { return x * x; }
-	LMAT_ENSURE_INLINE double   sqr(double   x) { return x * x; }
+	LMAT_ENSURE_INLINE inline int32_t  sqr(int32_t  x) { return x * x; }
+	LMAT_ENSURE_INLINE inline uint32_t sqr(uint32_t x) { return x * x; }
+	LMAT_ENSURE_INLINE inline float    sqr(float    x) { return x * x; }
+	LMAT_ENSURE_INLINE inline double   sqr(double   x) { return x * x; }
 
-	LMAT_ENSURE_INLINE float  rcp(float  x) { return 1.0f / x; }
-	LMAT_ENSURE_INLINE double rcp(double x) { return 1.0 / x; }
+	LMAT_ENSURE_INLINE inline float  rcp(float  x) { return 1.0f / x; }
+	LMAT_ENSURE_INLINE inline double rcp(double x) { return 1.0 / x; }
 
-	LMAT_ENSURE_INLINE float  rsqrt(float  x) { return 1.0f / std::sqrt(x); }
-	LMAT_ENSURE_INLINE double rsqrt(double x) { return 1.0 / std::sqrt(x); }
+	LMAT_ENSURE_INLINE inline float  rsqrt(float  x) { return 1.0f / std::sqrt(x); }
+	LMAT_ENSURE_INLINE inline double rsqrt(double x) { return 1.0 / std::sqrt(x); }
 
-	LMAT_ENSURE_INLINE int32_t  (max)(int32_t  x, int32_t  y) { return x > y ? x : y; }
-	LMAT_ENSURE_INLINE uint32_t (max)(uint32_t x, uint32_t y) { return x > y ? x : y; }
-	LMAT_ENSURE_INLINE int32_t  (min)(int32_t  x, int32_t  y) { return x < y ? x : y; }
-	LMAT_ENSURE_INLINE uint32_t (min)(uint32_t x, uint32_t y) { return x < y ? x : y; }
+	LMAT_ENSURE_INLINE inline int32_t  (max)(int32_t  x, int32_t  y) { return x > y ? x : y; }
+	LMAT_ENSURE_INLINE inline uint32_t (max)(uint32_t x, uint32_t y) { return x > y ? x : y; }
+	LMAT_ENSURE_INLINE inline int32_t  (min)(int32_t  x, int32_t  y) { return x < y ? x : y; }
+	LMAT_ENSURE_INLINE inline uint32_t (min)(uint32_t x, uint32_t y) { return x < y ? x : y; }
 
 #ifdef LMAT_HAS_CXX11_MATH
-	LMAT_ENSURE_INLINE float    (max)(float    x, float    y) { return std::fmax(x, y); }
-	LMAT_ENSURE_INLINE double   (max)(double   x, double   y) { return std::fmax(x, y); }
-	LMAT_ENSURE_INLINE float    (min)(float    x, float    y) { return std::fmin(x, y); }
-	LMAT_ENSURE_INLINE double   (min)(double   x, double   y) { return std::fmin(x, y); }
+	LMAT_ENSURE_INLINE inline float  (max)(float  x, float  y) { return std::fmax(x, y); }
+	LMAT_ENSURE_INLINE inline double (max)(double x, double y) { return std::fmax(x, y); }
+	LMAT_ENSURE_INLINE inline float  (min)(float  x, float  y) { return std::fmin(x, y); }
+	LMAT_ENSURE_INLINE inline double (min)(double x, double y) { return std::fmin(x, y); }
 #else
-	LMAT_ENSURE_INLINE float    (max)(float    x, float    y) { return x > y ? x : y; }
-	LMAT_ENSURE_INLINE double   (max)(double   x, double   y) { return x > y ? x : y; }
-	LMAT_ENSURE_INLINE float    (min)(float    x, float    y) { return x < y ? x : y; }
-	LMAT_ENSURE_INLINE double   (min)(double   x, double   y) { return x < y ? x : y; }
+	LMAT_ENSURE_INLINE inline float  (max)(float  x, float  y) { return x > y ? x : y; }
+	LMAT_ENSURE_INLINE inline double (max)(double x, double y) { return x > y ? x : y; }
+	LMAT_ENSURE_INLINE inline float  (min)(float  x, float  y) { return x < y ? x : y; }
+	LMAT_ENSURE_INLINE inline double (min)(double x, double y) { return x < y ? x : y; }
 #endif
 
 
