@@ -66,6 +66,7 @@ namespace lmat { namespace detail {
 		}
 
 	private:
+		LMAT_ALIGN(LMAT_DEFAULT_ALIGNMENT)
 		sarray<T, CTRows * CTCols> m_arr;
 	};
 

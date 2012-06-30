@@ -20,8 +20,6 @@ template class lmat::dense_col<double, DynamicDim>;
 template class lmat::dense_col<double, 4>;
 
 #ifdef LMAT_USE_STATIC_ASSERT
-static_assert(sizeof(lmat::col2_f64) == sizeof(double) * 2, "Incorrect size for fixed-size matrices");
-static_assert(sizeof(lmat::col3_f64) == sizeof(double) * 3, "Incorrect size for fixed-size matrices");
 
 static_assert(lmat::is_base_of<
 		lmat::dense_matrix<double, DynamicDim, 1>,

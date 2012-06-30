@@ -21,10 +21,6 @@ template class lmat::dense_matrix<double, 3, DynamicDim>;
 template class lmat::dense_matrix<double, 3, 4>;
 
 #ifdef LMAT_USE_STATIC_ASSERT
-static_assert(sizeof(lmat::mat22_f64) == sizeof(double) * 4, "Incorrect size for fixed-size matrices");
-static_assert(sizeof(lmat::mat23_f64) == sizeof(double) * 6, "Incorrect size for fixed-size matrices");
-static_assert(sizeof(lmat::mat32_f64) == sizeof(double) * 6, "Incorrect size for fixed-size matrices");
-static_assert(sizeof(lmat::mat33_f64) == sizeof(double) * 9, "Incorrect size for fixed-size matrices");
 
 static_assert(lmat::is_mat_xpr<lmat::dense_matrix<double> >::value, "Interface verification failed.");
 static_assert(lmat::is_mat_view<lmat::dense_matrix<double> >::value, "Interface verification failed.");

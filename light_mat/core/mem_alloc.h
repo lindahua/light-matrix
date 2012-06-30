@@ -24,7 +24,7 @@
 #include <new>
 #include <limits>
 
-#define LMAT_DEFAULT_ALIGNMENT 32
+#define LMAT_DEFAULT_ALIGNMENT 16
 
 namespace lmat
 {
