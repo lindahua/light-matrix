@@ -32,6 +32,14 @@ namespace lmat
 				src.ptr_data(), src.lead_dim(),
 				dst.ptr_data(), dst.lead_dim());
 	}
+
+
+	template<typename T, class SMat, class DMat>
+	LMAT_ENSURE_INLINE
+	inline void evaluate_to(const IDenseMatrix<SMat, T>& src, IDenseMatrix<DMat, T>& dst)
+	{
+		copy(src, dst);
+	}
 }
 
 #endif 

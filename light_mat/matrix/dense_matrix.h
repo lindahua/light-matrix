@@ -384,20 +384,6 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<typename T, int CTRows, int CTCols>
-	struct mat_evaluator<dense_matrix<T, CTRows, CTCols> >
-	{
-		typedef dense_matrix<T, CTRows, CTCols> expr_type;
-
-		template<class DMat>
-		LMAT_ENSURE_INLINE
-		static void evaluate(const expr_type& expr, IDenseMatrix<DMat, T>& dst)
-		{
-			copy(expr, dst.derived());
-		}
-	};
-
-
 	template<typename T, class Expr>
 	LMAT_ENSURE_INLINE
 	dense_matrix<T, ct_rows<Expr>::value, ct_cols<Expr>::value>

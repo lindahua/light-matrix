@@ -118,6 +118,7 @@ add_executable(test_ref_mat_ex ${REF_MAT_HS} test_ref_mat_ex.cpp)
 add_executable(test_mat_copy ${REF_MAT_HS} test_mat_copy.cpp)
 add_executable(test_mat_compare ${REF_MAT_HS} test_mat_compare.cpp)
 
+add_executable(test_dense_eval ${MATRIX_HS} test_dense_eval.cpp)
 add_executable(test_mat_subviews ${MATRIX_HS} test_mat_subviews.cpp)
 
 # Link to test_main
@@ -136,6 +137,7 @@ target_link_libraries(test_ref_mat_ex test_main)
 target_link_libraries(test_mat_copy test_main)
 target_link_libraries(test_mat_compare test_main)
 
+target_link_libraries(test_dense_eval test_main)
 target_link_libraries(test_mat_subviews test_main)
 
 # Set output directories
@@ -151,6 +153,7 @@ set(ALL_EXECUTABLES
     test_ref_mat_ex
     test_mat_copy
     test_mat_compare
+    test_dense_eval
     test_mat_subviews)
     
 set_target_properties(${ALL_EXECUTABLES}
@@ -174,6 +177,7 @@ add_test(NAME ref_mat_ex COMMAND test_ref_mat_ex)
 add_test(NAME mat_copy COMMAND test_mat_copy)
 add_test(NAME mat_compare COMMAND test_mat_compare)
 
+add_test(NAME dense_eval COMMAND test_dense_eval)
 add_test(NAME mat_subviews COMMAND test_mat_subviews)
 
 

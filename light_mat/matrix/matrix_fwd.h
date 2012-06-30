@@ -92,8 +92,6 @@ namespace lmat
 	template<class Mat> struct transposed;
 	template<class Mat> class transpose_expr;
 
-	template<class Mat> struct mat_evaluator;
-
 	template<typename T, class SExpr, class DMat>
 	inline void evaluate_to(const IMatrixXpr<SExpr, T>& src, IDenseMatrix<DMat, T>& dst);
 
