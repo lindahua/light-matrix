@@ -98,6 +98,23 @@ namespace lmat
 		fill(dst, s.value());
 	}
 
+
+	template<class Mat>
+	struct const_mat_same_form
+	{
+		typedef typename matrix_traits<Mat>::value_type value_type;
+
+		typedef const_matrix<value_type,
+				ct_rows<Mat>::value,
+				ct_cols<Mat>::value> type;
+
+		LMAT_ENSURE_INLINE
+		static type get(const value_type& v)
+		{
+			return type(v);
+		}
+	};
+
 }
 
 

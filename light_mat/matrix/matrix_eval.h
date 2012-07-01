@@ -60,7 +60,6 @@ namespace lmat
 			}
 		};
 
-
 		template<typename T, int CTRows, int CTCols>
 		struct mateval_internal
 		{
@@ -68,7 +67,8 @@ namespace lmat
 			LMAT_ENSURE_INLINE
 			static void evaluate(const Expr& expr, Dst& dst)
 			{
-				if (percol_eval_cost<Expr>::of(expr) > linear_eval_cost<Expr>::of(expr))
+				if (!has_continuous_layout<Dst>::value ||
+						percol_eval_cost<Expr>::of(expr) < linear_eval_cost<Expr>::of(expr))
 				{
 					percol_mateval_internal<T, CTRows, CTCols>::evaluate(expr, dst);
 				}
@@ -82,7 +82,7 @@ namespace lmat
 
 
 	template<typename T, class SExpr, class DMat>
-	inline void evaluate_to(const IMatrixXpr<SExpr, T>& expr, IDenseMatrix<DMat, T>& dst)
+	inline void evaluate_by_scalars(const IMatrixXpr<SExpr, T>& expr, IDenseMatrix<DMat, T>& dst)
 	{
 		if (is_column(expr))
 		{
@@ -95,6 +95,13 @@ namespace lmat
 				binary_ct_rows<SExpr, DMat>::value,
 				binary_ct_cols<SExpr, DMat>::value>::evaluate(expr.derived(), dst.derived());
 		}
+	}
+
+	template<typename T, class SExpr, class DMat>
+	LMAT_ENSURE_INLINE
+	inline void evaluate_to(const IMatrixXpr<SExpr, T>& expr, IDenseMatrix<DMat, T>& dst)
+	{
+		evaluate_by_scalars(expr, dst);
 	}
 
 }

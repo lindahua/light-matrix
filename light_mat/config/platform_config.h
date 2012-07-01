@@ -31,20 +31,22 @@
 	#define LMAT_USE_C11_STDLIB
 	#define LMAT_USE_STATIC_ASSERT
 	#define LMAT_HAS_NULLPTR
+	#define LMAT_HAS_DECLTYPE
 
 #elif (defined(__GNUC__))
 
 	#define LMAT_HAS_C99_MATH
 
 	#if (defined(__clang__))
-		#if ((__clang_major__ < 2) || (__clang_major__ == 2 && __clang_minor__ < 8))
-			#error CLANG of version lower than 2.8.0 is not supported
+		#if ((__clang_major__ < 2) || (__clang_major__ == 2 && __clang_minor__ < 9))
+			#error CLANG of version lower than 2.9.0 is not supported
 		#endif
 		#define LIGHTMAT_COMPILER LIGHTMAT_CLANG
 
 		#define LMAT_USE_C11_STDLIB
 		#define LMAT_USE_STATIC_ASSERT
 		#define LMAT_HAS_CXX11_MATH
+		#define LMAT_HAS_DECLTYPE
 
 		#if (__clang_major__ >= 3)
 			#define LMAT_HAS_NULLPTR
@@ -60,6 +62,7 @@
 			#define LMAT_USE_C11_STDLIB
 			#define LMAT_USE_STATIC_ASSERT
 			#define LMAT_HAS_CXX11_MATH
+			#define LMAT_HAS_DECLTYPE
 
 			#if (__GNUC__ == 4 && __GNUC_MINOR >= 6)
 				#define LMAT_HAS_NULLPTR
@@ -70,7 +73,7 @@
 	#define LIGHTMAT_PLATFORM LIGHTMAT_POSIX
 
 #else
-	#error BCSLib can only be used with Microsoft Visual C++, GCC (G++), or clang (clang++).
+	#error Light-Matrix can only be used with Microsoft Visual C++, GCC (G++), or clang (clang++).
 #endif
 
 

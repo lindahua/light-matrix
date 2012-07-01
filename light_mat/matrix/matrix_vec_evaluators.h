@@ -59,9 +59,9 @@ namespace lmat
 		template<class Mat>
 		LMAT_ENSURE_INLINE
 		dense_percol_evaluator(const IDenseMatrix<Mat, T>& X)
+		: m_ldim(X.lead_dim())
+		, m_data(X.ptr_data())
 		{
-			m_ldim = X.lead_dim();
-			m_data = X.ptr_data();
 		}
 
 		LMAT_ENSURE_INLINE T get_value(const index_t i) const
@@ -86,9 +86,9 @@ namespace lmat
 	public:
 		template<int CTRows, int CTCols>
 		LMAT_ENSURE_INLINE
-		const_linear_evaluator(const const_matrix<Mat, CTRows, CTCols>& X)
+		const_linear_evaluator(const const_matrix<T, CTRows, CTCols>& X)
+		: m_val(X.value())
 		{
-			m_val = X.value();
 		}
 
 		LMAT_ENSURE_INLINE T get_value(const index_t i) const
@@ -108,9 +108,9 @@ namespace lmat
 	public:
 		template<int CTRows, int CTCols>
 		LMAT_ENSURE_INLINE
-		const_percol_evaluator(const const_matrix<Mat, CTRows, CTCols>& X)
+		const_percol_evaluator(const const_matrix<T, CTRows, CTCols>& X)
+		: m_val(X.value())
 		{
-			m_val = X.value();
 		}
 
 		LMAT_ENSURE_INLINE T get_value(const index_t i) const
@@ -133,7 +133,7 @@ namespace lmat
 	public:
 		template<class Expr>
 		LMAT_ENSURE_INLINE
-		cached_linear_evaluator(const IMatrixExpr<Expr, T>& X)
+		cached_linear_evaluator(const IMatrixXpr<Expr, T>& X)
 		: m_cache(X), m_data(m_cache.ptr_data())
 		{
 		}
@@ -155,7 +155,7 @@ namespace lmat
 	public:
 		template<class Expr>
 		LMAT_ENSURE_INLINE
-		cached_percol_evaluator(const IMatrixExpr<Expr, T>& X)
+		cached_percol_evaluator(const IMatrixXpr<Expr, T>& X)
 		: m_cache(X), m_ldim(m_cache.lead_dim()), m_data(m_cache.ptr_data())
 		{
 		}
@@ -186,21 +186,36 @@ namespace lmat
 	template<class Expr>
 	struct linear_vector_evaluator
 	{
+		typedef typename matrix_traits<Expr>::value_type T;
+
 		typedef typename
 				if_<and_<is_dense_mat<Expr>, has_continuous_layout<Expr> >,
-					continuous_linear_evaluator<Expr>,
-					cached_linear_evaluator<Expr> >::type type;
+					continuous_linear_evaluator<T>,
+					cached_linear_evaluator<T> >::type type;
 	};
 
 	template<class Expr>
 	struct percol_vector_evaluator
 	{
+		typedef typename matrix_traits<Expr>::value_type T;
+
 		typedef typename
 				if_<is_dense_mat<Expr>,
-					dense_percol_evaluator<Expr>,
-					cached_percol_evaluator<Expr> >::type type;
+					dense_percol_evaluator<T>,
+					cached_percol_evaluator<T> >::type type;
 	};
 
+	template<typename T, int CTRows, int CTCols>
+	struct linear_vector_evaluator<const_matrix<T, CTRows, CTCols> >
+	{
+		typedef const_linear_evaluator<T> type;
+	};
+
+	template<typename T, int CTRows, int CTCols>
+	struct percol_vector_evaluator<const_matrix<T, CTRows, CTCols> >
+	{
+		typedef const_percol_evaluator<T> type;
+	};
 
 }
 

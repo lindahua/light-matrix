@@ -102,7 +102,7 @@ namespace lmat
 	struct percol_eval_cost
 	{
 		typedef typename
-				if_<and_<is_dense_mat<Expr>, has_continuous_layout<Expr> >,
+				if_<is_dense_mat<Expr>,
 					detail::dense_percol_eval_cost<Expr, ct_rows<Expr>::value>,
 					detail::generic_percol_eval_cost<Expr, ct_rows<Expr>::value>
 				>::type internal_t;

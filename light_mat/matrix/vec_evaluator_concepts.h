@@ -29,6 +29,7 @@ namespace lmat
 	public:
 		LMAT_CRTP_REF
 
+		LMAT_ENSURE_INLINE
 		T get_value(const index_t i) const
 		{
 			return derived().get_value(i);
@@ -41,16 +42,36 @@ namespace lmat
 	public:
 		LMAT_CRTP_REF
 
+		LMAT_ENSURE_INLINE
 		T get_value(const index_t i) const
 		{
 			return derived().get_value(i);
 		}
 
+		LMAT_ENSURE_INLINE
 		void next_column()
 		{
 			derived().next_column();
 		}
 	};
+
+
+	template<class Eva, typename T>
+	struct is_linear_vector_evaluator
+	{
+		static const bool value = is_base_of<
+				ILinearVectorEvaluator<Eva, T>,
+				Eva>::value;
+	};
+
+	template<class Eva, typename T>
+	struct is_percol_vector_evaluator
+	{
+		static const bool value = is_base_of<
+				IPerColVectorEvaluator<Eva, T>,
+				Eva>::value;
+	};
+
 
 
 	/********************************************
@@ -73,13 +94,8 @@ namespace lmat
 		template<class Mat>
 		LMAT_ENSURE_INLINE
 		linear_eval_context(IDenseMatrix<Mat, T>& mat)
-		{
-#ifdef LMAT_USE_STATIC_ASSERT
-			static_assert(has_continuous_layout<Mat>::value,
-					"Mat must have continuous layout");
-#endif
-			dst = mat.ptr_data();
-		}
+		: dst(mat.ptr_data())
+		{ }
 
 		template<class Eva>
 		LMAT_ENSURE_INLINE
@@ -103,14 +119,9 @@ namespace lmat
 		template<class Mat>
 		LMAT_ENSURE_INLINE
 		linear_eval_context(IDenseMatrix<Mat, T>& mat)
-		{
-#ifdef LMAT_USE_STATIC_ASSERT
-			static_assert(has_continuous_layout<Mat>::value,
-					"Mat must have continuous layout");
-#endif
-			nelems = mat.nelems();
-			dst = mat.ptr_data();
-		}
+		: nelems(mat.nelems())
+		, dst(mat.ptr_data())
+		{ }
 
 		template<class Eva>
 		LMAT_ENSURE_INLINE
@@ -140,11 +151,10 @@ namespace lmat
 		template<class Mat>
 		LMAT_ENSURE_INLINE
 		percol_eval_context(IDenseMatrix<Mat, T>& mat)
-		{
-			ncols = mat.ncolumns();
-			ldim = mat.lead_dim();
-			dst = mat.ptr_data();
-		}
+		: ncols(mat.ncolumns())
+		, ldim(mat.lead_dim())
+		, dst(mat.ptr_data())
+		{ }
 
 		template<class Eva>
 		LMAT_ENSURE_INLINE
@@ -176,12 +186,11 @@ namespace lmat
 		template<class Mat>
 		LMAT_ENSURE_INLINE
 		percol_eval_context(IDenseMatrix<Mat, T>& mat)
-		{
-			nrows = mat.nrows();
-			ncols = mat.ncolumns();
-			ldim = mat.lead_dim();
-			dst = mat.ptr_data();
-		}
+		: nrows(mat.nrows())
+		, ncols(mat.ncolumns())
+		, ldim(mat.lead_dim())
+		, dst(mat.ptr_data())
+		{ }
 
 		template<class Eva>
 		LMAT_ENSURE_INLINE
