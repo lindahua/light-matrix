@@ -13,12 +13,31 @@
 #ifndef LIGHTMAT_CONST_MATRIX_H_
 #define LIGHTMAT_CONST_MATRIX_H_
 
-#include <light_mat/matrix/matrix_concepts.h>
+#include <light_mat/matrix/matrix_base.h>
 
 namespace lmat
 {
+
 	template<typename T, int CTRows, int CTCols>
-	class const_matrix : public IMatrixXpr<const_matrix<T, CTRows, CTCols>, T>
+	struct matrix_traits<const_matrix<T, CTRows, CTCols> >
+	{
+		static const int num_dimensions = 2;
+		static const int compile_time_num_rows = CTRows;
+		static const int compile_time_num_cols = CTCols;
+
+		static const bool is_readonly = true;
+
+		typedef T value_type;
+	};
+
+	template<typename T, int CTRows, int CTCols>
+	struct is_linear_accessible<const_matrix<T, CTRows, CTCols> >
+	{
+		static const bool value = true;
+	};
+
+	template<typename T, int CTRows, int CTCols>
+	class const_matrix : public IMatrixView<const_matrix<T, CTRows, CTCols>, T>
 	{
 #ifdef LMAT_USE_STATIC_ASSERT
 		static_assert(is_supported_matrix_value_type<T>::value,
@@ -56,17 +75,27 @@ namespace lmat
 			return m_val;
 		}
 
+		LMAT_ENSURE_INLINE T elem(const index_type, const index_type) const
+		{
+			return m_val;
+		}
+
+		LMAT_ENSURE_INLINE T operator[] (const index_type) const
+		{
+			return m_val;
+		}
+
 	private:
-		matrix_shape<M, N> m_shape;
+		matrix_shape<CTRows, CTCols> m_shape;
 		const T m_val;
 	};
 
 
 	template<typename T, int CTRows, int CTCols, class DMat>
 	LMAT_ENSURE_INLINE
-	inline void evaluate_to(const const_matrix<T, CTRows, CTCols>& src, IDenseMatrix<DMat, T>& dst)
+	inline void evaluate_to(const const_matrix<T, CTRows, CTCols>& s, IDenseMatrix<DMat, T>& dst)
 	{
-		dst = fill_value(src.value());
+		fill(dst, s.value());
 	}
 
 }

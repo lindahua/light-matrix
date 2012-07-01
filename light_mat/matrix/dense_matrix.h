@@ -103,7 +103,7 @@ namespace lmat
 		}
 
 		template<class Other>
-		LMAT_ENSURE_INLINE dense_matrix(const IMatrixView<Other, T>& r)
+		LMAT_ENSURE_INLINE dense_matrix(const IDenseMatrix<Other, T>& r)
 		: m_internal(r.nrows(), r.ncolumns())
 		{
 			copy(r.derived(), *this);

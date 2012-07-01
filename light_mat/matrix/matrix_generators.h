@@ -128,6 +128,32 @@ namespace lmat
 	{
 		return copy_gen<T>(src);
 	}
+
+
+	// Convenient functions
+
+	template<typename T, class Mat>
+	LMAT_ENSURE_INLINE
+	inline void zero(IDenseMatrix<Mat, T>& X)
+	{
+		zero_gen<T>().generate_to(X.nrows(), X.ncolumns(), X.lead_dim(), X.ptr_data());
+	}
+
+	template<typename T, class Mat>
+	LMAT_ENSURE_INLINE
+	inline void fill(IDenseMatrix<Mat, T>& X, const T& val)
+	{
+		fill_gen<T>(val).generate_to(X.nrows(), X.ncolumns(), X.lead_dim(), X.ptr_data());
+	}
+
+	template<typename T, class Mat>
+	LMAT_ENSURE_INLINE
+	inline void copy_to(const T *src, IDenseMatrix<Mat, T>& X)
+	{
+		copy_gen<T>(src).generate_to(X.nrows(), X.ncolumns(), X.lead_dim(), X.ptr_data());
+	}
+
+
 }
 
 

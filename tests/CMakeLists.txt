@@ -101,6 +101,14 @@ add_executable(test_dense_mat ${DENSE_MAT_HS} test_dense_mat.cpp)
 add_executable(test_dense_col ${DENSE_MAT_HS} test_dense_col.cpp)
 add_executable(test_dense_row ${DENSE_MAT_HS} test_dense_row.cpp)  
 
+set(CONST_MAT_HS
+    ${CORE_HS}
+    ${MATRIX_BASE_HS}
+    ${INC}/matrix/const_matrix.h
+    ${INC}/matrix/dense_matrix.h)
+
+add_executable(test_const_mat ${CONST_MAT_HS} test_const_mat.cpp)
+
 set(REF_MAT_HS
     ${CORE_HS}
     ${MATRIX_BASE_HS}
@@ -126,6 +134,8 @@ target_link_libraries(test_dense_mat test_main)
 target_link_libraries(test_dense_col test_main)
 target_link_libraries(test_dense_row test_main)
 
+target_link_libraries(test_const_mat test_main)
+
 target_link_libraries(test_ref_mat test_main)
 target_link_libraries(test_ref_col test_main)
 target_link_libraries(test_ref_row test_main)
@@ -144,6 +154,7 @@ set(ALL_EXECUTABLES
     test_dense_mat
     test_dense_col
     test_dense_row
+    test_const_mat
     test_ref_mat
     test_ref_col
     test_ref_row
@@ -165,6 +176,8 @@ add_test(NAME arrays COMMAND test_arrays)
 add_test(NAME dense_mat COMMAND test_dense_mat)
 add_test(NAME dense_col COMMAND test_dense_col)
 add_test(NAME dense_row COMMAND test_dense_row)
+
+add_test(NAME const_mat COMMAND test_const_mat)
 
 add_test(NAME ref_mat COMMAND test_ref_mat)
 add_test(NAME ref_col COMMAND test_ref_col)

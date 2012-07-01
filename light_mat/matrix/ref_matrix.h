@@ -64,6 +64,11 @@ namespace lmat
 	template<typename T, int CTRows, int CTCols, typename Align>
 	class cref_matrix : public IDenseMatrix<cref_matrix<T, CTRows, CTCols, Align>, T>
 	{
+#ifdef LMAT_USE_STATIC_ASSERT
+		static_assert(is_supported_matrix_value_type<T>::value,
+				"T must be a supported matrix value type");
+#endif
+
 	public:
 		LMAT_MAT_TRAITS_CDEFS(T)
 
@@ -187,6 +192,11 @@ namespace lmat
 	template<typename T, int CTRows, int CTCols, typename Align>
 	class ref_matrix : public IDenseMatrix<ref_matrix<T, CTRows, CTCols, Align>, T>
 	{
+#ifdef LMAT_USE_STATIC_ASSERT
+		static_assert(is_supported_matrix_value_type<T>::value,
+				"T must be a supported matrix value type");
+#endif
+
 	public:
 		LMAT_MAT_TRAITS_DEFS(T)
 
