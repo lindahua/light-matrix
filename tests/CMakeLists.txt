@@ -158,6 +158,7 @@ set(EWISE_MAT_EVAL_HS
 add_executable(test_mat_arith ${EWISE_MAT_EVAL_HS} test_mat_arith.cpp)
 add_executable(test_mat_emath ${EWISE_MAT_EVAL_HS} test_mat_emath.cpp)
 add_executable(test_mat_ecomp ${EWISE_MAT_EVAL_HS} test_mat_ecomp.cpp)
+add_executable(test_mat_ebool ${EWISE_MAT_EVAL_HS} test_mat_ebool.cpp)
 
 # Link to test_main
 
@@ -185,6 +186,7 @@ target_link_libraries(test_dense_veval test_main)
 target_link_libraries(test_mat_arith test_main)
 target_link_libraries(test_mat_emath test_main)
 target_link_libraries(test_mat_ecomp test_main)
+target_link_libraries(test_mat_ebool test_main)
     
 # Set output directories
 
@@ -205,7 +207,8 @@ set(ALL_EXECUTABLES
     test_dense_veval
     test_mat_arith
     test_mat_emath
-    test_mat_ecomp)
+    test_mat_ecomp
+    test_mat_ebool)
     
 set_target_properties(${ALL_EXECUTABLES}
     PROPERTIES
@@ -238,5 +241,6 @@ add_test(NAME dense_veval COMMAND test_dense_veval)
 add_test(NAME mat_arith COMMAND test_mat_arith)
 add_test(NAME mat_emath COMMAND test_mat_emath)
 add_test(NAME mat_ecomp COMMAND test_mat_ecomp)
+add_test(NAME mat_ebool COMMAND test_mat_ebool)
 
 
