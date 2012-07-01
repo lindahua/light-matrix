@@ -18,30 +18,73 @@
 
 namespace lmat
 {
+	// forward declarations
+
+	template<class Fun, typename Arg> class unary_ewise_expr;
+	template<class Fun, typename Arg1, typename Arg2> class binary_ewise_expr;
+	template<class Fun, typename Arg2> class binary_fix1_ewise_expr;
+	template<class Fun, typename Arg1> class binary_fix2_ewise_expr;
+
+
+	/********************************************
+	 *
+	 *  Expression traits
+	 *
+	 ********************************************/
+	template<class Fun, typename Arg>
+	struct matrix_traits<unary_ewise_expr<Fun, Arg> >
+	{
+		static const int num_dimensions = 2;
+		static const int compile_time_num_rows = ct_rows<Arg>::value;
+		static const int compile_time_num_cols = ct_cols<Arg>::value;
+
+		static const bool is_readonly = true;
+
+		typedef typename Fun::result_type value_type;
+	};
+
+	template<class Fun, typename Arg1, typename Arg2>
+	struct matrix_traits<binary_ewise_expr<Fun, Arg1, Arg2> >
+	{
+		static const int num_dimensions = 2;
+		static const int compile_time_num_rows = binary_ct_rows<Arg1, Arg2>::value;
+		static const int compile_time_num_cols = binary_ct_cols<Arg1, Arg2>::value;
+
+		static const bool is_readonly = true;
+
+		typedef typename Fun::result_type value_type;
+	};
+
+	template<class Fun, typename Arg>
+	struct matrix_traits<binary_fix1_ewise_expr<Fun, Arg> >
+	{
+		static const int num_dimensions = 2;
+		static const int compile_time_num_rows = ct_rows<Arg>::value;
+		static const int compile_time_num_cols = ct_cols<Arg>::value;
+
+		static const bool is_readonly = true;
+
+		typedef typename Fun::result_type value_type;
+	};
+
+	template<class Fun, typename Arg>
+	struct matrix_traits<binary_fix2_ewise_expr<Fun, Arg> >
+	{
+		static const int num_dimensions = 2;
+		static const int compile_time_num_rows = ct_rows<Arg>::value;
+		static const int compile_time_num_cols = ct_cols<Arg>::value;
+
+		static const bool is_readonly = true;
+
+		typedef typename Fun::result_type value_type;
+	};
+
+
 	/********************************************
 	 *
 	 *  Expression classes
 	 *
 	 ********************************************/
-
-	template<class Fun, typename Arg>
-	class simple_unary_ewise_expr
-	: public IMatrixXpr<simple_unary_ewise_expr<Fun, Arg>, typename Fun::result_type>
-	{
-	public:
-		typedef typename Fun::result_type value_type;
-
-		LMAT_ENSURE_INLINE
-		explicit simple_unary_ewise_expr(const Arg& a) : m_arg(a) { }
-
-		LMAT_ENSURE_INLINE const Arg& arg() const
-		{
-			return m_arg;
-		}
-
-	private:
-		const Arg& m_arg;
-	};
 
 	template<class Fun, typename Arg>
 	class unary_ewise_expr
@@ -64,35 +107,29 @@ namespace lmat
 			return m_arg;
 		}
 
+		LMAT_ENSURE_INLINE index_t nelems() const
+		{
+			return m_arg.nelems();
+		}
+
+		LMAT_ENSURE_INLINE size_t size() const
+		{
+			return m_arg.size();
+		}
+
+		LMAT_ENSURE_INLINE index_t nrows() const
+		{
+			return m_arg.nrows();
+		}
+
+		LMAT_ENSURE_INLINE index_t ncolumns() const
+		{
+			return m_arg.ncolumns();
+		}
+
 	private:
-		const Fun& m_fun;
+		Fun m_fun;
 		const Arg& m_arg;
-	};
-
-	template<class Fun, typename Arg1, typename Arg2>
-	class simple_binary_ewise_expr
-	: public IMatrixXpr<simple_binary_ewise_expr<Fun, Arg1, Arg2>, typename Fun::result_type>
-	{
-	public:
-		typedef typename Fun::result_type value_type;
-
-		LMAT_ENSURE_INLINE
-		simple_binary_ewise_expr(const Arg1& arg1, const Arg2& arg2)
-		: m_arg1(arg1), m_arg2(arg2) { }
-
-		LMAT_ENSURE_INLINE const Arg1& first_arg() const
-		{
-			return m_arg1;
-		}
-
-		LMAT_ENSURE_INLINE const Arg2& second_arg() const
-		{
-			return m_arg2;
-		}
-
-	private:
-		const Arg1& m_arg1;
-		const Arg2& m_arg2;
 	};
 
 	template<class Fun, typename Arg1, typename Arg2>
@@ -104,7 +141,10 @@ namespace lmat
 
 		LMAT_ENSURE_INLINE
 		binary_ewise_expr(const Fun& fun, const Arg1& arg1, const Arg2& arg2)
-		: m_fun(fun), m_arg1(arg1), m_arg2(arg2) { }
+		: m_fun(fun), m_arg1(arg1), m_arg2(arg2)
+		{
+			check_same_size(arg1, arg2, "arg1 and arg2 must be of the same size.");
+		}
 
 		LMAT_ENSURE_INLINE const Fun& fun() const
 		{
@@ -121,11 +161,144 @@ namespace lmat
 			return m_arg2;
 		}
 
+		LMAT_ENSURE_INLINE index_t nelems() const
+		{
+			return m_arg1.nelems();
+		}
+
+		LMAT_ENSURE_INLINE size_t size() const
+		{
+			return m_arg1.size();
+		}
+
+		LMAT_ENSURE_INLINE index_t nrows() const
+		{
+			return m_arg1.nrows();
+		}
+
+		LMAT_ENSURE_INLINE index_t ncolumns() const
+		{
+			return m_arg1.ncolumns();
+		}
+
 	private:
-		const Fun& m_fun;
+		Fun m_fun;
 		const Arg1& m_arg1;
 		const Arg2& m_arg2;
 	};
+
+
+	template<class Fun, typename Arg2>
+	class binary_fix1_ewise_expr
+	: public IMatrixXpr<binary_fix1_ewise_expr<Fun, Arg2>, typename Fun::result_type>
+	{
+	public:
+		typedef typename Fun::result_type value_type;
+		typedef typename Fun::first_arg_type arg1_vtype;
+
+		LMAT_ENSURE_INLINE
+		binary_fix1_ewise_expr(const Fun& fun, const arg1_vtype& arg1v, const Arg2& arg2)
+		: m_fun(fun), m_arg1v(arg1v), m_arg2(arg2)
+		{
+		}
+
+		LMAT_ENSURE_INLINE const Fun& fun() const
+		{
+			return m_fun;
+		}
+
+		LMAT_ENSURE_INLINE const arg1_vtype& first_arg_value() const
+		{
+			return m_arg1v;
+		}
+
+		LMAT_ENSURE_INLINE const Arg2& second_arg() const
+		{
+			return m_arg2;
+		}
+
+		LMAT_ENSURE_INLINE index_t nelems() const
+		{
+			return m_arg2.nelems();
+		}
+
+		LMAT_ENSURE_INLINE size_t size() const
+		{
+			return m_arg2.size();
+		}
+
+		LMAT_ENSURE_INLINE index_t nrows() const
+		{
+			return m_arg2.nrows();
+		}
+
+		LMAT_ENSURE_INLINE index_t ncolumns() const
+		{
+			return m_arg2.ncolumns();
+		}
+
+	private:
+		Fun m_fun;
+		const arg1_vtype m_arg1v;
+		const Arg2& m_arg2;
+	};
+
+
+	template<class Fun, typename Arg1>
+	class binary_fix2_ewise_expr
+	: public IMatrixXpr<binary_fix2_ewise_expr<Fun, Arg1>, typename Fun::result_type>
+	{
+	public:
+		typedef typename Fun::result_type value_type;
+		typedef typename Fun::second_arg_type arg2_vtype;
+
+		LMAT_ENSURE_INLINE
+		binary_fix2_ewise_expr(const Fun& fun, const Arg1& arg1, const arg2_vtype& arg2v)
+		: m_fun(fun), m_arg1(arg1), m_arg2v(arg2v)
+		{
+		}
+
+		LMAT_ENSURE_INLINE const Fun& fun() const
+		{
+			return m_fun;
+		}
+
+		LMAT_ENSURE_INLINE const Arg1& first_arg() const
+		{
+			return m_arg1;
+		}
+
+		LMAT_ENSURE_INLINE const arg2_vtype& second_arg_value() const
+		{
+			return m_arg2v;
+		}
+
+		LMAT_ENSURE_INLINE index_t nelems() const
+		{
+			return m_arg1.nelems();
+		}
+
+		LMAT_ENSURE_INLINE size_t size() const
+		{
+			return m_arg1.size();
+		}
+
+		LMAT_ENSURE_INLINE index_t nrows() const
+		{
+			return m_arg1.nrows();
+		}
+
+		LMAT_ENSURE_INLINE index_t ncolumns() const
+		{
+			return m_arg1.ncolumns();
+		}
+
+	private:
+		Fun m_fun;
+		const Arg1& m_arg1;
+		const arg2_vtype m_arg2v;
+	};
+
 
 
 	/********************************************
@@ -133,27 +306,6 @@ namespace lmat
 	 *  Expression construction
 	 *
 	 ********************************************/
-
-	template<class Fun, class Arg>
-	LMAT_ENSURE_INLINE
-	inline simple_unary_ewise_expr<Fun, Arg> simple_ewise_expr(
-			Fun,
-			const IMatrixXpr<Arg, typename Fun::arg_type>& arg)
-	{
-		return simple_unary_ewise_expr<Fun, Arg>(arg.derived());
-	}
-
-	template<class Fun, class Arg1, class Arg2>
-	LMAT_ENSURE_INLINE
-	inline simple_binary_ewise_expr<Fun, Arg1, Arg2> simple_ewise_expr(
-			Fun,
-			const IMatrixXpr<Arg1, typename Fun::first_arg_type>& arg1,
-			const IMatrixXpr<Arg2, typename Fun::second_arg_type>& arg2)
-	{
-		return simple_binary_ewise_expr<Fun, Arg1, Arg2>(
-				arg1.derived(), arg2.derived());
-	}
-
 
 	template<class Fun, class Arg>
 	LMAT_ENSURE_INLINE
@@ -166,7 +318,7 @@ namespace lmat
 
 	template<class Fun, class Arg1, class Arg2>
 	LMAT_ENSURE_INLINE
-	inline binary_ewise_expr<Fun, Arg1, Arg2> simple_ewise_expr(
+	inline binary_ewise_expr<Fun, Arg1, Arg2> ewise_expr(
 			const Fun& fun,
 			const IMatrixXpr<Arg1, typename Fun::first_arg_type>& arg1,
 			const IMatrixXpr<Arg2, typename Fun::second_arg_type>& arg2)
@@ -175,6 +327,28 @@ namespace lmat
 				arg1.derived(), arg2.derived());
 	}
 
+	template<class Fun, class Arg1>
+	LMAT_ENSURE_INLINE
+	inline binary_fix2_ewise_expr<Fun, Arg1> ewise_expr(
+			const Fun& fun,
+			const IMatrixXpr<Arg1, typename Fun::first_arg_type>& arg1,
+			const typename Fun::second_arg_type& arg2v)
+	{
+		return binary_fix2_ewise_expr<Fun, Arg1>(fun,
+				arg1.derived(), arg2v);
+	}
+
+
+	template<class Fun, class Arg2>
+	LMAT_ENSURE_INLINE
+	inline binary_fix1_ewise_expr<Fun, Arg2> ewise_expr(
+			const Fun& fun,
+			const typename Fun::first_arg_type& arg1v,
+			const IMatrixXpr<Arg2, typename Fun::second_arg_type>& arg2)
+	{
+		return binary_fix1_ewise_expr<Fun, Arg2>(fun,
+				arg1v, arg2.derived());
+	}
 }
 
 #endif 

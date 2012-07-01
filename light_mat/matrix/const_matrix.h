@@ -107,12 +107,6 @@ namespace lmat
 		typedef const_matrix<value_type,
 				ct_rows<Mat>::value,
 				ct_cols<Mat>::value> type;
-
-		LMAT_ENSURE_INLINE
-		static type get(const value_type& v)
-		{
-			return type(v);
-		}
 	};
 
 }

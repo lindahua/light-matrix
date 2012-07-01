@@ -81,7 +81,13 @@ set(MATRIX_EVAL_BASE_HS
     ${INC}/matrix/vec_evaluator_concepts.h
     ${INC}/matrix/matrix_vec_evaluators.h
     ${INC}/matrix/matrix_eval_cost.h
-    ${INC}/matrix/matrix_eval.h)    
+    ${INC}/matrix/matrix_eval.h)   
+    
+set(MATRIX_EWISE_HS
+    ${INC}/math/arith_functors.h
+    ${INC}/matrix/matrix_ewise_expr.h
+    ${INC}/matrix/matrix_ewise_eval.h
+    ${INC}/matrix/matrix_arith.h)     
     
 set(CORE_HS
     ${COMMON_BASIC_HS}
@@ -90,7 +96,8 @@ set(CORE_HS
 set(MATRIX_HS
     ${CORE_HS}
     ${MATRIX_BASE_HS}
-    ${MATRIX_CLASS_HS})    
+    ${MATRIX_CLASS_HS})   
+ 
 
 # Executables
 
@@ -139,6 +146,13 @@ set(BASIC_MAT_EVAL_HS
     
 add_executable(test_dense_veval ${BASIC_MAT_EVAL_HS} test_dense_veval.cpp)
 
+set(EWISE_MAT_EVAL_HS
+    ${MATRIX_HS}
+    ${MATRIX_EVAL_BASE_HS}
+    ${MATRIX_EWISE_HS})
+    
+add_executable(test_mat_arith ${EWISE_MAT_EVAL_HS} test_mat_arith.cpp)
+
 # Link to test_main
 
 target_link_libraries(test_arrays test_main)
@@ -161,6 +175,8 @@ target_link_libraries(test_dense_eval test_main)
 target_link_libraries(test_mat_subviews test_main)
 
 target_link_libraries(test_dense_veval test_main)
+
+target_link_libraries(test_mat_arith test_main)
     
 # Set output directories
 
@@ -178,7 +194,8 @@ set(ALL_EXECUTABLES
     test_mat_compare
     test_dense_eval
     test_mat_subviews
-    test_dense_veval)
+    test_dense_veval
+    test_mat_arith)
     
 set_target_properties(${ALL_EXECUTABLES}
     PROPERTIES
@@ -207,6 +224,8 @@ add_test(NAME dense_eval COMMAND test_dense_eval)
 add_test(NAME mat_subviews COMMAND test_mat_subviews)
 
 add_test(NAME dense_veval COMMAND test_dense_veval)
+
+add_test(NAME mat_arith COMMAND test_mat_arith)
 
 
 
