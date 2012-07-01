@@ -46,6 +46,22 @@ namespace lmat
 		return ewise_expr(add_op<T>(), a, B);
 	}
 
+	template<typename T, class LMat, class RMat>
+	LMAT_ENSURE_INLINE
+	inline LMat& operator += (IDenseMatrix<LMat, T>& A, const IMatrixXpr<RMat, T>& B)
+	{
+		A.derived() = A.derived() + B.derived();
+		return A.derived();
+	}
+
+	template<typename T, class LMat>
+	LMAT_ENSURE_INLINE
+	inline LMat& operator += (IDenseMatrix<LMat, T>& A, const T& b)
+	{
+		A.derived() = A.derived() + b;
+		return A.derived();
+	}
+
 
 	// Subtraction
 
@@ -73,6 +89,22 @@ namespace lmat
 	{
 		typedef typename const_mat_same_form<RMat>::type cst_t;
 		return ewise_expr(sub_op<T>(), a, B);
+	}
+
+	template<typename T, class LMat, class RMat>
+	LMAT_ENSURE_INLINE
+	inline LMat& operator -= (IDenseMatrix<LMat, T>& A, const IMatrixXpr<RMat, T>& B)
+	{
+		A.derived() = A.derived() - B.derived();
+		return A.derived();
+	}
+
+	template<typename T, class LMat>
+	LMAT_ENSURE_INLINE
+	inline LMat& operator -= (IDenseMatrix<LMat, T>& A, const T& b)
+	{
+		A.derived() = A.derived() - b;
+		return A.derived();
 	}
 
 
@@ -104,6 +136,21 @@ namespace lmat
 		return ewise_expr(mul_op<T>(), a, B);
 	}
 
+	template<typename T, class LMat, class RMat>
+	LMAT_ENSURE_INLINE
+	inline LMat& operator *= (IDenseMatrix<LMat, T>& A, const IMatrixXpr<RMat, T>& B)
+	{
+		A.derived() = A.derived() * B.derived();
+		return A.derived();
+	}
+
+	template<typename T, class LMat>
+	LMAT_ENSURE_INLINE
+	inline LMat& operator *= (IDenseMatrix<LMat, T>& A, const T& b)
+	{
+		A.derived() = A.derived() * b;
+		return A.derived();
+	}
 
 	// Division
 
@@ -131,6 +178,22 @@ namespace lmat
 	{
 		typedef typename const_mat_same_form<RMat>::type cst_t;
 		return ewise_expr(div_op<T>(), a, B);
+	}
+
+	template<typename T, class LMat, class RMat>
+	LMAT_ENSURE_INLINE
+	inline LMat& operator /= (IDenseMatrix<LMat, T>& A, const IMatrixXpr<RMat, T>& B)
+	{
+		A.derived() = A.derived() / B.derived();
+		return A.derived();
+	}
+
+	template<typename T, class LMat>
+	LMAT_ENSURE_INLINE
+	inline LMat& operator /= (IDenseMatrix<LMat, T>& A, const T& b)
+	{
+		A.derived() = A.derived() / b;
+		return A.derived();
 	}
 
 

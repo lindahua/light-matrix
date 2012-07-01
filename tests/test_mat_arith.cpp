@@ -179,6 +179,40 @@ MN_CASE( mat_arith, add_ex )
 }
 
 
+MN_CASE( mat_arith, add_ip )
+{
+	typedef dense_matrix<double, M, N> mat_t;
+
+	const index_t m = M == 0 ? default_m : M;
+	const index_t n = N == 0 ? default_n : N;
+
+	mat_t A(m, n);
+	mat_t B(m, n);
+	double c = 7.0;
+
+	for (index_t i = 0; i < m * n; ++i) A[i] = double(i + 1);
+	for (index_t i = 0; i < m * n; ++i) B[i] = double(2 * i + 3);
+
+	// prepare ground-truth
+
+	mat_t AB_r(m, n);
+	for (index_t i = 0; i < m * n; ++i) AB_r[i] = A[i] + B[i];
+
+	mat_t AC_r(m, n);
+	for (index_t i = 0; i < m * n; ++i) AC_r[i] = A[i] + c;
+
+	// default evaluation
+
+	mat_t AB(A);
+	AB += B;
+	ASSERT_TRUE( is_equal(AB, AB_r) );
+
+	mat_t AC(A);
+	AC += c;
+	ASSERT_TRUE( is_equal(AC, AC_r) );
+}
+
+
 
 MN_CASE( mat_arith, sub )
 {
@@ -300,6 +334,40 @@ MN_CASE( mat_arith, sub_ex )
 	mat_t CB_s(m, n, fill_value(0.0));
 	evaluate_by_scalars(c - B, CB_s);
 	ASSERT_TRUE( is_equal(CB_s, CB_r) );
+}
+
+
+MN_CASE( mat_arith, sub_ip )
+{
+	typedef dense_matrix<double, M, N> mat_t;
+
+	const index_t m = M == 0 ? default_m : M;
+	const index_t n = N == 0 ? default_n : N;
+
+	mat_t A(m, n);
+	mat_t B(m, n);
+	double c = 7.0;
+
+	for (index_t i = 0; i < m * n; ++i) A[i] = double(i + 1);
+	for (index_t i = 0; i < m * n; ++i) B[i] = double(2 * i + 3);
+
+	// prepare ground-truth
+
+	mat_t AB_r(m, n);
+	for (index_t i = 0; i < m * n; ++i) AB_r[i] = A[i] - B[i];
+
+	mat_t AC_r(m, n);
+	for (index_t i = 0; i < m * n; ++i) AC_r[i] = A[i] - c;
+
+	// default evaluation
+
+	mat_t AB(A);
+	AB -= B;
+	ASSERT_TRUE( is_equal(AB, AB_r) );
+
+	mat_t AC(A);
+	AC -= c;
+	ASSERT_TRUE( is_equal(AC, AC_r) );
 }
 
 
@@ -426,6 +494,40 @@ MN_CASE( mat_arith, mul_ex )
 }
 
 
+MN_CASE( mat_arith, mul_ip )
+{
+	typedef dense_matrix<double, M, N> mat_t;
+
+	const index_t m = M == 0 ? default_m : M;
+	const index_t n = N == 0 ? default_n : N;
+
+	mat_t A(m, n);
+	mat_t B(m, n);
+	double c = 7.0;
+
+	for (index_t i = 0; i < m * n; ++i) A[i] = double(i + 1);
+	for (index_t i = 0; i < m * n; ++i) B[i] = double(2 * i + 3);
+
+	// prepare ground-truth
+
+	mat_t AB_r(m, n);
+	for (index_t i = 0; i < m * n; ++i) AB_r[i] = A[i] * B[i];
+
+	mat_t AC_r(m, n);
+	for (index_t i = 0; i < m * n; ++i) AC_r[i] = A[i] * c;
+
+	// default evaluation
+
+	mat_t AB(A);
+	AB *= B;
+	ASSERT_TRUE( is_equal(AB, AB_r) );
+
+	mat_t AC(A);
+	AC *= c;
+	ASSERT_TRUE( is_equal(AC, AC_r) );
+}
+
+
 MN_CASE( mat_arith, div )
 {
 	typedef dense_matrix<double, M, N> mat_t;
@@ -438,7 +540,7 @@ MN_CASE( mat_arith, div )
 	double c = 4.0;
 
 	for (index_t i = 0; i < m * n; ++i) A[i] = double(i + 1);
-	for (index_t i = 0; i < m * n; ++i) B[i] = double((i % 2) + 1);
+	for (index_t i = 0; i < m * n; ++i) B[i] = double(1 << (i % 5));
 
 	// type verification
 
@@ -502,7 +604,7 @@ MN_CASE( mat_arith, div_ex )
 	scoped_array<double> sb(LDim * n);
 
 	for (index_t i = 0; i < LDim * n; ++i) sa[i] = double(i + 1);
-	for (index_t i = 0; i < LDim * n; ++i) sb[i] = double((i % 2) + 1);
+	for (index_t i = 0; i < LDim * n; ++i) sb[i] = double(1 << (i % 5));
 
 	mat_ex_t A(sa.ptr_begin(), m, n, LDim);
 	mat_ex_t B(sb.ptr_begin(), m, n, LDim);
@@ -548,6 +650,40 @@ MN_CASE( mat_arith, div_ex )
 	ASSERT_TRUE( is_equal(CB_s, CB_r) );
 }
 
+MN_CASE( mat_arith, div_ip )
+{
+	typedef dense_matrix<double, M, N> mat_t;
+
+	const index_t m = M == 0 ? default_m : M;
+	const index_t n = N == 0 ? default_n : N;
+
+	mat_t A(m, n);
+	mat_t B(m, n);
+	double c = 4.0;
+
+	for (index_t i = 0; i < m * n; ++i) A[i] = double(i + 1);
+	for (index_t i = 0; i < m * n; ++i) B[i] = double(1 << (i % 5));
+
+	// prepare ground-truth
+
+	mat_t AB_r(m, n);
+	for (index_t i = 0; i < m * n; ++i) AB_r[i] = A[i] / B[i];
+
+	mat_t AC_r(m, n);
+	for (index_t i = 0; i < m * n; ++i) AC_r[i] = A[i] / c;
+
+	// default evaluation
+
+	mat_t AB(A);
+	AB /= B;
+	ASSERT_TRUE( is_equal(AB, AB_r) );
+
+	mat_t AC(A);
+	AC /= c;
+	ASSERT_TRUE( is_equal(AC, AC_r) );
+}
+
+
 
 BEGIN_TPACK( mat_arith_add )
 	ADD_MN_CASE( mat_arith, add, 0, 0 )
@@ -573,6 +709,19 @@ BEGIN_TPACK( mat_arith_add_ex )
 	ADD_MN_CASE( mat_arith, add_ex, default_m, default_n )
 END_TPACK
 
+BEGIN_TPACK( mat_arith_add_ip )
+	ADD_MN_CASE( mat_arith, add_ip, 0, 0 )
+	ADD_MN_CASE( mat_arith, add_ip, 0, 1 )
+	ADD_MN_CASE( mat_arith, add_ip, 0, default_n )
+	ADD_MN_CASE( mat_arith, add_ip, 1, 0 )
+	ADD_MN_CASE( mat_arith, add_ip, 1, 1 )
+	ADD_MN_CASE( mat_arith, add_ip, 1, default_n )
+	ADD_MN_CASE( mat_arith, add_ip, default_m, 0 )
+	ADD_MN_CASE( mat_arith, add_ip, default_m, 1 )
+	ADD_MN_CASE( mat_arith, add_ip, default_m, default_n )
+END_TPACK
+
+
 BEGIN_TPACK( mat_arith_sub )
 	ADD_MN_CASE( mat_arith, sub, 0, 0 )
 	ADD_MN_CASE( mat_arith, sub, 0, 1 )
@@ -595,6 +744,18 @@ BEGIN_TPACK( mat_arith_sub_ex )
 	ADD_MN_CASE( mat_arith, sub_ex, default_m, 0 )
 	ADD_MN_CASE( mat_arith, sub_ex, default_m, 1 )
 	ADD_MN_CASE( mat_arith, sub_ex, default_m, default_n )
+END_TPACK
+
+BEGIN_TPACK( mat_arith_sub_ip )
+	ADD_MN_CASE( mat_arith, sub_ip, 0, 0 )
+	ADD_MN_CASE( mat_arith, sub_ip, 0, 1 )
+	ADD_MN_CASE( mat_arith, sub_ip, 0, default_n )
+	ADD_MN_CASE( mat_arith, sub_ip, 1, 0 )
+	ADD_MN_CASE( mat_arith, sub_ip, 1, 1 )
+	ADD_MN_CASE( mat_arith, sub_ip, 1, default_n )
+	ADD_MN_CASE( mat_arith, sub_ip, default_m, 0 )
+	ADD_MN_CASE( mat_arith, sub_ip, default_m, 1 )
+	ADD_MN_CASE( mat_arith, sub_ip, default_m, default_n )
 END_TPACK
 
 BEGIN_TPACK( mat_arith_mul )
@@ -621,6 +782,18 @@ BEGIN_TPACK( mat_arith_mul_ex )
 	ADD_MN_CASE( mat_arith, mul_ex, default_m, default_n )
 END_TPACK
 
+BEGIN_TPACK( mat_arith_mul_ip )
+	ADD_MN_CASE( mat_arith, mul_ip, 0, 0 )
+	ADD_MN_CASE( mat_arith, mul_ip, 0, 1 )
+	ADD_MN_CASE( mat_arith, mul_ip, 0, default_n )
+	ADD_MN_CASE( mat_arith, mul_ip, 1, 0 )
+	ADD_MN_CASE( mat_arith, mul_ip, 1, 1 )
+	ADD_MN_CASE( mat_arith, mul_ip, 1, default_n )
+	ADD_MN_CASE( mat_arith, mul_ip, default_m, 0 )
+	ADD_MN_CASE( mat_arith, mul_ip, default_m, 1 )
+	ADD_MN_CASE( mat_arith, mul_ip, default_m, default_n )
+END_TPACK
+
 BEGIN_TPACK( mat_arith_div )
 	ADD_MN_CASE( mat_arith, div, 0, 0 )
 	ADD_MN_CASE( mat_arith, div, 0, 1 )
@@ -645,16 +818,35 @@ BEGIN_TPACK( mat_arith_div_ex )
 	ADD_MN_CASE( mat_arith, div_ex, default_m, default_n )
 END_TPACK
 
+BEGIN_TPACK( mat_arith_div_ip )
+	ADD_MN_CASE( mat_arith, div_ip, 0, 0 )
+	ADD_MN_CASE( mat_arith, div_ip, 0, 1 )
+	ADD_MN_CASE( mat_arith, div_ip, 0, default_n )
+	ADD_MN_CASE( mat_arith, div_ip, 1, 0 )
+	ADD_MN_CASE( mat_arith, div_ip, 1, 1 )
+	ADD_MN_CASE( mat_arith, div_ip, 1, default_n )
+	ADD_MN_CASE( mat_arith, div_ip, default_m, 0 )
+	ADD_MN_CASE( mat_arith, div_ip, default_m, 1 )
+	ADD_MN_CASE( mat_arith, div_ip, default_m, default_n )
+END_TPACK
+
 
 BEGIN_MAIN_SUITE
 	ADD_TPACK( mat_arith_add )
 	ADD_TPACK( mat_arith_add_ex )
+	ADD_TPACK( mat_arith_add_ip )
+
 	ADD_TPACK( mat_arith_sub )
 	ADD_TPACK( mat_arith_sub_ex )
+	ADD_TPACK( mat_arith_sub_ip )
+
 	ADD_TPACK( mat_arith_mul )
 	ADD_TPACK( mat_arith_mul_ex )
+	ADD_TPACK( mat_arith_mul_ip )
+
 	ADD_TPACK( mat_arith_div )
 	ADD_TPACK( mat_arith_div_ex )
+	ADD_TPACK( mat_arith_div_ip )
 END_MAIN_SUITE
 
 
