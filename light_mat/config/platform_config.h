@@ -35,8 +35,6 @@
 
 #elif (defined(__GNUC__))
 
-	#define LMAT_HAS_C99_MATH
-
 	#if (defined(__clang__))
 		#if ((__clang_major__ < 2) || (__clang_major__ == 2 && __clang_minor__ < 9))
 			#error CLANG of version lower than 2.9.0 is not supported

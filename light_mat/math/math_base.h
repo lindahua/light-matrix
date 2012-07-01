@@ -29,6 +29,10 @@ namespace lmat { namespace math {
 	using std::floor;
 	using std::ceil;
 
+	using std::exp;
+	using std::log;
+	using std::log10;
+
 	using std::sin;
 	using std::cos;
 	using std::tan;
@@ -41,10 +45,6 @@ namespace lmat { namespace math {
 	using std::sinh;
 	using std::cosh;
 	using std::tanh;
-
-	using std::exp;
-	using std::log;
-	using std::log10;
 
 	// additional functions
 
@@ -98,6 +98,9 @@ namespace lmat { namespace math {
 
 	using std::trunc;
 	using std::round;
+
+	using std::lgamma;
+	using std::tgamma;
 
 	using std::isinf;
 	using std::isnan;
