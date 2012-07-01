@@ -39,7 +39,6 @@ namespace lmat
 	inline binary_fix2_ewise_expr<add_op<T>, LMat>
 	operator + (const IMatrixXpr<LMat, T>& A, const T& b)
 	{
-		typedef typename const_mat_same_form<LMat>::type cst_t;
 		return ewise_expr(add_op<T>(), A, b);
 	}
 
@@ -48,7 +47,6 @@ namespace lmat
 	inline binary_fix1_ewise_expr<add_op<T>, RMat>
 	operator + (const T& a, const IMatrixXpr<RMat, T>& B)
 	{
-		typedef typename const_mat_same_form<RMat>::type cst_t;
 		return ewise_expr(add_op<T>(), a, B);
 	}
 
@@ -84,7 +82,6 @@ namespace lmat
 	inline binary_fix2_ewise_expr<sub_op<T>, LMat>
 	operator - (const IMatrixXpr<LMat, T>& A, const T& b)
 	{
-		typedef typename const_mat_same_form<LMat>::type cst_t;
 		return ewise_expr(sub_op<T>(), A, b);
 	}
 
@@ -93,7 +90,6 @@ namespace lmat
 	inline binary_fix1_ewise_expr<sub_op<T>, RMat>
 	operator - (const T& a, const IMatrixXpr<RMat, T>& B)
 	{
-		typedef typename const_mat_same_form<RMat>::type cst_t;
 		return ewise_expr(sub_op<T>(), a, B);
 	}
 
@@ -129,7 +125,6 @@ namespace lmat
 	inline binary_fix2_ewise_expr<mul_op<T>, LMat>
 	operator * (const IMatrixXpr<LMat, T>& A, const T& b)
 	{
-		typedef typename const_mat_same_form<LMat>::type cst_t;
 		return ewise_expr(mul_op<T>(), A, b);
 	}
 
@@ -138,7 +133,6 @@ namespace lmat
 	inline binary_fix1_ewise_expr<mul_op<T>, RMat>
 	operator * (const T& a, const IMatrixXpr<RMat, T>& B)
 	{
-		typedef typename const_mat_same_form<RMat>::type cst_t;
 		return ewise_expr(mul_op<T>(), a, B);
 	}
 
@@ -173,7 +167,6 @@ namespace lmat
 	inline binary_fix2_ewise_expr<div_op<T>, LMat>
 	operator / (const IMatrixXpr<LMat, T>& A, const T& b)
 	{
-		typedef typename const_mat_same_form<LMat>::type cst_t;
 		return ewise_expr(div_op<T>(), A, b);
 	}
 
@@ -182,7 +175,6 @@ namespace lmat
 	inline binary_fix1_ewise_expr<div_op<T>, RMat>
 	operator / (const T& a, const IMatrixXpr<RMat, T>& B)
 	{
-		typedef typename const_mat_same_form<RMat>::type cst_t;
 		return ewise_expr(div_op<T>(), a, B);
 	}
 

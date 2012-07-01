@@ -32,7 +32,6 @@ namespace lmat
 	inline binary_fix2_ewise_expr<max_fun<T>, LMat>
 	(max)(const IMatrixXpr<LMat, T>& A, const T& b)
 	{
-		typedef typename const_mat_same_form<LMat>::type cst_t;
 		return ewise_expr(max_fun<T>(), A, b);
 	}
 
@@ -41,7 +40,6 @@ namespace lmat
 	inline binary_fix1_ewise_expr<max_fun<T>, RMat>
 	(max)(const T& a, const IMatrixXpr<RMat, T>& B)
 	{
-		typedef typename const_mat_same_form<RMat>::type cst_t;
 		return ewise_expr(max_fun<T>(), a, B);
 	}
 
@@ -59,7 +57,6 @@ namespace lmat
 	inline binary_fix2_ewise_expr<min_fun<T>, LMat>
 	(min)(const IMatrixXpr<LMat, T>& A, const T& b)
 	{
-		typedef typename const_mat_same_form<LMat>::type cst_t;
 		return ewise_expr(min_fun<T>(), A, b);
 	}
 
@@ -68,7 +65,6 @@ namespace lmat
 	inline binary_fix1_ewise_expr<min_fun<T>, RMat>
 	(min)(const T& a, const IMatrixXpr<RMat, T>& B)
 	{
-		typedef typename const_mat_same_form<RMat>::type cst_t;
 		return ewise_expr(min_fun<T>(), a, B);
 	}
 
@@ -86,7 +82,6 @@ namespace lmat
 	inline binary_fix2_ewise_expr<pow_fun<T>, LMat>
 	pow(const IMatrixXpr<LMat, T>& A, const T& b)
 	{
-		typedef typename const_mat_same_form<LMat>::type cst_t;
 		return ewise_expr(pow_fun<T>(), A, b);
 	}
 

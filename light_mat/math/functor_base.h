@@ -62,12 +62,25 @@ namespace lmat
 	template<typename T>
 	struct binary_predicate_ewise_functor : public binary_ewise_functor<T, T, bool> { };
 
-	struct unary_logical_ewise_functor : public unary_ewise_functor<bool, bool> { };
+	struct unary_bool_ewise_functor : public unary_ewise_functor<bool, bool> { };
 
-	struct binary_logical_ewise_functor : public binary_ewise_functor<bool, bool, bool> { };
+	struct binary_bool_ewise_functor : public binary_ewise_functor<bool, bool, bool> { };
 }
 
 // Useful macros
+
+#define LMAT_DECLARE_AS_UNARY_EWISE_FUNCTOR( Fun, SuppSIMD ) \
+	template<> \
+	struct is_unary_ewise_functor< Fun > { static const bool value = true; }; \
+	template<> \
+	struct supports_simd< Fun > { static const bool value = SuppSIMD; };
+
+#define LMAT_DECLARE_AS_BINARY_EWISE_FUNCTOR( Fun, SuppSIMD ) \
+	template<> \
+	struct is_binary_ewise_functor< Fun > { static const bool value = true; }; \
+	template<> \
+	struct supports_simd< Fun > { static const bool value = SuppSIMD; };
+
 
 #define LMAT_DECLARE_AS_UNARY_EWISE_TFUNCTOR( FunT, SuppSIMD ) \
 	template<typename T> \
@@ -75,12 +88,12 @@ namespace lmat
 	template<typename T> \
 	struct supports_simd< FunT<T> > { static const bool value = SuppSIMD; };
 
-
 #define LMAT_DECLARE_AS_BINARY_EWISE_TFUNCTOR( FunT, SuppSIMD ) \
 	template<typename T> \
 	struct is_binary_ewise_functor< FunT<T> > { static const bool value = true; }; \
 	template<typename T> \
 	struct supports_simd< FunT<T> > { static const bool value = SuppSIMD; };
+
 
 #define LMAT_DEFINE_UNARY_NUMERIC_EWISE_TFUNCTOR( FunT, ImplFun ) \
 	template<typename T> \

@@ -19,7 +19,7 @@
 namespace lmat
 {
 	template<typename T>
-	struct add_op : binary_numeric_ewise_functor<T>
+	struct add_op : public binary_numeric_ewise_functor<T>
 	{
 		LMAT_ENSURE_INLINE T operator() (const T& x, const T& y) const
 		{
@@ -28,7 +28,7 @@ namespace lmat
 	};
 
 	template<typename T>
-	struct sub_op : binary_numeric_ewise_functor<T>
+	struct sub_op : public binary_numeric_ewise_functor<T>
 	{
 		LMAT_ENSURE_INLINE T operator() (const T& x, const T& y) const
 		{
@@ -37,7 +37,7 @@ namespace lmat
 	};
 
 	template<typename T>
-	struct mul_op : binary_numeric_ewise_functor<T>
+	struct mul_op : public binary_numeric_ewise_functor<T>
 	{
 		LMAT_ENSURE_INLINE T operator() (const T& x, const T& y) const
 		{
@@ -46,7 +46,7 @@ namespace lmat
 	};
 
 	template<typename T>
-	struct div_op : binary_numeric_ewise_functor<T>
+	struct div_op : public binary_numeric_ewise_functor<T>
 	{
 		LMAT_ENSURE_INLINE T operator() (const T& x, const T& y) const
 		{
@@ -55,7 +55,7 @@ namespace lmat
 	};
 
 	template<typename T>
-	struct neg_op : unary_numeric_ewise_functor<T>
+	struct neg_op : public unary_numeric_ewise_functor<T>
 	{
 		LMAT_ENSURE_INLINE T operator() (const T& x) const
 		{
@@ -64,7 +64,7 @@ namespace lmat
 	};
 
 	template<typename T>
-	struct abs_op : unary_numeric_ewise_functor<T>
+	struct abs_op : public unary_numeric_ewise_functor<T>
 	{
 		LMAT_ENSURE_INLINE T operator() (const T& x) const
 		{
@@ -73,7 +73,7 @@ namespace lmat
 	};
 
 	template<typename T>
-	struct sqr_op : unary_numeric_ewise_functor<T>
+	struct sqr_op : public unary_numeric_ewise_functor<T>
 	{
 		LMAT_ENSURE_INLINE T operator() (const T& x) const
 		{
@@ -82,7 +82,7 @@ namespace lmat
 	};
 
 	template<typename T>
-	struct rcp_op : unary_numeric_ewise_functor<T>
+	struct rcp_op : public unary_numeric_ewise_functor<T>
 	{
 		LMAT_ENSURE_INLINE T operator() (const T& x) const
 		{
@@ -91,7 +91,7 @@ namespace lmat
 	};
 
 	template<typename T>
-	struct sqrt_op : unary_numeric_ewise_functor<T>
+	struct sqrt_op : public unary_numeric_ewise_functor<T>
 	{
 		LMAT_ENSURE_INLINE T operator() (const T& x) const
 		{
@@ -100,7 +100,7 @@ namespace lmat
 	};
 
 	template<typename T>
-	struct rsqrt_op : unary_numeric_ewise_functor<T>
+	struct rsqrt_op : public unary_numeric_ewise_functor<T>
 	{
 		LMAT_ENSURE_INLINE T operator() (const T& x) const
 		{
