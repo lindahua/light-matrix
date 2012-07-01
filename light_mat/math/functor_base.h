@@ -71,16 +71,16 @@ namespace lmat
 
 #define LMAT_DECLARE_AS_UNARY_EWISE_TFUNCTOR( FunT, SuppSIMD ) \
 	template<typename T> \
-	struct lmat::is_unary_ewise_functor< FunT<T> > { static const bool value = true; }; \
+	struct is_unary_ewise_functor< FunT<T> > { static const bool value = true; }; \
 	template<typename T> \
-	struct lmat::supports_simd< FunT<T> > { static const bool value = SuppSIMD; };
+	struct supports_simd< FunT<T> > { static const bool value = SuppSIMD; };
 
 
 #define LMAT_DECLARE_AS_BINARY_EWISE_TFUNCTOR( FunT, SuppSIMD ) \
 	template<typename T> \
-	struct lmat::is_binary_ewise_functor< FunT<T> > { static const bool value = true; }; \
+	struct is_binary_ewise_functor< FunT<T> > { static const bool value = true; }; \
 	template<typename T> \
-	struct lmat::supports_simd< FunT<T> > { static const bool value = SuppSIMD; };
+	struct supports_simd< FunT<T> > { static const bool value = SuppSIMD; };
 
 #define LMAT_DEFINE_UNARY_NUMERIC_EWISE_TFUNCTOR( FunT, ImplFun ) \
 	template<typename T> \
