@@ -24,7 +24,7 @@ namespace lmat
 	inline binary_ewise_expr<max_fun<T>, LMat, RMat>
 	(max)(const IMatrixXpr<LMat, T>& A, const IMatrixXpr<RMat, T>& B)
 	{
-		return ewise(max_fun<T>(), A, B);
+		return ewise(max_fun<T>(), A.derived(), B.derived());
 	}
 
 	template<typename T, class LMat>
@@ -32,7 +32,7 @@ namespace lmat
 	inline binary_fix2_ewise_expr<max_fun<T>, LMat>
 	(max)(const IMatrixXpr<LMat, T>& A, const T& b)
 	{
-		return ewise(max_fun<T>(), A, b);
+		return ewise(max_fun<T>(), A.derived(), b);
 	}
 
 	template<typename T, class RMat>
@@ -40,7 +40,7 @@ namespace lmat
 	inline binary_fix1_ewise_expr<max_fun<T>, RMat>
 	(max)(const T& a, const IMatrixXpr<RMat, T>& B)
 	{
-		return ewise(max_fun<T>(), a, B);
+		return ewise(max_fun<T>(), a, B.derived());
 	}
 
 
@@ -49,7 +49,7 @@ namespace lmat
 	inline binary_ewise_expr<min_fun<T>, LMat, RMat>
 	(min)(const IMatrixXpr<LMat, T>& A, const IMatrixXpr<RMat, T>& B)
 	{
-		return ewise(min_fun<T>(), A, B);
+		return ewise(min_fun<T>(), A.derived(), B.derived());
 	}
 
 	template<typename T, class LMat>
@@ -57,7 +57,7 @@ namespace lmat
 	inline binary_fix2_ewise_expr<min_fun<T>, LMat>
 	(min)(const IMatrixXpr<LMat, T>& A, const T& b)
 	{
-		return ewise(min_fun<T>(), A, b);
+		return ewise(min_fun<T>(), A.derived(), b);
 	}
 
 	template<typename T, class RMat>
@@ -65,7 +65,7 @@ namespace lmat
 	inline binary_fix1_ewise_expr<min_fun<T>, RMat>
 	(min)(const T& a, const IMatrixXpr<RMat, T>& B)
 	{
-		return ewise(min_fun<T>(), a, B);
+		return ewise(min_fun<T>(), a, B.derived());
 	}
 
 
@@ -74,7 +74,7 @@ namespace lmat
 	inline binary_ewise_expr<pow_fun<T>, LMat, RMat>
 	pow(const IMatrixXpr<LMat, T>& A, const IMatrixXpr<RMat, T>& B)
 	{
-		return ewise(pow_fun<T>(), A, B);
+		return ewise(pow_fun<T>(), A.derived(), B.derived());
 	}
 
 	template<typename T, class LMat>
@@ -82,7 +82,7 @@ namespace lmat
 	inline binary_fix2_ewise_expr<pow_fun<T>, LMat>
 	pow(const IMatrixXpr<LMat, T>& A, const T& b)
 	{
-		return ewise(pow_fun<T>(), A, b);
+		return ewise(pow_fun<T>(), A.derived(), b);
 	}
 
 
@@ -91,7 +91,7 @@ namespace lmat
 	inline unary_ewise_expr<floor_fun<T>, Mat>
 	floor(const IMatrixXpr<Mat, T>& A)
 	{
-		return ewise(floor_fun<T>(), A);
+		return ewise(floor_fun<T>(), A.derived());
 	}
 
 	template<typename T, class Mat>
@@ -99,7 +99,7 @@ namespace lmat
 	inline unary_ewise_expr<ceil_fun<T>, Mat>
 	ceil(const IMatrixXpr<Mat, T>& A)
 	{
-		return ewise(ceil_fun<T>(), A);
+		return ewise(ceil_fun<T>(), A.derived());
 	}
 
 
@@ -108,7 +108,7 @@ namespace lmat
 	inline unary_ewise_expr<exp_fun<T>, Mat>
 	exp(const IMatrixXpr<Mat, T>& A)
 	{
-		return ewise(exp_fun<T>(), A);
+		return ewise(exp_fun<T>(), A.derived());
 	}
 
 	template<typename T, class Mat>
@@ -116,7 +116,7 @@ namespace lmat
 	inline unary_ewise_expr<log_fun<T>, Mat>
 	log(const IMatrixXpr<Mat, T>& A)
 	{
-		return ewise(log_fun<T>(), A);
+		return ewise(log_fun<T>(), A.derived());
 	}
 
 	template<typename T, class Mat>
@@ -124,7 +124,7 @@ namespace lmat
 	inline unary_ewise_expr<log10_fun<T>, Mat>
 	log10(const IMatrixXpr<Mat, T>& A)
 	{
-		return ewise(log10_fun<T>(), A);
+		return ewise(log10_fun<T>(), A.derived());
 	}
 
 
@@ -133,7 +133,7 @@ namespace lmat
 	inline unary_ewise_expr<sin_fun<T>, Mat>
 	sin(const IMatrixXpr<Mat, T>& A)
 	{
-		return ewise(sin_fun<T>(), A);
+		return ewise(sin_fun<T>(), A.derived());
 	}
 
 	template<typename T, class Mat>
@@ -141,7 +141,7 @@ namespace lmat
 	inline unary_ewise_expr<cos_fun<T>, Mat>
 	cos(const IMatrixXpr<Mat, T>& A)
 	{
-		return ewise(cos_fun<T>(), A);
+		return ewise(cos_fun<T>(), A.derived());
 	}
 
 	template<typename T, class Mat>
@@ -149,7 +149,7 @@ namespace lmat
 	inline unary_ewise_expr<tan_fun<T>, Mat>
 	tan(const IMatrixXpr<Mat, T>& A)
 	{
-		return ewise(tan_fun<T>(), A);
+		return ewise(tan_fun<T>(), A.derived());
 	}
 
 
@@ -158,7 +158,7 @@ namespace lmat
 	inline unary_ewise_expr<asin_fun<T>, Mat>
 	asin(const IMatrixXpr<Mat, T>& A)
 	{
-		return ewise(asin_fun<T>(), A);
+		return ewise(asin_fun<T>(), A.derived());
 	}
 
 	template<typename T, class Mat>
@@ -166,7 +166,7 @@ namespace lmat
 	inline unary_ewise_expr<acos_fun<T>, Mat>
 	acos(const IMatrixXpr<Mat, T>& A)
 	{
-		return ewise(acos_fun<T>(), A);
+		return ewise(acos_fun<T>(), A.derived());
 	}
 
 	template<typename T, class Mat>
@@ -174,7 +174,7 @@ namespace lmat
 	inline unary_ewise_expr<atan_fun<T>, Mat>
 	atan(const IMatrixXpr<Mat, T>& A)
 	{
-		return ewise(atan_fun<T>(), A);
+		return ewise(atan_fun<T>(), A.derived());
 	}
 
 	template<typename T, class LMat, class RMat>
@@ -182,7 +182,7 @@ namespace lmat
 	inline binary_ewise_expr<atan2_fun<T>, LMat, RMat>
 	atan2(const IMatrixXpr<LMat, T>& A, const IMatrixXpr<RMat, T>& B)
 	{
-		return ewise(atan2_fun<T>(), A, B);
+		return ewise(atan2_fun<T>(), A.derived(), B.derived());
 	}
 
 	template<typename T, class Mat>
@@ -190,7 +190,7 @@ namespace lmat
 	inline unary_ewise_expr<sinh_fun<T>, Mat>
 	sinh(const IMatrixXpr<Mat, T>& A)
 	{
-		return ewise(sinh_fun<T>(), A);
+		return ewise(sinh_fun<T>(), A.derived());
 	}
 
 	template<typename T, class Mat>
@@ -198,7 +198,7 @@ namespace lmat
 	inline unary_ewise_expr<cosh_fun<T>, Mat>
 	cosh(const IMatrixXpr<Mat, T>& A)
 	{
-		return ewise(cosh_fun<T>(), A);
+		return ewise(cosh_fun<T>(), A.derived());
 	}
 
 	template<typename T, class Mat>
@@ -206,7 +206,7 @@ namespace lmat
 	inline unary_ewise_expr<tanh_fun<T>, Mat>
 	tanh(const IMatrixXpr<Mat, T>& A)
 	{
-		return ewise(tanh_fun<T>(), A);
+		return ewise(tanh_fun<T>(), A.derived());
 	}
 
 #ifdef LMAT_HAS_CXX11_MATH
@@ -216,7 +216,7 @@ namespace lmat
 	inline unary_ewise_expr<round_fun<T>, Mat>
 	round(const IMatrixXpr<Mat, T>& A)
 	{
-		return ewise(round_fun<T>(), A);
+		return ewise(round_fun<T>(), A.derived());
 	}
 
 	template<typename T, class Mat>
@@ -224,7 +224,7 @@ namespace lmat
 	inline unary_ewise_expr<trunc_fun<T>, Mat>
 	trunc(const IMatrixXpr<Mat, T>& A)
 	{
-		return ewise(trunc_fun<T>(), A);
+		return ewise(trunc_fun<T>(), A.derived());
 	}
 
 	template<typename T, class Mat>
@@ -232,7 +232,7 @@ namespace lmat
 	inline unary_ewise_expr<cbrt_fun<T>, Mat>
 	cbrt(const IMatrixXpr<Mat, T>& A)
 	{
-		return ewise(cbrt_fun<T>(), A);
+		return ewise(cbrt_fun<T>(), A.derived());
 	}
 
 	template<typename T, class LMat, class RMat>
@@ -240,7 +240,7 @@ namespace lmat
 	inline binary_ewise_expr<hypot_fun<T>, LMat, RMat>
 	hypot(const IMatrixXpr<LMat, T>& A, const IMatrixXpr<RMat, T>& B)
 	{
-		return ewise(hypot_fun<T>(), A, B);
+		return ewise(hypot_fun<T>(), A.derived(), B.derived());
 	}
 
 
@@ -249,7 +249,7 @@ namespace lmat
 	inline unary_ewise_expr<exp2_fun<T>, Mat>
 	exp2(const IMatrixXpr<Mat, T>& A)
 	{
-		return ewise(exp2_fun<T>(), A);
+		return ewise(exp2_fun<T>(), A.derived());
 	}
 
 	template<typename T, class Mat>
@@ -257,7 +257,7 @@ namespace lmat
 	inline unary_ewise_expr<log2_fun<T>, Mat>
 	log2(const IMatrixXpr<Mat, T>& A)
 	{
-		return ewise(log2_fun<T>(), A);
+		return ewise(log2_fun<T>(), A.derived());
 	}
 
 	template<typename T, class Mat>
@@ -265,7 +265,7 @@ namespace lmat
 	inline unary_ewise_expr<expm1_fun<T>, Mat>
 	expm1(const IMatrixXpr<Mat, T>& A)
 	{
-		return ewise(expm1_fun<T>(), A);
+		return ewise(expm1_fun<T>(), A.derived());
 	}
 
 	template<typename T, class Mat>
@@ -273,7 +273,7 @@ namespace lmat
 	inline unary_ewise_expr<log1p_fun<T>, Mat>
 	log1p(const IMatrixXpr<Mat, T>& A)
 	{
-		return ewise(log1p_fun<T>(), A);
+		return ewise(log1p_fun<T>(), A.derived());
 	}
 
 
@@ -282,7 +282,7 @@ namespace lmat
 	inline unary_ewise_expr<asinh_fun<T>, Mat>
 	asinh(const IMatrixXpr<Mat, T>& A)
 	{
-		return ewise(asinh_fun<T>(), A);
+		return ewise(asinh_fun<T>(), A.derived());
 	}
 
 	template<typename T, class Mat>
@@ -290,7 +290,7 @@ namespace lmat
 	inline unary_ewise_expr<acosh_fun<T>, Mat>
 	acosh(const IMatrixXpr<Mat, T>& A)
 	{
-		return ewise(acosh_fun<T>(), A);
+		return ewise(acosh_fun<T>(), A.derived());
 	}
 
 	template<typename T, class Mat>
@@ -298,7 +298,7 @@ namespace lmat
 	inline unary_ewise_expr<atanh_fun<T>, Mat>
 	atanh(const IMatrixXpr<Mat, T>& A)
 	{
-		return ewise(atanh_fun<T>(), A);
+		return ewise(atanh_fun<T>(), A.derived());
 	}
 
 #endif
