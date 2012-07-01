@@ -14,36 +14,54 @@
 #define LIGHTMAT_MATRIX_EWISE_EVAL_H_
 
 #include <light_mat/matrix/matrix_ewise_expr.h>
-#include <light_mat/matrix/vec_evaluator_concepts.h>
-#include <light_mat/matrix/const_matrix.h>
-
-#include <light_mat/math/arith_functors.h>
+#include <light_mat/matrix/matrix_eval.h>
 
 namespace lmat
 {
-	template<typename T, class LMat, class RMat>
-	LMAT_ENSURE_INLINE
-	simple_binary_ewise_expr<T, LMat, RMat>
-	operator + (const IMatrixXpr<LMat, T>& A, const IMatrixXpr<RMat, T>& B)
+	template<class Fun, class Arg>
+	class simple_unary_ewise_linear_evaluator
+	: public ILinearVectorEvaluator<
+	  	  simple_unary_ewise_linear_evaluator<Fun, Arg>,
+	  	  typename Fun::result_type>
 	{
-		return simple_ewise_expr(add_op<T>(), A, B);
-	}
+		simple_unary_ewise_linear_evaluator(const simple_unary_ewise_expr<Fun, Arg>& expr)
+		: m_fun(), m_arg_eval(expr)
+		{
+		}
 
-	template<typename T, class LMat>
-	LMAT_ENSURE_INLINE
-	simple_binary_ewise_expr<T, LMat, typename const_mat_same_form<LMat>::type>
-	operator + (const IMatrixXpr<LMat, T>& A, const T& b)
-	{
-		return simple_ewise_expr(add_op<T>(), A, const_mat_same_form<LMat>::get(b));
-	}
+		LMAT_ENSURE_INLINE T get_value(const index_t i) const
+		{
+			return m_fun(m_arg_eval.get_value(i));
+		}
 
-	template<typename T, class RMat>
-	LMAT_ENSURE_INLINE
-	simple_binary_ewise_expr<T, typename const_mat_same_form<RMat>::type, RMat>
-	operator + (const T& a, const IMatrixXpr<RMat, T>& B)
+	private:
+		Fun m_fun;
+		typedef typename linear_vector_evaluator<Arg>::type arg_eval_t;
+		arg_eval_t m_arg_eval;
+	};
+
+	template<class Fun, class Arg>
+	class simple_unary_ewise_percol_evaluator
+	: public ILinearVectorEvaluator<
+	  	  simple_unary_ewise_percol_evaluator<Fun, Arg>,
+	  	  typename Fun::result_type>
 	{
-		return simple_ewise_expr(add_op<T>(), const_mat_same_form<RMat>::get(a), B);
-	}
+		simple_unary_ewise_percol_evaluator(const simple_unary_ewise_expr<Fun, Arg>& expr)
+		: m_fun(), m_arg_eval(expr)
+		{
+		}
+
+		LMAT_ENSURE_INLINE T get_value(const index_t i) const
+		{
+			return m_fun(m_arg_eval.get_value(i));
+		}
+
+	private:
+		Fun m_fun;
+		typedef typename percol_vector_evaluator<Arg>::type arg_eval_t;
+		arg_eval_t m_arg_eval;
+	};
+
 
 }
 

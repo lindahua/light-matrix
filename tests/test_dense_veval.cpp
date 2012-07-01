@@ -14,6 +14,23 @@
 using namespace lmat;
 using namespace lmat::test;
 
+#ifdef LMAT_USE_STATIC_ASSERT
+static_assert(is_linear_vector_evaluator<continuous_linear_evaluator<double>, double>::value,
+		"Evaluator interface check failed");
+static_assert(is_linear_vector_evaluator<cached_linear_evaluator<double>, double>::value,
+		"Evaluator interface check failed");
+static_assert(is_linear_vector_evaluator<const_linear_evaluator<double>, double>::value,
+		"Evaluator interface check failed");
+
+static_assert(is_percol_vector_evaluator<dense_percol_evaluator<double>, double>::value,
+		"Evaluator interface check failed");
+static_assert(is_percol_vector_evaluator<cached_percol_evaluator<double>, double>::value,
+		"Evaluator interface check failed");
+static_assert(is_percol_vector_evaluator<const_percol_evaluator<double>, double>::value,
+		"Evaluator interface check failed");
+#endif
+
+
 MN_CASE( linear_veval, continu_linear )
 {
 	const index_t m = M == 0 ? 5 : M;

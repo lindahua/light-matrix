@@ -81,7 +81,7 @@ namespace lmat
 
 	template<typename T>
 	class const_linear_evaluator
-	: public ILinearVectorEvaluator<continuous_linear_evaluator<T>, T>
+	: public ILinearVectorEvaluator<const_linear_evaluator<T>, T>
 	{
 	public:
 		template<int CTRows, int CTCols>
@@ -103,7 +103,7 @@ namespace lmat
 
 	template<typename T>
 	class const_percol_evaluator
-	: public IPerColVectorEvaluator<continuous_linear_evaluator<T>, T>
+	: public IPerColVectorEvaluator<const_percol_evaluator<T>, T>
 	{
 	public:
 		template<int CTRows, int CTCols>
