@@ -186,6 +186,42 @@ namespace lmat
 		};
 	}
 
+
+	template<int N>
+	struct single_dim
+	{
+		LMAT_ENSURE_INLINE
+		single_dim() { }
+
+		LMAT_ENSURE_INLINE
+		single_dim(const index_t n)
+		{
+			check_arg(n == N, "single_dim: the input dimension is invalid.");
+		}
+
+		LMAT_ENSURE_INLINE
+		index_t dim() const { return N; }
+	};
+
+
+	template<>
+	struct single_dim<DynamicDim>
+	{
+		LMAT_ENSURE_INLINE
+		single_dim() : m_dim(0) { }
+
+		LMAT_ENSURE_INLINE
+		single_dim(const index_t n) : m_dim(n)
+		{ }
+
+		LMAT_ENSURE_INLINE
+		index_t dim() const { return m_dim; }
+
+		const index_t m_dim;
+	};
+
+
+
 	template<int M, int N>
 	class matrix_shape
 	{

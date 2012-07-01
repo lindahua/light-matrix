@@ -160,6 +160,12 @@ add_executable(test_mat_emath ${EWISE_MAT_EVAL_HS} test_mat_emath.cpp)
 add_executable(test_mat_ecomp ${EWISE_MAT_EVAL_HS} test_mat_ecomp.cpp)
 add_executable(test_mat_ebool ${EWISE_MAT_EVAL_HS} test_mat_ebool.cpp)
 
+set(REP_VECS_HS
+    ${MATRIX_HS}
+    ${INC}/matrix/repeat_vecs.h)
+    
+add_executable(test_rep_vecs ${REP_VECS_HS} test_rep_vecs.cpp)
+
 # Link to test_main
 
 target_link_libraries(test_arrays test_main)
@@ -187,6 +193,8 @@ target_link_libraries(test_mat_arith test_main)
 target_link_libraries(test_mat_emath test_main)
 target_link_libraries(test_mat_ecomp test_main)
 target_link_libraries(test_mat_ebool test_main)
+
+target_link_libraries(test_rep_vecs test_main)
     
 # Set output directories
 
@@ -208,7 +216,8 @@ set(ALL_EXECUTABLES
     test_mat_arith
     test_mat_emath
     test_mat_ecomp
-    test_mat_ebool)
+    test_mat_ebool
+    test_rep_vecs)
     
 set_target_properties(${ALL_EXECUTABLES}
     PROPERTIES
@@ -242,5 +251,7 @@ add_test(NAME mat_arith COMMAND test_mat_arith)
 add_test(NAME mat_emath COMMAND test_mat_emath)
 add_test(NAME mat_ecomp COMMAND test_mat_ecomp)
 add_test(NAME mat_ebool COMMAND test_mat_ebool)
+
+add_test(NAME rep_vecs COMMAND test_rep_vecs)
 
 

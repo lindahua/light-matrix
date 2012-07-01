@@ -8,3 +8,4 @@ build-bench/*
 
 .project
 .cproject
+.settings/*

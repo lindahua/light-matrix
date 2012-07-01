@@ -18,13 +18,6 @@
 
 namespace lmat
 {
-	// forward declarations
-
-	template<class Fun, typename Arg> class unary_ewise_expr;
-	template<class Fun, typename Arg1, typename Arg2> class binary_ewise_expr;
-	template<class Fun, typename Arg2> class binary_fix1_ewise_expr;
-	template<class Fun, typename Arg1> class binary_fix2_ewise_expr;
-
 
 	/********************************************
 	 *
