@@ -365,9 +365,12 @@ MN_CASE( mat_ecomp, gt )
 	typedef binary_fix2_ewise_expr<gt_op<double>, mat_t> AC_t;
 	typedef binary_fix1_ewise_expr<gt_op<double>, mat_t> CB_t;
 
+#if (!defined(__clang__)) // clang seem to have problems parsing the following
 	static_assert(is_same<decltype(A > B), AB_t>::value, "Expression type verification failed.");
 	static_assert(is_same<decltype(A > c), AC_t>::value, "Expression type verification failed.");
 	static_assert(is_same<decltype(c > B), CB_t>::value, "Expression type verification failed.");
+#endif
+
 #endif
 
 	// prepare ground-truth
