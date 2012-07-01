@@ -233,6 +233,29 @@ namespace lmat
 		return ewise_expr(sqr_op<T>(), A);
 	}
 
+	template<typename T, class Mat>
+	LMAT_ENSURE_INLINE
+	inline unary_ewise_expr<sqrt_op<T>, Mat>
+	sqrt(const IMatrixXpr<Mat, T>& A)
+	{
+		return ewise_expr(sqrt_op<T>(), A);
+	}
+
+	template<typename T, class Mat>
+	LMAT_ENSURE_INLINE
+	inline unary_ewise_expr<rcp_op<T>, Mat>
+	rcp(const IMatrixXpr<Mat, T>& A)
+	{
+		return ewise_expr(rcp_op<T>(), A);
+	}
+
+	template<typename T, class Mat>
+	LMAT_ENSURE_INLINE
+	inline unary_ewise_expr<rsqrt_op<T>, Mat>
+	rsqrt(const IMatrixXpr<Mat, T>& A)
+	{
+		return ewise_expr(rsqrt_op<T>(), A);
+	}
 
 }
 

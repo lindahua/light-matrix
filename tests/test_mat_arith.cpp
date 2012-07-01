@@ -763,8 +763,8 @@ MN_CASE( mat_arith, abs )
 	// type verification
 
 #ifdef LMAT_HAS_DECLTYPE
-	typedef unary_ewise_expr<neg_op<double>, mat_t> R_t;
-	static_assert(is_same<decltype(-A), R_t>::value, "Expression type verification failed.");
+	typedef unary_ewise_expr<abs_op<double>, mat_t> R_t;
+	static_assert(is_same<decltype(abs(A)), R_t>::value, "Expression type verification failed.");
 #endif
 
 	// prepare ground-truth
@@ -829,8 +829,8 @@ MN_CASE( mat_arith, sqr )
 	// type verification
 
 #ifdef LMAT_HAS_DECLTYPE
-	typedef unary_ewise_expr<neg_op<double>, mat_t> R_t;
-	static_assert(is_same<decltype(-A), R_t>::value, "Expression type verification failed.");
+	typedef unary_ewise_expr<sqr_op<double>, mat_t> R_t;
+	static_assert(is_same<decltype(sqr(A)), R_t>::value, "Expression type verification failed.");
 #endif
 
 	// prepare ground-truth
@@ -879,6 +879,113 @@ MN_CASE( mat_arith, sqr_ex )
 	mat_t R_s(m, n, fill_value(0.0));
 	evaluate_by_scalars(sqr(A), R_s);
 	ASSERT_TRUE( is_equal(R_s, R_r) );
+}
+
+
+MN_CASE( mat_arith, sqrt )
+{
+	typedef dense_matrix<double, M, N> mat_t;
+
+	const index_t m = M == 0 ? default_m : M;
+	const index_t n = N == 0 ? default_n : N;
+	const double tol = 1.0e-10;
+
+	mat_t A(m, n);
+	for (index_t i = 0; i < m * n; ++i) A[i] = double(i+2);
+
+	// type verification
+
+#ifdef LMAT_HAS_DECLTYPE
+	typedef unary_ewise_expr<sqrt_op<double>, mat_t> R_t;
+	static_assert(is_same<decltype(sqrt(A)), R_t>::value, "Expression type verification failed.");
+#endif
+
+	// prepare ground-truth
+
+	mat_t R_r(m, n);
+	for (index_t i = 0; i < m * n; ++i) R_r[i] = std::sqrt(A[i]);
+
+	// default evaluation
+
+	mat_t R = sqrt(A);
+	ASSERT_TRUE( is_approx(R, R_r, tol) );
+
+	// by-scalars evaluation
+
+	mat_t R_s(m, n, fill_value(0.0));
+	evaluate_by_scalars(sqrt(A), R_s);
+	ASSERT_TRUE( is_approx(R_s, R_r, tol) );
+}
+
+
+MN_CASE( mat_arith, rcp )
+{
+	typedef dense_matrix<double, M, N> mat_t;
+
+	const index_t m = M == 0 ? default_m : M;
+	const index_t n = N == 0 ? default_n : N;
+	const double tol = 1.0e-10;
+
+	mat_t A(m, n);
+	for (index_t i = 0; i < m * n; ++i) A[i] = double(i+2);
+
+	// type verification
+
+#ifdef LMAT_HAS_DECLTYPE
+	typedef unary_ewise_expr<rcp_op<double>, mat_t> R_t;
+	static_assert(is_same<decltype(rcp(A)), R_t>::value, "Expression type verification failed.");
+#endif
+
+	// prepare ground-truth
+
+	mat_t R_r(m, n);
+	for (index_t i = 0; i < m * n; ++i) R_r[i] = 1.0 / A[i];
+
+	// default evaluation
+
+	mat_t R = rcp(A);
+	ASSERT_TRUE( is_approx(R, R_r, tol) );
+
+	// by-scalars evaluation
+
+	mat_t R_s(m, n, fill_value(0.0));
+	evaluate_by_scalars(rcp(A), R_s);
+	ASSERT_TRUE( is_approx(R_s, R_r, tol) );
+}
+
+MN_CASE( mat_arith, rsqrt )
+{
+	typedef dense_matrix<double, M, N> mat_t;
+
+	const index_t m = M == 0 ? default_m : M;
+	const index_t n = N == 0 ? default_n : N;
+	const double tol = 1.0e-10;
+
+	mat_t A(m, n);
+	for (index_t i = 0; i < m * n; ++i) A[i] = double(i+2);
+
+	// type verification
+
+#ifdef LMAT_HAS_DECLTYPE
+	typedef unary_ewise_expr<rsqrt_op<double>, mat_t> R_t;
+	static_assert(is_same<decltype(rsqrt(A)), R_t>::value, "Expression type verification failed.");
+#endif
+
+	// prepare ground-truth
+
+	mat_t R_r(m, n);
+	for (index_t i = 0; i < m * n; ++i) R_r[i] = 1.0 / std::sqrt(A[i]);
+
+	// default evaluation
+
+	mat_t R = rsqrt(A);
+	ASSERT_TRUE( is_approx(R, R_r, tol) );
+
+	// by-scalars evaluation
+
+	mat_t R_s(m, n, fill_value(0.0));
+	evaluate_by_scalars(rsqrt(A), R_s);
+	ASSERT_TRUE( is_approx(R_s, R_r, tol) );
 }
 
 
@@ -1100,6 +1207,42 @@ BEGIN_TPACK( mat_arith_sqr_ex )
 	ADD_MN_CASE( mat_arith, sqr_ex, default_m, default_n )
 END_TPACK
 
+BEGIN_TPACK( mat_arith_sqrt )
+	ADD_MN_CASE( mat_arith, sqrt, 0, 0 )
+	ADD_MN_CASE( mat_arith, sqrt, 0, 1 )
+	ADD_MN_CASE( mat_arith, sqrt, 0, default_n )
+	ADD_MN_CASE( mat_arith, sqrt, 1, 0 )
+	ADD_MN_CASE( mat_arith, sqrt, 1, 1 )
+	ADD_MN_CASE( mat_arith, sqrt, 1, default_n )
+	ADD_MN_CASE( mat_arith, sqrt, default_m, 0 )
+	ADD_MN_CASE( mat_arith, sqrt, default_m, 1 )
+	ADD_MN_CASE( mat_arith, sqrt, default_m, default_n )
+END_TPACK
+
+BEGIN_TPACK( mat_arith_rcp )
+	ADD_MN_CASE( mat_arith, rcp, 0, 0 )
+	ADD_MN_CASE( mat_arith, rcp, 0, 1 )
+	ADD_MN_CASE( mat_arith, rcp, 0, default_n )
+	ADD_MN_CASE( mat_arith, rcp, 1, 0 )
+	ADD_MN_CASE( mat_arith, rcp, 1, 1 )
+	ADD_MN_CASE( mat_arith, rcp, 1, default_n )
+	ADD_MN_CASE( mat_arith, rcp, default_m, 0 )
+	ADD_MN_CASE( mat_arith, rcp, default_m, 1 )
+	ADD_MN_CASE( mat_arith, rcp, default_m, default_n )
+END_TPACK
+
+BEGIN_TPACK( mat_arith_rsqrt )
+	ADD_MN_CASE( mat_arith, rsqrt, 0, 0 )
+	ADD_MN_CASE( mat_arith, rsqrt, 0, 1 )
+	ADD_MN_CASE( mat_arith, rsqrt, 0, default_n )
+	ADD_MN_CASE( mat_arith, rsqrt, 1, 0 )
+	ADD_MN_CASE( mat_arith, rsqrt, 1, 1 )
+	ADD_MN_CASE( mat_arith, rsqrt, 1, default_n )
+	ADD_MN_CASE( mat_arith, rsqrt, default_m, 0 )
+	ADD_MN_CASE( mat_arith, rsqrt, default_m, 1 )
+	ADD_MN_CASE( mat_arith, rsqrt, default_m, default_n )
+END_TPACK
+
 
 
 BEGIN_MAIN_SUITE
@@ -1127,6 +1270,12 @@ BEGIN_MAIN_SUITE
 
 	ADD_TPACK( mat_arith_sqr )
 	ADD_TPACK( mat_arith_sqr_ex )
+
+	ADD_TPACK( mat_arith_sqrt )
+
+	ADD_TPACK( mat_arith_rcp )
+
+	ADD_TPACK( mat_arith_rsqrt )
 END_MAIN_SUITE
 
 
