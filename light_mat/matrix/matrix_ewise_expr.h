@@ -321,6 +321,36 @@ namespace lmat
 	};
 
 
+	/********************************************
+	 *
+	 *  Expression type mapping
+	 *
+	 ********************************************/
+
+	template<class Fun, class Arg>
+	struct unary_ewise_expr_map
+	{
+		typedef unary_ewise_expr<Fun, Arg> type;
+	};
+
+	template<class Fun, class Arg1, class Arg2>
+	struct binary_ewise_expr_map
+	{
+		typedef binary_ewise_expr<Fun, Arg1, Arg2> type;
+	};
+
+	template<class Fun, class Arg1>
+	struct binary_fix2_ewise_expr_map
+	{
+		typedef binary_fix2_ewise_expr<Fun, Arg1> type;
+	};
+
+	template<class Fun, class Arg2>
+	struct binary_fix1_ewise_expr_map
+	{
+		typedef binary_fix1_ewise_expr<Fun, Arg2> type;
+	};
+
 
 	/********************************************
 	 *
@@ -330,19 +360,19 @@ namespace lmat
 
 	template<class Fun, class Arg>
 	LMAT_ENSURE_INLINE
-	inline unary_ewise_expr<Fun, Arg> ewise(
-			const Fun& fun,
-			const IMatrixXpr<Arg, typename Fun::arg_type>& arg)
+	inline typename unary_ewise_expr_map<Fun, Arg>::type
+	ewise(  const Fun& fun,
+			const IMatrixXpr<Arg, typename Fun::arg_type>& arg )
 	{
 		return unary_ewise_expr<Fun, Arg>(fun, arg.derived());
 	}
 
 	template<class Fun, class Arg1, class Arg2>
 	LMAT_ENSURE_INLINE
-	inline binary_ewise_expr<Fun, Arg1, Arg2> ewise(
-			const Fun& fun,
+	inline typename binary_ewise_expr_map<Fun, Arg1, Arg2>::type
+	ewise(  const Fun& fun,
 			const IMatrixXpr<Arg1, typename Fun::first_arg_type>& arg1,
-			const IMatrixXpr<Arg2, typename Fun::second_arg_type>& arg2)
+			const IMatrixXpr<Arg2, typename Fun::second_arg_type>& arg2 )
 	{
 		return binary_ewise_expr<Fun, Arg1, Arg2>(fun,
 				arg1.derived(), arg2.derived());
@@ -350,10 +380,10 @@ namespace lmat
 
 	template<class Fun, class Arg1>
 	LMAT_ENSURE_INLINE
-	inline binary_fix2_ewise_expr<Fun, Arg1> ewise(
-			const Fun& fun,
+	inline typename binary_fix2_ewise_expr_map<Fun, Arg1>::type
+	ewise(  const Fun& fun,
 			const IMatrixXpr<Arg1, typename Fun::first_arg_type>& arg1,
-			const typename Fun::second_arg_type& arg2v)
+			const typename Fun::second_arg_type& arg2v )
 	{
 		return binary_fix2_ewise_expr<Fun, Arg1>(fun,
 				arg1.derived(), arg2v);
@@ -362,10 +392,10 @@ namespace lmat
 
 	template<class Fun, class Arg2>
 	LMAT_ENSURE_INLINE
-	inline binary_fix1_ewise_expr<Fun, Arg2> ewise(
-			const Fun& fun,
+	inline typename binary_fix1_ewise_expr_map<Fun, Arg2>::type
+	ewise(  const Fun& fun,
 			const typename Fun::first_arg_type& arg1v,
-			const IMatrixXpr<Arg2, typename Fun::second_arg_type>& arg2)
+			const IMatrixXpr<Arg2, typename Fun::second_arg_type>& arg2 )
 	{
 		return binary_fix1_ewise_expr<Fun, Arg2>(fun,
 				arg1v, arg2.derived());

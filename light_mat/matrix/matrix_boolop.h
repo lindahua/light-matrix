@@ -22,7 +22,7 @@ namespace lmat
 
 	template<class Mat>
 	LMAT_ENSURE_INLINE
-	inline unary_ewise_expr<not_op, Mat>
+	inline typename unary_ewise_expr_map<not_op, Mat>::type
 	operator ! (const IMatrixXpr<Mat, bool>& A)
 	{
 		return ewise(not_op(), A.derived());
@@ -32,7 +32,7 @@ namespace lmat
 
 	template<class LMat, class RMat>
 	LMAT_ENSURE_INLINE
-	inline binary_ewise_expr<and_op, LMat, RMat>
+	inline typename binary_ewise_expr_map<and_op, LMat, RMat>::type
 	operator && (const IMatrixXpr<LMat, bool>& A, const IMatrixXpr<RMat, bool>& B)
 	{
 		return ewise(and_op(), A.derived(), B.derived());
@@ -42,7 +42,7 @@ namespace lmat
 
 	template<class LMat, class RMat>
 	LMAT_ENSURE_INLINE
-	inline binary_ewise_expr<or_op, LMat, RMat>
+	inline typename binary_ewise_expr_map<or_op, LMat, RMat>::type
 	operator || (const IMatrixXpr<LMat, bool>& A, const IMatrixXpr<RMat, bool>& B)
 	{
 		return ewise(or_op(), A.derived(), B.derived());
