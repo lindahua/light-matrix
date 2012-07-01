@@ -330,7 +330,7 @@ namespace lmat
 
 	template<class Fun, class Arg>
 	LMAT_ENSURE_INLINE
-	inline unary_ewise_expr<Fun, Arg> ewise_expr(
+	inline unary_ewise_expr<Fun, Arg> ewise(
 			const Fun& fun,
 			const IMatrixXpr<Arg, typename Fun::arg_type>& arg)
 	{
@@ -339,7 +339,7 @@ namespace lmat
 
 	template<class Fun, class Arg1, class Arg2>
 	LMAT_ENSURE_INLINE
-	inline binary_ewise_expr<Fun, Arg1, Arg2> ewise_expr(
+	inline binary_ewise_expr<Fun, Arg1, Arg2> ewise(
 			const Fun& fun,
 			const IMatrixXpr<Arg1, typename Fun::first_arg_type>& arg1,
 			const IMatrixXpr<Arg2, typename Fun::second_arg_type>& arg2)
@@ -350,7 +350,7 @@ namespace lmat
 
 	template<class Fun, class Arg1>
 	LMAT_ENSURE_INLINE
-	inline binary_fix2_ewise_expr<Fun, Arg1> ewise_expr(
+	inline binary_fix2_ewise_expr<Fun, Arg1> ewise(
 			const Fun& fun,
 			const IMatrixXpr<Arg1, typename Fun::first_arg_type>& arg1,
 			const typename Fun::second_arg_type& arg2v)
@@ -362,7 +362,7 @@ namespace lmat
 
 	template<class Fun, class Arg2>
 	LMAT_ENSURE_INLINE
-	inline binary_fix1_ewise_expr<Fun, Arg2> ewise_expr(
+	inline binary_fix1_ewise_expr<Fun, Arg2> ewise(
 			const Fun& fun,
 			const typename Fun::first_arg_type& arg1v,
 			const IMatrixXpr<Arg2, typename Fun::second_arg_type>& arg2)

@@ -25,7 +25,7 @@ namespace lmat
 	inline binary_ewise_expr<eq_op<T>, LMat, RMat>
 	operator == (const IMatrixXpr<LMat, T>& A, const IMatrixXpr<RMat, T>& B)
 	{
-		return ewise_expr(eq_op<T>(), A, B);
+		return ewise(eq_op<T>(), A, B);
 	}
 
 	template<typename T, class LMat>
@@ -34,7 +34,7 @@ namespace lmat
 	operator ==(const IMatrixXpr<LMat, T>& A, const T& b)
 	{
 		typedef typename const_mat_same_form<LMat>::type cst_t;
-		return ewise_expr(eq_op<T>(), A, b);
+		return ewise(eq_op<T>(), A, b);
 	}
 
 	template<typename T, class RMat>
@@ -43,7 +43,7 @@ namespace lmat
 	operator == (const T& a, const IMatrixXpr<RMat, T>& B)
 	{
 		typedef typename const_mat_same_form<RMat>::type cst_t;
-		return ewise_expr(eq_op<T>(), a, B);
+		return ewise(eq_op<T>(), a, B);
 	}
 
 	// ne
@@ -53,7 +53,7 @@ namespace lmat
 	inline binary_ewise_expr<ne_op<T>, LMat, RMat>
 	operator != (const IMatrixXpr<LMat, T>& A, const IMatrixXpr<RMat, T>& B)
 	{
-		return ewise_expr(ne_op<T>(), A, B);
+		return ewise(ne_op<T>(), A, B);
 	}
 
 	template<typename T, class LMat>
@@ -62,7 +62,7 @@ namespace lmat
 	operator !=(const IMatrixXpr<LMat, T>& A, const T& b)
 	{
 		typedef typename const_mat_same_form<LMat>::type cst_t;
-		return ewise_expr(ne_op<T>(), A, b);
+		return ewise(ne_op<T>(), A, b);
 	}
 
 	template<typename T, class RMat>
@@ -71,7 +71,7 @@ namespace lmat
 	operator != (const T& a, const IMatrixXpr<RMat, T>& B)
 	{
 		typedef typename const_mat_same_form<RMat>::type cst_t;
-		return ewise_expr(ne_op<T>(), a, B);
+		return ewise(ne_op<T>(), a, B);
 	}
 
 
@@ -82,7 +82,7 @@ namespace lmat
 	inline binary_ewise_expr<le_op<T>, LMat, RMat>
 	operator <= (const IMatrixXpr<LMat, T>& A, const IMatrixXpr<RMat, T>& B)
 	{
-		return ewise_expr(le_op<T>(), A, B);
+		return ewise(le_op<T>(), A, B);
 	}
 
 	template<typename T, class LMat>
@@ -91,7 +91,7 @@ namespace lmat
 	operator <=(const IMatrixXpr<LMat, T>& A, const T& b)
 	{
 		typedef typename const_mat_same_form<LMat>::type cst_t;
-		return ewise_expr(le_op<T>(), A, b);
+		return ewise(le_op<T>(), A, b);
 	}
 
 	template<typename T, class RMat>
@@ -100,7 +100,7 @@ namespace lmat
 	operator <= (const T& a, const IMatrixXpr<RMat, T>& B)
 	{
 		typedef typename const_mat_same_form<RMat>::type cst_t;
-		return ewise_expr(le_op<T>(), a, B);
+		return ewise(le_op<T>(), a, B);
 	}
 
 	// lt
@@ -110,7 +110,7 @@ namespace lmat
 	inline binary_ewise_expr<lt_op<T>, LMat, RMat>
 	operator < (const IMatrixXpr<LMat, T>& A, const IMatrixXpr<RMat, T>& B)
 	{
-		return ewise_expr(lt_op<T>(), A, B);
+		return ewise(lt_op<T>(), A, B);
 	}
 
 	template<typename T, class LMat>
@@ -119,7 +119,7 @@ namespace lmat
 	operator < (const IMatrixXpr<LMat, T>& A, const T& b)
 	{
 		typedef typename const_mat_same_form<LMat>::type cst_t;
-		return ewise_expr(lt_op<T>(), A, b);
+		return ewise(lt_op<T>(), A, b);
 	}
 
 	template<typename T, class RMat>
@@ -128,7 +128,7 @@ namespace lmat
 	operator < (const T& a, const IMatrixXpr<RMat, T>& B)
 	{
 		typedef typename const_mat_same_form<RMat>::type cst_t;
-		return ewise_expr(lt_op<T>(), a, B);
+		return ewise(lt_op<T>(), a, B);
 	}
 
 
@@ -140,7 +140,7 @@ namespace lmat
 	inline binary_ewise_expr<ge_op<T>, LMat, RMat>
 	operator >= (const IMatrixXpr<LMat, T>& A, const IMatrixXpr<RMat, T>& B)
 	{
-		return ewise_expr(ge_op<T>(), A, B);
+		return ewise(ge_op<T>(), A, B);
 	}
 
 	template<typename T, class LMat>
@@ -149,7 +149,7 @@ namespace lmat
 	operator >=(const IMatrixXpr<LMat, T>& A, const T& b)
 	{
 		typedef typename const_mat_same_form<LMat>::type cst_t;
-		return ewise_expr(ge_op<T>(), A, b);
+		return ewise(ge_op<T>(), A, b);
 	}
 
 	template<typename T, class RMat>
@@ -158,7 +158,7 @@ namespace lmat
 	operator >= (const T& a, const IMatrixXpr<RMat, T>& B)
 	{
 		typedef typename const_mat_same_form<RMat>::type cst_t;
-		return ewise_expr(ge_op<T>(), a, B);
+		return ewise(ge_op<T>(), a, B);
 	}
 
 	// gt
@@ -168,7 +168,7 @@ namespace lmat
 	inline binary_ewise_expr<gt_op<T>, LMat, RMat>
 	operator > (const IMatrixXpr<LMat, T>& A, const IMatrixXpr<RMat, T>& B)
 	{
-		return ewise_expr(gt_op<T>(), A, B);
+		return ewise(gt_op<T>(), A, B);
 	}
 
 	template<typename T, class LMat>
@@ -177,7 +177,7 @@ namespace lmat
 	operator >(const IMatrixXpr<LMat, T>& A, const T& b)
 	{
 		typedef typename const_mat_same_form<LMat>::type cst_t;
-		return ewise_expr(gt_op<T>(), A, b);
+		return ewise(gt_op<T>(), A, b);
 	}
 
 	template<typename T, class RMat>
@@ -186,7 +186,7 @@ namespace lmat
 	operator > (const T& a, const IMatrixXpr<RMat, T>& B)
 	{
 		typedef typename const_mat_same_form<RMat>::type cst_t;
-		return ewise_expr(gt_op<T>(), a, B);
+		return ewise(gt_op<T>(), a, B);
 	}
 }
 

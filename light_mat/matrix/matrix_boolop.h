@@ -25,7 +25,7 @@ namespace lmat
 	inline unary_ewise_expr<not_op, Mat>
 	operator ! (const IMatrixXpr<Mat, bool>& A)
 	{
-		return ewise_expr(not_op(), A);
+		return ewise(not_op(), A);
 	}
 
 	// and
@@ -35,7 +35,7 @@ namespace lmat
 	inline binary_ewise_expr<and_op, LMat, RMat>
 	operator && (const IMatrixXpr<LMat, bool>& A, const IMatrixXpr<RMat, bool>& B)
 	{
-		return ewise_expr(and_op(), A, B);
+		return ewise(and_op(), A, B);
 	}
 
 	// or
@@ -45,7 +45,7 @@ namespace lmat
 	inline binary_ewise_expr<or_op, LMat, RMat>
 	operator || (const IMatrixXpr<LMat, bool>& A, const IMatrixXpr<RMat, bool>& B)
 	{
-		return ewise_expr(or_op(), A, B);
+		return ewise(or_op(), A, B);
 	}
 
 }
