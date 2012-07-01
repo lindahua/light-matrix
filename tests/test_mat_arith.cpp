@@ -1,7 +1,7 @@
 /**
  * @file test_mat_arith.cpp
  *
- * Unit testing for Matrix arithmetics
+ * Unit testing for Basic matrix arithmetics
  *
  * @author Dahua Lin
  */
@@ -684,6 +684,204 @@ MN_CASE( mat_arith, div_ip )
 }
 
 
+MN_CASE( mat_arith, neg )
+{
+	typedef dense_matrix<double, M, N> mat_t;
+
+	const index_t m = M == 0 ? default_m : M;
+	const index_t n = N == 0 ? default_n : N;
+
+	mat_t A(m, n);
+	for (index_t i = 0; i < m * n; ++i) A[i] = double((i+1) * (i % 3 - 1));
+
+	// type verification
+
+#ifdef LMAT_HAS_DECLTYPE
+	typedef unary_ewise_expr<neg_op<double>, mat_t> R_t;
+	static_assert(is_same<decltype(-A), R_t>::value, "Expression type verification failed.");
+#endif
+
+	// prepare ground-truth
+
+	mat_t R_r(m, n);
+	for (index_t i = 0; i < m * n; ++i) R_r[i] = -A[i];
+
+	// default evaluation
+
+	mat_t R = -A;
+	ASSERT_TRUE( is_equal(R, R_r) );
+
+	// by-scalars evaluation
+
+	mat_t R_s(m, n, fill_value(0.0));
+	evaluate_by_scalars(-A, R_s);
+	ASSERT_TRUE( is_equal(R_s, R_r) );
+}
+
+
+MN_CASE( mat_arith, neg_ex )
+{
+	typedef dense_matrix<double, M, N> mat_t;
+	typedef ref_matrix_ex<double, M, N> mat_ex_t;
+
+	const index_t m = M == 0 ? default_m : M;
+	const index_t n = N == 0 ? default_n : N;
+
+	scoped_array<double> sa(LDim * n);
+	for (index_t i = 0; i < LDim * n; ++i) sa[i] = double((i+1) * (i % 3 - 1));
+	mat_ex_t A(sa.ptr_begin(), m, n, LDim);
+
+	// prepare ground-truth
+
+	mat_t R_r(m, n);
+	for (index_t j = 0; j < n; ++j)
+		for (index_t i = 0; i < m; ++i) R_r(i,j) = -A(i,j);
+
+	// default evaluation
+
+	mat_t R = -A;
+	ASSERT_TRUE( is_equal(R, R_r) );
+
+	// by-scalars evaluation
+
+	mat_t R_s(m, n, fill_value(0.0));
+	evaluate_by_scalars(-A, R_s);
+	ASSERT_TRUE( is_equal(R_s, R_r) );
+}
+
+
+MN_CASE( mat_arith, abs )
+{
+	typedef dense_matrix<double, M, N> mat_t;
+
+	const index_t m = M == 0 ? default_m : M;
+	const index_t n = N == 0 ? default_n : N;
+
+	mat_t A(m, n);
+	for (index_t i = 0; i < m * n; ++i) A[i] = double((i+1) * (i % 3 - 1));
+
+	// type verification
+
+#ifdef LMAT_HAS_DECLTYPE
+	typedef unary_ewise_expr<neg_op<double>, mat_t> R_t;
+	static_assert(is_same<decltype(-A), R_t>::value, "Expression type verification failed.");
+#endif
+
+	// prepare ground-truth
+
+	mat_t R_r(m, n);
+	for (index_t i = 0; i < m * n; ++i) R_r[i] = std::abs(A[i]);
+
+	// default evaluation
+
+	mat_t R = abs(A);
+	ASSERT_TRUE( is_equal(R, R_r) );
+
+	// by-scalars evaluation
+
+	mat_t R_s(m, n, fill_value(0.0));
+	evaluate_by_scalars(abs(A), R_s);
+	ASSERT_TRUE( is_equal(R_s, R_r) );
+}
+
+
+MN_CASE( mat_arith, abs_ex )
+{
+	typedef dense_matrix<double, M, N> mat_t;
+	typedef ref_matrix_ex<double, M, N> mat_ex_t;
+
+	const index_t m = M == 0 ? default_m : M;
+	const index_t n = N == 0 ? default_n : N;
+
+	scoped_array<double> sa(LDim * n);
+	for (index_t i = 0; i < LDim * n; ++i) sa[i] = double((i+1) * (i % 3 - 1));
+	mat_ex_t A(sa.ptr_begin(), m, n, LDim);
+
+	// prepare ground-truth
+
+	mat_t R_r(m, n);
+	for (index_t j = 0; j < n; ++j)
+		for (index_t i = 0; i < m; ++i) R_r(i,j) = std::abs(A(i,j));
+
+	// default evaluation
+
+	mat_t R = abs(A);
+	ASSERT_TRUE( is_equal(R, R_r) );
+
+	// by-scalars evaluation
+
+	mat_t R_s(m, n, fill_value(0.0));
+	evaluate_by_scalars(abs(A), R_s);
+	ASSERT_TRUE( is_equal(R_s, R_r) );
+}
+
+
+MN_CASE( mat_arith, sqr )
+{
+	typedef dense_matrix<double, M, N> mat_t;
+
+	const index_t m = M == 0 ? default_m : M;
+	const index_t n = N == 0 ? default_n : N;
+
+	mat_t A(m, n);
+	for (index_t i = 0; i < m * n; ++i) A[i] = double((i+1) * (i % 3 - 1));
+
+	// type verification
+
+#ifdef LMAT_HAS_DECLTYPE
+	typedef unary_ewise_expr<neg_op<double>, mat_t> R_t;
+	static_assert(is_same<decltype(-A), R_t>::value, "Expression type verification failed.");
+#endif
+
+	// prepare ground-truth
+
+	mat_t R_r(m, n);
+	for (index_t i = 0; i < m * n; ++i) R_r[i] = A[i] * A[i];
+
+	// default evaluation
+
+	mat_t R = sqr(A);
+	ASSERT_TRUE( is_equal(R, R_r) );
+
+	// by-scalars evaluation
+
+	mat_t R_s(m, n, fill_value(0.0));
+	evaluate_by_scalars(sqr(A), R_s);
+	ASSERT_TRUE( is_equal(R_s, R_r) );
+}
+
+
+MN_CASE( mat_arith, sqr_ex )
+{
+	typedef dense_matrix<double, M, N> mat_t;
+	typedef ref_matrix_ex<double, M, N> mat_ex_t;
+
+	const index_t m = M == 0 ? default_m : M;
+	const index_t n = N == 0 ? default_n : N;
+
+	scoped_array<double> sa(LDim * n);
+	for (index_t i = 0; i < LDim * n; ++i) sa[i] = double((i+1) * (i % 3 - 1));
+	mat_ex_t A(sa.ptr_begin(), m, n, LDim);
+
+	// prepare ground-truth
+
+	mat_t R_r(m, n);
+	for (index_t j = 0; j < n; ++j)
+		for (index_t i = 0; i < m; ++i) R_r(i,j) = A(i,j) * A(i,j);
+
+	// default evaluation
+
+	mat_t R = sqr(A);
+	ASSERT_TRUE( is_equal(R, R_r) );
+
+	// by-scalars evaluation
+
+	mat_t R_s(m, n, fill_value(0.0));
+	evaluate_by_scalars(sqr(A), R_s);
+	ASSERT_TRUE( is_equal(R_s, R_r) );
+}
+
+
 
 BEGIN_TPACK( mat_arith_add )
 	ADD_MN_CASE( mat_arith, add, 0, 0 )
@@ -830,6 +1028,79 @@ BEGIN_TPACK( mat_arith_div_ip )
 	ADD_MN_CASE( mat_arith, div_ip, default_m, default_n )
 END_TPACK
 
+BEGIN_TPACK( mat_arith_neg )
+	ADD_MN_CASE( mat_arith, neg, 0, 0 )
+	ADD_MN_CASE( mat_arith, neg, 0, 1 )
+	ADD_MN_CASE( mat_arith, neg, 0, default_n )
+	ADD_MN_CASE( mat_arith, neg, 1, 0 )
+	ADD_MN_CASE( mat_arith, neg, 1, 1 )
+	ADD_MN_CASE( mat_arith, neg, 1, default_n )
+	ADD_MN_CASE( mat_arith, neg, default_m, 0 )
+	ADD_MN_CASE( mat_arith, neg, default_m, 1 )
+	ADD_MN_CASE( mat_arith, neg, default_m, default_n )
+END_TPACK
+
+BEGIN_TPACK( mat_arith_neg_ex )
+	ADD_MN_CASE( mat_arith, neg_ex, 0, 0 )
+	ADD_MN_CASE( mat_arith, neg_ex, 0, 1 )
+	ADD_MN_CASE( mat_arith, neg_ex, 0, default_n )
+	ADD_MN_CASE( mat_arith, neg_ex, 1, 0 )
+	ADD_MN_CASE( mat_arith, neg_ex, 1, 1 )
+	ADD_MN_CASE( mat_arith, neg_ex, 1, default_n )
+	ADD_MN_CASE( mat_arith, neg_ex, default_m, 0 )
+	ADD_MN_CASE( mat_arith, neg_ex, default_m, 1 )
+	ADD_MN_CASE( mat_arith, neg_ex, default_m, default_n )
+END_TPACK
+
+BEGIN_TPACK( mat_arith_abs )
+	ADD_MN_CASE( mat_arith, abs, 0, 0 )
+	ADD_MN_CASE( mat_arith, abs, 0, 1 )
+	ADD_MN_CASE( mat_arith, abs, 0, default_n )
+	ADD_MN_CASE( mat_arith, abs, 1, 0 )
+	ADD_MN_CASE( mat_arith, abs, 1, 1 )
+	ADD_MN_CASE( mat_arith, abs, 1, default_n )
+	ADD_MN_CASE( mat_arith, abs, default_m, 0 )
+	ADD_MN_CASE( mat_arith, abs, default_m, 1 )
+	ADD_MN_CASE( mat_arith, abs, default_m, default_n )
+END_TPACK
+
+BEGIN_TPACK( mat_arith_abs_ex )
+	ADD_MN_CASE( mat_arith, abs_ex, 0, 0 )
+	ADD_MN_CASE( mat_arith, abs_ex, 0, 1 )
+	ADD_MN_CASE( mat_arith, abs_ex, 0, default_n )
+	ADD_MN_CASE( mat_arith, abs_ex, 1, 0 )
+	ADD_MN_CASE( mat_arith, abs_ex, 1, 1 )
+	ADD_MN_CASE( mat_arith, abs_ex, 1, default_n )
+	ADD_MN_CASE( mat_arith, abs_ex, default_m, 0 )
+	ADD_MN_CASE( mat_arith, abs_ex, default_m, 1 )
+	ADD_MN_CASE( mat_arith, abs_ex, default_m, default_n )
+END_TPACK
+
+BEGIN_TPACK( mat_arith_sqr )
+	ADD_MN_CASE( mat_arith, sqr, 0, 0 )
+	ADD_MN_CASE( mat_arith, sqr, 0, 1 )
+	ADD_MN_CASE( mat_arith, sqr, 0, default_n )
+	ADD_MN_CASE( mat_arith, sqr, 1, 0 )
+	ADD_MN_CASE( mat_arith, sqr, 1, 1 )
+	ADD_MN_CASE( mat_arith, sqr, 1, default_n )
+	ADD_MN_CASE( mat_arith, sqr, default_m, 0 )
+	ADD_MN_CASE( mat_arith, sqr, default_m, 1 )
+	ADD_MN_CASE( mat_arith, sqr, default_m, default_n )
+END_TPACK
+
+BEGIN_TPACK( mat_arith_sqr_ex )
+	ADD_MN_CASE( mat_arith, sqr_ex, 0, 0 )
+	ADD_MN_CASE( mat_arith, sqr_ex, 0, 1 )
+	ADD_MN_CASE( mat_arith, sqr_ex, 0, default_n )
+	ADD_MN_CASE( mat_arith, sqr_ex, 1, 0 )
+	ADD_MN_CASE( mat_arith, sqr_ex, 1, 1 )
+	ADD_MN_CASE( mat_arith, sqr_ex, 1, default_n )
+	ADD_MN_CASE( mat_arith, sqr_ex, default_m, 0 )
+	ADD_MN_CASE( mat_arith, sqr_ex, default_m, 1 )
+	ADD_MN_CASE( mat_arith, sqr_ex, default_m, default_n )
+END_TPACK
+
+
 
 BEGIN_MAIN_SUITE
 	ADD_TPACK( mat_arith_add )
@@ -847,6 +1118,15 @@ BEGIN_MAIN_SUITE
 	ADD_TPACK( mat_arith_div )
 	ADD_TPACK( mat_arith_div_ex )
 	ADD_TPACK( mat_arith_div_ip )
+
+	ADD_TPACK( mat_arith_neg )
+	ADD_TPACK( mat_arith_neg_ex )
+
+	ADD_TPACK( mat_arith_abs )
+	ADD_TPACK( mat_arith_abs_ex )
+
+	ADD_TPACK( mat_arith_sqr )
+	ADD_TPACK( mat_arith_sqr_ex )
 END_MAIN_SUITE
 
 

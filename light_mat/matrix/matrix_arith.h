@@ -18,6 +18,12 @@
 
 namespace lmat
 {
+	/********************************************
+	 *
+	 *  Add, Sub, Mul, and Div
+	 *
+	 ********************************************/
+
 	// Addition
 
 	template<typename T, class LMat, class RMat>
@@ -194,6 +200,37 @@ namespace lmat
 	{
 		A.derived() = A.derived() / b;
 		return A.derived();
+	}
+
+
+	/********************************************
+	 *
+	 *  Other arithmetic functions
+	 *
+	 ********************************************/
+
+	template<typename T, class Mat>
+	LMAT_ENSURE_INLINE
+	inline unary_ewise_expr<neg_op<T>, Mat>
+	operator - (const IMatrixXpr<Mat, T>& A)
+	{
+		return ewise_expr(neg_op<T>(), A);
+	}
+
+	template<typename T, class Mat>
+	LMAT_ENSURE_INLINE
+	inline unary_ewise_expr<abs_op<T>, Mat>
+	abs(const IMatrixXpr<Mat, T>& A)
+	{
+		return ewise_expr(abs_op<T>(), A);
+	}
+
+	template<typename T, class Mat>
+	LMAT_ENSURE_INLINE
+	inline unary_ewise_expr<sqr_op<T>, Mat>
+	sqr(const IMatrixXpr<Mat, T>& A)
+	{
+		return ewise_expr(sqr_op<T>(), A);
 	}
 
 
