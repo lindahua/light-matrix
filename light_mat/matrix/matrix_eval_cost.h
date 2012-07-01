@@ -14,6 +14,7 @@
 #define LIGHTMAT_MATRIX_EVAL_COST_H_
 
 #include <light_mat/matrix/matrix_properties.h>
+#include <light_mat/matrix/const_matrix.h>
 
 namespace lmat
 {
@@ -111,6 +112,21 @@ namespace lmat
 		{
 			return internal_t::of(expr);
 		}
+	};
+
+
+	template<typename T, int M, int N>
+	struct linear_eval_cost<const_matrix<T, M, N> >
+	{
+		LMAT_ENSURE_INLINE
+		static int of(const const_matrix<T, M, N>& ) { return 0; }
+	};
+
+	template<typename T, int M, int N>
+	struct percol_eval_cost<const_matrix<T, M, N> >
+	{
+		LMAT_ENSURE_INLINE
+		static int of(const const_matrix<T, M, N>& ) { return 0; }
 	};
 
 }

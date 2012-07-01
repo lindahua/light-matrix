@@ -87,13 +87,13 @@ namespace lmat
 		if (is_column(expr))
 		{
 			detail::coleval_internal<T,
-				binary_ct_rows<SExpr, DMat>::value>::evaluate(expr, dst);
+				binary_ct_rows<SExpr, DMat>::value>::evaluate(expr.derived(), dst.derived());
 		}
 		else
 		{
 			detail::mateval_internal<T,
 				binary_ct_rows<SExpr, DMat>::value,
-				binary_ct_cols<SExpr, DMat>::value>::evaluate(expr, dst);
+				binary_ct_cols<SExpr, DMat>::value>::evaluate(expr.derived(), dst.derived());
 		}
 	}
 

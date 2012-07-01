@@ -14,6 +14,7 @@
 #define LIGHTMAT_MATRIX_VEC_EVALUATORS_H_
 
 #include <light_mat/matrix/dense_matrix.h>
+#include <light_mat/matrix/const_matrix.h>
 #include <light_mat/matrix/vec_evaluator_concepts.h>
 
 namespace lmat
@@ -31,6 +32,7 @@ namespace lmat
 	public:
 
 		template<class Mat>
+		LMAT_ENSURE_INLINE
 		continuous_linear_evaluator(const IDenseMatrix<Mat, T>& X)
 		{
 #ifdef LMAT_USE_STATIC_ASSERT
@@ -40,7 +42,7 @@ namespace lmat
 			m_data = X.ptr_data();
 		}
 
-		T get_value(const index_t i) const
+		LMAT_ENSURE_INLINE T get_value(const index_t i) const
 		{
 			return m_data[i];
 		}
@@ -55,18 +57,19 @@ namespace lmat
 	{
 	public:
 		template<class Mat>
+		LMAT_ENSURE_INLINE
 		dense_percol_evaluator(const IDenseMatrix<Mat, T>& X)
 		{
 			m_ldim = X.lead_dim();
 			m_data = X.ptr_data();
 		}
 
-		T get_value(const index_t i) const
+		LMAT_ENSURE_INLINE T get_value(const index_t i) const
 		{
 			return m_data[i];
 		}
 
-		void next_column()
+		LMAT_ENSURE_INLINE void next_column()
 		{
 			m_data += m_ldim;
 		}
@@ -77,17 +80,65 @@ namespace lmat
 
 
 	template<typename T>
+	class const_linear_evaluator
+	: public ILinearVectorEvaluator<continuous_linear_evaluator<T>, T>
+	{
+	public:
+		template<int CTRows, int CTCols>
+		LMAT_ENSURE_INLINE
+		const_linear_evaluator(const const_matrix<Mat, CTRows, CTCols>& X)
+		{
+			m_val = X.value();
+		}
+
+		LMAT_ENSURE_INLINE T get_value(const index_t i) const
+		{
+			return m_val;
+		}
+
+	private:
+		const T m_val;
+	};
+
+
+	template<typename T>
+	class const_percol_evaluator
+	: public IPerColVectorEvaluator<continuous_linear_evaluator<T>, T>
+	{
+	public:
+		template<int CTRows, int CTCols>
+		LMAT_ENSURE_INLINE
+		const_percol_evaluator(const const_matrix<Mat, CTRows, CTCols>& X)
+		{
+			m_val = X.value();
+		}
+
+		LMAT_ENSURE_INLINE T get_value(const index_t i) const
+		{
+			return m_val;
+		}
+
+		LMAT_ENSURE_INLINE void next_column() { }
+
+	private:
+		const T m_val;
+	};
+
+
+
+	template<typename T>
 	class cached_linear_evaluator
 	: public ILinearVectorEvaluator<cached_linear_evaluator<T>, T>
 	{
 	public:
 		template<class Expr>
+		LMAT_ENSURE_INLINE
 		cached_linear_evaluator(const IMatrixExpr<Expr, T>& X)
 		: m_cache(X), m_data(m_cache.ptr_data())
 		{
 		}
 
-		T get_value(const index_t i) const
+		LMAT_ENSURE_INLINE T get_value(const index_t i) const
 		{
 			return m_data[i];
 		}
@@ -103,17 +154,18 @@ namespace lmat
 	{
 	public:
 		template<class Expr>
+		LMAT_ENSURE_INLINE
 		cached_percol_evaluator(const IMatrixExpr<Expr, T>& X)
 		: m_cache(X), m_ldim(m_cache.lead_dim()), m_data(m_cache.ptr_data())
 		{
 		}
 
-		T get_value(const index_t i) const
+		LMAT_ENSURE_INLINE T get_value(const index_t i) const
 		{
 			return m_data[i];
 		}
 
-		void next_column()
+		LMAT_ENSURE_INLINE void next_column()
 		{
 			m_data += m_ldim;
 		}
