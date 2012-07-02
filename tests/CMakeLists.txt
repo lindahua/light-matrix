@@ -167,6 +167,7 @@ set(REP_VECS_HS
     ${INC}/matrix/repeat_vecs_veval.h)
     
 add_executable(test_rep_vecs ${REP_VECS_HS} test_rep_vecs.cpp)
+add_executable(test_rep_veval ${REP_VECS_HS} test_rep_veval.cpp)
 
 # Link to test_main
 
@@ -197,6 +198,7 @@ target_link_libraries(test_mat_ecomp test_main)
 target_link_libraries(test_mat_ebool test_main)
 
 target_link_libraries(test_rep_vecs test_main)
+target_link_libraries(test_rep_veval test_main)
     
 # Set output directories
 
@@ -219,7 +221,8 @@ set(ALL_EXECUTABLES
     test_mat_emath
     test_mat_ecomp
     test_mat_ebool
-    test_rep_vecs)
+    test_rep_vecs
+    test_rep_veval)
     
 set_target_properties(${ALL_EXECUTABLES}
     PROPERTIES
@@ -255,5 +258,5 @@ add_test(NAME mat_ecomp COMMAND test_mat_ecomp)
 add_test(NAME mat_ebool COMMAND test_mat_ebool)
 
 add_test(NAME rep_vecs COMMAND test_rep_vecs)
-
+add_test(NAME rep_veval COMMAND test_rep_veval)
 
