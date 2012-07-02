@@ -36,6 +36,9 @@ namespace lmat { namespace detail {
 
 		LMAT_ENSURE_INLINE
 		T operator[] (const index_t j) const { return m_col[j]; }
+
+		LMAT_ENSURE_INLINE
+		const col_t& ref() const { return m_col; }
 	};
 
 	template<class Col>
@@ -57,6 +60,9 @@ namespace lmat { namespace detail {
 
 		LMAT_ENSURE_INLINE
 		T operator[] (const index_t j) const { return m_col[j]; }
+
+		LMAT_ENSURE_INLINE
+		const col_t& ref() const { return m_col; }
 	};
 
 	template<class Row>

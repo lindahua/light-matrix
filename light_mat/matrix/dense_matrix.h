@@ -393,6 +393,14 @@ namespace lmat
 				expr.derived());
 	}
 
+	template<typename T, class Expr>
+	LMAT_ENSURE_INLINE
+	T to_scalar(const IMatrixXpr<Expr, T>& expr)
+	{
+		dense_matrix<T,1,1> r(expr);
+		return r[0];
+	}
+
 
 	/********************************************
 	 *
