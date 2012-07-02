@@ -162,7 +162,9 @@ add_executable(test_mat_ebool ${EWISE_MAT_EVAL_HS} test_mat_ebool.cpp)
 
 set(REP_VECS_HS
     ${MATRIX_HS}
-    ${INC}/matrix/repeat_vecs.h)
+    ${INC}/matrix/bits/repeat_vecs_internal.h
+    ${INC}/matrix/repeat_vecs.h
+    ${INC}/matrix/repeat_vecs_veval.h)
     
 add_executable(test_rep_vecs ${REP_VECS_HS} test_rep_vecs.cpp)
 
