@@ -13,15 +13,15 @@
 #ifndef LIGHTMAT_MATRIX_EVAL_H_
 #define LIGHTMAT_MATRIX_EVAL_H_
 
-#include <matrix/matrix_classes.h>
+#include <light_mat/matrix/matrix_classes.h>
 
-#include <matrix/matrix_ewise_eval.h>
-#include <matrix/matrix_arith.h>
-#include <matrix/matrix_emath.h>
-#include <matrix/matrix_ecomp.h>
-#include <matrix/matrix_boolop.h>
+#include <light_mat/matrix/matrix_ewise_eval.h>
+#include <light_mat/matrix/matrix_arith.h>
+#include <light_mat/matrix/matrix_emath.h>
+#include <light_mat/matrix/matrix_ecomp.h>
+#include <light_mat/matrix/matrix_boolop.h>
 
-#include <matrix/repeat_vecs_veval.h>
+#include <light_mat/matrix/repeat_vecs_veval.h>
 
 
 #endif

@@ -181,6 +181,8 @@ set(REP_VECS_HS
 add_executable(test_rep_vecs ${REP_VECS_HS} test_rep_vecs.cpp)
 add_executable(test_rep_veval ${REP_VECS_HS} test_rep_veval.cpp)
 
+add_executable(test_cpd_ewise ${MATRIX_EVAL_HS} test_cpd_ewise.cpp)
+
 # Link to test_main
 
 target_link_libraries(test_arrays test_main)
@@ -211,6 +213,8 @@ target_link_libraries(test_mat_ebool test_main)
 
 target_link_libraries(test_rep_vecs test_main)
 target_link_libraries(test_rep_veval test_main)
+
+target_link_libraries(test_cpd_ewise test_main)
     
 # Set output directories
 
@@ -234,7 +238,8 @@ set(ALL_EXECUTABLES
     test_mat_ecomp
     test_mat_ebool
     test_rep_vecs
-    test_rep_veval)
+    test_rep_veval
+    test_cpd_ewise)
     
 set_target_properties(${ALL_EXECUTABLES}
     PROPERTIES
@@ -271,4 +276,7 @@ add_test(NAME mat_ebool COMMAND test_mat_ebool)
 
 add_test(NAME rep_vecs COMMAND test_rep_vecs)
 add_test(NAME rep_veval COMMAND test_rep_veval)
+
+add_test(NAME cpd_ewise COMMAND test_cpd_ewise)
+
 
