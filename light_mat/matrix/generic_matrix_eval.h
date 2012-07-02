@@ -10,8 +10,8 @@
 #pragma once
 #endif
 
-#ifndef LIGHTMAT_MATRIX_EVAL_H_
-#define LIGHTMAT_MATRIX_EVAL_H_
+#ifndef LIGHTMAT_GENERIC_MATRIX_EVAL_H_
+#define LIGHTMAT_GENERIC_MATRIX_EVAL_H_
 
 #include <light_mat/matrix/matrix_vec_evaluators.h>
 #include <light_mat/matrix/matrix_eval_cost.h>

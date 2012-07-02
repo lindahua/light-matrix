@@ -9,7 +9,7 @@
 #include "test_base.h"
 
 #include <light_mat/matrix/matrix_classes.h>
-#include <light_mat/matrix/matrix_eval.h>
+#include <light_mat/matrix/generic_matrix_eval.h>
 
 using namespace lmat;
 using namespace lmat::test;

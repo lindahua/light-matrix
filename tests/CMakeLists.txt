@@ -81,7 +81,7 @@ set(MATRIX_EVAL_BASE_HS
     ${INC}/matrix/vec_evaluator_concepts.h
     ${INC}/matrix/matrix_vec_evaluators.h
     ${INC}/matrix/matrix_eval_cost.h
-    ${INC}/matrix/matrix_eval.h)   
+    ${INC}/matrix/generic_matrix_eval.h)   
     
 set(MATRIX_EWISE_HS
     ${INC}/math/arith_functors.h
