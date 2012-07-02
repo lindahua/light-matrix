@@ -91,7 +91,12 @@ set(MATRIX_EWISE_HS
     ${INC}/matrix/matrix_arith.h
     ${INC}/matrix/matrix_emath.h
     ${INC}/matrix/matrix_ecomp.h
-    ${INC}/matrix/matrix_boolop.h)     
+    ${INC}/matrix/matrix_boolop.h)
+    
+set(REPEAT_VECS_HS
+    ${INC}/matrix/bits/repeat_vecs_internal.h
+    ${INC}/matrix/repeat_vecs.h
+    ${INC}/matrix/repeat_vecs_veval.h)     
     
 set(CORE_HS
     ${COMMON_BASIC_HS}
@@ -101,6 +106,14 @@ set(MATRIX_HS
     ${CORE_HS}
     ${MATRIX_BASE_HS}
     ${MATRIX_CLASS_HS})   
+    
+set(MATRIX_EVAL_HS
+    ${CORE_HS}
+    ${MATRIX_BASE_HS}
+    ${MATRIX_CLASS_HS}
+    ${MATRIX_EVAL_BASE_HS}
+    ${MATRIX_EWISE_HS}
+    ${REPEAT_VECS_HS})    
  
 
 # Executables
@@ -162,9 +175,8 @@ add_executable(test_mat_ebool ${EWISE_MAT_EVAL_HS} test_mat_ebool.cpp)
 
 set(REP_VECS_HS
     ${MATRIX_HS}
-    ${INC}/matrix/bits/repeat_vecs_internal.h
-    ${INC}/matrix/repeat_vecs.h
-    ${INC}/matrix/repeat_vecs_veval.h)
+    ${MATRIX_EVAL_BASE_HS}
+    ${REPEAT_VECS_HS})
     
 add_executable(test_rep_vecs ${REP_VECS_HS} test_rep_vecs.cpp)
 add_executable(test_rep_veval ${REP_VECS_HS} test_rep_veval.cpp)

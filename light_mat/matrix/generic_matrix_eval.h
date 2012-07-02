@@ -106,4 +106,4 @@ namespace lmat
 
 }
 
-#endif /* MATRIX_EVAL_H_ */
+#endif
