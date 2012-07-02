@@ -138,51 +138,19 @@ MN_CASE( percol_veval, reprow_percol )
 
 
 BEGIN_TPACK( repcol_linear_eval )
-	ADD_MN_CASE( linear_veval, repcol_linear, 0, 0 )
-	ADD_MN_CASE( linear_veval, repcol_linear, 0, 1 )
-	ADD_MN_CASE( linear_veval, repcol_linear, 0, 6 )
-	ADD_MN_CASE( linear_veval, repcol_linear, 1, 0 )
-	ADD_MN_CASE( linear_veval, repcol_linear, 1, 1 )
-	ADD_MN_CASE( linear_veval, repcol_linear, 1, 6 )
-	ADD_MN_CASE( linear_veval, repcol_linear, 5, 0 )
-	ADD_MN_CASE( linear_veval, repcol_linear, 5, 1 )
-	ADD_MN_CASE( linear_veval, repcol_linear, 5, 6 )
+	ADD_MN_CASE_3X3( linear_veval, repcol_linear, 5, 6 )
 END_TPACK
 
 BEGIN_TPACK( repcol_percol_eval )
-	ADD_MN_CASE( percol_veval, repcol_percol, 0, 0 )
-	ADD_MN_CASE( percol_veval, repcol_percol, 0, 1 )
-	ADD_MN_CASE( percol_veval, repcol_percol, 0, 6 )
-	ADD_MN_CASE( percol_veval, repcol_percol, 1, 0 )
-	ADD_MN_CASE( percol_veval, repcol_percol, 1, 1 )
-	ADD_MN_CASE( percol_veval, repcol_percol, 1, 6 )
-	ADD_MN_CASE( percol_veval, repcol_percol, 5, 0 )
-	ADD_MN_CASE( percol_veval, repcol_percol, 5, 1 )
-	ADD_MN_CASE( percol_veval, repcol_percol, 5, 6 )
+	ADD_MN_CASE_3X3( percol_veval, repcol_percol, 5, 6 )
 END_TPACK
 
 BEGIN_TPACK( reprow_linear_eval )
-	ADD_MN_CASE( linear_veval, reprow_linear, 0, 0 )
-	ADD_MN_CASE( linear_veval, reprow_linear, 0, 1 )
-	ADD_MN_CASE( linear_veval, reprow_linear, 0, 6 )
-	ADD_MN_CASE( linear_veval, reprow_linear, 1, 0 )
-	ADD_MN_CASE( linear_veval, reprow_linear, 1, 1 )
-	ADD_MN_CASE( linear_veval, reprow_linear, 1, 6 )
-	ADD_MN_CASE( linear_veval, reprow_linear, 5, 0 )
-	ADD_MN_CASE( linear_veval, reprow_linear, 5, 1 )
-	ADD_MN_CASE( linear_veval, reprow_linear, 5, 6 )
+	ADD_MN_CASE_3X3( linear_veval, reprow_linear, 5, 6 )
 END_TPACK
 
 BEGIN_TPACK( reprow_percol_eval )
-	ADD_MN_CASE( percol_veval, reprow_percol, 0, 0 )
-	ADD_MN_CASE( percol_veval, reprow_percol, 0, 1 )
-	ADD_MN_CASE( percol_veval, reprow_percol, 0, 6 )
-	ADD_MN_CASE( percol_veval, reprow_percol, 1, 0 )
-	ADD_MN_CASE( percol_veval, reprow_percol, 1, 1 )
-	ADD_MN_CASE( percol_veval, reprow_percol, 1, 6 )
-	ADD_MN_CASE( percol_veval, reprow_percol, 5, 0 )
-	ADD_MN_CASE( percol_veval, reprow_percol, 5, 1 )
-	ADD_MN_CASE( percol_veval, reprow_percol, 5, 6 )
+	ADD_MN_CASE_3X3( percol_veval, reprow_percol, 5, 6 )
 END_TPACK
 
 

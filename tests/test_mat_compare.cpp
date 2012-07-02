@@ -112,51 +112,19 @@ MN_CASE( mat_approx, approx_ex )
 
 
 BEGIN_TPACK( mat_equal )
-	ADD_MN_CASE( mat_equal, equal, 0, 0 );
-	ADD_MN_CASE( mat_equal, equal, 0, 1 );
-	ADD_MN_CASE( mat_equal, equal, 0, 6 );
-	ADD_MN_CASE( mat_equal, equal, 1, 0 );
-	ADD_MN_CASE( mat_equal, equal, 1, 1 );
-	ADD_MN_CASE( mat_equal, equal, 1, 6 );
-	ADD_MN_CASE( mat_equal, equal, 5, 0 );
-	ADD_MN_CASE( mat_equal, equal, 5, 1 );
-	ADD_MN_CASE( mat_equal, equal, 5, 6 );
+	ADD_MN_CASE_3X3( mat_equal, equal, 5, 6 );
 END_TPACK
 
 BEGIN_TPACK( mat_equal_ex )
-	ADD_MN_CASE( mat_equal, equal_ex, 0, 0 );
-	ADD_MN_CASE( mat_equal, equal_ex, 0, 1 );
-	ADD_MN_CASE( mat_equal, equal_ex, 0, 6 );
-	ADD_MN_CASE( mat_equal, equal_ex, 1, 0 );
-	ADD_MN_CASE( mat_equal, equal_ex, 1, 1 );
-	ADD_MN_CASE( mat_equal, equal_ex, 1, 6 );
-	ADD_MN_CASE( mat_equal, equal_ex, 5, 0 );
-	ADD_MN_CASE( mat_equal, equal_ex, 5, 1 );
-	ADD_MN_CASE( mat_equal, equal_ex, 5, 6 );
+	ADD_MN_CASE_3X3( mat_equal, equal_ex, 5, 6 );
 END_TPACK
 
 BEGIN_TPACK( mat_approx )
-	ADD_MN_CASE( mat_approx, approx, 0, 0 );
-	ADD_MN_CASE( mat_approx, approx, 0, 1 );
-	ADD_MN_CASE( mat_approx, approx, 0, 6 );
-	ADD_MN_CASE( mat_approx, approx, 1, 0 );
-	ADD_MN_CASE( mat_approx, approx, 1, 1 );
-	ADD_MN_CASE( mat_approx, approx, 1, 6 );
-	ADD_MN_CASE( mat_approx, approx, 5, 0 );
-	ADD_MN_CASE( mat_approx, approx, 5, 1 );
-	ADD_MN_CASE( mat_approx, approx, 5, 6 );
+	ADD_MN_CASE_3X3( mat_approx, approx, 5, 6 );
 END_TPACK
 
 BEGIN_TPACK( mat_approx_ex )
-	ADD_MN_CASE( mat_approx, approx_ex, 0, 0 );
-	ADD_MN_CASE( mat_approx, approx_ex, 0, 1 );
-	ADD_MN_CASE( mat_approx, approx_ex, 0, 6 );
-	ADD_MN_CASE( mat_approx, approx_ex, 1, 0 );
-	ADD_MN_CASE( mat_approx, approx_ex, 1, 1 );
-	ADD_MN_CASE( mat_approx, approx_ex, 1, 6 );
-	ADD_MN_CASE( mat_approx, approx_ex, 5, 0 );
-	ADD_MN_CASE( mat_approx, approx_ex, 5, 1 );
-	ADD_MN_CASE( mat_approx, approx_ex, 5, 6 );
+	ADD_MN_CASE_3X3( mat_approx, approx_ex, 5, 6 );
 END_TPACK
 
 BEGIN_MAIN_SUITE

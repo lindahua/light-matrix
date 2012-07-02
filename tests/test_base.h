@@ -135,6 +135,18 @@ namespace lmat { namespace test {
 #define ADD_MN_CASE( pname, tname, m, n ) \
 		tpack->add( new TCASE_CLASS( pname, tname )<m,n>()  );
 
+#define ADD_MN_CASE_3X3( pname, tname, m, n ) \
+		ADD_MN_CASE( pname, tname, 0, 0 ) \
+		ADD_MN_CASE( pname, tname, 0, 1 ) \
+		ADD_MN_CASE( pname, tname, 0, n ) \
+		ADD_MN_CASE( pname, tname, 1, 0 ) \
+		ADD_MN_CASE( pname, tname, 1, 1 ) \
+		ADD_MN_CASE( pname, tname, 1, n ) \
+		ADD_MN_CASE( pname, tname, m, 0 ) \
+		ADD_MN_CASE( pname, tname, m, 1 ) \
+		ADD_MN_CASE( pname, tname, m, n )
+
+
 #define BEGIN_TPACK( pname ) \
 	ltest::test_pack* create_tpack_##pname() { \
 		ltest::test_pack *tpack = new ltest::test_pack( #pname );

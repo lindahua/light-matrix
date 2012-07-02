@@ -74,40 +74,15 @@ MN_CASE( const_mat, evaluates )
 
 
 BEGIN_TPACK( const_mat_constructs )
-	ADD_MN_CASE( const_mat, constructs, 0, 0 )
-	ADD_MN_CASE( const_mat, constructs, 0, 1 )
-	ADD_MN_CASE( const_mat, constructs, 0, 4 )
-	ADD_MN_CASE( const_mat, constructs, 1, 0 )
-	ADD_MN_CASE( const_mat, constructs, 1, 1 )
-	ADD_MN_CASE( const_mat, constructs, 1, 4 )
-	ADD_MN_CASE( const_mat, constructs, 3, 0 )
-	ADD_MN_CASE( const_mat, constructs, 3, 1 )
-	ADD_MN_CASE( const_mat, constructs, 3, 4 )
+	ADD_MN_CASE_3X3( const_mat, constructs, 3, 4 )
 END_TPACK
 
-
 BEGIN_TPACK( const_mat_access )
-	ADD_MN_CASE( const_mat, access, 0, 0 )
-	ADD_MN_CASE( const_mat, access, 0, 1 )
-	ADD_MN_CASE( const_mat, access, 0, 4 )
-	ADD_MN_CASE( const_mat, access, 1, 0 )
-	ADD_MN_CASE( const_mat, access, 1, 1 )
-	ADD_MN_CASE( const_mat, access, 1, 4 )
-	ADD_MN_CASE( const_mat, access, 3, 0 )
-	ADD_MN_CASE( const_mat, access, 3, 1 )
-	ADD_MN_CASE( const_mat, access, 3, 4 )
+	ADD_MN_CASE_3X3( const_mat, access, 3, 4 )
 END_TPACK
 
 BEGIN_TPACK( const_mat_evaluates )
-	ADD_MN_CASE( const_mat, evaluates, 0, 0 )
-	ADD_MN_CASE( const_mat, evaluates, 0, 1 )
-	ADD_MN_CASE( const_mat, evaluates, 0, 4 )
-	ADD_MN_CASE( const_mat, evaluates, 1, 0 )
-	ADD_MN_CASE( const_mat, evaluates, 1, 1 )
-	ADD_MN_CASE( const_mat, evaluates, 1, 4 )
-	ADD_MN_CASE( const_mat, evaluates, 3, 0 )
-	ADD_MN_CASE( const_mat, evaluates, 3, 1 )
-	ADD_MN_CASE( const_mat, evaluates, 3, 4 )
+	ADD_MN_CASE_3X3( const_mat, evaluates, 3, 4 )
 END_TPACK
 
 BEGIN_MAIN_SUITE

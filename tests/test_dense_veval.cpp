@@ -276,126 +276,46 @@ MN_CASE( eval_by_scalars, ext_to_ext )
 
 
 BEGIN_TPACK( continu_linear_eval )
-	ADD_MN_CASE( linear_veval, continu_linear, 0, 0 )
-	ADD_MN_CASE( linear_veval, continu_linear, 0, 1 )
-	ADD_MN_CASE( linear_veval, continu_linear, 0, 6 )
-	ADD_MN_CASE( linear_veval, continu_linear, 1, 0 )
-	ADD_MN_CASE( linear_veval, continu_linear, 1, 1 )
-	ADD_MN_CASE( linear_veval, continu_linear, 1, 6 )
-	ADD_MN_CASE( linear_veval, continu_linear, 5, 0 )
-	ADD_MN_CASE( linear_veval, continu_linear, 5, 1 )
-	ADD_MN_CASE( linear_veval, continu_linear, 5, 6 )
+	ADD_MN_CASE_3X3( linear_veval, continu_linear, 5, 6 )
 END_TPACK
 
 BEGIN_TPACK( cached_linear_eval )
-	ADD_MN_CASE( linear_veval, cached_linear, 0, 0 )
-	ADD_MN_CASE( linear_veval, cached_linear, 0, 1 )
-	ADD_MN_CASE( linear_veval, cached_linear, 0, 6 )
-	ADD_MN_CASE( linear_veval, cached_linear, 1, 0 )
-	ADD_MN_CASE( linear_veval, cached_linear, 1, 1 )
-	ADD_MN_CASE( linear_veval, cached_linear, 1, 6 )
-	ADD_MN_CASE( linear_veval, cached_linear, 5, 0 )
-	ADD_MN_CASE( linear_veval, cached_linear, 5, 1 )
-	ADD_MN_CASE( linear_veval, cached_linear, 5, 6 )
+	ADD_MN_CASE_3X3( linear_veval, cached_linear, 5, 6 )
 END_TPACK
 
 BEGIN_TPACK( const_linear_eval )
-	ADD_MN_CASE( linear_veval, const_linear, 0, 0 )
-	ADD_MN_CASE( linear_veval, const_linear, 0, 1 )
-	ADD_MN_CASE( linear_veval, const_linear, 0, 6 )
-	ADD_MN_CASE( linear_veval, const_linear, 1, 0 )
-	ADD_MN_CASE( linear_veval, const_linear, 1, 1 )
-	ADD_MN_CASE( linear_veval, const_linear, 1, 6 )
-	ADD_MN_CASE( linear_veval, const_linear, 5, 0 )
-	ADD_MN_CASE( linear_veval, const_linear, 5, 1 )
-	ADD_MN_CASE( linear_veval, const_linear, 5, 6 )
+	ADD_MN_CASE_3X3( linear_veval, const_linear, 5, 6 )
 END_TPACK
 
 
 BEGIN_TPACK( dense_percol_eval )
-	ADD_MN_CASE( percol_veval, dense_percol, 0, 0 )
-	ADD_MN_CASE( percol_veval, dense_percol, 0, 1 )
-	ADD_MN_CASE( percol_veval, dense_percol, 0, 6 )
-	ADD_MN_CASE( percol_veval, dense_percol, 1, 0 )
-	ADD_MN_CASE( percol_veval, dense_percol, 1, 1 )
-	ADD_MN_CASE( percol_veval, dense_percol, 1, 6 )
-	ADD_MN_CASE( percol_veval, dense_percol, 5, 0 )
-	ADD_MN_CASE( percol_veval, dense_percol, 5, 1 )
-	ADD_MN_CASE( percol_veval, dense_percol, 5, 6 )
+	ADD_MN_CASE_3X3( percol_veval, dense_percol, 5, 6 )
 END_TPACK
 
 BEGIN_TPACK( cached_percol_eval )
-	ADD_MN_CASE( percol_veval, cached_percol, 0, 0 )
-	ADD_MN_CASE( percol_veval, cached_percol, 0, 1 )
-	ADD_MN_CASE( percol_veval, cached_percol, 0, 6 )
-	ADD_MN_CASE( percol_veval, cached_percol, 1, 0 )
-	ADD_MN_CASE( percol_veval, cached_percol, 1, 1 )
-	ADD_MN_CASE( percol_veval, cached_percol, 1, 6 )
-	ADD_MN_CASE( percol_veval, cached_percol, 5, 0 )
-	ADD_MN_CASE( percol_veval, cached_percol, 5, 1 )
-	ADD_MN_CASE( percol_veval, cached_percol, 5, 6 )
+	ADD_MN_CASE_3X3( percol_veval, cached_percol, 5, 6 )
 END_TPACK
 
 BEGIN_TPACK( const_percol_eval )
-	ADD_MN_CASE( percol_veval, const_percol, 0, 0 )
-	ADD_MN_CASE( percol_veval, const_percol, 0, 1 )
-	ADD_MN_CASE( percol_veval, const_percol, 0, 6 )
-	ADD_MN_CASE( percol_veval, const_percol, 1, 0 )
-	ADD_MN_CASE( percol_veval, const_percol, 1, 1 )
-	ADD_MN_CASE( percol_veval, const_percol, 1, 6 )
-	ADD_MN_CASE( percol_veval, const_percol, 5, 0 )
-	ADD_MN_CASE( percol_veval, const_percol, 5, 1 )
-	ADD_MN_CASE( percol_veval, const_percol, 5, 6 )
+	ADD_MN_CASE_3X3( percol_veval, const_percol, 5, 6 )
 END_TPACK
 
+
 BEGIN_TPACK( eval_by_scalars_c2c )
-	ADD_MN_CASE( eval_by_scalars, cont_to_cont, 0, 0 )
-	ADD_MN_CASE( eval_by_scalars, cont_to_cont, 0, 1 )
-	ADD_MN_CASE( eval_by_scalars, cont_to_cont, 0, 6 )
-	ADD_MN_CASE( eval_by_scalars, cont_to_cont, 1, 0 )
-	ADD_MN_CASE( eval_by_scalars, cont_to_cont, 1, 1 )
-	ADD_MN_CASE( eval_by_scalars, cont_to_cont, 1, 6 )
-	ADD_MN_CASE( eval_by_scalars, cont_to_cont, 5, 0 )
-	ADD_MN_CASE( eval_by_scalars, cont_to_cont, 5, 1 )
-	ADD_MN_CASE( eval_by_scalars, cont_to_cont, 5, 6 )
+	ADD_MN_CASE_3X3( eval_by_scalars, cont_to_cont, 5, 6 )
 END_TPACK
 
 BEGIN_TPACK( eval_by_scalars_c2e )
-	ADD_MN_CASE( eval_by_scalars, cont_to_ext, 0, 0 )
-	ADD_MN_CASE( eval_by_scalars, cont_to_ext, 0, 1 )
-	ADD_MN_CASE( eval_by_scalars, cont_to_ext, 0, 6 )
-	ADD_MN_CASE( eval_by_scalars, cont_to_ext, 1, 0 )
-	ADD_MN_CASE( eval_by_scalars, cont_to_ext, 1, 1 )
-	ADD_MN_CASE( eval_by_scalars, cont_to_ext, 1, 6 )
-	ADD_MN_CASE( eval_by_scalars, cont_to_ext, 5, 0 )
-	ADD_MN_CASE( eval_by_scalars, cont_to_ext, 5, 1 )
-	ADD_MN_CASE( eval_by_scalars, cont_to_ext, 5, 6 )
+	ADD_MN_CASE_3X3( eval_by_scalars, cont_to_ext, 5, 6 )
 END_TPACK
 
 BEGIN_TPACK( eval_by_scalars_e2c )
-	ADD_MN_CASE( eval_by_scalars, ext_to_cont, 0, 0 )
-	ADD_MN_CASE( eval_by_scalars, ext_to_cont, 0, 1 )
-	ADD_MN_CASE( eval_by_scalars, ext_to_cont, 0, 6 )
-	ADD_MN_CASE( eval_by_scalars, ext_to_cont, 1, 0 )
-	ADD_MN_CASE( eval_by_scalars, ext_to_cont, 1, 1 )
-	ADD_MN_CASE( eval_by_scalars, ext_to_cont, 1, 6 )
-	ADD_MN_CASE( eval_by_scalars, ext_to_cont, 5, 0 )
-	ADD_MN_CASE( eval_by_scalars, ext_to_cont, 5, 1 )
-	ADD_MN_CASE( eval_by_scalars, ext_to_cont, 5, 6 )
+	ADD_MN_CASE_3X3( eval_by_scalars, ext_to_cont, 5, 6 )
 END_TPACK
 
 BEGIN_TPACK( eval_by_scalars_e2e )
-	ADD_MN_CASE( eval_by_scalars, ext_to_ext, 0, 0 )
-	ADD_MN_CASE( eval_by_scalars, ext_to_ext, 0, 1 )
-	ADD_MN_CASE( eval_by_scalars, ext_to_ext, 0, 6 )
-	ADD_MN_CASE( eval_by_scalars, ext_to_ext, 1, 0 )
-	ADD_MN_CASE( eval_by_scalars, ext_to_ext, 1, 1 )
-	ADD_MN_CASE( eval_by_scalars, ext_to_ext, 1, 6 )
-	ADD_MN_CASE( eval_by_scalars, ext_to_ext, 5, 0 )
-	ADD_MN_CASE( eval_by_scalars, ext_to_ext, 5, 1 )
-	ADD_MN_CASE( eval_by_scalars, ext_to_ext, 5, 6 )
+	ADD_MN_CASE_3X3( eval_by_scalars, ext_to_ext, 5, 6 )
 END_TPACK
-
 
 
 BEGIN_MAIN_SUITE

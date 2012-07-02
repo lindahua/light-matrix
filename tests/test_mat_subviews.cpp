@@ -422,123 +422,43 @@ MN_CASE( mat_subview, range_range )
 
 
 BEGIN_TPACK( mat_col_view )
-	ADD_MN_CASE( mat_subview, col, 0, 0 );
-	ADD_MN_CASE( mat_subview, col, 0, 1 );
-	ADD_MN_CASE( mat_subview, col, 0, 8 );
-	ADD_MN_CASE( mat_subview, col, 1, 0 );
-	ADD_MN_CASE( mat_subview, col, 1, 1 );
-	ADD_MN_CASE( mat_subview, col, 1, 8 );
-	ADD_MN_CASE( mat_subview, col, 7, 0 );
-	ADD_MN_CASE( mat_subview, col, 7, 1 );
-	ADD_MN_CASE( mat_subview, col, 7, 8 );
+	ADD_MN_CASE_3X3( mat_subview, col, 7, 8 );
 END_TPACK
 
 BEGIN_TPACK( mat_row_view )
-	ADD_MN_CASE( mat_subview, row, 0, 0 );
-	ADD_MN_CASE( mat_subview, row, 0, 1 );
-	ADD_MN_CASE( mat_subview, row, 0, 8 );
-	ADD_MN_CASE( mat_subview, row, 1, 0 );
-	ADD_MN_CASE( mat_subview, row, 1, 1 );
-	ADD_MN_CASE( mat_subview, row, 1, 8 );
-	ADD_MN_CASE( mat_subview, row, 7, 0 );
-	ADD_MN_CASE( mat_subview, row, 7, 1 );
-	ADD_MN_CASE( mat_subview, row, 7, 8 );
+	ADD_MN_CASE_3X3( mat_subview, row, 7, 8 );
 END_TPACK
 
 BEGIN_TPACK( mat_col_whole )
-	ADD_MN_CASE( mat_subview, col_whole, 0, 0 );
-	ADD_MN_CASE( mat_subview, col_whole, 0, 1 );
-	ADD_MN_CASE( mat_subview, col_whole, 0, 8 );
-	ADD_MN_CASE( mat_subview, col_whole, 1, 0 );
-	ADD_MN_CASE( mat_subview, col_whole, 1, 1 );
-	ADD_MN_CASE( mat_subview, col_whole, 1, 8 );
-	ADD_MN_CASE( mat_subview, col_whole, 7, 0 );
-	ADD_MN_CASE( mat_subview, col_whole, 7, 1 );
-	ADD_MN_CASE( mat_subview, col_whole, 7, 8 );
+	ADD_MN_CASE_3X3( mat_subview, col_whole, 7, 8 );
 END_TPACK
 
 BEGIN_TPACK( mat_row_whole )
-	ADD_MN_CASE( mat_subview, row_whole, 0, 0 );
-	ADD_MN_CASE( mat_subview, row_whole, 0, 1 );
-	ADD_MN_CASE( mat_subview, row_whole, 0, 8 );
-	ADD_MN_CASE( mat_subview, row_whole, 1, 0 );
-	ADD_MN_CASE( mat_subview, row_whole, 1, 1 );
-	ADD_MN_CASE( mat_subview, row_whole, 1, 8 );
-	ADD_MN_CASE( mat_subview, row_whole, 7, 0 );
-	ADD_MN_CASE( mat_subview, row_whole, 7, 1 );
-	ADD_MN_CASE( mat_subview, row_whole, 7, 8 );
+	ADD_MN_CASE_3X3( mat_subview, row_whole, 7, 8 );
 END_TPACK
 
 BEGIN_TPACK( mat_col_range )
-	ADD_MN_CASE( mat_subview, col_range, 0, 0 );
-	ADD_MN_CASE( mat_subview, col_range, 0, 1 );
-	ADD_MN_CASE( mat_subview, col_range, 0, 8 );
-	ADD_MN_CASE( mat_subview, col_range, 1, 0 );
-	ADD_MN_CASE( mat_subview, col_range, 1, 1 );
-	ADD_MN_CASE( mat_subview, col_range, 1, 8 );
-	ADD_MN_CASE( mat_subview, col_range, 7, 0 );
-	ADD_MN_CASE( mat_subview, col_range, 7, 1 );
-	ADD_MN_CASE( mat_subview, col_range, 7, 8 );
+	ADD_MN_CASE_3X3( mat_subview, col_range, 7, 8 );
 END_TPACK
 
 BEGIN_TPACK( mat_row_range )
-	ADD_MN_CASE( mat_subview, row_range, 0, 0 );
-	ADD_MN_CASE( mat_subview, row_range, 0, 1 );
-	ADD_MN_CASE( mat_subview, row_range, 0, 8 );
-	ADD_MN_CASE( mat_subview, row_range, 1, 0 );
-	ADD_MN_CASE( mat_subview, row_range, 1, 1 );
-	ADD_MN_CASE( mat_subview, row_range, 1, 8 );
-	ADD_MN_CASE( mat_subview, row_range, 7, 0 );
-	ADD_MN_CASE( mat_subview, row_range, 7, 1 );
-	ADD_MN_CASE( mat_subview, row_range, 7, 8 );
+	ADD_MN_CASE_3X3( mat_subview, row_range, 7, 8 );
 END_TPACK
 
 BEGIN_TPACK( mat_whole_whole )
-	ADD_MN_CASE( mat_subview, whole_whole, 0, 0 );
-	ADD_MN_CASE( mat_subview, whole_whole, 0, 1 );
-	ADD_MN_CASE( mat_subview, whole_whole, 0, 8 );
-	ADD_MN_CASE( mat_subview, whole_whole, 1, 0 );
-	ADD_MN_CASE( mat_subview, whole_whole, 1, 1 );
-	ADD_MN_CASE( mat_subview, whole_whole, 1, 8 );
-	ADD_MN_CASE( mat_subview, whole_whole, 7, 0 );
-	ADD_MN_CASE( mat_subview, whole_whole, 7, 1 );
-	ADD_MN_CASE( mat_subview, whole_whole, 7, 8 );
+	ADD_MN_CASE_3X3( mat_subview, whole_whole, 7, 8 );
 END_TPACK
 
 BEGIN_TPACK( mat_whole_range )
-	ADD_MN_CASE( mat_subview, whole_range, 0, 0 );
-	ADD_MN_CASE( mat_subview, whole_range, 0, 1 );
-	ADD_MN_CASE( mat_subview, whole_range, 0, 8 );
-	ADD_MN_CASE( mat_subview, whole_range, 1, 0 );
-	ADD_MN_CASE( mat_subview, whole_range, 1, 1 );
-	ADD_MN_CASE( mat_subview, whole_range, 1, 8 );
-	ADD_MN_CASE( mat_subview, whole_range, 7, 0 );
-	ADD_MN_CASE( mat_subview, whole_range, 7, 1 );
-	ADD_MN_CASE( mat_subview, whole_range, 7, 8 );
+	ADD_MN_CASE_3X3( mat_subview, whole_range, 7, 8 );
 END_TPACK
 
 BEGIN_TPACK( mat_range_whole )
-	ADD_MN_CASE( mat_subview, range_whole, 0, 0 );
-	ADD_MN_CASE( mat_subview, range_whole, 0, 1 );
-	ADD_MN_CASE( mat_subview, range_whole, 0, 8 );
-	ADD_MN_CASE( mat_subview, range_whole, 1, 0 );
-	ADD_MN_CASE( mat_subview, range_whole, 1, 1 );
-	ADD_MN_CASE( mat_subview, range_whole, 1, 8 );
-	ADD_MN_CASE( mat_subview, range_whole, 7, 0 );
-	ADD_MN_CASE( mat_subview, range_whole, 7, 1 );
-	ADD_MN_CASE( mat_subview, range_whole, 7, 8 );
+	ADD_MN_CASE_3X3( mat_subview, range_whole, 7, 8 );
 END_TPACK
 
 BEGIN_TPACK( mat_range_range )
-	ADD_MN_CASE( mat_subview, range_range, 0, 0 );
-	ADD_MN_CASE( mat_subview, range_range, 0, 1 );
-	ADD_MN_CASE( mat_subview, range_range, 0, 8 );
-	ADD_MN_CASE( mat_subview, range_range, 1, 0 );
-	ADD_MN_CASE( mat_subview, range_range, 1, 1 );
-	ADD_MN_CASE( mat_subview, range_range, 1, 8 );
-	ADD_MN_CASE( mat_subview, range_range, 7, 0 );
-	ADD_MN_CASE( mat_subview, range_range, 7, 1 );
-	ADD_MN_CASE( mat_subview, range_range, 7, 8 );
+	ADD_MN_CASE_3X3( mat_subview, range_range, 7, 8 );
 END_TPACK
 
 

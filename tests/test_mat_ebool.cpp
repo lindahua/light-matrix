@@ -114,39 +114,15 @@ MN_CASE( mat_ebool, or )
 
 
 BEGIN_TPACK( mat_ebool_not )
-	ADD_MN_CASE( mat_ebool, not, 0, 0 )
-	ADD_MN_CASE( mat_ebool, not, 0, 1 )
-	ADD_MN_CASE( mat_ebool, not, 0, default_n )
-	ADD_MN_CASE( mat_ebool, not, 1, 0 )
-	ADD_MN_CASE( mat_ebool, not, 1, 1 )
-	ADD_MN_CASE( mat_ebool, not, 1, default_n )
-	ADD_MN_CASE( mat_ebool, not, default_m, 0 )
-	ADD_MN_CASE( mat_ebool, not, default_m, 1 )
-	ADD_MN_CASE( mat_ebool, not, default_m, default_n )
+	ADD_MN_CASE_3X3( mat_ebool, not, default_m, default_n )
 END_TPACK
 
 BEGIN_TPACK( mat_ebool_and )
-	ADD_MN_CASE( mat_ebool, and, 0, 0 )
-	ADD_MN_CASE( mat_ebool, and, 0, 1 )
-	ADD_MN_CASE( mat_ebool, and, 0, default_n )
-	ADD_MN_CASE( mat_ebool, and, 1, 0 )
-	ADD_MN_CASE( mat_ebool, and, 1, 1 )
-	ADD_MN_CASE( mat_ebool, and, 1, default_n )
-	ADD_MN_CASE( mat_ebool, and, default_m, 0 )
-	ADD_MN_CASE( mat_ebool, and, default_m, 1 )
-	ADD_MN_CASE( mat_ebool, and, default_m, default_n )
+	ADD_MN_CASE_3X3( mat_ebool, and, default_m, default_n )
 END_TPACK
 
 BEGIN_TPACK( mat_ebool_or )
-	ADD_MN_CASE( mat_ebool, or, 0, 0 )
-	ADD_MN_CASE( mat_ebool, or, 0, 1 )
-	ADD_MN_CASE( mat_ebool, or, 0, default_n )
-	ADD_MN_CASE( mat_ebool, or, 1, 0 )
-	ADD_MN_CASE( mat_ebool, or, 1, 1 )
-	ADD_MN_CASE( mat_ebool, or, 1, default_n )
-	ADD_MN_CASE( mat_ebool, or, default_m, 0 )
-	ADD_MN_CASE( mat_ebool, or, default_m, 1 )
-	ADD_MN_CASE( mat_ebool, or, default_m, default_n )
+	ADD_MN_CASE_3X3( mat_ebool, or, default_m, default_n )
 END_TPACK
 
 BEGIN_MAIN_SUITE

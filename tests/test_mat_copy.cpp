@@ -71,27 +71,11 @@ MN_CASE( mat_copy, copy_ex )
 
 
 BEGIN_TPACK( mat_copy )
-	ADD_MN_CASE( mat_copy, copy, 0, 0 );
-	ADD_MN_CASE( mat_copy, copy, 0, 1 );
-	ADD_MN_CASE( mat_copy, copy, 0, 6 );
-	ADD_MN_CASE( mat_copy, copy, 1, 0 );
-	ADD_MN_CASE( mat_copy, copy, 1, 1 );
-	ADD_MN_CASE( mat_copy, copy, 1, 6 );
-	ADD_MN_CASE( mat_copy, copy, 5, 0 );
-	ADD_MN_CASE( mat_copy, copy, 5, 1 );
-	ADD_MN_CASE( mat_copy, copy, 5, 6 );
+	ADD_MN_CASE_3X3( mat_copy, copy, 5, 6 );
 END_TPACK
 
 BEGIN_TPACK( mat_copy_ex )
-	ADD_MN_CASE( mat_copy, copy_ex, 0, 0 );
-	ADD_MN_CASE( mat_copy, copy_ex, 0, 1 );
-	ADD_MN_CASE( mat_copy, copy_ex, 0, 6 );
-	ADD_MN_CASE( mat_copy, copy_ex, 1, 0 );
-	ADD_MN_CASE( mat_copy, copy_ex, 1, 1 );
-	ADD_MN_CASE( mat_copy, copy_ex, 1, 6 );
-	ADD_MN_CASE( mat_copy, copy_ex, 5, 0 );
-	ADD_MN_CASE( mat_copy, copy_ex, 5, 1 );
-	ADD_MN_CASE( mat_copy, copy_ex, 5, 6 );
+	ADD_MN_CASE_3X3( mat_copy, copy_ex, 5, 6 );
 END_TPACK
 
 BEGIN_MAIN_SUITE

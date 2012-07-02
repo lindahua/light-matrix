@@ -76,39 +76,15 @@ MN_CASE( mat_eval, ref_mat_ex )
 }
 
 BEGIN_TPACK( dense_mat_eval )
-	ADD_MN_CASE( mat_eval, dense_mat, 0, 0 );
-	ADD_MN_CASE( mat_eval, dense_mat, 0, 1 );
-	ADD_MN_CASE( mat_eval, dense_mat, 0, 5 );
-	ADD_MN_CASE( mat_eval, dense_mat, 1, 0 );
-	ADD_MN_CASE( mat_eval, dense_mat, 1, 1 );
-	ADD_MN_CASE( mat_eval, dense_mat, 1, 5 );
-	ADD_MN_CASE( mat_eval, dense_mat, 4, 0 );
-	ADD_MN_CASE( mat_eval, dense_mat, 4, 1 );
-	ADD_MN_CASE( mat_eval, dense_mat, 4, 5 );
+	ADD_MN_CASE_3X3( mat_eval, dense_mat, 4, 5 );
 END_TPACK
 
 BEGIN_TPACK( ref_mat_eval )
-	ADD_MN_CASE( mat_eval, ref_mat, 0, 0 );
-	ADD_MN_CASE( mat_eval, ref_mat, 0, 1 );
-	ADD_MN_CASE( mat_eval, ref_mat, 0, 5 );
-	ADD_MN_CASE( mat_eval, ref_mat, 1, 0 );
-	ADD_MN_CASE( mat_eval, ref_mat, 1, 1 );
-	ADD_MN_CASE( mat_eval, ref_mat, 1, 5 );
-	ADD_MN_CASE( mat_eval, ref_mat, 4, 0 );
-	ADD_MN_CASE( mat_eval, ref_mat, 4, 1 );
-	ADD_MN_CASE( mat_eval, ref_mat, 4, 5 );
+	ADD_MN_CASE_3X3( mat_eval, ref_mat, 4, 5 );
 END_TPACK
 
 BEGIN_TPACK( ref_mat_ex_eval )
-	ADD_MN_CASE( mat_eval, ref_mat_ex, 0, 0 );
-	ADD_MN_CASE( mat_eval, ref_mat_ex, 0, 1 );
-	ADD_MN_CASE( mat_eval, ref_mat_ex, 0, 5 );
-	ADD_MN_CASE( mat_eval, ref_mat_ex, 1, 0 );
-	ADD_MN_CASE( mat_eval, ref_mat_ex, 1, 1 );
-	ADD_MN_CASE( mat_eval, ref_mat_ex, 1, 5 );
-	ADD_MN_CASE( mat_eval, ref_mat_ex, 4, 0 );
-	ADD_MN_CASE( mat_eval, ref_mat_ex, 4, 1 );
-	ADD_MN_CASE( mat_eval, ref_mat_ex, 4, 5 );
+	ADD_MN_CASE_3X3( mat_eval, ref_mat_ex, 4, 5 );
 END_TPACK
 
 BEGIN_MAIN_SUITE
