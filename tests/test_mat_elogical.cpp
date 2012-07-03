@@ -34,8 +34,11 @@ MN_CASE( mat_elogical, not )
 	// type verification
 
 #ifdef LMAT_HAS_DECLTYPE
+	#if ( LIGHTMAT_COMPILER != LIGHTMAT_GCC ) 
 	typedef unary_ewise_expr<mask_not_op<double>, mmat_t> R_t;
+	// for unknown reason, this leads to internal crash of g++ compiler itself
 	static_assert(is_same<decltype(~A), R_t>::value, "Expression type verification failed.");
+	#endif
 #endif
 
 	mmat_t R_r(m, n);
