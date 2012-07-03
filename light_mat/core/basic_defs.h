@@ -17,7 +17,9 @@
 
 #include <light_mat/core/prim_types.h>
 #include <light_mat/core/lang_base.h>
+#include <light_mat/core/mask_type.h>
 #include <light_mat/core/metaprog_base.h>
+
 #include <light_mat/core/type_traits.h>
 #include <light_mat/core/arg_check.h>
 

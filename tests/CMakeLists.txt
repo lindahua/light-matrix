@@ -41,6 +41,7 @@ set(COMMON_BASIC_HS
     ${INC}/core/prim_types.h
     ${INC}/core/lang_base.h
     ${INC}/core/metaprog_base.h
+    ${INC}/core/mask_type.h
     ${INC}/core/type_traits.h
     ${INC}/core/arg_check.h
     ${INC}/core/range.h
@@ -91,7 +92,7 @@ set(MATRIX_EWISE_HS
     ${INC}/matrix/matrix_arith.h
     ${INC}/matrix/matrix_emath.h
     ${INC}/matrix/matrix_ecomp.h
-    ${INC}/matrix/matrix_boolop.h)
+    ${INC}/matrix/matrix_elogical.h)
     
 set(REPEAT_VECS_HS
     ${INC}/matrix/bits/repeat_vecs_internal.h
@@ -170,18 +171,18 @@ set(EWISE_MAT_EVAL_HS
     
 add_executable(test_mat_arith ${EWISE_MAT_EVAL_HS} test_mat_arith.cpp)
 add_executable(test_mat_emath ${EWISE_MAT_EVAL_HS} test_mat_emath.cpp)
-add_executable(test_mat_ecomp ${EWISE_MAT_EVAL_HS} test_mat_ecomp.cpp)
-add_executable(test_mat_ebool ${EWISE_MAT_EVAL_HS} test_mat_ebool.cpp)
+# add_executable(test_mat_ecomp ${EWISE_MAT_EVAL_HS} test_mat_ecomp.cpp)
+# add_executable(test_mat_ebool ${EWISE_MAT_EVAL_HS} test_mat_ebool.cpp)
 
 set(REP_VECS_HS
     ${MATRIX_HS}
     ${MATRIX_EVAL_BASE_HS}
     ${REPEAT_VECS_HS})
     
-add_executable(test_rep_vecs ${REP_VECS_HS} test_rep_vecs.cpp)
-add_executable(test_rep_veval ${REP_VECS_HS} test_rep_veval.cpp)
+# add_executable(test_rep_vecs ${REP_VECS_HS} test_rep_vecs.cpp)
+# add_executable(test_rep_veval ${REP_VECS_HS} test_rep_veval.cpp)
 
-add_executable(test_cpd_ewise ${MATRIX_EVAL_HS} test_cpd_ewise.cpp)
+# add_executable(test_cpd_ewise ${MATRIX_EVAL_HS} test_cpd_ewise.cpp)
 
 # Link to test_main
 
@@ -208,13 +209,13 @@ target_link_libraries(test_dense_veval test_main)
 
 target_link_libraries(test_mat_arith test_main)
 target_link_libraries(test_mat_emath test_main)
-target_link_libraries(test_mat_ecomp test_main)
-target_link_libraries(test_mat_ebool test_main)
+# target_link_libraries(test_mat_ecomp test_main)
+# target_link_libraries(test_mat_ebool test_main)
 
-target_link_libraries(test_rep_vecs test_main)
-target_link_libraries(test_rep_veval test_main)
+# target_link_libraries(test_rep_vecs test_main)
+# target_link_libraries(test_rep_veval test_main)
 
-target_link_libraries(test_cpd_ewise test_main)
+# target_link_libraries(test_cpd_ewise test_main)
     
 # Set output directories
 
@@ -235,11 +236,12 @@ set(ALL_EXECUTABLES
     test_dense_veval
     test_mat_arith
     test_mat_emath
-    test_mat_ecomp
-    test_mat_ebool
-    test_rep_vecs
-    test_rep_veval
-    test_cpd_ewise)
+    # test_mat_ecomp
+    # test_mat_ebool
+    # test_rep_vecs
+    # test_rep_veval
+    # test_cpd_ewise
+    )
     
 set_target_properties(${ALL_EXECUTABLES}
     PROPERTIES
@@ -271,12 +273,12 @@ add_test(NAME dense_veval COMMAND test_dense_veval)
 
 add_test(NAME mat_arith COMMAND test_mat_arith)
 add_test(NAME mat_emath COMMAND test_mat_emath)
-add_test(NAME mat_ecomp COMMAND test_mat_ecomp)
-add_test(NAME mat_ebool COMMAND test_mat_ebool)
+# add_test(NAME mat_ecomp COMMAND test_mat_ecomp)
+# add_test(NAME mat_ebool COMMAND test_mat_ebool)
 
-add_test(NAME rep_vecs COMMAND test_rep_vecs)
-add_test(NAME rep_veval COMMAND test_rep_veval)
+# add_test(NAME rep_vecs COMMAND test_rep_vecs)
+# add_test(NAME rep_veval COMMAND test_rep_veval)
 
-add_test(NAME cpd_ewise COMMAND test_cpd_ewise)
+# add_test(NAME cpd_ewise COMMAND test_cpd_ewise)
 
 

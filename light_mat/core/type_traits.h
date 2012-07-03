@@ -68,6 +68,41 @@ namespace lmat
 
 	using LMAT_TR1::alignment_of;
 
+
+	template<typename S, typename T>
+	struct is_compatible_int
+	{
+		static const bool value =
+				is_integral<S>::value && is_integral<T>::value &&
+				(
+					( is_signed<S>::value == is_signed<T>::value && sizeof(S) <= sizeof(T) ) ||
+					( is_signed<T>::value && sizeof(S) < sizeof(T))
+				);
+	};
+
+
+	/**
+	 * Indicates that implicitly converting
+	 * value_type from S to D is ok.
+	 */
+	template<typename S_, typename T_>
+	struct is_compatible_type
+	{
+		typedef typename remove_cv<S_>::type S;
+		typedef typename remove_cv<T_>::type T;
+
+		static const bool value =
+			is_same<S, T>::value
+			||
+			is_compatible_int<S, T>::value
+			||
+			(is_integral<S>::value && is_floating_point<T>::value &&
+					sizeof(S) <= sizeof(T)
+			)
+			||
+			(is_same<S, bool>::value && is_integral<T>::value);
+	};
+
 }
 
 #endif

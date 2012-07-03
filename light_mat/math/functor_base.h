@@ -57,14 +57,30 @@ namespace lmat
 	struct binary_numeric_ewise_functor : public binary_ewise_functor<T, T, T> { };
 
 	template<typename T>
-	struct unary_predicate_ewise_functor : public unary_ewise_functor<T, bool> { };
+	struct unary_mpred_ewise_functor : public unary_ewise_functor<T, mask_t<T> > { };
 
 	template<typename T>
-	struct binary_predicate_ewise_functor : public binary_ewise_functor<T, T, bool> { };
+	struct binary_mpred_ewise_functor : public binary_ewise_functor<T, T, mask_t<T> > { };
 
-	struct unary_bool_ewise_functor : public unary_ewise_functor<bool, bool> { };
+	template<typename T>
+	struct unary_mask_ewise_functor : public unary_ewise_functor<mask_t<T>, mask_t<T> > { };
 
-	struct binary_bool_ewise_functor : public binary_ewise_functor<bool, bool, bool> { };
+	template<typename T>
+	struct binary_mask_ewise_functor : public binary_ewise_functor<mask_t<T>, mask_t<T>, mask_t<T> > { };
+
+
+	// conversion
+
+	template<typename S, typename T>
+	struct type_converter : public unary_ewise_functor<S, T>
+	{
+		LMAT_ENSURE_INLINE
+		T operator() (const S& s) const
+		{
+			return T(s);
+		}
+	};
+
 }
 
 // Useful macros
@@ -95,7 +111,7 @@ namespace lmat
 	struct supports_simd< FunT<T> > { static const bool value = SuppSIMD; };
 
 
-#define LMAT_DEFINE_UNARY_NUMERIC_EWISE_TFUNCTOR( FunT, ImplFun ) \
+#define LMAT_DEFINE_UNARY_NUMERIC_EWISE_TFUNCTOR( FunT, ImplFun, SuppSIMD ) \
 	template<typename T> \
 	struct FunT : public unary_numeric_ewise_functor<T> { \
 		T operator()(const T& x) const { return ImplFun(x); } \
@@ -103,9 +119,9 @@ namespace lmat
 	template<typename T> \
 	struct is_unary_ewise_functor< FunT<T> > { static const bool value = true; }; \
 	template<typename T> \
-	struct supports_simd< FunT<T> > { static const bool value = false; };
+	struct supports_simd< FunT<T> > { static const bool value = SuppSIMD; };
 
-#define LMAT_DEFINE_BINARY_NUMERIC_EWISE_TFUNCTOR( FunT, ImplFun ) \
+#define LMAT_DEFINE_BINARY_NUMERIC_EWISE_TFUNCTOR( FunT, ImplFun, SuppSIMD ) \
 	template<typename T> \
 	struct FunT : public binary_numeric_ewise_functor<T> { \
 		T operator()(const T& x, const T& y) const { return ImplFun(x, y); } \
@@ -113,6 +129,6 @@ namespace lmat
 	template<typename T> \
 	struct is_binary_ewise_functor< FunT<T> > { static const bool value = true; }; \
 	template<typename T> \
-	struct supports_simd< FunT<T> > { static const bool value = false; };
+	struct supports_simd< FunT<T> > { static const bool value = SuppSIMD; };
 
 #endif 

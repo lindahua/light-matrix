@@ -15,11 +15,12 @@
 
 #include <light_mat/matrix/matrix_classes.h>
 
-#include <light_mat/matrix/matrix_ewise_eval.h>
+#include <light_mat/matrix/matrix_vec_evaluators.h>
+
 #include <light_mat/matrix/matrix_arith.h>
 #include <light_mat/matrix/matrix_emath.h>
 #include <light_mat/matrix/matrix_ecomp.h>
-#include <light_mat/matrix/matrix_boolop.h>
+#include <light_mat/matrix/matrix_elogical.h>
 
 #include <light_mat/matrix/repeat_vecs_veval.h>
 

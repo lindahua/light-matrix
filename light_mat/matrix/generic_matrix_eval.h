@@ -13,8 +13,8 @@
 #ifndef LIGHTMAT_GENERIC_MATRIX_EVAL_H_
 #define LIGHTMAT_GENERIC_MATRIX_EVAL_H_
 
-#include <light_mat/matrix/matrix_vec_evaluators.h>
 #include <light_mat/matrix/matrix_eval_cost.h>
+#include <light_mat/matrix/matrix_vec_evaluators.h>
 
 namespace lmat
 {
@@ -81,8 +81,8 @@ namespace lmat
 	}
 
 
-	template<typename T, class SExpr, class DMat>
-	inline void evaluate_by_scalars(const IMatrixXpr<SExpr, T>& expr, IDenseMatrix<DMat, T>& dst)
+	template<typename S, typename T, class SExpr, class DMat>
+	inline void evaluate_by_scalars(const IMatrixXpr<SExpr, S>& expr, IDenseMatrix<DMat, T>& dst)
 	{
 		if (is_column(expr))
 		{
@@ -100,6 +100,14 @@ namespace lmat
 	template<typename T, class SExpr, class DMat>
 	LMAT_ENSURE_INLINE
 	inline void evaluate_to(const IMatrixXpr<SExpr, T>& expr, IDenseMatrix<DMat, T>& dst)
+	{
+		evaluate_by_scalars(expr, dst);
+	}
+
+
+	template<typename S, typename T, class SExpr, class DMat>
+	LMAT_ENSURE_INLINE
+	inline void convert_to(const IMatrixXpr<SExpr, S>& expr, IDenseMatrix<DMat, T>& dst)
 	{
 		evaluate_by_scalars(expr, dst);
 	}

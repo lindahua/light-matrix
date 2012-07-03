@@ -29,6 +29,10 @@ namespace lmat
 		static const bool value = false;
 	};
 
+	template<typename T>
+	struct type{ };
+
+
 	// meta if statement
 
 	template<bool Cond, typename Ttrue, typename Tfalse>

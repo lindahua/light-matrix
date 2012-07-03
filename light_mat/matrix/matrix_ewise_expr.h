@@ -393,6 +393,29 @@ namespace lmat
 		return binary_fix1_ewise_expr<Fun, Arg2>(fun,
 				arg1v, arg2.derived());
 	}
+
+	/********************************************
+	 *
+	 *  Conversion expression
+	 *
+	 ********************************************/
+
+	template<class SMat, typename T>
+	struct convert_expr_map
+	{
+		typedef typename matrix_traits<SMat>::value_type S;
+		typedef type_converter<S, T> converter_t;
+		typedef typename unary_ewise_expr_map<converter_t, SMat>::type type;
+	};
+
+	template<class SMat, typename S, typename T>
+	LMAT_ENSURE_INLINE
+	inline typename convert_expr_map<SMat, T>::type
+	cast(const IMatrixXpr<SMat, S>& smat, type<T> )
+	{
+		return ewise(type_converter<S, T>(), smat);
+	}
+
 }
 
 #endif 
