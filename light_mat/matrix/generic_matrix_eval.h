@@ -104,14 +104,6 @@ namespace lmat
 		evaluate_by_scalars(expr, dst);
 	}
 
-
-	template<typename S, typename T, class SExpr, class DMat>
-	LMAT_ENSURE_INLINE
-	inline void convert_to(const IMatrixXpr<SExpr, S>& expr, IDenseMatrix<DMat, T>& dst)
-	{
-		evaluate_by_scalars(expr, dst);
-	}
-
 }
 
 #endif

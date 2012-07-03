@@ -1,7 +1,7 @@
 /*
  * @file matrix_copy.h
  *
- * Functions to copy matrices
+ * Functions to copy or cast matrices
  *
  * @author Dahua Lin
  */
@@ -40,6 +40,7 @@ namespace lmat
 	{
 		copy(src, dst);
 	}
+
 }
 
 #endif 

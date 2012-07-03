@@ -81,6 +81,11 @@ namespace lmat
 		}
 	};
 
+	template<typename S, typename T>
+	struct is_unary_ewise_functor<type_converter<S, T> >
+	{
+		static const bool value = true;
+	};
 }
 
 // Useful macros

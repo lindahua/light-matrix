@@ -124,8 +124,8 @@ namespace lmat
 	template<typename T, class SExpr, class DMat>
 	inline void evaluate_to(const IMatrixXpr<SExpr, T>& src, IDenseMatrix<DMat, T>& dst);
 
-	template<class SMat, typename T> struct compatible_convert_expr_map;
-	template<class SMat, typename T> struct convert_expr_map;
+	template<class SMat, typename T> struct cast_expr_map;
+
 }
 
 // Useful macros

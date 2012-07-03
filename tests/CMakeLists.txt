@@ -66,6 +66,7 @@ set(MATRIX_BASE_HS
     ${INC}/matrix/bits/matrix_compare_internal.h
     ${INC}/matrix/matrix_print.h
     ${INC}/matrix/matrix_subviews.h
+    ${INC}/matrix/matrix_ewise_expr.h
     ${INC}/matrix/matrix_base.h)
     
 set(MATRIX_CLASS_HS
@@ -82,13 +83,14 @@ set(MATRIX_EVAL_BASE_HS
     ${INC}/matrix/vec_evaluator_concepts.h
     ${INC}/matrix/matrix_vec_evaluators.h
     ${INC}/matrix/matrix_eval_cost.h
-    ${INC}/matrix/generic_matrix_eval.h)   
+    ${INC}/matrix/generic_matrix_eval.h
+    ${INC}/matrix/matrix_ewise_eval.h)   
     
 set(MATRIX_EWISE_HS
     ${INC}/math/arith_functors.h
     ${INC}/math/emath_functors.h
-    ${INC}/matrix/matrix_ewise_expr.h
-    ${INC}/matrix/matrix_ewise_eval.h
+    ${INC}/math/comp_functors.h
+    ${INC}/math/mask_functors.h
     ${INC}/matrix/matrix_arith.h
     ${INC}/matrix/matrix_emath.h
     ${INC}/matrix/matrix_ecomp.h
@@ -163,6 +165,7 @@ set(BASIC_MAT_EVAL_HS
     ${MATRIX_EVAL_BASE_HS})
     
 add_executable(test_dense_veval ${BASIC_MAT_EVAL_HS} test_dense_veval.cpp)
+add_executable(test_dense_cast ${BASIC_MAT_EVAL_HS} test_dense_cast.cpp)
 
 set(EWISE_MAT_EVAL_HS
     ${MATRIX_HS}
@@ -171,18 +174,18 @@ set(EWISE_MAT_EVAL_HS
     
 add_executable(test_mat_arith ${EWISE_MAT_EVAL_HS} test_mat_arith.cpp)
 add_executable(test_mat_emath ${EWISE_MAT_EVAL_HS} test_mat_emath.cpp)
-# add_executable(test_mat_ecomp ${EWISE_MAT_EVAL_HS} test_mat_ecomp.cpp)
-# add_executable(test_mat_ebool ${EWISE_MAT_EVAL_HS} test_mat_ebool.cpp)
+add_executable(test_mat_ecomp ${EWISE_MAT_EVAL_HS} test_mat_ecomp.cpp)
+add_executable(test_mat_elogical ${EWISE_MAT_EVAL_HS} test_mat_elogical.cpp)
 
 set(REP_VECS_HS
     ${MATRIX_HS}
     ${MATRIX_EVAL_BASE_HS}
     ${REPEAT_VECS_HS})
     
-# add_executable(test_rep_vecs ${REP_VECS_HS} test_rep_vecs.cpp)
-# add_executable(test_rep_veval ${REP_VECS_HS} test_rep_veval.cpp)
+add_executable(test_rep_vecs ${REP_VECS_HS} test_rep_vecs.cpp)
+add_executable(test_rep_veval ${REP_VECS_HS} test_rep_veval.cpp)
 
-# add_executable(test_cpd_ewise ${MATRIX_EVAL_HS} test_cpd_ewise.cpp)
+add_executable(test_cpd_ewise ${MATRIX_EVAL_HS} test_cpd_ewise.cpp)
 
 # Link to test_main
 
@@ -206,16 +209,17 @@ target_link_libraries(test_dense_eval test_main)
 target_link_libraries(test_mat_subviews test_main)
 
 target_link_libraries(test_dense_veval test_main)
+target_link_libraries(test_dense_cast test_main)
 
 target_link_libraries(test_mat_arith test_main)
 target_link_libraries(test_mat_emath test_main)
-# target_link_libraries(test_mat_ecomp test_main)
-# target_link_libraries(test_mat_ebool test_main)
+target_link_libraries(test_mat_ecomp test_main)
+target_link_libraries(test_mat_elogical test_main)
 
-# target_link_libraries(test_rep_vecs test_main)
-# target_link_libraries(test_rep_veval test_main)
+target_link_libraries(test_rep_vecs test_main)
+target_link_libraries(test_rep_veval test_main)
 
-# target_link_libraries(test_cpd_ewise test_main)
+target_link_libraries(test_cpd_ewise test_main)
     
 # Set output directories
 
@@ -234,14 +238,14 @@ set(ALL_EXECUTABLES
     test_dense_eval
     test_mat_subviews
     test_dense_veval
+    test_dense_cast
     test_mat_arith
     test_mat_emath
-    # test_mat_ecomp
-    # test_mat_ebool
-    # test_rep_vecs
-    # test_rep_veval
-    # test_cpd_ewise
-    )
+    test_mat_ecomp
+    test_mat_elogical
+    test_rep_vecs
+    test_rep_veval
+    test_cpd_ewise)
     
 set_target_properties(${ALL_EXECUTABLES}
     PROPERTIES
@@ -270,15 +274,16 @@ add_test(NAME dense_eval COMMAND test_dense_eval)
 add_test(NAME mat_subviews COMMAND test_mat_subviews)
 
 add_test(NAME dense_veval COMMAND test_dense_veval)
+add_test(NAME dense_cast COMMAND test_dense_cast)
 
 add_test(NAME mat_arith COMMAND test_mat_arith)
 add_test(NAME mat_emath COMMAND test_mat_emath)
-# add_test(NAME mat_ecomp COMMAND test_mat_ecomp)
-# add_test(NAME mat_ebool COMMAND test_mat_ebool)
+add_test(NAME mat_ecomp COMMAND test_mat_ecomp)
+add_test(NAME mat_elogical COMMAND test_mat_elogical)
 
-# add_test(NAME rep_vecs COMMAND test_rep_vecs)
-# add_test(NAME rep_veval COMMAND test_rep_veval)
+add_test(NAME rep_vecs COMMAND test_rep_vecs)
+add_test(NAME rep_veval COMMAND test_rep_veval)
 
-# add_test(NAME cpd_ewise COMMAND test_cpd_ewise)
+add_test(NAME cpd_ewise COMMAND test_cpd_ewise)
 
 

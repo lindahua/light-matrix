@@ -227,7 +227,18 @@ namespace lmat
 		template<class Expr>
 		LMAT_ENSURE_INLINE ref_matrix& operator = (const IMatrixXpr<Expr, T>& r)
 		{
-			evaluate_to(r, *this);
+			evaluate_to(r.derived(), *this);
+			return *this;
+		}
+
+		template<class Expr, typename S>
+		LMAT_ENSURE_INLINE ref_matrix& operator = (const IMatrixXpr<Expr, S>& r)
+		{
+#ifdef LMAT_USE_STATIC_ASSERT
+			static_assert(is_implicitly_convertible<S, T>::value,
+					"S is NOT implicitly-convertible to T.");
+#endif
+			implicitly_cast_to(r.derived(), *this);
 			return *this;
 		}
 
@@ -377,21 +388,28 @@ namespace lmat
 		template<class Mat>
 		LMAT_ENSURE_INLINE ref_col& operator = (const IDenseMatrix<Mat, T>& r)
 		{
-			base_mat_t::operator = (r.derived());
+			base_mat_t::operator = (r);
 			return *this;
 		}
 
 		template<class Expr>
 		LMAT_ENSURE_INLINE ref_col& operator = (const IMatrixXpr<Expr, T>& r)
 		{
-			base_mat_t::operator = (r.derived());
+			base_mat_t::operator = (r);
+			return *this;
+		}
+
+		template<class Expr, typename S>
+		LMAT_ENSURE_INLINE ref_col& operator = (const IMatrixXpr<Expr, S>& r)
+		{
+			base_mat_t::operator = (r);
 			return *this;
 		}
 
 		template<class Gen>
 		LMAT_ENSURE_INLINE ref_col& operator = (const IMatrixGenerator<Gen, T>& gen)
 		{
-			base_mat_t::operator = (gen.derived());
+			base_mat_t::operator = (gen);
 			return *this;
 		}
 	};
@@ -431,21 +449,28 @@ namespace lmat
 		template<class Mat>
 		LMAT_ENSURE_INLINE ref_row& operator = (const IDenseMatrix<Mat, T>& r)
 		{
-			base_mat_t::operator = (r.derived());
+			base_mat_t::operator = (r);
 			return *this;
 		}
 
 		template<class Expr>
 		LMAT_ENSURE_INLINE ref_row& operator = (const IMatrixXpr<Expr, T>& r)
 		{
-			base_mat_t::operator = (r.derived());
+			base_mat_t::operator = (r);
+			return *this;
+		}
+
+		template<class Expr, typename S>
+		LMAT_ENSURE_INLINE ref_row& operator = (const IMatrixXpr<Expr, S>& r)
+		{
+			base_mat_t::operator = (r);
 			return *this;
 		}
 
 		template<class Gen>
 		LMAT_ENSURE_INLINE ref_row& operator = (const IMatrixGenerator<Gen, T>& gen)
 		{
-			base_mat_t::operator = (gen.derived());
+			base_mat_t::operator = (gen);
 			return *this;
 		}
 	};

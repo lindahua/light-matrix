@@ -401,19 +401,25 @@ namespace lmat
 	 ********************************************/
 
 	template<class SMat, typename T>
-	struct convert_expr_map
+	struct cast_expr_map
 	{
 		typedef typename matrix_traits<SMat>::value_type S;
 		typedef type_converter<S, T> converter_t;
 		typedef typename unary_ewise_expr_map<converter_t, SMat>::type type;
+
+		LMAT_ENSURE_INLINE
+		static type get(const IMatrixXpr<SMat, S>& sexpr)
+		{
+			return ewise(type_converter<S, T>(), sexpr.derived());
+		}
 	};
 
 	template<class SMat, typename S, typename T>
 	LMAT_ENSURE_INLINE
-	inline typename convert_expr_map<SMat, T>::type
-	cast(const IMatrixXpr<SMat, S>& smat, type<T> )
+	inline typename cast_expr_map<SMat, T>::type
+	cast(const IMatrixXpr<SMat, S>& sexpr, type<T> )
 	{
-		return ewise(type_converter<S, T>(), smat);
+		return ewise(type_converter<S, T>(), sexpr.derived());
 	}
 
 }

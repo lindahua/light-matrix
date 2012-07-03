@@ -70,7 +70,7 @@ namespace lmat
 
 
 	template<typename S, typename T>
-	struct is_compatible_int
+	struct is_implicitly_convertible_int
 	{
 		static const bool value =
 				is_integral<S>::value && is_integral<T>::value &&
@@ -81,12 +81,22 @@ namespace lmat
 	};
 
 
+	template<typename S, typename T>
+	struct is_implicitly_convertible_real
+	{
+		static const bool value =
+				(is_same<S, float>::value && (is_same<T, float>::value || is_same<T, double>::value))
+				||
+				(is_same<S, double>::value && (is_same<T, double>::value));
+	};
+
+
 	/**
 	 * Indicates that implicitly converting
 	 * value_type from S to D is ok.
 	 */
 	template<typename S_, typename T_>
-	struct is_compatible_type
+	struct is_implicitly_convertible
 	{
 		typedef typename remove_cv<S_>::type S;
 		typedef typename remove_cv<T_>::type T;
@@ -94,7 +104,9 @@ namespace lmat
 		static const bool value =
 			is_same<S, T>::value
 			||
-			is_compatible_int<S, T>::value
+			is_implicitly_convertible_int<S, T>::value
+			||
+			is_implicitly_convertible_real<S, T>::value
 			||
 			(is_integral<S>::value && is_floating_point<T>::value &&
 					sizeof(S) <= sizeof(T)

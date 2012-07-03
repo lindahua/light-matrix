@@ -100,6 +100,14 @@ namespace lmat
 			return derived().ncolumns();
 		}
 
+		template<typename T2>
+		LMAT_ENSURE_INLINE
+		typename cast_expr_map<Derived, T2>::type
+		cast()
+		{
+			return cast_expr_map<Derived, T2>::get(derived());
+		}
+
 	}; // end class IMatrixBase
 
 
@@ -330,6 +338,15 @@ namespace lmat
 		}
 
 	}; // end class IDenseMatrixBlock
+
+
+	template<typename S, typename T, class SExpr, class DMat>
+	LMAT_ENSURE_INLINE
+	inline typename enable_if_c<is_implicitly_convertible<S, T>::value, void>::type
+	implicitly_cast_to(const IMatrixXpr<SExpr, S>& src, IDenseMatrix<DMat, T>& dst)
+	{
+		evaluate_to(cast_expr_map<SExpr, T>::get(src.derived()), dst.derived());
+	}
 
 }
 

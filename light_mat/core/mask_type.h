@@ -180,16 +180,31 @@ namespace lmat
 
 
 	template<typename T>
-	struct is_compatible_type<mask_t<T>, bool>
+	struct is_implicitly_convertible<mask_t<T>, bool>
 	{
 		static const bool value = true;
 	};
 
 	template<typename T>
-	struct is_compatible_type<bool, mask_t<T> >
+	struct is_implicitly_convertible<bool, mask_t<T> >
 	{
 		static const bool value = true;
 	};
+
+
+	// Typedefs
+
+	typedef mask_t<double> mask_f64_t;
+	typedef mask_t<float>  mask_f32_t;
+	typedef mask_t<uint8_t> mask_u8_t;
+	typedef mask_t<int8_t>  mask_i8_t;
+	typedef mask_t<uint16_t> mask_u16_t;
+	typedef mask_t<int16_t>  mask_i16_t;
+	typedef mask_t<uint32_t> mask_u32_t;
+	typedef mask_t<int32_t>  mask_i32_t;
+	typedef mask_t<uint64_t> mask_u64_t;
+	typedef mask_t<int64_t>  mask_i64_t;
+
 }
 
 #endif 

@@ -282,7 +282,18 @@ namespace lmat
 		template<class Expr>
 		LMAT_ENSURE_INLINE ref_matrix_ex& operator = (const IMatrixXpr<Expr, T>& r)
 		{
-			evaluate_to(r, *this);
+			evaluate_to(r.derived(), *this);
+			return *this;
+		}
+
+		template<class Expr, typename S>
+		LMAT_ENSURE_INLINE ref_matrix_ex& operator = (const IMatrixXpr<Expr, S>& r)
+		{
+#ifdef LMAT_USE_STATIC_ASSERT
+			static_assert(is_implicitly_convertible<S, T>::value,
+					"S is NOT implicitly-convertible to T.");
+#endif
+			implicitly_cast_to(r.derived(), *this);
 			return *this;
 		}
 

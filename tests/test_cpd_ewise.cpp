@@ -56,6 +56,7 @@ MN_CASE( cpd_expr, ewise_sqdist )
 	ASSERT_TRUE( is_approx(Y, R, tol) );
 }
 
+
 MN_CASE( cpd_expr, ewise_normpdf )
 {
 	const index_t m = M == 0 ? 5 : M;
@@ -89,6 +90,34 @@ MN_CASE( cpd_expr, ewise_normpdf )
 
 	ASSERT_TRUE( is_approx(Y, R, tol) );
 	ASSERT_TRUE( is_approx(Y2, R, tol) );
+}
+
+
+MN_CASE( cpd_expr, axpy_cast )
+{
+	const index_t m = M == 0 ? 5 : M;
+	const index_t n = N == 0 ? 6 : N;
+
+	const double a = 1.5;
+	dense_matrix<double, M, N> X(m, n);
+	dense_matrix<double, M, N> Y(m, n);
+
+	fill_ran(X, -5.0, 5.0);
+	fill_ran(Y, -5.0, 5.0);
+	const float tol = 1.0e-5f;
+
+	dense_matrix<float, M, N> Z = (a * X + Y).cast<float>();
+	dense_matrix<float, M, N> R(m, n);
+
+	for (index_t j = 0; j < n; ++j)
+	{
+		for (index_t i = 0; i < m; ++i)
+		{
+			R(i, j) = float(a * X(i,j) + Y(i,j));
+		}
+	}
+
+	ASSERT_TRUE( is_approx(Z, R, tol) );
 }
 
 
@@ -131,6 +160,10 @@ BEGIN_TPACK( cpd_ewise_normpdf )
 	ADD_MN_CASE_3X3( cpd_expr, ewise_normpdf, 5, 6 )
 END_TPACK
 
+BEGIN_TPACK( cpd_ewise_axpy_cast )
+	ADD_MN_CASE_3X3( cpd_expr, axpy_cast, 5, 6 )
+END_TPACK
+
 BEGIN_TPACK( cpd_pwise_sqdist )
 	ADD_MN_CASE_3X3( cpd_expr, pwise_sqdist, 5, 6 )
 END_TPACK
@@ -139,6 +172,7 @@ END_TPACK
 BEGIN_MAIN_SUITE
 	ADD_TPACK( cpd_ewise_sqdist )
 	ADD_TPACK( cpd_ewise_normpdf )
+	ADD_TPACK( cpd_ewise_axpy_cast )
 	ADD_TPACK( cpd_pwise_sqdist )
 END_MAIN_SUITE
 
