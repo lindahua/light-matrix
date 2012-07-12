@@ -13,7 +13,7 @@
 #ifndef LIGHTMAT_PARTIAL_REDUCE_H_
 #define LIGHTMAT_PARTIAL_REDUCE_H_
 
-#include <light_mat/matrix/matrix_ewise_expr.h>
+#include <light_mat/matrix/matrix_arith.h>
 #include <light_mat/math/reduction_functors.h>
 #include "bits/partial_reduce_internal.h"
 
@@ -216,6 +216,8 @@ namespace lmat
 	 *
 	 ********************************************/
 
+	// sum
+
 	template<typename T, class Arg>
 	struct colwise_sum_t
 	{
@@ -246,6 +248,27 @@ namespace lmat
 		return reduce(sum_fun<T>(), arg, rowwise());
 	}
 
+	// mean
+
+	template<typename T, class Arg>
+	struct colwise_mean_t
+	{
+		typedef typename
+				binary_fix2_ewise_expr_map<
+					mul_op<T>,
+					typename colwise_sum_t<T, Arg>::type
+				>::type type;
+	};
+
+	template<typename T, class Arg>
+	struct rowwise_mean_t
+	{
+		typedef typename
+				binary_fix2_ewise_expr_map<
+					mul_op<T>,
+					typename rowwise_sum_t<T, Arg>::type
+				>::type type;
+	};
 
 }
 
