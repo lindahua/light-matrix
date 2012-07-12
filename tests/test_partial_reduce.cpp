@@ -51,7 +51,7 @@ MN_CASE( colwise_reduce, sum )
 MN_CASE( rowwise_reduce, sum )
 {
 	typedef dense_matrix<double, M, N> mat_t;
-	typedef dense_col<double, N> col_t;
+	typedef dense_col<double, M> col_t;
 
 	const index_t m = M == 0 ? DM : M;
 	const index_t n = N == 0 ? DN : N;
@@ -72,9 +72,10 @@ MN_CASE( rowwise_reduce, sum )
 	// test
 
 	col_t r = sum(A, rowwise());
+
 	ASSERT_EQ( r.nrows(), m );
 	ASSERT_EQ( r.ncolumns(), 1 );
-	ASSERT_VEC_EQ( n, r, r0 );
+	ASSERT_VEC_EQ( m, r, r0 );
 }
 
 
