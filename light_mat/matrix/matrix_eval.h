@@ -24,5 +24,6 @@
 
 #include <light_mat/matrix/repeat_vecs_veval.h>
 
+#include <light_mat/matrix/matrix_reduce.h>
 
 #endif

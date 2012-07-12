@@ -24,6 +24,7 @@ namespace lmat
 	 *  Expression traits
 	 *
 	 ********************************************/
+
 	template<class Fun, typename Arg>
 	struct matrix_traits<unary_ewise_expr<Fun, Arg> >
 	{

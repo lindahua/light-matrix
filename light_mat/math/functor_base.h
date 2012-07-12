@@ -17,6 +17,8 @@
 
 namespace lmat
 {
+	// element-wise functors
+
 	template<class Fun>
 	struct is_unary_ewise_functor
 	{
@@ -86,6 +88,22 @@ namespace lmat
 	{
 		static const bool value = true;
 	};
+
+
+	// reduction functors
+
+	template<class Fun>
+	struct is_reduction_functor
+	{
+		static const bool value = false;
+	};
+
+	template<typename Arg, typename Result>
+	struct reduction_functor
+	{
+		typedef Arg arg_type;
+		typedef Result result_type;
+	};
 }
 
 // Useful macros
@@ -136,4 +154,15 @@ namespace lmat
 	template<typename T> \
 	struct supports_simd< FunT<T> > { static const bool value = SuppSIMD; };
 
+
+#define LMAT_DECLARE_AS_REDUCTION_TFUNCTOR( FunT, SuppSIMD ) \
+	template<typename T> \
+	struct is_reduction_functor< FunT<T> > { static const bool value = true; }; \
+	template<typename T> \
+	struct supports_simd< FunT<T> > { static const bool value = SuppSIMD; };
+
 #endif 
+
+
+
+
