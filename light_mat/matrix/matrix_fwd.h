@@ -97,10 +97,8 @@ namespace lmat
 
 	// expressions
 
-	template<class Fun, class Arg> class unary_ewise_expr;
-	template<class Fun, class Arg1, class Arg2> class binary_ewise_expr;
-	template<class Fun, class Arg2> class binary_fix1_ewise_expr;
-	template<class Fun, class Arg1> class binary_fix2_ewise_expr;
+	template<class Fun, class Arg, bool IsEmbed=false> class unary_ewise_expr;
+	template<class Fun, class Arg1, class Arg2, bool IsEmbed1=false, bool IsEmbed2=false> class binary_ewise_expr;
 
 	template<class Col, int N=DynamicDim> class repeat_col_expr;
 	template<class Row, int M=DynamicDim> class repeat_row_expr;

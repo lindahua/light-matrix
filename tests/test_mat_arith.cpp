@@ -21,37 +21,18 @@ const index_t LDim = 12;
 typedef dense_matrix<double> dmat_t;
 
 #ifdef LMAT_USE_STATIC_ASSERT
+	static_assert( is_mat_xpr<unary_ewise_expr<neg_op<double>, dmat_t> >::value,
+		"Expression interface verification failed");
+
 	static_assert( is_mat_xpr<binary_ewise_expr<add_op<double>, dmat_t, dmat_t> >::value,
 			"Expression interface verification failed");
 
-	static_assert( is_mat_xpr<binary_fix1_ewise_expr<add_op<double>, dmat_t> >::value,
-			"Expression interface verification failed");
-
-	static_assert( is_mat_xpr<binary_fix2_ewise_expr<add_op<double>, dmat_t> >::value,
-			"Expression interface verification failed");
-
 	static_assert( is_linear_vector_evaluator<
-			binary_ewise_linear_evaluator<add_op<double>, dmat_t, dmat_t>, double>::value,
-			"Evaluator interface verification failed");
-
-	static_assert( is_linear_vector_evaluator<
-			binary_fix1_ewise_linear_evaluator<add_op<double>, dmat_t>, double>::value,
-			"Evaluator interface verification failed");
-
-	static_assert( is_linear_vector_evaluator<
-			binary_fix2_ewise_linear_evaluator<add_op<double>, dmat_t>, double>::value,
+			binary_ewise_linear_evaluator<add_op<double>, dmat_t, dmat_t, false, false>, double>::value,
 			"Evaluator interface verification failed");
 
 	static_assert( is_percol_vector_evaluator<
-			binary_ewise_percol_evaluator<add_op<double>, dmat_t, dmat_t>, double>::value,
-			"Evaluator interface verification failed");
-
-	static_assert( is_percol_vector_evaluator<
-			binary_fix1_ewise_percol_evaluator<add_op<double>, dmat_t>, double>::value,
-			"Evaluator interface verification failed");
-
-	static_assert( is_percol_vector_evaluator<
-			binary_fix2_ewise_percol_evaluator<add_op<double>, dmat_t>, double>::value,
+			binary_ewise_percol_evaluator<add_op<double>, dmat_t, dmat_t, false, false>, double>::value,
 			"Evaluator interface verification failed");
 #endif
 
@@ -69,18 +50,6 @@ MN_CASE( mat_arith, add )
 
 	for (index_t i = 0; i < m * n; ++i) A[i] = double(i + 1);
 	for (index_t i = 0; i < m * n; ++i) B[i] = double(2 * i + 3);
-
-	// type verification
-
-#ifdef LMAT_HAS_DECLTYPE
-	typedef binary_ewise_expr<add_op<double>, mat_t, mat_t> AB_t;
-	typedef binary_fix2_ewise_expr<add_op<double>, mat_t> AC_t;
-	typedef binary_fix1_ewise_expr<add_op<double>, mat_t> CB_t;
-
-	static_assert(is_same<decltype(A + B), AB_t>::value, "Expression type verification failed.");
-	static_assert(is_same<decltype(A + c), AC_t>::value, "Expression type verification failed.");
-	static_assert(is_same<decltype(c + B), CB_t>::value, "Expression type verification failed.");
-#endif
 
 	// prepare ground-truth
 
@@ -228,18 +197,6 @@ MN_CASE( mat_arith, sub )
 	for (index_t i = 0; i < m * n; ++i) A[i] = double(i + 1);
 	for (index_t i = 0; i < m * n; ++i) B[i] = double(2 * i + 3);
 
-	// type verification
-
-#ifdef LMAT_HAS_DECLTYPE
-	typedef binary_ewise_expr<sub_op<double>, mat_t, mat_t> AB_t;
-	typedef binary_fix2_ewise_expr<sub_op<double>, mat_t> AC_t;
-	typedef binary_fix1_ewise_expr<sub_op<double>, mat_t> CB_t;
-
-	static_assert(is_same<decltype(A - B), AB_t>::value, "Expression type verification failed.");
-	static_assert(is_same<decltype(A - c), AC_t>::value, "Expression type verification failed.");
-	static_assert(is_same<decltype(c - B), CB_t>::value, "Expression type verification failed.");
-#endif
-
 	// prepare ground-truth
 
 	mat_t AB_r(m, n);
@@ -385,18 +342,6 @@ MN_CASE( mat_arith, mul )
 	for (index_t i = 0; i < m * n; ++i) A[i] = double(i + 1);
 	for (index_t i = 0; i < m * n; ++i) B[i] = double(2 * i + 3);
 
-	// type verification
-
-#ifdef LMAT_HAS_DECLTYPE
-	typedef binary_ewise_expr<mul_op<double>, mat_t, mat_t> AB_t;
-	typedef binary_fix2_ewise_expr<mul_op<double>, mat_t> AC_t;
-	typedef binary_fix1_ewise_expr<mul_op<double>, mat_t> CB_t;
-
-	static_assert(is_same<decltype(A * B), AB_t>::value, "Expression type verification failed.");
-	static_assert(is_same<decltype(A * c), AC_t>::value, "Expression type verification failed.");
-	static_assert(is_same<decltype(c * B), CB_t>::value, "Expression type verification failed.");
-#endif
-
 	// prepare ground-truth
 
 	mat_t AB_r(m, n);
@@ -541,18 +486,6 @@ MN_CASE( mat_arith, div )
 
 	for (index_t i = 0; i < m * n; ++i) A[i] = double(i + 1);
 	for (index_t i = 0; i < m * n; ++i) B[i] = double(1 << (i % 5));
-
-	// type verification
-
-#ifdef LMAT_HAS_DECLTYPE
-	typedef binary_ewise_expr<div_op<double>, mat_t, mat_t> AB_t;
-	typedef binary_fix2_ewise_expr<div_op<double>, mat_t> AC_t;
-	typedef binary_fix1_ewise_expr<div_op<double>, mat_t> CB_t;
-
-	static_assert(is_same<decltype(A / B), AB_t>::value, "Expression type verification failed.");
-	static_assert(is_same<decltype(A / c), AC_t>::value, "Expression type verification failed.");
-	static_assert(is_same<decltype(c / B), CB_t>::value, "Expression type verification failed.");
-#endif
 
 	// prepare ground-truth
 

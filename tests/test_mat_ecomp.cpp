@@ -33,18 +33,6 @@ MN_CASE( mat_ecomp, eq )
 	for (index_t i = 0; i < m * n; ++i) A[i] = double(i + 1);
 	for (index_t i = 0; i < m * n; ++i) B[i] = double((i + 1) * (i & 1));
 
-	// type verification
-
-#ifdef LMAT_HAS_DECLTYPE
-	typedef binary_ewise_expr<eq_op<double>, mat_t, mat_t> AB_t;
-	typedef binary_fix2_ewise_expr<eq_op<double>, mat_t> AC_t;
-	typedef binary_fix1_ewise_expr<eq_op<double>, mat_t> CB_t;
-
-	static_assert(is_same<decltype(A == B), AB_t>::value, "Expression type verification failed.");
-	static_assert(is_same<decltype(A == c), AC_t>::value, "Expression type verification failed.");
-	static_assert(is_same<decltype(c == B), CB_t>::value, "Expression type verification failed.");
-#endif
-
 	// prepare ground-truth
 
 	bmat_t AB_r(m, n);
@@ -97,18 +85,6 @@ MN_CASE( mat_ecomp, ne )
 
 	for (index_t i = 0; i < m * n; ++i) A[i] = double(i + 1);
 	for (index_t i = 0; i < m * n; ++i) B[i] = double((i + 1) * (i & 1));
-
-	// type verification
-
-#ifdef LMAT_HAS_DECLTYPE
-	typedef binary_ewise_expr<ne_op<double>, mat_t, mat_t> AB_t;
-	typedef binary_fix2_ewise_expr<ne_op<double>, mat_t> AC_t;
-	typedef binary_fix1_ewise_expr<ne_op<double>, mat_t> CB_t;
-
-	static_assert(is_same<decltype(A != B), AB_t>::value, "Expression type verification failed.");
-	static_assert(is_same<decltype(A != c), AC_t>::value, "Expression type verification failed.");
-	static_assert(is_same<decltype(c != B), CB_t>::value, "Expression type verification failed.");
-#endif
 
 	// prepare ground-truth
 
@@ -163,18 +139,6 @@ MN_CASE( mat_ecomp, le )
 	for (index_t i = 0; i < m * n; ++i) A[i] = double(i + 1);
 	for (index_t i = 0; i < m * n; ++i) B[i] = double((i + 1) * (i & 1));
 
-	// type verification
-
-#ifdef LMAT_HAS_DECLTYPE
-	typedef binary_ewise_expr<le_op<double>, mat_t, mat_t> AB_t;
-	typedef binary_fix2_ewise_expr<le_op<double>, mat_t> AC_t;
-	typedef binary_fix1_ewise_expr<le_op<double>, mat_t> CB_t;
-
-	static_assert(is_same<decltype(A <= B), AB_t>::value, "Expression type verification failed.");
-	static_assert(is_same<decltype(A <= c), AC_t>::value, "Expression type verification failed.");
-	static_assert(is_same<decltype(c <= B), CB_t>::value, "Expression type verification failed.");
-#endif
-
 	// prepare ground-truth
 
 	bmat_t AB_r(m, n);
@@ -227,18 +191,6 @@ MN_CASE( mat_ecomp, lt )
 
 	for (index_t i = 0; i < m * n; ++i) A[i] = double(i + 1);
 	for (index_t i = 0; i < m * n; ++i) B[i] = double((i + 1) * (i & 1));
-
-	// type verification
-
-#ifdef LMAT_HAS_DECLTYPE
-	typedef binary_ewise_expr<lt_op<double>, mat_t, mat_t> AB_t;
-	typedef binary_fix2_ewise_expr<lt_op<double>, mat_t> AC_t;
-	typedef binary_fix1_ewise_expr<lt_op<double>, mat_t> CB_t;
-
-	static_assert(is_same<decltype(A < B), AB_t>::value, "Expression type verification failed.");
-	static_assert(is_same<decltype(A < c), AC_t>::value, "Expression type verification failed.");
-	static_assert(is_same<decltype(c < B), CB_t>::value, "Expression type verification failed.");
-#endif
 
 	// prepare ground-truth
 
@@ -293,18 +245,6 @@ MN_CASE( mat_ecomp, ge )
 	for (index_t i = 0; i < m * n; ++i) A[i] = double(i + 1);
 	for (index_t i = 0; i < m * n; ++i) B[i] = double((i + 1) * (i & 1));
 
-	// type verification
-
-#ifdef LMAT_HAS_DECLTYPE
-	typedef binary_ewise_expr<ge_op<double>, mat_t, mat_t> AB_t;
-	typedef binary_fix2_ewise_expr<ge_op<double>, mat_t> AC_t;
-	typedef binary_fix1_ewise_expr<ge_op<double>, mat_t> CB_t;
-
-	static_assert(is_same<decltype(A >= B), AB_t>::value, "Expression type verification failed.");
-	static_assert(is_same<decltype(A >= c), AC_t>::value, "Expression type verification failed.");
-	static_assert(is_same<decltype(c >= B), CB_t>::value, "Expression type verification failed.");
-#endif
-
 	// prepare ground-truth
 
 	bmat_t AB_r(m, n);
@@ -357,21 +297,6 @@ MN_CASE( mat_ecomp, gt )
 
 	for (index_t i = 0; i < m * n; ++i) A[i] = double(i + 1);
 	for (index_t i = 0; i < m * n; ++i) B[i] = double((i + 1) * (i & 1));
-
-	// type verification
-
-#ifdef LMAT_HAS_DECLTYPE
-	typedef binary_ewise_expr<gt_op<double>, mat_t, mat_t> AB_t;
-	typedef binary_fix2_ewise_expr<gt_op<double>, mat_t> AC_t;
-	typedef binary_fix1_ewise_expr<gt_op<double>, mat_t> CB_t;
-
-#if (!defined(__clang__)) // clang seem to have problems parsing the following
-	static_assert(is_same<decltype(A > B), AB_t>::value, "Expression type verification failed.");
-	static_assert(is_same<decltype(A > c), AC_t>::value, "Expression type verification failed.");
-	static_assert(is_same<decltype(c > B), CB_t>::value, "Expression type verification failed.");
-#endif
-
-#endif
 
 	// prepare ground-truth
 

@@ -55,6 +55,56 @@ namespace lmat
 		noncopyable& operator= (const noncopyable& );
 	};
 
+
+	// object wrapping
+
+	template<class T, bool IsEmbed>
+	class obj_wrapper;
+
+	template<class T>
+	class obj_wrapper<T, false>
+	{
+	public:
+		LMAT_ENSURE_INLINE
+		explicit obj_wrapper(const T& a) : m_ref(a) { }
+
+		LMAT_ENSURE_INLINE
+		const T& get() const { return m_ref; }
+
+	private:
+		const T& m_ref;
+	};
+
+	template<class T>
+	class obj_wrapper<T, true>
+	{
+	public:
+		LMAT_ENSURE_INLINE
+		explicit obj_wrapper(const T& a) : m_obj(a) { }
+
+		LMAT_ENSURE_INLINE
+		const T& get() const { return m_obj; }
+
+	private:
+		T m_obj;
+	};
+
+
+	template<class T>
+	struct embed_t
+	{
+		LMAT_ENSURE_INLINE
+		explicit embed_t(const T& a) : ref(a) { }
+		const T& ref;
+	};
+
+	template<class T>
+	LMAT_ENSURE_INLINE
+	inline embed_t<T> embed(const T& a)
+	{
+		return embed_t<T>(a);
+	}
+
 }
 
 #endif
