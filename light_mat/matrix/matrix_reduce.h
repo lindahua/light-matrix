@@ -105,6 +105,13 @@ namespace lmat
 	{
 		return X.nelems() > 0 ? maximum(abs(X)) : T(0);
 	}
+
+	template<typename T, class LMat, class RMat>
+	LMAT_ENSURE_INLINE
+	T nrmdot(const IMatrixXpr<LMat, T>& X, const IMatrixXpr<RMat, T>& Y)
+	{
+		return dot(X, Y) / (L2norm(X) * L2norm(Y));
+	}
 }
 
 #endif /* MATRIX_REDUC_EXPR_H_ */

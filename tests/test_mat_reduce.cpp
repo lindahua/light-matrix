@@ -305,6 +305,40 @@ MN_CASE( mat_reduce, Linfnorm )
 }
 
 
+MN_CASE( mat_reduce, nrmdot )
+{
+	typedef dense_matrix<double, M, N> mat_t;
+
+	const index_t m = M == 0 ? DM : M;
+	const index_t n = N == 0 ? DN : N;
+
+	mat_t A(m, n);
+	mat_t B(m, n);
+
+	for (index_t i = 0; i < m * n; ++i) A[i] = double(i + 1);
+	for (index_t i = 0; i < m * n; ++i) B[i] = double(i + 2);
+
+	// prepare ground-truth
+
+	double raa = 0.0;
+	double rab = 0.0;
+	double rbb = 0.0;
+
+	for (index_t i = 0; i < m * n; ++i)
+	{
+		rab += A[i] * B[i];
+		raa += A[i] * A[i];
+		rbb += B[i] * B[i];
+	}
+
+	double r0 = rab / (std::sqrt(raa) * std::sqrt(rbb));
+	ASSERT_TRUE( r0 <= 1.0 && r0 >= -1.0 );
+
+	// test
+
+	ASSERT_EQ( nrmdot(A, B), r0 );
+}
+
 
 BEGIN_TPACK( mat_sum )
 	ADD_MN_CASE_3X3( mat_reduce, sum, DM, DN )
@@ -354,6 +388,10 @@ BEGIN_TPACK( mat_Linfnorm )
 	ADD_MN_CASE_3X3( mat_reduce, Linfnorm, DM, DN )
 END_TPACK
 
+BEGIN_TPACK( mat_nrmdot )
+	ADD_MN_CASE_3X3( mat_reduce, nrmdot, DM, DN )
+END_TPACK
+
 
 BEGIN_MAIN_SUITE
 	ADD_TPACK( mat_sum )
@@ -369,6 +407,7 @@ BEGIN_MAIN_SUITE
 	ADD_TPACK( mat_sqL2norm )
 	ADD_TPACK( mat_L2norm )
 	ADD_TPACK( mat_Linfnorm )
+	ADD_TPACK( mat_nrmdot )
 END_MAIN_SUITE
 
 
