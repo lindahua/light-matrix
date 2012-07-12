@@ -99,8 +99,13 @@ set(MATRIX_EWISE_HS
 set(REPEAT_VECS_HS
     ${INC}/matrix/bits/repeat_vecs_internal.h
     ${INC}/matrix/repeat_vecs.h
-    ${INC}/matrix/repeat_vecs_veval.h)     
+    ${INC}/matrix/repeat_vecs_veval.h)   
     
+set(MATRIX_REDUC_HS
+    ${INC}/math/reduction_functors.h
+    ${INC}/matrix/bits/matrix_reduce_internal.h
+    ${INC}/matrix/matrix_reduce.h)    
+      
 set(CORE_HS
     ${COMMON_BASIC_HS}
     ${COMMON_ARRAY_HS})
@@ -116,7 +121,8 @@ set(MATRIX_EVAL_HS
     ${MATRIX_CLASS_HS}
     ${MATRIX_EVAL_BASE_HS}
     ${MATRIX_EWISE_HS}
-    ${REPEAT_VECS_HS})    
+    ${REPEAT_VECS_HS}
+    ${MATRIX_REDUC_HS})    
  
 
 # Executables
@@ -187,6 +193,14 @@ add_executable(test_rep_veval ${REP_VECS_HS} test_rep_veval.cpp)
 
 add_executable(test_cpd_ewise ${MATRIX_EVAL_HS} test_cpd_ewise.cpp)
 
+set(MAT_REDUC_HS
+    ${MATRIX_HS}
+    ${MATRIX_EVAL_BASE_HS}
+    ${MATRIX_REDUC_HS})
+    
+add_executable(test_mat_reduce ${MAT_REDUC_HS} test_mat_reduce.cpp) 
+
+
 # Link to test_main
 
 target_link_libraries(test_arrays test_main)
@@ -220,6 +234,8 @@ target_link_libraries(test_rep_vecs test_main)
 target_link_libraries(test_rep_veval test_main)
 
 target_link_libraries(test_cpd_ewise test_main)
+
+target_link_libraries(test_mat_reduce test_main)
     
 # Set output directories
 
@@ -245,7 +261,8 @@ set(ALL_EXECUTABLES
     test_mat_elogical
     test_rep_vecs
     test_rep_veval
-    test_cpd_ewise)
+    test_cpd_ewise
+    test_mat_reduce)
     
 set_target_properties(${ALL_EXECUTABLES}
     PROPERTIES
@@ -286,4 +303,5 @@ add_test(NAME rep_veval COMMAND test_rep_veval)
 
 add_test(NAME cpd_ewise COMMAND test_cpd_ewise)
 
+add_test(NAME mat_reduce COMMAND test_mat_reduce)
 

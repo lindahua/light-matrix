@@ -41,7 +41,7 @@ namespace lmat { namespace detail {
 		LMAT_ENSURE_INLINE
 		static typename Fun::result_type eval(const Fun& fun, const index_t len, const Vec& vec)
 		{
-			if (len == 0)
+			if (len > 0)
 			{
 				typename Fun::result_type r = fun(vec.get_value(0));
 				for (index_t i = 1; i < len; ++i)
@@ -118,13 +118,13 @@ namespace lmat { namespace detail {
 		LMAT_ENSURE_INLINE
 		static typename Fun::result_type evaluate(const Fun& fun, const Expr& expr)
 		{
-			if (percol_eval_cost<Expr>::value < linear_eval_cost<Expr>::value)
+			if (percol_eval_cost<Expr>::of(expr) < linear_eval_cost<Expr>::of(expr) )
 			{
-				percol_reduce_internal::evaluate(fun, expr);
+				return percol_reduce_internal::evaluate(fun, expr);
 			}
 			else
 			{
-				linear_reduce_internal::evaluate(fun, expr);
+				return linear_reduce_internal::evaluate(fun, expr);
 			}
 		}
 	};

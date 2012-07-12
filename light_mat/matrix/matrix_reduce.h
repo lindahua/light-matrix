@@ -23,11 +23,18 @@ namespace lmat
 	template<class Fun, typename T, class Mat>
 	LMAT_ENSURE_INLINE
 	inline typename Fun::result_type
-	reduce(const Fun& fun, const IMatrixXpr<Mat, T>& X)
+	reduce_by_scalars(const Fun& fun, const IMatrixXpr<Mat, T>& X)
 	{
-		detail::reduce_by_scalars_internal::evaluate(fun, X.derived());
+		return detail::reduce_by_scalars_internal::evaluate(fun, X.derived());
 	}
 
+	template<class Fun, typename T, class Mat>
+	LMAT_ENSURE_INLINE
+	inline typename Fun::result_type
+	reduce(const Fun& fun, const IMatrixXpr<Mat, T>& X)
+	{
+		return detail::reduce_by_scalars_internal::evaluate(fun, X.derived());
+	}
 
 	template<typename T, class Mat>
 	LMAT_ENSURE_INLINE
@@ -45,6 +52,13 @@ namespace lmat
 
 	template<typename T, class Mat>
 	LMAT_ENSURE_INLINE
+	T prod(const IMatrixXpr<Mat, T>& X)
+	{
+		return reduce(prod_fun<T>(), X);
+	}
+
+	template<typename T, class Mat>
+	LMAT_ENSURE_INLINE
 	T maximum(const IMatrixXpr<Mat, T>& X)
 	{
 		return reduce(maximum_fun<T>(), X);
@@ -54,7 +68,7 @@ namespace lmat
 	LMAT_ENSURE_INLINE
 	T minimum(const IMatrixXpr<Mat, T>& X)
 	{
-		return reduce(maximum_fun<T>(), X);
+		return reduce(minimum_fun<T>(), X);
 	}
 
 	template<typename T, class LMat, class RMat>
