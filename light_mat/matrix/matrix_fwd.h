@@ -97,13 +97,19 @@ namespace lmat
 
 	// expressions
 
-	template<class Fun, typename Arg> class unary_ewise_expr;
-	template<class Fun, typename Arg1, typename Arg2> class binary_ewise_expr;
-	template<class Fun, typename Arg2> class binary_fix1_ewise_expr;
-	template<class Fun, typename Arg1> class binary_fix2_ewise_expr;
+	template<class Fun, class Arg> class unary_ewise_expr;
+	template<class Fun, class Arg1, class Arg2> class binary_ewise_expr;
+	template<class Fun, class Arg2> class binary_fix1_ewise_expr;
+	template<class Fun, class Arg1> class binary_fix2_ewise_expr;
 
 	template<class Col, int N=DynamicDim> class repeat_col_expr;
 	template<class Row, int M=DynamicDim> class repeat_row_expr;
+
+	struct rowwise { };
+	struct colwise { };
+
+	template<class Fun, class Arg> class colwise_reduce_expr;
+	template<class Fun, class Arg> class rowwise_reduce_expr;
 
 	template<class Mat> struct transposed;
 	template<class Mat> class transpose_expr;

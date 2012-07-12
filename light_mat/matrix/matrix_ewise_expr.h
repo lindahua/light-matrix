@@ -25,7 +25,7 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<class Fun, typename Arg>
+	template<class Fun, class Arg>
 	struct matrix_traits<unary_ewise_expr<Fun, Arg> >
 	{
 		static const int num_dimensions = 2;
@@ -37,7 +37,7 @@ namespace lmat
 		typedef typename Fun::result_type value_type;
 	};
 
-	template<class Fun, typename Arg1, typename Arg2>
+	template<class Fun, class Arg1, class Arg2>
 	struct matrix_traits<binary_ewise_expr<Fun, Arg1, Arg2> >
 	{
 		static const int num_dimensions = 2;
@@ -49,7 +49,7 @@ namespace lmat
 		typedef typename Fun::result_type value_type;
 	};
 
-	template<class Fun, typename Arg>
+	template<class Fun, class Arg>
 	struct matrix_traits<binary_fix1_ewise_expr<Fun, Arg> >
 	{
 		static const int num_dimensions = 2;
@@ -61,7 +61,7 @@ namespace lmat
 		typedef typename Fun::result_type value_type;
 	};
 
-	template<class Fun, typename Arg>
+	template<class Fun, class Arg>
 	struct matrix_traits<binary_fix2_ewise_expr<Fun, Arg> >
 	{
 		static const int num_dimensions = 2;
@@ -80,7 +80,7 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<class Fun, typename Arg>
+	template<class Fun, class Arg>
 	class unary_ewise_expr
 	: public IMatrixXpr<unary_ewise_expr<Fun, Arg>, typename Fun::result_type>
 	{
@@ -131,7 +131,7 @@ namespace lmat
 		const Arg& m_arg;
 	};
 
-	template<class Fun, typename Arg1, typename Arg2>
+	template<class Fun, class Arg1, class Arg2>
 	class binary_ewise_expr
 	: public IMatrixXpr<binary_ewise_expr<Fun, Arg1, Arg2>, typename Fun::result_type>
 	{
@@ -193,7 +193,7 @@ namespace lmat
 	};
 
 
-	template<class Fun, typename Arg2>
+	template<class Fun, class Arg2>
 	class binary_fix1_ewise_expr
 	: public IMatrixXpr<binary_fix1_ewise_expr<Fun, Arg2>, typename Fun::result_type>
 	{
@@ -254,7 +254,7 @@ namespace lmat
 	};
 
 
-	template<class Fun, typename Arg1>
+	template<class Fun, class Arg1>
 	class binary_fix2_ewise_expr
 	: public IMatrixXpr<binary_fix2_ewise_expr<Fun, Arg1>, typename Fun::result_type>
 	{

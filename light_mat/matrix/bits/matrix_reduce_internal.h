@@ -69,7 +69,7 @@ namespace lmat { namespace detail {
 	};
 
 
-	struct linear_reduce_internal
+	struct full_reduce_linear_internal
 	{
 		template<class Fun, class Expr>
 		LMAT_ENSURE_INLINE
@@ -82,7 +82,7 @@ namespace lmat { namespace detail {
 	};
 
 
-	struct percol_reduce_internal
+	struct full_reduce_percol_internal
 	{
 		template<class Fun, class Expr>
 		inline
@@ -120,11 +120,11 @@ namespace lmat { namespace detail {
 		{
 			if (percol_eval_cost<Expr>::of(expr) < linear_eval_cost<Expr>::of(expr) )
 			{
-				return percol_reduce_internal::evaluate(fun, expr);
+				return full_reduce_linear_internal::evaluate(fun, expr);
 			}
 			else
 			{
-				return linear_reduce_internal::evaluate(fun, expr);
+				return full_reduce_percol_internal::evaluate(fun, expr);
 			}
 		}
 	};
