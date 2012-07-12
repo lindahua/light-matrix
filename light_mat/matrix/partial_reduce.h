@@ -25,8 +25,8 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<class Fun, class Arg>
-	struct matrix_traits<colwise_reduce_expr<Fun, Arg> >
+	template<class Fun, class Arg, bool IsEmbed>
+	struct matrix_traits<colwise_reduce_expr<Fun, Arg, IsEmbed> >
 	{
 		static const int num_dimensions = 2;
 		static const int compile_time_num_rows = 1;
@@ -38,8 +38,8 @@ namespace lmat
 	};
 
 
-	template<class Fun, class Arg>
-	struct matrix_traits<rowwise_reduce_expr<Fun, Arg> >
+	template<class Fun, class Arg, bool IsEmbed>
+	struct matrix_traits<rowwise_reduce_expr<Fun, Arg, IsEmbed> >
 	{
 		static const int num_dimensions = 2;
 		static const int compile_time_num_rows = ct_rows<Arg>::value;
@@ -51,9 +51,9 @@ namespace lmat
 	};
 
 
-	template<class Fun, class Arg>
+	template<class Fun, class Arg, bool IsEmbed>
 	class colwise_reduce_expr
-	: public IMatrixXpr<colwise_reduce_expr<Fun, Arg>, typename Fun::result_type>
+	: public IMatrixXpr<colwise_reduce_expr<Fun, Arg, IsEmbed>, typename Fun::result_type>
 	{
 #ifdef LMAT_USE_STATIC_ASSERT
 		static_assert(is_reduction_functor<Fun>::value, "Fun must be a reduction_functor");
@@ -74,12 +74,12 @@ namespace lmat
 
 		LMAT_ENSURE_INLINE const Arg& arg() const
 		{
-			return m_arg;
+			return m_arg.get();
 		}
 
 		LMAT_ENSURE_INLINE index_t nelems() const
 		{
-			return m_arg.ncolumns();
+			return arg().ncolumns();
 		}
 
 		LMAT_ENSURE_INLINE size_t size() const
@@ -94,18 +94,18 @@ namespace lmat
 
 		LMAT_ENSURE_INLINE index_t ncolumns() const
 		{
-			return m_arg.ncolumns();
+			return arg().ncolumns();
 		}
 
 	private:
 		Fun m_fun;
-		const Arg& m_arg;
+		obj_wrapper<Arg, IsEmbed> m_arg;
 	};
 
 
-	template<class Fun, class Arg>
+	template<class Fun, class Arg, bool IsEmbed>
 	class rowwise_reduce_expr
-	: public IMatrixXpr<rowwise_reduce_expr<Fun, Arg>, typename Fun::result_type>
+	: public IMatrixXpr<rowwise_reduce_expr<Fun, Arg, IsEmbed>, typename Fun::result_type>
 	{
 #ifdef LMAT_USE_STATIC_ASSERT
 		static_assert(is_reduction_functor<Fun>::value, "Fun must be a reduction_functor");
@@ -126,12 +126,12 @@ namespace lmat
 
 		LMAT_ENSURE_INLINE const Arg& arg() const
 		{
-			return m_arg;
+			return m_arg.get();
 		}
 
 		LMAT_ENSURE_INLINE index_t nelems() const
 		{
-			return m_arg.nrows();
+			return arg().nrows();
 		}
 
 		LMAT_ENSURE_INLINE size_t size() const
@@ -141,7 +141,7 @@ namespace lmat
 
 		LMAT_ENSURE_INLINE index_t nrows() const
 		{
-			return m_arg.nrows();
+			return arg().nrows();
 		}
 
 		LMAT_ENSURE_INLINE index_t ncolumns() const
@@ -151,7 +151,7 @@ namespace lmat
 
 	private:
 		Fun m_fun;
-		const Arg& m_arg;
+		obj_wrapper<Arg, IsEmbed> m_arg;
 	};
 
 
@@ -164,13 +164,13 @@ namespace lmat
 	template<class Fun, class Arg>
 	struct colwise_reduce_expr_map
 	{
-		typedef colwise_reduce_expr<Fun, Arg> type;
+		typedef colwise_reduce_expr<Fun, Arg, false> type;
 	};
 
 	template<class Fun, class Arg>
 	struct rowwise_reduce_expr_map
 	{
-		typedef rowwise_reduce_expr<Fun, Arg> type;
+		typedef rowwise_reduce_expr<Fun, Arg, false> type;
 	};
 
 	template<class Fun, class Arg>
@@ -194,16 +194,16 @@ namespace lmat
 	}
 
 
-	template<class Fun, class Arg, class DMat>
-	inline void evaluate_to(const colwise_reduce_expr<Fun, Arg>& expr,
+	template<class Fun, class Arg, class DMat, bool IsEmbed>
+	inline void evaluate_to(const colwise_reduce_expr<Fun, Arg, IsEmbed>& expr,
 			IDenseMatrix<DMat, typename Fun::result_type>& dst)
 	{
 		detail::colwise_reduce_internal::eval(expr.fun(), expr.arg(), dst.derived());
 	}
 
 
-	template<class Fun, class Arg, class DMat>
-	inline void evaluate_to(const rowwise_reduce_expr<Fun, Arg>& expr,
+	template<class Fun, class Arg, class DMat, bool IsEmbed>
+	inline void evaluate_to(const rowwise_reduce_expr<Fun, Arg, IsEmbed>& expr,
 			IDenseMatrix<DMat, typename Fun::result_type>& dst)
 	{
 		detail::rowwise_reduce_internal::eval(expr.fun(), expr.arg(), dst.derived());
@@ -247,28 +247,6 @@ namespace lmat
 	{
 		return reduce(sum_fun<T>(), arg, rowwise());
 	}
-
-	// mean
-
-	template<typename T, class Arg>
-	struct colwise_mean_t
-	{
-		typedef typename
-				binary_fix2_ewise_expr_map<
-					mul_op<T>,
-					typename colwise_sum_t<T, Arg>::type
-				>::type type;
-	};
-
-	template<typename T, class Arg>
-	struct rowwise_mean_t
-	{
-		typedef typename
-				binary_fix2_ewise_expr_map<
-					mul_op<T>,
-					typename rowwise_sum_t<T, Arg>::type
-				>::type type;
-	};
 
 }
 

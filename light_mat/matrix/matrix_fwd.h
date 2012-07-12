@@ -106,8 +106,8 @@ namespace lmat
 	struct rowwise { };
 	struct colwise { };
 
-	template<class Fun, class Arg> class colwise_reduce_expr;
-	template<class Fun, class Arg> class rowwise_reduce_expr;
+	template<class Fun, class Arg, bool IsEmbed=false> class colwise_reduce_expr;
+	template<class Fun, class Arg, bool IsEmbed=false> class rowwise_reduce_expr;
 
 	// evaluation
 
