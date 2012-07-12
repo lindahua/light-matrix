@@ -24,8 +24,8 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<class Col, int N>
-	struct matrix_traits<repeat_col_expr<Col, N> >
+	template<class Col, int N, bool IsEmbed>
+	struct matrix_traits<repeat_col_expr<Col, N, IsEmbed> >
 	{
 		static const int num_dimensions = 2;
 		static const int compile_time_num_rows = ct_rows<Col>::value;
@@ -36,8 +36,8 @@ namespace lmat
 		typedef typename matrix_traits<Col>::value_type value_type;
 	};
 
-	template<class Row, int M>
-	struct matrix_traits<repeat_row_expr<Row, M> >
+	template<class Row, int M, bool IsEmbed>
+	struct matrix_traits<repeat_row_expr<Row, M, IsEmbed> >
 	{
 		static const int num_dimensions = 2;
 		static const int compile_time_num_rows = M;
@@ -55,9 +55,9 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<class Col, int N>
+	template<class Col, int N, bool IsEmbed>
 	class repeat_col_expr
-	: public IMatrixXpr<repeat_col_expr<Col, N>, typename matrix_traits<Col>::value_type>
+	: public IMatrixXpr<repeat_col_expr<Col, N, IsEmbed>, typename matrix_traits<Col>::value_type>
 	{
 #ifdef LMAT_USE_STATIC_ASSERT
 		static_assert(is_mat_xpr<Col>::value, "Col must be a matrix expression class.");
@@ -75,7 +75,7 @@ namespace lmat
 
 		LMAT_ENSURE_INLINE const Col& column() const
 		{
-			return m_col;
+			return m_col.get();
 		}
 
 		LMAT_ENSURE_INLINE index_t nelems() const
@@ -90,7 +90,7 @@ namespace lmat
 
 		LMAT_ENSURE_INLINE index_t nrows() const
 		{
-			return m_col.nrows();
+			return column().nrows();
 		}
 
 		LMAT_ENSURE_INLINE index_t ncolumns() const
@@ -99,16 +99,16 @@ namespace lmat
 		}
 
 	private:
-		const Col& m_col;
+		obj_wrapper<Col, IsEmbed> m_col;
 		single_dim<N> m_ncols;
 	};
 
 
 	// repeat_row_expr
 
-	template<class Row, int M>
+	template<class Row, int M, bool IsEmbed>
 	class repeat_row_expr
-	: public IMatrixXpr<repeat_row_expr<Row, M>, typename matrix_traits<Row>::value_type>
+	: public IMatrixXpr<repeat_row_expr<Row, M, IsEmbed>, typename matrix_traits<Row>::value_type>
 	{
 #ifdef LMAT_USE_STATIC_ASSERT
 		static_assert(is_mat_xpr<Row>::value, "Row must be a matrix expression class.");
@@ -126,7 +126,7 @@ namespace lmat
 
 		LMAT_ENSURE_INLINE const Row& row() const
 		{
-			return m_row;
+			return m_row.get();
 		}
 
 		LMAT_ENSURE_INLINE index_t nelems() const
@@ -146,11 +146,11 @@ namespace lmat
 
 		LMAT_ENSURE_INLINE index_t ncolumns() const
 		{
-			return m_row.ncolumns();
+			return row().ncolumns();
 		}
 
 	private:
-		const Row& m_row;
+		obj_wrapper<Row, IsEmbed> m_row;
 		single_dim<M> m_nrows;
 	};
 
@@ -164,13 +164,13 @@ namespace lmat
 	template<class Col, int N>
 	struct repcol_type_map
 	{
-		typedef repeat_col_expr<Col, N> type;
+		typedef repeat_col_expr<Col, N, false> type;
 	};
 
 	template<class Row, int M>
 	struct reprow_type_map
 	{
-		typedef repeat_row_expr<Row, M> type;
+		typedef repeat_row_expr<Row, M, false> type;
 	};
 
 	template<typename T, int Mc, int Nc, int N>
@@ -264,16 +264,16 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<class Col, class DMat>
-	inline void evaluate_to(const repeat_col_expr<Col, 1>& s,
+	template<class Col, class DMat, bool IsEmbed>
+	inline void evaluate_to(const repeat_col_expr<Col, 1, IsEmbed>& s,
 			IDenseMatrix<DMat, typename matrix_traits<Col>::value_type>& dst)
 	{
 		evaluate_to(s.column(), dst);
 	}
 
 
-	template<class Col, int N, class DMat>
-	inline void evaluate_to(const repeat_col_expr<Col, N>& s,
+	template<class Col, int N, class DMat, bool IsEmbed>
+	inline void evaluate_to(const repeat_col_expr<Col, N, IsEmbed>& s,
 			IDenseMatrix<DMat, typename matrix_traits<Col>::value_type>& dst)
 	{
 		typedef typename matrix_traits<Col>::value_type T;
@@ -305,15 +305,15 @@ namespace lmat
 		}
 	}
 
-	template<class Row, class DMat>
-	inline void evaluate_to(const repeat_row_expr<Row, 1>& s,
+	template<class Row, class DMat, bool IsEmbed>
+	inline void evaluate_to(const repeat_row_expr<Row, 1, IsEmbed>& s,
 			IDenseMatrix<DMat, typename matrix_traits<Row>::value_type>& dst)
 	{
 		evaluate_to( s.row(), dst );
 	}
 
-	template<class Row, int M, class DMat>
-	inline void evaluate_to(const repeat_row_expr<Row, M>& s,
+	template<class Row, int M, class DMat, bool IsEmbed>
+	inline void evaluate_to(const repeat_row_expr<Row, M, IsEmbed>& s,
 			IDenseMatrix<DMat, typename matrix_traits<Row>::value_type>& dst)
 	{
 		typedef typename matrix_traits<Row>::value_type T;

@@ -175,42 +175,42 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<class Fun, class Arg>
-	struct linear_eval_cost<unary_ewise_expr<Fun, Arg> >
+	template<class Fun, class Arg, bool IsEmbed>
+	struct linear_eval_cost<unary_ewise_expr<Fun, Arg, IsEmbed> >
 	{
 		LMAT_ENSURE_INLINE
-		static int of(const unary_ewise_expr<Fun, Arg>& expr )
+		static int of(const unary_ewise_expr<Fun, Arg, IsEmbed>& expr )
 		{
 			return linear_eval_cost<Arg>::of(expr.arg());
 		}
 	};
 
-	template<class Fun, class Arg>
-	struct percol_eval_cost<unary_ewise_expr<Fun, Arg> >
+	template<class Fun, class Arg, bool IsEmbed>
+	struct percol_eval_cost<unary_ewise_expr<Fun, Arg, IsEmbed> >
 	{
 		LMAT_ENSURE_INLINE
-		static int of(const unary_ewise_expr<Fun, Arg>& expr )
+		static int of(const unary_ewise_expr<Fun, Arg, IsEmbed>& expr )
 		{
 			return percol_eval_cost<Arg>::of(expr.arg());
 		}
 	};
 
-	template<class Fun, class Arg1, class Arg2>
-	struct linear_eval_cost<binary_ewise_expr<Fun, Arg1, Arg2> >
+	template<class Fun, class Arg1, class Arg2, bool IsEmbed1, bool IsEmbed2>
+	struct linear_eval_cost<binary_ewise_expr<Fun, Arg1, Arg2, IsEmbed1, IsEmbed2> >
 	{
 		LMAT_ENSURE_INLINE
-		static int of(const binary_ewise_expr<Fun, Arg1, Arg2>& expr )
+		static int of(const binary_ewise_expr<Fun, Arg1, Arg2, IsEmbed1, IsEmbed2>& expr )
 		{
 			return  linear_eval_cost<Arg1>::of(expr.first_arg()) +
 					linear_eval_cost<Arg2>::of(expr.second_arg());
 		}
 	};
 
-	template<class Fun, class Arg1, class Arg2>
-	struct percol_eval_cost<binary_ewise_expr<Fun, Arg1, Arg2> >
+	template<class Fun, class Arg1, class Arg2, bool IsEmbed1, bool IsEmbed2>
+	struct percol_eval_cost<binary_ewise_expr<Fun, Arg1, Arg2, IsEmbed1, IsEmbed2> >
 	{
 		LMAT_ENSURE_INLINE
-		static int of(const binary_ewise_expr<Fun, Arg1, Arg2>& expr )
+		static int of(const binary_ewise_expr<Fun, Arg1, Arg2, IsEmbed1, IsEmbed2>& expr )
 		{
 			return  percol_eval_cost<Arg1>::of(expr.first_arg()) +
 					percol_eval_cost<Arg2>::of(expr.second_arg());

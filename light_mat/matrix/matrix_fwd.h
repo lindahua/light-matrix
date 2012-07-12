@@ -100,17 +100,14 @@ namespace lmat
 	template<class Fun, class Arg, bool IsEmbed=false> class unary_ewise_expr;
 	template<class Fun, class Arg1, class Arg2, bool IsEmbed1=false, bool IsEmbed2=false> class binary_ewise_expr;
 
-	template<class Col, int N=DynamicDim> class repeat_col_expr;
-	template<class Row, int M=DynamicDim> class repeat_row_expr;
+	template<class Col, int N=DynamicDim, bool IsEmbed=false> class repeat_col_expr;
+	template<class Row, int M=DynamicDim, bool IsEmbed=false> class repeat_row_expr;
 
 	struct rowwise { };
 	struct colwise { };
 
 	template<class Fun, class Arg> class colwise_reduce_expr;
 	template<class Fun, class Arg> class rowwise_reduce_expr;
-
-	template<class Mat> struct transposed;
-	template<class Mat> class transpose_expr;
 
 	// evaluation
 
