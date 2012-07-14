@@ -20,7 +20,7 @@ namespace lmat
 
 	/********************************************
 	 *
-	 *  dense_matrix
+	 *  matrix traits
 	 *
 	 ********************************************/
 
@@ -61,6 +61,12 @@ namespace lmat
 	};
 
 
+	/********************************************
+	 *
+	 *  dense_matrix
+	 *
+	 ********************************************/
+
 	template<typename T, int CTRows, int CTCols, typename Align>
 	class dense_matrix : public IDenseMatrix<dense_matrix<T, CTRows, CTCols, Align>, T>
 	{
@@ -71,8 +77,8 @@ namespace lmat
 		static_assert(CTRows >= 0 && CTCols >= 0,
 				"CTRows and CTCols must be non-negative numbers.");
 
-		static_assert(is_same<Align, base_aligned>::value || is_same<Align, percol_aligned>::value,
-				"Align must be either base_aligned or percol_aligned.");
+		static_assert(is_same<Align, base_aligned>::value,
+				"Align must be base_aligned in current version.");
 #endif
 
 	public:
@@ -217,37 +223,37 @@ namespace lmat
 
 		LMAT_ENSURE_INLINE const_pointer ptr_col(const index_type j) const
 		{
-			return m_internal.ptr_col(j);
+			return ptr_data() + j * lead_dim();
 		}
 
 		LMAT_ENSURE_INLINE pointer ptr_col(const index_type j)
 		{
-			return m_internal.ptr_col(j);
+			return ptr_data() + j * lead_dim();
 		}
 
 		LMAT_ENSURE_INLINE index_type offset(const index_type i, const index_type j) const
 		{
-			return matrix_indexer<CTRows, CTCols>::offset(lead_dim(), i, j);
+			return m_internal.offset(i, j);
 		}
 
 		LMAT_ENSURE_INLINE const_reference elem(const index_type i, const index_type j) const
 		{
-			return m_internal.ptr_data()[offset(i, j)];
+			return ptr_data()[offset(i, j)];
 		}
 
 		LMAT_ENSURE_INLINE reference elem(const index_type i, const index_type j)
 		{
-			return m_internal.ptr_data()[offset(i, j)];
+			return ptr_data()[offset(i, j)];
 		}
 
 		LMAT_ENSURE_INLINE const_reference operator[] (const index_type i) const
 		{
-			return m_internal.ptr_data()[i];
+			return ptr_data()[i];
 		}
 
 		LMAT_ENSURE_INLINE reference operator[] (const index_type i)
 		{
-			return m_internal.ptr_data()[i];
+			return ptr_data()[i];
 		}
 
 		LMAT_ENSURE_INLINE void resize(index_type m, index_type n)

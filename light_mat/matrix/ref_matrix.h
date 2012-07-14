@@ -125,7 +125,7 @@ namespace lmat
 
 		LMAT_ENSURE_INLINE index_type offset(const index_type i, const index_type j) const
 		{
-			return matrix_indexer<CTRows, CTCols>::offset_c(lead_dim(), i, j);
+			return m_shape.offset_c(i, j);
 		}
 
 		LMAT_ENSURE_INLINE const_reference elem(const index_type i, const index_type j) const
@@ -297,7 +297,7 @@ namespace lmat
 
 		LMAT_ENSURE_INLINE index_type offset(const index_type i, const index_type j) const
 		{
-			return matrix_indexer<CTRows, CTCols>::offset_c(lead_dim(), i, j);
+			return m_shape.offset_c(i, j);
 		}
 
 		LMAT_ENSURE_INLINE const_reference elem(const index_type i, const index_type j) const

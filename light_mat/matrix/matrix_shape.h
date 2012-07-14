@@ -136,8 +136,8 @@ namespace lmat
 		template<>
 		struct matrix_shape_internal<DynamicDim, DynamicDim, false, false>
 		{
-			const index_t _nrows;
-			const index_t _ncols;
+			index_t _nrows;
+			index_t _ncols;
 
 			LMAT_ENSURE_INLINE
 			matrix_shape_internal() : _nrows(0), _ncols(0) { }
@@ -148,22 +148,21 @@ namespace lmat
 			{
 			}
 
+			LMAT_ENSURE_INLINE void reset(const index_t m, const index_t n)
+			{
+				_nrows = m;
+				_ncols = n;
+			}
+
 			LMAT_ENSURE_INLINE index_t nrows() const { return _nrows; }
 			LMAT_ENSURE_INLINE index_t ncolumns() const { return _ncols; }
 			LMAT_ENSURE_INLINE index_t nelems() const { return _nrows * _ncols; }
-
-			LMAT_ENSURE_INLINE index_t is_empty() const { return _nrows == 0 || _ncols == 0; }
-			LMAT_ENSURE_INLINE index_t is_scalar() const { return _nrows == 1 && _ncols == 1; }
-			LMAT_ENSURE_INLINE index_t is_column() const { return _ncols == 1; }
-			LMAT_ENSURE_INLINE index_t is_row() const { return _nrows == 1; }
-			LMAT_ENSURE_INLINE index_t is_vector() const { return _nrows == 1 || _ncols == 1; }
-			LMAT_ENSURE_INLINE index_t is_square() const { return _nrows == _ncols; }
 		};
 
 		template<int N>
 		struct matrix_shape_internal<DynamicDim, N, false, true>
 		{
-			const index_t _nrows;
+			index_t _nrows;
 
 			LMAT_ENSURE_INLINE
 			matrix_shape_internal() : _nrows(0) { }
@@ -176,22 +175,21 @@ namespace lmat
 						"Attempted to construct a matrix with incorrect #columns.");
 			}
 
+			LMAT_ENSURE_INLINE void reset(const index_t m, const index_t n)
+			{
+				check_arg(n == N, "Attempted to resize to incorrect #columns");
+				_nrows = m;
+			}
+
 			LMAT_ENSURE_INLINE index_t nrows() const { return _nrows; }
 			LMAT_ENSURE_INLINE index_t ncolumns() const { return N; }
 			LMAT_ENSURE_INLINE index_t nelems() const { return _nrows * N; }
-
-			LMAT_ENSURE_INLINE index_t is_empty() const { return _nrows == 0; }
-			LMAT_ENSURE_INLINE index_t is_scalar() const { return N == 1 && _nrows == 1; }
-			LMAT_ENSURE_INLINE index_t is_column() const { return N == 1; }
-			LMAT_ENSURE_INLINE index_t is_row() const { return _nrows == 1; }
-			LMAT_ENSURE_INLINE index_t is_vector() const { return N == 1 || _nrows == 1; }
-			LMAT_ENSURE_INLINE index_t is_square() const { return _nrows == N; }
 		};
 
 		template<int M>
 		struct matrix_shape_internal<M, DynamicDim, true, false>
 		{
-			const index_t _ncols;
+			index_t _ncols;
 
 			LMAT_ENSURE_INLINE
 			matrix_shape_internal() : _ncols(0) { }
@@ -204,16 +202,15 @@ namespace lmat
 						"Attempted to construct a matrix with incorrect #rows.");
 			}
 
+			LMAT_ENSURE_INLINE void reset(const index_t m, const index_t n)
+			{
+				check_arg(m == M, "Attempted to resize to incorrect #rows");
+				_ncols = n;
+			}
+
 			LMAT_ENSURE_INLINE index_t nrows() const { return M; }
 			LMAT_ENSURE_INLINE index_t ncolumns() const { return _ncols; }
 			LMAT_ENSURE_INLINE index_t nelems() const { return M * _ncols; }
-
-			LMAT_ENSURE_INLINE index_t is_empty() const { return _ncols == 0; }
-			LMAT_ENSURE_INLINE index_t is_scalar() const { return M == 1 && _ncols == 1; }
-			LMAT_ENSURE_INLINE index_t is_column() const { return _ncols == 1; }
-			LMAT_ENSURE_INLINE index_t is_row() const { return M == 1; }
-			LMAT_ENSURE_INLINE index_t is_vector() const { return M == 1 || _ncols == 1; }
-			LMAT_ENSURE_INLINE index_t is_square() const { return M == _ncols; }
 		};
 
 		template<int M, int N>
@@ -229,16 +226,14 @@ namespace lmat
 						"Attempted to construct a matrix with incorrect size.");
 			}
 
+			LMAT_ENSURE_INLINE void reset(const index_t m, const index_t n)
+			{
+				check_arg(m == M && n == N, "Attempted to resize to incorrect size.");
+			}
+
 			LMAT_ENSURE_INLINE index_t nrows() const { return M; }
 			LMAT_ENSURE_INLINE index_t ncolumns() const { return N; }
 			LMAT_ENSURE_INLINE index_t nelems() const { return M * N; }
-
-			LMAT_ENSURE_INLINE index_t is_empty() const { return false; }
-			LMAT_ENSURE_INLINE index_t is_scalar() const { return M == 1 && N == 1; }
-			LMAT_ENSURE_INLINE index_t is_column() const { return N == 1; }
-			LMAT_ENSURE_INLINE index_t is_row() const { return M == 1; }
-			LMAT_ENSURE_INLINE index_t is_vector() const { return M == 1 || N == 1; }
-			LMAT_ENSURE_INLINE index_t is_square() const { return M == N; }
 		};
 	}
 
@@ -253,23 +248,21 @@ namespace lmat
 		matrix_shape(const index_t m, const index_t n)
 		: m_internal(m, n) { }
 
+		LMAT_ENSURE_INLINE void reset(const index_t m, const index_t n)
+		{
+			m_internal.reset(m, n);
+		}
+
 		LMAT_ENSURE_INLINE index_t nrows() const { return m_internal.nrows(); }
 		LMAT_ENSURE_INLINE index_t ncolumns() const { return m_internal.ncolumns(); }
 		LMAT_ENSURE_INLINE index_t nelems() const { return m_internal.nelems(); }
 
-		LMAT_ENSURE_INLINE index_t is_empty() const { return m_internal.is_empty(); }
-		LMAT_ENSURE_INLINE index_t is_scalar() const { return m_internal.is_scalar(); }
-		LMAT_ENSURE_INLINE index_t is_column() const { return m_internal.is_column(); }
-		LMAT_ENSURE_INLINE index_t is_row() const { return m_internal.is_row(); }
-		LMAT_ENSURE_INLINE index_t is_vector() const { return m_internal.is_vector(); }
-		LMAT_ENSURE_INLINE index_t is_square() const { return m_internal.is_square(); }
-
-		LMAT_ENSURE_INLINE index_t offset(const index_t ldim, const index_t i, const index_t j)
+		LMAT_ENSURE_INLINE index_t offset(const index_t ldim, const index_t i, const index_t j) const
 		{
 			return detail::matrix_index_helper<M==1, N==1>::offset(ldim, i, j);
 		}
 
-		LMAT_ENSURE_INLINE index_t offset_c(const index_t i, const index_t j)
+		LMAT_ENSURE_INLINE index_t offset_c(const index_t i, const index_t j) const
 		{
 			return detail::matrix_index_helper<M==1, N==1>::offset(nrows(), i, j);
 		}
@@ -277,13 +270,6 @@ namespace lmat
 	private:
 		detail::matrix_shape_internal<M, N, (M>0), (N>0)> m_internal;
 	};
-
-
-	/********************************************
-	 *
-	 *  indexing
-	 *
-	 ********************************************/
 
 }
 

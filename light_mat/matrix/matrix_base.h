@@ -13,8 +13,9 @@
 #ifndef LIGHTMAT_MATRIX_BASE_H_
 #define LIGHTMAT_MATRIX_BASE_H_
 
-// this also includes fwd, meta, and indexer
+
 #include <light_mat/matrix/matrix_concepts.h>
+#include <light_mat/matrix/matrix_shape.h>
 
 #include <light_mat/matrix/matrix_properties.h>
 #include <light_mat/matrix/matrix_check.h>

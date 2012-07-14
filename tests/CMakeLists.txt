@@ -55,7 +55,7 @@ set(COMMON_ARRAY_HS
 set(MATRIX_BASE_HS
     ${INC}/matrix/matrix_fwd.h 
     ${INC}/matrix/matrix_meta.h
-    ${INC}/matrix/matrix_indexer.h
+    ${INC}/matrix/matrix_shape.h
     ${INC}/matrix/matrix_concepts.h
     ${INC}/matrix/matrix_properties.h
     ${INC}/matrix/matrix_check.h

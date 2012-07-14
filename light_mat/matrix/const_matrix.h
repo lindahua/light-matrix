@@ -13,7 +13,8 @@
 #ifndef LIGHTMAT_CONST_MATRIX_H_
 #define LIGHTMAT_CONST_MATRIX_H_
 
-#include <light_mat/matrix/matrix_base.h>
+#include <light_mat/matrix/matrix_concepts.h>
+#include <light_mat/matrix/matrix_shape.h>
 
 namespace lmat
 {

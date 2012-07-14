@@ -45,6 +45,11 @@ namespace lmat { namespace detail {
 
 		LMAT_ENSURE_INLINE index_t ncolumns() const { return CTCols; }
 
+		LMAT_ENSURE_INLINE index_t offset(const index_t i, const index_t j) const
+		{
+			return CTRows * j + i;
+		}
+
 		LMAT_ENSURE_INLINE const T *ptr_data() const { return m_arr.ptr_begin(); }
 
 		LMAT_ENSURE_INLINE T *ptr_data() { return m_arr.ptr_begin(); }
@@ -95,6 +100,11 @@ namespace lmat { namespace detail {
 		LMAT_ENSURE_INLINE index_t nrows() const { return CTRows; }
 
 		LMAT_ENSURE_INLINE index_t ncolumns() const { return m_ncols; }
+
+		LMAT_ENSURE_INLINE index_t offset(const index_t i, const index_t j) const
+		{
+			return CTRows * j + i;
+		}
 
 		LMAT_ENSURE_INLINE const T *ptr_data() const { return m_arr.ptr_begin(); }
 
@@ -152,6 +162,11 @@ namespace lmat { namespace detail {
 
 		LMAT_ENSURE_INLINE index_t ncolumns() const { return CTCols; }
 
+		LMAT_ENSURE_INLINE index_t offset(const index_t i, const index_t j) const
+		{
+			return m_nrows * j + i;
+		}
+
 		LMAT_ENSURE_INLINE const T *ptr_data() const { return m_arr.ptr_begin(); }
 
 		LMAT_ENSURE_INLINE T *ptr_data() { return m_arr.ptr_begin(); }
@@ -207,6 +222,11 @@ namespace lmat { namespace detail {
 		LMAT_ENSURE_INLINE index_t nrows() const { return m_nrows; }
 
 		LMAT_ENSURE_INLINE index_t ncolumns() const { return m_ncols; }
+
+		LMAT_ENSURE_INLINE index_t offset(const index_t i, const index_t j) const
+		{
+			return m_nrows * j + i;
+		}
 
 		LMAT_ENSURE_INLINE const T *ptr_data() const { return m_arr.ptr_begin(); }
 
