@@ -100,7 +100,7 @@ namespace lmat
 				const IMatrixGenerator<Gen, T>& gen)
 		: m_internal(m, n)
 		{
-			gen.generate_to(m, n, m, m_internal.ptr_data());
+			gen.generate_to(*this);
 		}
 
 		LMAT_ENSURE_INLINE dense_matrix(const dense_matrix& s)
@@ -142,7 +142,7 @@ namespace lmat
 		template<class Gen>
 		LMAT_ENSURE_INLINE dense_matrix& operator = (const IMatrixGenerator<Gen, T>& gen)
 		{
-			gen.generate_to(nrows(), ncolumns(), lead_dim(), ptr_data());
+			gen.generate_to(*this);
 			return *this;
 		}
 

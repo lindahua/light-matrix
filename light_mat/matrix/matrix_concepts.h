@@ -57,21 +57,6 @@ namespace lmat
 	 ********************************************/
 
 	template<class Derived, typename T>
-	class IMatrixGenerator
-	{
-	public:
-		LMAT_CRTP_REF
-
-		LMAT_ENSURE_INLINE void generate_to(
-				const index_t m, const index_t n, const index_t ldim,
-				T *dst) const
-		{
-			derived().generate_to(m, n, ldim, dst);
-		}
-	};
-
-
-	template<class Derived, typename T>
 	class IMatrixXpr
 	{
 	public:

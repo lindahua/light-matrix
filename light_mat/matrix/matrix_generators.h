@@ -18,15 +18,33 @@
 
 namespace lmat
 {
+	template<class Derived, typename T>
+	class IMatrixGenerator
+	{
+	public:
+		LMAT_CRTP_REF
+
+		template<class Mat>
+		LMAT_ENSURE_INLINE void generate_to(IDenseMatrix<Mat, T>& mat) const
+		{
+			derived().generate_to(mat);
+		}
+	};
+
 
 	template<typename T>
 	class zero_gen : public IMatrixGenerator<zero_gen<T>, T>
 	{
 	public:
+		template<class Mat>
 		LMAT_ENSURE_INLINE
-		void generate_to(const index_t m, const index_t n,
-				const index_t ldim, T *dst) const
+		void generate_to(IDenseMatrix<Mat, T>& mat) const
 		{
+			const index_t m = mat.nrows();
+			const index_t n = mat.ncolumns();
+			const index_t ldim = mat.lead_dim();
+			T *dst = mat.ptr_data();
+
 			if (n == 1 || ldim == m)
 			{
 				zero_mem(m * n, dst);
@@ -57,10 +75,15 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		explicit fill_gen(const T& v) : m_val(v) { }
 
+		template<class Mat>
 		LMAT_ENSURE_INLINE
-		void generate_to(const index_t m, const index_t n,
-				const index_t ldim, T *dst) const
+		void generate_to(IDenseMatrix<Mat, T>& mat) const
 		{
+			const index_t m = mat.nrows();
+			const index_t n = mat.ncolumns();
+			const index_t ldim = mat.lead_dim();
+			T *dst = mat.ptr_data();
+
 			if (n == 1 || ldim == m)
 			{
 				fill_mem(m * n, dst, m_val);
@@ -94,10 +117,15 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		explicit copy_gen(const T *src) : m_src(src) { }
 
+		template<class Mat>
 		LMAT_ENSURE_INLINE
-		void generate_to(const index_t m, const index_t n,
-				const index_t ldim, T *dst) const
+		void generate_to(IDenseMatrix<Mat, T>& mat) const
 		{
+			const index_t m = mat.nrows();
+			const index_t n = mat.ncolumns();
+			const index_t ldim = mat.lead_dim();
+			T *dst = mat.ptr_data();
+
 			if (n == 1 || m == ldim)
 			{
 				copy_mem(m * n, m_src, dst);
@@ -136,21 +164,21 @@ namespace lmat
 	LMAT_ENSURE_INLINE
 	inline void zero(IDenseMatrix<Mat, T>& X)
 	{
-		zero_gen<T>().generate_to(X.nrows(), X.ncolumns(), X.lead_dim(), X.ptr_data());
+		zero_gen<T>().generate_to(X);
 	}
 
 	template<typename T, class Mat>
 	LMAT_ENSURE_INLINE
 	inline void fill(IDenseMatrix<Mat, T>& X, const T& val)
 	{
-		fill_gen<T>(val).generate_to(X.nrows(), X.ncolumns(), X.lead_dim(), X.ptr_data());
+		fill_gen<T>(val).generate_to(X);
 	}
 
 	template<typename T, class Mat>
 	LMAT_ENSURE_INLINE
 	inline void copy_to(const T *src, IDenseMatrix<Mat, T>& X)
 	{
-		copy_gen<T>(src).generate_to(X.nrows(), X.ncolumns(), X.lead_dim(), X.ptr_data());
+		copy_gen<T>(src).generate_to(X);
 	}
 
 

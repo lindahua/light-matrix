@@ -245,7 +245,7 @@ namespace lmat
 		template<class Gen>
 		LMAT_ENSURE_INLINE ref_matrix& operator = (const IMatrixGenerator<Gen, T>& gen)
 		{
-			gen.generate_to(nrows(), ncolumns(), lead_dim(), ptr_data());
+			gen.generate_to(*this);
 			return *this;
 		}
 
