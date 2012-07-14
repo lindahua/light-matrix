@@ -18,10 +18,10 @@
 #include <light_mat/matrix/matrix_shape.h>
 #include <light_mat/matrix/matrix_properties.h>
 
-#include <light_mat/matrix/matrix_generators.h>
 #include <light_mat/matrix/matrix_copy.h>
 #include <light_mat/matrix/matrix_compare.h>
 #include <light_mat/matrix/matrix_print.h>
+#include <light_mat/matrix/matrix_generators.h>
 
 #include <light_mat/matrix/matrix_subviews.h>
 #include <light_mat/matrix/matrix_ewise_expr.h>

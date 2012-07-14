@@ -120,7 +120,7 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		void generate_to(IDenseMatrix<Mat, T>& mat) const
 		{
-			copy_to(m_src, mat.derived());
+			copy(m_src, mat.derived());
 		}
 
 	private:

@@ -20,31 +20,66 @@ namespace lmat
 {
 	template<typename T, class RMat>
 	LMAT_ENSURE_INLINE
-	void copy_to(const T *src, IDenseMatrix<RMat, T>& dst)
+	void copy(const T *ps, IDenseMatrix<RMat, T>& dst)
 	{
-		const int M = ct_rows<RMat>::value;
-		const int N = ct_cols<RMat>::value;
-		typedef typename detail::mat_copier<T, M, N>::type copier_t;
+		typedef typename detail::mat_copier<T,
+				ct_rows<RMat>::value,
+				ct_cols<RMat>::value>::type copier_t;
 
 		copier_t::copy(dst.nrows(), dst.ncolumns(),
-				src, dst.ptr_data(), dst.lead_dim());
+				ps, dst.ptr_data(), dst.lead_dim());
+	}
+
+	template<typename T, class LMat>
+	LMAT_ENSURE_INLINE
+	void copy(const IDenseMatrix<LMat, T>& src, T* pd)
+	{
+		typedef typename detail::mat_copier<T,
+				ct_rows<LMat>::value,
+				ct_cols<LMat>::value>::type copier_t;
+
+		copier_t::copy(src.nrows(), src.ncolumns(),
+				src, src.lead_dim(), pd);
 	}
 
 	template<typename T, class LMat, class RMat>
-	LMAT_ENSURE_INLINE
+	inline
 	void copy(const IDenseMatrix<LMat, T>& src, IDenseMatrix<RMat, T>& dst)
 	{
 		check_same_size(src, dst, "copy: inconsistent sizes of src and dst.");
 
-		const int M = binary_ct_rows<LMat, RMat>::value;
-		const int N = binary_ct_cols<LMat, RMat>::value;
-		typedef typename detail::mat_copier<T, M, N>::type copier_t;
+		typedef typename detail::mat_copier<T,
+				binary_ct_rows<LMat, RMat>::value,
+				binary_ct_cols<LMat, RMat>::value>::type copier_t;
 
-		copier_t::copy(src.nrows(), src.ncolumns(),
-				src.ptr_data(), src.lead_dim(),
-				dst.ptr_data(), dst.lead_dim());
+		if (has_continuous_layout(src))
+		{
+			if (has_continuous_layout(dst))
+			{
+				copier_t::copy(src.nrows(), src.ncolumns(),
+						src.ptr_data(), dst.ptr_data());
+			}
+			else
+			{
+				copier_t::copy(src.nrows(), src.ncolumns(),
+						src.ptr_data(), dst.ptr_data(), dst.lead_dim());
+			}
+		}
+		else
+		{
+			if (has_continuous_layout(dst))
+			{
+				copier_t::copy(src.nrows(), src.ncolumns(),
+						src.ptr_data(), src.lead_dim(), dst.ptr_data());
+			}
+			else
+			{
+				copier_t::copy(src.nrows(), src.ncolumns(),
+						src.ptr_data(), src.lead_dim(),
+						dst.ptr_data(), dst.lead_dim());
+			}
+		}
 	}
-
 
 	template<typename T, class SMat, class DMat>
 	LMAT_ENSURE_INLINE
@@ -52,7 +87,6 @@ namespace lmat
 	{
 		copy(src, dst);
 	}
-
 }
 
 #endif 
