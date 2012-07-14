@@ -14,6 +14,7 @@
 #define LIGHTMAT_MATRIX_GENERATORS_H_
 
 #include <light_mat/matrix/matrix_copy.h>
+#include <light_mat/matrix/matrix_fill.h>
 
 namespace lmat
 {
@@ -39,22 +40,7 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		void generate_to(IDenseMatrix<Mat, T>& mat) const
 		{
-			const index_t m = mat.nrows();
-			const index_t n = mat.ncolumns();
-			const index_t ldim = mat.lead_dim();
-			T *dst = mat.ptr_data();
-
-			if (n == 1 || ldim == m)
-			{
-				zero_mem(m * n, dst);
-			}
-			else
-			{
-				for (index_t j = 0; j < n; ++j, dst += ldim)
-				{
-					zero_mem(m, dst);
-				}
-			}
+			zero(mat);
 		}
 
 	}; // end class zero_gen
@@ -78,22 +64,7 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		void generate_to(IDenseMatrix<Mat, T>& mat) const
 		{
-			const index_t m = mat.nrows();
-			const index_t n = mat.ncolumns();
-			const index_t ldim = mat.lead_dim();
-			T *dst = mat.ptr_data();
-
-			if (n == 1 || ldim == m)
-			{
-				fill_mem(m * n, dst, m_val);
-			}
-			else
-			{
-				for (index_t j = 0; j < n; ++j, dst += ldim)
-				{
-					fill_mem(m, dst, m_val);
-				}
-			}
+			fill(mat, m_val);
 		}
 
 	private:
@@ -134,23 +105,6 @@ namespace lmat
 	inline copy_gen<T> copy_from(const T* src)
 	{
 		return copy_gen<T>(src);
-	}
-
-
-	// Convenient functions
-
-	template<typename T, class Mat>
-	LMAT_ENSURE_INLINE
-	inline void zero(IDenseMatrix<Mat, T>& X)
-	{
-		zero_gen<T>().generate_to(X);
-	}
-
-	template<typename T, class Mat>
-	LMAT_ENSURE_INLINE
-	inline void fill(IDenseMatrix<Mat, T>& X, const T& val)
-	{
-		fill_gen<T>(val).generate_to(X);
 	}
 
 }

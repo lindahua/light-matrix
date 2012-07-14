@@ -13,7 +13,7 @@
 #ifndef LIGHTMAT_MATRIX_COPY_H_
 #define LIGHTMAT_MATRIX_COPY_H_
 
-#include <light_mat/matrix/matrix_concepts.h>
+#include <light_mat/matrix/matrix_properties.h>
 #include "bits/matrix_copy_internal.h"
 
 namespace lmat
@@ -26,8 +26,16 @@ namespace lmat
 				ct_rows<RMat>::value,
 				ct_cols<RMat>::value>::type copier_t;
 
-		copier_t::copy(dst.nrows(), dst.ncolumns(),
-				ps, dst.ptr_data(), dst.lead_dim());
+		if (has_continuous_layout(dst))
+		{
+			copier_t::copy(dst.nrows(), dst.ncolumns(),
+					ps, dst.ptr_data());
+		}
+		else
+		{
+			copier_t::copy(dst.nrows(), dst.ncolumns(),
+					ps, dst.ptr_data(), dst.lead_dim());
+		}
 	}
 
 	template<typename T, class LMat>
@@ -38,8 +46,16 @@ namespace lmat
 				ct_rows<LMat>::value,
 				ct_cols<LMat>::value>::type copier_t;
 
-		copier_t::copy(src.nrows(), src.ncolumns(),
-				src, src.lead_dim(), pd);
+		if (has_continuous_layout(src))
+		{
+			copier_t::copy(src.nrows(), src.ncolumns(),
+					src, pd);
+		}
+		else
+		{
+			copier_t::copy(src.nrows(), src.ncolumns(),
+					src, src.lead_dim(), pd);
+		}
 	}
 
 	template<typename T, class LMat, class RMat>

@@ -59,10 +59,12 @@ set(MATRIX_BASE_HS
     ${INC}/matrix/matrix_concepts.h
     ${INC}/matrix/matrix_properties.h
     ${INC}/matrix/matrix_generators.h
-    ${INC}/matrix/matrix_copy.h
-    ${INC}/matrix/matrix_compare.h
+    ${INC}/matrix/bits/matrix_fill_internal.h
     ${INC}/matrix/bits/matrix_copy_internal.h
     ${INC}/matrix/bits/matrix_compare_internal.h
+    ${INC}/matrix/matrix_fill.h
+    ${INC}/matrix/matrix_copy.h
+    ${INC}/matrix/matrix_compare.h
     ${INC}/matrix/matrix_print.h
     ${INC}/matrix/matrix_subviews.h
     ${INC}/matrix/matrix_ewise_expr.h

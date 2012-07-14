@@ -13,7 +13,7 @@
 #ifndef LIGHTMAT_MATRIX_COMPARE_H_
 #define LIGHTMAT_MATRIX_COMPARE_H_
 
-#include <light_mat/matrix/matrix_concepts.h>
+#include <light_mat/matrix/matrix_properties.h>
 #include "bits/matrix_compare_internal.h"
 #include <cmath>
 

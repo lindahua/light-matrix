@@ -10,8 +10,8 @@
 #pragma once
 #endif
 
-#ifndef MATRIX_COPY_INTERNAL_H_
-#define MATRIX_COPY_INTERNAL_H_
+#ifndef LIGHTMAT_MATRIX_COPY_INTERNAL_H_
+#define LIGHTMAT_MATRIX_COPY_INTERNAL_H_
 
 #include <light_mat/core/mem_op.h>
 
