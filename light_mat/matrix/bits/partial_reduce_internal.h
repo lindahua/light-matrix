@@ -26,7 +26,7 @@ namespace lmat { namespace detail {
 			const index_t m = arg.nrows();
 			const index_t n = arg.ncolumns();
 
-			typename percol_vector_evaluator<Arg>::type evaluator(arg);
+			typename percol_eval<Arg>::evaluator_type evaluator(arg);
 
 			for (index_t j = 0; j < n; ++j, evaluator.next_column())
 			{
@@ -146,7 +146,7 @@ namespace lmat { namespace detail {
 
 			if (n > 0)
 			{
-				typename percol_vector_evaluator<Arg>::type evaluator(arg);
+				typename percol_eval<Arg>::evaluator_type evaluator(arg);
 
 				accum_t::init_eval(fun, m, evaluator, pd);
 

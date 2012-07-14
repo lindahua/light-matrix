@@ -27,6 +27,6 @@
 #include <light_mat/matrix/repeat_vecs_eval.h>
 
 #include <light_mat/matrix/matrix_reduce.h>
-//#include <light_mat/matrix/partial_reduce.h>
+#include <light_mat/matrix/partial_reduce.h>
 
 #endif

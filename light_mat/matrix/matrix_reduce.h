@@ -15,6 +15,8 @@
 
 #include <light_mat/math/reduction_functors.h>
 #include <light_mat/matrix/matrix_arith.h>
+#include <light_mat/matrix/matrix_ewise_eval.h>
+
 #include "bits/matrix_reduce_internal.h"
 
 namespace lmat

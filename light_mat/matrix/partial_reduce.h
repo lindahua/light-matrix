@@ -13,8 +13,10 @@
 #ifndef LIGHTMAT_PARTIAL_REDUCE_H_
 #define LIGHTMAT_PARTIAL_REDUCE_H_
 
-#include <light_mat/matrix/matrix_arith.h>
 #include <light_mat/math/reduction_functors.h>
+#include <light_mat/matrix/matrix_arith.h>
+#include <light_mat/matrix/matrix_ewise_eval.h>
+
 #include "bits/partial_reduce_internal.h"
 
 namespace lmat
@@ -161,36 +163,36 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<class Fun, class Arg>
+	template<class Fun, class Arg, bool EmbedArg>
 	struct colwise_reduce_expr_map
 	{
-		typedef colwise_reduce_expr<Fun, Arg, false> type;
+		typedef colwise_reduce_expr<Fun, Arg, EmbedArg> type;
 	};
 
-	template<class Fun, class Arg>
+	template<class Fun, class Arg, bool EmbedArg>
 	struct rowwise_reduce_expr_map
 	{
-		typedef rowwise_reduce_expr<Fun, Arg, false> type;
+		typedef rowwise_reduce_expr<Fun, Arg, EmbedArg> type;
 	};
 
 	template<class Fun, class Arg>
 	LMAT_ENSURE_INLINE
-	inline typename colwise_reduce_expr_map<Fun, Arg>::type
+	inline typename colwise_reduce_expr_map<Fun, Arg, false>::type
 	reduce(  const Fun& fun,
 			const IMatrixXpr<Arg, typename Fun::arg_type>& arg,
 			colwise )
 	{
-		return colwise_reduce_expr<Fun, Arg>(fun, arg.derived());
+		return colwise_reduce_expr<Fun, Arg, false>(fun, arg.derived());
 	}
 
 	template<class Fun, class Arg>
 	LMAT_ENSURE_INLINE
-	inline typename rowwise_reduce_expr_map<Fun, Arg>::type
+	inline typename rowwise_reduce_expr_map<Fun, Arg, false>::type
 	reduce(  const Fun& fun,
 			const IMatrixXpr<Arg, typename Fun::arg_type>& arg,
 			rowwise )
 	{
-		return rowwise_reduce_expr<Fun, Arg>(fun, arg.derived());
+		return rowwise_reduce_expr<Fun, Arg, false>(fun, arg.derived());
 	}
 
 
@@ -218,23 +220,23 @@ namespace lmat
 
 	// sum
 
-	template<typename T, class Arg>
+	template<typename T, class Arg, bool EmbedArg>
 	struct colwise_sum_t
 	{
 		typedef typename colwise_reduce_expr_map<
-				sum_fun<T>, Arg>::type type;
+				sum_fun<T>, Arg, EmbedArg>::type type;
 	};
 
-	template<typename T, class Arg>
+	template<typename T, class Arg, bool EmbedArg>
 	struct rowwise_sum_t
 	{
 		typedef typename rowwise_reduce_expr_map<
-				sum_fun<T>, Arg>::type type;
+				sum_fun<T>, Arg, EmbedArg>::type type;
 	};
 
 	template<typename T, class Arg>
 	LMAT_ENSURE_INLINE
-	inline typename colwise_sum_t<T, Arg>::type
+	inline typename colwise_sum_t<T, Arg, false>::type
 	sum(const IMatrixXpr<Arg, T>& arg, colwise)
 	{
 		return reduce(sum_fun<T>(), arg, colwise());
@@ -242,7 +244,7 @@ namespace lmat
 
 	template<typename T, class Arg>
 	LMAT_ENSURE_INLINE
-	inline typename rowwise_sum_t<T, Arg>::type
+	inline typename rowwise_sum_t<T, Arg, false>::type
 	sum(const IMatrixXpr<Arg, T>& arg, rowwise)
 	{
 		return reduce(sum_fun<T>(), arg, rowwise());
