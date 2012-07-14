@@ -18,9 +18,6 @@
 
 namespace lmat
 {
-	LMAT_DEFINE_BINARY_NUMERIC_EWISE_TFUNCTOR( min_fun, (math::min), true )
-	LMAT_DEFINE_BINARY_NUMERIC_EWISE_TFUNCTOR( max_fun, (math::max), true )
-
 	LMAT_DEFINE_BINARY_NUMERIC_EWISE_TFUNCTOR( pow_fun,  math::pow, true )
 
 	LMAT_DEFINE_UNARY_NUMERIC_EWISE_TFUNCTOR( floor_fun, math::floor, true )

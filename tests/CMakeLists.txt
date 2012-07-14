@@ -201,8 +201,8 @@ set(MAT_REDUC_HS
     ${MATRIX_EVAL_BASE_HS}
     ${MATRIX_REDUC_HS})
     
-add_executable(test_mat_reduce ${MAT_REDUC_HS} test_mat_reduce.cpp) 
-add_executable(test_partial_reduce ${MAT_REDUC_HS} test_partial_reduce.cpp) 
+# add_executable(test_mat_reduce ${MAT_REDUC_HS} test_mat_reduce.cpp) 
+# add_executable(test_partial_reduce ${MAT_REDUC_HS} test_partial_reduce.cpp) 
 
 # Link to test_main
 
@@ -238,8 +238,8 @@ target_link_libraries(test_rep_veval test_main)
 
 target_link_libraries(test_cpd_ewise test_main)
 
-target_link_libraries(test_mat_reduce test_main)
-target_link_libraries(test_partial_reduce test_main)
+# target_link_libraries(test_mat_reduce test_main)
+# target_link_libraries(test_partial_reduce test_main)
     
 # Set output directories
 
@@ -266,8 +266,9 @@ set(ALL_EXECUTABLES
     test_rep_vecs
     test_rep_veval
     test_cpd_ewise
-    test_mat_reduce
-    test_partial_reduce)
+    # test_mat_reduce
+    # test_partial_reduce
+    )
     
 set_target_properties(${ALL_EXECUTABLES}
     PROPERTIES
@@ -308,8 +309,8 @@ add_test(NAME rep_veval COMMAND test_rep_veval)
 
 add_test(NAME cpd_ewise COMMAND test_cpd_ewise)
 
-add_test(NAME mat_reduce COMMAND test_mat_reduce)
-add_test(NAME partial_reduce COMMAND test_partial_reduce)
+# add_test(NAME mat_reduce COMMAND test_mat_reduce)
+# add_test(NAME partial_reduce COMMAND test_partial_reduce)
 
 
 

@@ -13,11 +13,47 @@
 #ifndef LIGHTMAT_MATRIX_EWISE_EXPR_H_
 #define LIGHTMAT_MATRIX_EWISE_EXPR_H_
 
-#include <light_mat/matrix/matrix_concepts.h>
-#include <light_mat/math/functor_base.h>
+#include <light_mat/matrix/matrix_expr_base.h>
 
 namespace lmat
 {
+
+	/********************************************
+	 *
+	 *  Expression type mapping
+	 *
+	 ********************************************/
+
+	template<class Fun, class Arg, bool EmbedArg>
+	struct unary_ewise_expr_map
+	{
+		typedef unary_ewise_expr<Fun, Arg, EmbedArg> type;
+	};
+
+	template<class Fun, class Arg1, class Arg2, bool EmbedArg1, bool EmbedArg2>
+	struct binary_ewise_expr_map
+	{
+		typedef binary_ewise_expr<Fun, Arg1, Arg2, EmbedArg1, EmbedArg2> type;
+	};
+
+	template<class Fun, class Arg1, bool EmbedArg1>
+	struct binary_fix2_ewise_expr_map
+	{
+		typedef typename Fun::second_arg_type T2;
+		typedef const_matrix<T2, ct_rows<Arg1>::value, ct_cols<Arg1>::value> Arg2;
+
+		typedef binary_ewise_expr<Fun, Arg1, Arg2, EmbedArg1, true> type;
+	};
+
+	template<class Fun, class Arg2, bool EmbedArg2>
+	struct binary_fix1_ewise_expr_map
+	{
+		typedef typename Fun::first_arg_type T1;
+		typedef const_matrix<T1, ct_rows<Arg2>::value, ct_cols<Arg2>::value> Arg1;
+
+		typedef binary_ewise_expr<Fun, Arg1, Arg2, true, EmbedArg2> type;
+	};
+
 
 	/********************************************
 	 *
@@ -169,41 +205,7 @@ namespace lmat
 	};
 
 
-	/********************************************
-	 *
-	 *  Expression type mapping
-	 *
-	 ********************************************/
 
-	template<class Fun, class Arg>
-	struct unary_ewise_expr_map
-	{
-		typedef unary_ewise_expr<Fun, Arg> type;
-	};
-
-	template<class Fun, class Arg1, class Arg2>
-	struct binary_ewise_expr_map
-	{
-		typedef binary_ewise_expr<Fun, Arg1, Arg2> type;
-	};
-
-	template<class Fun, class Arg1>
-	struct binary_fix2_ewise_expr_map
-	{
-		typedef typename Fun::second_arg_type T2;
-		typedef const_matrix<T2, ct_rows<Arg1>::value, ct_cols<Arg1>::value> Arg2;
-
-		typedef binary_ewise_expr<Fun, Arg1, Arg2, false, true> type;
-	};
-
-	template<class Fun, class Arg2>
-	struct binary_fix1_ewise_expr_map
-	{
-		typedef typename Fun::first_arg_type T1;
-		typedef const_matrix<T1, ct_rows<Arg2>::value, ct_cols<Arg2>::value> Arg1;
-
-		typedef binary_ewise_expr<Fun, Arg1, Arg2, true, false> type;
-	};
 
 
 	/********************************************
@@ -214,33 +216,34 @@ namespace lmat
 
 	template<class Fun, class Arg>
 	LMAT_ENSURE_INLINE
-	inline typename unary_ewise_expr_map<Fun, Arg>::type
+	inline typename unary_ewise_expr_map<Fun, Arg, false>::type
 	ewise(  const Fun& fun,
 			const IMatrixXpr<Arg, typename Fun::arg_type>& arg )
 	{
-		return unary_ewise_expr<Fun, Arg>(fun, arg.derived());
+		return unary_ewise_expr<Fun, Arg, false>(fun, arg.derived());
 	}
 
 	template<class Fun, class Arg1, class Arg2>
 	LMAT_ENSURE_INLINE
-	inline typename binary_ewise_expr_map<Fun, Arg1, Arg2>::type
+	inline typename binary_ewise_expr_map<Fun, Arg1, Arg2, false, false>::type
 	ewise(  const Fun& fun,
 			const IMatrixXpr<Arg1, typename Fun::first_arg_type>& arg1,
 			const IMatrixXpr<Arg2, typename Fun::second_arg_type>& arg2 )
 	{
-		return binary_ewise_expr<Fun, Arg1, Arg2>(fun,
+		return binary_ewise_expr<Fun, Arg1, Arg2, false, false>(fun,
 				arg1.derived(), arg2.derived());
 	}
 
 	template<class Fun, class Arg1>
 	LMAT_ENSURE_INLINE
-	inline typename binary_fix2_ewise_expr_map<Fun, Arg1>::type
+	inline typename binary_fix2_ewise_expr_map<Fun, Arg1, false>::type
 	ewise(  const Fun& fun,
 			const IMatrixXpr<Arg1, typename Fun::first_arg_type>& arg1,
 			const typename Fun::second_arg_type& arg2v )
 	{
-		typedef typename binary_fix2_ewise_expr_map<Fun, Arg1>::Arg2 arg2_t;
-		typedef typename binary_fix2_ewise_expr_map<Fun, Arg1>::type expr_type;
+		typedef binary_fix2_ewise_expr_map<Fun, Arg1, false> map_t;
+		typedef typename map_t::Arg2 arg2_t;
+		typedef typename map_t::type expr_type;
 
 		return expr_type(fun,
 				arg1.derived(),
@@ -249,13 +252,14 @@ namespace lmat
 
 	template<class Fun, class Arg2>
 	LMAT_ENSURE_INLINE
-	inline typename binary_fix1_ewise_expr_map<Fun, Arg2>::type
+	inline typename binary_fix1_ewise_expr_map<Fun, Arg2, false>::type
 	ewise(  const Fun& fun,
 			const typename Fun::first_arg_type& arg1v,
 			const IMatrixXpr<Arg2, typename Fun::second_arg_type>& arg2 )
 	{
-		typedef typename binary_fix1_ewise_expr_map<Fun, Arg2>::Arg1 arg1_t;
-		typedef typename binary_fix1_ewise_expr_map<Fun, Arg2>::type expr_type;
+		typedef binary_fix1_ewise_expr_map<Fun, Arg2, false> map_t;
+		typedef typename map_t::Arg1 arg1_t;
+		typedef typename map_t::type expr_type;
 
 		return expr_type(fun,
 				arg1_t(arg2.nrows(), arg2.ncolumns(), arg1v),
@@ -268,12 +272,12 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<class SMat, typename T>
+	template<class SMat, typename T, bool EmbedArg>
 	struct cast_expr_map
 	{
 		typedef typename matrix_traits<SMat>::value_type S;
 		typedef type_converter<S, T> converter_t;
-		typedef typename unary_ewise_expr_map<converter_t, SMat>::type type;
+		typedef typename unary_ewise_expr_map<converter_t, SMat, EmbedArg>::type type;
 
 		LMAT_ENSURE_INLINE
 		static type get(const IMatrixXpr<SMat, S>& sexpr)
@@ -284,7 +288,7 @@ namespace lmat
 
 	template<class SMat, typename S, typename T>
 	LMAT_ENSURE_INLINE
-	inline typename cast_expr_map<SMat, T>::type
+	inline typename cast_expr_map<SMat, T, false>::type
 	cast(const IMatrixXpr<SMat, S>& sexpr, type<T> )
 	{
 		return ewise(type_converter<S, T>(), sexpr.derived());

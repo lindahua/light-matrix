@@ -43,7 +43,7 @@ MN_CASE( linear_veval, repcol_linear )
 	col_t col(m, 1);
 	for (index_t i = 0; i < m; ++i) col[i] = double(i+2);
 
-	repeat_col_expr<col_t, N> expr(col, n);
+	repeat_col_expr<col_t, N, false> expr(col, n);
 
 	mat_t R_r(m, n);
 	for (index_t j = 0; j < n; ++j)
@@ -68,7 +68,7 @@ MN_CASE( percol_veval, repcol_percol )
 	col_t col(m, 1);
 	for (index_t i = 0; i < m; ++i) col[i] = double(i+2);
 
-	repeat_col_expr<col_t, N> expr(col, n);
+	repeat_col_expr<col_t, N, false> expr(col, n);
 
 	mat_t R_r(m, n);
 	for (index_t j = 0; j < n; ++j)
@@ -94,7 +94,7 @@ MN_CASE( linear_veval, reprow_linear )
 	row_t row(1, n);
 	for (index_t j = 0; j < n; ++j) row[j] = double(j+2);
 
-	repeat_row_expr<row_t, M> expr(row, m);
+	repeat_row_expr<row_t, M, false> expr(row, m);
 
 	mat_t R_r(m, n);
 	for (index_t j = 0; j < n; ++j)
@@ -120,7 +120,7 @@ MN_CASE( percol_veval, reprow_percol )
 	row_t row(1, n);
 	for (index_t j = 0; j < n; ++j) row[j] = double(j+2);
 
-	repeat_row_expr<row_t, M> expr(row, m);
+	repeat_row_expr<row_t, M, false> expr(row, m);
 
 	mat_t R_r(m, n);
 	for (index_t j = 0; j < n; ++j)

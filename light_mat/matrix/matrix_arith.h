@@ -20,234 +20,110 @@ namespace lmat
 {
 	/********************************************
 	 *
-	 *  Add, Sub, Mul, and Div
+	 *  Expression Type mapping
 	 *
 	 ********************************************/
 
-	// Addition
+	LMAT_DECLARE_BINARY_TYPE_MAP_EX( add, add_op )
+	LMAT_DECLARE_BINARY_TYPE_MAP_EX( sub, sub_op )
+	LMAT_DECLARE_BINARY_TYPE_MAP_EX( mul, mul_op )
+	LMAT_DECLARE_BINARY_TYPE_MAP_EX( div, div_op )
 
-	template<typename T, class LMat, class RMat>
-	LMAT_ENSURE_INLINE
-	inline typename binary_ewise_expr_map<add_op<T>, LMat, RMat>::type
-	operator + (const IMatrixXpr<LMat, T>& A, const IMatrixXpr<RMat, T>& B)
-	{
-		return ewise(add_op<T>(), A.derived(), B.derived());
-	}
+	LMAT_DECLARE_UNARY_TYPE_MAP( neg, neg_op )
+	LMAT_DECLARE_UNARY_TYPE_MAP( abs, abs_fun )
+	LMAT_DECLARE_UNARY_TYPE_MAP( sqr, sqr_fun )
+	LMAT_DECLARE_UNARY_TYPE_MAP( sqrt, sqrt_fun )
+	LMAT_DECLARE_UNARY_TYPE_MAP( rcp, rcp_fun )
+	LMAT_DECLARE_UNARY_TYPE_MAP( rsqrt, rsqrt_fun )
 
-	template<typename T, class LMat>
-	LMAT_ENSURE_INLINE
-	inline typename binary_fix2_ewise_expr_map<add_op<T>, LMat>::type
-	operator + (const IMatrixXpr<LMat, T>& A, const T& b)
-	{
-		return ewise(add_op<T>(), A.derived(), b);
-	}
+	LMAT_DECLARE_BINARY_TYPE_MAP_EX( max, max_fun )
+	LMAT_DECLARE_BINARY_TYPE_MAP_EX( min, min_fun )
 
-	template<typename T, class RMat>
-	LMAT_ENSURE_INLINE
-	inline typename binary_fix1_ewise_expr_map<add_op<T>, RMat>::type
-	operator + (const T& a, const IMatrixXpr<RMat, T>& B)
-	{
-		return ewise(add_op<T>(), a, B.derived().derived());
-	}
 
-	template<typename T, class LMat, class RMat>
-	LMAT_ENSURE_INLINE
-	inline LMat& operator += (IDenseMatrix<LMat, T>& A, const IMatrixXpr<RMat, T>& B)
+	/********************************************
+	 *
+	 *  Specific Expressions
+	 *
+	 ********************************************/
+
+	LMAT_DEFINE_BINARY_MATFUNCTION_EX( add, operator +, add_op )
+	LMAT_DEFINE_BINARY_MATFUNCTION_EX( sub, operator -, sub_op )
+	LMAT_DEFINE_BINARY_MATFUNCTION_EX( mul, operator *, mul_op )
+	LMAT_DEFINE_BINARY_MATFUNCTION_EX( div, operator /, div_op )
+
+	LMAT_DEFINE_UNARY_MATFUNCTION( neg, operator -, neg_op )
+
+	LMAT_DEFINE_UNARY_MATFUNCTION( abs, abs, abs_fun )
+	LMAT_DEFINE_UNARY_MATFUNCTION( sqr, sqr, sqr_fun )
+	LMAT_DEFINE_UNARY_MATFUNCTION( sqrt, sqrt, sqrt_fun )
+	LMAT_DEFINE_UNARY_MATFUNCTION( rcp, rcp, rcp_fun )
+	LMAT_DEFINE_UNARY_MATFUNCTION( rsqrt, rsqrt, rsqrt_fun )
+
+	LMAT_DEFINE_BINARY_MATFUNCTION_EX( max, max, max_fun )
+	LMAT_DEFINE_BINARY_MATFUNCTION_EX( min, min, min_fun )
+
+	/********************************************
+	 *
+	 *  In-place Expressions
+	 *
+	 ********************************************/
+
+	template<typename T, class LArg, class RArg>
+	LArg& operator += (IDenseMatrix<LArg, T>& A, const IMatrixXpr<RArg, T>& B)
 	{
 		A.derived() = A.derived() + B.derived();
 		return A.derived();
 	}
 
-	template<typename T, class LMat>
-	LMAT_ENSURE_INLINE
-	inline LMat& operator += (IDenseMatrix<LMat, T>& A, const T& b)
+	template<typename T, class LArg>
+	LArg& operator += (IDenseMatrix<LArg, T>& A, const T& b)
 	{
 		A.derived() = A.derived() + b;
 		return A.derived();
 	}
 
-
-	// Subtraction
-
-	template<typename T, class LMat, class RMat>
-	LMAT_ENSURE_INLINE
-	inline typename binary_ewise_expr_map<sub_op<T>, LMat, RMat>::type
-	operator - (const IMatrixXpr<LMat, T>& A, const IMatrixXpr<RMat, T>& B)
-	{
-		return ewise(sub_op<T>(), A.derived(), B.derived());
-	}
-
-	template<typename T, class LMat>
-	LMAT_ENSURE_INLINE
-	inline typename binary_fix2_ewise_expr_map<sub_op<T>, LMat>::type
-	operator - (const IMatrixXpr<LMat, T>& A, const T& b)
-	{
-		return ewise(sub_op<T>(), A.derived(), b);
-	}
-
-	template<typename T, class RMat>
-	LMAT_ENSURE_INLINE
-	inline typename binary_fix1_ewise_expr_map<sub_op<T>, RMat>::type
-	operator - (const T& a, const IMatrixXpr<RMat, T>& B)
-	{
-		return ewise(sub_op<T>(), a, B.derived());
-	}
-
-	template<typename T, class LMat, class RMat>
-	LMAT_ENSURE_INLINE
-	inline LMat& operator -= (IDenseMatrix<LMat, T>& A, const IMatrixXpr<RMat, T>& B)
+	template<typename T, class LArg, class RArg>
+	LArg& operator -= (IDenseMatrix<LArg, T>& A, const IMatrixXpr<RArg, T>& B)
 	{
 		A.derived() = A.derived() - B.derived();
 		return A.derived();
 	}
 
-	template<typename T, class LMat>
-	LMAT_ENSURE_INLINE
-	inline LMat& operator -= (IDenseMatrix<LMat, T>& A, const T& b)
+	template<typename T, class LArg>
+	LArg& operator -= (IDenseMatrix<LArg, T>& A, const T& b)
 	{
 		A.derived() = A.derived() - b;
 		return A.derived();
 	}
 
-
-	// Multiplication
-
-	template<typename T, class LMat, class RMat>
-	LMAT_ENSURE_INLINE
-	inline typename binary_ewise_expr_map<mul_op<T>, LMat, RMat>::type
-	operator * (const IMatrixXpr<LMat, T>& A, const IMatrixXpr<RMat, T>& B)
-	{
-		return ewise(mul_op<T>(), A.derived(), B.derived());
-	}
-
-	template<typename T, class LMat>
-	LMAT_ENSURE_INLINE
-	inline typename binary_fix2_ewise_expr_map<mul_op<T>, LMat>::type
-	operator * (const IMatrixXpr<LMat, T>& A, const T& b)
-	{
-		return ewise(mul_op<T>(), A.derived(), b);
-	}
-
-	template<typename T, class RMat>
-	LMAT_ENSURE_INLINE
-	inline typename binary_fix1_ewise_expr_map<mul_op<T>, RMat>::type
-	operator * (const T& a, const IMatrixXpr<RMat, T>& B)
-	{
-		return ewise(mul_op<T>(), a, B.derived());
-	}
-
-	template<typename T, class LMat, class RMat>
-	LMAT_ENSURE_INLINE
-	inline LMat& operator *= (IDenseMatrix<LMat, T>& A, const IMatrixXpr<RMat, T>& B)
+	template<typename T, class LArg, class RArg>
+	LArg& operator *= (IDenseMatrix<LArg, T>& A, const IMatrixXpr<RArg, T>& B)
 	{
 		A.derived() = A.derived() * B.derived();
 		return A.derived();
 	}
 
-	template<typename T, class LMat>
-	LMAT_ENSURE_INLINE
-	inline LMat& operator *= (IDenseMatrix<LMat, T>& A, const T& b)
+	template<typename T, class LArg>
+	LArg& operator *= (IDenseMatrix<LArg, T>& A, const T& b)
 	{
 		A.derived() = A.derived() * b;
 		return A.derived();
 	}
 
-	// Division
-
-	template<typename T, class LMat, class RMat>
-	LMAT_ENSURE_INLINE
-	inline typename binary_ewise_expr_map<div_op<T>, LMat, RMat>::type
-	operator / (const IMatrixXpr<LMat, T>& A, const IMatrixXpr<RMat, T>& B)
-	{
-		return ewise(div_op<T>(), A.derived(), B.derived());
-	}
-
-	template<typename T, class LMat>
-	LMAT_ENSURE_INLINE
-	inline typename binary_fix2_ewise_expr_map<div_op<T>, LMat>::type
-	operator / (const IMatrixXpr<LMat, T>& A, const T& b)
-	{
-		return ewise(div_op<T>(), A.derived(), b);
-	}
-
-	template<typename T, class RMat>
-	LMAT_ENSURE_INLINE
-	inline typename binary_fix1_ewise_expr_map<div_op<T>, RMat>::type
-	operator / (const T& a, const IMatrixXpr<RMat, T>& B)
-	{
-		return ewise(div_op<T>(), a, B.derived());
-	}
-
-	template<typename T, class LMat, class RMat>
-	LMAT_ENSURE_INLINE
-	inline LMat& operator /= (IDenseMatrix<LMat, T>& A, const IMatrixXpr<RMat, T>& B)
+	template<typename T, class LArg, class RArg>
+	LArg& operator /= (IDenseMatrix<LArg, T>& A, const IMatrixXpr<RArg, T>& B)
 	{
 		A.derived() = A.derived() / B.derived();
 		return A.derived();
 	}
 
-	template<typename T, class LMat>
-	LMAT_ENSURE_INLINE
-	inline LMat& operator /= (IDenseMatrix<LMat, T>& A, const T& b)
+	template<typename T, class LArg>
+	LArg& operator /= (IDenseMatrix<LArg, T>& A, const T& b)
 	{
 		A.derived() = A.derived() / b;
 		return A.derived();
 	}
 
-
-	/********************************************
-	 *
-	 *  Other arithmetic functions
-	 *
-	 ********************************************/
-
-	template<typename T, class Mat>
-	LMAT_ENSURE_INLINE
-	inline typename unary_ewise_expr_map<neg_op<T>, Mat>::type
-	operator - (const IMatrixXpr<Mat, T>& A)
-	{
-		return ewise(neg_op<T>(), A.derived());
-	}
-
-	template<typename T, class Mat>
-	LMAT_ENSURE_INLINE
-	inline typename unary_ewise_expr_map<abs_op<T>, Mat>::type
-	abs(const IMatrixXpr<Mat, T>& A)
-	{
-		return ewise(abs_op<T>(), A.derived());
-	}
-
-	template<typename T, class Mat>
-	LMAT_ENSURE_INLINE
-	inline typename unary_ewise_expr_map<sqr_op<T>, Mat>::type
-	sqr(const IMatrixXpr<Mat, T>& A)
-	{
-		return ewise(sqr_op<T>(), A.derived());
-	}
-
-	template<typename T, class Mat>
-	LMAT_ENSURE_INLINE
-	inline typename unary_ewise_expr_map<sqrt_op<T>, Mat>::type
-	sqrt(const IMatrixXpr<Mat, T>& A)
-	{
-		return ewise(sqrt_op<T>(), A.derived());
-	}
-
-	template<typename T, class Mat>
-	LMAT_ENSURE_INLINE
-	inline typename unary_ewise_expr_map<rcp_op<T>, Mat>::type
-	rcp(const IMatrixXpr<Mat, T>& A)
-	{
-		return ewise(rcp_op<T>(), A.derived());
-	}
-
-	template<typename T, class Mat>
-	LMAT_ENSURE_INLINE
-	inline typename unary_ewise_expr_map<rsqrt_op<T>, Mat>::type
-	rsqrt(const IMatrixXpr<Mat, T>& A)
-	{
-		return ewise(rsqrt_op<T>(), A.derived());
-	}
 
 }
 

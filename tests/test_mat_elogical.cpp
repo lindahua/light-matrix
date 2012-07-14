@@ -31,16 +31,6 @@ MN_CASE( mat_elogical, not )
 
 	for (index_t i = 0; i < m * n; ++i) A[i] = bool(i % 2);
 
-	// type verification
-
-#ifdef LMAT_HAS_DECLTYPE
-	#if ( LIGHTMAT_COMPILER != LIGHTMAT_GCC ) 
-	typedef unary_ewise_expr<mask_not_op<double>, mmat_t> R_t;
-	// for unknown reason, this leads to internal crash of g++ compiler itself
-	static_assert(is_same<decltype(~A), R_t>::value, "Expression type verification failed.");
-	#endif
-#endif
-
 	mmat_t R_r(m, n);
 	for (index_t i = 0; i < m * n; ++i) R_r[i] = ~(A[i]);
 
@@ -65,13 +55,6 @@ MN_CASE( mat_elogical, and )
 
 	for (index_t i = 0; i < m * n; ++i) A[i] = bool(i % 2);
 	for (index_t i = 0; i < m * n; ++i) B[i] = bool(i % 3);
-
-	// type verification
-
-#ifdef LMAT_HAS_DECLTYPE
-	typedef binary_ewise_expr<mask_and_op<double>, mmat_t, mmat_t> R_t;
-	static_assert(is_same<decltype(A & B), R_t>::value, "Expression type verification failed.");
-#endif
 
 	mmat_t R_r(m, n);
 	for (index_t i = 0; i < m * n; ++i) R_r[i] = (A[i] & B[i]);
@@ -98,13 +81,6 @@ MN_CASE( mat_elogical, or )
 	for (index_t i = 0; i < m * n; ++i) A[i] = bool(i % 2);
 	for (index_t i = 0; i < m * n; ++i) B[i] = bool(i % 3);
 
-	// type verification
-
-#ifdef LMAT_HAS_DECLTYPE
-	typedef binary_ewise_expr<mask_or_op<double>, mmat_t, mmat_t> R_t;
-	static_assert(is_same<decltype(A | B), R_t>::value, "Expression type verification failed.");
-#endif
-
 	mmat_t R_r(m, n);
 	for (index_t i = 0; i < m * n; ++i) R_r[i] = (A[i] | B[i]);
 
@@ -129,13 +105,6 @@ MN_CASE( mat_elogical, xor )
 
 	for (index_t i = 0; i < m * n; ++i) A[i] = bool(i % 2);
 	for (index_t i = 0; i < m * n; ++i) B[i] = bool(i % 3);
-
-	// type verification
-
-#ifdef LMAT_HAS_DECLTYPE
-	typedef binary_ewise_expr<mask_xor_op<double>, mmat_t, mmat_t> R_t;
-	static_assert(is_same<decltype(A ^ B), R_t>::value, "Expression type verification failed.");
-#endif
 
 	mmat_t R_r(m, n);
 	for (index_t i = 0; i < m * n; ++i) R_r[i] = (A[i] ^ B[i]);

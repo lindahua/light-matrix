@@ -29,67 +29,6 @@ void fill_ran(dense_matrix<double, M, N>& X, double a, double b)
 	}
 }
 
-
-MN_CASE( mat_emath, max )
-{
-	typedef dense_matrix<double, M, N> mat_t;
-
-	const index_t m = M == 0 ? default_m : M;
-	const index_t n = N == 0 ? default_n : N;
-
-	mat_t A(m, n); fill_ran(A, 0.0, 10.0);
-	mat_t B(m, n); fill_ran(B, 0.0, 10.0);
-	double c = 5.0;
-
-	mat_t AB_r(m, n);
-	for (index_t i = 0; i < m * n; ++i) AB_r[i] = A[i] > B[i] ? A[i] : B[i];
-
-	mat_t AC_r(m, n);
-	for (index_t i = 0; i < m * n; ++i) AC_r[i] = A[i] > c ? A[i] : c;
-
-	mat_t CB_r(m, n);
-	for (index_t i = 0; i < m * n; ++i) CB_r[i] = c > B[i] ? c : B[i];
-
-	mat_t AB = (max)(A, B);
-	ASSERT_TRUE( is_equal(AB, AB_r) );
-
-	mat_t AC = (max)(A, c);
-	ASSERT_TRUE( is_equal(AC, AC_r) );
-
-	mat_t CB = (max)(c, B);
-	ASSERT_TRUE( is_equal(CB, CB_r) );
-}
-
-MN_CASE( mat_emath, min )
-{
-	typedef dense_matrix<double, M, N> mat_t;
-
-	const index_t m = M == 0 ? default_m : M;
-	const index_t n = N == 0 ? default_n : N;
-
-	mat_t A(m, n); fill_ran(A, 0.0, 10.0);
-	mat_t B(m, n); fill_ran(B, 0.0, 10.0);
-	double c = 5.0;
-
-	mat_t AB_r(m, n);
-	for (index_t i = 0; i < m * n; ++i) AB_r[i] = A[i] < B[i] ? A[i] : B[i];
-
-	mat_t AC_r(m, n);
-	for (index_t i = 0; i < m * n; ++i) AC_r[i] = A[i] < c ? A[i] : c;
-
-	mat_t CB_r(m, n);
-	for (index_t i = 0; i < m * n; ++i) CB_r[i] = c < B[i] ? c : B[i];
-
-	mat_t AB = (min)(A, B);
-	ASSERT_TRUE( is_equal(AB, AB_r) );
-
-	mat_t AC = (min)(A, c);
-	ASSERT_TRUE( is_equal(AC, AC_r) );
-
-	mat_t CB = (min)(c, B);
-	ASSERT_TRUE( is_equal(CB, CB_r) );
-}
-
 MN_CASE( mat_emath, pow )
 {
 	typedef dense_matrix<double, M, N> mat_t;
@@ -671,15 +610,6 @@ MN_CASE( mat_emath, atanh )
 #endif
 
 
-BEGIN_TPACK( mat_max )
-	ADD_MN_CASE_3X3( mat_emath, max, default_m, default_n )
-END_TPACK
-
-BEGIN_TPACK( mat_min )
-	ADD_MN_CASE_3X3( mat_emath, min, default_m, default_n )
-END_TPACK
-
-
 BEGIN_TPACK( mat_pow )
 	ADD_MN_CASE_3X3( mat_emath, pow, default_m, default_n )
 END_TPACK
@@ -801,13 +731,10 @@ END_TPACK
 
 
 BEGIN_MAIN_SUITE
-	ADD_TPACK( mat_max )
-	ADD_TPACK( mat_min )
-
-	ADD_TPACK( mat_pow )
-
 	ADD_TPACK( mat_floor )
 	ADD_TPACK( mat_ceil )
+
+	ADD_TPACK( mat_pow )
 
 	ADD_TPACK( mat_exp )
 	ADD_TPACK( mat_log )

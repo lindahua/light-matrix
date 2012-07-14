@@ -13,8 +13,6 @@
 #ifndef LIGHTMAT_MATRIX_CLASSES_H_
 #define LIGHTMAT_MATRIX_CLASSES_H_
 
-#include <light_mat/matrix/matrix_base.h>
-
 #include <light_mat/matrix/dense_matrix.h>
 #include <light_mat/matrix/ref_matrix.h>
 #include <light_mat/matrix/ref_matrix_ex.h>

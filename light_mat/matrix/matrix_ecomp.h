@@ -18,176 +18,31 @@
 
 namespace lmat
 {
-	// eq
+	/********************************************
+	 *
+	 *  Expression Type mapping
+	 *
+	 ********************************************/
 
-	template<typename T, class LMat, class RMat>
-	LMAT_ENSURE_INLINE
-	inline typename binary_ewise_expr_map<eq_op<T>, LMat, RMat>::type
-	operator == (const IMatrixXpr<LMat, T>& A, const IMatrixXpr<RMat, T>& B)
-	{
-		return ewise(eq_op<T>(), A.derived(), B.derived());
-	}
+	LMAT_DECLARE_BINARY_TYPE_MAP_EX( eq, eq_op )
+	LMAT_DECLARE_BINARY_TYPE_MAP_EX( ne, ne_op )
+	LMAT_DECLARE_BINARY_TYPE_MAP_EX( lt, lt_op )
+	LMAT_DECLARE_BINARY_TYPE_MAP_EX( le, le_op )
+	LMAT_DECLARE_BINARY_TYPE_MAP_EX( gt, gt_op )
+	LMAT_DECLARE_BINARY_TYPE_MAP_EX( ge, ge_op )
 
-	template<typename T, class LMat>
-	LMAT_ENSURE_INLINE
-	inline typename binary_fix2_ewise_expr_map<eq_op<T>, LMat>::type
-	operator ==(const IMatrixXpr<LMat, T>& A, const T& b)
-	{
-		typedef typename const_mat_same_form<LMat>::type cst_t;
-		return ewise(eq_op<T>(), A.derived(), b);
-	}
+	/********************************************
+	 *
+	 *  Specific Expressions
+	 *
+	 ********************************************/
 
-	template<typename T, class RMat>
-	LMAT_ENSURE_INLINE
-	inline typename binary_fix1_ewise_expr_map<eq_op<T>, RMat>::type
-	operator == (const T& a, const IMatrixXpr<RMat, T>& B)
-	{
-		typedef typename const_mat_same_form<RMat>::type cst_t;
-		return ewise(eq_op<T>(), a, B.derived());
-	}
-
-	// ne
-
-	template<typename T, class LMat, class RMat>
-	LMAT_ENSURE_INLINE
-	inline typename binary_ewise_expr_map<ne_op<T>, LMat, RMat>::type
-	operator != (const IMatrixXpr<LMat, T>& A, const IMatrixXpr<RMat, T>& B)
-	{
-		return ewise(ne_op<T>(), A.derived(), B.derived());
-	}
-
-	template<typename T, class LMat>
-	LMAT_ENSURE_INLINE
-	inline typename binary_fix2_ewise_expr_map<ne_op<T>, LMat>::type
-	operator !=(const IMatrixXpr<LMat, T>& A, const T& b)
-	{
-		typedef typename const_mat_same_form<LMat>::type cst_t;
-		return ewise(ne_op<T>(), A.derived(), b);
-	}
-
-	template<typename T, class RMat>
-	LMAT_ENSURE_INLINE
-	inline typename binary_fix1_ewise_expr_map<ne_op<T>, RMat>::type
-	operator != (const T& a, const IMatrixXpr<RMat, T>& B)
-	{
-		typedef typename const_mat_same_form<RMat>::type cst_t;
-		return ewise(ne_op<T>(), a, B.derived());
-	}
-
-
-	// le
-
-	template<typename T, class LMat, class RMat>
-	LMAT_ENSURE_INLINE
-	inline typename binary_ewise_expr_map<le_op<T>, LMat, RMat>::type
-	operator <= (const IMatrixXpr<LMat, T>& A, const IMatrixXpr<RMat, T>& B)
-	{
-		return ewise(le_op<T>(), A.derived(), B.derived());
-	}
-
-	template<typename T, class LMat>
-	LMAT_ENSURE_INLINE
-	inline typename binary_fix2_ewise_expr_map<le_op<T>, LMat>::type
-	operator <=(const IMatrixXpr<LMat, T>& A, const T& b)
-	{
-		typedef typename const_mat_same_form<LMat>::type cst_t;
-		return ewise(le_op<T>(), A.derived(), b);
-	}
-
-	template<typename T, class RMat>
-	LMAT_ENSURE_INLINE
-	inline typename binary_fix1_ewise_expr_map<le_op<T>, RMat>::type
-	operator <= (const T& a, const IMatrixXpr<RMat, T>& B)
-	{
-		typedef typename const_mat_same_form<RMat>::type cst_t;
-		return ewise(le_op<T>(), a, B.derived());
-	}
-
-	// lt
-
-	template<typename T, class LMat, class RMat>
-	LMAT_ENSURE_INLINE
-	inline typename binary_ewise_expr_map<lt_op<T>, LMat, RMat>::type
-	operator < (const IMatrixXpr<LMat, T>& A, const IMatrixXpr<RMat, T>& B)
-	{
-		return ewise(lt_op<T>(), A.derived(), B.derived());
-	}
-
-	template<typename T, class LMat>
-	LMAT_ENSURE_INLINE
-	inline typename binary_fix2_ewise_expr_map<lt_op<T>, LMat>::type
-	operator < (const IMatrixXpr<LMat, T>& A, const T& b)
-	{
-		typedef typename const_mat_same_form<LMat>::type cst_t;
-		return ewise(lt_op<T>(), A.derived(), b);
-	}
-
-	template<typename T, class RMat>
-	LMAT_ENSURE_INLINE
-	inline typename binary_fix1_ewise_expr_map<lt_op<T>, RMat>::type
-	operator < (const T& a, const IMatrixXpr<RMat, T>& B)
-	{
-		typedef typename const_mat_same_form<RMat>::type cst_t;
-		return ewise(lt_op<T>(), a, B.derived());
-	}
-
-
-
-	// ge
-
-	template<typename T, class LMat, class RMat>
-	LMAT_ENSURE_INLINE
-	inline typename binary_ewise_expr_map<ge_op<T>, LMat, RMat>::type
-	operator >= (const IMatrixXpr<LMat, T>& A, const IMatrixXpr<RMat, T>& B)
-	{
-		return ewise(ge_op<T>(), A.derived(), B.derived());
-	}
-
-	template<typename T, class LMat>
-	LMAT_ENSURE_INLINE
-	inline typename binary_fix2_ewise_expr_map<ge_op<T>, LMat>::type
-	operator >=(const IMatrixXpr<LMat, T>& A, const T& b)
-	{
-		typedef typename const_mat_same_form<LMat>::type cst_t;
-		return ewise(ge_op<T>(), A.derived(), b);
-	}
-
-	template<typename T, class RMat>
-	LMAT_ENSURE_INLINE
-	inline typename binary_fix1_ewise_expr_map<ge_op<T>, RMat>::type
-	operator >= (const T& a, const IMatrixXpr<RMat, T>& B)
-	{
-		typedef typename const_mat_same_form<RMat>::type cst_t;
-		return ewise(ge_op<T>(), a, B.derived());
-	}
-
-	// gt
-
-	template<typename T, class LMat, class RMat>
-	LMAT_ENSURE_INLINE
-	inline typename binary_ewise_expr_map<gt_op<T>, LMat, RMat>::type
-	operator > (const IMatrixXpr<LMat, T>& A, const IMatrixXpr<RMat, T>& B)
-	{
-		return ewise(gt_op<T>(), A.derived(), B.derived());
-	}
-
-	template<typename T, class LMat>
-	LMAT_ENSURE_INLINE
-	inline typename binary_fix2_ewise_expr_map<gt_op<T>, LMat>::type
-	operator >(const IMatrixXpr<LMat, T>& A, const T& b)
-	{
-		typedef typename const_mat_same_form<LMat>::type cst_t;
-		return ewise(gt_op<T>(), A.derived(), b);
-	}
-
-	template<typename T, class RMat>
-	LMAT_ENSURE_INLINE
-	inline typename binary_fix1_ewise_expr_map<gt_op<T>, RMat>::type
-	operator > (const T& a, const IMatrixXpr<RMat, T>& B)
-	{
-		typedef typename const_mat_same_form<RMat>::type cst_t;
-		return ewise(gt_op<T>(), a, B.derived());
-	}
+	LMAT_DEFINE_BINARY_MATFUNCTION_EX( eq, operator ==, eq_op )
+	LMAT_DEFINE_BINARY_MATFUNCTION_EX( ne, operator !=, ne_op )
+	LMAT_DEFINE_BINARY_MATFUNCTION_EX( lt, operator <, lt_op )
+	LMAT_DEFINE_BINARY_MATFUNCTION_EX( le, operator <=, le_op )
+	LMAT_DEFINE_BINARY_MATFUNCTION_EX( gt, operator >, gt_op )
+	LMAT_DEFINE_BINARY_MATFUNCTION_EX( ge, operator >=, ge_op )
 }
 
 #endif 

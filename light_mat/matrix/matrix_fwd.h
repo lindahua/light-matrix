@@ -97,17 +97,17 @@ namespace lmat
 
 	// expressions
 
-	template<class Fun, class Arg, bool IsEmbed=false> class unary_ewise_expr;
-	template<class Fun, class Arg1, class Arg2, bool IsEmbed1=false, bool IsEmbed2=false> class binary_ewise_expr;
+	template<class Fun, class Arg, bool IsEmbed> class unary_ewise_expr;
+	template<class Fun, class Arg1, class Arg2, bool IsEmbed1, bool IsEmbed2> class binary_ewise_expr;
 
-	template<class Col, int N=DynamicDim, bool IsEmbed=false> class repeat_col_expr;
-	template<class Row, int M=DynamicDim, bool IsEmbed=false> class repeat_row_expr;
+	template<class Col, int N, bool IsEmbed> class repeat_col_expr;
+	template<class Row, int M, bool IsEmbed> class repeat_row_expr;
 
 	struct rowwise { };
 	struct colwise { };
 
-	template<class Fun, class Arg, bool IsEmbed=false> class colwise_reduce_expr;
-	template<class Fun, class Arg, bool IsEmbed=false> class rowwise_reduce_expr;
+	template<class Fun, class Arg, bool IsEmbed> class colwise_reduce_expr;
+	template<class Fun, class Arg, bool IsEmbed> class rowwise_reduce_expr;
 
 	// evaluation
 
@@ -125,7 +125,7 @@ namespace lmat
 	template<typename T, class SExpr, class DMat>
 	inline void evaluate_to(const IMatrixXpr<SExpr, T>& src, IDenseMatrix<DMat, T>& dst);
 
-	template<class SMat, typename T> struct cast_expr_map;
+	template<class SMat, typename T, bool EmbedArg> struct cast_expr_map;
 
 }
 

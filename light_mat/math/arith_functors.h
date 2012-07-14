@@ -64,7 +64,7 @@ namespace lmat
 	};
 
 	template<typename T>
-	struct abs_op : public unary_numeric_ewise_functor<T>
+	struct abs_fun : public unary_numeric_ewise_functor<T>
 	{
 		LMAT_ENSURE_INLINE T operator() (const T& x) const
 		{
@@ -73,7 +73,7 @@ namespace lmat
 	};
 
 	template<typename T>
-	struct sqr_op : public unary_numeric_ewise_functor<T>
+	struct sqr_fun : public unary_numeric_ewise_functor<T>
 	{
 		LMAT_ENSURE_INLINE T operator() (const T& x) const
 		{
@@ -82,7 +82,7 @@ namespace lmat
 	};
 
 	template<typename T>
-	struct rcp_op : public unary_numeric_ewise_functor<T>
+	struct rcp_fun : public unary_numeric_ewise_functor<T>
 	{
 		LMAT_ENSURE_INLINE T operator() (const T& x) const
 		{
@@ -91,7 +91,7 @@ namespace lmat
 	};
 
 	template<typename T>
-	struct sqrt_op : public unary_numeric_ewise_functor<T>
+	struct sqrt_fun : public unary_numeric_ewise_functor<T>
 	{
 		LMAT_ENSURE_INLINE T operator() (const T& x) const
 		{
@@ -100,7 +100,7 @@ namespace lmat
 	};
 
 	template<typename T>
-	struct rsqrt_op : public unary_numeric_ewise_functor<T>
+	struct rsqrt_fun : public unary_numeric_ewise_functor<T>
 	{
 		LMAT_ENSURE_INLINE T operator() (const T& x) const
 		{
@@ -116,11 +116,14 @@ namespace lmat
 	LMAT_DECLARE_AS_BINARY_EWISE_TFUNCTOR( div_op, true )
 
 	LMAT_DECLARE_AS_UNARY_EWISE_TFUNCTOR( neg_op, true )
-	LMAT_DECLARE_AS_UNARY_EWISE_TFUNCTOR( abs_op, true )
-	LMAT_DECLARE_AS_UNARY_EWISE_TFUNCTOR( sqr_op, true )
-	LMAT_DECLARE_AS_UNARY_EWISE_TFUNCTOR( sqrt_op, true )
-	LMAT_DECLARE_AS_UNARY_EWISE_TFUNCTOR( rcp_op, true )
-	LMAT_DECLARE_AS_UNARY_EWISE_TFUNCTOR( rsqrt_op, true )
+	LMAT_DECLARE_AS_UNARY_EWISE_TFUNCTOR( abs_fun, true )
+	LMAT_DECLARE_AS_UNARY_EWISE_TFUNCTOR( sqr_fun, true )
+	LMAT_DECLARE_AS_UNARY_EWISE_TFUNCTOR( sqrt_fun, true )
+	LMAT_DECLARE_AS_UNARY_EWISE_TFUNCTOR( rcp_fun, true )
+	LMAT_DECLARE_AS_UNARY_EWISE_TFUNCTOR( rsqrt_fun, true )
+
+	LMAT_DEFINE_BINARY_NUMERIC_EWISE_TFUNCTOR( min_fun, (math::min), true )
+	LMAT_DEFINE_BINARY_NUMERIC_EWISE_TFUNCTOR( max_fun, (math::max), true )
 }
 
 

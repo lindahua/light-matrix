@@ -21,15 +21,15 @@ using namespace lmat::test;
 typedef dense_matrix<double, 0, 1> dcol_t;
 typedef dense_matrix<double, 1, 0> drow_t;
 
-template class lmat::repeat_col_expr<dcol_t, DynamicDim>;
-template class lmat::repeat_col_expr<dcol_t, 6>;
-template class lmat::repeat_row_expr<drow_t, DynamicDim>;
-template class lmat::repeat_row_expr<drow_t, 4>;
+template class lmat::repeat_col_expr<dcol_t, DynamicDim, false>;
+template class lmat::repeat_col_expr<dcol_t, 6, false>;
+template class lmat::repeat_row_expr<drow_t, DynamicDim, false>;
+template class lmat::repeat_row_expr<drow_t, 4, false>;
 
 
 #ifdef LMAT_USE_STATIC_ASSERT
-static_assert(lmat::is_mat_xpr<lmat::repeat_col_expr<dcol_t> >::value, "Interface verification failed.");
-static_assert(lmat::is_mat_xpr<lmat::repeat_row_expr<drow_t> >::value, "Interface verification failed.");
+static_assert(lmat::is_mat_xpr<lmat::repeat_col_expr<dcol_t, DynamicDim, false> >::value, "Interface verification failed.");
+static_assert(lmat::is_mat_xpr<lmat::repeat_row_expr<drow_t, DynamicDim, false> >::value, "Interface verification failed.");
 #endif
 
 
@@ -39,7 +39,7 @@ N_CASE( repcols, generic )
 	const index_t n = 6;
 
 	typedef dense_matrix<double, N, 1> col_t;
-	typedef repeat_col_expr<col_t> expr_t;
+	typedef repeat_col_expr<col_t, DynamicDim, false> expr_t;
 
 	col_t a(m, 1);
 
@@ -70,7 +70,7 @@ MN_CASE( repcols, generic_fix )
 	const index_t n = N;
 
 	typedef dense_matrix<double, M, 1> col_t;
-	typedef repeat_col_expr<col_t, N> expr_t;
+	typedef repeat_col_expr<col_t, N, false> expr_t;
 
 	col_t a(m, 1);
 
@@ -161,7 +161,7 @@ N_CASE( reprows, generic )
 	const index_t n = N == 0 ? 6 : N;
 
 	typedef dense_matrix<double, 1, N> row_t;
-	typedef repeat_row_expr<row_t> expr_t;
+	typedef repeat_row_expr<row_t, DynamicDim, false> expr_t;
 
 	row_t a(1, n);
 
@@ -192,7 +192,7 @@ MN_CASE( reprows, generic_fix )
 	const index_t n = N == 0 ? 6 : N;
 
 	typedef dense_matrix<double, 1, N> row_t;
-	typedef repeat_row_expr<row_t, M> expr_t;
+	typedef repeat_row_expr<row_t, M, false> expr_t;
 
 	row_t a(1, n);
 
@@ -286,7 +286,7 @@ MN_CASE( repcols, eval )
 	col_t col(m, 1);
 	for (index_t i = 0; i < m; ++i) col[i] = double(i + 2);
 
-	typedef repeat_col_expr<col_t, N> expr_t;
+	typedef repeat_col_expr<col_t, N, false> expr_t;
 	expr_t expr(col, n);
 
 	ASSERT_EQ( expr.nrows(), m );
@@ -314,7 +314,7 @@ MN_CASE( reprows, eval )
 	row_t row(1, n);
 	for (index_t j = 0; j < n; ++j) row[j] = double(j + 2);
 
-	typedef repeat_row_expr<row_t, M> expr_t;
+	typedef repeat_row_expr<row_t, M, false> expr_t;
 	expr_t expr(row, m);
 
 	ASSERT_EQ( expr.nrows(), m );

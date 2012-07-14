@@ -19,6 +19,33 @@ namespace lmat
 {
 	/********************************************
 	 *
+	 *  Type related tools
+	 *
+	 ********************************************/
+
+	template<class LMat, class RMat>
+	struct has_same_value_type
+	{
+		static const bool value = is_same<
+			typename matrix_traits<LMat>::value_type,
+			typename matrix_traits<RMat>::value_type>::value;
+	};
+
+
+	template<class LMat, class RMat>
+	struct binary_value_type
+	{
+#ifdef LMAT_USE_STATIC_ASSERT
+		static_assert( has_same_value_type<LMat, RMat>::value,
+				"LMat and RMat have different value_type." );
+#endif
+
+		typedef typename matrix_traits<LMat>::value_type type;
+	};
+
+
+	/********************************************
+	 *
 	 *  Dimension related tools
 	 *
 	 ********************************************/

@@ -288,7 +288,7 @@ namespace lmat
 		static const int _cost = (M == 1 || N == 1) ? 0 : VEC_EVAL_CACHE_COST;
 
 		LMAT_ENSURE_INLINE
-		static int of(const repeat_col_expr<Col, N>& )
+		static int of(const repeat_col_expr<Col, N, IsEmbed>& )
 		{
 			return _cost;
 		}
@@ -301,7 +301,7 @@ namespace lmat
 		static const int _cost = (M == 1 || N == 1) ? 0 : VEC_EVAL_CACHE_COST;
 
 		LMAT_ENSURE_INLINE
-		static int of(const repeat_row_expr<Row, M>& )
+		static int of(const repeat_row_expr<Row, M, IsEmbed>& )
 		{
 			return _cost;
 		}
