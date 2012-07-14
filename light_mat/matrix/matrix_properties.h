@@ -81,6 +81,37 @@ namespace lmat
 	{
 		return has_same_nrows(A, B) && has_same_ncolumns(A, B);
 	}
+
+	// check
+
+	template<class Mat1, typename T1, class Mat2, typename T2>
+	LMAT_ENSURE_INLINE
+	inline void check_same_size(
+			const IMatrixXpr<Mat1, T1>& A,
+			const IMatrixXpr<Mat2, T2>& B,
+			const char *msg)
+	{
+		check_arg(has_same_size(A, B), msg);
+	}
+
+	template<class Mat, typename T>
+	LMAT_ENSURE_INLINE
+	inline void check_square(
+			const IMatrixXpr<Mat, T>& A,
+			const char *msg)
+	{
+		check_arg(is_square(A), msg);
+	}
+
+	template<class Mat1, typename T1, class Mat2, typename T2>
+	LMAT_ENSURE_INLINE
+	inline void check_same_innerdim(
+			const IMatrixXpr<Mat1, T1>& A,
+			const IMatrixXpr<Mat2, T2>& B,
+			const char *msg)
+	{
+		check_arg(A.ncolumns() == B.nrows(), msg);
+	}
 }
 
 #endif 

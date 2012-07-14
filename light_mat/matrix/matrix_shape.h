@@ -13,7 +13,7 @@
 #ifndef LIGHTMAT_MATRIX_SHAPE_H_
 #define LIGHTMAT_MATRIX_SHAPE_H_
 
-#include <light_mat/matrix/matrix_fwd.h>
+#include <light_mat/core/basic_defs.h>
 
 namespace lmat
 {

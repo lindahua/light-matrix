@@ -58,7 +58,6 @@ set(MATRIX_BASE_HS
     ${INC}/matrix/matrix_shape.h
     ${INC}/matrix/matrix_concepts.h
     ${INC}/matrix/matrix_properties.h
-    ${INC}/matrix/matrix_check.h
     ${INC}/matrix/matrix_generators.h
     ${INC}/matrix/matrix_copy.h
     ${INC}/matrix/matrix_compare.h
