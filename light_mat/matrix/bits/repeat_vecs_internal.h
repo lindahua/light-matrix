@@ -13,7 +13,7 @@
 #ifndef REPEAT_VECS_INTERNAL_H_
 #define REPEAT_VECS_INTERNAL_H_
 
-#include <light_mat/matrix/dense_matrix.h>
+#include <light_mat/matrix/matrix_classes.h>
 
 namespace lmat { namespace detail {
 

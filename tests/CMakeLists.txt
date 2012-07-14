@@ -81,9 +81,8 @@ set(MATRIX_CLASS_HS
 set(MATRIX_EVAL_BASE_HS
     ${INC}/math/math_base.h
     ${INC}/math/functor_base.h
-    ${INC}/matrix/vec_evaluator_concepts.h
-    ${INC}/matrix/matrix_vec_evaluators.h
-    ${INC}/matrix/matrix_eval_cost.h
+    ${INC}/matrix/vec_eval_concepts.h
+    ${INC}/matrix/vec_evaluators.h
     ${INC}/matrix/generic_matrix_eval.h
     ${INC}/matrix/matrix_ewise_eval.h)   
     
@@ -99,8 +98,8 @@ set(MATRIX_EWISE_HS
     
 set(REPEAT_VECS_HS
     ${INC}/matrix/bits/repeat_vecs_internal.h
-    ${INC}/matrix/repeat_vecs.h
-    ${INC}/matrix/repeat_vecs_veval.h)   
+    ${INC}/matrix/repeat_vecs_expr.h
+    ${INC}/matrix/repeat_vecs_eval.h)   
     
 set(MATRIX_REDUC_HS
     ${INC}/math/reduction_functors.h

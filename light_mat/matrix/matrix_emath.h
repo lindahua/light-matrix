@@ -13,7 +13,7 @@
 #ifndef LIGHTMAT_MATRIX_EMATH_H_
 #define LIGHTMAT_MATRIX_EMATH_H_
 
-#include <light_mat/matrix/matrix_ewise_eval.h>
+#include <light_mat/matrix/matrix_ewise_expr.h>
 #include <light_mat/math/emath_functors.h>
 
 namespace lmat

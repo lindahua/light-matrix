@@ -8,8 +8,8 @@
 
 #include "test_base.h"
 
-#include <light_mat/matrix/matrix_classes.h>
 #include <light_mat/matrix/matrix_arith.h>
+#include <light_mat/matrix/matrix_ewise_eval.h>
 
 using namespace lmat;
 using namespace lmat::test;
@@ -20,6 +20,7 @@ const index_t LDim = 12;
 
 typedef dense_matrix<double> dmat_t;
 
+
 #ifdef LMAT_USE_STATIC_ASSERT
 	static_assert( is_linear_vector_evaluator<
 			binary_ewise_linear_evaluator<add_op<double>, dmat_t, dmat_t, false, false>, double>::value,
@@ -29,6 +30,7 @@ typedef dense_matrix<double> dmat_t;
 			binary_ewise_percol_evaluator<add_op<double>, dmat_t, dmat_t, false, false>, double>::value,
 			"Evaluator interface verification failed");
 #endif
+
 
 template<int M, int N>
 void fill_ran(dense_matrix<double, M, N>& X, double a, double b)

@@ -8,8 +8,8 @@
 
 #include "test_base.h"
 
-#include <light_mat/matrix/matrix_classes.h>
 #include <light_mat/matrix/matrix_emath.h>
+#include <light_mat/matrix/matrix_ewise_eval.h>
 
 #include <cstdlib>
 

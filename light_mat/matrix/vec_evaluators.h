@@ -13,12 +13,12 @@
 #ifndef LIGHTMAT_MATRIX_VEC_EVALUATORS_H_
 #define LIGHTMAT_MATRIX_VEC_EVALUATORS_H_
 
-#include <light_mat/matrix/dense_matrix.h>
-#include <light_mat/matrix/const_matrix.h>
-#include <light_mat/matrix/vec_evaluator_concepts.h>
+#include <light_mat/matrix/vec_eval_concepts.h>
+#include <light_mat/matrix/matrix_classes.h>
 
 namespace lmat
 {
+
 	/********************************************
 	 *
 	 *  Evaluator classes
@@ -174,47 +174,6 @@ namespace lmat
 		dense_matrix<T> m_cache;
 		const index_t m_ldim;
 		const T *m_data;
-	};
-
-
-	/********************************************
-	 *
-	 *  Evaluator dispatch
-	 *
-	 ********************************************/
-
-	template<class Expr>
-	struct linear_vector_evaluator
-	{
-		typedef typename matrix_traits<Expr>::value_type T;
-
-		typedef typename
-				if_<and_<is_dense_mat<Expr>, ct_has_continuous_layout<Expr> >,
-					continuous_linear_evaluator<T>,
-					cached_linear_evaluator<T> >::type type;
-	};
-
-	template<class Expr>
-	struct percol_vector_evaluator
-	{
-		typedef typename matrix_traits<Expr>::value_type T;
-
-		typedef typename
-				if_<is_dense_mat<Expr>,
-					dense_percol_evaluator<T>,
-					cached_percol_evaluator<T> >::type type;
-	};
-
-	template<typename T, int CTRows, int CTCols>
-	struct linear_vector_evaluator<const_matrix<T, CTRows, CTCols> >
-	{
-		typedef const_linear_evaluator<T> type;
-	};
-
-	template<typename T, int CTRows, int CTCols>
-	struct percol_vector_evaluator<const_matrix<T, CTRows, CTCols> >
-	{
-		typedef const_percol_evaluator<T> type;
 	};
 
 }

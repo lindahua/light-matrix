@@ -75,7 +75,7 @@ namespace lmat { namespace detail {
 		LMAT_ENSURE_INLINE
 		static typename Fun::result_type evaluate(const Fun& fun, const Expr& expr)
 		{
-			typename linear_vector_evaluator<Expr>::type evaluator(expr);
+			typename linear_eval<Expr>::evaluator_type evaluator(expr);
 			return single_vec_reduce<ct_size<Expr>::value>::eval(
 					fun, expr.nelems(), evaluator);
 		}
@@ -88,7 +88,7 @@ namespace lmat { namespace detail {
 		inline
 		static typename Fun::result_type evaluate(const Fun& fun, const Expr& expr)
 		{
-			typename percol_vector_evaluator<Expr>::type evaluator(expr);
+			typename percol_eval<Expr>::evaluator_type evaluator(expr);
 			const index_t m = expr.nrows();
 			const index_t n = expr.ncolumns();
 
@@ -118,13 +118,13 @@ namespace lmat { namespace detail {
 		LMAT_ENSURE_INLINE
 		static typename Fun::result_type evaluate(const Fun& fun, const Expr& expr)
 		{
-			if (percol_eval_cost<Expr>::of(expr) < linear_eval_cost<Expr>::of(expr) )
+			if (percol_eval<Expr>::cost_of(expr) < linear_eval<Expr>::cost_of(expr) )
 			{
-				return full_reduce_linear_internal::evaluate(fun, expr);
+				return full_reduce_percol_internal::evaluate(fun, expr);
 			}
 			else
 			{
-				return full_reduce_percol_internal::evaluate(fun, expr);
+				return full_reduce_linear_internal::evaluate(fun, expr);
 			}
 		}
 	};

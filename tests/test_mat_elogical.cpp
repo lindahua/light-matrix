@@ -8,8 +8,8 @@
 
 #include "test_base.h"
 
-#include <light_mat/matrix/matrix_classes.h>
 #include <light_mat/matrix/matrix_elogical.h>
+#include <light_mat/matrix/matrix_ewise_eval.h>
 
 using namespace lmat;
 using namespace lmat::test;

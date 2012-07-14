@@ -44,7 +44,7 @@ namespace lmat
 
 	private:
 		Fun m_fun;
-		typedef typename linear_vector_evaluator<Arg>::type arg_eval_t;
+		typedef typename linear_eval<Arg>::evaluator_type arg_eval_t;
 		arg_eval_t m_arg_eval;
 	};
 
@@ -72,7 +72,7 @@ namespace lmat
 
 	private:
 		Fun m_fun;
-		typedef typename percol_vector_evaluator<Arg>::type arg_eval_t;
+		typedef typename percol_eval<Arg>::evaluator_type arg_eval_t;
 		arg_eval_t m_arg_eval;
 	};
 
@@ -96,8 +96,8 @@ namespace lmat
 
 	private:
 		Fun m_fun;
-		typedef typename linear_vector_evaluator<Arg1>::type arg1_eval_t;
-		typedef typename linear_vector_evaluator<Arg2>::type arg2_eval_t;
+		typedef typename linear_eval<Arg1>::evaluator_type arg1_eval_t;
+		typedef typename linear_eval<Arg2>::evaluator_type arg2_eval_t;
 
 		arg1_eval_t m_arg1_eval;
 		arg2_eval_t m_arg2_eval;
@@ -129,8 +129,8 @@ namespace lmat
 
 	private:
 		Fun m_fun;
-		typedef typename percol_vector_evaluator<Arg1>::type arg1_eval_t;
-		typedef typename percol_vector_evaluator<Arg2>::type arg2_eval_t;
+		typedef typename percol_eval<Arg1>::evaluator_type arg1_eval_t;
+		typedef typename percol_eval<Arg2>::evaluator_type arg2_eval_t;
 
 		arg1_eval_t m_arg1_eval;
 		arg2_eval_t m_arg2_eval;
@@ -140,80 +140,57 @@ namespace lmat
 
 	/********************************************
 	 *
-	 *  Vector evaluator dispatch
+	 *  Evaluator dispatch
 	 *
 	 ********************************************/
 
 	template<typename Fun, class Arg, bool IsEmbed>
-	struct linear_vector_evaluator<unary_ewise_expr<Fun, Arg, IsEmbed> >
+	struct linear_eval<unary_ewise_expr<Fun, Arg, IsEmbed> >
 	{
-		typedef unary_ewise_linear_evaluator<Fun, Arg, IsEmbed> type;
+		typedef unary_ewise_linear_evaluator<Fun, Arg, IsEmbed> evaluator_type;
+
+		LMAT_ENSURE_INLINE
+		static int cost_of(const unary_ewise_expr<Fun, Arg, IsEmbed>& expr )
+		{
+			return linear_eval<Arg>::cost_of(expr.arg());
+		}
 	};
 
 	template<typename Fun, class Arg, bool IsEmbed>
-	struct percol_vector_evaluator<unary_ewise_expr<Fun, Arg, IsEmbed> >
+	struct percol_eval<unary_ewise_expr<Fun, Arg, IsEmbed> >
 	{
-		typedef unary_ewise_percol_evaluator<Fun, Arg, IsEmbed> type;
+		typedef unary_ewise_percol_evaluator<Fun, Arg, IsEmbed> evaluator_type;
+
+		LMAT_ENSURE_INLINE
+		static int cost_of(const unary_ewise_expr<Fun, Arg, IsEmbed>& expr )
+		{
+			return percol_eval<Arg>::cost_of(expr.arg());
+		}
 	};
 
 	template<typename Fun, class Arg1, class Arg2, bool IsEmbed1, bool IsEmbed2>
-	struct linear_vector_evaluator<binary_ewise_expr<Fun, Arg1, Arg2, IsEmbed1, IsEmbed2> >
+	struct linear_eval<binary_ewise_expr<Fun, Arg1, Arg2, IsEmbed1, IsEmbed2> >
 	{
-		typedef binary_ewise_linear_evaluator<Fun, Arg1, Arg2, IsEmbed1, IsEmbed2> type;
+		typedef binary_ewise_linear_evaluator<Fun, Arg1, Arg2, IsEmbed1, IsEmbed2> evaluator_type;
+
+		LMAT_ENSURE_INLINE
+		static int cost_of(const binary_ewise_expr<Fun, Arg1, Arg2, IsEmbed1, IsEmbed2>& expr )
+		{
+			return  linear_eval<Arg1>::cost_of(expr.first_arg()) +
+					linear_eval<Arg2>::cost_of(expr.second_arg());
+		}
 	};
 
 	template<typename Fun, class Arg1, class Arg2, bool IsEmbed1, bool IsEmbed2>
-	struct percol_vector_evaluator<binary_ewise_expr<Fun, Arg1, Arg2, IsEmbed1, IsEmbed2> >
+	struct percol_eval<binary_ewise_expr<Fun, Arg1, Arg2, IsEmbed1, IsEmbed2> >
 	{
-		typedef binary_ewise_percol_evaluator<Fun, Arg1, Arg2, IsEmbed1, IsEmbed2> type;
-	};
+		typedef binary_ewise_percol_evaluator<Fun, Arg1, Arg2, IsEmbed1, IsEmbed2> evaluator_type;
 
-
-	/********************************************
-	 *
-	 *  Cost model
-	 *
-	 ********************************************/
-
-	template<class Fun, class Arg, bool IsEmbed>
-	struct linear_eval_cost<unary_ewise_expr<Fun, Arg, IsEmbed> >
-	{
 		LMAT_ENSURE_INLINE
-		static int of(const unary_ewise_expr<Fun, Arg, IsEmbed>& expr )
+		static int cost_of(const binary_ewise_expr<Fun, Arg1, Arg2, IsEmbed1, IsEmbed2>& expr )
 		{
-			return linear_eval_cost<Arg>::of(expr.arg());
-		}
-	};
-
-	template<class Fun, class Arg, bool IsEmbed>
-	struct percol_eval_cost<unary_ewise_expr<Fun, Arg, IsEmbed> >
-	{
-		LMAT_ENSURE_INLINE
-		static int of(const unary_ewise_expr<Fun, Arg, IsEmbed>& expr )
-		{
-			return percol_eval_cost<Arg>::of(expr.arg());
-		}
-	};
-
-	template<class Fun, class Arg1, class Arg2, bool IsEmbed1, bool IsEmbed2>
-	struct linear_eval_cost<binary_ewise_expr<Fun, Arg1, Arg2, IsEmbed1, IsEmbed2> >
-	{
-		LMAT_ENSURE_INLINE
-		static int of(const binary_ewise_expr<Fun, Arg1, Arg2, IsEmbed1, IsEmbed2>& expr )
-		{
-			return  linear_eval_cost<Arg1>::of(expr.first_arg()) +
-					linear_eval_cost<Arg2>::of(expr.second_arg());
-		}
-	};
-
-	template<class Fun, class Arg1, class Arg2, bool IsEmbed1, bool IsEmbed2>
-	struct percol_eval_cost<binary_ewise_expr<Fun, Arg1, Arg2, IsEmbed1, IsEmbed2> >
-	{
-		LMAT_ENSURE_INLINE
-		static int of(const binary_ewise_expr<Fun, Arg1, Arg2, IsEmbed1, IsEmbed2>& expr )
-		{
-			return  percol_eval_cost<Arg1>::of(expr.first_arg()) +
-					percol_eval_cost<Arg2>::of(expr.second_arg());
+			return  percol_eval<Arg1>::cost_of(expr.first_arg()) +
+					percol_eval<Arg2>::cost_of(expr.second_arg());
 		}
 	};
 

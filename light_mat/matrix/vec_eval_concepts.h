@@ -1,5 +1,5 @@
 /**
- * @file vec_evaluator_concepts.h
+ * @file vec_eval_concepts.h
  *
  * Generic concepts for vector-based evaluation
  *
@@ -10,10 +10,10 @@
 #pragma once
 #endif
 
-#ifndef LIGHTMAT_VEC_EVALUATOR_CONCEPTS_H_
-#define LIGHTMAT_VEC_EVALUATOR_CONCEPTS_H_
+#ifndef LIGHTMAT_VEC_EVAL_CONCEPTS_H_
+#define LIGHTMAT_VEC_EVAL_CONCEPTS_H_
 
-#include <light_mat/matrix/matrix_concepts.h>
+#include <light_mat/matrix/matrix_properties.h>
 
 namespace lmat
 {
@@ -209,7 +209,8 @@ namespace lmat
 	};
 
 
-
 }
 
-#endif /* VEC_EVALUATOR_CONCEPTS_H_ */
+#endif
+
+

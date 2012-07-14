@@ -13,8 +13,8 @@
 #ifndef LIGHTMAT_REPEAT_VECS_H_
 #define LIGHTMAT_REPEAT_VECS_H_
 
-#include <light_mat/matrix/matrix_classes.h>
-#include "bits/repeat_vecs_internal.h"
+#include <light_mat/matrix/matrix_expr_base.h>
+#include <light_mat/matrix/matrix_shape.h>
 
 namespace lmat
 {
@@ -256,116 +256,6 @@ namespace lmat
 	reprow(const const_matrix<T, Mc, Nc>& row, fixed_dim<M>)
 	{
 		return const_matrix<T, M, Nc>(M, row.ncolumns(), row.value());
-	}
-
-
-	/********************************************
-	 *
-	 *  Expression evaluation
-	 *
-	 ********************************************/
-
-	template<class Col, class DMat, bool IsEmbed>
-	inline void evaluate_to(const repeat_col_expr<Col, 1, IsEmbed>& s,
-			IDenseMatrix<DMat, typename matrix_traits<Col>::value_type>& dst)
-	{
-		evaluate_to(s.column(), dst.derived());
-	}
-
-
-	template<class Col, int N, class DMat, bool IsEmbed>
-	inline void evaluate_to(const repeat_col_expr<Col, N, IsEmbed>& s,
-			IDenseMatrix<DMat, typename matrix_traits<Col>::value_type>& dst)
-	{
-		typedef typename matrix_traits<Col>::value_type T;
-
-		if ( is_column(s) )
-		{
-			const int M = binary_ct_rows<Col, DMat>::value;
-			ref_col<T, M> dview(dst.ptr_data(), s.nrows());
-			evaluate_to(s.column(), dview);
-		}
-		else
-		{
-			typedef typename detail::repcol_ewrapper_map<Col>::type wrapper_t;
-			wrapper_t col_wrap(s.column());
-
-			const index_t m = col_wrap.nrows();
-			if (m == 1)
-			{
-				fill(dst, col_wrap[0]);
-			}
-			else
-			{
-				const index_t n = s.ncolumns();
-				for (index_t j = 0; j < n; ++j)
-				{
-					copy_mem(m, col_wrap.data(), dst.ptr_col(j));
-				}
-			}
-		}
-	}
-
-	template<class Row, class DMat, bool IsEmbed>
-	inline void evaluate_to(const repeat_row_expr<Row, 1, IsEmbed>& s,
-			IDenseMatrix<DMat, typename matrix_traits<Row>::value_type>& dst)
-	{
-		evaluate_to( s.row(), dst.derived() );
-	}
-
-	template<class Row, int M, class DMat, bool IsEmbed>
-	inline void evaluate_to(const repeat_row_expr<Row, M, IsEmbed>& s,
-			IDenseMatrix<DMat, typename matrix_traits<Row>::value_type>& dst)
-	{
-		typedef typename matrix_traits<Row>::value_type T;
-
-		if ( is_row(s) )
-		{
-			const int N = binary_ct_cols<Row, DMat>::value;
-			if (has_continuous_layout(dst))
-			{
-				ref_row<T, N> dview(dst.ptr_data(), s.ncolumns());
-				evaluate_to(s.row(), dview);
-			}
-			else
-			{
-				ref_matrix_ex<T, 1, N> dview(dst.ptr_data(), 1, s.ncolumns(), dst.lead_dim());
-				evaluate_to(s.row(), dview);
-			}
-		}
-		else
-		{
-			typedef typename detail::reprow_ewrapper_map<Row>::type wrapper_t;
-			wrapper_t row_wrap(s.row());
-
-			const index_t n = row_wrap.ncolumns();
-
-			if (M == 0)
-			{
-				const index_t m = s.nrows();
-				if (n == 1)
-				{
-					fill_mem(m, dst.ptr_data(), row_wrap[0]);
-				}
-				else
-				{
-					for (index_t j = 0; j < n; ++j)
-						fill_mem(m, dst.ptr_col(j), row_wrap[j]);
-				}
-			}
-			else
-			{
-				if (n == 1)
-				{
-					fill_mem(M, dst.ptr_data(), row_wrap[0]);
-				}
-				else
-				{
-					for (index_t j = 0; j < n; ++j)
-						fill_mem(M, dst.ptr_col(j), row_wrap[j]);
-				}
-			}
-		}
 	}
 
 }

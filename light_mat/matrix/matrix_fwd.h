@@ -111,16 +111,11 @@ namespace lmat
 
 	// evaluation
 
-	template<class Expr> struct linear_vector_evaluator;
-	template<class Expr> struct percol_vector_evaluator;
-	template<class Expr> struct linear_simd_vector_evaluator;
-	template<class Expr> struct percol_simd_vector_evaluator;
+	template<class Expr> struct linear_eval;
+	template<class Expr> struct percol_eval;
 
 	template<typename T, int CTSize> class linear_eval_context;
 	template<typename T, int CTRows, int CTCols> class percol_eval_context;
-
-	template<class Expr> struct linear_eval_cost;
-	template<class Expr> struct percol_eval_cost;
 
 	template<typename T, class SExpr, class DMat>
 	inline void evaluate_to(const IMatrixXpr<SExpr, T>& src, IDenseMatrix<DMat, T>& dst);

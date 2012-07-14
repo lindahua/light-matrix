@@ -41,7 +41,7 @@ MN_CASE( linear_veval, continu_linear )
 	typedef continuous_linear_evaluator<double> veval;
 
 #ifdef LMAT_USE_STATIC_ASSERT
-	static_assert(is_same<typename linear_vector_evaluator<mat>::type, veval>::value,
+	static_assert(is_same<typename linear_eval<mat>::evaluator_type, veval>::value,
 			"Evaluator type verification failed");
 #endif
 
@@ -69,8 +69,8 @@ MN_CASE( linear_veval, cached_linear )
 #ifdef LMAT_USE_STATIC_ASSERT
 
 	static_assert(
-			(N == 1 && is_same<typename linear_vector_evaluator<mat_ex>::type, veval_ex1>::value) ||
-			(N != 1  && is_same<typename linear_vector_evaluator<mat_ex>::type, veval_ex>::value),
+			(N == 1 && is_same<typename linear_eval<mat_ex>::evaluator_type, veval_ex1>::value) ||
+			(N != 1  && is_same<typename linear_eval<mat_ex>::evaluator_type, veval_ex>::value),
 			"Evaluator type verification failed");
 #endif
 
@@ -97,7 +97,7 @@ MN_CASE( linear_veval, const_linear )
 	typedef const_linear_evaluator<double> veval;
 
 #ifdef LMAT_USE_STATIC_ASSERT
-	static_assert(is_same<typename linear_vector_evaluator<mat>::type, veval>::value,
+	static_assert(is_same<typename linear_eval<mat>::evaluator_type, veval>::value,
 			"Evaluator type verification failed");
 #endif
 
@@ -124,7 +124,7 @@ MN_CASE( percol_veval, dense_percol )
 #ifdef LMAT_USE_STATIC_ASSERT
 
 	static_assert(
-			is_same<typename percol_vector_evaluator<mat_ex>::type, veval_ex>::value,
+			is_same<typename percol_eval<mat_ex>::evaluator_type, veval_ex>::value,
 			"Evaluator type verification failed");
 #endif
 
@@ -182,7 +182,7 @@ MN_CASE( percol_veval, const_percol )
 #ifdef LMAT_USE_STATIC_ASSERT
 
 	static_assert(
-			is_same<typename percol_vector_evaluator<mat>::type, veval>::value,
+			is_same<typename percol_eval<mat>::evaluator_type, veval>::value,
 			"Evaluator type verification failed");
 #endif
 

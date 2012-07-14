@@ -11,7 +11,7 @@
 
 #include <light_mat/matrix/const_matrix.h>
 #include <light_mat/matrix/dense_matrix.h>
-#include <light_mat/matrix/repeat_vecs.h>
+#include <light_mat/matrix/repeat_vecs_expr.h>
 
 using namespace lmat;
 using namespace lmat::test;
@@ -276,63 +276,6 @@ MN_CASE( reprows, const_fix )
 }
 
 
-MN_CASE( repcols, eval )
-{
-	const index_t m = M == 0 ? 4 : M;
-	const index_t n = N == 0 ? 6 : N;
-
-	typedef dense_matrix<double, M, 1> col_t;
-
-	col_t col(m, 1);
-	for (index_t i = 0; i < m; ++i) col[i] = double(i + 2);
-
-	typedef repeat_col_expr<col_t, N, false> expr_t;
-	expr_t expr(col, n);
-
-	ASSERT_EQ( expr.nrows(), m );
-	ASSERT_EQ( expr.ncolumns(), n );
-
-	dense_matrix<double, M, N> R( expr );
-
-	dense_matrix<double, M, N> R_r(m, n);
-	for (index_t j = 0; j < n; ++j)
-	{
-		for (index_t i = 0; i < m; ++i) R_r(i, j) = col(i, 0);
-	}
-
-	ASSERT_TRUE( is_equal(R, R_r) );
-}
-
-
-MN_CASE( reprows, eval )
-{
-	const index_t m = M == 0 ? 4 : M;
-	const index_t n = N == 0 ? 6 : N;
-
-	typedef dense_matrix<double, 1, N> row_t;
-
-	row_t row(1, n);
-	for (index_t j = 0; j < n; ++j) row[j] = double(j + 2);
-
-	typedef repeat_row_expr<row_t, M, false> expr_t;
-	expr_t expr(row, m);
-
-	ASSERT_EQ( expr.nrows(), m );
-	ASSERT_EQ( expr.ncolumns(), n );
-
-	dense_matrix<double, M, N> R( expr );
-
-	dense_matrix<double, M, N> R_r(m, n);
-	for (index_t j = 0; j < n; ++j)
-	{
-		for (index_t i = 0; i < m; ++i) R_r(i, j) = row(0, j);
-	}
-
-	ASSERT_TRUE( is_equal(R, R_r) );
-}
-
-
-
 BEGIN_TPACK( repcols_generic )
 	ADD_N_CASE( repcols, generic, 0 )
 	ADD_N_CASE( repcols, generic, 1 )
@@ -361,18 +304,6 @@ BEGIN_TPACK( repcols_const_fix )
 	ADD_MN_CASE( repcols, const_fix, 0, 6 )
 	ADD_MN_CASE( repcols, const_fix, 1, 6 )
 	ADD_MN_CASE( repcols, const_fix, 4, 6 )
-END_TPACK
-
-BEGIN_TPACK( repcols_eval )
-	ADD_MN_CASE( repcols, eval, 0, 0 )
-	ADD_MN_CASE( repcols, eval, 0, 1 )
-	ADD_MN_CASE( repcols, eval, 0, 6 )
-	ADD_MN_CASE( repcols, eval, 1, 0 )
-	ADD_MN_CASE( repcols, eval, 1, 1 )
-	ADD_MN_CASE( repcols, eval, 1, 6 )
-	ADD_MN_CASE( repcols, eval, 4, 0 )
-	ADD_MN_CASE( repcols, eval, 4, 1 )
-	ADD_MN_CASE( repcols, eval, 4, 6 )
 END_TPACK
 
 
@@ -406,32 +337,16 @@ BEGIN_TPACK( reprows_const_fix )
 	ADD_MN_CASE( reprows, const_fix, 4, 6 )
 END_TPACK
 
-
-BEGIN_TPACK( reprows_eval )
-	ADD_MN_CASE( reprows, eval, 0, 0 )
-	ADD_MN_CASE( reprows, eval, 0, 1 )
-	ADD_MN_CASE( reprows, eval, 0, 6 )
-	ADD_MN_CASE( reprows, eval, 1, 0 )
-	ADD_MN_CASE( reprows, eval, 1, 1 )
-	ADD_MN_CASE( reprows, eval, 1, 6 )
-	ADD_MN_CASE( reprows, eval, 4, 0 )
-	ADD_MN_CASE( reprows, eval, 4, 1 )
-	ADD_MN_CASE( reprows, eval, 4, 6 )
-END_TPACK
-
-
 BEGIN_MAIN_SUITE
 	ADD_TPACK( repcols_generic )
 	ADD_TPACK( repcols_generic_fix )
 	ADD_TPACK( repcols_const )
 	ADD_TPACK( repcols_const_fix )
-	ADD_TPACK( repcols_eval )
 
 	ADD_TPACK( reprows_generic )
 	ADD_TPACK( reprows_generic_fix )
 	ADD_TPACK( reprows_const )
 	ADD_TPACK( reprows_const_fix )
-	ADD_TPACK( reprows_eval )
 END_MAIN_SUITE
 
 
