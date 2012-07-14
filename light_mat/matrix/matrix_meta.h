@@ -211,7 +211,7 @@ namespace lmat
 	 ********************************************/
 
 	template<class Mat>
-	struct has_continuous_layout { static const bool value = false; };
+	struct ct_has_continuous_layout { static const bool value = false; };
 
 	template<class Mat>
 	struct is_base_aligned { static const bool value = false; };

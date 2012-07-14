@@ -18,6 +18,18 @@
 
 namespace lmat
 {
+	template<typename T, class RMat>
+	LMAT_ENSURE_INLINE
+	void copy_to(const T *src, IDenseMatrix<RMat, T>& dst)
+	{
+		const int M = ct_rows<RMat>::value;
+		const int N = ct_cols<RMat>::value;
+		typedef typename detail::mat_copier<T, M, N>::type copier_t;
+
+		copier_t::copy(dst.nrows(), dst.ncolumns(),
+				src, dst.ptr_data(), dst.lead_dim());
+	}
+
 	template<typename T, class LMat, class RMat>
 	LMAT_ENSURE_INLINE
 	void copy(const IDenseMatrix<LMat, T>& src, IDenseMatrix<RMat, T>& dst)

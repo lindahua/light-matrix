@@ -53,7 +53,7 @@ namespace lmat
 			template<class Expr, class Dst>
 			inline static void evaluate(const Expr& expr, Dst& dst)
 			{
-				if (!has_continuous_layout<Dst>::value ||
+				if (!ct_has_continuous_layout<Dst>::value ||
 						percol_eval_cost<Expr>::of(expr) < linear_eval_cost<Expr>::of(expr))
 				{
 					ewise_percol_eval_internal<T, CTRows, CTCols>::evaluate(expr, dst);

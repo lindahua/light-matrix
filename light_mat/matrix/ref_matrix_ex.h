@@ -94,7 +94,7 @@ namespace lmat
 	};
 
 	template<typename T, int CTRows, int CTCols, typename Align>
-	struct has_continuous_layout<cref_matrix_ex<T, CTRows, CTCols, Align> >
+	struct ct_has_continuous_layout<cref_matrix_ex<T, CTRows, CTCols, Align> >
 	{
 		static const bool value = (CTCols == 1);
 	};
@@ -220,7 +220,7 @@ namespace lmat
 	};
 
 	template<typename T, int CTRows, int CTCols, typename Align>
-	struct has_continuous_layout<ref_matrix_ex<T, CTRows, CTCols, Align> >
+	struct ct_has_continuous_layout<ref_matrix_ex<T, CTRows, CTCols, Align> >
 	{
 		static const bool value = (CTCols == 1);
 	};
@@ -267,7 +267,7 @@ namespace lmat
 		{
 			if (this != &r)
 			{
-				copy_from_mat(r);
+				copy(r, *this);
 			}
 			return *this;
 		}
@@ -275,7 +275,7 @@ namespace lmat
 		template<class Mat>
 		LMAT_ENSURE_INLINE ref_matrix_ex& operator = (const IDenseMatrix<Mat, T>& r)
 		{
-			copy_from_mat(r);
+			copy(r.derived(), *this);
 			return *this;
 		}
 
@@ -373,17 +373,6 @@ namespace lmat
 		LMAT_ENSURE_INLINE reference operator[] (const index_type i)
 		{
 			return m_data[detail::ref_ex_linear_offset(*this, i)];
-		}
-
-	private:
-		template<class Mat>
-		LMAT_ENSURE_INLINE
-		void copy_from_mat(const IDenseMatrix<Mat, T>& r)
-		{
-			if ( !(ptr_data() == r.ptr_data() && lead_dim() == r.lead_dim()) )
-			{
-				copy(r.derived(), *this);
-			}
 		}
 
 	private:

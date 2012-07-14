@@ -268,7 +268,7 @@ namespace lmat
 	inline void evaluate_to(const repeat_col_expr<Col, 1, IsEmbed>& s,
 			IDenseMatrix<DMat, typename matrix_traits<Col>::value_type>& dst)
 	{
-		evaluate_to(s.column(), dst);
+		evaluate_to(s.column(), dst.derived());
 	}
 
 
@@ -281,7 +281,7 @@ namespace lmat
 		if ( is_column(s) )
 		{
 			const int M = binary_ct_rows<Col, DMat>::value;
-			ref_col<T, M> dview(dst.ptr_data(), dst.nrows());
+			ref_col<T, M> dview(dst.ptr_data(), s.nrows());
 			evaluate_to(s.column(), dview);
 		}
 		else
@@ -309,7 +309,7 @@ namespace lmat
 	inline void evaluate_to(const repeat_row_expr<Row, 1, IsEmbed>& s,
 			IDenseMatrix<DMat, typename matrix_traits<Row>::value_type>& dst)
 	{
-		evaluate_to( s.row(), dst );
+		evaluate_to( s.row(), dst.derived() );
 	}
 
 	template<class Row, int M, class DMat, bool IsEmbed>
@@ -321,14 +321,14 @@ namespace lmat
 		if ( is_row(s) )
 		{
 			const int N = binary_ct_cols<Row, DMat>::value;
-			if (has_continuous_layout<DMat>::value)
+			if (has_continuous_layout(dst))
 			{
-				ref_row<T, N> dview(dst.ptr_data(), dst.ncolumns());
+				ref_row<T, N> dview(dst.ptr_data(), s.ncolumns());
 				evaluate_to(s.row(), dview);
 			}
 			else
 			{
-				ref_matrix_ex<T, 1, N> dview(dst.ptr_data(), 1, dst.ncolumns(), dst.lead_dim());
+				ref_matrix_ex<T, 1, N> dview(dst.ptr_data(), 1, s.ncolumns(), dst.lead_dim());
 				evaluate_to(s.row(), dview);
 			}
 		}

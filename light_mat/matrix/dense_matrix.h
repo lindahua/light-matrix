@@ -37,7 +37,7 @@ namespace lmat
 	};
 
 	template<typename T, int CTRows, int CTCols, typename Align>
-	struct has_continuous_layout<dense_matrix<T, CTRows, CTCols, Align> >
+	struct ct_has_continuous_layout<dense_matrix<T, CTRows, CTCols, Align> >
 	{
 		static const bool value = true;
 	};

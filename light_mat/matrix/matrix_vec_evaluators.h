@@ -36,7 +36,7 @@ namespace lmat
 		continuous_linear_evaluator(const IDenseMatrix<Mat, T>& X)
 		{
 #ifdef LMAT_USE_STATIC_ASSERT
-			static_assert(has_continuous_layout<Mat>::value,
+			static_assert(ct_has_continuous_layout<Mat>::value,
 					"Mat must always have continuous layout");
 #endif
 			m_data = X.ptr_data();
@@ -189,7 +189,7 @@ namespace lmat
 		typedef typename matrix_traits<Expr>::value_type T;
 
 		typedef typename
-				if_<and_<is_dense_mat<Expr>, has_continuous_layout<Expr> >,
+				if_<and_<is_dense_mat<Expr>, ct_has_continuous_layout<Expr> >,
 					continuous_linear_evaluator<T>,
 					cached_linear_evaluator<T> >::type type;
 	};

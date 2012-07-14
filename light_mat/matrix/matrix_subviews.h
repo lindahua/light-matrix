@@ -194,7 +194,7 @@ namespace lmat
 	template<class Mat>
 	struct subviews<Mat, whole, whole>
 	{
-		static const bool is_continuous = has_continuous_layout<Mat>::value;
+		static const bool is_continuous = ct_has_continuous_layout<Mat>::value;
 		typedef detail::multicol_helper<Mat, ct_cols<Mat>::value, is_continuous> helper_t;
 
 		typedef typename helper_t::const_type const_type;
@@ -217,7 +217,7 @@ namespace lmat
 	template<class Mat>
 	struct subviews<Mat, whole, range>
 	{
-		static const bool is_continuous = has_continuous_layout<Mat>::value;
+		static const bool is_continuous = ct_has_continuous_layout<Mat>::value;
 		typedef detail::multicol_helper<Mat, DynamicDim, is_continuous> helper_t;
 
 		typedef typename helper_t::const_type const_type;

@@ -85,7 +85,7 @@ namespace lmat
 	struct linear_eval_cost
 	{
 		typedef typename
-				if_<and_<is_dense_mat<Expr>, has_continuous_layout<Expr> >,
+				if_<and_<is_dense_mat<Expr>, ct_has_continuous_layout<Expr> >,
 					detail::continuous_linear_eval_cost<Expr>,
 					detail::generic_linear_eval_cost<Expr>
 				>::type internal_t;

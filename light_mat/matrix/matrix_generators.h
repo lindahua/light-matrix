@@ -13,8 +13,7 @@
 #ifndef LIGHTMAT_MATRIX_GENERATORS_H_
 #define LIGHTMAT_MATRIX_GENERATORS_H_
 
-#include <light_mat/matrix/matrix_concepts.h>
-#include <light_mat/core/mem_op.h>
+#include <light_mat/matrix/matrix_copy.h>
 
 namespace lmat
 {
@@ -121,27 +120,7 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		void generate_to(IDenseMatrix<Mat, T>& mat) const
 		{
-			const index_t m = mat.nrows();
-			const index_t n = mat.ncolumns();
-			const index_t ldim = mat.lead_dim();
-			T *dst = mat.ptr_data();
-
-			if (n == 1 || m == ldim)
-			{
-				copy_mem(m * n, m_src, dst);
-			}
-			else if (m == 1)
-			{
-				unpack_vec(n, m_src, dst, ldim);
-			}
-			else
-			{
-				const T *s = m_src;
-				for (index_t j = 0; j < n; ++j, s += m, dst += ldim)
-				{
-					copy_mem(m, s, dst);
-				}
-			}
+			copy_to(m_src, mat.derived());
 		}
 
 	private:
@@ -173,14 +152,6 @@ namespace lmat
 	{
 		fill_gen<T>(val).generate_to(X);
 	}
-
-	template<typename T, class Mat>
-	LMAT_ENSURE_INLINE
-	inline void copy_to(const T *src, IDenseMatrix<Mat, T>& X)
-	{
-		copy_gen<T>(src).generate_to(X);
-	}
-
 
 }
 

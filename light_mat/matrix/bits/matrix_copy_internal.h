@@ -22,6 +22,23 @@ namespace lmat { namespace detail {
 	{
 		LMAT_ENSURE_INLINE
 		static void copy(const index_t, const index_t,
+				const T *src, T *dst, const index_t ldim_d)
+		{
+			if (ldim_d == M)
+			{
+				copy_mem(M * N, src, dst);
+			}
+			else
+			{
+				for (index_t j = 0; j < N; ++j, src+=M, dst+=ldim_d)
+				{
+					copy_mem(M, src, dst);
+				}
+			}
+		}
+
+		LMAT_ENSURE_INLINE
+		static void copy(const index_t, const index_t,
 				const T *src, const index_t ldim_s,
 				      T *dst, const index_t ldim_d)
 		{
@@ -44,6 +61,13 @@ namespace lmat { namespace detail {
 	{
 		LMAT_ENSURE_INLINE
 		static void copy(const index_t, const index_t,
+				const T *src, T *dst, const index_t)
+		{
+			*dst = *src;
+		}
+
+		LMAT_ENSURE_INLINE
+		static void copy(const index_t, const index_t,
 				const T *src, const index_t,
 				      T *dst, const index_t)
 		{
@@ -56,8 +80,15 @@ namespace lmat { namespace detail {
 	{
 		LMAT_ENSURE_INLINE
 		static void copy(const index_t m, const index_t,
-				const T *src, const index_t ldim_s,
-				      T *dst, const index_t ldim_d)
+				const T *src, T *dst, const index_t)
+		{
+			copy_mem(m, src, dst);
+		}
+
+		LMAT_ENSURE_INLINE
+		static void copy(const index_t m, const index_t,
+				const T *src, const index_t,
+				      T *dst, const index_t)
 		{
 			copy_mem(m, src, dst);
 		}
@@ -66,6 +97,23 @@ namespace lmat { namespace detail {
 	template<typename T>
 	struct row_copy
 	{
+		LMAT_ENSURE_INLINE
+		static void copy(const index_t, const index_t n,
+				const T *src, T *dst, const index_t ldim_d)
+		{
+			if (ldim_d == 1)
+			{
+				copy_mem(n, src, dst);
+			}
+			else
+			{
+				for (index_t j = 0; j < n; ++j)
+				{
+					dst[j * ldim_d] = src[j];
+				}
+			}
+		}
+
 		LMAT_ENSURE_INLINE
 		static void copy(const index_t, const index_t n,
 				const T *src, const index_t ldim_s,
@@ -88,6 +136,35 @@ namespace lmat { namespace detail {
 	template<typename T>
 	struct mat_copy
 	{
+		LMAT_ENSURE_INLINE
+		static void copy(const index_t m, const index_t n,
+				const T *src, T *dst, const index_t ldim_d)
+		{
+			if (n == 1)
+			{
+				copy_mem(m, src, dst);
+			}
+			else if (ldim_d == m)
+			{
+				copy_mem(m * n, src, dst);
+			}
+			else if (m == 1)
+			{
+				for (index_t j = 0; j < n; ++j)
+				{
+					dst[j * ldim_d] = src[j * m];
+				}
+			}
+			else
+			{
+				for (index_t j = 0; j < n; ++j,
+					src += m, dst += ldim_d)
+				{
+					copy_mem(m, src, dst);
+				}
+			}
+		}
+
 		LMAT_ENSURE_INLINE
 		static void copy(const index_t m, const index_t n,
 				const T *src, const index_t ldim_s,

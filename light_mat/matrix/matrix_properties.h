@@ -82,6 +82,13 @@ namespace lmat
 		return has_same_nrows(A, B) && has_same_ncolumns(A, B);
 	}
 
+	template<class Mat, typename T>
+	LMAT_ENSURE_INLINE
+	inline bool has_continuous_layout(const IDenseMatrix<Mat, T>& A)
+	{
+		return ct_has_continuous_layout<Mat>::value || A.lead_dim() == A.nrows();
+	}
+
 	// check
 
 	template<class Mat1, typename T1, class Mat2, typename T2>
