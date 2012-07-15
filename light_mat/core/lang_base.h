@@ -89,22 +89,6 @@ namespace lmat
 		T m_obj;
 	};
 
-
-	template<class T>
-	struct embed_t
-	{
-		LMAT_ENSURE_INLINE
-		explicit embed_t(const T& a) : ref(a) { }
-		const T& ref;
-	};
-
-	template<class T>
-	LMAT_ENSURE_INLINE
-	inline embed_t<T> embed(const T& a)
-	{
-		return embed_t<T>(a);
-	}
-
 }
 
 #endif

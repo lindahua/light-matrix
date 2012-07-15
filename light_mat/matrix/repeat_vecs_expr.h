@@ -201,6 +201,15 @@ namespace lmat
 		return repeat_col_expr<Col, DynamicDim, false>(col.derived(), n);
 	}
 
+	template<typename T, class Col>
+	LMAT_ENSURE_INLINE
+	inline typename repcol_type_map<Col, DynamicDim, true>::type
+	repcol(const embed_mat<Col, T>& col, const index_t n)
+	{
+		return repeat_col_expr<Col, DynamicDim, true>(col.get(), n);
+	}
+
+
 	template<typename T, class Col, int N>
 	LMAT_ENSURE_INLINE
 	inline typename repcol_type_map<Col, N, false>::type
@@ -208,6 +217,15 @@ namespace lmat
 	{
 		return repeat_col_expr<Col, N, false>(col.derived(), N);
 	}
+
+	template<typename T, class Col, int N>
+	LMAT_ENSURE_INLINE
+	inline typename repcol_type_map<Col, N, true>::type
+	repcol(const embed_mat<Col, T>& col, fixed_dim<N>)
+	{
+		return repeat_col_expr<Col, N, true>(col.get(), N);
+	}
+
 
 	template<typename T, class Row>
 	LMAT_ENSURE_INLINE
@@ -217,6 +235,15 @@ namespace lmat
 		return repeat_row_expr<Row, DynamicDim, false>(row.derived(), m);
 	}
 
+	template<typename T, class Row>
+	LMAT_ENSURE_INLINE
+	inline typename reprow_type_map<Row, DynamicDim, true>::type
+	reprow(const embed_mat<Row, T>& row, const index_t m)
+	{
+		return repeat_row_expr<Row, DynamicDim, true>(row.get(), m);
+	}
+
+
 	template<typename T, class Row, int M>
 	LMAT_ENSURE_INLINE
 	inline typename reprow_type_map<Row, M, false>::type
@@ -225,10 +252,18 @@ namespace lmat
 		return repeat_row_expr<Row, M, false>(row.derived(), M);
 	}
 
+	template<typename T, class Row, int M>
+	LMAT_ENSURE_INLINE
+	inline typename reprow_type_map<Row, M, true>::type
+	reprow(const embed_mat<Row, T>& row, fixed_dim<M>)
+	{
+		return repeat_row_expr<Row, M, true>(row.get(), M);
+	}
+
 
 	template<typename T, int Mc, int Nc>
 	LMAT_ENSURE_INLINE
-	inline typename repcol_type_map<const_matrix<T, Mc, Nc>, DynamicDim, false>::type
+	inline const_matrix<T, Mc, DynamicDim>
 	repcol(const const_matrix<T, Mc, Nc>& col, const index_t n)
 	{
 		return const_matrix<T, Mc, DynamicDim>(col.nrows(), n, col.value());
@@ -236,7 +271,7 @@ namespace lmat
 
 	template<typename T, int Mc, int Nc, int N>
 	LMAT_ENSURE_INLINE
-	inline typename repcol_type_map<const_matrix<T, Mc, Nc>, N, false>::type
+	inline const_matrix<T, Mc, N>
 	repcol(const const_matrix<T, Mc, Nc>& col, fixed_dim<N>)
 	{
 		return const_matrix<T, Mc, N>(col.nrows(), N, col.value());
@@ -244,7 +279,7 @@ namespace lmat
 
 	template<typename T, int Mc, int Nc>
 	LMAT_ENSURE_INLINE
-	inline typename reprow_type_map<const_matrix<T, Mc, Nc>, DynamicDim, false>::type
+	inline const_matrix<T, DynamicDim, Nc>
 	reprow(const const_matrix<T, Mc, Nc>& row, const index_t m)
 	{
 		return const_matrix<T, DynamicDim, Nc>(m, row.ncolumns(), row.value());
@@ -252,7 +287,7 @@ namespace lmat
 
 	template<typename T, int Mc, int Nc, int M>
 	LMAT_ENSURE_INLINE
-	inline typename reprow_type_map<const_matrix<T, Mc, Nc>, M, false>::type
+	inline const_matrix<T, M, Nc>
 	reprow(const const_matrix<T, Mc, Nc>& row, fixed_dim<M>)
 	{
 		return const_matrix<T, M, Nc>(M, row.ncolumns(), row.value());

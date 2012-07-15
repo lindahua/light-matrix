@@ -78,6 +78,21 @@ MN_CASE( mat_arith, add )
 	mat_t CB = c + B;
 	ASSERT_TRUE( is_equal(CB, CB_r) );
 
+	mat_t AB1 = A + embed(B);
+	ASSERT_TRUE( is_equal(AB, AB_r) );
+
+	mat_t AB2 = embed(A) + B;
+	ASSERT_TRUE( is_equal(AB2, AB_r) );
+
+	mat_t AB3 = embed(A) + embed(B);
+	ASSERT_TRUE( is_equal(AB3, AB_r) );
+
+	mat_t AC1 = embed(A) + c;
+	ASSERT_TRUE( is_equal(AC1, AC_r) );
+
+	mat_t CB1 = c + embed(B);
+	ASSERT_TRUE( is_equal(CB1, CB_r) );
+
 	// by-scalars evaluation
 
 	mat_t AB_s(m, n, fill_value(0.0));
@@ -223,6 +238,21 @@ MN_CASE( mat_arith, sub )
 
 	mat_t CB = c - B;
 	ASSERT_TRUE( is_equal(CB, CB_r) );
+
+	mat_t AB1 = A - embed(B);
+	ASSERT_TRUE( is_equal(AB, AB_r) );
+
+	mat_t AB2 = embed(A) - B;
+	ASSERT_TRUE( is_equal(AB2, AB_r) );
+
+	mat_t AB3 = embed(A) - embed(B);
+	ASSERT_TRUE( is_equal(AB3, AB_r) );
+
+	mat_t AC1 = embed(A) - c;
+	ASSERT_TRUE( is_equal(AC1, AC_r) );
+
+	mat_t CB1 = c - embed(B);
+	ASSERT_TRUE( is_equal(CB1, CB_r) );
 
 	// by-scalars evaluation
 
@@ -642,6 +672,9 @@ MN_CASE( mat_arith, neg )
 	mat_t R = -A;
 	ASSERT_TRUE( is_equal(R, R_r) );
 
+	mat_t R1 = -embed(A);
+	ASSERT_TRUE( is_equal(R1, R_r) );
+
 	// by-scalars evaluation
 
 	mat_t R_s(m, n, fill_value(0.0));
@@ -760,6 +793,9 @@ MN_CASE( mat_arith, sqr )
 
 	mat_t R = sqr(A);
 	ASSERT_TRUE( is_equal(R, R_r) );
+
+	mat_t R1 = sqr( embed(A) );
+	ASSERT_TRUE( is_equal(R1, R_r) );
 
 	// by-scalars evaluation
 

@@ -220,23 +220,25 @@ namespace lmat
 
 	// sum
 
-	template<typename T, class Arg, bool EmbedArg>
-	struct colwise_sum_t
+	template<class Arg, bool EmbedArg>
+	struct colwise_sum_expr_map
 	{
 		typedef typename colwise_reduce_expr_map<
-				sum_fun<T>, Arg, EmbedArg>::type type;
+				sum_fun<typename matrix_traits<Arg>::value_type>,
+				Arg, EmbedArg>::type type;
 	};
 
-	template<typename T, class Arg, bool EmbedArg>
-	struct rowwise_sum_t
+	template<class Arg, bool EmbedArg>
+	struct rowwise_sum_expr_map
 	{
 		typedef typename rowwise_reduce_expr_map<
-				sum_fun<T>, Arg, EmbedArg>::type type;
+				sum_fun<typename matrix_traits<Arg>::value_type>,
+				Arg, EmbedArg>::type type;
 	};
 
 	template<typename T, class Arg>
 	LMAT_ENSURE_INLINE
-	inline typename colwise_sum_t<T, Arg, false>::type
+	inline typename colwise_sum_expr_map<Arg, false>::type
 	sum(const IMatrixXpr<Arg, T>& arg, colwise)
 	{
 		return reduce(sum_fun<T>(), arg, colwise());
@@ -244,10 +246,49 @@ namespace lmat
 
 	template<typename T, class Arg>
 	LMAT_ENSURE_INLINE
-	inline typename rowwise_sum_t<T, Arg, false>::type
+	inline typename rowwise_sum_expr_map<Arg, false>::type
 	sum(const IMatrixXpr<Arg, T>& arg, rowwise)
 	{
 		return reduce(sum_fun<T>(), arg, rowwise());
+	}
+
+
+	// mean
+
+	template<class Arg, bool EmbedArg>
+	struct colwise_mean_expr_map
+	{
+		typedef typename mul_fix2_expr_map<
+					typename colwise_sum_expr_map<Arg, EmbedArg>::type,
+					true
+				>::type type;
+	};
+
+	template<class Arg, bool EmbedArg>
+	struct rowwise_mean_expr_map
+	{
+		typedef typename mul_fix2_expr_map<
+					typename rowwise_sum_expr_map<Arg, EmbedArg>::type,
+					true
+				>::type type;
+	};
+
+	template<typename T, class Arg>
+	LMAT_ENSURE_INLINE
+	inline typename colwise_mean_expr_map<Arg, false>::type
+	mean(const IMatrixXpr<Arg, T>& arg, colwise)
+	{
+		return embed(sum(arg, colwise())) *
+				math::rcp(T(arg.nrows()));
+	}
+
+	template<typename T, class Arg>
+	LMAT_ENSURE_INLINE
+	inline typename rowwise_sum_expr_map<Arg, false>::type
+	mean(const IMatrixXpr<Arg, T>& arg, rowwise)
+	{
+		return embed(sum(arg, rowwise())) *
+				math::rcp(T(arg.ncolumns()));
 	}
 
 }
