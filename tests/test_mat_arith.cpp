@@ -79,7 +79,7 @@ MN_CASE( mat_arith, add )
 	ASSERT_TRUE( is_equal(CB, CB_r) );
 
 	mat_t AB1 = A + embed(B);
-	ASSERT_TRUE( is_equal(AB, AB_r) );
+	ASSERT_TRUE( is_equal(AB1, AB_r) );
 
 	mat_t AB2 = embed(A) + B;
 	ASSERT_TRUE( is_equal(AB2, AB_r) );
