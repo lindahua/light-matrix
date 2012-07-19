@@ -23,11 +23,11 @@ typedef dense_matrix<double> dmat_t;
 
 #ifdef LMAT_USE_STATIC_ASSERT
 	static_assert( is_linear_vector_evaluator<
-			binary_ewise_linear_evaluator<add_op<double>, dmat_t, dmat_t, false, false>, double>::value,
+			binary_ewise_linear_evaluator<add_op<double>, dmat_t, dmat_t>, double>::value,
 			"Evaluator interface verification failed");
 
 	static_assert( is_percol_vector_evaluator<
-			binary_ewise_percol_evaluator<add_op<double>, dmat_t, dmat_t, false, false>, double>::value,
+			binary_ewise_percol_evaluator<add_op<double>, dmat_t, dmat_t>, double>::value,
 			"Evaluator interface verification failed");
 #endif
 

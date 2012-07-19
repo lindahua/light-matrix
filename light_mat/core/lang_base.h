@@ -58,11 +58,8 @@ namespace lmat
 
 	// object wrapping
 
-	template<class T, bool IsEmbed>
-	class obj_wrapper;
-
 	template<class T>
-	class obj_wrapper<T, false>
+	class obj_wrapper
 	{
 	public:
 		LMAT_ENSURE_INLINE
@@ -73,20 +70,6 @@ namespace lmat
 
 	private:
 		const T& m_ref;
-	};
-
-	template<class T>
-	class obj_wrapper<T, true>
-	{
-	public:
-		LMAT_ENSURE_INLINE
-		explicit obj_wrapper(const T& a) : m_obj(a) { }
-
-		LMAT_ENSURE_INLINE
-		const T& get() const { return m_obj; }
-
-	private:
-		T m_obj;
 	};
 
 }

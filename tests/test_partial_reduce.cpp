@@ -262,7 +262,6 @@ MN_CASE( rowwise_reduce, minimum )
 }
 
 
-
 MN_CASE( colwise_reduce, dot )
 {
 	typedef dense_matrix<double, M, N> mat_t;
@@ -587,8 +586,6 @@ MN_CASE( rowwise_reduce, Linfnorm )
 }
 
 
-
-
 MN_CASE( colwise_reduce, nrmdot )
 {
 	typedef dense_matrix<double, M, N> mat_t;
@@ -684,6 +681,7 @@ BEGIN_TPACK( rowwise_sum )
 	ADD_MN_CASE_3X3( rowwise_reduce, sum, DM, DN )
 END_TPACK
 
+
 BEGIN_TPACK( colwise_mean )
 	ADD_MN_CASE_3X3( colwise_reduce, mean, DM, DN )
 END_TPACK
@@ -691,6 +689,7 @@ END_TPACK
 BEGIN_TPACK( rowwise_mean )
 	ADD_MN_CASE_3X3( colwise_reduce, mean, DM, DN )
 END_TPACK
+
 
 BEGIN_TPACK( colwise_maximum )
 	ADD_MN_CASE_3X3( colwise_reduce, maximum, DM, DN )
@@ -788,6 +787,7 @@ BEGIN_MAIN_SUITE
 
 	ADD_TPACK( colwise_nrmdot )
 	ADD_TPACK( rowwise_nrmdot )
+
 END_MAIN_SUITE
 
 

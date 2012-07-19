@@ -26,16 +26,16 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<class Col, class DMat, bool IsEmbed>
-	inline void evaluate_to(const repeat_col_expr<Col, 1, IsEmbed>& s,
+	template<class Col, class DMat>
+	inline void evaluate_to(const repeat_col_expr<Col, 1>& s,
 			IDenseMatrix<DMat, typename matrix_traits<Col>::value_type>& dst)
 	{
 		evaluate_to(s.column(), dst.derived());
 	}
 
 
-	template<class Col, int N, class DMat, bool IsEmbed>
-	inline void evaluate_to(const repeat_col_expr<Col, N, IsEmbed>& s,
+	template<class Col, int N, class DMat>
+	inline void evaluate_to(const repeat_col_expr<Col, N>& s,
 			IDenseMatrix<DMat, typename matrix_traits<Col>::value_type>& dst)
 	{
 		typedef typename matrix_traits<Col>::value_type T;
@@ -67,15 +67,15 @@ namespace lmat
 		}
 	}
 
-	template<class Row, class DMat, bool IsEmbed>
-	inline void evaluate_to(const repeat_row_expr<Row, 1, IsEmbed>& s,
+	template<class Row, class DMat>
+	inline void evaluate_to(const repeat_row_expr<Row, 1>& s,
 			IDenseMatrix<DMat, typename matrix_traits<Row>::value_type>& dst)
 	{
 		evaluate_to( s.row(), dst.derived() );
 	}
 
-	template<class Row, int M, class DMat, bool IsEmbed>
-	inline void evaluate_to(const repeat_row_expr<Row, M, IsEmbed>& s,
+	template<class Row, int M, class DMat>
+	inline void evaluate_to(const repeat_row_expr<Row, M>& s,
 			IDenseMatrix<DMat, typename matrix_traits<Row>::value_type>& dst)
 	{
 		typedef typename matrix_traits<Row>::value_type T;
@@ -137,21 +137,21 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<class Vec, bool IsEmbed>
+	template<class Vec>
 	class single_vec_percol_evaluator
 	: public IPerColVectorEvaluator<
-	  	  single_vec_percol_evaluator<Vec, IsEmbed>,
+	  	  single_vec_percol_evaluator<Vec>,
 	  	  typename matrix_traits<Vec>::value_type>
 	{
 	public:
 		typedef typename matrix_traits<Vec>::value_type T;
 
 		LMAT_ENSURE_INLINE
-		single_vec_percol_evaluator(const repeat_col_expr<Vec, 1, IsEmbed>& expr)
+		single_vec_percol_evaluator(const repeat_col_expr<Vec, 1>& expr)
 		: m_eval(expr.column()) { }
 
 		LMAT_ENSURE_INLINE
-		single_vec_percol_evaluator(const repeat_row_expr<Vec, 1, IsEmbed>& expr)
+		single_vec_percol_evaluator(const repeat_row_expr<Vec, 1>& expr)
 		: m_eval(expr.row()) { }
 
 		LMAT_ENSURE_INLINE
@@ -165,21 +165,21 @@ namespace lmat
 	};
 
 
-	template<class Vec, bool IsEmbed>
+	template<class Vec>
 	class single_vec_linear_evaluator
 	: public ILinearVectorEvaluator<
-	  	  single_vec_linear_evaluator<Vec, IsEmbed>,
+	  	  single_vec_linear_evaluator<Vec>,
 	  	  typename matrix_traits<Vec>::value_type>
 	{
 	public:
 		typedef typename matrix_traits<Vec>::value_type T;
 
 		LMAT_ENSURE_INLINE
-		single_vec_linear_evaluator(const repeat_col_expr<Vec, 1, IsEmbed>& expr)
+		single_vec_linear_evaluator(const repeat_col_expr<Vec, 1>& expr)
 		: m_eval(expr.column()) { }
 
 		LMAT_ENSURE_INLINE
-		single_vec_linear_evaluator(const repeat_row_expr<Vec, 1, IsEmbed>& expr)
+		single_vec_linear_evaluator(const repeat_row_expr<Vec, 1>& expr)
 		: m_eval(expr.row()) { }
 
 		LMAT_ENSURE_INLINE
@@ -190,10 +190,10 @@ namespace lmat
 	};
 
 
-	template<class Vec, bool IsEmbed>
+	template<class Vec>
 	class rep_scalar_percol_evaluator
 	: public IPerColVectorEvaluator<
-	  	  rep_scalar_percol_evaluator<Vec, IsEmbed>,
+	  	  rep_scalar_percol_evaluator<Vec>,
 	  	  typename matrix_traits<Vec>::value_type>
 	{
 	public:
@@ -201,14 +201,14 @@ namespace lmat
 
 		template<int N>
 		LMAT_ENSURE_INLINE
-		rep_scalar_percol_evaluator(const repeat_col_expr<Vec, N, IsEmbed>& expr)
+		rep_scalar_percol_evaluator(const repeat_col_expr<Vec, N>& expr)
 		{
 			m_val = to_scalar(expr.column());
 		}
 
 		template<int M>
 		LMAT_ENSURE_INLINE
-		rep_scalar_percol_evaluator(const repeat_row_expr<Vec, M, IsEmbed>& expr)
+		rep_scalar_percol_evaluator(const repeat_row_expr<Vec, M>& expr)
 		{
 			m_val = to_scalar(expr.row());
 		}
@@ -224,10 +224,10 @@ namespace lmat
 	};
 
 
-	template<class Vec, bool IsEmbed>
+	template<class Vec>
 	class rep_scalar_linear_evaluator
 	: public ILinearVectorEvaluator<
-	  	  rep_scalar_linear_evaluator<Vec, IsEmbed>,
+	  	  rep_scalar_linear_evaluator<Vec>,
 	  	  typename matrix_traits<Vec>::value_type>
 	{
 	public:
@@ -235,14 +235,14 @@ namespace lmat
 
 		template<int N>
 		LMAT_ENSURE_INLINE
-		rep_scalar_linear_evaluator(const repeat_col_expr<Vec, N, IsEmbed>& expr)
+		rep_scalar_linear_evaluator(const repeat_col_expr<Vec, N>& expr)
 		{
 			m_val = to_scalar(expr.column());
 		}
 
 		template<int M>
 		LMAT_ENSURE_INLINE
-		rep_scalar_linear_evaluator(const repeat_row_expr<Vec, M, IsEmbed>& expr)
+		rep_scalar_linear_evaluator(const repeat_row_expr<Vec, M>& expr)
 		{
 			m_val = to_scalar(expr.row());
 		}
@@ -255,10 +255,10 @@ namespace lmat
 	};
 
 
-	template<class Col, bool IsEmbed>
+	template<class Col>
 	class repcol_percol_evaluator
 	: public IPerColVectorEvaluator<
-	  	  repcol_percol_evaluator<Col, IsEmbed>,
+	  	  repcol_percol_evaluator<Col>,
 	  	  typename matrix_traits<Col>::value_type>
 	{
 	public:
@@ -266,7 +266,7 @@ namespace lmat
 
 		template<int N>
 		LMAT_ENSURE_INLINE
-		repcol_percol_evaluator(const repeat_col_expr<Col, N, IsEmbed>& expr)
+		repcol_percol_evaluator(const repeat_col_expr<Col, N>& expr)
 		: m_colwrap(expr.column())
 		, m_eval(m_colwrap.ref()) { }
 
@@ -284,10 +284,10 @@ namespace lmat
 	};
 
 
-	template<class Row, bool IsEmbed>
+	template<class Row>
 	class reprow_percol_evaluator
 	: public IPerColVectorEvaluator<
-	  	  reprow_percol_evaluator<Row, IsEmbed>,
+	  	  reprow_percol_evaluator<Row>,
 	  	  typename matrix_traits<Row>::value_type>
 	{
 	public:
@@ -295,7 +295,7 @@ namespace lmat
 
 		template<int N>
 		LMAT_ENSURE_INLINE
-		reprow_percol_evaluator(const repeat_row_expr<Row, N, IsEmbed>& expr)
+		reprow_percol_evaluator(const repeat_row_expr<Row, N>& expr)
 		: m_rowwrap(expr.row()), m_j(0) { }
 
 		LMAT_ENSURE_INLINE
@@ -319,17 +319,17 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<class Col, int N, bool IsEmbed>
-	struct linear_eval<repeat_col_expr<Col, N, IsEmbed> >
+	template<class Col, int N>
+	struct linear_eval<repeat_col_expr<Col, N> >
 	{
 		static const int M = ct_rows<Col>::value;
 
 		typedef typename
 				if_c<N == 1,
-					single_vec_linear_evaluator<Col, IsEmbed>,
+					single_vec_linear_evaluator<Col>,
 					typename
 					if_c<M == 1,
-						rep_scalar_linear_evaluator<Col, IsEmbed>,
+						rep_scalar_linear_evaluator<Col>,
 						cached_linear_evaluator<typename matrix_traits<Col>::value_type>
 					>::type
 				>::type evaluator_type;
@@ -337,24 +337,24 @@ namespace lmat
 		static const int cost = (N == 1 || M == 1) ? 0 : VEC_EVAL_CACHE_COST;
 
 		LMAT_ENSURE_INLINE
-		static int cost_of(const repeat_col_expr<Col, N, IsEmbed>& )
+		static int cost_of(const repeat_col_expr<Col, N>& )
 		{
 			return cost;
 		}
 	};
 
 
-	template<class Row, int M, bool IsEmbed>
-	struct linear_eval<repeat_row_expr<Row, M, IsEmbed> >
+	template<class Row, int M>
+	struct linear_eval<repeat_row_expr<Row, M> >
 	{
 		static const int N = ct_cols<Row>::value;
 
 		typedef typename
 				if_c<M == 1,
-					single_vec_linear_evaluator<Row, IsEmbed>,
+					single_vec_linear_evaluator<Row>,
 					typename
 					if_c<N == 1,
-						rep_scalar_linear_evaluator<Row, IsEmbed>,
+						rep_scalar_linear_evaluator<Row>,
 						cached_linear_evaluator<typename matrix_traits<Row>::value_type>
 					>::type
 				>::type evaluator_type;
@@ -362,57 +362,57 @@ namespace lmat
 		static const int cost = (M == 1 || N == 1) ? 0 : VEC_EVAL_CACHE_COST;
 
 		LMAT_ENSURE_INLINE
-		static int cost_of(const repeat_row_expr<Row, M, IsEmbed>& )
+		static int cost_of(const repeat_row_expr<Row, M>& )
 		{
 			return cost;
 		}
 	};
 
 
-	template<class Col, int N, bool IsEmbed>
-	struct percol_eval<repeat_col_expr<Col, N, IsEmbed> >
+	template<class Col, int N>
+	struct percol_eval<repeat_col_expr<Col, N> >
 	{
 		static const int M = ct_rows<Col>::value;
 
 		typedef typename
 				if_c<N == 1,
-					single_vec_percol_evaluator<Col, IsEmbed>,
+					single_vec_percol_evaluator<Col>,
 					typename
 					if_c<M == 1,
-						rep_scalar_percol_evaluator<Col, IsEmbed>,
-						repcol_percol_evaluator<Col, IsEmbed>
+						rep_scalar_percol_evaluator<Col>,
+						repcol_percol_evaluator<Col>
 					>::type
 				>::type evaluator_type;
 
 		static const int cost = M < SHORTVEC_LENGTH_THRESHOLD ? SHORTVEC_PERCOL_COST : 0;
 
 		LMAT_ENSURE_INLINE
-		static int cost_of(const repeat_col_expr<Col, N, IsEmbed>& )
+		static int cost_of(const repeat_col_expr<Col, N>& )
 		{
 			return cost;
 		}
 	};
 
 
-	template<class Row, int M, bool IsEmbed>
-	struct percol_eval<repeat_row_expr<Row, M, IsEmbed> >
+	template<class Row, int M>
+	struct percol_eval<repeat_row_expr<Row, M> >
 	{
 		static const int N = ct_cols<Row>::value;
 
 		typedef typename
 				if_c<M == 1,
-					single_vec_percol_evaluator<Row, IsEmbed>,
+					single_vec_percol_evaluator<Row>,
 					typename
 					if_c<N == 1,
-						rep_scalar_percol_evaluator<Row, IsEmbed>,
-						reprow_percol_evaluator<Row, IsEmbed>
+						rep_scalar_percol_evaluator<Row>,
+						reprow_percol_evaluator<Row>
 					>::type
 				>::type evaluator_type;
 
 		static const int cost = M < SHORTVEC_LENGTH_THRESHOLD ? SHORTVEC_PERCOL_COST : 0;
 
 		LMAT_ENSURE_INLINE
-		static int cost_of(const repeat_row_expr<Row, M, IsEmbed>& )
+		static int cost_of(const repeat_row_expr<Row, M>& )
 		{
 			return cost;
 		}

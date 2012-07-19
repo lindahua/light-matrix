@@ -85,10 +85,10 @@ namespace lmat
 
 		template<typename T2>
 		LMAT_ENSURE_INLINE
-		typename cast_expr_map<Derived, T2, false>::type
+		typename cast_expr_map<Derived, T2>::type
 		cast()
 		{
-			return cast_expr_map<Derived, T2, false>::get(derived());
+			return cast_expr_map<Derived, T2>::get(derived());
 		}
 
 	}; // end class IMatrixBase
@@ -328,7 +328,7 @@ namespace lmat
 	inline typename enable_if_c<is_implicitly_convertible<S, T>::value, void>::type
 	implicitly_cast_to(const IMatrixXpr<SExpr, S>& src, IDenseMatrix<DMat, T>& dst)
 	{
-		evaluate_to(cast_expr_map<SExpr, T, false>::get(src.derived()), dst.derived());
+		evaluate_to(cast_expr_map<SExpr, T>::get(src.derived()), dst.derived());
 	}
 
 }

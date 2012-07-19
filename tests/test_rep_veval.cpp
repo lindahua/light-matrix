@@ -17,17 +17,17 @@ typedef dense_matrix<double, 0, 1> dcol_t;
 typedef dense_matrix<double, 1, 0> drow_t;
 
 #ifdef LMAT_USE_STATIC_ASSERT
-static_assert(is_linear_vector_evaluator<single_vec_linear_evaluator<dcol_t, false>, double>::value,
+static_assert(is_linear_vector_evaluator<single_vec_linear_evaluator<dcol_t>, double>::value,
 		"Evaluator interface check failed");
-static_assert(is_linear_vector_evaluator<rep_scalar_linear_evaluator<dcol_t, false>, double>::value,
+static_assert(is_linear_vector_evaluator<rep_scalar_linear_evaluator<dcol_t>, double>::value,
 		"Evaluator interface check failed");
-static_assert(is_percol_vector_evaluator<single_vec_percol_evaluator<dcol_t, false>, double>::value,
+static_assert(is_percol_vector_evaluator<single_vec_percol_evaluator<dcol_t>, double>::value,
 		"Evaluator interface check failed");
-static_assert(is_percol_vector_evaluator<rep_scalar_percol_evaluator<dcol_t, false>, double>::value,
+static_assert(is_percol_vector_evaluator<rep_scalar_percol_evaluator<dcol_t>, double>::value,
 		"Evaluator interface check failed");
-static_assert(is_percol_vector_evaluator<repcol_percol_evaluator<dcol_t, false>, double>::value,
+static_assert(is_percol_vector_evaluator<repcol_percol_evaluator<dcol_t>, double>::value,
 		"Evaluator interface check failed");
-static_assert(is_percol_vector_evaluator<reprow_percol_evaluator<drow_t, false>, double>::value,
+static_assert(is_percol_vector_evaluator<reprow_percol_evaluator<drow_t>, double>::value,
 		"Evaluator interface check failed");
 #endif
 
@@ -42,7 +42,7 @@ MN_CASE( repcols, eval )
 	col_t col(m, 1);
 	for (index_t i = 0; i < m; ++i) col[i] = double(i + 2);
 
-	typedef repeat_col_expr<col_t, N, false> expr_t;
+	typedef repeat_col_expr<col_t, N> expr_t;
 	expr_t expr(col, n);
 
 	ASSERT_EQ( expr.nrows(), m );
@@ -70,7 +70,7 @@ MN_CASE( reprows, eval )
 	row_t row(1, n);
 	for (index_t j = 0; j < n; ++j) row[j] = double(j + 2);
 
-	typedef repeat_row_expr<row_t, M, false> expr_t;
+	typedef repeat_row_expr<row_t, M> expr_t;
 	expr_t expr(row, m);
 
 	ASSERT_EQ( expr.nrows(), m );
@@ -99,7 +99,7 @@ MN_CASE( linear_veval, repcol_linear )
 	col_t col(m, 1);
 	for (index_t i = 0; i < m; ++i) col[i] = double(i+2);
 
-	repeat_col_expr<col_t, N, false> expr(col, n);
+	repeat_col_expr<col_t, N> expr(col, n);
 
 	mat_t R_r(m, n);
 	for (index_t j = 0; j < n; ++j)
@@ -124,7 +124,7 @@ MN_CASE( percol_veval, repcol_percol )
 	col_t col(m, 1);
 	for (index_t i = 0; i < m; ++i) col[i] = double(i+2);
 
-	repeat_col_expr<col_t, N, false> expr(col, n);
+	repeat_col_expr<col_t, N> expr(col, n);
 
 	mat_t R_r(m, n);
 	for (index_t j = 0; j < n; ++j)
@@ -150,7 +150,7 @@ MN_CASE( linear_veval, reprow_linear )
 	row_t row(1, n);
 	for (index_t j = 0; j < n; ++j) row[j] = double(j+2);
 
-	repeat_row_expr<row_t, M, false> expr(row, m);
+	repeat_row_expr<row_t, M> expr(row, m);
 
 	mat_t R_r(m, n);
 	for (index_t j = 0; j < n; ++j)
@@ -176,7 +176,7 @@ MN_CASE( percol_veval, reprow_percol )
 	row_t row(1, n);
 	for (index_t j = 0; j < n; ++j) row[j] = double(j+2);
 
-	repeat_row_expr<row_t, M, false> expr(row, m);
+	repeat_row_expr<row_t, M> expr(row, m);
 
 	mat_t R_r(m, n);
 	for (index_t j = 0; j < n; ++j)

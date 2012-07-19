@@ -74,6 +74,14 @@ namespace lmat
 		}
 	};
 
+
+	template<class Expr>
+	struct linear_eval<embed_mat<Expr> > { };
+
+	template<class Expr>
+	struct percol_eval<embed_mat<Expr> > { };
+
+
 	template<typename T, int CTRows, int CTCols>
 	struct linear_eval<const_matrix<T, CTRows, CTCols> >
 	{
@@ -169,6 +177,13 @@ namespace lmat
 	{
 		evaluate_by_scalars(expr, dst);
 	}
+
+
+
+	template<typename T, class Expr, class DMat>
+	LMAT_ENSURE_INLINE
+	inline void evaluate_to(const embed_mat<Expr>& expr, IDenseMatrix<DMat, T>& dst);
+	// ensure that evaluate_to is never invoked on embed_mat<Expr>
 
 }
 

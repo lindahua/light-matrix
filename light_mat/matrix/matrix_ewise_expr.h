@@ -24,34 +24,34 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<class Fun, class Arg, bool EmbedArg>
+	template<class Fun, class Arg>
 	struct unary_ewise_expr_map
 	{
-		typedef unary_ewise_expr<Fun, Arg, EmbedArg> type;
+		typedef unary_ewise_expr<Fun, Arg> type;
 	};
 
-	template<class Fun, class Arg1, class Arg2, bool EmbedArg1, bool EmbedArg2>
+	template<class Fun, class Arg1, class Arg2>
 	struct binary_ewise_expr_map
 	{
-		typedef binary_ewise_expr<Fun, Arg1, Arg2, EmbedArg1, EmbedArg2> type;
+		typedef binary_ewise_expr<Fun, Arg1, Arg2> type;
 	};
 
-	template<class Fun, class Arg1, bool EmbedArg1>
+	template<class Fun, class Arg1>
 	struct binary_fix2_ewise_expr_map
 	{
 		typedef typename Fun::second_arg_type T2;
 		typedef const_matrix<T2, ct_rows<Arg1>::value, ct_cols<Arg1>::value> Arg2;
 
-		typedef binary_ewise_expr<Fun, Arg1, Arg2, EmbedArg1, true> type;
+		typedef binary_ewise_expr<Fun, Arg1, embed_mat<Arg2> > type;
 	};
 
-	template<class Fun, class Arg2, bool EmbedArg2>
+	template<class Fun, class Arg2>
 	struct binary_fix1_ewise_expr_map
 	{
 		typedef typename Fun::first_arg_type T1;
 		typedef const_matrix<T1, ct_rows<Arg2>::value, ct_cols<Arg2>::value> Arg1;
 
-		typedef binary_ewise_expr<Fun, Arg1, Arg2, true, EmbedArg2> type;
+		typedef binary_ewise_expr<Fun, embed_mat<Arg1>, Arg2> type;
 	};
 
 
@@ -61,8 +61,8 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<class Fun, class Arg, bool IsEmbed>
-	struct matrix_traits<unary_ewise_expr<Fun, Arg, IsEmbed> >
+	template<class Fun, class Arg>
+	struct matrix_traits<unary_ewise_expr<Fun, Arg> >
 	{
 		static const int num_dimensions = 2;
 		static const int compile_time_num_rows = ct_rows<Arg>::value;
@@ -73,8 +73,8 @@ namespace lmat
 		typedef typename Fun::result_type value_type;
 	};
 
-	template<class Fun, class Arg1, class Arg2, bool IsEmbed1, bool IsEmbed2>
-	struct matrix_traits<binary_ewise_expr<Fun, Arg1, Arg2, IsEmbed1, IsEmbed2> >
+	template<class Fun, class Arg1, class Arg2>
+	struct matrix_traits<binary_ewise_expr<Fun, Arg1, Arg2> >
 	{
 		static const int num_dimensions = 2;
 		static const int compile_time_num_rows = binary_ct_rows<Arg1, Arg2>::value;
@@ -92,9 +92,9 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<class Fun, class Arg, bool IsEmbed>
+	template<class Fun, class Arg>
 	class unary_ewise_expr
-	: public IMatrixXpr<unary_ewise_expr<Fun, Arg, IsEmbed>, typename Fun::result_type>
+	: public IMatrixXpr<unary_ewise_expr<Fun, Arg>, typename Fun::result_type>
 	{
 #ifdef LMAT_USE_STATIC_ASSERT
 		static_assert(is_unary_ewise_functor<Fun>::value, "Fun must be a unary_ewise_functor");
@@ -103,6 +103,7 @@ namespace lmat
 
 	public:
 		typedef typename Fun::result_type value_type;
+		typedef typename unwrapped_expr<Arg>::type arg_expr_t;
 
 		LMAT_ENSURE_INLINE
 		unary_ewise_expr(const Fun& fun, const Arg& a)
@@ -113,7 +114,7 @@ namespace lmat
 			return m_fun;
 		}
 
-		LMAT_ENSURE_INLINE const Arg& arg() const
+		LMAT_ENSURE_INLINE const arg_expr_t& arg() const
 		{
 			return m_arg.get();
 		}
@@ -140,12 +141,12 @@ namespace lmat
 
 	private:
 		Fun m_fun;
-		obj_wrapper<Arg, IsEmbed> m_arg;
+		obj_wrapper<Arg> m_arg;
 	};
 
-	template<class Fun, class Arg1, class Arg2, bool IsEmbed1, bool IsEmbed2>
+	template<class Fun, class Arg1, class Arg2>
 	class binary_ewise_expr
-	: public IMatrixXpr<binary_ewise_expr<Fun, Arg1, Arg2, IsEmbed1, IsEmbed2>, typename Fun::result_type>
+	: public IMatrixXpr<binary_ewise_expr<Fun, Arg1, Arg2>, typename Fun::result_type>
 	{
 #ifdef LMAT_USE_STATIC_ASSERT
 		static_assert(is_binary_ewise_functor<Fun>::value, "Fun must be a binary_ewise_functor");
@@ -155,6 +156,8 @@ namespace lmat
 
 	public:
 		typedef typename Fun::result_type value_type;
+		typedef typename unwrapped_expr<Arg1>::type arg1_expr_t;
+		typedef typename unwrapped_expr<Arg2>::type arg2_expr_t;
 
 		LMAT_ENSURE_INLINE
 		binary_ewise_expr(const Fun& fun, const Arg1& arg1, const Arg2& arg2)
@@ -168,12 +171,12 @@ namespace lmat
 			return m_fun;
 		}
 
-		LMAT_ENSURE_INLINE const Arg1& first_arg() const
+		LMAT_ENSURE_INLINE const arg1_expr_t& first_arg() const
 		{
 			return m_arg1.get();
 		}
 
-		LMAT_ENSURE_INLINE const Arg2& second_arg() const
+		LMAT_ENSURE_INLINE const arg2_expr_t& second_arg() const
 		{
 			return m_arg2.get();
 		}
@@ -200,8 +203,8 @@ namespace lmat
 
 	private:
 		Fun m_fun;
-		obj_wrapper<Arg1, IsEmbed1> m_arg1;
-		obj_wrapper<Arg2, IsEmbed2> m_arg2;
+		obj_wrapper<Arg1> m_arg1;
+		obj_wrapper<Arg2> m_arg2;
 	};
 
 
@@ -213,130 +216,55 @@ namespace lmat
 
 	template<class Fun, class Arg>
 	LMAT_ENSURE_INLINE
-	inline typename unary_ewise_expr_map<Fun, Arg, false>::type
+	inline typename unary_ewise_expr_map<Fun, Arg>::type
 	ewise(  const Fun& fun,
 			const IMatrixXpr<Arg, typename Fun::arg_type>& arg )
 	{
-		return unary_ewise_expr<Fun, Arg, false>(fun, arg.derived());
-	}
-
-	template<class Fun, class Arg>
-	LMAT_ENSURE_INLINE
-	inline typename unary_ewise_expr_map<Fun, Arg, true>::type
-	ewise(  const Fun& fun,
-			const embed_mat<Arg, typename Fun::arg_type>& arg )
-	{
-		return unary_ewise_expr<Fun, Arg, true>(fun, arg.get());
+		return unary_ewise_expr<Fun, Arg>(fun, arg.derived());
 	}
 
 	template<class Fun, class Arg1, class Arg2>
 	LMAT_ENSURE_INLINE
-	inline typename binary_ewise_expr_map<Fun, Arg1, Arg2, false, false>::type
+	inline typename binary_ewise_expr_map<Fun, Arg1, Arg2>::type
 	ewise(  const Fun& fun,
 			const IMatrixXpr<Arg1, typename Fun::first_arg_type>& arg1,
 			const IMatrixXpr<Arg2, typename Fun::second_arg_type>& arg2 )
 	{
-		return binary_ewise_expr<Fun, Arg1, Arg2, false, false>(fun,
+		return binary_ewise_expr<Fun, Arg1, Arg2>(fun,
 				arg1.derived(), arg2.derived());
-	}
-
-	template<class Fun, class Arg1, class Arg2>
-	LMAT_ENSURE_INLINE
-	inline typename binary_ewise_expr_map<Fun, Arg1, Arg2, false, true>::type
-	ewise(  const Fun& fun,
-			const IMatrixXpr<Arg1, typename Fun::first_arg_type>& arg1,
-			const embed_mat<Arg2, typename Fun::second_arg_type>& arg2 )
-	{
-		return binary_ewise_expr<Fun, Arg1, Arg2, false, true>(fun,
-				arg1.derived(), arg2.get());
-	}
-
-	template<class Fun, class Arg1, class Arg2>
-	LMAT_ENSURE_INLINE
-	inline typename binary_ewise_expr_map<Fun, Arg1, Arg2, true, false>::type
-	ewise(  const Fun& fun,
-			const embed_mat<Arg1, typename Fun::first_arg_type>& arg1,
-			const IMatrixXpr<Arg2, typename Fun::second_arg_type>& arg2 )
-	{
-		return binary_ewise_expr<Fun, Arg1, Arg2, true, false>(fun,
-				arg1.get(), arg2.derived());
-	}
-
-	template<class Fun, class Arg1, class Arg2>
-	LMAT_ENSURE_INLINE
-	inline typename binary_ewise_expr_map<Fun, Arg1, Arg2, true, true>::type
-	ewise(  const Fun& fun,
-			const embed_mat<Arg1, typename Fun::first_arg_type>& arg1,
-			const embed_mat<Arg2, typename Fun::second_arg_type>& arg2 )
-	{
-		return binary_ewise_expr<Fun, Arg1, Arg2, true, true>(fun,
-				arg1.get(), arg2.get());
 	}
 
 	template<class Fun, class Arg1>
 	LMAT_ENSURE_INLINE
-	inline typename binary_fix2_ewise_expr_map<Fun, Arg1, false>::type
+	inline typename binary_fix2_ewise_expr_map<Fun, Arg1>::type
 	ewise(  const Fun& fun,
 			const IMatrixXpr<Arg1, typename Fun::first_arg_type>& arg1,
 			const typename Fun::second_arg_type& arg2v )
 	{
-		typedef binary_fix2_ewise_expr_map<Fun, Arg1, false> map_t;
+		typedef binary_fix2_ewise_expr_map<Fun, Arg1> map_t;
 		typedef typename map_t::Arg2 arg2_t;
 		typedef typename map_t::type expr_type;
 
 		return expr_type(fun,
 				arg1.derived(),
-				arg2_t(arg1.nrows(), arg1.ncolumns(), arg2v));
-	}
-
-	template<class Fun, class Arg1>
-	LMAT_ENSURE_INLINE
-	inline typename binary_fix2_ewise_expr_map<Fun, Arg1, true>::type
-	ewise(  const Fun& fun,
-			const embed_mat<Arg1, typename Fun::first_arg_type>& arg1,
-			const typename Fun::second_arg_type& arg2v )
-	{
-		typedef binary_fix2_ewise_expr_map<Fun, Arg1, true> map_t;
-		typedef typename map_t::Arg2 arg2_t;
-		typedef typename map_t::type expr_type;
-
-		return expr_type(fun,
-				arg1.get(),
-				arg2_t(arg1.get().nrows(), arg1.get().ncolumns(), arg2v));
+				embed(arg2_t(arg1.nrows(), arg1.ncolumns(), arg2v)) );
 	}
 
 	template<class Fun, class Arg2>
 	LMAT_ENSURE_INLINE
-	inline typename binary_fix1_ewise_expr_map<Fun, Arg2, false>::type
+	inline typename binary_fix1_ewise_expr_map<Fun, Arg2>::type
 	ewise(  const Fun& fun,
 			const typename Fun::first_arg_type& arg1v,
 			const IMatrixXpr<Arg2, typename Fun::second_arg_type>& arg2 )
 	{
-		typedef binary_fix1_ewise_expr_map<Fun, Arg2, false> map_t;
+		typedef binary_fix1_ewise_expr_map<Fun, Arg2> map_t;
 		typedef typename map_t::Arg1 arg1_t;
 		typedef typename map_t::type expr_type;
 
 		return expr_type(fun,
-				arg1_t(arg2.nrows(), arg2.ncolumns(), arg1v),
+				embed(arg1_t(arg2.nrows(), arg2.ncolumns(), arg1v)),
 				arg2.derived());
 	}
-
-	template<class Fun, class Arg2>
-	LMAT_ENSURE_INLINE
-	inline typename binary_fix1_ewise_expr_map<Fun, Arg2, true>::type
-	ewise(  const Fun& fun,
-			const typename Fun::first_arg_type& arg1v,
-			const embed_mat<Arg2, typename Fun::second_arg_type>& arg2 )
-	{
-		typedef binary_fix1_ewise_expr_map<Fun, Arg2, true> map_t;
-		typedef typename map_t::Arg1 arg1_t;
-		typedef typename map_t::type expr_type;
-
-		return expr_type(fun,
-				arg1_t(arg2.get().nrows(), arg2.get().ncolumns(), arg1v),
-				arg2.get());
-	}
-
 
 
 	/********************************************
@@ -345,12 +273,12 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<class SMat, typename T, bool EmbedArg>
+	template<class SMat, typename T>
 	struct cast_expr_map
 	{
 		typedef typename matrix_traits<SMat>::value_type S;
 		typedef type_converter<S, T> converter_t;
-		typedef typename unary_ewise_expr_map<converter_t, SMat, EmbedArg>::type type;
+		typedef typename unary_ewise_expr_map<converter_t, SMat>::type type;
 
 		LMAT_ENSURE_INLINE
 		static type get(const IMatrixXpr<SMat, S>& sexpr)
@@ -361,19 +289,12 @@ namespace lmat
 
 	template<class SMat, typename S, typename T>
 	LMAT_ENSURE_INLINE
-	inline typename cast_expr_map<SMat, T, false>::type
+	inline typename cast_expr_map<SMat, T>::type
 	cast(const IMatrixXpr<SMat, S>& sexpr, type<T> )
 	{
 		return ewise(type_converter<S, T>(), sexpr.derived());
 	}
 
-	template<class SMat, typename S, typename T>
-	LMAT_ENSURE_INLINE
-	inline typename cast_expr_map<SMat, T, true>::type
-	cast(const embed_mat<SMat, S>& sexpr, type<T> )
-	{
-		return ewise(type_converter<S, T>(), sexpr.get());
-	}
 
 }
 

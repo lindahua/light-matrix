@@ -21,15 +21,15 @@ using namespace lmat::test;
 typedef dense_matrix<double, 0, 1> dcol_t;
 typedef dense_matrix<double, 1, 0> drow_t;
 
-template class lmat::repeat_col_expr<dcol_t, DynamicDim, false>;
-template class lmat::repeat_col_expr<dcol_t, 6, false>;
-template class lmat::repeat_row_expr<drow_t, DynamicDim, false>;
-template class lmat::repeat_row_expr<drow_t, 4, false>;
+template class lmat::repeat_col_expr<dcol_t, DynamicDim>;
+template class lmat::repeat_col_expr<dcol_t, 6>;
+template class lmat::repeat_row_expr<drow_t, DynamicDim>;
+template class lmat::repeat_row_expr<drow_t, 4>;
 
 
 #ifdef LMAT_USE_STATIC_ASSERT
-static_assert(lmat::is_mat_xpr<lmat::repeat_col_expr<dcol_t, DynamicDim, false> >::value, "Interface verification failed.");
-static_assert(lmat::is_mat_xpr<lmat::repeat_row_expr<drow_t, DynamicDim, false> >::value, "Interface verification failed.");
+static_assert(lmat::is_mat_xpr<lmat::repeat_col_expr<dcol_t, DynamicDim> >::value, "Interface verification failed.");
+static_assert(lmat::is_mat_xpr<lmat::repeat_row_expr<drow_t, DynamicDim> >::value, "Interface verification failed.");
 #endif
 
 
@@ -39,8 +39,8 @@ N_CASE( repcols, generic )
 	const index_t n = 6;
 
 	typedef dense_matrix<double, N, 1> col_t;
-	typedef repeat_col_expr<col_t, DynamicDim, false> expr_t;
-	typedef repeat_col_expr<col_t, DynamicDim, true> expr_te;
+	typedef repeat_col_expr<col_t, DynamicDim> expr_t;
+	typedef repeat_col_expr<embed_mat<col_t>, DynamicDim> expr_te;
 
 	col_t a(m, 1);
 
@@ -83,8 +83,8 @@ MN_CASE( repcols, generic_fix )
 	const index_t n = N;
 
 	typedef dense_matrix<double, M, 1> col_t;
-	typedef repeat_col_expr<col_t, N, false> expr_t;
-	typedef repeat_col_expr<col_t, N, true> expr_te;
+	typedef repeat_col_expr<col_t, N> expr_t;
+	typedef repeat_col_expr<embed_mat<col_t>, N> expr_te;
 
 	col_t a(m, 1);
 
@@ -187,8 +187,8 @@ N_CASE( reprows, generic )
 	const index_t n = N == 0 ? 6 : N;
 
 	typedef dense_matrix<double, 1, N> row_t;
-	typedef repeat_row_expr<row_t, DynamicDim, false> expr_t;
-	typedef repeat_row_expr<row_t, DynamicDim, true> expr_te;
+	typedef repeat_row_expr<row_t, DynamicDim> expr_t;
+	typedef repeat_row_expr<embed_mat<row_t>, DynamicDim> expr_te;
 
 	row_t a(1, n);
 
@@ -230,8 +230,8 @@ MN_CASE( reprows, generic_fix )
 	const index_t n = N == 0 ? 6 : N;
 
 	typedef dense_matrix<double, 1, N> row_t;
-	typedef repeat_row_expr<row_t, M, false> expr_t;
-	typedef repeat_row_expr<row_t, M, true> expr_te;
+	typedef repeat_row_expr<row_t, M> expr_t;
+	typedef repeat_row_expr<embed_mat<row_t>, M> expr_te;
 
 	row_t a(1, n);
 
