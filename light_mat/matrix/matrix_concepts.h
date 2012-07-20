@@ -83,6 +83,11 @@ namespace lmat
 			return derived().ncolumns();
 		}
 
+		LMAT_ENSURE_INLINE transpose_expr<Derived> trans() const
+		{
+			return transpose_expr<Derived>(derived());
+		}
+
 		template<typename T2>
 		LMAT_ENSURE_INLINE
 		typename cast_expr_map<Derived, T2>::type

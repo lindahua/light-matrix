@@ -102,6 +102,8 @@ namespace lmat
 	template<class Fun, class Arg> class unary_ewise_expr;
 	template<class Fun, class Arg1, class Arg2> class binary_ewise_expr;
 
+	template<class Expr> class transpose_expr;
+
 	template<class Col, int N> class repeat_col_expr;
 	template<class Row, int M> class repeat_row_expr;
 

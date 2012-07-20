@@ -62,10 +62,12 @@ set(MATRIX_BASE_HS
     ${INC}/matrix/bits/matrix_fill_internal.h
     ${INC}/matrix/bits/matrix_copy_internal.h
     ${INC}/matrix/bits/matrix_compare_internal.h
+    ${INC}/matrix/bits/matrix_transpose_internal.h
     ${INC}/matrix/matrix_fill.h
     ${INC}/matrix/matrix_copy.h
     ${INC}/matrix/matrix_compare.h
     ${INC}/matrix/matrix_print.h
+    ${INC}/matrix/matrix_transpose.h
     ${INC}/matrix/matrix_subviews.h
     ${INC}/matrix/matrix_ewise_expr.h
     ${INC}/matrix/matrix_base.h)
