@@ -207,7 +207,6 @@ namespace lmat
 		obj_wrapper<Arg2> m_arg2;
 	};
 
-
 	/********************************************
 	 *
 	 *  Expression construction

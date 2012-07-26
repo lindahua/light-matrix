@@ -315,7 +315,7 @@ namespace lmat
 
 	/********************************************
 	 *
-	 *  generic transpose
+	 *  dense transpose
 	 *
 	 ********************************************/
 
@@ -375,6 +375,153 @@ namespace lmat
 	}
 
 
+	/********************************************
+	 *
+	 *  col expression transpose
+	 *
+	 ********************************************/
+
+	template<class Expr>
+	class colxpr_transpose_base
+	: public IMatrixXpr<transpose_expr<Expr>, typename matrix_traits<Expr>::value_type>
+	{
+	public:
+		LMAT_MAT_TRAITS_CDEFS( typename matrix_traits<Expr>::value_type )
+
+		typedef typename unwrapped_expr<Expr>::type arg_type;
+
+	public:
+		LMAT_ENSURE_INLINE colxpr_transpose_base(const Expr& expr)
+		: m_expr(expr)
+		{
+		}
+
+		LMAT_ENSURE_INLINE const arg_type& arg() const
+		{
+			return m_expr.get();
+		}
+
+		LMAT_ENSURE_INLINE index_type nelems() const
+		{
+			return arg().nelems();
+		}
+
+		LMAT_ENSURE_INLINE size_type size() const
+		{
+			return arg().size();
+		}
+
+		LMAT_ENSURE_INLINE index_type nrows() const
+		{
+			return 1;
+		}
+
+		LMAT_ENSURE_INLINE index_type ncolumns() const
+		{
+			return arg().nrows();
+		}
+
+	private:
+		obj_wrapper<Expr> m_expr;
+	};
+
+	template<class Expr, class DMat>
+	inline
+	void base_evaluate_to(const colxpr_transpose_base<Expr>& s,
+			IDenseMatrix<DMat, typename matrix_traits<Expr>::value_type>& dst)
+	{
+		typedef typename matrix_traits<Expr>::value_type T;
+		const int Len = binary_ctdim<ct_rows<Expr>::value, ct_cols<DMat>::value>::value;
+
+		const Expr& arg = s.arg();
+
+		if (has_continuous_layout(dst))
+		{
+			evaluate_to(arg,
+					ref_matrix<T, 1, Len>(dst.ptr_data(), 1, arg.nrows()));
+		}
+		else
+		{
+			dense_matrix<T, Len, 1> tmp(arg);
+			const index_t n = arg.nrows();
+			for (index_t i = 0; i < n; ++i)
+			{
+				dst.elem(0, i) = tmp[i];
+			}
+		}
+	}
+
+
+	/********************************************
+	 *
+	 *  row expression transpose
+	 *
+	 ********************************************/
+
+	template<class Expr>
+	class rowxpr_transpose_base
+	: public IMatrixXpr<transpose_expr<Expr>, typename matrix_traits<Expr>::value_type>
+	{
+	public:
+		LMAT_MAT_TRAITS_CDEFS( typename matrix_traits<Expr>::value_type )
+
+		typedef typename unwrapped_expr<Expr>::type arg_type;
+
+	public:
+		LMAT_ENSURE_INLINE rowxpr_transpose_base(const Expr& expr)
+		: m_expr(expr)
+		{
+		}
+
+		LMAT_ENSURE_INLINE const arg_type& arg() const
+		{
+			return m_expr.get();
+		}
+
+		LMAT_ENSURE_INLINE index_type nelems() const
+		{
+			return arg().nelems();
+		}
+
+		LMAT_ENSURE_INLINE size_type size() const
+		{
+			return arg().size();
+		}
+
+		LMAT_ENSURE_INLINE index_type nrows() const
+		{
+			return arg().ncolumns();
+		}
+
+		LMAT_ENSURE_INLINE index_type ncolumns() const
+		{
+			return 1;
+		}
+
+	private:
+		obj_wrapper<Expr> m_expr;
+	};
+
+	template<class Expr, class DMat>
+	inline
+	void base_evaluate_to(const rowxpr_transpose_base<Expr>& s,
+			IDenseMatrix<DMat, typename matrix_traits<Expr>::value_type>& dst)
+	{
+		typedef typename matrix_traits<Expr>::value_type T;
+		const int Len = binary_ctdim<ct_rows<Expr>::value, ct_cols<DMat>::value>::value;
+
+		const Expr& arg = s.arg();
+		evaluate_to(arg,
+				ref_matrix<T, Len, 1>(dst.ptr_data(), 1, arg.nrows()));
+	}
+
+
+
+	/********************************************
+	 *
+	 *  generic transpose
+	 *
+	 ********************************************/
 
 	template<class Expr>
 	class generic_transpose_base
@@ -447,6 +594,7 @@ namespace lmat
 
 		typedef typename
 				if_<is_dense_mat<Expr>,
+					// is dense
 					typename
 					if_<ct_is_col<Expr>,
 						// is column
@@ -463,8 +611,19 @@ namespace lmat
 							dense_transpose_base<Expr_>
 						>::type
 					>::type,
-					// generic expression
-					generic_transpose_base<Expr_>
+					// non dense
+					typename
+					if_<ct_is_row<Expr>,
+						// is_row
+						rowxpr_transpose_base<Expr_>,
+						typename
+						if_<ct_is_col<Expr>,
+							// is column
+							colxpr_transpose_base<Expr_>,
+							// generic non-vector
+							generic_transpose_base<Expr_>
+						>::type
+					>::type
 				>::type type;
 	};
 
