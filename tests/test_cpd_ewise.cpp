@@ -106,7 +106,7 @@ MN_CASE( cpd_expr, axpy_cast )
 	fill_ran(Y, -5.0, 5.0);
 	const float tol = 1.0e-5f;
 
-	dense_matrix<float, M, N> Z = (a * X + Y).cast<float>();
+	dense_matrix<float, M, N> Z = (a * X + Y).template cast<float>();
 	dense_matrix<float, M, N> R(m, n);
 
 	for (index_t j = 0; j < n; ++j)

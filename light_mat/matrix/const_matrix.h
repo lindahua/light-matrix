@@ -1,4 +1,4 @@
-/*
+/**
  * @file const_matrix.h
  *
  * Constant matrix class

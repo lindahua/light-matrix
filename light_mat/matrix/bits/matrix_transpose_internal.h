@@ -14,6 +14,7 @@
 #define LIGHTMAT_MATRIX_TRANSPOSE_INTERNAL_H_
 
 #include <light_mat/matrix/matrix_expr_base.h>
+#include "mat_transpose_impl.h"
 
 namespace lmat { namespace detail {
 
@@ -138,6 +139,13 @@ namespace lmat { namespace detail {
 			return ptr_data()[idx];
 		}
 
+		template<typename DMat>
+		LMAT_ENSURE_INLINE
+		void eval_to(IDenseMatrix<DMat, value_type>& dst)
+		{
+			copy(ptr_data(), dst.derived());
+		}
+
 	private:
 		obj_wrapper<Col> m_col;
 	};
@@ -208,6 +216,13 @@ namespace lmat { namespace detail {
 			return ptr_data()[idx];
 		}
 
+		template<typename DMat>
+		LMAT_ENSURE_INLINE
+		void eval_to(IDenseMatrix<DMat, value_type>& dst)
+		{
+			copy(ptr_data(), dst.derived());
+		}
+
 	private:
 		obj_wrapper<Row> m_row;
 	};
@@ -269,6 +284,19 @@ namespace lmat { namespace detail {
 			return arg().elem(0, idx);
 		}
 
+		template<typename DMat>
+		LMAT_ENSURE_INLINE
+		void eval_to(IDenseMatrix<DMat, value_type>& dst)
+		{
+			const index_t m = nrows();
+			value_type *pd = dst.ptr_data();
+
+			for (index_t i = 0; i < m; ++i)
+			{
+				pd[i] = arg().elem(0, i);
+			}
+		}
+
 	private:
 		obj_wrapper<Row> m_row;
 	};
@@ -320,6 +348,15 @@ namespace lmat { namespace detail {
 			return arg().nrows();
 		}
 
+		template<typename DMat>
+		LMAT_ENSURE_INLINE
+		void eval_to(IDenseMatrix<DMat, value_type>& dst)
+		{
+			const index_t m = arg().nrows();
+			const index_t n = arg().ncolumns();
+			transpose(m, n, arg().ptr_data(), arg().lead_dim(), dst.ptr_data(), dst.lead_dim());
+		}
+
 	private:
 		obj_wrapper<Mat> m_mat;
 	};
@@ -364,6 +401,18 @@ namespace lmat { namespace detail {
 		{
 			return arg().nrows();
 		}
+
+		template<typename DMat>
+		LMAT_ENSURE_INLINE
+		void eval_to(IDenseMatrix<DMat, value_type>& dst)
+		{
+			const index_t m = arg().nrows();
+			const index_t n = arg().ncolumns();
+
+			dense_matrix<value_type, ct_rows<Expr>::value, ct_cols<Expr>::value> src(arg());
+			transpose(m, n, src.ptr_data(), src.lead_dim(), dst.ptr_data(), dst.lead_dim());
+		}
+
 
 	private:
 		obj_wrapper<Expr> m_expr;

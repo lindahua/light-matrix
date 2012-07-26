@@ -57,7 +57,7 @@ MN_CASE( dense_cast, explicit_cast )
 		Br[i] = float(v);
 	}
 
-	dense_matrix<float, M, N> B1 = A.cast<float>();
+	dense_matrix<float, M, N> B1 = A.template cast<float>();
 	dense_matrix<float, M, N> B2 = cast(A, type<float>());
 
 	ASSERT_TRUE( is_equal(B1, Br) );
@@ -108,7 +108,7 @@ MN_CASE( ref_cast, explicit_cast )
 	}
 
 	ref_matrix<float, M, N> B(sB.ptr_begin(), m, n);
-	B = A.cast<float>();
+	B = A.template cast<float>();
 
 	ASSERT_TRUE( is_equal(B, Br) );
 }
@@ -167,7 +167,7 @@ MN_CASE( ref_ex_cast, explicit_cast )
 	}
 
 	ref_matrix_ex<float, M, N> B(sB.ptr_begin(), m, n, ldim_b);
-	B = A.cast<float>();
+	B = A.template cast<float>();
 
 	ASSERT_TRUE( is_equal(B, Br) );
 }

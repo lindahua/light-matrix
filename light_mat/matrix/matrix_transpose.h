@@ -67,6 +67,16 @@ namespace lmat
 	{
 	};
 
+	// evaluation
+
+	template<class Expr, class DMat>
+	LMAT_ENSURE_INLINE
+	void evaluate(const transpose_expr<Expr>& s,
+			IDenseMatrix<DMat, typename matrix_traits<Expr>::value_type>& dst)
+	{
+		s.eval_to(dst.derived());
+	}
+
 }
 
 #endif /* MATRIX_TRANSPOSE_H_ */

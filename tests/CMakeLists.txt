@@ -63,6 +63,7 @@ set(MATRIX_BASE_HS
     ${INC}/matrix/bits/matrix_copy_internal.h
     ${INC}/matrix/bits/matrix_compare_internal.h
     ${INC}/matrix/bits/matrix_transpose_internal.h
+    ${INC}/matrix/bits/mat_transpose_impl.h
     ${INC}/matrix/matrix_fill.h
     ${INC}/matrix/matrix_copy.h
     ${INC}/matrix/matrix_compare.h
@@ -169,6 +170,7 @@ add_executable(test_mat_compare ${REF_MAT_HS} test_mat_compare.cpp)
 
 add_executable(test_dense_eval ${MATRIX_HS} test_dense_eval.cpp)
 add_executable(test_mat_subviews ${MATRIX_HS} test_mat_subviews.cpp)
+add_executable(test_mat_transpose ${MATRIX_HS} test_mat_transpose.cpp)
 
 set(BASIC_MAT_EVAL_HS
     ${MATRIX_HS}
@@ -225,6 +227,7 @@ target_link_libraries(test_mat_compare test_main)
 
 target_link_libraries(test_dense_eval test_main)
 target_link_libraries(test_mat_subviews test_main)
+target_link_libraries(test_mat_transpose test_main)
 
 target_link_libraries(test_dense_veval test_main)
 target_link_libraries(test_dense_cast test_main)
@@ -258,6 +261,7 @@ set(ALL_EXECUTABLES
     test_mat_compare
     test_dense_eval
     test_mat_subviews
+    test_mat_transpose
     test_dense_veval
     test_dense_cast
     test_mat_arith
