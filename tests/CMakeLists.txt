@@ -62,7 +62,6 @@ set(MATRIX_BASE_HS
     ${INC}/matrix/bits/matrix_fill_internal.h
     ${INC}/matrix/bits/matrix_copy_internal.h
     ${INC}/matrix/bits/matrix_compare_internal.h
-    ${INC}/matrix/bits/matrix_transpose_internal.h
     ${INC}/matrix/bits/mat_transpose_impl.h
     ${INC}/matrix/matrix_fill.h
     ${INC}/matrix/matrix_copy.h
