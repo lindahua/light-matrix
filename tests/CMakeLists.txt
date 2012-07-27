@@ -33,6 +33,7 @@ set(CMAKE_CXX_FLAGS "${TEST_CXX_FLAGS}")
 # Header file groups (to be used as dependencies)
 
 set(INC ../light_mat)
+set(EXECUTABLE_OUTPUT_PATH bin)
 
 set(COMMON_BASIC_HS 
     ${INC}/config/user_config.h 
@@ -208,114 +209,41 @@ add_executable(test_partial_reduce ${MAT_REDUC_HS} test_partial_reduce.cpp)
 
 # Link to test_main
 
-target_link_libraries(test_arrays test_main)
+set(LMAT_TEST_NAMES
+	test_arrays
+	test_dense_mat
+	test_dense_col
+	test_dense_row
+	test_const_mat
+	test_ref_mat
+	test_ref_col
+	test_ref_row
+	test_ref_mat_ex
+	test_mat_copy
+	test_mat_compare
+	test_dense_eval
+	test_mat_subviews
+	test_mat_transpose
+	test_dense_veval
+	test_dense_cast
+	test_mat_arith
+	test_mat_emath
+	test_mat_ecomp
+	test_mat_elogical
+	test_rep_vecs
+	test_rep_veval
+	test_cpd_ewise
+	test_mat_reduce
+	test_partial_reduce
+)
+	
+foreach(tname ${LMAT_TEST_NAMES})
+	target_link_libraries(${tname} test_main)
+endforeach(tname)	
 
-target_link_libraries(test_dense_mat test_main)
-target_link_libraries(test_dense_col test_main)
-target_link_libraries(test_dense_row test_main)
-
-target_link_libraries(test_const_mat test_main)
-
-target_link_libraries(test_ref_mat test_main)
-target_link_libraries(test_ref_col test_main)
-target_link_libraries(test_ref_row test_main)
-target_link_libraries(test_ref_mat_ex test_main)
-
-target_link_libraries(test_mat_copy test_main)
-target_link_libraries(test_mat_compare test_main)
-
-target_link_libraries(test_dense_eval test_main)
-target_link_libraries(test_mat_subviews test_main)
-target_link_libraries(test_mat_transpose test_main)
-
-target_link_libraries(test_dense_veval test_main)
-target_link_libraries(test_dense_cast test_main)
-
-target_link_libraries(test_mat_arith test_main)
-target_link_libraries(test_mat_emath test_main)
-target_link_libraries(test_mat_ecomp test_main)
-target_link_libraries(test_mat_elogical test_main)
-
-target_link_libraries(test_rep_vecs test_main)
-target_link_libraries(test_rep_veval test_main)
-
-target_link_libraries(test_cpd_ewise test_main)
-
-target_link_libraries(test_mat_reduce test_main)
-target_link_libraries(test_partial_reduce test_main)
-    
-# Set output directories
-
-set(ALL_EXECUTABLES 
-    test_arrays
-    test_dense_mat
-    test_dense_col
-    test_dense_row
-    test_const_mat
-    test_ref_mat
-    test_ref_col
-    test_ref_row
-    test_ref_mat_ex
-    test_mat_copy
-    test_mat_compare
-    test_dense_eval
-    test_mat_subviews
-    test_mat_transpose
-    test_dense_veval
-    test_dense_cast
-    test_mat_arith
-    test_mat_emath
-    test_mat_ecomp
-    test_mat_elogical
-    test_rep_vecs
-    test_rep_veval
-    test_cpd_ewise
-    test_mat_reduce
-    test_partial_reduce
-    )
-    
-set_target_properties(${ALL_EXECUTABLES}
-    PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY "bin")    
-
-
-# Add Tests
-
-add_test(NAME arrays COMMAND test_arrays)
-
-add_test(NAME dense_mat COMMAND test_dense_mat)
-add_test(NAME dense_col COMMAND test_dense_col)
-add_test(NAME dense_row COMMAND test_dense_row)
-
-add_test(NAME const_mat COMMAND test_const_mat)
-
-add_test(NAME ref_mat COMMAND test_ref_mat)
-add_test(NAME ref_col COMMAND test_ref_col)
-add_test(NAME ref_row COMMAND test_ref_row)
-add_test(NAME ref_mat_ex COMMAND test_ref_mat_ex)
-
-add_test(NAME mat_copy COMMAND test_mat_copy)
-add_test(NAME mat_compare COMMAND test_mat_compare)
-
-add_test(NAME dense_eval COMMAND test_dense_eval)
-add_test(NAME mat_subviews COMMAND test_mat_subviews)
-
-add_test(NAME dense_veval COMMAND test_dense_veval)
-add_test(NAME dense_cast COMMAND test_dense_cast)
-
-add_test(NAME mat_arith COMMAND test_mat_arith)
-add_test(NAME mat_emath COMMAND test_mat_emath)
-add_test(NAME mat_ecomp COMMAND test_mat_ecomp)
-add_test(NAME mat_elogical COMMAND test_mat_elogical)
-
-add_test(NAME rep_vecs COMMAND test_rep_vecs)
-add_test(NAME rep_veval COMMAND test_rep_veval)
-
-add_test(NAME cpd_ewise COMMAND test_cpd_ewise)
-
-add_test(NAME mat_reduce COMMAND test_mat_reduce)
-add_test(NAME partial_reduce COMMAND test_partial_reduce)
-
+foreach(tname ${LMAT_TEST_NAMES})
+	add_test(NAME ${tname} COMMAND ${tname})
+endforeach(tname)
 
 
 
