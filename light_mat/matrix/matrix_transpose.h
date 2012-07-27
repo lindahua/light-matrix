@@ -31,6 +31,7 @@ namespace lmat
 	template<class Row> class controw_transpose_base;
 	template<class Row> class regular_row_transpose_base;
 	template<class Mat> class dense_transpose_base;
+
 	template<class Expr> class colxpr_transpose_base;
 	template<class Expr> class rowxpr_transpose_base;
 	template<class Expr> class generic_transpose_base;
@@ -464,8 +465,8 @@ namespace lmat
 
 		if (has_continuous_layout(dst))
 		{
-			evaluate_to(arg,
-					ref_matrix<T, 1, Len>(dst.ptr_data(), 1, arg.nrows()));
+			ref_matrix<T, Len, 1> dview(dst.ptr_data(), arg.nrows(), 1);
+			evaluate_to(arg, dview);
 		}
 		else
 		{
@@ -540,11 +541,11 @@ namespace lmat
 			IDenseMatrix<DMat, typename matrix_traits<Expr>::value_type>& dst)
 	{
 		typedef typename matrix_traits<Expr>::value_type T;
-		const int Len = binary_ctdim<ct_rows<Expr>::value, ct_cols<DMat>::value>::value;
+		const int Len = binary_ctdim<ct_cols<Expr>::value, ct_rows<DMat>::value>::value;
 
 		const Expr& arg = s.arg();
-		evaluate_to(arg,
-				ref_matrix<T, Len, 1>(dst.ptr_data(), 1, arg.nrows()));
+		ref_matrix<T, 1, Len> dview(dst.ptr_data(), 1, arg.ncolumns());
+		evaluate_to(arg, dview);
 	}
 
 
@@ -610,8 +611,8 @@ namespace lmat
 			IDenseMatrix<DMat, typename matrix_traits<Expr>::value_type>& dst)
 	{
 		dense_matrix<typename matrix_traits<Expr>::value_type,
-			binary_ct_rows<Expr, DMat>::value,
-			binary_ct_cols<Expr, DMat>::value> mat = s.arg();
+			ct_rows<Expr>::value,
+			ct_cols<Expr>::value> mat = s.arg();
 
 		detail::transpose(mat.nrows(), mat.ncolumns(),
 				mat.ptr_data(), mat.lead_dim(), dst.ptr_data(), dst.lead_dim());

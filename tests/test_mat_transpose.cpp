@@ -7,7 +7,7 @@
  */
 
 #include "test_base.h"
-#include <light_mat/matrix/matrix_classes.h>
+#include <light_mat/matrix/matrix_eval.h>
 #include <string>
 
 using namespace lmat;
@@ -71,6 +71,13 @@ MN_CASE( mat_trans, dense )
 	ASSERT_EQ( T.ncolumns(), m );
 
 	ASSERT_MAT_EQ( n, m, T, T0 );
+
+	dense_matrix<double, M, N> R = T.trans();
+
+	ASSERT_EQ( R.nrows(), m );
+	ASSERT_EQ( R.ncolumns(), n );
+
+	ASSERT_MAT_EQ( m, n, R, S );
 }
 
 
@@ -101,6 +108,74 @@ MN_CASE( mat_trans, refex )
 }
 
 
+MN_CASE( mat_trans, unary_ewise )
+{
+	const index_t m = M == 0 ? DM : M;
+	const index_t n = N == 0 ? DN : N;
+
+	std::string base_name =
+			M == 1 ? "rowxpr" : (N == 1 ? "colxpr" : "generic");
+
+	dense_matrix<double, M, N> S(m, n);
+	fill_lin(S);
+
+	ASSERT_STREQ( sqr(S).trans().trans_base_type_name(), base_name );
+
+	dense_matrix<double, M, N> R = sqr(S);
+	dense_matrix<double, N, M> T0(n, m);
+	my_transpose(R, T0);
+
+	dense_matrix<double, N, M> T = sqr(S).trans();
+
+	ASSERT_EQ( T.nrows(), n );
+	ASSERT_EQ( T.ncolumns(), m );
+
+	ASSERT_MAT_EQ( n, m, T, T0 );
+
+	scoped_array<double> darr(LDim * m, -1.0);
+	ref_matrix_ex<double, N, M> T2(darr.ptr_begin(), n, m, LDim);
+
+	T2 = sqr(S).trans();
+
+	ASSERT_MAT_EQ( n, m, T2, T0 );
+}
+
+
+MN_CASE( mat_trans, binary_ewise )
+{
+	const index_t m = M == 0 ? DM : M;
+	const index_t n = N == 0 ? DN : N;
+
+	std::string base_name =
+			M == 1 ? "rowxpr" : (N == 1 ? "colxpr" : "generic");
+
+	dense_matrix<double, M, N> S(m, n);
+	fill_lin(S);
+	dense_matrix<double, M, N> S2 = sqr(S);
+
+	ASSERT_STREQ( (S + S2).trans().trans_base_type_name(), base_name );
+
+	dense_matrix<double, M, N> R = S + S2;
+	dense_matrix<double, N, M> T0(n, m);
+	my_transpose(R, T0);
+
+	dense_matrix<double, N, M> T = (S + S2).trans();
+
+	ASSERT_EQ( T.nrows(), n );
+	ASSERT_EQ( T.ncolumns(), m );
+
+	ASSERT_MAT_EQ( n, m, T, T0 );
+
+	scoped_array<double> darr(LDim * m, -1.0);
+	ref_matrix_ex<double, N, M> T2(darr.ptr_begin(), n, m, LDim);
+
+	T2 = (S + S2).trans();
+
+	ASSERT_MAT_EQ( n, m, T2, T0 );
+}
+
+
+
 BEGIN_TPACK( dense_trans )
 	ADD_MN_CASE_3X3( mat_trans, dense, DM, DN )
 END_TPACK
@@ -109,9 +184,19 @@ BEGIN_TPACK( refex_trans )
 	ADD_MN_CASE_3X3( mat_trans, refex, DM, DN )
 END_TPACK
 
+BEGIN_TPACK( unary_ewise_trans )
+	ADD_MN_CASE_3X3( mat_trans, unary_ewise, DM, DN )
+END_TPACK
+
+BEGIN_TPACK( binary_ewise_trans )
+	ADD_MN_CASE_3X3( mat_trans, binary_ewise, DM, DN )
+END_TPACK
+
 
 BEGIN_MAIN_SUITE
 	ADD_TPACK( dense_trans )
 	ADD_TPACK( refex_trans )
+	ADD_TPACK( unary_ewise_trans )
+	ADD_TPACK( binary_ewise_trans )
 END_MAIN_SUITE
 
