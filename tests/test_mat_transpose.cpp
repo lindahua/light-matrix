@@ -8,6 +8,7 @@
 
 #include "test_base.h"
 #include <light_mat/matrix/matrix_classes.h>
+#include <string>
 
 using namespace lmat;
 using namespace lmat::test;
@@ -53,8 +54,13 @@ MN_CASE( mat_trans, dense )
 	const index_t m = M == 0 ? DM : M;
 	const index_t n = N == 0 ? DN : N;
 
+	std::string base_name =
+			N == 1 ? "contcol" : (M == 1 ? "controw" : "dense");
+
 	dense_matrix<double, M, N> S(m, n);
 	fill_lin(S);
+
+	ASSERT_STREQ( S.trans().trans_base_type_name(), base_name  );
 
 	dense_matrix<double, N, M> T0(n, m);
 	my_transpose(S, T0);
@@ -73,10 +79,15 @@ MN_CASE( mat_trans, refex )
 	const index_t m = M == 0 ? DM : M;
 	const index_t n = N == 0 ? DN : N;
 
+	const char *base_name =
+			N == 1 ? "contcol" : (M == 1 ? "regular_row" : "dense");
+
 	scoped_array<double> sarr(LDim * n, -1.0);
 
-	ref_matrix_ex<double> S(sarr.ptr_begin(), m, n, LDim);
+	ref_matrix_ex<double, M, N> S(sarr.ptr_begin(), m, n, LDim);
 	fill_lin(S);
+
+	ASSERT_STREQ( S.trans().trans_base_type_name(), base_name  );
 
 	dense_matrix<double, N, M> T0(n, m);
 	my_transpose(S, T0);

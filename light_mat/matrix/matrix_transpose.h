@@ -31,6 +31,8 @@ namespace lmat
 	template<class Row> class controw_transpose_base;
 	template<class Row> class regular_row_transpose_base;
 	template<class Mat> class dense_transpose_base;
+	template<class Expr> class colxpr_transpose_base;
+	template<class Expr> class rowxpr_transpose_base;
 	template<class Expr> class generic_transpose_base;
 
 	// traits
@@ -89,6 +91,11 @@ namespace lmat
 		LMAT_ENSURE_INLINE contcol_transpose_base(const Col& col)
 		: m_col(col)
 		{
+		}
+
+		LMAT_ENSURE_INLINE const char *trans_base_type_name() const
+		{
+			return "contcol";
 		}
 
 		LMAT_ENSURE_INLINE const arg_type& arg() const
@@ -169,6 +176,11 @@ namespace lmat
 		LMAT_ENSURE_INLINE controw_transpose_base(const Row& row)
 		: m_row(row)
 		{
+		}
+
+		LMAT_ENSURE_INLINE const char *trans_base_type_name() const
+		{
+			return "controw";
 		}
 
 		LMAT_ENSURE_INLINE const arg_type& arg() const
@@ -257,6 +269,11 @@ namespace lmat
 		{
 		}
 
+		LMAT_ENSURE_INLINE const char *trans_base_type_name() const
+		{
+			return "regular_row";
+		}
+
 		LMAT_ENSURE_INLINE const arg_type& arg() const
 		{
 			return m_row.get();
@@ -334,6 +351,11 @@ namespace lmat
 		{
 		}
 
+		LMAT_ENSURE_INLINE const char *trans_base_type_name() const
+		{
+			return "dense";
+		}
+
 		LMAT_ENSURE_INLINE const arg_type& arg() const
 		{
 			return m_mat.get();
@@ -394,6 +416,11 @@ namespace lmat
 		LMAT_ENSURE_INLINE colxpr_transpose_base(const Expr& expr)
 		: m_expr(expr)
 		{
+		}
+
+		LMAT_ENSURE_INLINE const char *trans_base_type_name() const
+		{
+			return "colxpr";
 		}
 
 		LMAT_ENSURE_INLINE const arg_type& arg() const
@@ -473,6 +500,11 @@ namespace lmat
 		{
 		}
 
+		LMAT_ENSURE_INLINE const char *trans_base_type_name() const
+		{
+			return "rowxpr";
+		}
+
 		LMAT_ENSURE_INLINE const arg_type& arg() const
 		{
 			return m_expr.get();
@@ -536,6 +568,11 @@ namespace lmat
 		LMAT_ENSURE_INLINE generic_transpose_base(const Expr& expr)
 		: m_expr(expr)
 		{
+		}
+
+		LMAT_ENSURE_INLINE const char *trans_base_type_name() const
+		{
+			return "generic";
 		}
 
 		LMAT_ENSURE_INLINE const arg_type& arg() const
