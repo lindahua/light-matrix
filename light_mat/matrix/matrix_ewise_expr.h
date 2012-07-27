@@ -30,10 +30,24 @@ namespace lmat
 		typedef unary_ewise_expr<Fun, Arg> type;
 	};
 
+	template<class Fun, class Arg>
+	struct unary_ewise_expr_map<Fun, transpose_expr<Arg> >
+	{
+		typedef transpose_expr<
+				embed_mat<typename unary_ewise_expr_map<Fun, Arg>::type> > type;
+	};
+
 	template<class Fun, class Arg1, class Arg2>
 	struct binary_ewise_expr_map
 	{
 		typedef binary_ewise_expr<Fun, Arg1, Arg2> type;
+	};
+
+	template<class Fun, class Arg1, class Arg2>
+	struct binary_ewise_expr_map<Fun, transpose_expr<Arg1>, transpose_expr<Arg2> >
+	{
+		typedef transpose_expr<
+				embed_mat<typename binary_ewise_expr_map<Fun, Arg1, Arg2>::type> > type;
 	};
 
 	template<class Fun, class Arg1>
@@ -45,6 +59,13 @@ namespace lmat
 		typedef binary_ewise_expr<Fun, Arg1, embed_mat<Arg2> > type;
 	};
 
+	template<class Fun, class Arg1>
+	struct binary_fix2_ewise_expr_map<Fun, transpose_expr<Arg1> >
+	{
+		typedef transpose_expr<
+				embed_mat<typename binary_fix2_ewise_expr_map<Fun, Arg1>::type> > type;
+	};
+
 	template<class Fun, class Arg2>
 	struct binary_fix1_ewise_expr_map
 	{
@@ -54,6 +75,12 @@ namespace lmat
 		typedef binary_ewise_expr<Fun, embed_mat<Arg1>, Arg2> type;
 	};
 
+	template<class Fun, class Arg2>
+	struct binary_fix1_ewise_expr_map<Fun, transpose_expr<Arg2> >
+	{
+		typedef transpose_expr<
+				embed_mat<typename binary_fix1_ewise_expr_map<Fun, Arg2>::type> > type;
+	};
 
 	/********************************************
 	 *
@@ -222,6 +249,16 @@ namespace lmat
 		return unary_ewise_expr<Fun, Arg>(fun, arg.derived());
 	}
 
+	template<class Fun, class Arg>
+	LMAT_ENSURE_INLINE
+	inline typename unary_ewise_expr_map<Fun, transpose_expr<Arg> >::type
+	ewise(  const Fun& fun,
+			const transpose_expr<Arg>& texpr )
+	{
+		return embed(ewise(fun, texpr.arg())).trans();
+	}
+
+
 	template<class Fun, class Arg1, class Arg2>
 	LMAT_ENSURE_INLINE
 	inline typename binary_ewise_expr_map<Fun, Arg1, Arg2>::type
@@ -232,6 +269,17 @@ namespace lmat
 		return binary_ewise_expr<Fun, Arg1, Arg2>(fun,
 				arg1.derived(), arg2.derived());
 	}
+
+	template<class Fun, class Arg1, class Arg2>
+	LMAT_ENSURE_INLINE
+	inline typename binary_ewise_expr_map<Fun, transpose_expr<Arg1>, transpose_expr<Arg2> >::type
+	ewise(  const Fun& fun,
+			const transpose_expr<Arg1>& texpr1,
+			const transpose_expr<Arg2>& texpr2 )
+	{
+		return embed(ewise(fun, texpr1.arg(), texpr2.arg())).trans();
+	}
+
 
 	template<class Fun, class Arg1>
 	LMAT_ENSURE_INLINE
@@ -249,6 +297,16 @@ namespace lmat
 				embed(arg2_t(arg1.nrows(), arg1.ncolumns(), arg2v)) );
 	}
 
+	template<class Fun, class Arg1>
+	LMAT_ENSURE_INLINE
+	inline typename binary_fix2_ewise_expr_map<Fun, transpose_expr<Arg1> >::type
+	ewise(  const Fun& fun,
+			const transpose_expr<Arg1>& texpr1,
+			const typename Fun::second_arg_type& arg2v )
+	{
+		return embed(ewise(fun, texpr1.arg(), arg2v)).trans();
+	}
+
 	template<class Fun, class Arg2>
 	LMAT_ENSURE_INLINE
 	inline typename binary_fix1_ewise_expr_map<Fun, Arg2>::type
@@ -263,6 +321,16 @@ namespace lmat
 		return expr_type(fun,
 				embed(arg1_t(arg2.nrows(), arg2.ncolumns(), arg1v)),
 				arg2.derived());
+	}
+
+	template<class Fun, class Arg2>
+	LMAT_ENSURE_INLINE
+	inline typename binary_fix1_ewise_expr_map<Fun, transpose_expr<Arg2> >::type
+	ewise(  const Fun& fun,
+			const typename Fun::first_arg_type& arg1v,
+			const transpose_expr<Arg2>& texpr2 )
+	{
+		return embed(ewise(fun, arg1v, texpr2.arg())).trans();
 	}
 
 

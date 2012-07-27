@@ -224,6 +224,92 @@ MN_CASE( mat_trans, rowwise_reduce )
 }
 
 
+MN_CASE( mat_trans, unary_with_targ )
+{
+	const index_t m = M == 0 ? DM : M;
+	const index_t n = N == 0 ? DN : N;
+
+	dense_matrix<double, M, N> S(m, n);
+	fill_lin(S);
+
+	dense_matrix<double, M, N> R = sqr(S);
+	dense_matrix<double, N, M> T0(n, m);
+	my_transpose(R, T0);
+
+	dense_matrix<double, N, M> T = sqr(S.trans());
+
+	ASSERT_EQ( T.nrows(), n );
+	ASSERT_EQ( T.ncolumns(), m );
+
+	ASSERT_MAT_EQ( n, m, T, T0 );
+}
+
+
+MN_CASE( mat_trans, binary_with_targ )
+{
+	const index_t m = M == 0 ? DM : M;
+	const index_t n = N == 0 ? DN : N;
+
+	dense_matrix<double, M, N> A(m, n);
+	fill_lin(A);
+	dense_matrix<double, N, M> AT = A.trans();
+
+	dense_matrix<double, M, N> B = sqr(A);
+	dense_matrix<double, N, M> BT = B.trans();
+
+	dense_matrix<double, M, N> R = A + B;
+
+	dense_matrix<double, M, N> T1 = AT.trans() + BT.trans();
+
+	ASSERT_EQ( T1.nrows(), m );
+	ASSERT_EQ( T1.ncolumns(), n );
+	ASSERT_MAT_EQ( m, n, T1, R );
+
+	dense_matrix<double, M, N> T2 = AT.trans() + B;
+
+	ASSERT_EQ( T2.nrows(), m );
+	ASSERT_EQ( T2.ncolumns(), n );
+	ASSERT_MAT_EQ( m, n, T2, R );
+
+	dense_matrix<double, M, N> T3 = A + BT.trans();
+
+	ASSERT_EQ( T3.nrows(), m );
+	ASSERT_EQ( T3.ncolumns(), n );
+	ASSERT_MAT_EQ( m, n, T3, R );
+}
+
+
+MN_CASE( mat_trans, binary_c_with_targ )
+{
+	const index_t m = M == 0 ? DM : M;
+	const index_t n = N == 0 ? DN : N;
+
+	dense_matrix<double, M, N> A(m, n);
+	fill_lin(A);
+
+	double bv = 12.5;
+
+	dense_matrix<double, M, N> R1 = A - bv;
+	dense_matrix<double, N, M> R1t(n, m);
+	my_transpose(R1, R1t);
+
+	dense_matrix<double, M, N> R2 = bv - A;
+	dense_matrix<double, N, M> R2t(n, m);
+	my_transpose(R2, R2t);
+
+	dense_matrix<double, N, M> T1 = A.trans() - bv;
+
+	ASSERT_EQ( T1.nrows(), n );
+	ASSERT_EQ( T1.ncolumns(), m );
+	ASSERT_MAT_EQ( n, m, T1, R1t );
+
+	dense_matrix<double, N, M> T2 = bv - A.trans();
+
+	ASSERT_EQ( T1.nrows(), n );
+	ASSERT_EQ( T1.ncolumns(), m );
+	ASSERT_MAT_EQ( n, m, T2, R2t );
+}
+
 
 
 BEGIN_TPACK( dense_trans )
@@ -252,6 +338,19 @@ BEGIN_TPACK( rowwise_reduce_trans )
 END_TPACK
 
 
+BEGIN_TPACK( unary_ewise_with_targ )
+	ADD_MN_CASE_3X3( mat_trans, unary_with_targ, DM, DN )
+END_TPACK
+
+BEGIN_TPACK( binary_ewise_with_targ )
+	ADD_MN_CASE_3X3( mat_trans, binary_with_targ, DM, DN )
+END_TPACK
+
+BEGIN_TPACK( binary_c_ewise_with_targ )
+	ADD_MN_CASE_3X3( mat_trans, binary_c_with_targ, DM, DN )
+END_TPACK
+
+
 BEGIN_MAIN_SUITE
 	ADD_TPACK( dense_trans )
 	ADD_TPACK( refex_trans )
@@ -259,5 +358,8 @@ BEGIN_MAIN_SUITE
 	ADD_TPACK( binary_ewise_trans )
 	ADD_TPACK( colwise_reduce_trans )
 	ADD_TPACK( rowwise_reduce_trans )
+	ADD_TPACK( unary_ewise_with_targ )
+	ADD_TPACK( binary_ewise_with_targ )
+	ADD_TPACK( binary_c_ewise_with_targ )
 END_MAIN_SUITE
 

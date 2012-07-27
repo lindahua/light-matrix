@@ -321,7 +321,7 @@ namespace lmat
 	{
 		const index_t m = s.nrows();
 		typename matrix_traits<Row>::value_type *pd = dst.ptr_data();
-		const Row& row = s.arg();
+		const typename unwrapped_expr<Row>::type& row = s.arg();
 
 		for (index_t i = 0; i < m; ++i)
 		{
@@ -391,7 +391,7 @@ namespace lmat
 	void base_evaluate_to(const dense_transpose_base<Mat>& s,
 			IDenseMatrix<DMat, typename matrix_traits<Mat>::value_type>& dst)
 	{
-		const Mat& mat = s.arg();
+		const typename unwrapped_expr<Mat>::type& mat = s.arg();
 
 		detail::transpose(mat.nrows(), mat.ncolumns(),
 				mat.ptr_data(), mat.lead_dim(), dst.ptr_data(), dst.lead_dim());
@@ -461,7 +461,7 @@ namespace lmat
 		typedef typename matrix_traits<Expr>::value_type T;
 		const int Len = binary_ctdim<ct_rows<Expr>::value, ct_cols<DMat>::value>::value;
 
-		const Expr& arg = s.arg();
+		const typename unwrapped_expr<Expr>::type& arg = s.arg();
 
 		if (has_continuous_layout(dst))
 		{
@@ -543,7 +543,7 @@ namespace lmat
 		typedef typename matrix_traits<Expr>::value_type T;
 		const int Len = binary_ctdim<ct_cols<Expr>::value, ct_rows<DMat>::value>::value;
 
-		const Expr& arg = s.arg();
+		const typename unwrapped_expr<Expr>::type& arg = s.arg();
 		ref_matrix<T, 1, Len> dview(dst.ptr_data(), 1, arg.ncolumns());
 		evaluate_to(arg, dview);
 	}
