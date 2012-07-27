@@ -60,7 +60,7 @@ MN_CASE( mat_trans, dense )
 	dense_matrix<double, M, N> S(m, n);
 	fill_lin(S);
 
-	ASSERT_STREQ( S.trans().trans_base_type_name(), base_name  );
+	ASSERT_STREQ( trans_base_typename(S.trans()), base_name  );
 
 	dense_matrix<double, N, M> T0(n, m);
 	my_transpose(S, T0);
@@ -94,7 +94,7 @@ MN_CASE( mat_trans, refex )
 	ref_matrix_ex<double, M, N> S(sarr.ptr_begin(), m, n, LDim);
 	fill_lin(S);
 
-	ASSERT_STREQ( S.trans().trans_base_type_name(), base_name  );
+	ASSERT_STREQ( trans_base_typename(S.trans()), base_name  );
 
 	dense_matrix<double, N, M> T0(n, m);
 	my_transpose(S, T0);
@@ -119,7 +119,7 @@ MN_CASE( mat_trans, unary_ewise )
 	dense_matrix<double, M, N> S(m, n);
 	fill_lin(S);
 
-	ASSERT_STREQ( sqr(S).trans().trans_base_type_name(), base_name );
+	ASSERT_STREQ( trans_base_typename(sqr(S).trans()), base_name );
 
 	dense_matrix<double, M, N> R = sqr(S);
 	dense_matrix<double, N, M> T0(n, m);
@@ -153,7 +153,7 @@ MN_CASE( mat_trans, binary_ewise )
 	fill_lin(S);
 	dense_matrix<double, M, N> S2 = sqr(S);
 
-	ASSERT_STREQ( (S + S2).trans().trans_base_type_name(), base_name );
+	ASSERT_STREQ( trans_base_typename((S + S2).trans()), base_name );
 
 	dense_matrix<double, M, N> R = S + S2;
 	dense_matrix<double, N, M> T0(n, m);
@@ -184,7 +184,7 @@ MN_CASE( mat_trans, colwise_reduce )
 
 	dense_matrix<double, M, N> S(m, n);
 	fill_lin(S);
-	ASSERT_STREQ( sum(S, colwise()).trans().trans_base_type_name(), base_name );
+	ASSERT_STREQ( trans_base_typename(sum(S, colwise()).trans()), base_name );
 
 	dense_matrix<double, 1, N> R = sum(S, colwise());
 	dense_matrix<double, N, 1> T0(n, 1);
@@ -209,7 +209,7 @@ MN_CASE( mat_trans, rowwise_reduce )
 	dense_matrix<double, M, N> S(m, n);
 	fill_lin(S);
 
-	ASSERT_STREQ( sum(S, rowwise()).trans().trans_base_type_name(), base_name );
+	ASSERT_STREQ( trans_base_typename(sum(S, rowwise()).trans()), base_name );
 
 	dense_matrix<double, M, 1> R = sum(S, rowwise());
 	dense_matrix<double, 1, M> T0(1, m);

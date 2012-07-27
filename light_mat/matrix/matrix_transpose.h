@@ -94,11 +94,6 @@ namespace lmat
 		{
 		}
 
-		LMAT_ENSURE_INLINE const char *trans_base_type_name() const
-		{
-			return "contcol";
-		}
-
 		LMAT_ENSURE_INLINE const arg_type& arg() const
 		{
 			return m_col.get();
@@ -177,11 +172,6 @@ namespace lmat
 		LMAT_ENSURE_INLINE controw_transpose_base(const Row& row)
 		: m_row(row)
 		{
-		}
-
-		LMAT_ENSURE_INLINE const char *trans_base_type_name() const
-		{
-			return "controw";
 		}
 
 		LMAT_ENSURE_INLINE const arg_type& arg() const
@@ -270,11 +260,6 @@ namespace lmat
 		{
 		}
 
-		LMAT_ENSURE_INLINE const char *trans_base_type_name() const
-		{
-			return "regular_row";
-		}
-
 		LMAT_ENSURE_INLINE const arg_type& arg() const
 		{
 			return m_row.get();
@@ -352,11 +337,6 @@ namespace lmat
 		{
 		}
 
-		LMAT_ENSURE_INLINE const char *trans_base_type_name() const
-		{
-			return "dense";
-		}
-
 		LMAT_ENSURE_INLINE const arg_type& arg() const
 		{
 			return m_mat.get();
@@ -417,11 +397,6 @@ namespace lmat
 		LMAT_ENSURE_INLINE colxpr_transpose_base(const Expr& expr)
 		: m_expr(expr)
 		{
-		}
-
-		LMAT_ENSURE_INLINE const char *trans_base_type_name() const
-		{
-			return "colxpr";
 		}
 
 		LMAT_ENSURE_INLINE const arg_type& arg() const
@@ -501,11 +476,6 @@ namespace lmat
 		{
 		}
 
-		LMAT_ENSURE_INLINE const char *trans_base_type_name() const
-		{
-			return "rowxpr";
-		}
-
 		LMAT_ENSURE_INLINE const arg_type& arg() const
 		{
 			return m_expr.get();
@@ -569,11 +539,6 @@ namespace lmat
 		LMAT_ENSURE_INLINE generic_transpose_base(const Expr& expr)
 		: m_expr(expr)
 		{
-		}
-
-		LMAT_ENSURE_INLINE const char *trans_base_type_name() const
-		{
-			return "generic";
 		}
 
 		LMAT_ENSURE_INLINE const arg_type& arg() const
@@ -664,6 +629,62 @@ namespace lmat
 					>::type
 				>::type type;
 	};
+
+
+	/********************************************
+	 *
+	 *  retrospection
+	 *
+	 ********************************************/
+
+	template<class Col>
+	LMAT_ENSURE_INLINE
+	const char* trans_base_typename(const contcol_transpose_base<Col>& )
+	{
+		return "contcol";
+	}
+
+	template<class Row>
+	LMAT_ENSURE_INLINE
+	const char* trans_base_typename(const controw_transpose_base<Row>& )
+	{
+		return "controw";
+	}
+
+	template<class Row>
+	LMAT_ENSURE_INLINE
+	const char* trans_base_typename(const regular_row_transpose_base<Row>& )
+	{
+		return "regular_row";
+	}
+
+	template<class Mat>
+	LMAT_ENSURE_INLINE
+	const char* trans_base_typename(const dense_transpose_base<Mat>& )
+	{
+		return "dense";
+	}
+
+	template<class Expr>
+	LMAT_ENSURE_INLINE
+	const char* trans_base_typename(const colxpr_transpose_base<Expr>& )
+	{
+		return "colxpr";
+	}
+
+	template<class Expr>
+	LMAT_ENSURE_INLINE
+	const char* trans_base_typename(const rowxpr_transpose_base<Expr>& )
+	{
+		return "rowxpr";
+	}
+
+	template<class Expr>
+	LMAT_ENSURE_INLINE
+	const char* trans_base_typename(const generic_transpose_base<Expr>& )
+	{
+		return "generic";
+	}
 
 
 	/********************************************
