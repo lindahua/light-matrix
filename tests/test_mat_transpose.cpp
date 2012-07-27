@@ -175,6 +175,56 @@ MN_CASE( mat_trans, binary_ewise )
 }
 
 
+MN_CASE( mat_trans, colwise_reduce )
+{
+	const index_t m = M == 0 ? DM : M;
+	const index_t n = N == 0 ? DN : N;
+
+	std::string base_name = "rowxpr";
+
+	dense_matrix<double, M, N> S(m, n);
+	fill_lin(S);
+	ASSERT_STREQ( sum(S, colwise()).trans().trans_base_type_name(), base_name );
+
+	dense_matrix<double, 1, N> R = sum(S, colwise());
+	dense_matrix<double, N, 1> T0(n, 1);
+	my_transpose(R, T0);
+
+	dense_matrix<double, N, 1> T = sum(S, colwise()).trans();
+
+	ASSERT_EQ( T.nrows(), n );
+	ASSERT_EQ( T.ncolumns(), 1 );
+
+	ASSERT_MAT_EQ( n, 1, T, T0 );
+}
+
+
+MN_CASE( mat_trans, rowwise_reduce )
+{
+	const index_t m = M == 0 ? DM : M;
+	const index_t n = N == 0 ? DN : N;
+
+	std::string base_name = M == 1 ? "rowxpr" : "colxpr";
+
+	dense_matrix<double, M, N> S(m, n);
+	fill_lin(S);
+
+	ASSERT_STREQ( sum(S, rowwise()).trans().trans_base_type_name(), base_name );
+
+	dense_matrix<double, M, 1> R = sum(S, rowwise());
+	dense_matrix<double, 1, M> T0(1, m);
+	my_transpose(R, T0);
+
+	dense_matrix<double, 1, M> T = sum(S, rowwise()).trans();
+
+	ASSERT_EQ( T.nrows(), 1 );
+	ASSERT_EQ( T.ncolumns(), m );
+
+	ASSERT_MAT_EQ( 1, m, T, T0 );
+}
+
+
+
 
 BEGIN_TPACK( dense_trans )
 	ADD_MN_CASE_3X3( mat_trans, dense, DM, DN )
@@ -193,10 +243,21 @@ BEGIN_TPACK( binary_ewise_trans )
 END_TPACK
 
 
+BEGIN_TPACK( colwise_reduce_trans )
+	ADD_MN_CASE_3X3( mat_trans, colwise_reduce, DM, DN )
+END_TPACK
+
+BEGIN_TPACK( rowwise_reduce_trans )
+	ADD_MN_CASE_3X3( mat_trans, rowwise_reduce, DM, DN )
+END_TPACK
+
+
 BEGIN_MAIN_SUITE
 	ADD_TPACK( dense_trans )
 	ADD_TPACK( refex_trans )
 	ADD_TPACK( unary_ewise_trans )
 	ADD_TPACK( binary_ewise_trans )
+	ADD_TPACK( colwise_reduce_trans )
+	ADD_TPACK( rowwise_reduce_trans )
 END_MAIN_SUITE
 
