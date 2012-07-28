@@ -14,7 +14,7 @@
 #define LIGHTMAT_MATRIX_REDUCE_INTERNAL_H_
 
 #include <light_mat/matrix/matrix_properties.h>
-#include <light_mat/matrix/generic_matrix_eval.h>
+#include <light_mat/matrix/matrix_veval.h>
 
 namespace lmat { namespace detail {
 

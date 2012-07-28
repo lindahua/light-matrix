@@ -108,7 +108,7 @@ MN_CASE( linear_veval, repcol_linear )
 	}
 
 	mat_t R(m, n);
-	lmat::detail::ewise_linear_eval_internal<double, M*N>::evaluate(expr, R);
+	linear_scalar_evaluate(expr, R);
 
 	ASSERT_TRUE( is_equal(R, R_r) );
 }
@@ -133,7 +133,7 @@ MN_CASE( percol_veval, repcol_percol )
 	}
 
 	mat_t R(m, n);
-	lmat::detail::ewise_percol_eval_internal<double, M, N>::evaluate(expr, R);
+	percol_scalar_evaluate(expr, R);
 
 	ASSERT_TRUE( is_equal(R, R_r) );
 }
@@ -159,7 +159,7 @@ MN_CASE( linear_veval, reprow_linear )
 	}
 
 	mat_t R(m, n);
-	lmat::detail::ewise_linear_eval_internal<double, M*N>::evaluate(expr, R);
+	linear_scalar_evaluate(expr, R);
 
 	ASSERT_TRUE( is_equal(R, R_r) );
 }
@@ -185,7 +185,7 @@ MN_CASE( percol_veval, reprow_percol )
 	}
 
 	mat_t R(m, n);
-	lmat::detail::ewise_percol_eval_internal<double, M, N>::evaluate(expr, R);
+	percol_scalar_evaluate(expr, R);
 
 	ASSERT_TRUE( is_equal(R, R_r) );
 }

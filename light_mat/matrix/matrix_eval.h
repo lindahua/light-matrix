@@ -22,7 +22,7 @@
 
 #include <light_mat/matrix/repeat_vecs_expr.h>
 
-#include <light_mat/matrix/generic_matrix_eval.h>
+#include <light_mat/matrix/matrix_veval.h>
 #include <light_mat/matrix/matrix_ewise_eval.h>
 #include <light_mat/matrix/repeat_vecs_eval.h>
 

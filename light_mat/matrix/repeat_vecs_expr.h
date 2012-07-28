@@ -49,7 +49,6 @@ namespace lmat
 	};
 
 
-
 	/********************************************
 	 *
 	 *  Expression traits
@@ -78,6 +77,20 @@ namespace lmat
 		static const bool is_readonly = true;
 
 		typedef typename matrix_traits<Row>::value_type value_type;
+	};
+
+	template<class Col, int N, class Dst>
+	struct default_evalctx<repeat_col_expr<Col, N>, Dst>
+	{
+		static const int N_ = binary_ctdim<N, ct_cols<Dst>::value>::value;
+		typedef repcols_evalctx<Col, N_, Dst> type;
+	};
+
+	template<class Row, int M, class Dst>
+	struct default_evalctx<repeat_row_expr<Row, M>, Dst>
+	{
+		static const int M_ = binary_ctdim<M, ct_rows<Dst>::value>::value;
+		typedef reprows_evalctx<Row, M_, Dst> type;
 	};
 
 

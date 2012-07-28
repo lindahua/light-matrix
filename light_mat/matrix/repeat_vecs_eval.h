@@ -14,7 +14,7 @@
 #define LIGHTMAT_REPEAT_VECS_VEVAL_H_
 
 #include <light_mat/matrix/repeat_vecs_expr.h>
-#include <light_mat/matrix/generic_matrix_eval.h>
+#include <light_mat/matrix/matrix_veval.h>
 #include "bits/repeat_vecs_internal.h"
 
 namespace lmat
@@ -26,108 +26,134 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<class Col, class DMat>
-	inline void evaluate_to(const repeat_col_expr<Col, 1>& s,
-			IDenseMatrix<DMat, typename matrix_traits<Col>::value_type>& dst)
+	template<class Col, int N, class Dst>
+	struct repcols_evalctx
 	{
-		evaluate_to(s.column(), dst.derived());
-	}
+#ifdef LMAT_USE_STATIC_ASSERT
+		static_assert(N == 0 || N > 1, "N should be either 0 or greater than 1 here");
+#endif
 
+		typedef typename binary_value_type<Col, Dst>::type T;
 
-	template<class Col, int N, class DMat>
-	inline void evaluate_to(const repeat_col_expr<Col, N>& s,
-			IDenseMatrix<DMat, typename matrix_traits<Col>::value_type>& dst)
-	{
-		typedef typename matrix_traits<Col>::value_type T;
-
-		if ( is_column(s) )
+		inline
+		static void evaluate(const repeat_col_expr<Col, N>& s,
+				Dst& dst)
 		{
-			const int M = binary_ct_rows<Col, DMat>::value;
-			ref_col<T, M> dview(dst.ptr_data(), s.nrows());
-			evaluate_to(s.column(), dview);
-		}
-		else
-		{
-			typedef typename detail::repcol_ewrapper_map<Col>::type wrapper_t;
-			wrapper_t col_wrap(s.column());
-
-			const index_t m = col_wrap.nrows();
-			if (m == 1)
+			if ( is_column(s) )
 			{
-				fill(dst, col_wrap[0]);
+				const int M = binary_ct_rows<Col, Dst>::value;
+				ref_col<T, M> dview(dst.ptr_data(), s.nrows());
+				default_evaluate(s.column(), dview);
 			}
 			else
 			{
-				const index_t n = s.ncolumns();
-				for (index_t j = 0; j < n; ++j)
+				typedef typename detail::repcol_ewrapper_map<Col>::type wrapper_t;
+				wrapper_t col_wrap(s.column());
+
+				const index_t m = col_wrap.nrows();
+				if (m == 1)
 				{
-					copy_mem(m, col_wrap.data(), dst.ptr_col(j));
-				}
-			}
-		}
-	}
-
-	template<class Row, class DMat>
-	inline void evaluate_to(const repeat_row_expr<Row, 1>& s,
-			IDenseMatrix<DMat, typename matrix_traits<Row>::value_type>& dst)
-	{
-		evaluate_to( s.row(), dst.derived() );
-	}
-
-	template<class Row, int M, class DMat>
-	inline void evaluate_to(const repeat_row_expr<Row, M>& s,
-			IDenseMatrix<DMat, typename matrix_traits<Row>::value_type>& dst)
-	{
-		typedef typename matrix_traits<Row>::value_type T;
-
-		if ( is_row(s) )
-		{
-			const int N = binary_ct_cols<Row, DMat>::value;
-			if (has_continuous_layout(dst))
-			{
-				ref_row<T, N> dview(dst.ptr_data(), s.ncolumns());
-				evaluate_to(s.row(), dview);
-			}
-			else
-			{
-				ref_matrix_ex<T, 1, N> dview(dst.ptr_data(), 1, s.ncolumns(), dst.lead_dim());
-				evaluate_to(s.row(), dview);
-			}
-		}
-		else
-		{
-			typedef typename detail::reprow_ewrapper_map<Row>::type wrapper_t;
-			wrapper_t row_wrap(s.row());
-
-			const index_t n = row_wrap.ncolumns();
-
-			if (M == 0)
-			{
-				const index_t m = s.nrows();
-				if (n == 1)
-				{
-					fill_mem(m, dst.ptr_data(), row_wrap[0]);
+					fill(dst, col_wrap[0]);
 				}
 				else
 				{
+					const index_t n = s.ncolumns();
 					for (index_t j = 0; j < n; ++j)
-						fill_mem(m, dst.ptr_col(j), row_wrap[j]);
+					{
+						copy_mem(m, col_wrap.data(), dst.ptr_col(j));
+					}
+				}
+			}
+		}
+	};
+
+
+	template<class Col, class Dst>
+	struct repcols_evalctx<Col, 1, Dst>
+	{
+		LMAT_ENSURE_INLINE
+		static void evaluate(const repeat_col_expr<Col, 1>& s, Dst& dst)
+		{
+			default_evaluate(s.column(), dst);
+		}
+	};
+
+
+	template<class Row, int M, class Dst>
+	struct reprows_evalctx
+	{
+#ifdef LMAT_USE_STATIC_ASSERT
+		static_assert(M == 0 || M > 1, "M should be either 0 or greater than 1 here");
+#endif
+
+		typedef typename binary_value_type<Row, Dst>::type T;
+
+		inline
+		static void evaluate(const repeat_row_expr<Row, M>& s,
+				Dst& dst)
+		{
+			if ( is_row(s) )
+			{
+				const int N = binary_ct_cols<Row, Dst>::value;
+				if (has_continuous_layout(dst))
+				{
+					ref_row<T, N> dview(dst.ptr_data(), s.ncolumns());
+					default_evaluate(s.row(), dview);
+				}
+				else
+				{
+					ref_matrix_ex<T, 1, N> dview(dst.ptr_data(), 1, s.ncolumns(), dst.lead_dim());
+					default_evaluate(s.row(), dview);
 				}
 			}
 			else
 			{
-				if (n == 1)
+				typedef typename detail::reprow_ewrapper_map<Row>::type wrapper_t;
+				wrapper_t row_wrap(s.row());
+
+				const index_t n = row_wrap.ncolumns();
+
+				if (M == 0)
 				{
-					fill_mem(M, dst.ptr_data(), row_wrap[0]);
+					const index_t m = s.nrows();
+					if (n == 1)
+					{
+						fill_mem(m, dst.ptr_data(), row_wrap[0]);
+					}
+					else
+					{
+						for (index_t j = 0; j < n; ++j)
+							fill_mem(m, dst.ptr_col(j), row_wrap[j]);
+					}
 				}
 				else
 				{
-					for (index_t j = 0; j < n; ++j)
-						fill_mem(M, dst.ptr_col(j), row_wrap[j]);
+					if (n == 1)
+					{
+						fill_mem(M, dst.ptr_data(), row_wrap[0]);
+					}
+					else
+					{
+						for (index_t j = 0; j < n; ++j)
+							fill_mem(M, dst.ptr_col(j), row_wrap[j]);
+					}
 				}
 			}
 		}
-	}
+	};
+
+
+	template<class Row, class Dst>
+	struct reprows_evalctx<Row, 1, Dst>
+	{
+		typedef typename binary_value_type<Row, Dst>::type T;
+
+		inline
+		static void evaluate(const repeat_row_expr<Row, 1>& s, Dst& dst)
+		{
+			default_evaluate(s.row(), dst);
+		}
+	};
 
 
 
@@ -335,12 +361,6 @@ namespace lmat
 				>::type evaluator_type;
 
 		static const int cost = (N == 1 || M == 1) ? 0 : VEC_EVAL_CACHE_COST;
-
-		LMAT_ENSURE_INLINE
-		static int cost_of(const repeat_col_expr<Col, N>& )
-		{
-			return cost;
-		}
 	};
 
 
@@ -360,12 +380,6 @@ namespace lmat
 				>::type evaluator_type;
 
 		static const int cost = (M == 1 || N == 1) ? 0 : VEC_EVAL_CACHE_COST;
-
-		LMAT_ENSURE_INLINE
-		static int cost_of(const repeat_row_expr<Row, M>& )
-		{
-			return cost;
-		}
 	};
 
 
@@ -384,13 +398,8 @@ namespace lmat
 					>::type
 				>::type evaluator_type;
 
-		static const int cost = M < SHORTVEC_LENGTH_THRESHOLD ? SHORTVEC_PERCOL_COST : 0;
-
-		LMAT_ENSURE_INLINE
-		static int cost_of(const repeat_col_expr<Col, N>& )
-		{
-			return cost;
-		}
+		static const int normal_cost = 0;
+		static const int shortv_cost = SHORTVEC_PERCOL_COST;
 	};
 
 
@@ -409,13 +418,8 @@ namespace lmat
 					>::type
 				>::type evaluator_type;
 
-		static const int cost = M < SHORTVEC_LENGTH_THRESHOLD ? SHORTVEC_PERCOL_COST : 0;
-
-		LMAT_ENSURE_INLINE
-		static int cost_of(const repeat_row_expr<Row, M>& )
-		{
-			return cost;
-		}
+		static const int normal_cost = 0;
+		static const int shortv_cost = SHORTVEC_PERCOL_COST;
 	};
 
 }

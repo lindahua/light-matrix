@@ -119,8 +119,8 @@ namespace lmat
 
 	template<class Expr, class Dst> struct copy_evalctx;
 	template<int M, int N, class Dst> struct fill_evalctx;
-	template<class Col, class Dst> struct repcols_evalctx;
-	template<class Row, class Dst> struct reprows_evalctx;
+	template<class Col, int N, class Dst> struct repcols_evalctx;
+	template<class Row, int M, class Dst> struct reprows_evalctx;
 
 	template<class Expr, class Dst> struct linear_scalar_evalctx;
 	template<class Expr, class Dst> struct percol_scalar_evalctx;

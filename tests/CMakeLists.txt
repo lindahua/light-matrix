@@ -194,10 +194,10 @@ set(REP_VECS_HS
     ${MATRIX_EVAL_BASE_HS}
     ${REPEAT_VECS_HS})
     
-# add_executable(test_rep_vecs ${REP_VECS_HS} test_rep_vecs.cpp)
-# add_executable(test_rep_veval ${REP_VECS_HS} test_rep_veval.cpp)
+add_executable(test_rep_vecs ${REP_VECS_HS} test_rep_vecs.cpp)
+add_executable(test_rep_veval ${REP_VECS_HS} test_rep_veval.cpp)
 
-# add_executable(test_cpd_ewise ${MATRIX_EVAL_HS} test_cpd_ewise.cpp)
+add_executable(test_cpd_ewise ${MATRIX_EVAL_HS} test_cpd_ewise.cpp)
 
 set(MAT_REDUC_HS
     ${MATRIX_HS}
@@ -230,9 +230,9 @@ set(LMAT_TEST_NAMES
 	test_mat_emath
 	test_mat_ecomp
 	test_mat_elogical
-	# test_rep_vecs
-	# test_rep_veval
-    # test_cpd_ewise
+	test_rep_vecs
+	test_rep_veval
+    test_cpd_ewise
 	# test_mat_reduce
 	# test_partial_reduce
 )
