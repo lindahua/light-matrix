@@ -151,7 +151,7 @@ MN_CASE( cpd_expr, pwise_sqdist )
 	ASSERT_TRUE( is_approx(Y, R, tol) );
 }
 
-/*
+
 MN_CASE( cpd_expr, pwise_sqdist2 )
 {
 	const index_t m = M == 0 ? 5 : M;
@@ -162,7 +162,7 @@ MN_CASE( cpd_expr, pwise_sqdist2 )
 
 	fill_ran(vx, -5.0, 5.0);
 	fill_ran(vy, -5.0, 5.0);
-	const double tol = 1.0e-12;
+
 
 	dense_matrix<double, M, N> Y =
 			  repcol(sqr(vx), n)
@@ -179,9 +179,10 @@ MN_CASE( cpd_expr, pwise_sqdist2 )
 		}
 	}
 
+	const double tol = 1.0e-12;
 	ASSERT_TRUE( is_approx(Y, R, tol) );
 }
-*/
+
 
 BEGIN_TPACK( cpd_ewise_sqdist )
 	ADD_MN_CASE_3X3( cpd_expr, ewise_sqdist, 5, 6 )
@@ -199,17 +200,18 @@ BEGIN_TPACK( cpd_pwise_sqdist )
 	ADD_MN_CASE_3X3( cpd_expr, pwise_sqdist, 5, 6 )
 END_TPACK
 
-/*
+
 BEGIN_TPACK( cpd_pwise_sqdist2 )
 	ADD_MN_CASE_3X3( cpd_expr, pwise_sqdist2, 5, 6 )
 END_TPACK
-*/
+
 
 BEGIN_MAIN_SUITE
 	ADD_TPACK( cpd_ewise_sqdist )
 	ADD_TPACK( cpd_ewise_normpdf )
 	ADD_TPACK( cpd_ewise_axpy_cast )
 	ADD_TPACK( cpd_pwise_sqdist )
+	ADD_TPACK( cpd_pwise_sqdist2 )
 END_MAIN_SUITE
 
 

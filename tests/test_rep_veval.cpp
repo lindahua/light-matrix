@@ -50,6 +50,14 @@ MN_CASE( repcols, eval )
 
 	dense_matrix<double, M, N> R( expr );
 
+	typedef repeat_col_expr<embed_mat<col_t>, N> expr_et;
+	expr_et expr_e(embed(col), n);
+
+	ASSERT_EQ( expr_e.nrows(), m );
+	ASSERT_EQ( expr_e.ncolumns(), n );
+
+	dense_matrix<double, M, N> Re(expr_e);
+
 	dense_matrix<double, M, N> R_r(m, n);
 	for (index_t j = 0; j < n; ++j)
 	{
@@ -57,6 +65,7 @@ MN_CASE( repcols, eval )
 	}
 
 	ASSERT_TRUE( is_equal(R, R_r) );
+	ASSERT_TRUE( is_equal(Re, R_r) );
 }
 
 
@@ -77,6 +86,14 @@ MN_CASE( reprows, eval )
 	ASSERT_EQ( expr.ncolumns(), n );
 
 	dense_matrix<double, M, N> R( expr );
+
+	typedef repeat_row_expr<embed_mat<row_t>, M> expr_et;
+	expr_et expr_e(embed(row), m);
+
+	ASSERT_EQ( expr_e.nrows(), m );
+	ASSERT_EQ( expr_e.ncolumns(), n );
+
+	dense_matrix<double, M, N> Re(expr_e);
 
 	dense_matrix<double, M, N> R_r(m, n);
 	for (index_t j = 0; j < n; ++j)
@@ -100,6 +117,7 @@ MN_CASE( linear_veval, repcol_linear )
 	for (index_t i = 0; i < m; ++i) col[i] = double(i+2);
 
 	repeat_col_expr<col_t, N> expr(col, n);
+	repeat_col_expr<embed_mat<col_t>, N> expr_e(embed(col), n);
 
 	mat_t R_r(m, n);
 	for (index_t j = 0; j < n; ++j)
@@ -109,8 +127,11 @@ MN_CASE( linear_veval, repcol_linear )
 
 	mat_t R(m, n);
 	linear_scalar_evaluate(expr, R);
-
 	ASSERT_TRUE( is_equal(R, R_r) );
+
+	mat_t Re(m, n);
+	linear_scalar_evaluate(expr_e, Re);
+	ASSERT_TRUE( is_equal(Re, R_r) );
 }
 
 MN_CASE( percol_veval, repcol_percol )
@@ -125,6 +146,7 @@ MN_CASE( percol_veval, repcol_percol )
 	for (index_t i = 0; i < m; ++i) col[i] = double(i+2);
 
 	repeat_col_expr<col_t, N> expr(col, n);
+	repeat_col_expr<embed_mat<col_t>, N> expr_e(embed(col), n);
 
 	mat_t R_r(m, n);
 	for (index_t j = 0; j < n; ++j)
@@ -134,8 +156,11 @@ MN_CASE( percol_veval, repcol_percol )
 
 	mat_t R(m, n);
 	percol_scalar_evaluate(expr, R);
-
 	ASSERT_TRUE( is_equal(R, R_r) );
+
+	mat_t Re(m, n);
+	percol_scalar_evaluate(expr_e, Re);
+	ASSERT_TRUE( is_equal(Re, R_r) );
 }
 
 
@@ -151,6 +176,7 @@ MN_CASE( linear_veval, reprow_linear )
 	for (index_t j = 0; j < n; ++j) row[j] = double(j+2);
 
 	repeat_row_expr<row_t, M> expr(row, m);
+	repeat_row_expr<embed_mat<row_t>, M> expr_e(embed(row), m);
 
 	mat_t R_r(m, n);
 	for (index_t j = 0; j < n; ++j)
@@ -160,8 +186,11 @@ MN_CASE( linear_veval, reprow_linear )
 
 	mat_t R(m, n);
 	linear_scalar_evaluate(expr, R);
-
 	ASSERT_TRUE( is_equal(R, R_r) );
+
+	mat_t Re(m, n);
+	linear_scalar_evaluate(expr_e, Re);
+	ASSERT_TRUE( is_equal(Re, R_r) );
 }
 
 
@@ -177,6 +206,7 @@ MN_CASE( percol_veval, reprow_percol )
 	for (index_t j = 0; j < n; ++j) row[j] = double(j+2);
 
 	repeat_row_expr<row_t, M> expr(row, m);
+	repeat_row_expr<embed_mat<row_t>, M> expr_e(embed(row), m);
 
 	mat_t R_r(m, n);
 	for (index_t j = 0; j < n; ++j)
@@ -186,8 +216,11 @@ MN_CASE( percol_veval, reprow_percol )
 
 	mat_t R(m, n);
 	percol_scalar_evaluate(expr, R);
-
 	ASSERT_TRUE( is_equal(R, R_r) );
+
+	mat_t Re(m, n);
+	percol_scalar_evaluate(expr_e, Re);
+	ASSERT_TRUE( is_equal(Re, R_r) );
 }
 
 

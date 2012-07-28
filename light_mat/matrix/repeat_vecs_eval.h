@@ -172,7 +172,8 @@ namespace lmat
 	  	  typename matrix_traits<Vec>::value_type>
 	{
 	public:
-		typedef typename matrix_traits<Vec>::value_type T;
+		typedef typename unwrapped_expr<Vec>::type Vec_;
+		typedef typename matrix_traits<Vec_>::value_type T;
 
 		LMAT_ENSURE_INLINE
 		single_vec_percol_evaluator(const repeat_col_expr<Vec, 1>& expr)
@@ -189,7 +190,7 @@ namespace lmat
 		void next_column() { m_eval.next_column(); }
 
 	private:
-		typename percol_eval<Vec>::evaluator_type m_eval;
+		typename percol_eval<Vec_>::evaluator_type m_eval;
 	};
 
 
@@ -200,7 +201,8 @@ namespace lmat
 	  	  typename matrix_traits<Vec>::value_type>
 	{
 	public:
-		typedef typename matrix_traits<Vec>::value_type T;
+		typedef typename unwrapped_expr<Vec>::type Vec_;
+		typedef typename matrix_traits<Vec_>::value_type T;
 
 		LMAT_ENSURE_INLINE
 		single_vec_linear_evaluator(const repeat_col_expr<Vec, 1>& expr)
@@ -214,7 +216,7 @@ namespace lmat
 		T get_value(const index_t i) const { return m_eval.get_value(i); }
 
 	private:
-		typename linear_eval<Vec>::evaluator_type m_eval;
+		typename linear_eval<Vec_>::evaluator_type m_eval;
 	};
 
 
@@ -325,7 +327,7 @@ namespace lmat
 
 		template<int N>
 		LMAT_ENSURE_INLINE
-		reprow_percol_evaluator(const repeat_row_expr<Row_, N>& expr)
+		reprow_percol_evaluator(const repeat_row_expr<Row, N>& expr)
 		: m_rowwrap(expr.row()), m_j(0) { }
 
 		LMAT_ENSURE_INLINE
