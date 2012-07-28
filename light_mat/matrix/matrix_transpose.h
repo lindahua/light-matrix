@@ -768,6 +768,25 @@ namespace lmat
 	};
 
 
+	/********************************************
+	 *
+	 *  transpose_expr map
+	 *
+	 ********************************************/
+
+	template<class Arg>
+	struct transpose_expr_map
+	{
+		typedef transpose_expr<Arg> type;
+
+		LMAT_ENSURE_INLINE
+		static type get(const Arg& arg)
+		{
+			return type(arg);
+		}
+	};
+
+
 }
 
 #endif /* MATRIX_TRANSPOSE_H_ */

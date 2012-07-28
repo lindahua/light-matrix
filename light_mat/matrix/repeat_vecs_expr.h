@@ -226,7 +226,6 @@ namespace lmat
 		return repeat_col_expr<Col, N>(col.derived(), N);
 	}
 
-
 	template<typename T, class Row>
 	LMAT_ENSURE_INLINE
 	inline typename reprow_type_map<Row, DynamicDim>::type

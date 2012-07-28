@@ -113,6 +113,9 @@ namespace lmat
 	template<class Fun, class Arg> class colwise_reduce_expr;
 	template<class Fun, class Arg> class rowwise_reduce_expr;
 
+	template<class Arg> struct transpose_expr_map;
+	template<class SMat, typename T> struct cast_expr_map;
+
 	// evaluation
 
 	template<class Expr, class Dst> struct default_evalctx;
@@ -130,8 +133,6 @@ namespace lmat
 
 	template<class Expr> struct linear_eval;
 	template<class Expr> struct percol_eval;
-
-	template<class SMat, typename T> struct cast_expr_map;
 
 	template<class Fun, class Arg, class Dst> struct colwise_reduce_evalctx;
 	template<class Fun, class Arg, class Dst> struct rowwise_reduce_evalctx;
