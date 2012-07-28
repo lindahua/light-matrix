@@ -14,7 +14,7 @@
 #define LIGHTMAT_MATRIX_EWISE_EVAL_H_
 
 #include <light_mat/matrix/matrix_ewise_expr.h>
-#include <light_mat/matrix/generic_matrix_eval.h>
+#include <light_mat/matrix/matrix_veval.h>
 
 namespace lmat
 {
@@ -159,11 +159,7 @@ namespace lmat
 	{
 		typedef unary_ewise_linear_evaluator<Fun, Arg> evaluator_type;
 
-		LMAT_ENSURE_INLINE
-		static int cost_of(const unary_ewise_expr<Fun, Arg>& expr )
-		{
-			return linear_eval<typename unwrapped_expr<Arg>::type>::cost_of(expr.arg());
-		}
+		static const int cost = linear_eval<typename unwrapped_expr<Arg>::type>::cost;
 	};
 
 	template<typename Fun, class Arg>
@@ -171,11 +167,8 @@ namespace lmat
 	{
 		typedef unary_ewise_percol_evaluator<Fun, Arg> evaluator_type;
 
-		LMAT_ENSURE_INLINE
-		static int cost_of(const unary_ewise_expr<Fun, Arg>& expr )
-		{
-			return percol_eval<typename unwrapped_expr<Arg>::type>::cost_of(expr.arg());
-		}
+		static const int normal_cost = percol_eval<typename unwrapped_expr<Arg>::type>::normal_cost;
+		static const int shortv_cost = percol_eval<typename unwrapped_expr<Arg>::type>::shortv_cost;
 	};
 
 	template<typename Fun, class Arg1, class Arg2>
@@ -183,12 +176,9 @@ namespace lmat
 	{
 		typedef binary_ewise_linear_evaluator<Fun, Arg1, Arg2> evaluator_type;
 
-		LMAT_ENSURE_INLINE
-		static int cost_of(const binary_ewise_expr<Fun, Arg1, Arg2>& expr )
-		{
-			return  linear_eval<typename unwrapped_expr<Arg1>::type>::cost_of(expr.first_arg()) +
-					linear_eval<typename unwrapped_expr<Arg2>::type>::cost_of(expr.second_arg());
-		}
+		static const int cost =
+				linear_eval<typename unwrapped_expr<Arg1>::type>::cost +
+				linear_eval<typename unwrapped_expr<Arg2>::type>::cost;
 	};
 
 	template<typename Fun, class Arg1, class Arg2>
@@ -196,12 +186,46 @@ namespace lmat
 	{
 		typedef binary_ewise_percol_evaluator<Fun, Arg1, Arg2> evaluator_type;
 
-		LMAT_ENSURE_INLINE
-		static int cost_of(const binary_ewise_expr<Fun, Arg1, Arg2>& expr )
-		{
-			return  percol_eval<typename unwrapped_expr<Arg1>::type>::cost_of(expr.first_arg()) +
-					percol_eval<typename unwrapped_expr<Arg2>::type>::cost_of(expr.second_arg());
-		}
+		static const int normal_cost =
+				percol_eval<typename unwrapped_expr<Arg1>::type>::normal_cost +
+				percol_eval<typename unwrapped_expr<Arg2>::type>::normal_cost;
+
+		static const int shortv_cost =
+				percol_eval<typename unwrapped_expr<Arg1>::type>::shortv_cost +
+				percol_eval<typename unwrapped_expr<Arg2>::type>::shortv_cost;
+	};
+
+
+	template<class Src, class Dst>
+	struct default_ewise_evalctx
+	{
+		static const int linear_cost = linear_eval<Src>::cost;
+		static const int percol_cost =
+				binary_ct_rows<Src, Dst>::value <= SHORTVEC_LENGTH_THRESHOLD ?
+						percol_eval<Src>::normal_cost :
+						percol_eval<Dst>::shortv_cost;
+
+		static const bool choose_linear = ct_has_continuous_layout<Dst>::value && linear_cost <= percol_cost;
+
+		typedef typename
+				if_c<choose_linear,
+					linear_scalar_evalctx<Src, Dst>,
+					percol_scalar_evalctx<Src, Dst> >::type type;
+	};
+
+
+	template<typename Fun, class Arg, class Dst>
+	struct default_evalctx<unary_ewise_expr<Fun, Arg>, Dst>
+	{
+		typedef typename default_ewise_evalctx<
+				unary_ewise_expr<Fun, Arg>, Dst>::type type;
+	};
+
+	template<typename Fun, class Arg1, class Arg2, class Dst>
+	struct default_evalctx<binary_ewise_expr<Fun, Arg1, Arg2>, Dst>
+	{
+		typedef typename default_ewise_evalctx<
+				binary_ewise_expr<Fun, Arg1, Arg2>, Dst>::type type;
 	};
 
 }

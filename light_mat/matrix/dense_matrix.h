@@ -60,6 +60,12 @@ namespace lmat
 		static const bool value = true;
 	};
 
+	template<typename T, int CTRows, int CTCols, typename Align, class DMat>
+	struct default_evalctx<dense_matrix<T, CTRows, CTCols, Align>, DMat>
+	{
+		typedef copy_evalctx<dense_matrix<T, CTRows, CTCols, Align>, DMat> type;
+	};
+
 
 	/********************************************
 	 *
@@ -108,18 +114,11 @@ namespace lmat
 		{
 		}
 
-		template<class Other>
-		LMAT_ENSURE_INLINE dense_matrix(const IDenseMatrix<Other, T>& r)
-		: m_internal(r.nrows(), r.ncolumns())
-		{
-			copy(r.derived(), *this);
-		}
-
 		template<class Expr>
 		LMAT_ENSURE_INLINE dense_matrix(const IMatrixXpr<Expr, T>& r)
 		: m_internal(r.nrows(), r.ncolumns())
 		{
-			evaluate_to(r.derived(), *this);
+			default_evaluate(r, *this);
 		}
 
 		template<class Expr, typename S>
@@ -157,19 +156,11 @@ namespace lmat
 			return *this;
 		}
 
-		template<class RMat>
-		LMAT_ENSURE_INLINE dense_matrix& operator = (const IDenseMatrix<RMat, T>& r)
-		{
-			resize_to(r);
-			copy(r.derived(), *this);
-			return *this;
-		}
-
 		template<class Expr>
 		LMAT_ENSURE_INLINE dense_matrix& operator = (const IMatrixXpr<Expr, T>& r)
 		{
 			resize_to(r);
-			evaluate_to(r.derived(), *this);
+			default_evaluate(r, *this);
 			return *this;
 		}
 

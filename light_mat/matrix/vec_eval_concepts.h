@@ -81,86 +81,79 @@ namespace lmat
 	 ********************************************/
 
 	template<typename T, int CTSize>
-	class linear_eval_context
+	struct linear_byscalars_eval_impl
 	{
 #ifdef LMAT_USE_STATIC_ASSERT
 		static_assert(CTSize > 0, "CTSize must be positive.");
 #endif
 
-	private:
-		T *dst;
-
-	public:
-		template<class Mat>
+		template<class Eva, class Mat>
 		LMAT_ENSURE_INLINE
-		linear_eval_context(IDenseMatrix<Mat, T>& mat)
-		: dst(mat.ptr_data())
-		{ }
-
-		template<class Eva>
-		LMAT_ENSURE_INLINE
-		void eval_by_scalars(const ILinearVectorEvaluator<Eva, T>& evaluator)
+		static void evaluate(
+				const ILinearVectorEvaluator<Eva, T>& evaluator,
+				IDenseMatrix<Mat, T>& dst)
 		{
+			T* pd = dst.ptr_data();
 			for (index_t i = 0; i < CTSize; ++i)
 			{
-				dst[i] = evaluator.get_value(i);
+				pd[i] = evaluator.get_value(i);
 			}
 		}
 	};
 
 	template<typename T>
-	class linear_eval_context<T, DynamicDim>
+	struct linear_byscalars_eval_impl<T, DynamicDim>
 	{
-	private:
-		const index_t nelems;
-		T *dst;
-
-	public:
-		template<class Mat>
+		template<class Eva, class Mat>
 		LMAT_ENSURE_INLINE
-		linear_eval_context(IDenseMatrix<Mat, T>& mat)
-		: nelems(mat.nelems())
-		, dst(mat.ptr_data())
-		{ }
-
-		template<class Eva>
-		LMAT_ENSURE_INLINE
-		void eval_by_scalars(const ILinearVectorEvaluator<Eva, T>& evaluator) const
+		static void evaluate(
+				const ILinearVectorEvaluator<Eva, T>& evaluator,
+				IDenseMatrix<Mat, T>& dst)
 		{
-			for (index_t i = 0; i < nelems; ++i)
+			T* pd = dst.ptr_data();
+			const index_t len = dst.nelems();
+
+			for (index_t i = 0; i < len; ++i)
 			{
-				dst[i] = evaluator.get_value(i);
+				pd[i] = evaluator.get_value(i);
 			}
 		}
 	};
 
 
+	template<class Expr, class Dst>
+	struct linear_scalar_evalctx
+	{
+		typedef typename binary_value_type<Expr, Dst>::type T;
+		typedef linear_byscalars_eval_impl<T, binary_ct_size<Expr, Dst>::value> impl_t;
+
+		LMAT_ENSURE_INLINE
+		static void evaluate(const Expr& src, Dst& dst)
+		{
+			typename linear_eval<Expr>::evaluator_type evaluator(src);
+			impl_t::evaluate(evaluator, dst);
+		}
+	};
+
+
+
 	template<typename T, int CTRows, int CTCols>
-	class percol_eval_context
+	struct percol_byscalars_eval_impl
 	{
 #ifdef LMAT_USE_STATIC_ASSERT
-		static_assert(CTRows > 0, "CTRows must be positive.");
+		static_assert(CTRows > 0, "CTSize must be positive.");
 #endif
 
-	private:
-		const index_t ncols;
-		const index_t ldim;
-		T *dst;
-
-	public:
-		template<class Mat>
+		template<class Eva, class Mat>
 		LMAT_ENSURE_INLINE
-		percol_eval_context(IDenseMatrix<Mat, T>& mat)
-		: ncols(mat.ncolumns())
-		, ldim(mat.lead_dim())
-		, dst(mat.ptr_data())
-		{ }
-
-		template<class Eva>
-		LMAT_ENSURE_INLINE
-		void eval_by_scalars(IPerColVectorEvaluator<Eva, T>& evaluator) const
+		static void evaluate(
+				IPerColVectorEvaluator<Eva, T>& evaluator,
+				IDenseMatrix<Mat, T>& dst)
 		{
-			T *pd = dst;
+			const index_t ncols = dst.ncolumns();
+			const index_t ldim = dst.lead_dim();
+			T *pd = dst.ptr_data();
+
 			for (index_t j = 0; j < ncols; ++j,
 				pd += ldim, evaluator.next_column())
 			{
@@ -174,29 +167,19 @@ namespace lmat
 
 
 	template<typename T, int CTCols>
-	class percol_eval_context<T, DynamicDim, CTCols>
+	struct percol_byscalars_eval_impl<T, DynamicDim, CTCols>
 	{
-	private:
-		const index_t nrows;
-		const index_t ncols;
-		const index_t ldim;
-		T *dst;
-
-	public:
-		template<class Mat>
+		template<class Eva, class Mat>
 		LMAT_ENSURE_INLINE
-		percol_eval_context(IDenseMatrix<Mat, T>& mat)
-		: nrows(mat.nrows())
-		, ncols(mat.ncolumns())
-		, ldim(mat.lead_dim())
-		, dst(mat.ptr_data())
-		{ }
-
-		template<class Eva>
-		LMAT_ENSURE_INLINE
-		void eval_by_scalars(IPerColVectorEvaluator<Eva, T>& evaluator) const
+		static void evaluate(
+				IPerColVectorEvaluator<Eva, T>& evaluator,
+				IDenseMatrix<Mat, T>& dst)
 		{
-			T *pd = dst;
+			const index_t nrows = dst.nrows();
+			const index_t ncols = dst.ncolumns();
+			const index_t ldim = dst.lead_dim();
+			T *pd = dst.ptr_data();
+
 			for (index_t j = 0; j < ncols; ++j,
 				pd += ldim, evaluator.next_column())
 			{
@@ -208,6 +191,21 @@ namespace lmat
 		}
 	};
 
+	template<class Expr, class Dst>
+	struct percol_scalar_evalctx
+	{
+		typedef typename binary_value_type<Expr, Dst>::type T;
+		typedef percol_byscalars_eval_impl<T,
+				binary_ct_rows<Expr, Dst>::value,
+				binary_ct_cols<Expr, Dst>::value> impl_t;
+
+		LMAT_ENSURE_INLINE
+		static void evaluate(const Expr& src, Dst& dst)
+		{
+			typename percol_eval<Expr>::evaluator_type evaluator(src);
+			impl_t::evaluate(evaluator, dst);
+		}
+	};
 
 }
 

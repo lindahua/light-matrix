@@ -13,7 +13,7 @@
 #ifndef LIGHTMAT_CONST_MATRIX_H_
 #define LIGHTMAT_CONST_MATRIX_H_
 
-#include <light_mat/matrix/matrix_concepts.h>
+#include <light_mat/matrix/matrix_fill.h>
 #include <light_mat/matrix/matrix_shape.h>
 
 namespace lmat
@@ -36,6 +36,13 @@ namespace lmat
 	{
 		static const bool value = true;
 	};
+
+	template<typename T, int CTRows, int CTCols, class DMat>
+	struct default_evalctx<const_matrix<T, CTRows, CTCols>, DMat>
+	{
+		typedef fill_evalctx<CTRows, CTCols, DMat> type;
+	};
+
 
 	template<typename T, int CTRows, int CTCols>
 	class const_matrix : public IMatrixView<const_matrix<T, CTRows, CTCols>, T>
@@ -92,22 +99,18 @@ namespace lmat
 	};
 
 
-	template<typename T, int CTRows, int CTCols, class DMat>
-	LMAT_ENSURE_INLINE
-	inline void evaluate_to(const const_matrix<T, CTRows, CTCols>& s, IDenseMatrix<DMat, T>& dst)
+	// Evaluation
+
+	template<int M, int N, class Dst>
+	struct fill_evalctx
 	{
-		fill(dst, s.value());
-	}
+		typedef const_matrix<typename matrix_traits<Dst>::value_type, M, N> SMat;
 
-
-	template<class Mat>
-	struct const_mat_same_form
-	{
-		typedef typename matrix_traits<Mat>::value_type value_type;
-
-		typedef const_matrix<value_type,
-				ct_rows<Mat>::value,
-				ct_cols<Mat>::value> type;
+		LMAT_ENSURE_INLINE
+		static void evaluate(const SMat& src, Dst &dst)
+		{
+			fill(dst, src.value());
+		}
 	};
 
 }

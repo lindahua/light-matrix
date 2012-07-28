@@ -115,17 +115,22 @@ namespace lmat
 
 	// evaluation
 
+	template<class Expr, class Dst> struct default_evalctx;
+
+	template<class Expr, class Dst> struct copy_evalctx;
+	template<int M, int N, class Dst> struct fill_evalctx;
+	template<class Col, class Dst> struct repcols_evalctx;
+	template<class Row, class Dst> struct reprows_evalctx;
+
+	template<class Expr, class Dst> struct linear_scalar_evalctx;
+	template<class Expr, class Dst> struct percol_scalar_evalctx;
+	template<class Expr, class Dst> struct linear_simd_evalctx;
+	template<class Expr, class Dst> struct percol_simd_evalctx;
+
 	template<class Expr> struct linear_eval;
 	template<class Expr> struct percol_eval;
 
-	template<typename T, int CTSize> class linear_eval_context;
-	template<typename T, int CTRows, int CTCols> class percol_eval_context;
-
-	template<typename T, class SExpr, class DMat>
-	inline void evaluate_to(const IMatrixXpr<SExpr, T>& src, IDenseMatrix<DMat, T>& dst);
-
 	template<class SMat, typename T> struct cast_expr_map;
-
 }
 
 // Useful macros

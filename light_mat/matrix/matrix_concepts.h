@@ -328,12 +328,23 @@ namespace lmat
 	}; // end class IDenseMatrixBlock
 
 
+	template<typename T, class SExpr, class DMat>
+	LMAT_ENSURE_INLINE
+	void default_evaluate(const IMatrixXpr<SExpr, T>& src, IMatrixXpr<DMat, T>& dst)
+	{
+		typedef typename default_evalctx<SExpr, DMat>::type ctx_t;
+		ctx_t::evaluate(src.derived(), dst.derived());
+	}
+
+
 	template<typename S, typename T, class SExpr, class DMat>
 	LMAT_ENSURE_INLINE
 	inline typename enable_if_c<is_implicitly_convertible<S, T>::value, void>::type
 	implicitly_cast_to(const IMatrixXpr<SExpr, S>& src, IDenseMatrix<DMat, T>& dst)
 	{
-		evaluate_to(cast_expr_map<SExpr, T>::get(src.derived()), dst.derived());
+		typedef typename cast_expr_map<SExpr, T>::type conv_expr_t;
+		typedef typename default_evalctx<conv_expr_t, DMat>::type ctx_t;
+		ctx_t::evaluate(cast_expr_map<SExpr, T>::get(src), dst.derived());
 	}
 
 }

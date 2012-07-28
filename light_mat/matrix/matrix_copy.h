@@ -97,12 +97,19 @@ namespace lmat
 		}
 	}
 
-	template<typename T, class SMat, class DMat>
-	LMAT_ENSURE_INLINE
-	inline void evaluate_to(const IDenseMatrix<SMat, T>& src, IDenseMatrix<DMat, T>& dst)
+
+	template<class SMat, class DMat>
+	struct copy_evalctx
 	{
-		copy(src, dst);
-	}
+		typedef typename binary_value_type<SMat, DMat>::type T;
+
+		LMAT_ENSURE_INLINE
+		static void evaluate(const SMat& src, DMat& dst)
+		{
+			copy<T, SMat, DMat>(src, dst);
+		}
+	};
+
 }
 
 #endif 

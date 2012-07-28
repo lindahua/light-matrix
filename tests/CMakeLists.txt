@@ -86,7 +86,7 @@ set(MATRIX_EVAL_BASE_HS
     ${INC}/math/functor_base.h
     ${INC}/matrix/vec_eval_concepts.h
     ${INC}/matrix/vec_evaluators.h
-    ${INC}/matrix/generic_matrix_eval.h
+    ${INC}/matrix/matrix_veval.h
     ${INC}/matrix/matrix_ewise_eval.h)   
     
 set(MATRIX_EWISE_HS
@@ -170,7 +170,7 @@ add_executable(test_mat_compare ${REF_MAT_HS} test_mat_compare.cpp)
 
 add_executable(test_dense_eval ${MATRIX_HS} test_dense_eval.cpp)
 add_executable(test_mat_subviews ${MATRIX_HS} test_mat_subviews.cpp)
-add_executable(test_mat_transpose ${MATRIX_HS} test_mat_transpose.cpp)
+# add_executable(test_mat_transpose ${MATRIX_HS} test_mat_transpose.cpp)
 
 set(BASIC_MAT_EVAL_HS
     ${MATRIX_HS}
@@ -194,18 +194,18 @@ set(REP_VECS_HS
     ${MATRIX_EVAL_BASE_HS}
     ${REPEAT_VECS_HS})
     
-add_executable(test_rep_vecs ${REP_VECS_HS} test_rep_vecs.cpp)
-add_executable(test_rep_veval ${REP_VECS_HS} test_rep_veval.cpp)
+# add_executable(test_rep_vecs ${REP_VECS_HS} test_rep_vecs.cpp)
+# add_executable(test_rep_veval ${REP_VECS_HS} test_rep_veval.cpp)
 
-add_executable(test_cpd_ewise ${MATRIX_EVAL_HS} test_cpd_ewise.cpp)
+# add_executable(test_cpd_ewise ${MATRIX_EVAL_HS} test_cpd_ewise.cpp)
 
 set(MAT_REDUC_HS
     ${MATRIX_HS}
     ${MATRIX_EVAL_BASE_HS}
     ${MATRIX_REDUC_HS})
     
-add_executable(test_mat_reduce ${MAT_REDUC_HS} test_mat_reduce.cpp) 
-add_executable(test_partial_reduce ${MAT_REDUC_HS} test_partial_reduce.cpp) 
+# add_executable(test_mat_reduce ${MAT_REDUC_HS} test_mat_reduce.cpp) 
+# add_executable(test_partial_reduce ${MAT_REDUC_HS} test_partial_reduce.cpp) 
 
 # Link to test_main
 
@@ -223,18 +223,18 @@ set(LMAT_TEST_NAMES
 	test_mat_compare
 	test_dense_eval
 	test_mat_subviews
-	test_mat_transpose
+	# test_mat_transpose
 	test_dense_veval
 	test_dense_cast
 	test_mat_arith
 	test_mat_emath
 	test_mat_ecomp
 	test_mat_elogical
-	test_rep_vecs
-	test_rep_veval
-	test_cpd_ewise
-	test_mat_reduce
-	test_partial_reduce
+	# test_rep_vecs
+	# test_rep_veval
+    # test_cpd_ewise
+	# test_mat_reduce
+	# test_partial_reduce
 )
 	
 foreach(tname ${LMAT_TEST_NAMES})

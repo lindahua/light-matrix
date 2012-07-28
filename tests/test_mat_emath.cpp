@@ -71,7 +71,7 @@ MN_CASE( mat_emath, floor )
 	ASSERT_TRUE( is_equal(R, R_r) );
 
 	mat_t R_s(m, n, fill_value(0.0));
-	evaluate_by_scalars(floor(A), R_s);
+	linear_scalar_evaluate(floor(A), R_s);
 	ASSERT_TRUE( is_equal(R_s, R_r) );
 }
 
@@ -92,7 +92,7 @@ MN_CASE( mat_emath, ceil )
 	ASSERT_TRUE( is_equal(R, R_r) );
 
 	mat_t R_s(m, n, fill_value(0.0));
-	evaluate_by_scalars(ceil(A), R_s);
+	linear_scalar_evaluate(ceil(A), R_s);
 	ASSERT_TRUE( is_equal(R_s, R_r) );
 }
 
@@ -114,7 +114,7 @@ MN_CASE( mat_emath, exp )
 	ASSERT_TRUE( is_approx(R, R_r, tol) );
 
 	mat_t R_s(m, n, fill_value(0.0));
-	evaluate_by_scalars(exp(A), R_s);
+	linear_scalar_evaluate(exp(A), R_s);
 	ASSERT_TRUE( is_approx(R_s, R_r, tol) );
 }
 
@@ -136,7 +136,7 @@ MN_CASE( mat_emath, log )
 	ASSERT_TRUE( is_approx(R, R_r, tol) );
 
 	mat_t R_s(m, n, fill_value(0.0));
-	evaluate_by_scalars(log(A), R_s);
+	linear_scalar_evaluate(log(A), R_s);
 	ASSERT_TRUE( is_approx(R_s, R_r, tol) );
 }
 
@@ -158,7 +158,7 @@ MN_CASE( mat_emath, log10 )
 	ASSERT_TRUE( is_approx(R, R_r, tol) );
 
 	mat_t R_s(m, n, fill_value(0.0));
-	evaluate_by_scalars(log10(A), R_s);
+	linear_scalar_evaluate(log10(A), R_s);
 	ASSERT_TRUE( is_approx(R_s, R_r, tol) );
 }
 
@@ -180,7 +180,7 @@ MN_CASE( mat_emath, sin )
 	ASSERT_TRUE( is_approx(R, R_r, tol) );
 
 	mat_t R_s(m, n, fill_value(0.0));
-	evaluate_by_scalars(sin(A), R_s);
+	linear_scalar_evaluate(sin(A), R_s);
 	ASSERT_TRUE( is_approx(R_s, R_r, tol) );
 }
 
@@ -201,7 +201,7 @@ MN_CASE( mat_emath, cos )
 	ASSERT_TRUE( is_approx(R, R_r, tol) );
 
 	mat_t R_s(m, n, fill_value(0.0));
-	evaluate_by_scalars(cos(A), R_s);
+	linear_scalar_evaluate(cos(A), R_s);
 	ASSERT_TRUE( is_approx(R_s, R_r, tol) );
 }
 
@@ -222,7 +222,7 @@ MN_CASE( mat_emath, tan )
 	ASSERT_TRUE( is_approx(R, R_r, tol) );
 
 	mat_t R_s(m, n, fill_value(0.0));
-	evaluate_by_scalars(tan(A), R_s);
+	linear_scalar_evaluate(tan(A), R_s);
 	ASSERT_TRUE( is_approx(R_s, R_r, tol) );
 }
 
@@ -244,7 +244,7 @@ MN_CASE( mat_emath, asin )
 	ASSERT_TRUE( is_approx(R, R_r, tol) );
 
 	mat_t R_s(m, n, fill_value(0.0));
-	evaluate_by_scalars(asin(A), R_s);
+	linear_scalar_evaluate(asin(A), R_s);
 	ASSERT_TRUE( is_approx(R_s, R_r, tol) );
 }
 
@@ -265,7 +265,7 @@ MN_CASE( mat_emath, acos )
 	ASSERT_TRUE( is_approx(R, R_r, tol) );
 
 	mat_t R_s(m, n, fill_value(0.0));
-	evaluate_by_scalars(acos(A), R_s);
+	linear_scalar_evaluate(acos(A), R_s);
 	ASSERT_TRUE( is_approx(R_s, R_r, tol) );
 }
 
@@ -286,7 +286,7 @@ MN_CASE( mat_emath, atan )
 	ASSERT_TRUE( is_approx(R, R_r, tol) );
 
 	mat_t R_s(m, n, fill_value(0.0));
-	evaluate_by_scalars(atan(A), R_s);
+	linear_scalar_evaluate(atan(A), R_s);
 	ASSERT_TRUE( is_approx(R_s, R_r, tol) );
 }
 
@@ -326,7 +326,7 @@ MN_CASE( mat_emath, sinh )
 	ASSERT_TRUE( is_approx(R, R_r, tol) );
 
 	mat_t R_s(m, n, fill_value(0.0));
-	evaluate_by_scalars(sinh(A), R_s);
+	linear_scalar_evaluate(sinh(A), R_s);
 	ASSERT_TRUE( is_approx(R_s, R_r, tol) );
 }
 
@@ -347,7 +347,7 @@ MN_CASE( mat_emath, cosh )
 	ASSERT_TRUE( is_approx(R, R_r, tol) );
 
 	mat_t R_s(m, n, fill_value(0.0));
-	evaluate_by_scalars(cosh(A), R_s);
+	linear_scalar_evaluate(cosh(A), R_s);
 	ASSERT_TRUE( is_approx(R_s, R_r, tol) );
 }
 
@@ -368,7 +368,7 @@ MN_CASE( mat_emath, tanh )
 	ASSERT_TRUE( is_approx(R, R_r, tol) );
 
 	mat_t R_s(m, n, fill_value(0.0));
-	evaluate_by_scalars(tanh(A), R_s);
+	linear_scalar_evaluate(tanh(A), R_s);
 	ASSERT_TRUE( is_approx(R_s, R_r, tol) );
 }
 
@@ -392,7 +392,7 @@ MN_CASE( mat_emath, round )
 	ASSERT_TRUE( is_approx(R, R_r, tol) );
 
 	mat_t R_s(m, n, fill_value(0.0));
-	evaluate_by_scalars(round(A), R_s);
+	linear_scalar_evaluate(round(A), R_s);
 	ASSERT_TRUE( is_approx(R_s, R_r, tol) );
 }
 
@@ -413,7 +413,7 @@ MN_CASE( mat_emath, trunc )
 	ASSERT_TRUE( is_approx(R, R_r, tol) );
 
 	mat_t R_s(m, n, fill_value(0.0));
-	evaluate_by_scalars(trunc(A), R_s);
+	linear_scalar_evaluate(trunc(A), R_s);
 	ASSERT_TRUE( is_approx(R_s, R_r, tol) );
 }
 
@@ -435,7 +435,7 @@ MN_CASE( mat_emath, cbrt )
 	ASSERT_TRUE( is_approx(R, R_r, tol) );
 
 	mat_t R_s(m, n, fill_value(0.0));
-	evaluate_by_scalars(cbrt(A), R_s);
+	linear_scalar_evaluate(cbrt(A), R_s);
 	ASSERT_TRUE( is_approx(R_s, R_r, tol) );
 }
 
@@ -475,7 +475,7 @@ MN_CASE( mat_emath, exp2 )
 	ASSERT_TRUE( is_approx(R, R_r, tol) );
 
 	mat_t R_s(m, n, fill_value(0.0));
-	evaluate_by_scalars(exp2(A), R_s);
+	linear_scalar_evaluate(exp2(A), R_s);
 	ASSERT_TRUE( is_approx(R_s, R_r, tol) );
 }
 
@@ -496,7 +496,7 @@ MN_CASE( mat_emath, log2 )
 	ASSERT_TRUE( is_approx(R, R_r, tol) );
 
 	mat_t R_s(m, n, fill_value(0.0));
-	evaluate_by_scalars(log2(A), R_s);
+	linear_scalar_evaluate(log2(A), R_s);
 	ASSERT_TRUE( is_approx(R_s, R_r, tol) );
 }
 
@@ -517,7 +517,7 @@ MN_CASE( mat_emath, expm1 )
 	ASSERT_TRUE( is_approx(R, R_r, tol) );
 
 	mat_t R_s(m, n, fill_value(0.0));
-	evaluate_by_scalars(expm1(A), R_s);
+	linear_scalar_evaluate(expm1(A), R_s);
 	ASSERT_TRUE( is_approx(R_s, R_r, tol) );
 }
 
@@ -538,7 +538,7 @@ MN_CASE( mat_emath, log1p )
 	ASSERT_TRUE( is_approx(R, R_r, tol) );
 
 	mat_t R_s(m, n, fill_value(0.0));
-	evaluate_by_scalars(log1p(A), R_s);
+	linear_scalar_evaluate(log1p(A), R_s);
 	ASSERT_TRUE( is_approx(R_s, R_r, tol) );
 }
 
@@ -559,7 +559,7 @@ MN_CASE( mat_emath, asinh )
 	ASSERT_TRUE( is_approx(R, R_r, tol) );
 
 	mat_t R_s(m, n, fill_value(0.0));
-	evaluate_by_scalars(asinh(A), R_s);
+	linear_scalar_evaluate(asinh(A), R_s);
 	ASSERT_TRUE( is_approx(R_s, R_r, tol) );
 }
 
@@ -580,7 +580,7 @@ MN_CASE( mat_emath, acosh )
 	ASSERT_TRUE( is_approx(R, R_r, tol) );
 
 	mat_t R_s(m, n, fill_value(0.0));
-	evaluate_by_scalars(acosh(A), R_s);
+	linear_scalar_evaluate(acosh(A), R_s);
 	ASSERT_TRUE( is_approx(R_s, R_r, tol) );
 }
 
@@ -601,7 +601,7 @@ MN_CASE( mat_emath, atanh )
 	ASSERT_TRUE( is_approx(R, R_r, tol) );
 
 	mat_t R_s(m, n, fill_value(0.0));
-	evaluate_by_scalars(atanh(A), R_s);
+	linear_scalar_evaluate(atanh(A), R_s);
 	ASSERT_TRUE( is_approx(R_s, R_r, tol) );
 }
 

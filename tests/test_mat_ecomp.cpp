@@ -58,15 +58,15 @@ MN_CASE( mat_ecomp, eq )
 	// by-scalars evaluation
 
 	bmat_t AB_s(m, n);
-	evaluate_by_scalars((A == B).template cast<bool>(), AB_s);
+	linear_scalar_evaluate((A == B).template cast<bool>(), AB_s);
 	ASSERT_TRUE( is_equal(AB_s, AB_r) );
 
 	bmat_t AC_s(m, n);
-	evaluate_by_scalars((A == c).template cast<bool>(), AC_s);
+	linear_scalar_evaluate((A == c).template cast<bool>(), AC_s);
 	ASSERT_TRUE( is_equal(AC_s, AC_r) );
 
 	bmat_t CB_s(m, n);
-	evaluate_by_scalars((c == B).template cast<bool>(), CB_s);
+	linear_scalar_evaluate((c == B).template cast<bool>(), CB_s);
 	ASSERT_TRUE( is_equal(CB_s, CB_r) );
 }
 
@@ -111,15 +111,15 @@ MN_CASE( mat_ecomp, ne )
 	// by-scalars evaluation
 
 	bmat_t AB_s(m, n);
-	evaluate_by_scalars((A != B).template cast<bool>(), AB_s);
+	linear_scalar_evaluate((A != B).template cast<bool>(), AB_s);
 	ASSERT_TRUE( is_equal(AB_s, AB_r) );
 
 	bmat_t AC_s(m, n);
-	evaluate_by_scalars((A != c).template cast<bool>(), AC_s);
+	linear_scalar_evaluate((A != c).template cast<bool>(), AC_s);
 	ASSERT_TRUE( is_equal(AC_s, AC_r) );
 
 	bmat_t CB_s(m, n);
-	evaluate_by_scalars((c != B).template cast<bool>(), CB_s);
+	linear_scalar_evaluate((c != B).template cast<bool>(), CB_s);
 	ASSERT_TRUE( is_equal(CB_s, CB_r) );
 }
 
@@ -164,15 +164,15 @@ MN_CASE( mat_ecomp, le )
 	// by-scalars evaluation
 
 	bmat_t AB_s(m, n);
-	evaluate_by_scalars((A <= B).template cast<bool>(), AB_s);
+	linear_scalar_evaluate((A <= B).template cast<bool>(), AB_s);
 	ASSERT_TRUE( is_equal(AB_s, AB_r) );
 
 	bmat_t AC_s(m, n);
-	evaluate_by_scalars((A <= c).template cast<bool>(), AC_s);
+	linear_scalar_evaluate((A <= c).template cast<bool>(), AC_s);
 	ASSERT_TRUE( is_equal(AC_s, AC_r) );
 
 	bmat_t CB_s(m, n);
-	evaluate_by_scalars((c <= B).template cast<bool>(), CB_s);
+	linear_scalar_evaluate((c <= B).template cast<bool>(), CB_s);
 	ASSERT_TRUE( is_equal(CB_s, CB_r) );
 }
 
@@ -217,15 +217,15 @@ MN_CASE( mat_ecomp, lt )
 	// by-scalars evaluation
 
 	bmat_t AB_s(m, n);
-	evaluate_by_scalars((A < B).template cast<bool>(), AB_s);
+	linear_scalar_evaluate((A < B).template cast<bool>(), AB_s);
 	ASSERT_TRUE( is_equal(AB_s, AB_r) );
 
 	bmat_t AC_s(m, n);
-	evaluate_by_scalars((A < c).template cast<bool>(), AC_s);
+	linear_scalar_evaluate((A < c).template cast<bool>(), AC_s);
 	ASSERT_TRUE( is_equal(AC_s, AC_r) );
 
 	bmat_t CB_s(m, n);
-	evaluate_by_scalars((c < B).template cast<bool>(), CB_s);
+	linear_scalar_evaluate((c < B).template cast<bool>(), CB_s);
 	ASSERT_TRUE( is_equal(CB_s, CB_r) );
 }
 
@@ -270,15 +270,15 @@ MN_CASE( mat_ecomp, ge )
 	// by-scalars evaluation
 
 	bmat_t AB_s(m, n);
-	evaluate_by_scalars((A >= B).template cast<bool>(), AB_s);
+	linear_scalar_evaluate((A >= B).template cast<bool>(), AB_s);
 	ASSERT_TRUE( is_equal(AB_s, AB_r) );
 
 	bmat_t AC_s(m, n);
-	evaluate_by_scalars((A >= c).template cast<bool>(), AC_s);
+	linear_scalar_evaluate((A >= c).template cast<bool>(), AC_s);
 	ASSERT_TRUE( is_equal(AC_s, AC_r) );
 
 	bmat_t CB_s(m, n);
-	evaluate_by_scalars((c >= B).template cast<bool>(), CB_s);
+	linear_scalar_evaluate((c >= B).template cast<bool>(), CB_s);
 	ASSERT_TRUE( is_equal(CB_s, CB_r) );
 }
 
@@ -323,15 +323,15 @@ MN_CASE( mat_ecomp, gt )
 	// by-scalars evaluation
 
 	bmat_t AB_s(m, n);
-	evaluate_by_scalars((A > B).template cast<bool>(), AB_s);
+	linear_scalar_evaluate((A > B).template cast<bool>(), AB_s);
 	ASSERT_TRUE( is_equal(AB_s, AB_r) );
 
 	bmat_t AC_s(m, n);
-	evaluate_by_scalars((A > c).template cast<bool>(), AC_s);
+	linear_scalar_evaluate((A > c).template cast<bool>(), AC_s);
 	ASSERT_TRUE( is_equal(AC_s, AC_r) );
 
 	bmat_t CB_s(m, n);
-	evaluate_by_scalars((c > B).template cast<bool>(), CB_s);
+	linear_scalar_evaluate((c > B).template cast<bool>(), CB_s);
 	ASSERT_TRUE( is_equal(CB_s, CB_r) );
 }
 

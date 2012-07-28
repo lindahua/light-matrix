@@ -38,7 +38,7 @@ MN_CASE( mat_elogical, not )
 	ASSERT_TRUE( is_equal(R, R_r) );
 
 	mmat_t R_s(m, n);
-	evaluate_by_scalars(~A, R_s);
+	linear_scalar_evaluate(~A, R_s);
 	ASSERT_TRUE( is_equal(R_s, R_r) );
 }
 
@@ -63,7 +63,7 @@ MN_CASE( mat_elogical, and )
 	ASSERT_TRUE( is_equal(R, R_r) );
 
 	mmat_t R_s(m, n);
-	evaluate_by_scalars(A & B, R_s);
+	linear_scalar_evaluate(A & B, R_s);
 	ASSERT_TRUE( is_equal(R_s, R_r) );
 }
 
@@ -88,7 +88,7 @@ MN_CASE( mat_elogical, or )
 	ASSERT_TRUE( is_equal(R, R_r) );
 
 	mmat_t R_s(m, n);
-	evaluate_by_scalars(A | B, R_s);
+	linear_scalar_evaluate(A | B, R_s);
 	ASSERT_TRUE( is_equal(R_s, R_r) );
 }
 
@@ -113,7 +113,7 @@ MN_CASE( mat_elogical, xor )
 	ASSERT_TRUE( is_equal(R, R_r) );
 
 	mmat_t R_s(m, n);
-	evaluate_by_scalars(A ^ B, R_s);
+	linear_scalar_evaluate(A ^ B, R_s);
 	ASSERT_TRUE( is_equal(R_s, R_r) );
 }
 

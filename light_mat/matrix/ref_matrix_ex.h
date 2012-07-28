@@ -117,6 +117,12 @@ namespace lmat
 		static const bool value = (CTRows == 1 || CTCols == 1);
 	};
 
+	template<typename T, int CTRows, int CTCols, typename Align, class DMat>
+	struct default_evalctx<cref_matrix_ex<T, CTRows, CTCols, Align>, DMat>
+	{
+		typedef copy_evalctx<cref_matrix_ex<T, CTRows, CTCols, Align>, DMat> type;
+	};
+
 
 	template<typename T, int CTRows, int CTCols, typename Align>
 	class cref_matrix_ex : public IDenseMatrix<cref_matrix_ex<T, CTRows, CTCols, Align>, T>
@@ -243,6 +249,12 @@ namespace lmat
 		static const bool value = (CTRows == 1 || CTCols == 1);
 	};
 
+	template<typename T, int CTRows, int CTCols, typename Align, class DMat>
+	struct default_evalctx<ref_matrix_ex<T, CTRows, CTCols, Align>, DMat>
+	{
+		typedef copy_evalctx<ref_matrix_ex<T, CTRows, CTCols, Align>, DMat> type;
+	};
+
 
 	template<typename T, int CTRows, int CTCols, typename Align>
 	class ref_matrix_ex : public IDenseMatrix<ref_matrix_ex<T, CTRows, CTCols, Align>, T>
@@ -272,17 +284,10 @@ namespace lmat
 			return *this;
 		}
 
-		template<class Mat>
-		LMAT_ENSURE_INLINE ref_matrix_ex& operator = (const IDenseMatrix<Mat, T>& r)
-		{
-			copy(r.derived(), *this);
-			return *this;
-		}
-
 		template<class Expr>
 		LMAT_ENSURE_INLINE ref_matrix_ex& operator = (const IMatrixXpr<Expr, T>& r)
 		{
-			evaluate_to(r.derived(), *this);
+			default_evaluate(r, *this);
 			return *this;
 		}
 

@@ -96,15 +96,15 @@ MN_CASE( mat_arith, add )
 	// by-scalars evaluation
 
 	mat_t AB_s(m, n, fill_value(0.0));
-	evaluate_by_scalars(A + B, AB_s);
+	linear_scalar_evaluate(A + B, AB_s);
 	ASSERT_TRUE( is_equal(AB_s, AB_r) );
 
 	mat_t AC_s(m, n, fill_value(0.0));
-	evaluate_by_scalars(A + c, AC_s);
+	linear_scalar_evaluate(A + c, AC_s);
 	ASSERT_TRUE( is_equal(AC_s, AC_r) );
 
 	mat_t CB_s(m, n, fill_value(0.0));
-	evaluate_by_scalars(c + B, CB_s);
+	linear_scalar_evaluate(c + B, CB_s);
 	ASSERT_TRUE( is_equal(CB_s, CB_r) );
 }
 
@@ -155,15 +155,15 @@ MN_CASE( mat_arith, add_ex )
 	// by-scalars evaluation
 
 	mat_t AB_s(m, n, fill_value(0.0));
-	evaluate_by_scalars(A + B, AB_s);
+	percol_scalar_evaluate(A + B, AB_s);
 	ASSERT_TRUE( is_equal(AB_s, AB_r) );
 
 	mat_t AC_s(m, n, fill_value(0.0));
-	evaluate_by_scalars(A + c, AC_s);
+	percol_scalar_evaluate(A + c, AC_s);
 	ASSERT_TRUE( is_equal(AC_s, AC_r) );
 
 	mat_t CB_s(m, n, fill_value(0.0));
-	evaluate_by_scalars(c + B, CB_s);
+	percol_scalar_evaluate(c + B, CB_s);
 	ASSERT_TRUE( is_equal(CB_s, CB_r) );
 }
 
@@ -257,15 +257,15 @@ MN_CASE( mat_arith, sub )
 	// by-scalars evaluation
 
 	mat_t AB_s(m, n, fill_value(0.0));
-	evaluate_by_scalars(A - B, AB_s);
+	linear_scalar_evaluate(A - B, AB_s);
 	ASSERT_TRUE( is_equal(AB_s, AB_r) );
 
 	mat_t AC_s(m, n, fill_value(0.0));
-	evaluate_by_scalars(A - c, AC_s);
+	linear_scalar_evaluate(A - c, AC_s);
 	ASSERT_TRUE( is_equal(AC_s, AC_r) );
 
 	mat_t CB_s(m, n, fill_value(0.0));
-	evaluate_by_scalars(c - B, CB_s);
+	linear_scalar_evaluate(c - B, CB_s);
 	ASSERT_TRUE( is_equal(CB_s, CB_r) );
 }
 
@@ -316,15 +316,15 @@ MN_CASE( mat_arith, sub_ex )
 	// by-scalars evaluation
 
 	mat_t AB_s(m, n, fill_value(0.0));
-	evaluate_by_scalars(A - B, AB_s);
+	percol_scalar_evaluate(A - B, AB_s);
 	ASSERT_TRUE( is_equal(AB_s, AB_r) );
 
 	mat_t AC_s(m, n, fill_value(0.0));
-	evaluate_by_scalars(A - c, AC_s);
+	percol_scalar_evaluate(A - c, AC_s);
 	ASSERT_TRUE( is_equal(AC_s, AC_r) );
 
 	mat_t CB_s(m, n, fill_value(0.0));
-	evaluate_by_scalars(c - B, CB_s);
+	percol_scalar_evaluate(c - B, CB_s);
 	ASSERT_TRUE( is_equal(CB_s, CB_r) );
 }
 
@@ -402,15 +402,15 @@ MN_CASE( mat_arith, mul )
 	// by-scalars evaluation
 
 	mat_t AB_s(m, n, fill_value(0.0));
-	evaluate_by_scalars(A * B, AB_s);
+	linear_scalar_evaluate(A * B, AB_s);
 	ASSERT_TRUE( is_equal(AB_s, AB_r) );
 
 	mat_t AC_s(m, n, fill_value(0.0));
-	evaluate_by_scalars(A * c, AC_s);
+	linear_scalar_evaluate(A * c, AC_s);
 	ASSERT_TRUE( is_equal(AC_s, AC_r) );
 
 	mat_t CB_s(m, n, fill_value(0.0));
-	evaluate_by_scalars(c * B, CB_s);
+	linear_scalar_evaluate(c * B, CB_s);
 	ASSERT_TRUE( is_equal(CB_s, CB_r) );
 }
 
@@ -461,15 +461,15 @@ MN_CASE( mat_arith, mul_ex )
 	// by-scalars evaluation
 
 	mat_t AB_s(m, n, fill_value(0.0));
-	evaluate_by_scalars(A * B, AB_s);
+	percol_scalar_evaluate(A * B, AB_s);
 	ASSERT_TRUE( is_equal(AB_s, AB_r) );
 
 	mat_t AC_s(m, n, fill_value(0.0));
-	evaluate_by_scalars(A * c, AC_s);
+	percol_scalar_evaluate(A * c, AC_s);
 	ASSERT_TRUE( is_equal(AC_s, AC_r) );
 
 	mat_t CB_s(m, n, fill_value(0.0));
-	evaluate_by_scalars(c * B, CB_s);
+	percol_scalar_evaluate(c * B, CB_s);
 	ASSERT_TRUE( is_equal(CB_s, CB_r) );
 }
 
@@ -547,15 +547,15 @@ MN_CASE( mat_arith, div )
 	// by-scalars evaluation
 
 	mat_t AB_s(m, n, fill_value(0.0));
-	evaluate_by_scalars(A / B, AB_s);
+	linear_scalar_evaluate(A / B, AB_s);
 	ASSERT_TRUE( is_equal(AB_s, AB_r) );
 
 	mat_t AC_s(m, n, fill_value(0.0));
-	evaluate_by_scalars(A / c, AC_s);
+	linear_scalar_evaluate(A / c, AC_s);
 	ASSERT_TRUE( is_equal(AC_s, AC_r) );
 
 	mat_t CB_s(m, n, fill_value(0.0));
-	evaluate_by_scalars(c / B, CB_s);
+	linear_scalar_evaluate(c / B, CB_s);
 	ASSERT_TRUE( is_equal(CB_s, CB_r) );
 }
 
@@ -606,15 +606,15 @@ MN_CASE( mat_arith, div_ex )
 	// by-scalars evaluation
 
 	mat_t AB_s(m, n, fill_value(0.0));
-	evaluate_by_scalars(A / B, AB_s);
+	percol_scalar_evaluate(A / B, AB_s);
 	ASSERT_TRUE( is_equal(AB_s, AB_r) );
 
 	mat_t AC_s(m, n, fill_value(0.0));
-	evaluate_by_scalars(A / c, AC_s);
+	percol_scalar_evaluate(A / c, AC_s);
 	ASSERT_TRUE( is_equal(AC_s, AC_r) );
 
 	mat_t CB_s(m, n, fill_value(0.0));
-	evaluate_by_scalars(c / B, CB_s);
+	percol_scalar_evaluate(c / B, CB_s);
 	ASSERT_TRUE( is_equal(CB_s, CB_r) );
 }
 
@@ -678,7 +678,7 @@ MN_CASE( mat_arith, neg )
 	// by-scalars evaluation
 
 	mat_t R_s(m, n, fill_value(0.0));
-	evaluate_by_scalars(-A, R_s);
+	linear_scalar_evaluate(-A, R_s);
 	ASSERT_TRUE( is_equal(R_s, R_r) );
 }
 
@@ -709,7 +709,7 @@ MN_CASE( mat_arith, neg_ex )
 	// by-scalars evaluation
 
 	mat_t R_s(m, n, fill_value(0.0));
-	evaluate_by_scalars(-A, R_s);
+	percol_scalar_evaluate(-A, R_s);
 	ASSERT_TRUE( is_equal(R_s, R_r) );
 }
 
@@ -737,7 +737,7 @@ MN_CASE( mat_arith, abs )
 	// by-scalars evaluation
 
 	mat_t R_s(m, n, fill_value(0.0));
-	evaluate_by_scalars(abs(A), R_s);
+	linear_scalar_evaluate(abs(A), R_s);
 	ASSERT_TRUE( is_equal(R_s, R_r) );
 }
 
@@ -768,7 +768,7 @@ MN_CASE( mat_arith, abs_ex )
 	// by-scalars evaluation
 
 	mat_t R_s(m, n, fill_value(0.0));
-	evaluate_by_scalars(abs(A), R_s);
+	percol_scalar_evaluate(abs(A), R_s);
 	ASSERT_TRUE( is_equal(R_s, R_r) );
 }
 
@@ -800,7 +800,7 @@ MN_CASE( mat_arith, sqr )
 	// by-scalars evaluation
 
 	mat_t R_s(m, n, fill_value(0.0));
-	evaluate_by_scalars(sqr(A), R_s);
+	linear_scalar_evaluate(sqr(A), R_s);
 	ASSERT_TRUE( is_equal(R_s, R_r) );
 }
 
@@ -831,7 +831,7 @@ MN_CASE( mat_arith, sqr_ex )
 	// by-scalars evaluation
 
 	mat_t R_s(m, n, fill_value(0.0));
-	evaluate_by_scalars(sqr(A), R_s);
+	percol_scalar_evaluate(sqr(A), R_s);
 	ASSERT_TRUE( is_equal(R_s, R_r) );
 }
 
@@ -861,7 +861,7 @@ MN_CASE( mat_arith, sqrt )
 	// by-scalars evaluation
 
 	mat_t R_s(m, n, fill_value(0.0));
-	evaluate_by_scalars(sqrt(A), R_s);
+	linear_scalar_evaluate(sqrt(A), R_s);
 	ASSERT_TRUE( is_approx(R_s, R_r, tol) );
 }
 
@@ -890,7 +890,7 @@ MN_CASE( mat_arith, rcp )
 	// by-scalars evaluation
 
 	mat_t R_s(m, n, fill_value(0.0));
-	evaluate_by_scalars(rcp(A), R_s);
+	linear_scalar_evaluate(rcp(A), R_s);
 	ASSERT_TRUE( is_approx(R_s, R_r, tol) );
 }
 
@@ -918,7 +918,7 @@ MN_CASE( mat_arith, rsqrt )
 	// by-scalars evaluation
 
 	mat_t R_s(m, n, fill_value(0.0));
-	evaluate_by_scalars(rsqrt(A), R_s);
+	linear_scalar_evaluate(rsqrt(A), R_s);
 	ASSERT_TRUE( is_approx(R_s, R_r, tol) );
 }
 

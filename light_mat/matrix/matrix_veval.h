@@ -1,7 +1,7 @@
 /**
- * @file matrix_eval.h
+ * @file matrix_veval.h
  *
- * Generic matrix evaluation
+ * Generic vector-based matrix evaluation
  *
  * @author Dahua Lin
  */
@@ -10,8 +10,8 @@
 #pragma once
 #endif
 
-#ifndef LIGHTMAT_GENERIC_MATRIX_EVAL_H_
-#define LIGHTMAT_GENERIC_MATRIX_EVAL_H_
+#ifndef LIGHTMAT_MATRIX_VEVAL_H_
+#define LIGHTMAT_MATRIX_VEVAL_H_
 
 #include <light_mat/matrix/vec_evaluators.h>
 
@@ -41,12 +41,6 @@ namespace lmat
 					cached_linear_evaluator<T> >::type evaluator_type;
 
 		static const int cost = can_direct ? 0 : VEC_EVAL_CACHE_COST;
-
-		LMAT_ENSURE_INLINE
-		static int cost_of(const Expr& )
-		{
-			return cost;
-		}
 	};
 
 	template<class Expr>
@@ -62,16 +56,8 @@ namespace lmat
 					dense_percol_evaluator<T>,
 					cached_percol_evaluator<T> >::type evaluator_type;
 
-		static const int cost = can_direct ?
-				(has_short_col ? SHORTVEC_PERCOL_COST : 0) :
-				(has_short_col ? (SHORTVEC_PERCOL_COST + VEC_EVAL_CACHE_COST) : VEC_EVAL_CACHE_COST);
-
-
-		LMAT_ENSURE_INLINE
-		static int cost_of(const Expr& )
-		{
-			return cost;
-		}
+		static const int normal_cost = can_direct ? 0 : VEC_EVAL_CACHE_COST;
+		static const int shortv_cost = SHORTVEC_PERCOL_COST + normal_cost;
 	};
 
 
@@ -87,11 +73,7 @@ namespace lmat
 	{
 		typedef const_linear_evaluator<T> evaluator_type;
 
-		LMAT_ENSURE_INLINE
-		static int cost_of(const const_matrix<T, CTRows, CTCols>& )
-		{
-			return 0;
-		}
+		static const int cost = 0;
 	};
 
 	template<typename T, int CTRows, int CTCols>
@@ -99,91 +81,30 @@ namespace lmat
 	{
 		typedef const_percol_evaluator<T> evaluator_type;
 
-		LMAT_ENSURE_INLINE
-		static int cost_of(const const_matrix<T, CTRows, CTCols>& )
-		{
-			return 0;
-		}
+		static const int normal_cost = 0;
+		static const int shortv_cost = 0;
 	};
 
 
 	/********************************************
 	 *
-	 *  Generic evaluation
+	 *  Evaluation functions
 	 *
 	 ********************************************/
 
-	namespace detail
+	template<typename T, class Expr, class Dst>
+	LMAT_ENSURE_INLINE
+	void linear_scalar_evaluate(const IMatrixXpr<Expr, T>& expr, IDenseMatrix<Dst, T>& dst)
 	{
-
-		template<typename T, int CTSize>
-		struct ewise_linear_eval_internal
-		{
-			template<class Expr, class Dst>
-			LMAT_ENSURE_INLINE
-			static void evaluate(const Expr& expr, Dst& dst)
-			{
-				typename linear_eval<Expr>::evaluator_type evaluator(expr);
-				linear_eval_context<T, CTSize> ctx(dst);
-				ctx.eval_by_scalars(evaluator);
-			}
-		};
-
-		template<typename T, int CTRows, int CTCols>
-		struct ewise_percol_eval_internal
-		{
-			template<class Expr, class Dst>
-			LMAT_ENSURE_INLINE
-			static void evaluate(const Expr& expr, Dst& dst)
-			{
-				typename percol_eval<Expr>::evaluator_type evaluator(expr);
-				percol_eval_context<T, CTRows, CTCols> ctx(dst);
-				ctx.eval_by_scalars(evaluator);
-			}
-		};
-
-		template<typename T, int CTRows, int CTCols>
-		struct ewise_eval_by_scalars_internal
-		{
-			template<class Expr, class Dst>
-			inline static void evaluate(const Expr& expr, Dst& dst)
-			{
-				if (!ct_has_continuous_layout<Dst>::value ||
-						percol_eval<Expr>::cost_of(expr) < linear_eval<Expr>::cost_of(expr))
-				{
-					ewise_percol_eval_internal<T, CTRows, CTCols>::evaluate(expr, dst);
-				}
-				else
-				{
-					ewise_linear_eval_internal<T, CTRows * CTCols>::evaluate(expr, dst);
-				}
-			}
-		};
+		linear_scalar_evalctx<Expr, Dst>::evaluate(expr.derived(), dst.derived());
 	}
 
-
-	template<typename S, typename T, class SExpr, class DMat>
+	template<typename T, class Expr, class Dst>
 	LMAT_ENSURE_INLINE
-	inline void evaluate_by_scalars(const IMatrixXpr<SExpr, S>& expr, IDenseMatrix<DMat, T>& dst)
+	void percol_scalar_evaluate(const IMatrixXpr<Expr, T>& expr, IDenseMatrix<Dst, T>& dst)
 	{
-		detail::ewise_eval_by_scalars_internal<T,
-			binary_ct_rows<SExpr, DMat>::value,
-			binary_ct_cols<SExpr, DMat>::value>::evaluate(expr.derived(), dst.derived());
+		percol_scalar_evalctx<Expr, Dst>::evaluate(expr.derived(), dst.derived());
 	}
-
-	template<typename T, class SExpr, class DMat>
-	LMAT_ENSURE_INLINE
-	inline void evaluate_to(const IMatrixXpr<SExpr, T>& expr, IDenseMatrix<DMat, T>& dst)
-	{
-		evaluate_by_scalars(expr, dst);
-	}
-
-
-
-	template<typename T, class Expr, class DMat>
-	LMAT_ENSURE_INLINE
-	inline void evaluate_to(const embed_mat<Expr>& expr, IDenseMatrix<DMat, T>& dst);
-	// ensure that evaluate_to is never invoked on embed_mat<Expr>
 
 }
 

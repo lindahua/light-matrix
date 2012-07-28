@@ -9,7 +9,7 @@
 #include "test_base.h"
 
 #include <light_mat/matrix/matrix_classes.h>
-#include <light_mat/matrix/generic_matrix_eval.h>
+#include <light_mat/matrix/matrix_veval.h>
 
 using namespace lmat;
 using namespace lmat::test;
@@ -212,8 +212,12 @@ MN_CASE( eval_by_scalars, cont_to_cont )
 
 	dense_matrix<double, M, N> b(m, n, zeros<double>());
 
-	evaluate_by_scalars(a, b);
+	linear_scalar_evaluate(a, b);
+	ASSERT_MAT_EQ(m, n, a, b);
 
+	fill(b, 0.0);
+
+	percol_scalar_evaluate(a, b);
 	ASSERT_MAT_EQ(m, n, a, b);
 }
 
@@ -230,8 +234,7 @@ MN_CASE( eval_by_scalars, cont_to_ext )
 	fill(sb, 0.0);
 	ref_matrix_ex<double, M, N> b(sb.ptr_begin(), m, n, ldim_b);
 
-	evaluate_by_scalars(a, b);
-
+	percol_scalar_evaluate(a, b);
 	ASSERT_MAT_EQ(m, n, a, b);
 }
 
@@ -247,8 +250,12 @@ MN_CASE( eval_by_scalars, ext_to_cont )
 	ref_matrix_ex<double, M, N> a(sa.ptr_begin(), m, n, ldim_a);
 	dense_matrix<double, M, N> b(m, n, fill_value(0.0));
 
-	evaluate_by_scalars(a, b);
+	linear_scalar_evaluate(a, b);
+	ASSERT_MAT_EQ(m, n, a, b);
 
+	fill(b, 0.0);
+
+	percol_scalar_evaluate(a, b);
 	ASSERT_MAT_EQ(m, n, a, b);
 }
 
@@ -268,8 +275,7 @@ MN_CASE( eval_by_scalars, ext_to_ext )
 	ref_matrix_ex<double, M, N> a(sa.ptr_begin(), m, n, ldim_a);
 	ref_matrix_ex<double, M, N> b(sb.ptr_begin(), m, n, ldim_b);
 
-	evaluate_by_scalars(a, b);
-
+	percol_scalar_evaluate(a, b);
 	ASSERT_MAT_EQ(m, n, a, b);
 }
 

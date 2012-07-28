@@ -264,7 +264,6 @@ namespace lmat
 				is_same<Tag, percol_aligned>::value;
 	};
 
-
 }
 
 #endif /* MATRIX_META_H_ */
