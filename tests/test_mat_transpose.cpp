@@ -108,6 +108,22 @@ MN_CASE( mat_trans, refex )
 }
 
 
+MN_CASE( mat_trans, const )
+{
+	const index_t m = M == 0 ? DM : M;
+	const index_t n = N == 0 ? DN : N;
+
+	double v = 12.5;
+	const_matrix<double, M, N> S(m, n, v);
+
+	const_matrix<double, N, M> T = S.trans();
+
+	ASSERT_EQ( T.nrows(), n );
+	ASSERT_EQ( T.ncolumns(), m );
+	ASSERT_EQ( T.value(), v );
+}
+
+
 MN_CASE( mat_trans, unary_ewise )
 {
 	const index_t m = M == 0 ? DM : M;
@@ -320,6 +336,11 @@ BEGIN_TPACK( refex_trans )
 	ADD_MN_CASE_3X3( mat_trans, refex, DM, DN )
 END_TPACK
 
+BEGIN_TPACK( const_trans )
+	ADD_MN_CASE_3X3( mat_trans, const, DM, DN )
+END_TPACK
+
+
 BEGIN_TPACK( unary_ewise_trans )
 	ADD_MN_CASE_3X3( mat_trans, unary_ewise, DM, DN )
 END_TPACK
@@ -354,6 +375,7 @@ END_TPACK
 BEGIN_MAIN_SUITE
 	ADD_TPACK( dense_trans )
 	ADD_TPACK( refex_trans )
+	ADD_TPACK( const_trans )
 	ADD_TPACK( unary_ewise_trans )
 	ADD_TPACK( binary_ewise_trans )
 	ADD_TPACK( colwise_reduce_trans )

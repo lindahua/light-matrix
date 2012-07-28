@@ -113,6 +113,21 @@ namespace lmat
 		}
 	};
 
+
+	// Transpose
+
+	template<typename T, int M, int N>
+	struct transpose_expr_map<const_matrix<T, M, N> >
+	{
+		typedef const_matrix<T, N, M> type;
+
+		LMAT_ENSURE_INLINE
+		static type get(const const_matrix<T, M, N>& arg)
+		{
+			return type(arg.ncolumns(), arg.nrows(), arg.value());
+		}
+	};
+
 }
 
 
