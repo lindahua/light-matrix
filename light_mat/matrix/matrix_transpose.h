@@ -441,7 +441,7 @@ namespace lmat
 		if (has_continuous_layout(dst))
 		{
 			ref_matrix<T, Len, 1> dview(dst.ptr_data(), arg.nrows(), 1);
-			evaluate_to(arg, dview);
+			default_evaluate(arg, dview);
 		}
 		else
 		{
@@ -515,7 +515,7 @@ namespace lmat
 
 		const typename unwrapped_expr<Expr>::type& arg = s.arg();
 		ref_matrix<T, 1, Len> dview(dst.ptr_data(), 1, arg.ncolumns());
-		evaluate_to(arg, dview);
+		default_evaluate(arg, dview);
 	}
 
 
@@ -734,6 +734,12 @@ namespace lmat
 		static const bool value = transpose_base_traits<base_t>::is_linear_accessible;
 	};
 
+	template<class Expr, class Dst>
+	struct default_evalctx<transpose_expr<Expr>, Dst>
+	{
+		typedef transpose_evalctx<Expr, Dst> type;
+	};
+
 	// class
 
 	template<class Expr>
@@ -751,13 +757,16 @@ namespace lmat
 
 	// evaluation
 
-	template<class Expr, class DMat>
-	LMAT_ENSURE_INLINE
-	void evaluate_to(const transpose_expr<Expr>& s,
-			IDenseMatrix<DMat, typename matrix_traits<Expr>::value_type>& dst)
+	template<class Src, class Dst>
+	struct transpose_evalctx
 	{
-		base_evaluate_to(s, dst);
-	}
+		LMAT_ENSURE_INLINE
+		static void evaluate(const transpose_expr<Src>& expr, Dst& dst)
+		{
+			base_evaluate_to(expr, dst);
+		}
+	};
+
 
 }
 
