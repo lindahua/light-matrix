@@ -275,6 +275,41 @@ namespace lmat
 		return const_matrix<T, M, Nc>(M, row.ncolumns(), row.value());
 	}
 
+
+	/********************************************
+	 *
+	 *  Transpose
+	 *
+	 ********************************************/
+
+	template<class Col, int N>
+	struct transpose_expr_map<repeat_col_expr<Col, N> >
+	{
+		typedef repeat_row_expr<
+				embed_mat<typename transpose_expr_map<Col>::type>, N> type;
+
+		LMAT_ENSURE_INLINE
+		static type get(const repeat_col_expr<Col, N>& expr)
+		{
+			return type(embed(expr.column().trans()), expr.ncolumns());
+		}
+	};
+
+
+	template<class Row, int M>
+	struct transpose_expr_map<repeat_row_expr<Row, M> >
+	{
+		typedef repeat_col_expr<
+				embed_mat<typename transpose_expr_map<Row>::type>, M> type;
+
+		LMAT_ENSURE_INLINE
+		static type get(const repeat_row_expr<Row, M>& expr)
+		{
+			return type(embed(expr.row().trans()), expr.nrows());
+		}
+	};
+
+
 }
 
 #endif /* REPEAT_VECS_H_ */

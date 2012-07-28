@@ -327,6 +327,50 @@ MN_CASE( mat_trans, binary_c_with_targ )
 }
 
 
+MN_CASE( mat_trans, repcols )
+{
+	const index_t m = M == 0 ? DM : M;
+	const index_t n = N == 0 ? DN : N;
+
+	typedef dense_matrix<double, M, 1> col_t;
+	col_t col(m, 1);
+	fill_lin(col);
+
+	repeat_col_expr<col_t, N> expr(col, n);
+	dense_matrix<double, M, N> S(expr);
+
+	dense_matrix<double, N, M> T0(n, m, zeros<double>());
+	my_transpose(S, T0);
+
+	dense_matrix<double, N, M> T = expr.trans();
+
+	ASSERT_EQ( T.nrows(), n );
+	ASSERT_EQ( T.ncolumns(), m );
+	ASSERT_MAT_EQ( n, m, T, T0 );
+}
+
+MN_CASE( mat_trans, reprows )
+{
+	const index_t m = M == 0 ? DM : M;
+	const index_t n = N == 0 ? DN : N;
+
+	typedef dense_matrix<double, 1, N> row_t;
+	row_t row(1, n);
+	fill_lin(row);
+
+	repeat_row_expr<row_t, M> expr(row, m);
+	dense_matrix<double, M, N> S(expr);
+
+	dense_matrix<double, N, M> T0(n, m, zeros<double>());
+	my_transpose(S, T0);
+
+	dense_matrix<double, N, M> T = expr.trans();
+
+	ASSERT_EQ( T.nrows(), n );
+	ASSERT_EQ( T.ncolumns(), m );
+	ASSERT_MAT_EQ( n, m, T, T0 );
+}
+
 
 BEGIN_TPACK( dense_trans )
 	ADD_MN_CASE_3X3( mat_trans, dense, DM, DN )
@@ -372,16 +416,31 @@ BEGIN_TPACK( binary_c_ewise_with_targ )
 END_TPACK
 
 
+BEGIN_TPACK( repcols_trans )
+	ADD_MN_CASE_3X3( mat_trans, repcols, DM, DN )
+END_TPACK
+
+BEGIN_TPACK( reprows_trans )
+	ADD_MN_CASE_3X3( mat_trans, reprows, DM, DN )
+END_TPACK
+
+
 BEGIN_MAIN_SUITE
 	ADD_TPACK( dense_trans )
 	ADD_TPACK( refex_trans )
 	ADD_TPACK( const_trans )
+
 	ADD_TPACK( unary_ewise_trans )
 	ADD_TPACK( binary_ewise_trans )
+
 	ADD_TPACK( colwise_reduce_trans )
 	ADD_TPACK( rowwise_reduce_trans )
+
 	ADD_TPACK( unary_ewise_with_targ )
 	ADD_TPACK( binary_ewise_with_targ )
 	ADD_TPACK( binary_c_ewise_with_targ )
+
+	ADD_TPACK( repcols_trans )
+	ADD_TPACK( reprows_trans )
 END_MAIN_SUITE
 

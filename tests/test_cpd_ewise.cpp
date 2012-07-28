@@ -151,6 +151,37 @@ MN_CASE( cpd_expr, pwise_sqdist )
 	ASSERT_TRUE( is_approx(Y, R, tol) );
 }
 
+/*
+MN_CASE( cpd_expr, pwise_sqdist2 )
+{
+	const index_t m = M == 0 ? 5 : M;
+	const index_t n = N == 0 ? 6 : N;
+
+	dense_col<double, M> vx(m);
+	dense_col<double, N> vy(n);
+
+	fill_ran(vx, -5.0, 5.0);
+	fill_ran(vy, -5.0, 5.0);
+	const double tol = 1.0e-12;
+
+	dense_matrix<double, M, N> Y =
+			  repcol(sqr(vx), n)
+			+ repcol(sqr(vy), m).trans()
+			- 2.0 * repcol(vx, n) * reprow(vy.trans(), m);
+
+	dense_matrix<double, M, N> R(m, n);
+
+	for (index_t j = 0; j < n; ++j)
+	{
+		for (index_t i = 0; i < m; ++i)
+		{
+			R(i,j) = math::sqr(vx[i] - vy[j]);
+		}
+	}
+
+	ASSERT_TRUE( is_approx(Y, R, tol) );
+}
+*/
 
 BEGIN_TPACK( cpd_ewise_sqdist )
 	ADD_MN_CASE_3X3( cpd_expr, ewise_sqdist, 5, 6 )
@@ -168,6 +199,11 @@ BEGIN_TPACK( cpd_pwise_sqdist )
 	ADD_MN_CASE_3X3( cpd_expr, pwise_sqdist, 5, 6 )
 END_TPACK
 
+/*
+BEGIN_TPACK( cpd_pwise_sqdist2 )
+	ADD_MN_CASE_3X3( cpd_expr, pwise_sqdist2, 5, 6 )
+END_TPACK
+*/
 
 BEGIN_MAIN_SUITE
 	ADD_TPACK( cpd_ewise_sqdist )

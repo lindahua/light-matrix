@@ -34,6 +34,7 @@ namespace lmat
 #endif
 
 		typedef typename binary_value_type<Col, Dst>::type T;
+		typedef typename unwrapped_expr<Col>::type Col_;
 
 		inline
 		static void evaluate(const repeat_col_expr<Col, N>& s,
@@ -41,13 +42,13 @@ namespace lmat
 		{
 			if ( is_column(s) )
 			{
-				const int M = binary_ct_rows<Col, Dst>::value;
+				const int M = binary_ct_rows<Col_, Dst>::value;
 				ref_col<T, M> dview(dst.ptr_data(), s.nrows());
 				default_evaluate(s.column(), dview);
 			}
 			else
 			{
-				typedef typename detail::repcol_ewrapper_map<Col>::type wrapper_t;
+				typedef typename detail::repcol_ewrapper_map<Col_>::type wrapper_t;
 				wrapper_t col_wrap(s.column());
 
 				const index_t m = col_wrap.nrows();
@@ -87,6 +88,7 @@ namespace lmat
 #endif
 
 		typedef typename binary_value_type<Row, Dst>::type T;
+		typedef typename unwrapped_expr<Row>::type Row_;
 
 		inline
 		static void evaluate(const repeat_row_expr<Row, M>& s,
@@ -94,7 +96,7 @@ namespace lmat
 		{
 			if ( is_row(s) )
 			{
-				const int N = binary_ct_cols<Row, Dst>::value;
+				const int N = binary_ct_cols<Row_, Dst>::value;
 				if (has_continuous_layout(dst))
 				{
 					ref_row<T, N> dview(dst.ptr_data(), s.ncolumns());
@@ -108,7 +110,7 @@ namespace lmat
 			}
 			else
 			{
-				typedef typename detail::reprow_ewrapper_map<Row>::type wrapper_t;
+				typedef typename detail::reprow_ewrapper_map<Row_>::type wrapper_t;
 				wrapper_t row_wrap(s.row());
 
 				const index_t n = row_wrap.ncolumns();
@@ -288,7 +290,8 @@ namespace lmat
 	  	  typename matrix_traits<Col>::value_type>
 	{
 	public:
-		typedef typename matrix_traits<Col>::value_type T;
+		typedef typename unwrapped_expr<Col>::type Col_;
+		typedef typename matrix_traits<Col_>::value_type T;
 
 		template<int N>
 		LMAT_ENSURE_INLINE
@@ -303,7 +306,7 @@ namespace lmat
 		void next_column() { }
 
 	private:
-		typedef typename detail::repcol_ewrapper_map<Col>::type wrapper_t;
+		typedef typename detail::repcol_ewrapper_map<Col_>::type wrapper_t;
 		wrapper_t m_colwrap;
 
 		typename percol_eval<typename wrapper_t::col_t>::evaluator_type m_eval;
@@ -317,11 +320,12 @@ namespace lmat
 	  	  typename matrix_traits<Row>::value_type>
 	{
 	public:
-		typedef typename matrix_traits<Row>::value_type T;
+		typedef typename unwrapped_expr<Row>::type Row_;
+		typedef typename matrix_traits<Row_>::value_type T;
 
 		template<int N>
 		LMAT_ENSURE_INLINE
-		reprow_percol_evaluator(const repeat_row_expr<Row, N>& expr)
+		reprow_percol_evaluator(const repeat_row_expr<Row_, N>& expr)
 		: m_rowwrap(expr.row()), m_j(0) { }
 
 		LMAT_ENSURE_INLINE
@@ -331,7 +335,7 @@ namespace lmat
 		void next_column() { ++ m_j; }
 
 	private:
-		typedef typename detail::reprow_ewrapper_map<Row>::type wrapper_t;
+		typedef typename detail::reprow_ewrapper_map<Row_>::type wrapper_t;
 		wrapper_t m_rowwrap;
 		index_t m_j;
 	};
