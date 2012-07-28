@@ -22,12 +22,26 @@
 namespace lmat
 {
 
+	/********************************************
+	 *
+	 *  generic reduction functions
+	 *
+	 ********************************************/
+
 	template<class Fun, typename T, class Mat>
 	LMAT_ENSURE_INLINE
 	inline typename Fun::result_type
-	reduce_by_scalars(const Fun& fun, const IMatrixXpr<Mat, T>& X)
+	linear_scalar_reduce(const Fun& fun, const IMatrixXpr<Mat, T>& X)
 	{
-		return detail::reduce_by_scalars_internal::evaluate(fun, X.derived());
+		return detail::full_reduce_linear_internal::evaluate(fun, X.derived());
+	}
+
+	template<class Fun, typename T, class Mat>
+	LMAT_ENSURE_INLINE
+	inline typename Fun::result_type
+	percol_scalar_reduce(const Fun& fun, const IMatrixXpr<Mat, T>& X)
+	{
+		return detail::full_reduce_percol_internal::evaluate(fun, X.derived());
 	}
 
 	template<class Fun, typename T, class Mat>
@@ -35,8 +49,16 @@ namespace lmat
 	inline typename Fun::result_type
 	reduce(const Fun& fun, const IMatrixXpr<Mat, T>& X)
 	{
-		return detail::reduce_by_scalars_internal::evaluate(fun, X.derived());
+		typedef typename detail::reduce_internal_map<Mat>::type internal_t;
+		return internal_t::evaluate(fun, X.derived());
 	}
+
+
+	/********************************************
+	 *
+	 *  specific reduction functions
+	 *
+	 ********************************************/
 
 	template<typename T, class Mat>
 	LMAT_ENSURE_INLINE

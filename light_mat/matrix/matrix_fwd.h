@@ -131,6 +131,10 @@ namespace lmat
 	template<class Expr> struct percol_eval;
 
 	template<class SMat, typename T> struct cast_expr_map;
+
+	template<class Fun, class Arg, class Dst> struct colwise_reduce_evalctx;
+	template<class Fun, class Arg, class Dst> struct rowwise_reduce_evalctx;
+
 }
 
 // Useful macros

@@ -39,7 +39,6 @@ namespace lmat
 		typedef typename Fun::result_type value_type;
 	};
 
-
 	template<class Fun, class Arg>
 	struct matrix_traits<rowwise_reduce_expr<Fun, Arg> >
 	{
@@ -50,6 +49,18 @@ namespace lmat
 		static const bool is_readonly = true;
 
 		typedef typename Fun::result_type value_type;
+	};
+
+	template<class Fun, class Arg, class Dst>
+	struct default_evalctx<colwise_reduce_expr<Fun, Arg>, Dst>
+	{
+		typedef colwise_reduce_evalctx<Fun, Arg, Dst> type;
+	};
+
+	template<class Fun, class Arg, class Dst>
+	struct default_evalctx<rowwise_reduce_expr<Fun, Arg>, Dst>
+	{
+		typedef rowwise_reduce_evalctx<Fun, Arg, Dst> type;
 	};
 
 
@@ -199,19 +210,25 @@ namespace lmat
 		return rowwise_reduce_expr<Fun, Arg>(fun, arg.derived());
 	}
 
-	template<class Fun, class Arg, class DMat>
-	inline void evaluate_to(const colwise_reduce_expr<Fun, Arg>& expr,
-			IDenseMatrix<DMat, typename Fun::result_type>& dst)
+	template<class Fun, class Arg, class Dst>
+	struct colwise_reduce_evalctx
 	{
-		detail::colwise_reduce_internal::eval(expr.fun(), expr.arg(), dst.derived());
-	}
+		LMAT_ENSURE_INLINE
+		static void evaluate(const colwise_reduce_expr<Fun, Arg>& expr, Dst& dst)
+		{
+			detail::colwise_reduce_internal::eval(expr.fun(), expr.arg(), dst);
+		}
+	};
 
-	template<class Fun, class Arg, class DMat>
-	inline void evaluate_to(const rowwise_reduce_expr<Fun, Arg>& expr,
-			IDenseMatrix<DMat, typename Fun::result_type>& dst)
+	template<class Fun, class Arg, class Dst>
+	struct rowwise_reduce_evalctx
 	{
-		detail::rowwise_reduce_internal::eval(expr.fun(), expr.arg(), dst.derived());
-	}
+		LMAT_ENSURE_INLINE
+		static void evaluate(const rowwise_reduce_expr<Fun, Arg>& expr, Dst& dst)
+		{
+			detail::rowwise_reduce_internal::eval(expr.fun(), expr.arg(), dst);
+		}
+	};
 
 
 	/********************************************

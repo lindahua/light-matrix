@@ -36,7 +36,8 @@ MN_CASE( mat_reduce, sum )
 
 	// test
 
-	ASSERT_EQ( reduce_by_scalars(sum_fun<double>(), A), r0 );
+	ASSERT_EQ( linear_scalar_reduce(sum_fun<double>(), A), r0 );
+	ASSERT_EQ( percol_scalar_reduce(sum_fun<double>(), A), r0 );
 	ASSERT_EQ( sum(A), r0 );
 }
 
@@ -60,7 +61,8 @@ MN_CASE( mat_reduce, sum_ex )
 
 	// test
 
-	ASSERT_EQ( reduce_by_scalars(sum_fun<double>(), A), r0 );
+	ASSERT_EQ( linear_scalar_reduce(sum_fun<double>(), A), r0 );
+	ASSERT_EQ( percol_scalar_reduce(sum_fun<double>(), A), r0 );
 	ASSERT_EQ( sum(A), r0 );
 }
 
@@ -109,7 +111,8 @@ MN_CASE( mat_reduce, maximum )
 
 	// test
 
-	ASSERT_EQ( reduce_by_scalars(maximum_fun<double>(), A), r0 );
+	ASSERT_EQ( linear_scalar_reduce(maximum_fun<double>(), A), r0 );
+	ASSERT_EQ( percol_scalar_reduce(maximum_fun<double>(), A), r0 );
 	ASSERT_EQ( maximum(A), r0 );
 }
 
@@ -134,7 +137,8 @@ MN_CASE( mat_reduce, maximum_ex )
 
 	// test
 
-	ASSERT_EQ( reduce_by_scalars(maximum_fun<double>(), A), r0 );
+	ASSERT_EQ( linear_scalar_reduce(maximum_fun<double>(), A), r0 );
+	ASSERT_EQ( percol_scalar_reduce(maximum_fun<double>(), A), r0 );
 	ASSERT_EQ( maximum(A), r0 );
 }
 
@@ -160,7 +164,8 @@ MN_CASE( mat_reduce, minimum )
 
 	// test
 
-	ASSERT_EQ( reduce_by_scalars(minimum_fun<double>(), A), r0 );
+	ASSERT_EQ( linear_scalar_reduce(minimum_fun<double>(), A), r0 );
+	ASSERT_EQ( percol_scalar_reduce(minimum_fun<double>(), A), r0 );
 	ASSERT_EQ( minimum(A), r0 );
 }
 
@@ -185,7 +190,8 @@ MN_CASE( mat_reduce, minimum_ex )
 
 	// test
 
-	ASSERT_EQ( reduce_by_scalars(minimum_fun<double>(), A), r0 );
+	ASSERT_EQ( linear_scalar_reduce(minimum_fun<double>(), A), r0 );
+	ASSERT_EQ( percol_scalar_reduce(minimum_fun<double>(), A), r0 );
 	ASSERT_EQ( minimum(A), r0 );
 }
 

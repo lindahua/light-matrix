@@ -112,21 +112,21 @@ namespace lmat { namespace detail {
 	};
 
 
-	struct reduce_by_scalars_internal
+	template<class Expr>
+	struct reduce_internal_map
 	{
-		template<class Fun, class Expr>
-		LMAT_ENSURE_INLINE
-		static typename Fun::result_type evaluate(const Fun& fun, const Expr& expr)
-		{
-			if (percol_eval<Expr>::cost_of(expr) < linear_eval<Expr>::cost_of(expr) )
-			{
-				return full_reduce_percol_internal::evaluate(fun, expr);
-			}
-			else
-			{
-				return full_reduce_linear_internal::evaluate(fun, expr);
-			}
-		}
+		static const int linear_cost = linear_eval<Expr>::cost;
+
+		static const bool is_shortv = ct_rows<Expr>::value <= SHORTVEC_LENGTH_THRESHOLD;
+		static const int percol_cost = is_shortv ?
+				percol_eval<Expr>::shortv_cost : percol_eval<Expr>::normal_cost;
+
+		static const bool use_percol = percol_cost < linear_cost;
+
+		typedef typename
+				if_c<use_percol,
+					full_reduce_percol_internal,
+					full_reduce_linear_internal>::type type;
 	};
 
 
