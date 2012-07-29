@@ -22,7 +22,7 @@ namespace lmat { namespace blas {
 	float asum(const IMatrixXpr<Mat, float>& x)
 	{
 		typedef typename lmat::detail::unary_blasl1_internal_map<Mat>::type intern_t;
-		intern_t::asum(x);
+		return intern_t::asum(x);
 	}
 
 	template<class Mat>
@@ -30,7 +30,7 @@ namespace lmat { namespace blas {
 	double asum(const IMatrixXpr<Mat, double>& x)
 	{
 		typedef typename lmat::detail::unary_blasl1_internal_map<Mat>::type intern_t;
-		intern_t::asum(x);
+		return intern_t::asum(x);
 	}
 
 

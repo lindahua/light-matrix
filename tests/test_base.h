@@ -83,10 +83,6 @@ namespace lmat { namespace test {
 } }
 
 
-#define ASSERT_STREQ( a, b ) \
-		if (!(std::string(a) == std::string(b))) throw ::ltest::assertion_failure(__FILE__, __LINE__, #a " == " #b)
-
-
 #define BEGIN_MAIN_SUITE \
 	ltest::test_suite lmat_main_suite( "Main" ); \
 	void lmat_add_test_packs() {

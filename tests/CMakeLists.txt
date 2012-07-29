@@ -29,6 +29,16 @@ set(TEST_CXX_FLAGS "${LANG_FLAGS} ${WARNING_FLAGS}")
 
 set(CMAKE_CXX_FLAGS "${TEST_CXX_FLAGS}")
 
+# Find third-party libraries
+
+set(CMAKE_MODULE_PATH "../cmake_modules" ${CMAKE_MODULE_PATH})
+
+find_package(MKL)
+
+if (NOT MKL_FOUND)
+    message(FATAL_ERROR "Intel MKL is not found")
+endif (NOT MKL_FOUND)
+
 
 # Header file groups (to be used as dependencies)
 
@@ -110,7 +120,13 @@ set(MATRIX_REDUC_HS
     ${INC}/matrix/bits/partial_reduce_internal.h
     ${INC}/matrix/matrix_reduce.h
     ${INC}/matrix/partial_reduce.h)    
-      
+    
+set(BLAS_HS
+    ${INC}/linalg/linalg_base.h
+    ${INC}/linalg/blas_extern.h
+    ${INC}/linalg/bits/matrix_blasl1_internal.h
+    ${INC}/linalg/matrix_blasl1.h)    
+          
 set(CORE_HS
     ${COMMON_BASIC_HS}
     ${COMMON_ARRAY_HS})
@@ -128,8 +144,7 @@ set(MATRIX_EVAL_HS
     ${MATRIX_EWISE_HS}
     ${REPEAT_VECS_HS}
     ${MATRIX_REDUC_HS})    
- 
-
+    
 # Executables
 
 add_library(test_main STATIC test_main.cpp)
@@ -207,6 +222,13 @@ set(MAT_REDUC_HS
 add_executable(test_mat_reduce ${MAT_REDUC_HS} test_mat_reduce.cpp) 
 add_executable(test_partial_reduce ${MAT_REDUC_HS} test_partial_reduce.cpp) 
 
+set(MAT_BLAS_HS
+    ${MATRIX_HS}
+    ${BLAS_HS})
+    
+add_executable(test_blasl1 ${MAT_BLAS_HS} test_blasl1.cpp)
+
+
 # Link to test_main
 
 set(LMAT_TEST_NAMES
@@ -235,7 +257,12 @@ set(LMAT_TEST_NAMES
     test_cpd_ewise
 	test_mat_reduce
 	test_partial_reduce
+	test_blasl1
 )
+
+set_target_properties(test_blasl1
+    PROPERTIES LINK_FLAGS ${MKL_LINK_FLAGS})
+
 	
 foreach(tname ${LMAT_TEST_NAMES})
 	target_link_libraries(${tname} test_main)

@@ -88,19 +88,19 @@ namespace lmat { namespace detail {
 			{
 				m_inc = 1;
 				m_own = false;
-				m_pdata = mat.ptr_data();
+				m_pdata = const_cast<T*>(mat.ptr_data());
 			}
 			else if (is_row(mat))
 			{
 				m_inc = (lmat_blas_int)mat.lead_dim();
 				m_own = false;
-				m_pdata = mat.ptr_data();
+				m_pdata = const_cast<T*>(mat.ptr_data());
 			}
 			else
 			{
 				m_inc = 1;
 				m_own = true;
-				m_pdata = aligned_allocate((size_t)m_len, LMAT_DEFAULT_ALIGNMENT);
+				m_pdata = (T*)aligned_allocate((size_t)m_len * sizeof(T), LMAT_DEFAULT_ALIGNMENT);
 				copy(mat, m_pdata);
 			}
 		}
@@ -124,7 +124,7 @@ namespace lmat { namespace detail {
 		lmat_blas_int m_len;
 		lmat_blas_int m_inc;
 		bool m_own;
-		const T* m_pdata;
+		T* m_pdata;
 	};
 
 	template<class Mat>
@@ -186,10 +186,23 @@ namespace lmat { namespace detail {
 	{
 		template<class Mat>
 		LMAT_ENSURE_INLINE
-		float asum(const IMatrixXpr<Mat, float>& x)
+		static float asum(const IMatrixXpr<Mat, float>& x)
 		{
-			typename blasl1_wrapper_map<Mat>::type xw(x);
-			LMAT_SASUM(xw.plength(), xw.pdata(), xw.pinc());
+			typename blasl1_wrapper_map<Mat>::type xw(x.derived());
+			return LMAT_SASUM(xw.plength(), xw.pdata(), xw.pinc());
+		}
+
+		template<class XMat, class YMat>
+		LMAT_ENSURE_INLINE
+		static float axpy(const float a, const IMatrixXpr<XMat, float>& x,
+				IDenseMatrix<YMat, float>& y)
+		{
+			check_arg(has_same_size(x, y), "blas::axpy: x and y should have the same size.");
+			check_arg(has_continuous_layout(y), "blas::axpy: y should have continuous memory layout.");
+
+			typename blasl1_wrapper_map<XMat>::type xw(x.derived());
+			const lmat_blas_int incy = 1;
+			LMAT_SAXPY(xw.plength(), &a, xw.pdata(), xw.pinc(), y.ptr_data(), &incy);
 		}
 	};
 
@@ -198,10 +211,23 @@ namespace lmat { namespace detail {
 	{
 		template<class Mat>
 		LMAT_ENSURE_INLINE
-		double asum(const IMatrixXpr<Mat, double>& x)
+		static double asum(const IMatrixXpr<Mat, double>& x)
 		{
-			typename blasl1_wrapper_map<Mat>::type xw(x);
-			LMAT_DASUM(xw.plength(), xw.pdata(), xw.pinc());
+			typename blasl1_wrapper_map<Mat>::type xw(x.derived());
+			return LMAT_DASUM(xw.plength(), xw.pdata(), xw.pinc());
+		}
+
+		template<class XMat, class YMat>
+		LMAT_ENSURE_INLINE
+		static double axpy(const double a, const IMatrixXpr<XMat, double>& x,
+				IDenseMatrix<YMat, double>& y)
+		{
+			check_arg(has_same_size(x, y), "blas::axpy: x and y should have the same size.");
+			check_arg(has_continuous_layout(y), "blas::axpy: y should have continuous memory layout.");
+
+			typename blasl1_wrapper_map<XMat>::type xw(x.derived());
+			const lmat_blas_int incy = 1;
+			LMAT_SAXPY(xw.plength(), &a, xw.pdata(), xw.pinc(), y.ptr_data(), &incy);
 		}
 	};
 

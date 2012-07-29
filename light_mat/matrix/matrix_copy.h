@@ -49,12 +49,12 @@ namespace lmat
 		if (has_continuous_layout(src))
 		{
 			copier_t::copy(src.nrows(), src.ncolumns(),
-					src, pd);
+					src.ptr_data(), pd);
 		}
 		else
 		{
 			copier_t::copy(src.nrows(), src.ncolumns(),
-					src, src.lead_dim(), pd);
+					src.ptr_data(), src.lead_dim(), pd);
 		}
 	}
 
