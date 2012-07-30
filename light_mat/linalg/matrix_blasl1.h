@@ -38,6 +38,9 @@ namespace lmat { namespace blas {
 	LMAT_ENSURE_INLINE
 	void axpy(const float& a, const IMatrixXpr<XMat, float>& x, IDenseMatrix<YMat, float>& y)
 	{
+		check_arg(has_same_size(x, y), "blas::axpy: x and y should have the same size.");
+		check_arg(has_continuous_layout(y), "blas::axpy: y should have continuous memory layout.");
+
 		typedef typename lmat::detail::binary_blasl1_internal_map<XMat, YMat>::type intern_t;
 		intern_t::axpy(a, x, y);
 	}
@@ -46,6 +49,9 @@ namespace lmat { namespace blas {
 	LMAT_ENSURE_INLINE
 	void axpy(const double& a, const IMatrixXpr<XMat, double>& x, IDenseMatrix<YMat, double>& y)
 	{
+		check_arg(has_same_size(x, y), "blas::axpy: x and y should have the same size.");
+		check_arg(has_continuous_layout(y), "blas::axpy: y should have continuous memory layout.");
+
 		typedef typename lmat::detail::binary_blasl1_internal_map<XMat, YMat>::type intern_t;
 		intern_t::axpy(a, x, y);
 	}
@@ -55,6 +61,8 @@ namespace lmat { namespace blas {
 	LMAT_ENSURE_INLINE
 	float dot(const IMatrixXpr<XMat, float>& x, const IMatrixXpr<YMat, float>& y)
 	{
+		check_arg(has_same_size(x, y), "blas::dot: x and y should have the same size.");
+
 		typedef typename lmat::detail::binary_blasl1_internal_map<XMat, YMat>::type intern_t;
 		return intern_t::dot(x, y);
 	}
@@ -63,6 +71,8 @@ namespace lmat { namespace blas {
 	LMAT_ENSURE_INLINE
 	double dot(const IMatrixXpr<XMat, double>& x, const IMatrixXpr<YMat, double>& y)
 	{
+		check_arg(has_same_size(x, y), "blas::dot: x and y should have the same size.");
+
 		typedef typename lmat::detail::binary_blasl1_internal_map<XMat, YMat>::type intern_t;
 		return intern_t::dot(x, y);
 	}
@@ -89,6 +99,10 @@ namespace lmat { namespace blas {
 	LMAT_ENSURE_INLINE
 	void rot(IDenseMatrix<XMat, float>& x, IDenseMatrix<YMat, float>& y, const float& c, const float& s)
 	{
+		check_arg(has_continuous_layout(x), "blas::rot: x should have continuous layout.");
+		check_arg(has_continuous_layout(y), "blas::rot: y should have continuous layout.");
+		check_arg(has_same_size(x, y), "blas::rot: x and y should have the same size.");
+
 		typedef typename lmat::detail::binary_blasl1_internal_map<XMat, YMat>::type intern_t;
 		intern_t::rot(x, y, c, s);
 	}
@@ -97,6 +111,10 @@ namespace lmat { namespace blas {
 	LMAT_ENSURE_INLINE
 	void rot(IDenseMatrix<XMat, double>& x, IDenseMatrix<YMat, double>& y, const double& c, const double& s)
 	{
+		check_arg(has_continuous_layout(x), "blas::rot: x should have continuous layout.");
+		check_arg(has_continuous_layout(y), "blas::rot: y should have continuous layout.");
+		check_arg(has_same_size(x, y), "blas::rot: x and y should have the same size.");
+
 		typedef typename lmat::detail::binary_blasl1_internal_map<XMat, YMat>::type intern_t;
 		intern_t::rot(x, y, c, s);
 	}
