@@ -268,12 +268,7 @@ endforeach(tname)
 
 foreach(tname ${LMAT_LINALG_TEST_NAMES})
     target_link_libraries(${tname} test_main
-        ${LIB_MKL_INTEL}
-        ${LIB_MKL_INTEL_THREAD}
-        ${LIB_MKL_CORE}
-        ${LIB_IOMP5}
-        ${LIB_PTHREAD}
-        ${LIB_IMF})
+        ${MKL_LIBRARY})
 endforeach(tname)
 
 
