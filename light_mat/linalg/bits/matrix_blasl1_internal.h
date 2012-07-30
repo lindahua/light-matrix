@@ -194,7 +194,7 @@ namespace lmat { namespace detail {
 
 		template<class XMat, class YMat>
 		LMAT_ENSURE_INLINE
-		static float axpy(const float a, const IMatrixXpr<XMat, float>& x,
+		static void axpy(const float a, const IMatrixXpr<XMat, float>& x,
 				IDenseMatrix<YMat, float>& y)
 		{
 			check_arg(has_same_size(x, y), "blas::axpy: x and y should have the same size.");
@@ -204,7 +204,42 @@ namespace lmat { namespace detail {
 			const lmat_blas_int incy = 1;
 			LMAT_SAXPY(xw.plength(), &a, xw.pdata(), xw.pinc(), y.ptr_data(), &incy);
 		}
+
+		template<class XMat, class YMat>
+		LMAT_ENSURE_INLINE
+		static float dot(const IMatrixXpr<XMat, float>& x, const IMatrixXpr<YMat, float>& y)
+		{
+			check_arg(has_same_size(x, y), "blas::dot: x and y should have the same size.");
+
+			typename blasl1_wrapper_map<XMat>::type xw(x.derived());
+			typename blasl1_wrapper_map<YMat>::type yw(y.derived());
+
+			return LMAT_SDOT(xw.plength(), xw.pdata(), xw.pinc(), yw.pdata(), yw.pinc());
+		}
+
+		template<class Mat>
+		LMAT_ENSURE_INLINE
+		static float nrm2(const IMatrixXpr<Mat, float>& x)
+		{
+			typename blasl1_wrapper_map<Mat>::type xw(x.derived());
+			return LMAT_SNRM2(xw.plength(), xw.pdata(), xw.pinc());
+		}
+
+		template<class XMat, class YMat>
+		LMAT_ENSURE_INLINE
+		static void rot(IDenseMatrix<XMat, float>& x, IDenseMatrix<YMat, float>& y, const float c, const float s)
+		{
+			check_arg(has_continuous_layout(x), "blas::rot: x should have continuous layout.");
+			check_arg(has_continuous_layout(y), "blas::rot: y should have continuous layout.");
+			check_arg(has_same_size(x, y), "blas::rot: x and y should have the same size.");
+
+			const lmat_blas_int n = x.nelems();
+			const lmat_blas_int incx = 1;
+			const lmat_blas_int incy = 1;
+			LMAT_SROT(&n, x.ptr_data(), &incx, y.ptr_data(), &incy, &c, &s);
+		}
 	};
+
 
 	template<int M, int N>
 	struct blasl1_internal<double, M, N>
@@ -219,7 +254,7 @@ namespace lmat { namespace detail {
 
 		template<class XMat, class YMat>
 		LMAT_ENSURE_INLINE
-		static double axpy(const double a, const IMatrixXpr<XMat, double>& x,
+		static void axpy(const double a, const IMatrixXpr<XMat, double>& x,
 				IDenseMatrix<YMat, double>& y)
 		{
 			check_arg(has_same_size(x, y), "blas::axpy: x and y should have the same size.");
@@ -227,7 +262,41 @@ namespace lmat { namespace detail {
 
 			typename blasl1_wrapper_map<XMat>::type xw(x.derived());
 			const lmat_blas_int incy = 1;
-			LMAT_SAXPY(xw.plength(), &a, xw.pdata(), xw.pinc(), y.ptr_data(), &incy);
+			LMAT_DAXPY(xw.plength(), &a, xw.pdata(), xw.pinc(), y.ptr_data(), &incy);
+		}
+
+		template<class XMat, class YMat>
+		LMAT_ENSURE_INLINE
+		static double dot(const IMatrixXpr<XMat, double>& x, const IMatrixXpr<YMat, double>& y)
+		{
+			check_arg(has_same_size(x, y), "blas::dot: x and y should have the same size.");
+
+			typename blasl1_wrapper_map<XMat>::type xw(x.derived());
+			typename blasl1_wrapper_map<YMat>::type yw(y.derived());
+
+			return LMAT_DDOT(xw.plength(), xw.pdata(), xw.pinc(), yw.pdata(), yw.pinc());
+		}
+
+		template<class Mat>
+		LMAT_ENSURE_INLINE
+		static double nrm2(const IMatrixXpr<Mat, double>& x)
+		{
+			typename blasl1_wrapper_map<Mat>::type xw(x.derived());
+			return LMAT_DNRM2(xw.plength(), xw.pdata(), xw.pinc());
+		}
+
+		template<class XMat, class YMat>
+		LMAT_ENSURE_INLINE
+		static void rot(IDenseMatrix<XMat, double>& x, IDenseMatrix<YMat, double>& y, const double c, const double s)
+		{
+			check_arg(has_continuous_layout(x), "blas::rot: x should have continuous layout.");
+			check_arg(has_continuous_layout(y), "blas::rot: y should have continuous layout.");
+			check_arg(has_same_size(x, y), "blas::rot: x and y should have the same size.");
+
+			const lmat_blas_int n = x.nelems();
+			const lmat_blas_int incx = 1;
+			const lmat_blas_int incy = 1;
+			LMAT_DROT(&n, x.ptr_data(), &incx, y.ptr_data(), &incy, &c, &s);
 		}
 	};
 
