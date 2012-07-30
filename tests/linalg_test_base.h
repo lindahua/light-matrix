@@ -93,6 +93,32 @@ namespace lmat { namespace test {
 		}
 	}
 
+
+	template<typename T, class MatA, class MatB, class MatC>
+	void naive_mtimes(
+			const IDenseMatrix<MatA, T>& A,
+			const IDenseMatrix<MatB, T>& B,
+			IDenseMatrix<MatC, T>& C)
+	{
+		const index_t m = A.nrows();
+		const index_t k = A.ncolumns();
+		const index_t n = B.ncolumns();
+
+		for (index_t j = 0; j < n; ++j)
+		{
+			for (index_t i = 0; i < m; ++i)
+			{
+				double s = 0;
+				for (index_t l = 0; l < k; ++l)
+				{
+					s += double( A(i, l) * B(l, j) );
+				}
+				C(i, j) = T(s);
+			}
+		}
+	}
+
+
 } }
 
 

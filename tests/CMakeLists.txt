@@ -257,20 +257,33 @@ set(LMAT_TEST_NAMES
     test_cpd_ewise
 	test_mat_reduce
 	test_partial_reduce
-	test_blasl1
 )
 
-set_target_properties(test_blasl1
-    PROPERTIES LINK_FLAGS ${MKL_LINK_FLAGS})
-
+set(LMAT_LINALG_TEST_NAMES
+    test_blasl1)
 	
 foreach(tname ${LMAT_TEST_NAMES})
 	target_link_libraries(${tname} test_main)
 endforeach(tname)	
 
+foreach(tname ${LMAT_LINALG_TEST_NAMES})
+    target_link_libraries(${tname} test_main
+        ${LIB_MKL_INTEL}
+        ${LIB_MKL_INTEL_THREAD}
+        ${LIB_MKL_CORE}
+        ${LIB_IOMP5}
+        ${LIB_PTHREAD}
+        ${LIB_IMF})
+endforeach(tname)
+
+
+# Add tests
+
 foreach(tname ${LMAT_TEST_NAMES})
 	add_test(NAME ${tname} COMMAND ${tname})
 endforeach(tname)
 
-
+foreach(tname ${LMAT_LINALG_TEST_NAMES})
+	add_test(NAME ${tname} COMMAND ${tname})
+endforeach(tname)
 
