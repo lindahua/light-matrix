@@ -230,6 +230,51 @@ TMN_CASE( gemv_t, dense )
 }
 
 
+TMN_CASE( gevm_n, dense )
+{
+	const index_t m = M == 0 ? DM : M;
+	const index_t n = N == 0 ? DN : N;
+	const T alpha = T(1.5);
+	const T beta = T(1.2);
+	T tol = tolvalue<T>::get();
+
+	dense_matrix<T, M, N> A(m, n);
+	dense_matrix<T, 1, M> x(1, m);
+	dense_matrix<T, 1, N> y(1, n, zeros<T>());
+	dense_matrix<T, 1, N> r(1, n, zeros<T>());
+	dense_matrix<T, 1, N> t(1, n, zeros<T>());
+
+	fill_rand(A, T(-1), T(1));
+	fill_rand(x, T(-1), T(1));
+
+	// y = x * A
+
+	gevm_n(x, A, y);
+	naive_mtimes(x, A, t);
+	ASSERT_MAT_APPROX(1, n, y, t, tol);
+
+	// y = alpha * x * A
+
+	gevm_n(alpha, x, A, y);
+	r = t * alpha;
+	ASSERT_MAT_APPROX(1, n, y, r, tol);
+
+	// y = A * x + beta * y
+
+	fill_rand(y, T(-1), T(1));
+	r = t + y * beta;
+	gevm_n(x, A, beta, y);
+	ASSERT_MAT_APPROX(1, n, y, r, tol);
+
+	// y = alpha * A * x + beta * y
+
+	fill_rand(y, T(-1), T(1));
+	r = t * alpha + y * beta;
+	gevm_n(alpha, x, A, beta, y);
+	ASSERT_MAT_APPROX(1, n, y, r, tol);
+}
+
+
 
 BEGIN_TPACK( gemv_n_dense )
 	ADD_TMN_CASE_3X3( gemv_n, dense, float,  DM, DN )
@@ -251,10 +296,17 @@ BEGIN_TPACK( gemv_t_dense )
 	ADD_TMN_CASE_3X3( gemv_t, dense, double, DM, DN )
 END_TPACK
 
+BEGIN_TPACK( gevm_n_dense )
+	ADD_TMN_CASE_3X3( gevm_n, dense, float,  DM, DN )
+	ADD_TMN_CASE_3X3( gevm_n, dense, double, DM, DN )
+END_TPACK
+
 
 BEGIN_MAIN_SUITE
 	ADD_TPACK( gemv_n_dense )
 	ADD_TPACK( gemv_n_refex )
 	ADD_TPACK( gemv_n_mexpr )
 	ADD_TPACK( gemv_t_dense )
+
+	ADD_TPACK( gevm_n_dense )
 END_MAIN_SUITE

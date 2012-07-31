@@ -48,7 +48,7 @@ namespace lmat
 		check_gemv_n_args(A, x, y);
 
 		typedef typename lmat::detail::gemv_n_internal_map<MatA, VecX, VecY>::type intern_t;
-		intern_t::eval_n(A, x, y);
+		intern_t::eval(A, x, y);
 	}
 
 	template<class MatA, class VecX, class VecY>
@@ -61,7 +61,7 @@ namespace lmat
 		check_gemv_n_args(A, x, y);
 
 		typedef typename lmat::detail::gemv_n_internal_map<MatA, VecX, VecY>::type intern_t;
-		intern_t::eval_n(A, x, y);
+		intern_t::eval(A, x, y);
 	}
 
 
@@ -75,7 +75,7 @@ namespace lmat
 		check_gemv_n_args(A, x, y);
 
 		typedef typename lmat::detail::gemv_n_internal_map<MatA, VecX, VecY>::type intern_t;
-		intern_t::eval_n(alpha, A, x, y);
+		intern_t::eval(alpha, A, x, y);
 	}
 
 	template<class MatA, class VecX, class VecY>
@@ -88,7 +88,7 @@ namespace lmat
 		check_gemv_n_args(A, x, y);
 
 		typedef typename lmat::detail::gemv_n_internal_map<MatA, VecX, VecY>::type intern_t;
-		intern_t::eval_n(alpha, A, x, y);
+		intern_t::eval(alpha, A, x, y);
 	}
 
 
@@ -102,7 +102,7 @@ namespace lmat
 		check_gemv_n_args(A, x, y);
 
 		typedef typename lmat::detail::gemv_n_internal_map<MatA, VecX, VecY>::type intern_t;
-		intern_t::eval_n(A, x, beta, y);
+		intern_t::eval(A, x, beta, y);
 	}
 
 	template<class MatA, class VecX, class VecY>
@@ -115,7 +115,7 @@ namespace lmat
 		check_gemv_n_args(A, x, y);
 
 		typedef typename lmat::detail::gemv_n_internal_map<MatA, VecX, VecY>::type intern_t;
-		intern_t::eval_n(A, x, beta, y);
+		intern_t::eval(A, x, beta, y);
 	}
 
 
@@ -129,7 +129,7 @@ namespace lmat
 		check_gemv_n_args(A, x, y);
 
 		typedef typename lmat::detail::gemv_n_internal_map<MatA, VecX, VecY>::type intern_t;
-		intern_t::eval_n(alpha, A, x, beta, y);
+		intern_t::eval(alpha, A, x, beta, y);
 	}
 
 	template<class MatA, class VecX, class VecY>
@@ -142,7 +142,7 @@ namespace lmat
 		check_gemv_n_args(A, x, y);
 
 		typedef typename lmat::detail::gemv_n_internal_map<MatA, VecX, VecY>::type intern_t;
-		intern_t::eval_n(alpha, A, x, beta, y);
+		intern_t::eval(alpha, A, x, beta, y);
 	}
 
 
@@ -176,7 +176,7 @@ namespace lmat
 		check_gemv_t_args(A, x, y);
 
 		typedef typename lmat::detail::gemv_t_internal_map<MatA, VecX, VecY>::type intern_t;
-		intern_t::eval_t(A, x, y);
+		intern_t::eval(A, x, y);
 	}
 
 	template<class MatA, class VecX, class VecY>
@@ -189,7 +189,7 @@ namespace lmat
 		check_gemv_t_args(A, x, y);
 
 		typedef typename lmat::detail::gemv_t_internal_map<MatA, VecX, VecY>::type intern_t;
-		intern_t::eval_t(A, x, y);
+		intern_t::eval(A, x, y);
 	}
 
 
@@ -203,7 +203,7 @@ namespace lmat
 		check_gemv_t_args(A, x, y);
 
 		typedef typename lmat::detail::gemv_t_internal_map<MatA, VecX, VecY>::type intern_t;
-		intern_t::eval_t(alpha, A, x, y);
+		intern_t::eval(alpha, A, x, y);
 	}
 
 	template<class MatA, class VecX, class VecY>
@@ -216,7 +216,7 @@ namespace lmat
 		check_gemv_t_args(A, x, y);
 
 		typedef typename lmat::detail::gemv_t_internal_map<MatA, VecX, VecY>::type intern_t;
-		intern_t::eval_t(alpha, A, x, y);
+		intern_t::eval(alpha, A, x, y);
 	}
 
 
@@ -230,7 +230,7 @@ namespace lmat
 		check_gemv_t_args(A, x, y);
 
 		typedef typename lmat::detail::gemv_t_internal_map<MatA, VecX, VecY>::type intern_t;
-		intern_t::eval_t(A, x, beta, y);
+		intern_t::eval(A, x, beta, y);
 	}
 
 	template<class MatA, class VecX, class VecY>
@@ -243,7 +243,7 @@ namespace lmat
 		check_gemv_t_args(A, x, y);
 
 		typedef typename lmat::detail::gemv_t_internal_map<MatA, VecX, VecY>::type intern_t;
-		intern_t::eval_t(A, x, beta, y);
+		intern_t::eval(A, x, beta, y);
 	}
 
 
@@ -257,7 +257,7 @@ namespace lmat
 		check_gemv_t_args(A, x, y);
 
 		typedef typename lmat::detail::gemv_t_internal_map<MatA, VecX, VecY>::type intern_t;
-		intern_t::eval_t(alpha, A, x, beta, y);
+		intern_t::eval(alpha, A, x, beta, y);
 	}
 
 	template<class MatA, class VecX, class VecY>
@@ -270,7 +270,136 @@ namespace lmat
 		check_gemv_t_args(A, x, y);
 
 		typedef typename lmat::detail::gemv_t_internal_map<MatA, VecX, VecY>::type intern_t;
-		intern_t::eval_t(alpha, A, x, beta, y);
+		intern_t::eval(alpha, A, x, beta, y);
+	}
+
+
+	/********************************************
+	 *
+	 *  gevm_n
+	 *
+	 ********************************************/
+
+	template<typename T, class MatA, class VecX, class VecY>
+	LMAT_ENSURE_INLINE
+	void check_gevm_n_args(
+			const IMatrixXpr<VecX, T>& x,
+			const IMatrixXpr<MatA, T>& A,
+			IDenseMatrix<VecY, T>& y)
+	{
+		check_arg(is_row(x) && x.ncolumns() == A.nrows(),
+				"blas::gemv_n: x should be a row vector of length m");
+
+		check_arg(is_row(y) && y.ncolumns() == A.ncolumns(),
+				"blas::gemv_n: y should be a column vector of length n");
+	}
+
+
+	template<class MatA, class VecX, class VecY>
+	LMAT_ENSURE_INLINE
+	void gevm_n(
+			const IMatrixXpr<VecX, float>& x,
+			const IMatrixXpr<MatA, float>& A,
+			IDenseMatrix<VecY, float>& y)
+	{
+		check_gevm_n_args(x, A, y);
+
+		typedef typename lmat::detail::gevm_n_internal_map<MatA, VecX, VecY>::type intern_t;
+		intern_t::eval(x, A, y);
+	}
+
+	template<class MatA, class VecX, class VecY>
+	LMAT_ENSURE_INLINE
+	void gevm_n(
+			const IMatrixXpr<VecX, double>& x,
+			const IMatrixXpr<MatA, double>& A,
+			IDenseMatrix<VecY, double>& y)
+	{
+		check_gevm_n_args(x, A, y);
+
+		typedef typename lmat::detail::gevm_n_internal_map<MatA, VecX, VecY>::type intern_t;
+		intern_t::eval(x, A, y);
+	}
+
+
+	template<class MatA, class VecX, class VecY>
+	LMAT_ENSURE_INLINE
+	void gevm_n(const float alpha,
+			const IMatrixXpr<VecX, float>& x,
+			const IMatrixXpr<MatA, float>& A,
+			IDenseMatrix<VecY, float>& y)
+	{
+		check_gevm_n_args(x, A, y);
+
+		typedef typename lmat::detail::gevm_n_internal_map<MatA, VecX, VecY>::type intern_t;
+		intern_t::eval(alpha, x, A, y);
+	}
+
+	template<class MatA, class VecX, class VecY>
+	LMAT_ENSURE_INLINE
+	void gevm_n(const double alpha,
+			const IMatrixXpr<VecX, double>& x,
+			const IMatrixXpr<MatA, double>& A,
+			IDenseMatrix<VecY, double>& y)
+	{
+		check_gevm_n_args(x, A, y);
+
+		typedef typename lmat::detail::gevm_n_internal_map<MatA, VecX, VecY>::type intern_t;
+		intern_t::eval(alpha, x, A, y);
+	}
+
+
+	template<class MatA, class VecX, class VecY>
+	LMAT_ENSURE_INLINE
+	void gevm_n(
+			const IMatrixXpr<VecX, float>& x,
+			const IMatrixXpr<MatA, float>& A,
+			const float beta, IDenseMatrix<VecY, float>& y)
+	{
+		check_gevm_n_args(x, A, y);
+
+		typedef typename lmat::detail::gevm_n_internal_map<MatA, VecX, VecY>::type intern_t;
+		intern_t::eval(x, A, beta, y);
+	}
+
+	template<class MatA, class VecX, class VecY>
+	LMAT_ENSURE_INLINE
+	void gevm_n(
+			const IMatrixXpr<VecX, double>& x,
+			const IMatrixXpr<MatA, double>& A,
+			const double beta, IDenseMatrix<VecY, double>& y)
+	{
+		check_gevm_n_args(x, A, y);
+
+		typedef typename lmat::detail::gevm_n_internal_map<MatA, VecX, VecY>::type intern_t;
+		intern_t::eval(x, A, beta, y);
+	}
+
+
+	template<class MatA, class VecX, class VecY>
+	LMAT_ENSURE_INLINE
+	void gevm_n(const float alpha,
+			const IMatrixXpr<VecX, float>& x,
+			const IMatrixXpr<MatA, float>& A,
+			const float beta, IDenseMatrix<VecY, float>& y)
+	{
+		check_gevm_n_args(x, A, y);
+
+		typedef typename lmat::detail::gevm_n_internal_map<MatA, VecX, VecY>::type intern_t;
+		intern_t::eval(alpha, x, A, beta, y);
+	}
+
+	template<class MatA, class VecX, class VecY>
+	LMAT_ENSURE_INLINE
+	void gevm_n(const double alpha,
+			const IMatrixXpr<VecX, double>& x,
+			const IMatrixXpr<MatA, double>& A,
+			const double beta, IDenseMatrix<VecY, double>& y)
+	{
+		check_gevm_n_args(x, A, y);
+
+		typedef typename lmat::detail::gevm_n_internal_map<MatA, VecX, VecY>::type intern_t;
+		intern_t::eval(alpha, x, A, beta, y);
 	}
 
 
