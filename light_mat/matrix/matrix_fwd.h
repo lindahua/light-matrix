@@ -15,6 +15,8 @@
 
 #include <light_mat/core/basic_defs.h>
 #include <light_mat/core/range.h>
+#include <light_mat/core/expr_base.h>
+#include <light_mat/math/functor_base.h>
 
 namespace lmat
 {
@@ -86,56 +88,56 @@ namespace lmat
 	template<typename T, int CTRows=DynamicDim, int CTCols=DynamicDim, typename Align=unaligned>
 	class ref_matrix_ex;
 
+	template<class Mat> class dense_wref_mat;
+
 	template<typename T, int CTRows=DynamicDim, int CTCols=DynamicDim>
 	class const_matrix;
 
-	// auxiliary structures
-
-	template<class Mat, typename RowRange> struct colviews;
-	template<class Mat, typename ColRange> struct rowviews;
-	template<class Mat, typename RowRange, typename ColRange> struct subviews;
 
 	// expressions
 
-	template<class Expr> class embed_mat;
+	template<class LMat, class RExpr> class assign_to_dense_expr;
 
-	template<class Fun, class Arg> class unary_ewise_expr;
-	template<class Fun, class Arg1, class Arg2> class binary_ewise_expr;
+	template<typename RowRange> struct colview_spec;
+	template<typename ColRange> struct rowview_spec;
+	template<typename RowRange, typename ColRange> struct matview_spec;
 
-	template<class Expr> class transpose_expr;
+	template<typename >
 
-	template<class Col, int N> class repeat_col_expr;
-	template<class Row, int M> class repeat_row_expr;
+	template<class Fun, class Arg_Holder> class unary_ewise_expr;
+	template<class Fun, class Arg1_Holder, class Arg2_Holder> class binary_ewise_expr;
+	template<class Fun, class Arg1_Holder, class Arg2_Holder, class Arg3_Holder> class ternary_ewise_expr;
+
+	template<class Arg_Holder> class transpose_expr;
+
+	template<class Arg_Holder, int N> class repeat_col_expr;
+	template<class Arg_Holder, int M> class repeat_row_expr;
 
 	struct rowwise { };
 	struct colwise { };
 
-	template<class Fun, class Arg> class colwise_reduce_expr;
-	template<class Fun, class Arg> class rowwise_reduce_expr;
-
-	template<class Arg> struct transpose_expr_map;
-	template<class SMat, typename T> struct cast_expr_map;
+	template<class Fun, class Arg_Holder> class colwise_reduce_expr;
+	template<class Fun, class Arg_Holder> class rowwise_reduce_expr;
 
 	// evaluation
 
-	template<class Expr, class Dst> struct default_evalctx;
+	struct default_evaldom { };
 
-	template<class Expr, class Dst> struct copy_evalctx;
-	template<int M, int N, class Dst> struct fill_evalctx;
-	template<class Src, class Dst> struct transpose_evalctx;
-	template<class Col, int N, class Dst> struct repcols_evalctx;
-	template<class Row, int M, class Dst> struct reprows_evalctx;
+	template<typename Dom, class Expr, class Dst> struct mateval_ctx;
 
-	template<class Expr, class Dst> struct linear_scalar_evalctx;
-	template<class Expr, class Dst> struct percol_scalar_evalctx;
-	template<class Expr, class Dst> struct linear_simd_evalctx;
-	template<class Expr, class Dst> struct percol_simd_evalctx;
+	template<typename T, int M, int N> struct matcopy_evalctx;
+	template<typename T, int M, int N> struct matfill_evalctx;
+
+	template<typename T, int M, int N> struct linear_scalar_evalctx;
+	template<typename T, int M, int N> struct percol_scalar_evalctx;
+	template<typename T, int M, int N> struct linear_simd_evalctx;
+	template<typename T, int M, int N> struct percol_simd_evalctx;
 
 	template<class Expr> struct linear_eval;
 	template<class Expr> struct percol_eval;
 
-	template<class Fun, class Arg, class Dst> struct colwise_reduce_evalctx;
-	template<class Fun, class Arg, class Dst> struct rowwise_reduce_evalctx;
+	template<typename T, int M, int N> struct colwise_reduce_evalctx;
+	template<typename T, int M, int N> struct rowwise_reduce_evalctx;
 
 }
 

@@ -422,58 +422,6 @@ namespace lmat
 	}
 
 
-	/********************************************
-	 *
-	 *  Assignment expressions
-	 *
-	 ********************************************/
-
-	template<class Lhs, class Rhs_Holder> struct assign_expr_map;
-	template<class Lhs, class Rhs> struct assign_expr_verifier;
-
-	template<class Lhs, class Rhs_Holder>
-	class assign_expr
-	{
-	public:
-		typedef Lhs lhs_type;
-		typedef typename Rhs_Holder::arg_type rhs_type;
-		typedef typename arg_forwarder<Rhs_Holder>::type rhs_forwarder;
-
-		LMAT_ENSURE_INLINE
-		assign_expr(Lhs& lhs, rhs_forwarder rhs_fwd)
-		: m_lhs(lhs)
-		, m_rhs_holder(rhs_fwd)
-		{
-		}
-
-		LMAT_ENSURE_INLINE
-		lhs_type& lhs() const
-		{
-			return m_lhs;
-		}
-
-		LMAT_ENSURE_INLINE
-		const rhs_type& rhs() const
-		{
-			return m_rhs_holder.get();
-		}
-
-	private:
-		Lhs& m_lhs;
-		Rhs_Holder& m_rhs_holder;
-	};
-
-
-	template<class Lhs, class Rhs_Holder>
-	LMAT_ENSURE_INLINE
-	typename enable_if<
-		assign_expr_verifier<Lhs, typename Rhs_Holder::arg_type>,
-		typename assign_expr_map<Lhs, Rhs_Holder>::type>::type
-	make_assign_expr(const Lhs& lhs, const typename arg_forwarder<Rhs_Holder>::type& rhs_fwd)
-	{
-		return assign_expr_map<Lhs, Rhs_Holder>::get(lhs, rhs_fwd);
-	}
-
 }
 
 #endif /* EXPR_BASE_H_ */

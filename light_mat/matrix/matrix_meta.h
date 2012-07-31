@@ -68,12 +68,17 @@ namespace lmat
 		static const int value = ct_rows<Mat>::value * ct_cols<Mat>::value;
 	};
 
+	template<int N1, int N2>
+	struct is_compatible_ctdim
+	{
+		static const bool value = N1 >= 0 && N2 >= 0 && (N1 == 0 || N2 == 0 || N1 == N2);
+	};
 
 	template<int N1, int N2>
 	struct binary_ctdim
 	{
 #ifdef LMAT_USE_STATIC_ASSERT
-		static_assert(!(N1 > 0 && N2 > 0 && N1 != N2), "Incompatible compile-time dimensions.");
+		static_assert(is_compatible_ctdim<N1, N2>::value, "Incompatible compile-time dimensions.");
 #endif
 		static const int value = N1 > N2 ? N1 : N2;
 	};
@@ -95,6 +100,14 @@ namespace lmat
 	struct binary_ct_size
 	{
 		static const int value = binary_ct_rows<Mat1, Mat2>::value * binary_ct_cols<Mat1, Mat2>::value;
+	};
+
+	template<class LMat, class RMat>
+	struct has_compatible_ct_size
+	{
+		static const bool value =
+				is_compatible_ctdim<ct_rows<LMat>::value, ct_rows<RMat>::value>::value &&
+				is_compatible_ctdim<ct_cols<LMat>::value, ct_cols<RMat>::value>::value;
 	};
 
 

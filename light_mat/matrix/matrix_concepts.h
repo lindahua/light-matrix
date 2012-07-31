@@ -90,14 +90,6 @@ namespace lmat
 			return transpose_expr_map<Derived>::get(derived());
 		}
 
-		template<typename T2>
-		LMAT_ENSURE_INLINE
-		typename cast_expr_map<Derived, T2>::type
-		cast()
-		{
-			return cast_expr_map<Derived, T2>::get(derived());
-		}
-
 	}; // end class IMatrixBase
 
 
@@ -241,112 +233,153 @@ namespace lmat
 			return elem(i, j);
 		}
 
+
+		LMAT_ENSURE_INLINE void require_size(const index_type m, const index_type n)
+		{
+			derived().require_size(m, n);
+		}
+
 	public:
 
 		// column views
 
 		LMAT_ENSURE_INLINE
-		typename colviews<Derived, whole>::const_type
+		typename unary_expr_map<colview_spec<whole>, Derived>::const_type
 		column(const index_type j) const
 		{
-			return colviews<Derived, whole>::get(derived(), j, whole());
+			return unary_expr_map<colview_spec<whole>, Derived>::get(
+					colview_spec<whole>(j), derived());
 		}
 
 		LMAT_ENSURE_INLINE
-		typename colviews<Derived, whole>::type
+		typename unary_expr_map<colview_spec<whole>, Derived>::type
 		column(const index_type j)
 		{
-			return colviews<Derived, whole>::get(derived(), j, whole());
+			return unary_expr_map<colview_spec<whole>, Derived>::get(
+					colview_spec<whole>(j), derived());
 		}
 
 		template<class Range>
 		LMAT_ENSURE_INLINE
-		typename colviews<Derived, Range>::const_type
+		typename unary_expr_map<colview_spec<Range>, Derived>::const_type
 		operator()(const IRange<Range>& rgn, const index_t j) const
 		{
-			return colviews<Derived, Range>::get(derived(), j, rgn.derived());
+			return unary_expr_map<colview_spec<Range>, Derived>::get(
+					colview_spec<Range>(j, rgn), derived());
 		}
 
 		template<class Range>
 		LMAT_ENSURE_INLINE
-		typename colviews<Derived, Range>::type
+		typename unary_expr_map<colview_spec<Range>, Derived>::type
 		operator()(const IRange<Range>& rgn, const index_t j)
 		{
-			return colviews<Derived, Range>::get(derived(), j, rgn.derived());
+			return unary_expr_map<colview_spec<Range>, Derived>::get(
+					colview_spec<Range>(j, rgn), derived());
 		}
 
 		// row views
 
 		LMAT_ENSURE_INLINE
-		typename rowviews<Derived, whole>::const_type
+		typename unary_expr_map<rowview_spec<whole>, Derived>::const_type
 		row(const index_type i) const
 		{
-			return rowviews<Derived, whole>::get(derived(), i, whole());
+			return unary_expr_map<rowview_spec<whole>, Derived>::get(
+					rowview_spec<whole>(i), derived());
 		}
 
 		LMAT_ENSURE_INLINE
-		typename rowviews<Derived, whole>::type
+		typename unary_expr_map<rowview_spec<whole>, Derived>::type
 		row(const index_type i)
 		{
-			return rowviews<Derived, whole>::get(derived(), i, whole());
+			return unary_expr_map<rowview_spec<whole>, Derived>::get(
+					rowview_spec<whole>(i), derived());
 		}
 
 		template<class Range>
 		LMAT_ENSURE_INLINE
-		typename rowviews<Derived, Range>::const_type
+		typename unary_expr_map<rowview_spec<Range>, Derived>::const_type
 		operator()(const index_t i, const IRange<Range>& rgn) const
 		{
-			return rowviews<Derived, Range>::get(derived(), i, rgn.derived());
+			return unary_expr_map<rowview_spec<Range>, Derived>::get(
+					rowview_spec<Range>(i, rgn), derived());
 		}
 
 		template<class Range>
 		LMAT_ENSURE_INLINE
-		typename rowviews<Derived, Range>::type
+		typename unary_expr_map<rowview_spec<Range>, Derived>::type
 		operator()(const index_t i, const IRange<Range>& rgn)
 		{
-			return rowviews<Derived, Range>::get(derived(), i, rgn.derived());
+			return unary_expr_map<rowview_spec<Range>, Derived>::get(
+					rowview_spec<Range>(i, rgn), derived());
 		}
 
 		// sub-views
 
 		template<class Range0, class Range1>
 		LMAT_ENSURE_INLINE
-		typename subviews<Derived, Range0, Range1>::const_type
+		typename unary_expr_map<matview_spec<Range0, Range1>, Derived>::const_type
 		operator()(const IRange<Range0>& row_rgn, const IRange<Range1>& col_rgn) const
 		{
-			return subviews<Derived, Range0, Range1>::get(derived(),
-					row_rgn.derived(), col_rgn.derived());
+			return unary_expr_map<matview_spec<Range0, Range1>, Derived>::get(
+					matview_spec<Range0, Range1>(row_rgn, col_rgn), derived());
 		}
 
 		template<class Range0, class Range1>
 		LMAT_ENSURE_INLINE
-		typename subviews<Derived, Range0, Range1>::type
+		typename unary_expr_map<matview_spec<Range0, Range1>, Derived>::const_type
 		operator()(const IRange<Range0>& row_rgn, const IRange<Range1>& col_rgn)
 		{
-			return subviews<Derived, Range0, Range1>::get(derived(),
-					row_rgn.derived(), col_rgn.derived());
+			return unary_expr_map<matview_spec<Range0, Range1>, Derived>::get(
+					matview_spec<Range0, Range1>(row_rgn, col_rgn), derived());
 		}
 
 	}; // end class IDenseMatrixBlock
 
 
+	/********************************************
+	 *
+	 *  matrix assignment
+	 *
+	 ********************************************/
+
+	template<class SExpr, class DMat>
+	class mat_eval_verifier
+	{
+		static const bool value =
+				is_dense_mat<DMat>::value &&
+				!is_readonly_mat<DMat>::value &&
+				is_mat_xpr<SExpr>::value &&
+				is_same<
+					typename matrix_traits<DMat>::value_type,
+					typename matrix_traits<SExpr>::value_type
+				>::value &&
+				has_compatible_ct_size<DMat, SExpr>::value;
+	};
+
 	template<typename T, class SExpr, class DMat>
 	LMAT_ENSURE_INLINE
-	void default_evaluate(const IMatrixXpr<SExpr, T>& src, IMatrixXpr<DMat, T>& dst)
+	inline typename enable_if<mat_eval_verifier<SExpr, DMat>, void>::type
+	default_evaluate(const IMatrixXpr<SExpr, T>& sexpr, IDenseMatrix<DMat, T>& dmat)
 	{
-		typedef typename default_evalctx<SExpr, DMat>::type ctx_t;
-		ctx_t::evaluate(src.derived(), dst.derived());
+		typedef typename mateval_ctx<default_evaldom, SExpr, DMat>::type ctx_t;
+		evaluate(sexpr.derived(), dmat.derived(), ctx_t());
 	}
 
+	template<typename T, class LMat, class RExpr>
+	LMAT_ENSURE_INLINE
+	inline typename enable_if<mat_eval_verifier<RExpr, LMat>, void>::type
+	default_assign(IDenseMatrix<LMat, T>& lhs, const IMatrixXpr<RExpr, T>& rhs)
+	{
+		lhs.require_size(rhs.nrows(), rhs.ncolumns());
+		default_evaluate(rhs, lhs);
+	}
 
 	template<typename S, typename T, class SExpr, class DMat>
 	LMAT_ENSURE_INLINE
-	inline typename enable_if_c<is_implicitly_convertible<S, T>::value, void>::type
-	implicitly_cast_to(const IMatrixXpr<SExpr, S>& src, IDenseMatrix<DMat, T>& dst)
+	inline typename enable_if<is_implicitly_convertible<S, T>, void>::type
+	default_assign_with_implicit_cast(const IMatrixXpr<SExpr, S>& src, IDenseMatrix<DMat, T>& dst)
 	{
-		typedef typename cast_expr_map<SExpr, T>::type conv_expr_t;
-		typedef typename default_evalctx<conv_expr_t, DMat>::type ctx_t;
-		ctx_t::evaluate(cast_expr_map<SExpr, T>::get(src), dst.derived());
+		default_assign(dst, make_expr(type_converter<S, T>(), src.derived()));
 	}
 
 }

@@ -61,9 +61,11 @@ namespace lmat
 	};
 
 	template<typename T, int CTRows, int CTCols, typename Align, class DMat>
-	struct default_evalctx<dense_matrix<T, CTRows, CTCols, Align>, DMat>
+	struct mateval_ctx<default_evaldom, dense_matrix<T, CTRows, CTCols, Align>, DMat>
 	{
-		typedef copy_evalctx<dense_matrix<T, CTRows, CTCols, Align>, DMat> type;
+		typedef matcopy_evalctx<T,
+				binary_ctdim<CTRows, ct_rows<DMat>::value>::value,
+				binary_ctdim<CTCols, ct_cols<DMat>::value>::value> type;
 	};
 
 
@@ -125,11 +127,7 @@ namespace lmat
 		LMAT_ENSURE_INLINE dense_matrix(const IMatrixXpr<Expr, S>& r)
 		: m_internal(r.nrows(), r.ncolumns())
 		{
-#ifdef LMAT_USE_STATIC_ASSERT
-			static_assert(is_implicitly_convertible<S, T>::value,
-					"S is NOT implicitly-convertible to T.");
-#endif
-			implicitly_cast_to(r.derived(), *this);
+			default_assign_with_implicit_cast(*this, r);
 		}
 
 		LMAT_ENSURE_INLINE void swap(dense_matrix& s)
@@ -149,8 +147,7 @@ namespace lmat
 		{
 			if (this != &r)
 			{
-				resize_to(r);
-				copy(r, *this);
+				default_assign(*this, r);
 			}
 
 			return *this;
@@ -159,20 +156,14 @@ namespace lmat
 		template<class Expr>
 		LMAT_ENSURE_INLINE dense_matrix& operator = (const IMatrixXpr<Expr, T>& r)
 		{
-			resize_to(r);
-			default_evaluate(r, *this);
+			default_assign(*this, r);
 			return *this;
 		}
 
 		template<class Expr, typename S>
 		LMAT_ENSURE_INLINE dense_matrix& operator = (const IMatrixXpr<Expr, S>& r)
 		{
-#ifdef LMAT_USE_STATIC_ASSERT
-			static_assert(is_implicitly_convertible<S, T>::value,
-					"S is NOT implicitly-convertible to T.");
-#endif
-			resize_to(r);
-			implicitly_cast_to(r.derived(), *this);
+			default_assign_with_implicit_cast(*this, r);
 			return *this;
 		}
 
@@ -247,17 +238,9 @@ namespace lmat
 			return ptr_data()[i];
 		}
 
-		LMAT_ENSURE_INLINE void resize(index_type m, index_type n)
+		LMAT_ENSURE_INLINE void require_size(index_type m, index_type n)
 		{
 			m_internal.resize(m, n);
-		}
-
-	private:
-		template<class RMat>
-		LMAT_ENSURE_INLINE void resize_to(const IMatrixXpr<RMat, T>& r)
-		{
-			if (!has_same_size(*this, r))
-				resize(r.nrows(), r.ncolumns());
 		}
 
 	private:
@@ -431,6 +414,15 @@ namespace lmat
 	{
 		return dense_matrix<T, ct_rows<Expr>::value, ct_cols<Expr>::value>(
 				expr.derived());
+	}
+
+	template<typename T, class Expr, class Context>
+	LMAT_ENSURE_INLINE
+	dense_matrix<T, ct_rows<Expr>::value, ct_cols<Expr>::value>
+	eval(const IMatrixXpr<Expr, T>& expr, const Context& ctx)
+	{
+		dense_matrix<T, ct_rows<Expr>::value, ct_cols<Expr>::value> r(expr.nrows(), expr.ncolumns());
+		evaluate(expr.derived(), r, ctx);
 	}
 
 	template<typename T, class Expr>
