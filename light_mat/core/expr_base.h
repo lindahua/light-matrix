@@ -120,6 +120,27 @@ namespace lmat
 		explicit cache_arg_forwarder(const Arg& a) : arg(a) { }
 	};
 
+	template<class Arg>
+	LMAT_ENSURE_INLINE
+	ref_arg_forwarder<Arg> ref_arg(const Arg& arg)
+	{
+		return ref_arg_forwarder<Arg>(arg);
+	}
+
+	template<class Arg>
+	LMAT_ENSURE_INLINE
+	copy_arg_forwarder<Arg> copy_arg(const Arg& arg)
+	{
+		return copy_arg_forwarder<Arg>(arg);
+	}
+
+	template<class Arg>
+	LMAT_ENSURE_INLINE
+	cache_arg_forwarder<Arg> cache_arg(const Arg& arg)
+	{
+		return cache_arg_forwarder<Arg>(arg);
+	}
+
 
 	// Holders
 
@@ -220,29 +241,23 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<class Tag>
-	struct is_expr_tag
-	{
-		static const bool value = false;
-	};
+	template<typename Spec, class Arg_Holder> struct unary_expr_map;
+	template<typename Spec, class Arg1_Holder, class Arg2_Holder> struct binary_expr_map;
+	template<typename Spec, class Arg1_Holder, class Arg2_Holder, class Arg3_Holder> struct ternary_expr_map;
 
-	template<typename Tag, class Arg_Holder> struct unary_expr_map;
-	template<typename Tag, class Arg1_Holder, class Arg2_Holder> struct binary_expr_map;
-	template<typename Tag, class Arg1_Holder, class Arg2_Holder, class Arg3_Holder> struct ternary_expr_map;
-
-	template<typename Tag, class Arg>
+	template<typename Spec, class Arg>
 	struct unary_expr_verifier
 	{
 		static const bool value = false;
 	};
 
-	template<typename Tag, class Arg1, class Arg2>
+	template<typename Spec, class Arg1, class Arg2>
 	struct binary_expr_verifier
 	{
 		static const bool value = false;
 	};
 
-	template<typename Tag, class Arg1, class Arg2, class Arg3>
+	template<typename Spec, class Arg1, class Arg2, class Arg3>
 	struct ternary_expr_verifier
 	{
 		static const bool value = false;
@@ -252,7 +267,7 @@ namespace lmat
 
 	// expression classes
 
-	template<class Arg_Holder, int NumOuts>
+	template<class Arg_Holder>
 	class unary_expr
 	{
 	public:
@@ -357,55 +372,107 @@ namespace lmat
 
 	// functions to make expression
 
-	template<typename Tag, class Arg_Holder>
+	template<typename Spec, class Arg_Holder>
 	LMAT_ENSURE_INLINE
 	typename enable_if<
-		unary_expr_verifier<Tag,
+		unary_expr_verifier<Spec,
 			typename Arg_Holder::arg_type>,
-		typename unary_expr_map<Tag,
+		typename unary_expr_map<Spec,
 			Arg_Holder>::type >::type
-	make_expr(Tag, const typename arg_forwarder<Arg_Holder>::type& arg_fwd)
+	make_expr(const Spec& spec, const typename arg_forwarder<Arg_Holder>::type& arg_fwd)
 	{
-		return unary_expr_map<Tag, Arg_Holder>::get(arg_fwd);
+		return unary_expr_map<Spec, Arg_Holder>::get(spec, arg_fwd);
 	}
 
 
-	template<typename Tag, class Arg1_Holder, class Arg2_Holder>
+	template<typename Spec, class Arg1_Holder, class Arg2_Holder>
 	LMAT_ENSURE_INLINE
 	typename enable_if<
-		binary_expr_verifier<Tag,
+		binary_expr_verifier<Spec,
 			typename Arg1_Holder::arg_type,
 			typename Arg2_Holder::arg_type>,
-		typename binary_expr_map<Tag,
+		typename binary_expr_map<Spec,
 			Arg1_Holder,
 			Arg2_Holder>::type >::type
-	make_expr(Tag,
+	make_expr(const Spec& spec,
 			const typename arg_forwarder<Arg1_Holder>::type& arg1_fwd,
 			const typename arg_forwarder<Arg2_Holder>::type& arg2_fwd)
 	{
-		return binary_expr_map<Tag, Arg1_Holder, Arg2_Holder>::get(arg1_fwd, arg2_fwd);
+		return binary_expr_map<Spec, Arg1_Holder, Arg2_Holder>::get(spec, arg1_fwd, arg2_fwd);
 	}
 
 
-	template<typename Tag, class Arg1_Holder, class Arg2_Holder, class Arg3_Holder>
+	template<typename Spec, class Arg1_Holder, class Arg2_Holder, class Arg3_Holder>
 	LMAT_ENSURE_INLINE
 	typename enable_if<
-		ternary_expr_verifier<Tag,
+		ternary_expr_verifier<Spec,
 			typename Arg1_Holder::arg_type,
 			typename Arg2_Holder::arg_type,
 			typename Arg3_Holder::arg_type>,
-		typename ternary_expr_map<Tag,
+		typename ternary_expr_map<Spec,
 			Arg1_Holder,
 			Arg2_Holder,
 			Arg3_Holder>::type >::type
-	make_expr(Tag,
+	make_expr(const Spec& spec,
 			const typename arg_forwarder<Arg1_Holder>::type& arg1_fwd,
 			const typename arg_forwarder<Arg2_Holder>::type& arg2_fwd,
 			const typename arg_forwarder<Arg3_Holder>::type& arg3_fwd)
 	{
-		return binary_expr_map<Tag, Arg1_Holder, Arg2_Holder>::get(arg1_fwd, arg2_fwd, arg3_fwd);
+		return binary_expr_map<Spec, Arg1_Holder, Arg2_Holder>::get(spec, arg1_fwd, arg2_fwd, arg3_fwd);
 	}
 
+
+	/********************************************
+	 *
+	 *  Assignment expressions
+	 *
+	 ********************************************/
+
+	template<class Lhs, class Rhs_Holder> struct assign_expr_map;
+	template<class Lhs, class Rhs> struct assign_expr_verifier;
+
+	template<class Lhs, class Rhs_Holder>
+	class assign_expr
+	{
+	public:
+		typedef Lhs lhs_type;
+		typedef typename Rhs_Holder::arg_type rhs_type;
+		typedef typename arg_forwarder<Rhs_Holder>::type rhs_forwarder;
+
+		LMAT_ENSURE_INLINE
+		assign_expr(Lhs& lhs, rhs_forwarder rhs_fwd)
+		: m_lhs(lhs)
+		, m_rhs_holder(rhs_fwd)
+		{
+		}
+
+		LMAT_ENSURE_INLINE
+		lhs_type& lhs() const
+		{
+			return m_lhs;
+		}
+
+		LMAT_ENSURE_INLINE
+		const rhs_type& rhs() const
+		{
+			return m_rhs_holder.get();
+		}
+
+	private:
+		Lhs& m_lhs;
+		Rhs_Holder& m_rhs_holder;
+	};
+
+
+	template<class Lhs, class Rhs_Holder>
+	LMAT_ENSURE_INLINE
+	typename enable_if<
+		assign_expr_verifier<Lhs, typename Rhs_Holder::arg_type>,
+		typename assign_expr_map<Lhs, Rhs_Holder>::type>::type
+	make_assign_expr(const Lhs& lhs, const typename arg_forwarder<Rhs_Holder>::type& rhs_fwd)
+	{
+		return assign_expr_map<Lhs, Rhs_Holder>::get(lhs, rhs_fwd);
+	}
 
 }
 
