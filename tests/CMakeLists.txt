@@ -227,7 +227,7 @@ set(MAT_BLAS_HS
     ${BLAS_HS})
     
 add_executable(test_blasl1 ${MAT_BLAS_HS} test_blasl1.cpp)
-
+add_executable(test_gemv ${MAT_BLAS_HS} test_gemv.cpp)
 
 # Link to test_main
 
@@ -260,7 +260,8 @@ set(LMAT_TEST_NAMES
 )
 
 set(LMAT_LINALG_TEST_NAMES
-    test_blasl1)
+    test_blasl1
+    test_gemv)
 	
 foreach(tname ${LMAT_TEST_NAMES})
 	target_link_libraries(${tname} test_main)

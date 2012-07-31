@@ -28,6 +28,110 @@ namespace lmat { namespace detail {
 
 	template<typename T, int M, int N> struct gemv_internal;
 
+
+	template<int M, int N>
+	struct gemv_internal<float, M, N>
+	{
+		template<class MatA, class VecX, class VecY>
+		LMAT_ENSURE_INLINE
+		static void eval_n(
+				const IMatrixXpr<MatA, float>& A,
+				const IMatrixXpr<VecX, float>& x,
+				IDenseMatrix<VecY, float>& y)
+		{
+			eval_n(1.0f, A, x, 0.0f, y);
+		}
+
+		template<class MatA, class VecX, class VecY>
+		LMAT_ENSURE_INLINE
+		static void eval_n(
+				const float alpha, const IMatrixXpr<MatA, float>& A,
+				const IMatrixXpr<VecX, float>& x,
+				IDenseMatrix<VecY, float>& y)
+		{
+			eval_n(alpha, A, x, 0.0f, y);
+		}
+
+		template<class MatA, class VecX, class VecY>
+		LMAT_ENSURE_INLINE
+		static void eval_n(
+				const IMatrixXpr<MatA, float>& A,
+				const IMatrixXpr<VecX, float>& x,
+				const float beta, IDenseMatrix<VecY, float>& y)
+		{
+			eval_n(1.0f, A, x, beta, y);
+		}
+
+		template<class MatA, class VecX, class VecY>
+		LMAT_ENSURE_INLINE
+		static void eval_n(
+				const float alpha, const IMatrixXpr<MatA, float>& A,
+				const IMatrixXpr<VecX, float>& x,
+				const float beta, IDenseMatrix<VecY, float>& y)
+		{
+			typename lmat::detail::blas_mat_proxy<MatA>::type A_(A.derived());
+			typename lmat::detail::blas_col_proxy<VecX>::type x_(x.derived());
+
+			lmat_blas_int m = A_.nrows();
+			lmat_blas_int n = A_.ncolumns();
+			lmat_blas_int lda = A_.lead_dim();
+			lmat_blas_int incx = x_.inc();
+			lmat_blas_int incy = 1;
+
+			LMAT_SGEMV("N", &m, &n, &alpha, A_.pdata(), &lda, x_.pdata(), &incx, &beta, y.ptr_data(), &incy);
+		}
+
+		template<class MatA, class VecX, class VecY>
+		LMAT_ENSURE_INLINE
+		static void eval_t(
+				const IMatrixXpr<MatA, float>& A,
+				const IMatrixXpr<VecX, float>& x,
+				IDenseMatrix<VecY, float>& y)
+		{
+			eval_t(1.0f, A, x, 0.0f, y);
+		}
+
+		template<class MatA, class VecX, class VecY>
+		LMAT_ENSURE_INLINE
+		static void eval_t(
+				const float alpha, const IMatrixXpr<MatA, float>& A,
+				const IMatrixXpr<VecX, float>& x,
+				IDenseMatrix<VecY, float>& y)
+		{
+			eval_t(alpha, A, x, 0.0f, y);
+		}
+
+		template<class MatA, class VecX, class VecY>
+		LMAT_ENSURE_INLINE
+		static void eval_t(
+				const IMatrixXpr<MatA, float>& A,
+				const IMatrixXpr<VecX, float>& x,
+				const float beta, IDenseMatrix<VecY, float>& y)
+		{
+			eval_t(1.0f, A, x, beta, y);
+		}
+
+		template<class MatA, class VecX, class VecY>
+		LMAT_ENSURE_INLINE
+		static void eval_t(
+				const float alpha, const IMatrixXpr<MatA, float>& A,
+				const IMatrixXpr<VecX, float>& x,
+				const float beta, IDenseMatrix<VecY, float>& y)
+		{
+			typename lmat::detail::blas_mat_proxy<MatA>::type A_(A.derived());
+			typename lmat::detail::blas_col_proxy<VecX>::type x_(x.derived());
+
+			lmat_blas_int m = A_.nrows();
+			lmat_blas_int n = A_.ncolumns();
+			lmat_blas_int lda = A_.lead_dim();
+			lmat_blas_int incx = x_.inc();
+			lmat_blas_int incy = 1;
+
+			LMAT_SGEMV("T", &m, &n, &alpha, A_.pdata(), &lda, x_.pdata(), &incx, &beta, y.ptr_data(), &incy);
+		}
+	};
+
+
 	template<int M, int N>
 	struct gemv_internal<double, M, N>
 	{
@@ -77,7 +181,7 @@ namespace lmat { namespace detail {
 			lmat_blas_int incx = x_.inc();
 			lmat_blas_int incy = 1;
 
-			LMAT_DGEMV("N", &m, &n, &alpha, A_.pdata(), lda, x_.pdata(), &incx, &beta, y.ptr_data(), &incy);
+			LMAT_DGEMV("N", &m, &n, &alpha, A_.pdata(), &lda, x_.pdata(), &incx, &beta, y.ptr_data(), &incy);
 		}
 
 		template<class MatA, class VecX, class VecY>
@@ -126,7 +230,7 @@ namespace lmat { namespace detail {
 			lmat_blas_int incx = x_.inc();
 			lmat_blas_int incy = 1;
 
-			LMAT_DGEMV("T", &m, &n, &alpha, A_.pdata(), lda, x_.pdata(), &incx, &beta, y.ptr_data(), &incy);
+			LMAT_DGEMV("T", &m, &n, &alpha, A_.pdata(), &lda, x_.pdata(), &incx, &beta, y.ptr_data(), &incy);
 		}
 	};
 
@@ -141,6 +245,15 @@ namespace lmat { namespace detail {
 		typedef gemv_internal<T, M, N> type;
 	};
 
+	template<class MatA, class VecX, class VecY>
+	struct gemv_t_internal_map
+	{
+		typedef typename matrix_traits<MatA>::value_type T;
+		static const int M = binary_ctdim<ct_rows<MatA>::value, ct_rows<VecX>::value>::value;
+		static const int N = binary_ctdim<ct_cols<MatA>::value, ct_rows<VecY>::value>::value;
+
+		typedef gemv_internal<T, M, N> type;
+	};
 
 } }
 
