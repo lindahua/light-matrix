@@ -96,9 +96,7 @@ set(MATRIX_CLASS_HS
 set(MATRIX_EVAL_BASE_HS
     ${INC}/math/math_base.h
     ${INC}/math/functor_base.h
-    ${INC}/matrix/vec_eval_concepts.h
-    ${INC}/matrix/vec_evaluators.h
-    ${INC}/matrix/matrix_veval.h
+    ${INC}/matrix/matrix_vector_eval.h
     ${INC}/matrix/matrix_ewise_eval.h)   
     
 set(MATRIX_EWISE_HS
@@ -106,6 +104,7 @@ set(MATRIX_EWISE_HS
     ${INC}/math/emath_functors.h
     ${INC}/math/comp_functors.h
     ${INC}/math/mask_functors.h
+    ${INC}/matrix/matrix_cast.h
     ${INC}/matrix/matrix_arith.h
     ${INC}/matrix/matrix_emath.h
     ${INC}/matrix/matrix_ecomp.h
@@ -193,15 +192,15 @@ set(BASIC_MAT_EVAL_HS
     ${MATRIX_HS}
     ${MATRIX_EVAL_BASE_HS})
     
-# add_executable(test_dense_veval ${BASIC_MAT_EVAL_HS} test_dense_veval.cpp)
-# add_executable(test_dense_cast ${BASIC_MAT_EVAL_HS} test_dense_cast.cpp)
+add_executable(test_dense_veval ${BASIC_MAT_EVAL_HS} test_dense_veval.cpp)
 
 set(EWISE_MAT_EVAL_HS
     ${MATRIX_HS}
     ${MATRIX_EVAL_BASE_HS}
     ${MATRIX_EWISE_HS})
-    
-# add_executable(test_mat_arith ${EWISE_MAT_EVAL_HS} test_mat_arith.cpp)
+
+# add_executable(test_dense_cast ${EWISE_MAT_EVAL_HS} test_dense_cast.cpp)   
+add_executable(test_mat_arith ${EWISE_MAT_EVAL_HS} test_mat_arith.cpp)
 # add_executable(test_mat_emath ${EWISE_MAT_EVAL_HS} test_mat_emath.cpp)
 # add_executable(test_mat_ecomp ${EWISE_MAT_EVAL_HS} test_mat_ecomp.cpp)
 # add_executable(test_mat_elogical ${EWISE_MAT_EVAL_HS} test_mat_elogical.cpp)
@@ -248,9 +247,9 @@ set(LMAT_TEST_NAMES
 	test_dense_eval
 	test_mat_subviews
 	# test_mat_transpose
-	# test_dense_veval
+	test_dense_veval
 	# test_dense_cast
-	# test_mat_arith
+	test_mat_arith
 	# test_mat_emath
 	# test_mat_ecomp
 	# test_mat_elogical

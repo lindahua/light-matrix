@@ -18,27 +18,6 @@
 
 namespace lmat
 {
-	/********************************************
-	 *
-	 *  Expression Type mapping
-	 *
-	 ********************************************/
-
-	LMAT_DECLARE_BINARY_TYPE_MAP_EX( add, add_op )
-	LMAT_DECLARE_BINARY_TYPE_MAP_EX( sub, sub_op )
-	LMAT_DECLARE_BINARY_TYPE_MAP_EX( mul, mul_op )
-	LMAT_DECLARE_BINARY_TYPE_MAP_EX( div, div_op )
-
-	LMAT_DECLARE_UNARY_TYPE_MAP( neg, neg_op )
-	LMAT_DECLARE_UNARY_TYPE_MAP( abs, abs_fun )
-	LMAT_DECLARE_UNARY_TYPE_MAP( sqr, sqr_fun )
-	LMAT_DECLARE_UNARY_TYPE_MAP( sqrt, sqrt_fun )
-	LMAT_DECLARE_UNARY_TYPE_MAP( rcp, rcp_fun )
-	LMAT_DECLARE_UNARY_TYPE_MAP( rsqrt, rsqrt_fun )
-
-	LMAT_DECLARE_BINARY_TYPE_MAP_EX( max, max_fun )
-	LMAT_DECLARE_BINARY_TYPE_MAP_EX( min, min_fun )
-
 
 	/********************************************
 	 *
@@ -46,21 +25,21 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	LMAT_DEFINE_BINARY_MATFUNCTION_EX( add, operator +, add_op )
-	LMAT_DEFINE_BINARY_MATFUNCTION_EX( sub, operator -, sub_op )
-	LMAT_DEFINE_BINARY_MATFUNCTION_EX( mul, operator *, mul_op )
-	LMAT_DEFINE_BINARY_MATFUNCTION_EX( div, operator /, div_op )
+	LMAT_DEFINE_BINARY_MATFUNCTION_EX( operator +, add_op )
+	LMAT_DEFINE_BINARY_MATFUNCTION_EX( operator -, sub_op )
+	LMAT_DEFINE_BINARY_MATFUNCTION_EX( operator *, mul_op )
+	LMAT_DEFINE_BINARY_MATFUNCTION_EX( operator /, div_op )
 
-	LMAT_DEFINE_UNARY_MATFUNCTION( neg, operator -, neg_op )
+	LMAT_DEFINE_UNARY_MATFUNCTION( operator -, neg_op )
 
-	LMAT_DEFINE_UNARY_MATFUNCTION( abs, abs, abs_fun )
-	LMAT_DEFINE_UNARY_MATFUNCTION( sqr, sqr, sqr_fun )
-	LMAT_DEFINE_UNARY_MATFUNCTION( sqrt, sqrt, sqrt_fun )
-	LMAT_DEFINE_UNARY_MATFUNCTION( rcp, rcp, rcp_fun )
-	LMAT_DEFINE_UNARY_MATFUNCTION( rsqrt, rsqrt, rsqrt_fun )
+	LMAT_DEFINE_UNARY_MATFUNCTION( abs, abs_fun )
+	LMAT_DEFINE_UNARY_MATFUNCTION( sqr, sqr_fun )
+	LMAT_DEFINE_UNARY_MATFUNCTION( sqrt, sqrt_fun )
+	LMAT_DEFINE_UNARY_MATFUNCTION( rcp, rcp_fun )
+	LMAT_DEFINE_UNARY_MATFUNCTION( rsqrt, rsqrt_fun )
 
-	LMAT_DEFINE_BINARY_MATFUNCTION_EX( max, max, max_fun )
-	LMAT_DEFINE_BINARY_MATFUNCTION_EX( min, min, min_fun )
+	LMAT_DEFINE_BINARY_MATFUNCTION_EX( max, max_fun )
+	LMAT_DEFINE_BINARY_MATFUNCTION_EX( min, min_fun )
 
 	/********************************************
 	 *

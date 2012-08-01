@@ -123,7 +123,6 @@ namespace lmat
 	// evaluation
 
 	template<class Expr, class Dst> struct default_matrix_eval_policy;
-
 }
 
 // Useful macros

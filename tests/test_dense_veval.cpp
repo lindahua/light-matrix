@@ -8,8 +8,7 @@
 
 #include "test_base.h"
 
-#include <light_mat/matrix/matrix_classes.h>
-#include <light_mat/matrix/matrix_veval.h>
+#include <light_mat/matrix/matrix_vector_eval.h>
 
 using namespace lmat;
 using namespace lmat::test;
@@ -41,7 +40,9 @@ MN_CASE( linear_veval, continu_linear )
 	typedef continuous_linear_evaluator<double> veval;
 
 #ifdef LMAT_USE_STATIC_ASSERT
-	static_assert(is_same<typename linear_eval<mat>::evaluator_type, veval>::value,
+	static_assert(is_same<
+			typename vector_eval<mat, as_linear_vec, by_scalars>::evaluator_type,
+			veval>::value,
 			"Evaluator type verification failed");
 #endif
 
@@ -69,8 +70,11 @@ MN_CASE( linear_veval, cached_linear )
 #ifdef LMAT_USE_STATIC_ASSERT
 
 	static_assert(
-			(N == 1 && is_same<typename linear_eval<mat_ex>::evaluator_type, veval_ex1>::value) ||
-			(N != 1  && is_same<typename linear_eval<mat_ex>::evaluator_type, veval_ex>::value),
+			(N == 1 && is_same<
+					typename vector_eval<mat_ex, as_linear_vec, by_scalars>::evaluator_type,
+					veval_ex1>::value) ||
+			(N != 1  && is_same<typename vector_eval<mat_ex, as_linear_vec, by_scalars>::evaluator_type,
+					veval_ex>::value),
 			"Evaluator type verification failed");
 #endif
 
@@ -97,7 +101,9 @@ MN_CASE( linear_veval, const_linear )
 	typedef const_linear_evaluator<double> veval;
 
 #ifdef LMAT_USE_STATIC_ASSERT
-	static_assert(is_same<typename linear_eval<mat>::evaluator_type, veval>::value,
+	static_assert(is_same<
+			typename vector_eval<mat, as_linear_vec, by_scalars>::evaluator_type,
+			veval>::value,
 			"Evaluator type verification failed");
 #endif
 
@@ -123,8 +129,9 @@ MN_CASE( percol_veval, dense_percol )
 
 #ifdef LMAT_USE_STATIC_ASSERT
 
-	static_assert(
-			is_same<typename percol_eval<mat_ex>::evaluator_type, veval_ex>::value,
+	static_assert(is_same<
+			typename vector_eval<mat_ex, per_column, by_scalars>::evaluator_type,
+			veval_ex>::value,
 			"Evaluator type verification failed");
 #endif
 
@@ -180,9 +187,9 @@ MN_CASE( percol_veval, const_percol )
 	typedef const_percol_evaluator<double> veval;
 
 #ifdef LMAT_USE_STATIC_ASSERT
-
-	static_assert(
-			is_same<typename percol_eval<mat>::evaluator_type, veval>::value,
+	static_assert(is_same<
+			typename vector_eval<mat, per_column, by_scalars>::evaluator_type,
+			veval>::value,
 			"Evaluator type verification failed");
 #endif
 
@@ -212,12 +219,12 @@ MN_CASE( eval_by_scalars, cont_to_cont )
 
 	dense_matrix<double, M, N> b(m, n, zeros<double>());
 
-	linear_scalar_evaluate(a, b);
+	linear_by_scalars_evaluate(a, b);
 	ASSERT_MAT_EQ(m, n, a, b);
 
 	fill(b, 0.0);
 
-	percol_scalar_evaluate(a, b);
+	percol_by_scalars_evaluate(a, b);
 	ASSERT_MAT_EQ(m, n, a, b);
 }
 
@@ -234,7 +241,7 @@ MN_CASE( eval_by_scalars, cont_to_ext )
 	fill(sb, 0.0);
 	ref_matrix_ex<double, M, N> b(sb.ptr_begin(), m, n, ldim_b);
 
-	percol_scalar_evaluate(a, b);
+	percol_by_scalars_evaluate(a, b);
 	ASSERT_MAT_EQ(m, n, a, b);
 }
 
@@ -250,12 +257,12 @@ MN_CASE( eval_by_scalars, ext_to_cont )
 	ref_matrix_ex<double, M, N> a(sa.ptr_begin(), m, n, ldim_a);
 	dense_matrix<double, M, N> b(m, n, fill_value(0.0));
 
-	linear_scalar_evaluate(a, b);
+	linear_by_scalars_evaluate(a, b);
 	ASSERT_MAT_EQ(m, n, a, b);
 
 	fill(b, 0.0);
 
-	percol_scalar_evaluate(a, b);
+	percol_by_scalars_evaluate(a, b);
 	ASSERT_MAT_EQ(m, n, a, b);
 }
 
@@ -275,7 +282,7 @@ MN_CASE( eval_by_scalars, ext_to_ext )
 	ref_matrix_ex<double, M, N> a(sa.ptr_begin(), m, n, ldim_a);
 	ref_matrix_ex<double, M, N> b(sb.ptr_begin(), m, n, ldim_b);
 
-	percol_scalar_evaluate(a, b);
+	percol_by_scalars_evaluate(a, b);
 	ASSERT_MAT_EQ(m, n, a, b);
 }
 
