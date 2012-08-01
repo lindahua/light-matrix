@@ -23,7 +23,7 @@ namespace lmat
 	 *  Expression type mapping
 	 *
 	 ********************************************/
-
+/*
 	template<class Fun, class Arg>
 	struct unary_ewise_expr_map
 	{
@@ -81,13 +81,13 @@ namespace lmat
 		typedef transpose_expr<
 				embed_mat<typename binary_fix1_ewise_expr_map<Fun, Arg2>::type> > type;
 	};
-
+*/
 	/********************************************
 	 *
 	 *  Expression traits
 	 *
 	 ********************************************/
-
+/*
 	template<class Fun, class Arg>
 	struct matrix_traits<unary_ewise_expr<Fun, Arg> >
 	{
@@ -111,14 +111,14 @@ namespace lmat
 
 		typedef typename Fun::result_type value_type;
 	};
-
+*/
 
 	/********************************************
 	 *
 	 *  Expression classes
 	 *
 	 ********************************************/
-
+/*
 	template<class Fun, class Arg>
 	class unary_ewise_expr
 	: public IMatrixXpr<unary_ewise_expr<Fun, Arg>, typename Fun::result_type>
@@ -233,13 +233,14 @@ namespace lmat
 		obj_wrapper<Arg1> m_arg1;
 		obj_wrapper<Arg2> m_arg2;
 	};
+*/
 
 	/********************************************
 	 *
 	 *  Expression construction
 	 *
 	 ********************************************/
-
+/*
 	template<class Fun, class Arg>
 	LMAT_ENSURE_INLINE
 	inline typename unary_ewise_expr_map<Fun, Arg>::type
@@ -332,14 +333,14 @@ namespace lmat
 	{
 		return embed(ewise(fun, arg1v, texpr2.arg())).trans();
 	}
-
+*/
 
 	/********************************************
 	 *
 	 *  Conversion expression
 	 *
 	 ********************************************/
-
+/*
 	template<class SMat, typename T>
 	struct cast_expr_map
 	{
@@ -361,7 +362,7 @@ namespace lmat
 	{
 		return ewise(type_converter<S, T>(), sexpr.derived());
 	}
-
+*/
 
 }
 

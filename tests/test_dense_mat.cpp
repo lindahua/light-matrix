@@ -191,7 +191,7 @@ MN_CASE( dense_mat, resize )
 
 	const double *p1 = a.ptr_data();
 
-	a.resize(m2, n2);
+	a.require_size(m2, n2);
 
 	ASSERT_EQ(a.nrows(), m2);
 	ASSERT_EQ(a.ncolumns(), n2);
@@ -209,7 +209,7 @@ MN_CASE( dense_mat, resize )
 		ASSERT_NE( p2, p1 );
 	}
 
-	a.resize(m3, n3);
+	a.require_size(m3, n3);
 
 	ASSERT_EQ(a.nrows(), m3);
 	ASSERT_EQ(a.ncolumns(), n3);

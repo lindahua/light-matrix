@@ -24,7 +24,7 @@ namespace lmat
 	 *  transpose_base classes
 	 *
 	 ********************************************/
-
+/*
 	// forward declaration
 
 	template<class Col> class contcol_transpose_base;
@@ -236,7 +236,7 @@ namespace lmat
 	{
 		copy(s.ptr_data(), dst.derived());
 	}
-
+*/
 
 
 	/********************************************
@@ -244,7 +244,7 @@ namespace lmat
 	 *  transpose regular row
 	 *
 	 ********************************************/
-
+/*
 	template<class Row>
 	class regular_row_transpose_base
 	: public IMatrixView<transpose_expr<Row>, typename matrix_traits<Row>::value_type>
@@ -314,14 +314,14 @@ namespace lmat
 		}
 	}
 
-
+*/
 
 	/********************************************
 	 *
 	 *  dense transpose
 	 *
 	 ********************************************/
-
+/*
 	template<class Mat>
 	class dense_transpose_base
 	: public IMatrixXpr<transpose_expr<Mat>, typename matrix_traits<Mat>::value_type>
@@ -376,14 +376,14 @@ namespace lmat
 		detail::transpose(mat.nrows(), mat.ncolumns(),
 				mat.ptr_data(), mat.lead_dim(), dst.ptr_data(), dst.lead_dim());
 	}
-
+*/
 
 	/********************************************
 	 *
 	 *  col expression transpose
 	 *
 	 ********************************************/
-
+/*
 	template<class Expr>
 	class colxpr_transpose_base
 	: public IMatrixXpr<transpose_expr<Expr>, typename matrix_traits<Expr>::value_type>
@@ -453,14 +453,14 @@ namespace lmat
 			}
 		}
 	}
-
+*/
 
 	/********************************************
 	 *
 	 *  row expression transpose
 	 *
 	 ********************************************/
-
+/*
 	template<class Expr>
 	class rowxpr_transpose_base
 	: public IMatrixXpr<transpose_expr<Expr>, typename matrix_traits<Expr>::value_type>
@@ -517,7 +517,7 @@ namespace lmat
 		ref_matrix<T, 1, Len> dview(dst.ptr_data(), 1, arg.ncolumns());
 		default_evaluate(arg, dview);
 	}
-
+*/
 
 
 	/********************************************
@@ -525,7 +525,7 @@ namespace lmat
 	 *  generic transpose
 	 *
 	 ********************************************/
-
+/*
 	template<class Expr>
 	class generic_transpose_base
 	: public IMatrixXpr<transpose_expr<Expr>, typename matrix_traits<Expr>::value_type>
@@ -582,14 +582,14 @@ namespace lmat
 		detail::transpose(mat.nrows(), mat.ncolumns(),
 				mat.ptr_data(), mat.lead_dim(), dst.ptr_data(), dst.lead_dim());
 	}
-
+*/
 
 	/********************************************
 	 *
 	 *  base type map
 	 *
 	 ********************************************/
-
+/*
 	template<typename Expr_>
 	struct matrix_transpose_base_map
 	{
@@ -629,14 +629,14 @@ namespace lmat
 					>::type
 				>::type type;
 	};
-
+*/
 
 	/********************************************
 	 *
-	 *  retrospection
+	 *  reflection
 	 *
 	 ********************************************/
-
+/*
 	template<class Col>
 	LMAT_ENSURE_INLINE
 	const char* trans_base_typename(const contcol_transpose_base<Col>& )
@@ -685,14 +685,14 @@ namespace lmat
 	{
 		return "generic";
 	}
-
+*/
 
 	/********************************************
 	 *
 	 *  transpose_expr classes
 	 *
 	 ********************************************/
-
+/*
 	// traits
 
 	template<class Expr>
@@ -766,25 +766,7 @@ namespace lmat
 			base_evaluate_to(expr, dst);
 		}
 	};
-
-
-	/********************************************
-	 *
-	 *  transpose_expr map
-	 *
-	 ********************************************/
-
-	template<class Arg>
-	struct transpose_expr_map
-	{
-		typedef transpose_expr<Arg> type;
-
-		LMAT_ENSURE_INLINE
-		static type get(const Arg& arg)
-		{
-			return type(arg);
-		}
-	};
+*/
 
 
 }

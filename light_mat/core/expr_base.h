@@ -44,8 +44,8 @@ namespace lmat
 
 	// cross maps between forwarders and holders
 
-	template<class Holder> class arg_forwarder;
-	template<class Forwarder> class arg_holder;
+	template<class Holder> struct arg_forwarder;
+	template<class Forwarder> struct arg_holder;
 
 	template<class Arg>
 	struct arg_forwarder<ref_arg_holder<Arg> >
@@ -276,7 +276,7 @@ namespace lmat
 
 	public:
 		LMAT_ENSURE_INLINE
-		unary_expr(arg_forwarder arg_fwd)
+		explicit unary_expr(arg_forwarder arg_fwd)
 		: m_arg_holder(arg_fwd)
 		{ }
 

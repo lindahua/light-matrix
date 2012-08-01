@@ -118,9 +118,9 @@ namespace lmat
 	};
 
 	template<typename T, int CTRows, int CTCols, typename Align, class DMat>
-	struct default_evalctx<cref_matrix_ex<T, CTRows, CTCols, Align>, DMat>
+	struct mateval_ctx<default_evaldom, cref_matrix_ex<T, CTRows, CTCols, Align>, DMat>
 	{
-		typedef copy_evalctx<cref_matrix_ex<T, CTRows, CTCols, Align>, DMat> type;
+		typedef matcopy_evalctx type;
 	};
 
 
@@ -250,9 +250,9 @@ namespace lmat
 	};
 
 	template<typename T, int CTRows, int CTCols, typename Align, class DMat>
-	struct default_evalctx<ref_matrix_ex<T, CTRows, CTCols, Align>, DMat>
+	struct mateval_ctx<default_evaldom, ref_matrix_ex<T, CTRows, CTCols, Align>, DMat>
 	{
-		typedef copy_evalctx<ref_matrix_ex<T, CTRows, CTCols, Align>, DMat> type;
+		typedef matcopy_evalctx type;
 	};
 
 
@@ -287,18 +287,14 @@ namespace lmat
 		template<class Expr>
 		LMAT_ENSURE_INLINE ref_matrix_ex& operator = (const IMatrixXpr<Expr, T>& r)
 		{
-			default_evaluate(r, *this);
+			default_assign(*this, r);
 			return *this;
 		}
 
 		template<class Expr, typename S>
 		LMAT_ENSURE_INLINE ref_matrix_ex& operator = (const IMatrixXpr<Expr, S>& r)
 		{
-#ifdef LMAT_USE_STATIC_ASSERT
-			static_assert(is_implicitly_convertible<S, T>::value,
-					"S is NOT implicitly-convertible to T.");
-#endif
-			implicitly_cast_to(r.derived(), *this);
+			default_assign_with_implicit_cast(*this, r);
 			return *this;
 		}
 
@@ -378,6 +374,12 @@ namespace lmat
 		LMAT_ENSURE_INLINE reference operator[] (const index_type i)
 		{
 			return m_data[detail::ref_ex_linear_offset(*this, i)];
+		}
+
+		LMAT_ENSURE_INLINE void require_size(const index_type m, const index_type n)
+		{
+			check_arg(nrows() == m && ncolumns() == n,
+					"ref_matrix::require_size: The required size is invalid.");
 		}
 
 	private:

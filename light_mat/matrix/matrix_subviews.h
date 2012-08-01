@@ -22,7 +22,7 @@ namespace lmat
 	 *  column views
 	 *
 	 ********************************************/
-
+/*
 	template<class Mat>
 	struct colviews<Mat, whole>
 	{
@@ -71,7 +71,7 @@ namespace lmat
 			return type(mat.ptr_col(j) + rg.begin_index(), rg.num(), 1);
 		}
 	};
-
+*/
 
 
 	/********************************************
@@ -79,7 +79,7 @@ namespace lmat
 	 *  row views
 	 *
 	 ********************************************/
-
+/*
 	template<class Mat>
 	struct rowviews<Mat, whole>
 	{
@@ -130,7 +130,7 @@ namespace lmat
 		}
 
 	};
-
+*/
 
 
 	/********************************************
@@ -138,7 +138,7 @@ namespace lmat
 	 *  subviews
 	 *
 	 ********************************************/
-
+/*
 	namespace detail
 	{
 		template<class Mat, int CTCols, bool IsCont> struct multicol_helper;
@@ -288,6 +288,7 @@ namespace lmat
 					rrg.num(), crg.num(), mat.lead_dim());
 		}
 	};
+*/
 }
 
 #endif /* MATRIX_SUBVIEWS_H_ */

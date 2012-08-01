@@ -55,23 +55,6 @@ namespace lmat
 		noncopyable& operator= (const noncopyable& );
 	};
 
-
-	// object wrapping
-
-	template<class T>
-	class obj_wrapper
-	{
-	public:
-		LMAT_ENSURE_INLINE
-		explicit obj_wrapper(const T& a) : m_ref(a) { }
-
-		LMAT_ENSURE_INLINE
-		const T& get() const { return m_ref; }
-
-	private:
-		const T& m_ref;
-	};
-
 }
 
 #endif

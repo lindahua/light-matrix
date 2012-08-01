@@ -56,7 +56,8 @@ set(COMMON_BASIC_HS
     ${INC}/core/type_traits.h
     ${INC}/core/arg_check.h
     ${INC}/core/range.h
-    ${INC}/core/basic_defs.h)
+    ${INC}/core/basic_defs.h
+    ${INC}/core/expr_base.h)
     
 set(COMMON_ARRAY_HS
     ${INC}/core/mem_op.h
@@ -184,43 +185,43 @@ add_executable(test_mat_copy ${REF_MAT_HS} test_mat_copy.cpp)
 add_executable(test_mat_compare ${REF_MAT_HS} test_mat_compare.cpp)
 
 add_executable(test_dense_eval ${MATRIX_HS} test_dense_eval.cpp)
-add_executable(test_mat_subviews ${MATRIX_HS} test_mat_subviews.cpp)
-add_executable(test_mat_transpose ${MATRIX_HS} test_mat_transpose.cpp)
+# add_executable(test_mat_subviews ${MATRIX_HS} test_mat_subviews.cpp)
+# add_executable(test_mat_transpose ${MATRIX_HS} test_mat_transpose.cpp)
 
 set(BASIC_MAT_EVAL_HS
     ${MATRIX_HS}
     ${MATRIX_EVAL_BASE_HS})
     
-add_executable(test_dense_veval ${BASIC_MAT_EVAL_HS} test_dense_veval.cpp)
-add_executable(test_dense_cast ${BASIC_MAT_EVAL_HS} test_dense_cast.cpp)
+# add_executable(test_dense_veval ${BASIC_MAT_EVAL_HS} test_dense_veval.cpp)
+# add_executable(test_dense_cast ${BASIC_MAT_EVAL_HS} test_dense_cast.cpp)
 
 set(EWISE_MAT_EVAL_HS
     ${MATRIX_HS}
     ${MATRIX_EVAL_BASE_HS}
     ${MATRIX_EWISE_HS})
     
-add_executable(test_mat_arith ${EWISE_MAT_EVAL_HS} test_mat_arith.cpp)
-add_executable(test_mat_emath ${EWISE_MAT_EVAL_HS} test_mat_emath.cpp)
-add_executable(test_mat_ecomp ${EWISE_MAT_EVAL_HS} test_mat_ecomp.cpp)
-add_executable(test_mat_elogical ${EWISE_MAT_EVAL_HS} test_mat_elogical.cpp)
+# add_executable(test_mat_arith ${EWISE_MAT_EVAL_HS} test_mat_arith.cpp)
+# add_executable(test_mat_emath ${EWISE_MAT_EVAL_HS} test_mat_emath.cpp)
+# add_executable(test_mat_ecomp ${EWISE_MAT_EVAL_HS} test_mat_ecomp.cpp)
+# add_executable(test_mat_elogical ${EWISE_MAT_EVAL_HS} test_mat_elogical.cpp)
 
 set(REP_VECS_HS
     ${MATRIX_HS}
     ${MATRIX_EVAL_BASE_HS}
     ${REPEAT_VECS_HS})
     
-add_executable(test_rep_vecs ${REP_VECS_HS} test_rep_vecs.cpp)
-add_executable(test_rep_veval ${REP_VECS_HS} test_rep_veval.cpp)
+# add_executable(test_rep_vecs ${REP_VECS_HS} test_rep_vecs.cpp)
+# add_executable(test_rep_veval ${REP_VECS_HS} test_rep_veval.cpp)
 
-add_executable(test_cpd_ewise ${MATRIX_EVAL_HS} test_cpd_ewise.cpp)
+# add_executable(test_cpd_ewise ${MATRIX_EVAL_HS} test_cpd_ewise.cpp)
 
 set(MAT_REDUC_HS
     ${MATRIX_HS}
     ${MATRIX_EVAL_BASE_HS}
     ${MATRIX_REDUC_HS})
     
-add_executable(test_mat_reduce ${MAT_REDUC_HS} test_mat_reduce.cpp) 
-add_executable(test_partial_reduce ${MAT_REDUC_HS} test_partial_reduce.cpp) 
+# add_executable(test_mat_reduce ${MAT_REDUC_HS} test_mat_reduce.cpp) 
+# add_executable(test_partial_reduce ${MAT_REDUC_HS} test_partial_reduce.cpp) 
 
 set(MAT_BLAS_HS
     ${MATRIX_HS}
@@ -244,19 +245,19 @@ set(LMAT_TEST_NAMES
 	test_mat_copy
 	test_mat_compare
 	test_dense_eval
-	test_mat_subviews
-	test_mat_transpose
-	test_dense_veval
-	test_dense_cast
-	test_mat_arith
-	test_mat_emath
-	test_mat_ecomp
-	test_mat_elogical
-	test_rep_vecs
-	test_rep_veval
-    test_cpd_ewise
-	test_mat_reduce
-	test_partial_reduce
+	# test_mat_subviews
+	# test_mat_transpose
+	# test_dense_veval
+	# test_dense_cast
+	# test_mat_arith
+	# test_mat_emath
+	# test_mat_ecomp
+	# test_mat_elogical
+	# test_rep_vecs
+	# test_rep_veval
+    # test_cpd_ewise
+	# test_mat_reduce
+	# test_partial_reduce
 )
 
 set(LMAT_LINALG_TEST_NAMES

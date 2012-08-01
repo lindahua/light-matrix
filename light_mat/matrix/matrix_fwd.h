@@ -98,16 +98,15 @@ namespace lmat
 
 	template<class LMat, class RExpr> class assign_to_dense_expr;
 
-	template<typename RowRange> struct colview_spec;
-	template<typename ColRange> struct rowview_spec;
-	template<typename RowRange, typename ColRange> struct matview_spec;
-
-	template<typename >
+	template<class Mat, typename RowRange> struct colview_map;
+	template<class Mat, typename ColRange> struct rowview_map;
+	template<class Mat, typename RowRange, typename ColRange> struct matview_map;
 
 	template<class Fun, class Arg_Holder> class unary_ewise_expr;
 	template<class Fun, class Arg1_Holder, class Arg2_Holder> class binary_ewise_expr;
 	template<class Fun, class Arg1_Holder, class Arg2_Holder, class Arg3_Holder> class ternary_ewise_expr;
 
+	struct transpose_t { };
 	template<class Arg_Holder> class transpose_expr;
 
 	template<class Arg_Holder, int N> class repeat_col_expr;
@@ -125,13 +124,13 @@ namespace lmat
 
 	template<typename Dom, class Expr, class Dst> struct mateval_ctx;
 
-	template<typename T, int M, int N> struct matcopy_evalctx;
-	template<typename T, int M, int N> struct matfill_evalctx;
+	struct matcopy_evalctx { };
+	struct matfill_evalctx { };
 
-	template<typename T, int M, int N> struct linear_scalar_evalctx;
-	template<typename T, int M, int N> struct percol_scalar_evalctx;
-	template<typename T, int M, int N> struct linear_simd_evalctx;
-	template<typename T, int M, int N> struct percol_simd_evalctx;
+	struct linear_scalar_evalctx { };
+	struct percol_scalar_evalctx { };
+	struct linear_simd_evalctx { };
+	struct percol_simd_evalctx { };
 
 	template<class Expr> struct linear_eval;
 	template<class Expr> struct percol_eval;

@@ -59,13 +59,15 @@ namespace lmat
 	}
 
 
-	template<typename T, int M, int N, class LMat, class RMat>
+	template<typename T, class LMat, class RMat>
 	inline
-	void evaluate(const IDenseMatrix<LMat, T>& src, IDenseMatrix<RMat, T>& dst, matcopy_evalctx<T, M, N>)
+	void evaluate(const IDenseMatrix<LMat, T>& src, IDenseMatrix<RMat, T>& dst, matcopy_evalctx)
 	{
 		check_same_size(src, dst, "copy: inconsistent sizes of src and dst.");
 
-		typedef typename detail::mat_copier<T, M, N>::type copier_t;
+		typedef typename detail::mat_copier<T,
+				binary_ct_rows<LMat, RMat>::value,
+				binary_ct_cols<LMat, RMat>::value>::type copier_t;
 
 		if (has_continuous_layout(src))
 		{
@@ -101,11 +103,7 @@ namespace lmat
 	LMAT_ENSURE_INLINE
 	void copy(const IDenseMatrix<LMat, T>& src, IDenseMatrix<RMat, T>& dst)
 	{
-		typedef matcopy_evalctx<T,
-				binary_ct_rows<LMat, RMat>::value,
-				binary_ct_cols<LMat, RMat>::value> ctx_t;
-
-		evaluate(src.derived(), dst.derived(), ctx_t());
+		evaluate(src.derived(), dst.derived(), matcopy_evalctx());
 	}
 
 }

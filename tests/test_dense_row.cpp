@@ -139,7 +139,7 @@ N_CASE( dense_row, resize )
 	dense_row<double, N> a(n);
 	const double *p1 = a.ptr_data();
 
-	a.resize(1, n);
+	a.require_size(1, n);
 
 	ASSERT_EQ(a.nrows(), 1);
 	ASSERT_EQ(a.ncolumns(), n);
@@ -148,7 +148,7 @@ N_CASE( dense_row, resize )
 
 	ASSERT_EQ(a.ptr_data(), p1);
 
-	a.resize(n);
+	a.require_size(n);
 
 	ASSERT_EQ(a.nrows(), 1);
 	ASSERT_EQ(a.ncolumns(), n);
@@ -157,7 +157,7 @@ N_CASE( dense_row, resize )
 
 	ASSERT_EQ(a.ptr_data(), p1);
 
-	a.resize(n2);
+	a.require_size(n2);
 
 	ASSERT_EQ(a.nrows(), 1);
 	ASSERT_EQ(a.ncolumns(), n2);

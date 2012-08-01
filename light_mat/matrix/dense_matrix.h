@@ -63,9 +63,7 @@ namespace lmat
 	template<typename T, int CTRows, int CTCols, typename Align, class DMat>
 	struct mateval_ctx<default_evaldom, dense_matrix<T, CTRows, CTCols, Align>, DMat>
 	{
-		typedef matcopy_evalctx<T,
-				binary_ctdim<CTRows, ct_rows<DMat>::value>::value,
-				binary_ctdim<CTCols, ct_cols<DMat>::value>::value> type;
+		typedef matcopy_evalctx type;
 	};
 
 
@@ -320,15 +318,15 @@ namespace lmat
 
 	public:
 		LMAT_ENSURE_INLINE
-		void resize(index_t m, index_t n)
+		void require_size(index_t m, index_t n)
 		{
-			base_mat_t::resize(m, n);
+			base_mat_t::require_size(m, n);
 		}
 
 		LMAT_ENSURE_INLINE
-		void resize(index_t n)
+		void require_size(index_t n)
 		{
-			base_mat_t::resize(n, 1);
+			base_mat_t::require_size(n, 1);
 		}
 	};
 
@@ -388,15 +386,15 @@ namespace lmat
 
 	public:
 		LMAT_ENSURE_INLINE
-		void resize(index_t m, index_t n)
+		void require_size(index_t m, index_t n)
 		{
-			base_mat_t::resize(m, n);
+			base_mat_t::require_size(m, n);
 		}
 
 		LMAT_ENSURE_INLINE
-		void resize(index_t n)
+		void require_size(index_t n)
 		{
-			base_mat_t::resize(1, n);
+			base_mat_t::require_size(1, n);
 		}
 	};
 

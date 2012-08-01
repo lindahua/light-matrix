@@ -38,9 +38,9 @@ namespace lmat
 	};
 
 	template<typename T, int CTRows, int CTCols, class DMat>
-	struct default_evalctx<const_matrix<T, CTRows, CTCols>, DMat>
+	struct mateval_ctx<default_evaldom, const_matrix<T, CTRows, CTCols>, DMat>
 	{
-		typedef fill_evalctx<CTRows, CTCols, DMat> type;
+		typedef matfill_evalctx type;
 	};
 
 
@@ -101,29 +101,38 @@ namespace lmat
 
 	// Evaluation
 
-	template<int M, int N, class Dst>
-	struct fill_evalctx
+	template<typename T, int M, int N, class Dst>
+	LMAT_ENSURE_INLINE
+	void evaluate(const const_matrix<T, M, N>& mat, IDenseMatrix<Dst, T>& dst, matfill_evalctx)
 	{
-		typedef const_matrix<typename matrix_traits<Dst>::value_type, M, N> SMat;
-
-		LMAT_ENSURE_INLINE
-		static void evaluate(const SMat& src, Dst &dst)
-		{
-			fill(dst, src.value());
-		}
-	};
+		fill(dst, mat.value());
+	}
 
 
 	// Transpose
 
 	template<typename T, int M, int N>
-	struct transpose_expr_map<const_matrix<T, M, N> >
+	struct unary_expr_map<transpose_t, ref_arg_holder<const_matrix<T, M, N> > >
 	{
 		typedef const_matrix<T, N, M> type;
 
 		LMAT_ENSURE_INLINE
-		static type get(const const_matrix<T, M, N>& arg)
+		static type get(const ref_arg_forwarder<const_matrix<T, M, N> >& arg_fwd)
 		{
+			const const_matrix<T, M, N>& arg = arg_fwd.arg;
+			return type(arg.ncolumns(), arg.nrows(), arg.value());
+		}
+	};
+
+	template<typename T, int M, int N>
+	struct unary_expr_map<transpose_t, copy_arg_holder<const_matrix<T, M, N> > >
+	{
+		typedef const_matrix<T, N, M> type;
+
+		LMAT_ENSURE_INLINE
+		static type get(const copy_arg_forwarder<const_matrix<T, M, N> >& arg_fwd)
+		{
+			const const_matrix<T, M, N>& arg = arg_fwd.arg;
 			return type(arg.ncolumns(), arg.nrows(), arg.value());
 		}
 	};
