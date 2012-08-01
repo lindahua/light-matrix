@@ -88,7 +88,7 @@ namespace lmat
 	template<typename T, int CTRows=DynamicDim, int CTCols=DynamicDim, typename Align=unaligned>
 	class ref_matrix_ex;
 
-	template<class Mat> class dense_wref_mat;
+	template<class Mat> class dense_mutable_view;
 
 	template<typename T, int CTRows=DynamicDim, int CTCols=DynamicDim>
 	class const_matrix;

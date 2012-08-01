@@ -90,6 +90,7 @@ set(MATRIX_CLASS_HS
     ${INC}/matrix/ref_matrix.h
     ${INC}/matrix/ref_matrix_ex.h
     ${INC}/matrix/const_matrix.h
+    ${INC}/matrix/dense_mutable_view.h
     ${INC}/matrix/matrix_classes.h)
     
 set(MATRIX_EVAL_BASE_HS
