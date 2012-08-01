@@ -29,6 +29,7 @@ namespace lmat
 		static const bool is_readonly = true;
 
 		typedef T value_type;
+		typedef cpu_domain domain;
 	};
 
 	template<typename T, int CTRows, int CTCols>
@@ -37,10 +38,12 @@ namespace lmat
 		static const bool value = true;
 	};
 
+	struct matrix_fill_policy { };
+
 	template<typename T, int CTRows, int CTCols, class DMat>
-	struct mateval_ctx<default_evaldom, const_matrix<T, CTRows, CTCols>, DMat>
+	struct default_matrix_eval_policy<const_matrix<T, CTRows, CTCols>, DMat>
 	{
-		typedef matfill_evalctx type;
+		typedef matrix_fill_policy type;
 	};
 
 
@@ -103,7 +106,7 @@ namespace lmat
 
 	template<typename T, int M, int N, class Dst>
 	LMAT_ENSURE_INLINE
-	void evaluate(const const_matrix<T, M, N>& mat, IDenseMatrix<Dst, T>& dst, matfill_evalctx)
+	void evaluate(const const_matrix<T, M, N>& mat, IDenseMatrix<Dst, T>& dst, matrix_fill_policy)
 	{
 		fill(dst, mat.value());
 	}

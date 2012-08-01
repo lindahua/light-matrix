@@ -337,31 +337,29 @@ namespace lmat
 	 ********************************************/
 
 	template<class SExpr, class DMat>
-	struct mat_eval_verifier
+	struct matrix_eval_verifier
 	{
 		static const bool value =
 				is_dense_mat<DMat>::value &&
 				!is_readonly_mat<DMat>::value &&
 				is_mat_xpr<SExpr>::value &&
-				is_same<
-					typename matrix_traits<DMat>::value_type,
-					typename matrix_traits<SExpr>::value_type
-				>::value &&
+				has_same_domain<SExpr, DMat>::value &&
+				has_same_value_type<SExpr, DMat>::value &&
 				has_compatible_ct_size<DMat, SExpr>::value;
 	};
 
 	template<typename T, class SExpr, class DMat>
 	LMAT_ENSURE_INLINE
-	inline typename enable_if<mat_eval_verifier<SExpr, DMat>, void>::type
+	inline typename enable_if<matrix_eval_verifier<SExpr, DMat>, void>::type
 	default_evaluate(const IMatrixXpr<SExpr, T>& sexpr, IDenseMatrix<DMat, T>& dmat)
 	{
-		typedef typename mateval_ctx<default_evaldom, SExpr, DMat>::type ctx_t;
-		evaluate(sexpr.derived(), dmat.derived(), ctx_t());
+		typedef typename default_matrix_eval_policy<SExpr, DMat>::type policy_t;
+		evaluate(sexpr.derived(), dmat.derived(), policy_t());
 	}
 
 	template<typename T, class LMat, class RExpr>
 	LMAT_ENSURE_INLINE
-	inline typename enable_if<mat_eval_verifier<RExpr, LMat>, void>::type
+	inline typename enable_if<matrix_eval_verifier<RExpr, LMat>, void>::type
 	default_assign(IDenseMatrix<LMat, T>& lhs, const IMatrixXpr<RExpr, T>& rhs)
 	{
 		lhs.require_size(rhs.nrows(), rhs.ncolumns());

@@ -61,7 +61,7 @@ namespace lmat
 
 	template<typename T, class LMat, class RMat>
 	inline
-	void evaluate(const IDenseMatrix<LMat, T>& src, IDenseMatrix<RMat, T>& dst, matcopy_evalctx)
+	void copy(const IDenseMatrix<LMat, T>& src, IDenseMatrix<RMat, T>& dst)
 	{
 		check_same_size(src, dst, "copy: inconsistent sizes of src and dst.");
 
@@ -99,13 +99,14 @@ namespace lmat
 	}
 
 
+	struct matrix_copy_policy { };
+
 	template<typename T, class LMat, class RMat>
 	LMAT_ENSURE_INLINE
-	void copy(const IDenseMatrix<LMat, T>& src, IDenseMatrix<RMat, T>& dst)
+	void evaluate(const IDenseMatrix<LMat, T>& src, IDenseMatrix<RMat, T>& dst, matrix_copy_policy)
 	{
-		evaluate(src.derived(), dst.derived(), matcopy_evalctx());
+		copy(src.derived(), dst.derived());
 	}
-
 }
 
 #endif 

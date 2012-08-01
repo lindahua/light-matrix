@@ -41,8 +41,12 @@ namespace lmat
 	 *   - is_readonly:				whether the contents can be modified
 	 *
 	 *	 - value_type:			the type of element value
+	 *	 - domain:				the domain (e.g. cpu_domain, cuda_domain)
 	 *
 	 ****************************************************************/
+
+	struct cpu_domain { };
+	struct cuda_domain { };
 
 	template<class Derived> struct matrix_traits;
 
@@ -96,8 +100,6 @@ namespace lmat
 
 	// expressions
 
-	template<class LMat, class RExpr> class assign_to_dense_expr;
-
 	template<class Mat, typename RowRange> struct colview_map;
 	template<class Mat, typename ColRange> struct rowview_map;
 	template<class Mat, typename RowRange, typename ColRange> struct matview_map;
@@ -120,23 +122,7 @@ namespace lmat
 
 	// evaluation
 
-	struct default_evaldom { };
-
-	template<typename Dom, class Expr, class Dst> struct mateval_ctx;
-
-	struct matcopy_evalctx { };
-	struct matfill_evalctx { };
-
-	struct linear_scalar_evalctx { };
-	struct percol_scalar_evalctx { };
-	struct linear_simd_evalctx { };
-	struct percol_simd_evalctx { };
-
-	template<class Expr> struct linear_eval;
-	template<class Expr> struct percol_eval;
-
-	template<typename T, int M, int N> struct colwise_reduce_evalctx;
-	template<typename T, int M, int N> struct rowwise_reduce_evalctx;
+	template<class Expr, class Dst> struct default_matrix_eval_policy;
 
 }
 

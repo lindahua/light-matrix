@@ -34,6 +34,7 @@ namespace lmat
 		static const bool is_readonly = false;
 
 		typedef T value_type;
+		typedef cpu_domain domain;
 	};
 
 	template<typename T, int CTRows, int CTCols, typename Align>
@@ -61,9 +62,9 @@ namespace lmat
 	};
 
 	template<typename T, int CTRows, int CTCols, typename Align, class DMat>
-	struct mateval_ctx<default_evaldom, dense_matrix<T, CTRows, CTCols, Align>, DMat>
+	struct default_matrix_eval_policy<dense_matrix<T, CTRows, CTCols, Align>, DMat>
 	{
-		typedef matcopy_evalctx type;
+		typedef matrix_copy_policy type;
 	};
 
 

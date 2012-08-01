@@ -157,6 +157,15 @@ MN_CASE( mat_subview, col_whole )
 		ASSERT_TRUE( is_equal(b(whole(), j), r) );
 		ASSERT_TRUE( is_equal(bc(whole(), j), r) );
 	}
+
+	dense_matrix<double, M, 1> c(m, 1);
+	for (index_t i = 0; i < m; ++i) c[i] = double(2 * i + 3);
+
+	for (index_t j = 0; j < n; ++j)
+	{
+		b(whole(), j) = c;
+		ASSERT_TRUE( is_equal(b(whole(), j), c) );
+	}
 }
 
 
@@ -190,6 +199,15 @@ MN_CASE( mat_subview, row_whole )
 		mat_f64 r = extract_block(b, i, 1, 0, n);
 		ASSERT_TRUE( is_equal(b(i, whole()), r) );
 		ASSERT_TRUE( is_equal(bc(i, whole()), r) );
+	}
+
+	dense_matrix<double, 1, N> c(1, n);
+	for (index_t j = 0; j < n; ++j) c[j] = double(2 * j + 3);
+
+	for (index_t i = 0; i < m; ++i)
+	{
+		b(i, whole()) = c;
+		ASSERT_TRUE( is_equal(b(i, whole()), c) );
 	}
 }
 
@@ -237,6 +255,15 @@ MN_CASE( mat_subview, col_range )
 		ASSERT_TRUE( is_equal(b(colon(i0, i1), j), r) );
 		ASSERT_TRUE( is_equal(bc(colon(i0, i1), j), r) );
 	}
+
+	dense_matrix<double, 0, 1> c(i1 - i0, 1);
+	for (index_t i = 0; i < i1 - i0; ++i) c[i] = double(2 * i + 3);
+
+	for (index_t j = 0; j < n; ++j)
+	{
+		b(colon(i0, i1), j) = c;
+		ASSERT_TRUE( is_equal(b(colon(i0, i1), j), c) );
+	}
 }
 
 
@@ -282,6 +309,15 @@ MN_CASE( mat_subview, row_range )
 		mat_f64 r = extract_block(b, i, 1, j0, j1 - j0);
 		ASSERT_TRUE( is_equal(b(i, colon(j0, j1)), r) );
 		ASSERT_TRUE( is_equal(bc(i, colon(j0, j1)), r) );
+	}
+
+	dense_matrix<double, 1, 0> c(1, j1 - j0);
+	for (index_t j = 0; j < j1 - j0; ++j) c[j] = double(2 * j + 3);
+
+	for (index_t i = 0; i < m; ++i)
+	{
+		b(i, colon(j0, j1)) = c;
+		ASSERT_TRUE( is_equal(b(i, colon(j0, j1)), c) );
 	}
 }
 

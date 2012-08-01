@@ -17,6 +17,74 @@
 
 namespace lmat
 {
+
+	/********************************************
+	 *
+	 *  Concept test tools
+	 *
+	 ********************************************/
+
+	template<class T>
+	struct is_supported_matrix_value_type
+	{
+		static const bool value = lmat::is_pod<T>::value;
+	};
+
+	template<class T>
+	struct is_supported_matrix_value_type< mask_t<T> >
+	{
+		static const bool value = is_supported_matrix_value_type<T>::value;
+	};
+
+	template<class Derived, template<class D, typename T> class Interface>
+	struct has_matrix_interface
+	{
+		typedef Interface<Derived, typename matrix_traits<Derived>::value_type> expect_base;
+		static const bool value = is_base_of<expect_base, Derived>::value;
+	};
+
+	template<class Mat>
+	struct is_mat_xpr
+	{
+		static const bool value = has_matrix_interface<Mat, IMatrixXpr>::value;
+	};
+
+	template<class Mat>
+	struct is_mat_view
+	{
+		static const bool value = has_matrix_interface<Mat, IMatrixView>::value;
+	};
+
+	template<class Mat>
+	struct is_dense_mat
+	{
+		static const bool value = has_matrix_interface<Mat, IDenseMatrix>::value;
+	};
+
+
+	/********************************************
+	 *
+	 *  Domain related tools
+	 *
+	 ********************************************/
+
+	template<class LMat, class RMat>
+	struct has_same_domain
+	{
+		static const bool value = is_same<
+				typename matrix_traits<LMat>::domain,
+				typename matrix_traits<RMat>::domain>::value;
+	};
+
+
+	template<class Mat>
+	struct has_cpu_domain
+	{
+		static const bool value = is_same<
+				typename matrix_traits<Mat>::domain,
+				cpu_domain>::value;
+	};
+
 	/********************************************
 	 *
 	 *  Type related tools
@@ -174,50 +242,6 @@ namespace lmat
 		static const bool value =
 				ct_cols<LMat>::value > 0 &&
 				ct_cols<LMat>::value == ct_cols<RMat>::value;
-	};
-
-
-	/********************************************
-	 *
-	 *  Concept test tools
-	 *
-	 ********************************************/
-
-	template<class T>
-	struct is_supported_matrix_value_type
-	{
-		static const bool value = lmat::is_pod<T>::value;
-	};
-
-	template<class T>
-	struct is_supported_matrix_value_type< mask_t<T> >
-	{
-		static const bool value = is_supported_matrix_value_type<T>::value;
-	};
-
-	template<class Derived, template<class D, typename T> class Interface>
-	struct has_matrix_interface
-	{
-		typedef Interface<Derived, typename matrix_traits<Derived>::value_type> expect_base;
-		static const bool value = is_base_of<expect_base, Derived>::value;
-	};
-
-	template<class Mat>
-	struct is_mat_xpr
-	{
-		static const bool value = has_matrix_interface<Mat, IMatrixXpr>::value;
-	};
-
-	template<class Mat>
-	struct is_mat_view
-	{
-		static const bool value = has_matrix_interface<Mat, IMatrixView>::value;
-	};
-
-	template<class Mat>
-	struct is_dense_mat
-	{
-		static const bool value = has_matrix_interface<Mat, IDenseMatrix>::value;
 	};
 
 
