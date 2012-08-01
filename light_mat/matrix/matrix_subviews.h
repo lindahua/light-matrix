@@ -22,9 +22,9 @@ namespace lmat
 	 *  column views
 	 *
 	 ********************************************/
-/*
+
 	template<class Mat>
-	struct colviews<Mat, whole>
+	struct colview_map<Mat, whole>
 	{
 		typedef typename matrix_traits<Mat>::value_type value_type;
 
@@ -33,7 +33,17 @@ namespace lmat
 		typedef cref_matrix<value_type, ctrows, 1> const_type;
 		typedef  ref_matrix<value_type, ctrows, 1> non_const_type;
 
-		typedef typename if_<is_readonly_mat<Mat>, const_type, non_const_type>::type type;
+		typedef typename
+				if_<is_readonly_mat<Mat>,
+					const_type,
+					non_const_type
+				>::type _type;
+
+		typedef typename
+				if_<is_readonly_mat<Mat>,
+					const_type,
+					dense_mutable_view<non_const_type>
+				>::type type;
 
 		LMAT_ENSURE_INLINE
 		static const_type get(const Mat& mat, const index_t j, whole)
@@ -44,20 +54,30 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		static type get(Mat& mat, const index_t j, whole)
 		{
-			return type(mat.ptr_col(j), mat.nrows(), 1);
+			return _type(mat.ptr_col(j), mat.nrows(), 1);
 		}
 	};
 
 
 	template<class Mat>
-	struct colviews<Mat, range>
+	struct colview_map<Mat, range>
 	{
 		typedef typename matrix_traits<Mat>::value_type value_type;
 
 		typedef cref_matrix<value_type, DynamicDim, 1> const_type;
 		typedef  ref_matrix<value_type, DynamicDim, 1> non_const_type;
 
-		typedef typename if_<is_readonly_mat<Mat>, const_type, non_const_type>::type type;
+		typedef typename
+				if_<is_readonly_mat<Mat>,
+					const_type,
+					non_const_type
+				>::type _type;
+
+		typedef typename
+				if_<is_readonly_mat<Mat>,
+					const_type,
+					dense_mutable_view<non_const_type>
+				>::type type;
 
 		LMAT_ENSURE_INLINE
 		static const_type get(const Mat& mat, const index_t j, const range &rg)
@@ -68,10 +88,10 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		static type get(Mat& mat, const index_t j, const range& rg)
 		{
-			return type(mat.ptr_col(j) + rg.begin_index(), rg.num(), 1);
+			return _type(mat.ptr_col(j) + rg.begin_index(), rg.num(), 1);
 		}
 	};
-*/
+
 
 
 	/********************************************
@@ -79,9 +99,9 @@ namespace lmat
 	 *  row views
 	 *
 	 ********************************************/
-/*
+
 	template<class Mat>
-	struct rowviews<Mat, whole>
+	struct rowview_map<Mat, whole>
 	{
 		typedef typename matrix_traits<Mat>::value_type value_type;
 
@@ -90,7 +110,17 @@ namespace lmat
 		typedef cref_matrix_ex<value_type, 1, ctcols> const_type;
 		typedef  ref_matrix_ex<value_type, 1, ctcols> non_const_type;
 
-		typedef typename if_<is_readonly_mat<Mat>, const_type, non_const_type>::type type;
+		typedef typename
+				if_<is_readonly_mat<Mat>,
+					const_type,
+					non_const_type
+				>::type _type;
+
+		typedef typename
+				if_<is_readonly_mat<Mat>,
+					const_type,
+					dense_mutable_view<non_const_type>
+				>::type type;
 
 		LMAT_ENSURE_INLINE
 		static const_type get(const Mat& mat, const index_t i, whole)
@@ -101,21 +131,31 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		static type get(Mat& mat, const index_t i, whole)
 		{
-			return type(mat.ptr_data() + i, 1, mat.ncolumns(), mat.lead_dim());
+			return _type(mat.ptr_data() + i, 1, mat.ncolumns(), mat.lead_dim());
 		}
 
 	};
 
 
 	template<class Mat>
-	struct rowviews<Mat, range>
+	struct rowview_map<Mat, range>
 	{
 		typedef typename matrix_traits<Mat>::value_type value_type;
 
 		typedef cref_matrix_ex<value_type, 1, DynamicDim> const_type;
 		typedef  ref_matrix_ex<value_type, 1, DynamicDim> non_const_type;
 
-		typedef typename if_<is_readonly_mat<Mat>, const_type, non_const_type>::type type;
+		typedef typename
+				if_<is_readonly_mat<Mat>,
+					const_type,
+					non_const_type
+				>::type _type;
+
+		typedef typename
+				if_<is_readonly_mat<Mat>,
+					const_type,
+					dense_mutable_view<non_const_type>
+				>::type type;
 
 		LMAT_ENSURE_INLINE
 		static const_type get(const Mat& mat, const index_t i, const range& rg)
@@ -126,11 +166,11 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		static type get(Mat& mat, const index_t i, const range& rg)
 		{
-			return type(mat.ptr_col(rg.begin_index()) + i, 1, rg.num(), mat.lead_dim());
+			return _type(mat.ptr_col(rg.begin_index()) + i, 1, rg.num(), mat.lead_dim());
 		}
 
 	};
-*/
+
 
 
 	/********************************************
@@ -138,7 +178,7 @@ namespace lmat
 	 *  subviews
 	 *
 	 ********************************************/
-/*
+
 	namespace detail
 	{
 		template<class Mat, int CTCols, bool IsCont> struct multicol_helper;
@@ -151,7 +191,18 @@ namespace lmat
 
 			typedef cref_matrix<value_type, ctrows, CTCols> const_type;
 			typedef  ref_matrix<value_type, ctrows, CTCols> non_const_type;
-			typedef typename if_<is_readonly_mat<Mat>, const_type, non_const_type>::type type;
+
+			typedef typename
+					if_<is_readonly_mat<Mat>,
+						const_type,
+						non_const_type
+					>::type _type;
+
+			typedef typename
+					if_<is_readonly_mat<Mat>,
+						const_type,
+						dense_mutable_view<non_const_type>
+					>::type type;
 
 			LMAT_ENSURE_INLINE
 			static const_type get(const Mat& mat, const index_t j, const index_t n)
@@ -162,7 +213,7 @@ namespace lmat
 			LMAT_ENSURE_INLINE
 			static type get(Mat& mat, const index_t j, const index_t n)
 			{
-				return type(mat.ptr_col(j), mat.nrows(), n);
+				return _type(mat.ptr_col(j), mat.nrows(), n);
 			}
 		};
 
@@ -175,7 +226,18 @@ namespace lmat
 
 			typedef cref_matrix_ex<value_type, ctrows, CTCols> const_type;
 			typedef  ref_matrix_ex<value_type, ctrows, CTCols> non_const_type;
-			typedef typename if_<is_readonly_mat<Mat>, const_type, non_const_type>::type type;
+
+			typedef typename
+					if_<is_readonly_mat<Mat>,
+						const_type,
+						non_const_type
+					>::type _type;
+
+			typedef typename
+					if_<is_readonly_mat<Mat>,
+						const_type,
+						dense_mutable_view<non_const_type>
+					>::type type;
 
 			LMAT_ENSURE_INLINE
 			static const_type get(const Mat& mat, const index_t j, const index_t n)
@@ -186,13 +248,13 @@ namespace lmat
 			LMAT_ENSURE_INLINE
 			static type get(Mat& mat, const index_t j, const index_t n)
 			{
-				return type(mat.ptr_col(j), mat.nrows(), n, mat.lead_dim());
+				return _type(mat.ptr_col(j), mat.nrows(), n, mat.lead_dim());
 			}
 		};
 	}
 
 	template<class Mat>
-	struct subviews<Mat, whole, whole>
+	struct matview_map<Mat, whole, whole>
 	{
 		static const bool is_continuous = ct_has_continuous_layout<Mat>::value;
 		typedef detail::multicol_helper<Mat, ct_cols<Mat>::value, is_continuous> helper_t;
@@ -215,7 +277,7 @@ namespace lmat
 
 
 	template<class Mat>
-	struct subviews<Mat, whole, range>
+	struct matview_map<Mat, whole, range>
 	{
 		static const bool is_continuous = ct_has_continuous_layout<Mat>::value;
 		typedef detail::multicol_helper<Mat, DynamicDim, is_continuous> helper_t;
@@ -238,14 +300,25 @@ namespace lmat
 
 
 	template<class Mat>
-	struct subviews<Mat, range, whole>
+	struct matview_map<Mat, range, whole>
 	{
 		typedef typename matrix_traits<Mat>::value_type value_type;
 		static const int ctcols = ct_cols<Mat>::value;
 
 		typedef cref_matrix_ex<value_type, DynamicDim, ctcols> const_type;
 		typedef  ref_matrix_ex<value_type, DynamicDim, ctcols> non_const_type;
-		typedef typename if_<is_readonly_mat<Mat>, const_type, non_const_type>::type type;
+
+		typedef typename
+				if_<is_readonly_mat<Mat>,
+					const_type,
+					non_const_type
+				>::type _type;
+
+		typedef typename
+				if_<is_readonly_mat<Mat>,
+					const_type,
+					dense_mutable_view<non_const_type>
+				>::type type;
 
 		LMAT_ENSURE_INLINE
 		static const_type get(const Mat& mat, const range& rg, whole)
@@ -257,20 +330,31 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		static type get(Mat& mat, const range& rg, whole)
 		{
-			return type(mat.ptr_data() + rg.begin_index(), rg.num(),
+			return _type(mat.ptr_data() + rg.begin_index(), rg.num(),
 					mat.ncolumns(), mat.lead_dim());
 		}
 	};
 
 
 	template<class Mat>
-	struct subviews<Mat, range, range>
+	struct matview_map<Mat, range, range>
 	{
 		typedef typename matrix_traits<Mat>::value_type value_type;
 
 		typedef cref_matrix_ex<value_type, DynamicDim, DynamicDim> const_type;
 		typedef  ref_matrix_ex<value_type, DynamicDim, DynamicDim> non_const_type;
-		typedef typename if_<is_readonly_mat<Mat>, const_type, non_const_type>::type type;
+
+		typedef typename
+				if_<is_readonly_mat<Mat>,
+					const_type,
+					non_const_type
+				>::type _type;
+
+		typedef typename
+				if_<is_readonly_mat<Mat>,
+					const_type,
+					dense_mutable_view<non_const_type>
+				>::type type;
 
 		LMAT_ENSURE_INLINE
 		static const_type get(const Mat& mat, const range& rrg, const range& crg)
@@ -283,12 +367,12 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		static type get(Mat& mat, const range& rrg, const range& crg)
 		{
-			return type(
+			return _type(
 					mat.ptr_col(crg.begin_index()) + rrg.begin_index(),
 					rrg.num(), crg.num(), mat.lead_dim());
 		}
 	};
-*/
+
 }
 
 #endif /* MATRIX_SUBVIEWS_H_ */

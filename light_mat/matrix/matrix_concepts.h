@@ -240,7 +240,7 @@ namespace lmat
 		}
 
 	public:
-/*
+
 		// column views
 
 		LMAT_ENSURE_INLINE
@@ -262,7 +262,7 @@ namespace lmat
 		typename colview_map<Derived, Range>::const_type
 		operator()(const IRange<Range>& rgn, const index_t j) const
 		{
-			return colview_map<Derived, Range>::get(derived(), j, rgn);
+			return colview_map<Derived, Range>::get(derived(), j, rgn.derived());
 		}
 
 		template<class Range>
@@ -270,7 +270,7 @@ namespace lmat
 		typename colview_map<Derived, Range>::type
 		operator()(const IRange<Range>& rgn, const index_t j)
 		{
-			return colview_map<Derived, Range>::get(derived(), j, rgn);
+			return colview_map<Derived, Range>::get(derived(), j, rgn.derived());
 		}
 
 		// row views
@@ -294,7 +294,7 @@ namespace lmat
 		typename rowview_map<Derived, Range>::const_type
 		operator()(const index_t i, const IRange<Range>& rgn) const
 		{
-			return rowview_map<Derived, Range>::get(derived(), i, rgn);
+			return rowview_map<Derived, Range>::get(derived(), i, rgn.derived());
 		}
 
 		template<class Range>
@@ -302,7 +302,7 @@ namespace lmat
 		typename rowview_map<Derived, Range>::type
 		operator()(const index_t i, const IRange<Range>& rgn)
 		{
-			return rowview_map<Derived, Range>::get(derived(), i, rgn);
+			return rowview_map<Derived, Range>::get(derived(), i, rgn.derived());
 		}
 
 
@@ -313,17 +313,19 @@ namespace lmat
 		typename matview_map<Derived, Range0, Range1>::const_type
 		operator()(const IRange<Range0>& row_rgn, const IRange<Range1>& col_rgn) const
 		{
-			return matview_map<Derived, Range0, Range1>::get(derived(), row_rgn, col_rgn);
+			return matview_map<Derived, Range0, Range1>::get(derived(),
+					row_rgn.derived(), col_rgn.derived());
 		}
 
 		template<class Range0, class Range1>
 		LMAT_ENSURE_INLINE
-		typename matview_map<Derived, Range0, Range1>::const_type
+		typename matview_map<Derived, Range0, Range1>::type
 		operator()(const IRange<Range0>& row_rgn, const IRange<Range1>& col_rgn)
 		{
-			return matview_map<Derived, Range0, Range1>::get(derived(), row_rgn, col_rgn);
+			return matview_map<Derived, Range0, Range1>::get(derived(),
+					row_rgn.derived(), col_rgn.derived());
 		}
-*/
+
 
 	}; // end class IDenseMatrixBlock
 
@@ -364,14 +366,6 @@ namespace lmat
 	{
 		lhs.require_size(rhs.nrows(), rhs.ncolumns());
 		default_evaluate(rhs, lhs);
-	}
-
-	template<typename S, typename T, class SExpr, class DMat>
-	LMAT_ENSURE_INLINE
-	inline typename enable_if<is_implicitly_convertible<S, T>, void>::type
-	default_assign_with_implicit_cast(IDenseMatrix<DMat, T>& lhs, const IMatrixXpr<SExpr, S>& rhs)
-	{
-		default_assign(lhs, make_expr(type_converter<S, T>(), rhs.derived()));
 	}
 
 }

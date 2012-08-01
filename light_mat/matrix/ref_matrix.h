@@ -236,13 +236,6 @@ namespace lmat
 			return *this;
 		}
 
-		template<class Expr, typename S>
-		LMAT_ENSURE_INLINE ref_matrix& operator = (const IMatrixXpr<Expr, S>& r)
-		{
-			default_assign_with_implicit_cast(*this, r);
-			return *this;
-		}
-
 		template<class Gen>
 		LMAT_ENSURE_INLINE ref_matrix& operator = (const IMatrixGenerator<Gen, T>& gen)
 		{
@@ -378,13 +371,6 @@ namespace lmat
 			return *this;
 		}
 
-		template<class Expr, typename S>
-		LMAT_ENSURE_INLINE ref_col& operator = (const IMatrixXpr<Expr, S>& r)
-		{
-			base_mat_t::operator = (r);
-			return *this;
-		}
-
 		template<class Gen>
 		LMAT_ENSURE_INLINE ref_col& operator = (const IMatrixGenerator<Gen, T>& gen)
 		{
@@ -427,13 +413,6 @@ namespace lmat
 
 		template<class Expr>
 		LMAT_ENSURE_INLINE ref_row& operator = (const IMatrixXpr<Expr, T>& r)
-		{
-			base_mat_t::operator = (r);
-			return *this;
-		}
-
-		template<class Expr, typename S>
-		LMAT_ENSURE_INLINE ref_row& operator = (const IMatrixXpr<Expr, S>& r)
 		{
 			base_mat_t::operator = (r);
 			return *this;

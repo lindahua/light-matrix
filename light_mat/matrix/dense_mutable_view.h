@@ -36,21 +36,14 @@ namespace lmat
 
 	public:
 		template<class Expr>
-		LMAT_ENSURE_INLINE dense_mutable_view& operator = (const IMatrixXpr<Expr, value_type>& r) const
+		LMAT_ENSURE_INLINE const dense_mutable_view& operator = (const IMatrixXpr<Expr, value_type>& r) const
 		{
 			default_assign(const_cast<dense_mutable_view&>(*this), r);
 			return *this;
 		}
 
-		template<class Expr, typename S>
-		LMAT_ENSURE_INLINE dense_mutable_view& operator = (const IMatrixXpr<Expr, S>& r)
-		{
-			default_assign_with_implicit_cast(const_cast<dense_mutable_view&>(*this), r);
-			return *this;
-		}
-
 		template<class Gen>
-		LMAT_ENSURE_INLINE dense_mutable_view& operator = (const IMatrixGenerator<Gen, value_type>& gen)
+		LMAT_ENSURE_INLINE const dense_mutable_view& operator = (const IMatrixGenerator<Gen, value_type>& gen) const
 		{
 			gen.generate_to(*this);
 			return *this;

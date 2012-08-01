@@ -71,6 +71,15 @@ MN_CASE( mat_subview, col )
 		ASSERT_TRUE( is_equal(b.column(j), r) );
 		ASSERT_TRUE( is_equal(bc.column(j), r) );
 	}
+
+	dense_matrix<double, M, 1> c(m, 1);
+	for (index_t i = 0; i < m; ++i) c[i] = double(2 * i + 3);
+
+	for (index_t j = 0; j < n; ++j)
+	{
+		b.column(j) = c;
+		ASSERT_TRUE( is_equal(b.column(j), c) );
+	}
 }
 
 
@@ -104,6 +113,15 @@ MN_CASE( mat_subview, row )
 		mat_f64 r = extract_block(b, i, 1, 0, n);
 		ASSERT_TRUE( is_equal(b.row(i), r) );
 		ASSERT_TRUE( is_equal(bc.row(i), r) );
+	}
+
+	dense_matrix<double, 1, N> c(1, n);
+	for (index_t j = 0; j < n; ++j) c[j] = double(2 * j + 3);
+
+	for (index_t i = 0; i < m; ++i)
+	{
+		b.row(i) = c;
+		ASSERT_TRUE( is_equal(b.row(i), c) );
 	}
 }
 
@@ -293,6 +311,10 @@ MN_CASE( mat_subview, whole_whole )
 	mat_f64 rb = extract_block(b, 0, m, 0, n);
 	ASSERT_TRUE( is_equal(b(whole(), whole()), rb) );
 	ASSERT_TRUE( is_equal(bc(whole(), whole()), rb) );
+
+	for (index_t i = 0; i < rb.nelems(); ++i) rb[i] = double(2 * i + 5);
+	b(whole(), whole()) = rb;
+	ASSERT_TRUE( is_equal(b(whole(), whole()), rb) );
 }
 
 
@@ -331,6 +353,10 @@ MN_CASE( mat_subview, whole_range )
 	mat_f64 rb = extract_block(b, 0, m, j0, j1 - j0);
 	ASSERT_TRUE( is_equal(b(whole(), colon(j0, j1)), rb) );
 	ASSERT_TRUE( is_equal(bc(whole(), colon(j0, j1)), rb) );
+
+	for (index_t i = 0; i < rb.nelems(); ++i) rb[i] = double(2 * i + 5);
+	b(whole(), colon(j0, j1)) = rb;
+	ASSERT_TRUE( is_equal(b(whole(), colon(j0, j1)), rb) );
 }
 
 
@@ -369,6 +395,10 @@ MN_CASE( mat_subview, range_whole )
 	mat_f64 rb = extract_block(b, i0, i1 - i0, 0, n);
 	ASSERT_TRUE( is_equal(b(colon(i0, i1), whole()), rb) );
 	ASSERT_TRUE( is_equal(bc(colon(i0, i1), whole()), rb) );
+
+	for (index_t i = 0; i < rb.nelems(); ++i) rb[i] = double(2 * i + 5);
+	b(colon(i0, i1), whole()) = rb;
+	ASSERT_TRUE( is_equal(b(colon(i0, i1), whole()), rb) );
 }
 
 
@@ -417,6 +447,10 @@ MN_CASE( mat_subview, range_range )
 	mat_f64 rb = extract_block(b, i0, i1 - i0, j0, j1 - j0);
 	ASSERT_TRUE( is_equal(b(colon(i0, i1), colon(j0, j1)), rb) );
 	ASSERT_TRUE( is_equal(bc(colon(i0, i1), colon(j0, j1)), rb) );
+
+	for (index_t i = 0; i < rb.nelems(); ++i) rb[i] = double(2 * i + 5);
+	b(colon(i0, i1), colon(j0, j1)) = rb;
+	ASSERT_TRUE( is_equal(b(colon(i0, i1), colon(j0, j1)), rb) );
 }
 
 

@@ -121,13 +121,6 @@ namespace lmat
 			default_evaluate(r, *this);
 		}
 
-		template<class Expr, typename S>
-		LMAT_ENSURE_INLINE dense_matrix(const IMatrixXpr<Expr, S>& r)
-		: m_internal(r.nrows(), r.ncolumns())
-		{
-			default_assign_with_implicit_cast(*this, r);
-		}
-
 		LMAT_ENSURE_INLINE void swap(dense_matrix& s)
 		{
 			m_internal.swap(s.m_internal);
@@ -155,13 +148,6 @@ namespace lmat
 		LMAT_ENSURE_INLINE dense_matrix& operator = (const IMatrixXpr<Expr, T>& r)
 		{
 			default_assign(*this, r);
-			return *this;
-		}
-
-		template<class Expr, typename S>
-		LMAT_ENSURE_INLINE dense_matrix& operator = (const IMatrixXpr<Expr, S>& r)
-		{
-			default_assign_with_implicit_cast(*this, r);
 			return *this;
 		}
 
@@ -284,9 +270,6 @@ namespace lmat
 		template<class Expr>
 		LMAT_ENSURE_INLINE dense_col(const IMatrixXpr<Expr, T>& r) : base_mat_t(r) { }
 
-		template<class Expr, typename S>
-		LMAT_ENSURE_INLINE dense_col(const IMatrixXpr<Expr, S>& r) : base_mat_t(r) { }
-
 	public:
 		template<class Gen>
 		LMAT_ENSURE_INLINE
@@ -304,13 +287,6 @@ namespace lmat
 
 		template<class Expr>
 		LMAT_ENSURE_INLINE dense_col& operator = (const IMatrixXpr<Expr, T>& r)
-		{
-			base_mat_t::operator = (r);
-			return *this;
-		}
-
-		template<class Expr, typename S>
-		LMAT_ENSURE_INLINE dense_col& operator = (const IMatrixXpr<Expr, S>& r)
 		{
 			base_mat_t::operator = (r);
 			return *this;
@@ -352,9 +328,6 @@ namespace lmat
 		template<class Expr>
 		LMAT_ENSURE_INLINE dense_row(const IMatrixXpr<Expr, T>& r) : base_mat_t(r) { }
 
-		template<class Expr, typename S>
-		LMAT_ENSURE_INLINE dense_row(const IMatrixXpr<Expr, S>& r) : base_mat_t(r) { }
-
 	public:
 		template<class Gen>
 		LMAT_ENSURE_INLINE
@@ -372,13 +345,6 @@ namespace lmat
 
 		template<class Expr>
 		LMAT_ENSURE_INLINE dense_row& operator = (const IMatrixXpr<Expr, T>& r)
-		{
-			base_mat_t::operator = (r);
-			return *this;
-		}
-
-		template<class Expr, typename S>
-		LMAT_ENSURE_INLINE dense_row& operator = (const IMatrixXpr<Expr, S>& r)
 		{
 			base_mat_t::operator = (r);
 			return *this;
