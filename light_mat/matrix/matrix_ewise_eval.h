@@ -25,17 +25,18 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<class Fun, class Arg_Holder>
+	template<class Fun, typename Arg_HP, class Arg>
 	class unary_ewise_linear_evaluator
 	: public ILinearVectorEvaluator<
-	  	  unary_ewise_linear_evaluator<Fun, Arg_Holder>,
+	  	  unary_ewise_linear_evaluator<Fun, Arg_HP, Arg>,
 	  	  typename Fun::result_type>
 	{
 	public:
-		typedef typename Arg_Holder::arg_type arg_type;
+		typedef unary_ewise_expr<Fun, Arg_HP, Arg> expr_t;
+		typedef typename expr_t::arg_type arg_type;
 
 		LMAT_ENSURE_INLINE
-		unary_ewise_linear_evaluator(const unary_ewise_expr<Fun, Arg_Holder>& expr)
+		unary_ewise_linear_evaluator(const expr_t& expr)
 		: m_fun(expr.fun()), m_arg_eval(expr.arg())
 		{
 		}
@@ -51,17 +52,18 @@ namespace lmat
 		arg_eval_t m_arg_eval;
 	};
 
-	template<class Fun, class Arg_Holder>
+	template<class Fun, typename Arg_HP, class Arg>
 	class unary_ewise_percol_evaluator
 	: public IPerColVectorEvaluator<
-	  	  unary_ewise_percol_evaluator<Fun, Arg_Holder>,
+	  	  unary_ewise_percol_evaluator<Fun, Arg_HP, Arg>,
 	  	  typename Fun::result_type>
 	{
 	public:
-		typedef typename Arg_Holder::arg_type arg_type;
+		typedef unary_ewise_expr<Fun, Arg_HP, Arg> expr_t;
+		typedef typename expr_t::arg_type arg_type;
 
 		LMAT_ENSURE_INLINE
-		unary_ewise_percol_evaluator(const unary_ewise_expr<Fun, Arg_Holder>& expr)
+		unary_ewise_percol_evaluator(const expr_t& expr)
 		: m_fun(expr.fun()), m_arg_eval(expr.arg())
 		{
 		}
@@ -83,18 +85,19 @@ namespace lmat
 	};
 
 
-	template<class Fun, class Arg1_Holder, class Arg2_Holder>
+	template<class Fun, typename Arg1_HP, class Arg1, typename Arg2_HP, class Arg2>
 	class binary_ewise_linear_evaluator
 	: public ILinearVectorEvaluator<
-	  	  binary_ewise_linear_evaluator<Fun, Arg1_Holder, Arg2_Holder>,
+	  	  binary_ewise_linear_evaluator<Fun, Arg1_HP, Arg1, Arg2_HP, Arg2>,
 	  	  typename Fun::result_type>
 	{
 	public:
-		typedef typename Arg1_Holder::arg_type arg1_type;
-		typedef typename Arg2_Holder::arg_type arg2_type;
+		typedef binary_ewise_expr<Fun, Arg1_HP, Arg1, Arg2_HP, Arg2> expr_t;
+		typedef typename expr_t::arg1_type arg1_type;
+		typedef typename expr_t::arg2_type arg2_type;
 
 		LMAT_ENSURE_INLINE
-		binary_ewise_linear_evaluator(const binary_ewise_expr<Fun, Arg1_Holder, Arg2_Holder>& expr)
+		binary_ewise_linear_evaluator(const expr_t& expr)
 		: m_fun(expr.fun()), m_arg1_eval(expr.first_arg()), m_arg2_eval(expr.second_arg())
 		{
 		}
@@ -114,18 +117,19 @@ namespace lmat
 	};
 
 
-	template<class Fun, class Arg1_Holder, class Arg2_Holder>
+	template<class Fun, typename Arg1_HP, class Arg1, typename Arg2_HP, class Arg2>
 	class binary_ewise_percol_evaluator
 	: public IPerColVectorEvaluator<
-	  	  binary_ewise_percol_evaluator<Fun, Arg1_Holder, Arg2_Holder>,
+	  	  binary_ewise_percol_evaluator<Fun, Arg1_HP, Arg1, Arg2_HP, Arg2>,
 	  	  typename Fun::result_type>
 	{
 	public:
-		typedef typename Arg1_Holder::arg_type arg1_type;
-		typedef typename Arg2_Holder::arg_type arg2_type;
+		typedef binary_ewise_expr<Fun, Arg1_HP, Arg1, Arg2_HP, Arg2> expr_t;
+		typedef typename expr_t::arg1_type arg1_type;
+		typedef typename expr_t::arg2_type arg2_type;
 
 		LMAT_ENSURE_INLINE
-		binary_ewise_percol_evaluator(const binary_ewise_expr<Fun, Arg1_Holder, Arg2_Holder>& expr)
+		binary_ewise_percol_evaluator(const expr_t& expr)
 		: m_fun(expr.fun()), m_arg1_eval(expr.first_arg()), m_arg2_eval(expr.second_arg())
 		{
 		}
@@ -158,21 +162,23 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<typename Fun, class Arg_Holder, typename Means>
-	struct vector_eval<unary_ewise_expr<Fun, Arg_Holder>, as_linear_vec, Means>
+	template<typename Fun, typename Arg_HP, class Arg, typename Means>
+	struct vector_eval<unary_ewise_expr<Fun, Arg_HP, Arg>, as_linear_vec, Means>
 	{
-		typedef unary_ewise_linear_evaluator<Fun, Arg_Holder> evaluator_type;
+		typedef unary_ewise_linear_evaluator<Fun, Arg_HP, Arg> evaluator_type;
 
-		typedef typename Arg_Holder::arg_type arg_type;
+		typedef unary_ewise_expr<Fun, Arg_HP, Arg> expr_t;
+		typedef typename expr_t::arg_type arg_type;
 		static const int cost = vector_eval<arg_type, as_linear_vec, Means>::cost;
 	};
 
-	template<typename Fun, class Arg_Holder, typename Means>
-	struct vector_eval<unary_ewise_expr<Fun, Arg_Holder>, per_column, Means>
+	template<typename Fun, typename Arg_HP, class Arg, typename Means>
+	struct vector_eval<unary_ewise_expr<Fun, Arg_HP, Arg>, per_column, Means>
 	{
-		typedef unary_ewise_percol_evaluator<Fun, Arg_Holder> evaluator_type;
+		typedef unary_ewise_percol_evaluator<Fun, Arg_HP, Arg> evaluator_type;
 
-		typedef typename Arg_Holder::arg_type arg_type;
+		typedef unary_ewise_expr<Fun, Arg_HP, Arg> expr_t;
+		typedef typename expr_t::arg_type arg_type;
 		static const int normal_cost = vector_eval<arg_type, per_column, Means>::normal_cost;
 		static const int shortv_cost = vector_eval<arg_type, per_column, Means>::shortv_cost;
 
@@ -180,26 +186,28 @@ namespace lmat
 		static const int cost = has_short_col ? shortv_cost : normal_cost;
 	};
 
-	template<typename Fun, class Arg1_Holder, class Arg2_Holder, typename Means>
-	struct vector_eval<binary_ewise_expr<Fun, Arg1_Holder, Arg2_Holder>, as_linear_vec, Means>
+	template<typename Fun, typename Arg1_HP, class Arg1, typename Arg2_HP, class Arg2, typename Means>
+	struct vector_eval<binary_ewise_expr<Fun, Arg1_HP, Arg1, Arg2_HP, Arg2>, as_linear_vec, Means>
 	{
-		typedef binary_ewise_linear_evaluator<Fun, Arg1_Holder, Arg2_Holder> evaluator_type;
+		typedef binary_ewise_linear_evaluator<Fun, Arg1_HP, Arg1, Arg2_HP, Arg2> evaluator_type;
 
-		typedef typename Arg1_Holder::arg_type arg1_type;
-		typedef typename Arg2_Holder::arg_type arg2_type;
+		typedef binary_ewise_expr<Fun, Arg1_HP, Arg1, Arg2_HP, Arg2> expr_t;
+		typedef typename expr_t::arg1_type arg1_type;
+		typedef typename expr_t::arg2_type arg2_type;
 
 		static const int cost =
 				vector_eval<arg1_type, as_linear_vec, Means>::cost +
 				vector_eval<arg2_type, as_linear_vec, Means>::cost;
 	};
 
-	template<typename Fun, class Arg1_Holder, class Arg2_Holder, typename Means>
-	struct vector_eval<binary_ewise_expr<Fun, Arg1_Holder, Arg2_Holder>, per_column, Means>
+	template<typename Fun, typename Arg1_HP, class Arg1, typename Arg2_HP, class Arg2, typename Means>
+	struct vector_eval<binary_ewise_expr<Fun, Arg1_HP, Arg1, Arg2_HP, Arg2>, per_column, Means>
 	{
-		typedef binary_ewise_percol_evaluator<Fun, Arg1_Holder, Arg2_Holder> evaluator_type;
+		typedef binary_ewise_percol_evaluator<Fun, Arg1_HP, Arg1, Arg2_HP, Arg2> evaluator_type;
 
-		typedef typename Arg1_Holder::arg_type arg1_type;
-		typedef typename Arg2_Holder::arg_type arg2_type;
+		typedef binary_ewise_expr<Fun, Arg1_HP, Arg1, Arg2_HP, Arg2> expr_t;
+		typedef typename expr_t::arg1_type arg1_type;
+		typedef typename expr_t::arg2_type arg2_type;
 
 		static const int normal_cost =
 				vector_eval<arg1_type, per_column, Means>::normal_cost +
@@ -214,18 +222,18 @@ namespace lmat
 	};
 
 
-	template<typename Fun, class Arg_Holder, class Dst>
-	struct default_matrix_eval_policy<unary_ewise_expr<Fun, Arg_Holder>, Dst>
+	template<typename Fun, typename Arg_HP, class Arg, class Dst>
+	struct default_matrix_eval_policy<unary_ewise_expr<Fun, Arg_HP, Arg>, Dst>
 	{
 		typedef typename vector_eval_default_policy<
-				unary_ewise_expr<Fun, Arg_Holder> >::type type;
+				unary_ewise_expr<Fun, Arg_HP, Arg> >::type type;
 	};
 
-	template<typename Fun, class Arg1_Holder, class Arg2_Holder, class Dst>
-	struct default_matrix_eval_policy<binary_ewise_expr<Fun, Arg1_Holder, Arg2_Holder>, Dst>
+	template<typename Fun, typename Arg1_HP, class Arg1, typename Arg2_HP, class Arg2, class Dst>
+	struct default_matrix_eval_policy<binary_ewise_expr<Fun, Arg1_HP, Arg1, Arg2_HP, Arg2>, Dst>
 	{
 		typedef typename vector_eval_default_policy<
-				binary_ewise_expr<Fun, Arg1_Holder, Arg2_Holder> >::type type;
+				binary_ewise_expr<Fun, Arg1_HP, Arg1, Arg2_HP, Arg2> >::type type;
 	};
 
 }

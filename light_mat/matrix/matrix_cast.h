@@ -23,7 +23,7 @@ namespace lmat
 	LMAT_ENSURE_INLINE
 	inline typename unary_expr_map<
 		ewise_t<type_converter<S, T> >,
-		ref_arg_holder<SMat> >::type
+		ref_arg_t, SMat >::type
 	cast(const IMatrixXpr<SMat, S>& sexpr, type<T> )
 	{
 		return ewise(type_converter<S, T>(), sexpr.derived());
@@ -34,7 +34,7 @@ namespace lmat
 	LMAT_ENSURE_INLINE
 	inline typename unary_expr_map<
 		ewise_t<type_converter<S, bool> >,
-		ref_arg_holder<SMat> >::type
+		ref_arg_t, SMat >::type
 	to_bool(const IMatrixXpr<SMat, S>& sexpr)
 	{
 		return ewise(type_converter<S, bool>(), sexpr.derived());
@@ -45,7 +45,7 @@ namespace lmat
 	LMAT_ENSURE_INLINE
 	inline typename unary_expr_map<
 		ewise_t<type_converter<S, float> >,
-		ref_arg_holder<SMat> >::type
+		ref_arg_t, SMat >::type
 	to_f32(const IMatrixXpr<SMat, S>& sexpr)
 	{
 		return ewise(type_converter<S, float>(), sexpr.derived());
@@ -55,7 +55,7 @@ namespace lmat
 	LMAT_ENSURE_INLINE
 	inline typename unary_expr_map<
 		ewise_t<type_converter<S, double> >,
-		ref_arg_holder<SMat> >::type
+		ref_arg_t, SMat >::type
 	to_f64(const IMatrixXpr<SMat, S>& sexpr)
 	{
 		return ewise(type_converter<S, double>(), sexpr.derived());
@@ -65,7 +65,7 @@ namespace lmat
 	LMAT_ENSURE_INLINE
 	inline typename unary_expr_map<
 		ewise_t<type_converter<S, int32_t> >,
-		ref_arg_holder<SMat> >::type
+		ref_arg_t, SMat >::type
 	to_i32(const IMatrixXpr<SMat, S>& sexpr)
 	{
 		return ewise(type_converter<S, int32_t>(), sexpr.derived());
@@ -75,7 +75,7 @@ namespace lmat
 	LMAT_ENSURE_INLINE
 	inline typename unary_expr_map<
 		ewise_t<type_converter<S, uint32_t> >,
-		ref_arg_holder<SMat> >::type
+		ref_arg_t, SMat >::type
 	to_u32(const IMatrixXpr<SMat, S>& sexpr)
 	{
 		return ewise(type_converter<S, uint32_t>(), sexpr.derived());

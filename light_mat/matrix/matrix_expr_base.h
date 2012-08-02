@@ -23,7 +23,7 @@
 #define LMAT_DEFINE_UNARY_MATFUNCTION( matfun_name, functor_name ) \
 	template<typename T, class Arg> \
 	LMAT_ENSURE_INLINE \
-	inline typename unary_expr_map<ewise_t<functor_name<T> >, ref_arg_holder<Arg> >::type \
+	inline typename unary_expr_map<ewise_t<functor_name<T> >, ref_arg_t, Arg>::type \
 	matfun_name(const IMatrixXpr<Arg, T>& A) { \
 		return ewise(functor_name<T>(), A.derived()); }
 
@@ -31,7 +31,7 @@
 #define LMAT_DEFINE_BINARY_MATFUNCTION( matfun_name, functor_name ) \
 	template<typename T, class LArg, class RArg> \
 	LMAT_ENSURE_INLINE \
-	inline typename binary_expr_map<ewise_t<functor_name<T> >, ref_arg_holder<LArg>, ref_arg_holder<RArg> >::type \
+	inline typename binary_expr_map<ewise_t<functor_name<T> >, ref_arg_t, LArg, ref_arg_t, RArg>::type \
 	matfun_name(const IMatrixXpr<LArg, T>& A, const IMatrixXpr<RArg, T>& B) { \
 		return ewise(functor_name<T>(), A.derived(), B.derived()); }
 
@@ -40,12 +40,12 @@
 	LMAT_DEFINE_BINARY_MATFUNCTION( matfun_name, functor_name ) \
 	template<typename T, class RArg> \
 	LMAT_ENSURE_INLINE \
-	inline typename binary_fix1_ewise_expr_map< functor_name<T>, ref_arg_holder<RArg> >::type \
+	inline typename binary_fix1_ewise_expr_map< functor_name<T>, ref_arg_t, RArg>::type \
 	matfun_name(const T& a, const IMatrixXpr<RArg, T>& B) { \
 		return ewise(functor_name<T>(), a, B.derived()); } \
 	template<typename T, class LArg> \
 	LMAT_ENSURE_INLINE \
-	inline typename binary_fix2_ewise_expr_map< functor_name<T>, ref_arg_holder<LArg> >::type \
+	inline typename binary_fix2_ewise_expr_map< functor_name<T>, ref_arg_t, LArg>::type \
 	matfun_name(const IMatrixXpr<LArg, T>& A, const T& b) { \
 		return ewise(functor_name<T>(), A.derived(), b); }
 

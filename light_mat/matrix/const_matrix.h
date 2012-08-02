@@ -114,26 +114,13 @@ namespace lmat
 
 	// Transpose
 
-	template<typename T, int M, int N>
-	struct unary_expr_map<transpose_t, ref_arg_holder<const_matrix<T, M, N> > >
+	template<typename T, int M, int N, typename Arg_HP>
+	struct unary_expr_map<transpose_t, Arg_HP, const_matrix<T, M, N> >
 	{
 		typedef const_matrix<T, N, M> type;
 
 		LMAT_ENSURE_INLINE
-		static type get(const ref_arg_forwarder<const_matrix<T, M, N> >& arg_fwd)
-		{
-			const const_matrix<T, M, N>& arg = arg_fwd.arg;
-			return type(arg.ncolumns(), arg.nrows(), arg.value());
-		}
-	};
-
-	template<typename T, int M, int N>
-	struct unary_expr_map<transpose_t, copy_arg_holder<const_matrix<T, M, N> > >
-	{
-		typedef const_matrix<T, N, M> type;
-
-		LMAT_ENSURE_INLINE
-		static type get(const copy_arg_forwarder<const_matrix<T, M, N> >& arg_fwd)
+		static type get(const arg_forwarder<Arg_HP, const_matrix<T, M, N> >& arg_fwd)
 		{
 			const const_matrix<T, M, N>& arg = arg_fwd.arg;
 			return type(arg.ncolumns(), arg.nrows(), arg.value());

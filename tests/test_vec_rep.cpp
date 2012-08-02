@@ -21,10 +21,10 @@ using namespace lmat::test;
 typedef dense_matrix<double, 0, 1> dcol_t;
 typedef dense_matrix<double, 1, 0> drow_t;
 
-template class lmat::horizontal_repeat_expr<ref_arg_holder<dcol_t>, DynamicDim>;
-template class lmat::horizontal_repeat_expr<ref_arg_holder<dcol_t>, 6>;
-template class lmat::vertical_repeat_expr<ref_arg_holder<drow_t>, DynamicDim>;
-template class lmat::vertical_repeat_expr<ref_arg_holder<drow_t>, 4>;
+template class lmat::horizontal_repeat_expr<ref_arg_t, dcol_t, DynamicDim>;
+template class lmat::horizontal_repeat_expr<ref_arg_t, dcol_t, 6>;
+template class lmat::vertical_repeat_expr<ref_arg_t, drow_t, DynamicDim>;
+template class lmat::vertical_repeat_expr<ref_arg_t, drow_t, 4>;
 
 
 N_CASE( repcols, generic )
@@ -33,7 +33,7 @@ N_CASE( repcols, generic )
 	const index_t n = 6;
 
 	typedef dense_matrix<double, N, 1> col_t;
-	typedef horizontal_repeat_expr<ref_arg_holder<col_t>, DynamicDim> expr_t;
+	typedef horizontal_repeat_expr<ref_arg_t, col_t, DynamicDim> expr_t;
 
 	col_t a(m, 1);
 
@@ -56,7 +56,7 @@ MN_CASE( repcols, generic_fix )
 	const index_t n = N;
 
 	typedef dense_matrix<double, M, 1> col_t;
-	typedef horizontal_repeat_expr<ref_arg_holder<col_t>, N> expr_t;
+	typedef horizontal_repeat_expr<ref_arg_t, col_t, N> expr_t;
 
 	col_t a(m, 1);
 
@@ -123,7 +123,7 @@ N_CASE( reprows, generic )
 	const index_t n = N == 0 ? 6 : N;
 
 	typedef dense_matrix<double, 1, N> row_t;
-	typedef vertical_repeat_expr<ref_arg_holder<row_t>, DynamicDim> expr_t;
+	typedef vertical_repeat_expr<ref_arg_t, row_t, DynamicDim> expr_t;
 
 	row_t a(1, n);
 
@@ -146,7 +146,7 @@ MN_CASE( reprows, generic_fix )
 	const index_t n = N == 0 ? 6 : N;
 
 	typedef dense_matrix<double, 1, N> row_t;
-	typedef vertical_repeat_expr<ref_arg_holder<row_t>, M> expr_t;
+	typedef vertical_repeat_expr<ref_arg_t, row_t, M> expr_t;
 
 	row_t a(1, n);
 
@@ -214,7 +214,7 @@ MN_CASE( repcols, eval )
 	col_t col(m, 1);
 	for (index_t i = 0; i < m; ++i) col[i] = double(i + 2);
 
-	typedef horizontal_repeat_expr<ref_arg_holder<col_t>, N> expr_t;
+	typedef horizontal_repeat_expr<ref_arg_t, col_t, N> expr_t;
 	expr_t expr = make_expr(hrep_t<N>(n), ref_arg(col));
 
 	ASSERT_EQ( expr.nrows(), m );
@@ -222,7 +222,7 @@ MN_CASE( repcols, eval )
 
 	dense_matrix<double, M, N> R( expr );
 
-	typedef horizontal_repeat_expr<copy_arg_holder<col_t>, N> expr_et;
+	typedef horizontal_repeat_expr<copy_arg_t, col_t, N> expr_et;
 	expr_et expr_e = make_expr(hrep_t<N>(n), copy_arg(col));
 
 	ASSERT_EQ( expr_e.nrows(), m );
@@ -251,7 +251,7 @@ MN_CASE( reprows, eval )
 	row_t row(1, n);
 	for (index_t j = 0; j < n; ++j) row[j] = double(j + 2);
 
-	typedef vertical_repeat_expr<ref_arg_holder<row_t>, M> expr_t;
+	typedef vertical_repeat_expr<ref_arg_t, row_t, M> expr_t;
 	expr_t expr = make_expr(vrep_t<M>(m), ref_arg(row));
 
 	ASSERT_EQ( expr.nrows(), m );
@@ -259,7 +259,7 @@ MN_CASE( reprows, eval )
 
 	dense_matrix<double, M, N> R( expr );
 
-	typedef vertical_repeat_expr<copy_arg_holder<row_t>, M> expr_et;
+	typedef vertical_repeat_expr<copy_arg_t, row_t, M> expr_et;
 	expr_et expr_e = make_expr(vrep_t<M>(m), copy_arg(row));
 
 	ASSERT_EQ( expr_e.nrows(), m );
@@ -288,10 +288,10 @@ MN_CASE( repcols, vec_eval )
 	col_t col(m, 1);
 	for (index_t i = 0; i < m; ++i) col[i] = double(i+2);
 
-	horizontal_repeat_expr<ref_arg_holder<col_t>, N> expr =
+	horizontal_repeat_expr<ref_arg_t, col_t, N> expr =
 			make_expr(hrep_t<N>(n), ref_arg(col));
 
-	horizontal_repeat_expr<copy_arg_holder<col_t>, N> expr_e =
+	horizontal_repeat_expr<copy_arg_t, col_t, N> expr_e =
 			make_expr(hrep_t<N>(n), copy_arg(col));
 
 	mat_t R_r(m, n);
@@ -331,10 +331,10 @@ MN_CASE( reprows, vec_eval )
 	row_t row(1, n);
 	for (index_t j = 0; j < n; ++j) row[j] = double(j+2);
 
-	vertical_repeat_expr<ref_arg_holder<row_t>, M> expr =
+	vertical_repeat_expr<ref_arg_t, row_t, M> expr =
 			make_expr(vrep_t<M>(m), ref_arg(row));
 
-	vertical_repeat_expr<copy_arg_holder<row_t>, M> expr_e =
+	vertical_repeat_expr<copy_arg_t, row_t, M> expr_e =
 			make_expr(vrep_t<M>(m), copy_arg(row));
 
 	mat_t R_r(m, n);

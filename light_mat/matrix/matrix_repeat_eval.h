@@ -25,37 +25,39 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<class Arg_Holder, int N, class Dst>
-	struct default_matrix_eval_policy<horizontal_repeat_expr<Arg_Holder, N>, Dst>
+	template<typename Arg_HP, class Arg, int N, class Dst>
+	struct default_matrix_eval_policy<horizontal_repeat_expr<Arg_HP, Arg, N>, Dst>
 	{
 		typedef matrix_copy_policy type;
 	};
 
-	template<class Arg_Holder, int M, class Dst>
-	struct default_matrix_eval_policy<vertical_repeat_expr<Arg_Holder, M>, Dst>
+	template<typename Arg_HP, class Arg, int M, class Dst>
+	struct default_matrix_eval_policy<vertical_repeat_expr<Arg_HP, Arg, M>, Dst>
 	{
 		typedef matrix_copy_policy type;
 	};
 
 
-	template<class Arg_Holder, int N, class Dst>
-	inline void evaluate(const horizontal_repeat_expr<Arg_Holder, N>& expr,
-			IDenseMatrix<Dst, typename matrix_traits<typename Arg_Holder::arg_type>::value_type >& dst,
+	template<typename Arg_HP, class Arg, int N, class Dst>
+	inline void evaluate(const horizontal_repeat_expr<Arg_HP, Arg, N>& expr,
+			IDenseMatrix<Dst, typename matrix_traits<Arg>::value_type >& dst,
 			matrix_copy_policy)
 	{
-		typedef typename Arg_Holder::arg_type Arg;
-		Arg s = expr.arg();
+		typedef horizontal_repeat_expr<Arg_HP, Arg, N> expr_t;
+		typedef typename expr_t::arg_type arg_type;
+
+		const arg_type& s = expr.arg();
 		typedef typename matrix_traits<Arg>::value_type T;
 
 		if ( is_column(expr) )
 		{
-			const int M = binary_ct_rows<Arg, Dst>::value;
+			const int M = binary_ct_rows<arg_type, Dst>::value;
 			ref_col<T, M> dview(dst.ptr_data(), s.nrows());
 			default_evaluate(s, dview);
 		}
 		else
 		{
-			typedef typename detail::repcol_ewrapper_map<Arg>::type wrapper_t;
+			typedef typename detail::repcol_ewrapper_map<arg_type>::type wrapper_t;
 			wrapper_t col_wrap(s);
 
 			const index_t m = col_wrap.nrows();
@@ -75,10 +77,10 @@ namespace lmat
 	}
 
 
-	template<class Arg_Holder, class Dst>
+	template<typename Arg_HP, class Arg, class Dst>
 	LMAT_ENSURE_INLINE
-	inline void evaluate(const horizontal_repeat_expr<Arg_Holder, 1>& expr,
-			IDenseMatrix<Dst, typename matrix_traits<typename Arg_Holder::arg_type>::value_type >& dst,
+	inline void evaluate(const horizontal_repeat_expr<Arg_HP, Arg, 1>& expr,
+			IDenseMatrix<Dst, typename matrix_traits<Arg>::value_type >& dst,
 			matrix_copy_policy)
 	{
 
@@ -86,18 +88,20 @@ namespace lmat
 	}
 
 
-	template<class Arg_Holder, int M, class Dst>
-	inline void evaluate(const vertical_repeat_expr<Arg_Holder, M>& expr,
-			IDenseMatrix<Dst, typename matrix_traits<typename Arg_Holder::arg_type>::value_type >& dst,
+	template<typename Arg_HP, class Arg, int M, class Dst>
+	inline void evaluate(const vertical_repeat_expr<Arg_HP, Arg, M>& expr,
+			IDenseMatrix<Dst, typename matrix_traits<Arg>::value_type >& dst,
 			matrix_copy_policy)
 	{
-		typedef typename Arg_Holder::arg_type Arg;
-		Arg s = expr.arg();
+		typedef vertical_repeat_expr<Arg_HP, Arg, M> expr_t;
+		typedef typename expr_t::arg_type arg_type;
+
+		const arg_type& s = expr.arg();
 		typedef typename matrix_traits<Arg>::value_type T;
 
 		if ( is_row(expr) )
 		{
-			const int N = binary_ct_cols<Arg, Dst>::value;
+			const int N = binary_ct_cols<arg_type, Dst>::value;
 			if (has_continuous_layout(dst))
 			{
 				ref_row<T, N> dview(dst.ptr_data(), s.ncolumns());
@@ -111,7 +115,7 @@ namespace lmat
 		}
 		else
 		{
-			typedef typename detail::reprow_ewrapper_map<Arg>::type wrapper_t;
+			typedef typename detail::reprow_ewrapper_map<arg_type>::type wrapper_t;
 			wrapper_t row_wrap(s);
 
 			const index_t n = row_wrap.ncolumns();
@@ -146,10 +150,10 @@ namespace lmat
 	}
 
 
-	template<class Arg_Holder, class Dst>
+	template<typename Arg_HP, class Arg, class Dst>
 	LMAT_ENSURE_INLINE
-	inline void evaluate(const vertical_repeat_expr<Arg_Holder, 1>& expr,
-			IDenseMatrix<Dst, typename matrix_traits<typename Arg_Holder::arg_type>::value_type>& dst,
+	inline void evaluate(const vertical_repeat_expr<Arg_HP, Arg, 1>& expr,
+			IDenseMatrix<Dst, typename matrix_traits<Arg>::value_type>& dst,
 			matrix_copy_policy)
 	{
 
@@ -165,22 +169,22 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<class Arg_Holder>
+	template<typename Arg_HP, class Arg>
 	class single_vec_percol_evaluator
 	: public IPerColVectorEvaluator<
-	  	  single_vec_percol_evaluator<Arg_Holder>,
-	  	  typename matrix_traits<typename Arg_Holder::arg_type>::value_type>
+	  	  single_vec_percol_evaluator<Arg_HP, Arg>,
+	  	  typename matrix_traits<Arg>::value_type>
 	{
 	public:
-		typedef typename Arg_Holder::arg_type arg_type;
-		typedef typename matrix_traits<arg_type>::value_type T;
+		typedef typename arg_holder<Arg_HP, Arg>::internal_arg_type arg_type;
+		typedef typename matrix_traits<Arg>::value_type T;
 
 		LMAT_ENSURE_INLINE
-		single_vec_percol_evaluator(const horizontal_repeat_expr<Arg_Holder, 1>& expr)
+		single_vec_percol_evaluator(const horizontal_repeat_expr<Arg_HP, Arg, 1>& expr)
 		: m_eval(expr.arg()) { }
 
 		LMAT_ENSURE_INLINE
-		single_vec_percol_evaluator(const vertical_repeat_expr<Arg_Holder, 1>& expr)
+		single_vec_percol_evaluator(const vertical_repeat_expr<Arg_HP, Arg, 1>& expr)
 		: m_eval(expr.arg()) { }
 
 		LMAT_ENSURE_INLINE
@@ -194,22 +198,22 @@ namespace lmat
 	};
 
 
-	template<class Arg_Holder>
+	template<typename Arg_HP, class Arg>
 	class single_vec_linear_evaluator
 	: public ILinearVectorEvaluator<
-	  	  single_vec_linear_evaluator<Arg_Holder>,
-	  	  typename matrix_traits<typename Arg_Holder::arg_type>::value_type>
+	  	  single_vec_linear_evaluator<Arg_HP, Arg>,
+	  	  typename matrix_traits<Arg>::value_type>
 	{
 	public:
-		typedef typename Arg_Holder::arg_type arg_type;
-		typedef typename matrix_traits<arg_type>::value_type T;
+		typedef typename arg_holder<Arg_HP, Arg>::internal_arg_type arg_type;
+		typedef typename matrix_traits<Arg>::value_type T;
 
 		LMAT_ENSURE_INLINE
-		single_vec_linear_evaluator(const horizontal_repeat_expr<Arg_Holder, 1>& expr)
+		single_vec_linear_evaluator(const horizontal_repeat_expr<Arg_HP, Arg, 1>& expr)
 		: m_eval(expr.arg()) { }
 
 		LMAT_ENSURE_INLINE
-		single_vec_linear_evaluator(const vertical_repeat_expr<Arg_Holder, 1>& expr)
+		single_vec_linear_evaluator(const vertical_repeat_expr<Arg_HP, Arg, 1>& expr)
 		: m_eval(expr.arg()) { }
 
 		LMAT_ENSURE_INLINE
@@ -220,26 +224,26 @@ namespace lmat
 	};
 
 
-	template<class Arg_Holder>
+	template<typename Arg_HP, class Arg>
 	class rep_scalar_percol_evaluator
 	: public IPerColVectorEvaluator<
-	  	  rep_scalar_percol_evaluator<Arg_Holder>,
-	  	  typename matrix_traits<typename Arg_Holder::arg_type>::value_type>
+	  	  rep_scalar_percol_evaluator<Arg_HP, Arg>,
+	  	  typename matrix_traits<Arg>::value_type>
 	{
 	public:
-		typedef typename Arg_Holder::arg_type arg_type;
-		typedef typename matrix_traits<arg_type>::value_type T;
+		typedef typename arg_holder<Arg_HP, Arg>::internal_arg_type arg_type;
+		typedef typename matrix_traits<Arg>::value_type T;
 
 		template<int N>
 		LMAT_ENSURE_INLINE
-		rep_scalar_percol_evaluator(const horizontal_repeat_expr<Arg_Holder, N>& expr)
+		rep_scalar_percol_evaluator(const horizontal_repeat_expr<Arg_HP, Arg, N>& expr)
 		{
 			m_val = to_scalar(expr.arg());
 		}
 
 		template<int M>
 		LMAT_ENSURE_INLINE
-		rep_scalar_percol_evaluator(const vertical_repeat_expr<Arg_Holder, M>& expr)
+		rep_scalar_percol_evaluator(const vertical_repeat_expr<Arg_HP, Arg, M>& expr)
 		{
 			m_val = to_scalar(expr.arg());
 		}
@@ -255,26 +259,26 @@ namespace lmat
 	};
 
 
-	template<class Arg_Holder>
+	template<typename Arg_HP, class Arg>
 	class rep_scalar_linear_evaluator
 	: public ILinearVectorEvaluator<
-	  	  rep_scalar_linear_evaluator<Arg_Holder>,
-	  	  typename matrix_traits<typename Arg_Holder::arg_type>::value_type>
+	  	  rep_scalar_linear_evaluator<Arg_HP, Arg>,
+	  	  typename matrix_traits<Arg>::value_type>
 	{
 	public:
-		typedef typename Arg_Holder::arg_type arg_type;
-		typedef typename matrix_traits<arg_type>::value_type T;
+		typedef typename arg_holder<Arg_HP, Arg>::internal_arg_type arg_type;
+		typedef typename matrix_traits<Arg>::value_type T;
 
 		template<int N>
 		LMAT_ENSURE_INLINE
-		rep_scalar_linear_evaluator(const horizontal_repeat_expr<Arg_Holder, N>& expr)
+		rep_scalar_linear_evaluator(const horizontal_repeat_expr<Arg_HP, Arg, N>& expr)
 		{
 			m_val = to_scalar(expr.arg());
 		}
 
 		template<int M>
 		LMAT_ENSURE_INLINE
-		rep_scalar_linear_evaluator(const vertical_repeat_expr<Arg_Holder, M>& expr)
+		rep_scalar_linear_evaluator(const vertical_repeat_expr<Arg_HP, Arg, M>& expr)
 		{
 			m_val = to_scalar(expr.arg());
 		}
@@ -287,19 +291,19 @@ namespace lmat
 	};
 
 
-	template<class Arg_Holder>
+	template<typename Arg_HP, class Arg>
 	class repcol_percol_evaluator
 	: public IPerColVectorEvaluator<
-	  	  repcol_percol_evaluator<Arg_Holder>,
-	  	  typename matrix_traits<typename Arg_Holder::arg_type>::value_type>
+	  	  repcol_percol_evaluator<Arg_HP, Arg>,
+	  	  typename matrix_traits<Arg>::value_type>
 	{
 	public:
-		typedef typename Arg_Holder::arg_type arg_type;
-		typedef typename matrix_traits<arg_type>::value_type T;
+		typedef typename arg_holder<Arg_HP, Arg>::internal_arg_type arg_type;
+		typedef typename matrix_traits<Arg>::value_type T;
 
 		template<int N>
 		LMAT_ENSURE_INLINE
-		repcol_percol_evaluator(const horizontal_repeat_expr<Arg_Holder, N>& expr)
+		repcol_percol_evaluator(const horizontal_repeat_expr<Arg_HP, Arg, N>& expr)
 		: m_colwrap(expr.arg())
 		, m_eval(m_colwrap.ref()) { }
 
@@ -315,19 +319,19 @@ namespace lmat
 	};
 
 
-	template<class Arg_Holder>
+	template<typename Arg_HP, class Arg>
 	class reprow_percol_evaluator
 	: public IPerColVectorEvaluator<
-	  	  reprow_percol_evaluator<Arg_Holder>,
-	  	  typename matrix_traits<typename Arg_Holder::arg_type>::value_type>
+	  	  reprow_percol_evaluator<Arg_HP, Arg>,
+	  	  typename matrix_traits<Arg>::value_type>
 	{
 	public:
-		typedef typename Arg_Holder::arg_type arg_type;
-		typedef typename matrix_traits<arg_type>::value_type T;
+		typedef typename arg_holder<Arg_HP, Arg>::internal_arg_type arg_type;
+		typedef typename matrix_traits<Arg>::value_type T;
 
 		template<int N>
 		LMAT_ENSURE_INLINE
-		reprow_percol_evaluator(const vertical_repeat_expr<Arg_Holder, N>& expr)
+		reprow_percol_evaluator(const vertical_repeat_expr<Arg_HP, Arg, N>& expr)
 		: m_rowwrap(expr.arg()), m_j(0) { }
 
 		LMAT_ENSURE_INLINE
@@ -350,19 +354,18 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<class Arg_Holder, int N>
-	struct vector_eval<horizontal_repeat_expr<Arg_Holder, N>, as_linear_vec, by_scalars>
+	template<typename Arg_HP, class Arg, int N>
+	struct vector_eval<horizontal_repeat_expr<Arg_HP, Arg, N>, as_linear_vec, by_scalars>
 	{
-		typedef typename Arg_Holder::arg_type arg_type;
-		typedef typename matrix_traits<arg_type>::value_type T;
-		static const int M = ct_rows<arg_type>::value;
+		typedef typename matrix_traits<Arg>::value_type T;
+		static const int M = ct_rows<Arg>::value;
 
 		typedef typename
 				if_c<N == 1,
-					single_vec_linear_evaluator<Arg_Holder>,
+					single_vec_linear_evaluator<Arg_HP, Arg>,
 					typename
 					if_c<M == 1,
-						rep_scalar_linear_evaluator<Arg_Holder>,
+						rep_scalar_linear_evaluator<Arg_HP, Arg>,
 						cached_linear_evaluator<T>
 					>::type
 				>::type evaluator_type;
@@ -371,20 +374,19 @@ namespace lmat
 	};
 
 
-	template<class Arg_Holder, int M>
-	struct vector_eval<vertical_repeat_expr<Arg_Holder, M>, as_linear_vec, by_scalars>
+	template<typename Arg_HP, class Arg, int M>
+	struct vector_eval<vertical_repeat_expr<Arg_HP, Arg, M>, as_linear_vec, by_scalars>
 	{
-		typedef typename Arg_Holder::arg_type arg_type;
-		typedef typename matrix_traits<arg_type>::value_type T;
-		static const int N = ct_cols<arg_type>::value;
+		typedef typename matrix_traits<Arg>::value_type T;
+		static const int N = ct_cols<Arg>::value;
 
 		typedef typename
 				if_c<M == 1,
-					single_vec_linear_evaluator<Arg_Holder>,
+					single_vec_linear_evaluator<Arg_HP, Arg>,
 					typename
 					if_c<N == 1,
-						rep_scalar_linear_evaluator<Arg_Holder>,
-						cached_linear_evaluator<typename matrix_traits<arg_type>::value_type>
+						rep_scalar_linear_evaluator<Arg_HP, Arg>,
+						cached_linear_evaluator<T>
 					>::type
 				>::type evaluator_type;
 
@@ -392,20 +394,19 @@ namespace lmat
 	};
 
 
-	template<class Arg_Holder, int N>
-	struct vector_eval<horizontal_repeat_expr<Arg_Holder, N>, per_column, by_scalars>
+	template<typename Arg_HP, class Arg, int N>
+	struct vector_eval<horizontal_repeat_expr<Arg_HP, Arg, N>, per_column, by_scalars>
 	{
-		typedef typename Arg_Holder::arg_type arg_type;
-		typedef typename matrix_traits<arg_type>::value_type T;
-		static const int M = ct_rows<arg_type>::value;
+		typedef typename matrix_traits<Arg>::value_type T;
+		static const int M = ct_rows<Arg>::value;
 
 		typedef typename
 				if_c<N == 1,
-					single_vec_percol_evaluator<Arg_Holder>,
+					single_vec_percol_evaluator<Arg_HP, Arg>,
 					typename
 					if_c<M == 1,
-						rep_scalar_percol_evaluator<Arg_Holder>,
-						repcol_percol_evaluator<Arg_Holder>
+						rep_scalar_percol_evaluator<Arg_HP, Arg>,
+						repcol_percol_evaluator<Arg_HP, Arg>
 					>::type
 				>::type evaluator_type;
 
@@ -415,20 +416,19 @@ namespace lmat
 	};
 
 
-	template<class Arg_Holder, int M>
-	struct vector_eval<vertical_repeat_expr<Arg_Holder, M>, per_column, by_scalars>
+	template<typename Arg_HP, class Arg, int M>
+	struct vector_eval<vertical_repeat_expr<Arg_HP, Arg, M>, per_column, by_scalars>
 	{
-		typedef typename Arg_Holder::arg_type arg_type;
-		typedef typename matrix_traits<arg_type>::value_type T;
-		static const int N = ct_cols<arg_type>::value;
+		typedef typename matrix_traits<Arg>::value_type T;
+		static const int N = ct_cols<Arg>::value;
 
 		typedef typename
 				if_c<M == 1,
-					single_vec_percol_evaluator<Arg_Holder>,
+					single_vec_percol_evaluator<Arg_HP, Arg>,
 					typename
 					if_c<N == 1,
-						rep_scalar_percol_evaluator<Arg_Holder>,
-						reprow_percol_evaluator<Arg_Holder>
+						rep_scalar_percol_evaluator<Arg_HP, Arg>,
+						reprow_percol_evaluator<Arg_HP, Arg>
 					>::type
 				>::type evaluator_type;
 
