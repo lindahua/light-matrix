@@ -35,6 +35,18 @@ namespace lmat { namespace detail {
 			}
 			return r;
 		}
+
+		template<class Fun, class Vec, typename State>
+		LMAT_ENSURE_INLINE
+		static typename Fun::result_type eval(const Fun& fun, const index_t, const Vec& vec, const State& s)
+		{
+			typename Fun::result_type r = fun(vec.get_value(s, 0));
+			for (index_t i = 1; i < CTLen; ++i)
+			{
+				r = fun(r, vec.get_value(s, i));
+			}
+			return r;
+		}
 	};
 
 	template<>
@@ -58,6 +70,25 @@ namespace lmat { namespace detail {
 				return fun();
 			}
 		}
+
+		template<class Fun, class Vec, typename State>
+		LMAT_ENSURE_INLINE
+		static typename Fun::result_type eval(const Fun& fun, const index_t len, const Vec& vec, const State& s)
+		{
+			if (len > 0)
+			{
+				typename Fun::result_type r = fun(vec.get_value(s, 0));
+				for (index_t i = 1; i < len; ++i)
+				{
+					r = fun(r, vec.get_value(s, i));
+				}
+				return r;
+			}
+			else
+			{
+				return fun();
+			}
+		}
 	};
 
 	template<>
@@ -68,6 +99,13 @@ namespace lmat { namespace detail {
 		static typename Fun::result_type eval(const Fun& fun, const index_t, const Vec& vec)
 		{
 			return fun(vec.get_value(0));
+		}
+
+		template<class Fun, class Vec, typename State>
+		LMAT_ENSURE_INLINE
+		static typename Fun::result_type eval(const Fun& fun, const index_t, const Vec& vec, const State& s)
+		{
+			return fun(vec.get_value(s, 0));
 		}
 	};
 

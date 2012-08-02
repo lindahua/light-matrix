@@ -45,21 +45,22 @@ namespace lmat
 			const IMatrixXpr<Expr, typename Fun::arg_type>& expr,
 			vector_eval_policy<per_column, Means>)
 	{
-		typename vector_eval<Expr, per_column, Means>::evaluator_type evaluator(expr.derived());
+		typedef typename vector_eval<Expr, per_column, Means>::evaluator_type eval_t;
+		eval_t evaluator(expr.derived());
 		const index_t m = expr.nrows();
 		const index_t n = expr.ncolumns();
 
 		typedef typename Fun::result_type RT;
 
 		RT r = detail::single_vec_reduce<ct_rows<Expr>::value, Means>::eval(
-				fun, m, evaluator);
+				fun, m, evaluator, evaluator.col_state(0));
 
 		for (index_t j = 1; j < n; ++j)
 		{
-			evaluator.next_column();
+			typename percol_eval_state<eval_t>::type s = evaluator.col_state(j);
 
 			RT rj = detail::single_vec_reduce<ct_rows<Expr>::value, Means>::eval(
-					fun, m, evaluator);
+					fun, m, evaluator, s);
 
 			r = fun(r, rj);
 		}

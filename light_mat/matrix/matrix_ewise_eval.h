@@ -15,6 +15,7 @@
 
 #include <light_mat/matrix/matrix_ewise_expr.h>
 #include <light_mat/matrix/matrix_vector_eval.h>
+#include <utility>
 
 namespace lmat
 {
@@ -24,6 +25,22 @@ namespace lmat
 	 *  Vector evaluator classes
 	 *
 	 ********************************************/
+
+	// forward
+
+	template<class Fun, typename Arg_HP, class Arg>
+	class unary_ewise_linear_evaluator;
+
+	template<class Fun, typename Arg_HP, class Arg>
+	class unary_ewise_percol_evaluator;
+
+	template<class Fun, typename Arg1_HP, class Arg1, typename Arg2_HP, class Arg2>
+	class binary_ewise_linear_evaluator;
+
+	template<class Fun, typename Arg1_HP, class Arg1, typename Arg2_HP, class Arg2>
+	class binary_ewise_percol_evaluator;
+
+	// definitions
 
 	template<class Fun, typename Arg_HP, class Arg>
 	class unary_ewise_linear_evaluator
@@ -52,6 +69,18 @@ namespace lmat
 		arg_eval_t m_arg_eval;
 	};
 
+
+	template<class Fun, typename Arg_HP, class Arg>
+	struct percol_eval_state<unary_ewise_percol_evaluator<Fun, Arg_HP, Arg> >
+	{
+		typedef typename arg_holder<Arg_HP, Arg>::internal_arg_type arg_type;
+		typedef typename vector_eval<arg_type, per_column, by_scalars>::evaluator_type arg_eval_t;
+
+		typedef typename percol_eval_state<arg_eval_t>::type arg_state_t;
+		typedef arg_state_t type;
+	};
+
+
 	template<class Fun, typename Arg_HP, class Arg>
 	class unary_ewise_percol_evaluator
 	: public IPerColVectorEvaluator<
@@ -61,6 +90,7 @@ namespace lmat
 	public:
 		typedef unary_ewise_expr<Fun, Arg_HP, Arg> expr_t;
 		typedef typename expr_t::arg_type arg_type;
+		typedef typename percol_eval_state<unary_ewise_percol_evaluator<Fun, Arg_HP, Arg> >::type state_t;
 
 		LMAT_ENSURE_INLINE
 		unary_ewise_percol_evaluator(const expr_t& expr)
@@ -68,14 +98,14 @@ namespace lmat
 		{
 		}
 
-		LMAT_ENSURE_INLINE typename Fun::result_type get_value(const index_t i) const
+		LMAT_ENSURE_INLINE typename Fun::result_type get_value(const state_t& s, const index_t i) const
 		{
-			return m_fun(m_arg_eval.get_value(i));
+			return m_fun(m_arg_eval.get_value(s, i));
 		}
 
-		LMAT_ENSURE_INLINE void next_column()
+		LMAT_ENSURE_INLINE state_t col_state(const index_t j) const
 		{
-			m_arg_eval.next_column();
+			return m_arg_eval.col_state(j);
 		}
 
 	private:
@@ -118,6 +148,21 @@ namespace lmat
 
 
 	template<class Fun, typename Arg1_HP, class Arg1, typename Arg2_HP, class Arg2>
+	struct percol_eval_state<binary_ewise_percol_evaluator<Fun, Arg1_HP, Arg1, Arg2_HP, Arg2> >
+	{
+		typedef typename arg_holder<Arg1_HP, Arg1>::internal_arg_type arg1_type;
+		typedef typename arg_holder<Arg2_HP, Arg2>::internal_arg_type arg2_type;
+
+		typedef typename vector_eval<arg1_type, per_column, by_scalars>::evaluator_type arg1_eval_t;
+		typedef typename vector_eval<arg2_type, per_column, by_scalars>::evaluator_type arg2_eval_t;
+
+		typedef typename percol_eval_state<arg1_eval_t>::type arg1_state_t;
+		typedef typename percol_eval_state<arg2_eval_t>::type arg2_state_t;
+
+		typedef std::pair<arg1_state_t, arg2_state_t> type;
+	};
+
+	template<class Fun, typename Arg1_HP, class Arg1, typename Arg2_HP, class Arg2>
 	class binary_ewise_percol_evaluator
 	: public IPerColVectorEvaluator<
 	  	  binary_ewise_percol_evaluator<Fun, Arg1_HP, Arg1, Arg2_HP, Arg2>,
@@ -127,6 +172,8 @@ namespace lmat
 		typedef binary_ewise_expr<Fun, Arg1_HP, Arg1, Arg2_HP, Arg2> expr_t;
 		typedef typename expr_t::arg1_type arg1_type;
 		typedef typename expr_t::arg2_type arg2_type;
+		typedef typename percol_eval_state<
+				binary_ewise_percol_evaluator<Fun, Arg1_HP, Arg1, Arg2_HP, Arg2> >::type state_t;
 
 		LMAT_ENSURE_INLINE
 		binary_ewise_percol_evaluator(const expr_t& expr)
@@ -134,15 +181,16 @@ namespace lmat
 		{
 		}
 
-		LMAT_ENSURE_INLINE typename Fun::result_type get_value(const index_t i) const
+		LMAT_ENSURE_INLINE typename Fun::result_type get_value(const state_t& s, const index_t i) const
 		{
-			return m_fun(m_arg1_eval.get_value(i), m_arg2_eval.get_value(i));
+			return m_fun(
+					m_arg1_eval.get_value(s.first, i),
+					m_arg2_eval.get_value(s.second, i));
 		}
 
-		LMAT_ENSURE_INLINE void next_column()
+		LMAT_ENSURE_INLINE state_t col_state(const index_t j) const
 		{
-			m_arg1_eval.next_column();
-			m_arg2_eval.next_column();
+			return state_t(m_arg1_eval.col_state(j), m_arg2_eval.col_state(j));
 		}
 
 	private:

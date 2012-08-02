@@ -142,12 +142,12 @@ MN_CASE( percol_veval, dense_percol )
 
 	for (index_t j = 0; j < n; ++j)
 	{
+		densecol_state<double> s = ve.col_state(j);
+
 		for (index_t i = 0; i < m; ++i)
 		{
-			ASSERT_EQ(ve.get_value(i), a(i, j));
+			ASSERT_EQ(ve.get_value(s, i), a(i, j));
 		}
-
-		ve.next_column();
 	}
 }
 
@@ -168,12 +168,12 @@ MN_CASE( percol_veval, cached_percol )
 
 	for (index_t j = 0; j < n; ++j)
 	{
+		densecol_state<double> s = ve.col_state(j);
+
 		for (index_t i = 0; i < m; ++i)
 		{
-			ASSERT_EQ(ve.get_value(i), a(i, j));
+			ASSERT_EQ(ve.get_value(s, i), a(i, j));
 		}
-
-		ve.next_column();
 	}
 }
 
@@ -201,10 +201,8 @@ MN_CASE( percol_veval, const_percol )
 	{
 		for (index_t i = 0; i < m; ++i)
 		{
-			ASSERT_EQ(ve.get_value(i), val);
+			ASSERT_EQ(ve.get_value(nil_eval_state(), i), val);
 		}
-
-		ve.next_column();
 	}
 }
 

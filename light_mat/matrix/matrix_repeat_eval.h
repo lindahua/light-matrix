@@ -162,12 +162,30 @@ namespace lmat
 
 
 
-
 	/********************************************
 	 *
 	 *  Vector-based Evaluators
 	 *
 	 ********************************************/
+
+	// forward declarations
+
+	template<typename Arg_HP, class Arg> class single_vec_percol_evaluator;
+	template<typename Arg_HP, class Arg> class single_vec_linear_evaluator;
+	template<typename Arg_HP, class Arg> class rep_scalar_percol_evaluator;
+	template<typename Arg_HP, class Arg> class rep_scalar_linear_evaluator;
+	template<typename Arg_HP, class Arg> class repcol_percol_evaluator;
+	template<typename Arg_HP, class Arg> class reprow_percol_evaluator;
+
+	// definitions
+
+	template<typename Arg_HP, class Arg>
+	struct percol_eval_state<single_vec_percol_evaluator<Arg_HP, Arg> >
+	{
+		typedef typename arg_holder<Arg_HP, Arg>::internal_arg_type arg_type;
+		typedef typename vector_eval<arg_type, per_column, by_scalars>::evaluator_type arg_eval_t;
+		typedef typename percol_eval_state<arg_eval_t>::type type;
+	};
 
 	template<typename Arg_HP, class Arg>
 	class single_vec_percol_evaluator
@@ -179,6 +197,9 @@ namespace lmat
 		typedef typename arg_holder<Arg_HP, Arg>::internal_arg_type arg_type;
 		typedef typename matrix_traits<Arg>::value_type T;
 
+		typedef typename vector_eval<arg_type, per_column, by_scalars>::evaluator_type arg_eval_t;
+		typedef typename percol_eval_state<arg_eval_t>::type state_t;
+
 		LMAT_ENSURE_INLINE
 		single_vec_percol_evaluator(const horizontal_repeat_expr<Arg_HP, Arg, 1>& expr)
 		: m_eval(expr.arg()) { }
@@ -188,13 +209,16 @@ namespace lmat
 		: m_eval(expr.arg()) { }
 
 		LMAT_ENSURE_INLINE
-		T get_value(const index_t i) const { return m_eval.get_value(i); }
+		T get_value(const state_t& s, const index_t i) const
+		{
+			return m_eval.get_value(s, i);
+		}
 
 		LMAT_ENSURE_INLINE
-		void next_column() { m_eval.next_column(); }
+		state_t col_state(const index_t j) const { return m_eval.col_state(j); }
 
 	private:
-		typename vector_eval<arg_type, per_column, by_scalars>::evaluator_type m_eval;
+		arg_eval_t m_eval;
 	};
 
 
@@ -207,6 +231,7 @@ namespace lmat
 	public:
 		typedef typename arg_holder<Arg_HP, Arg>::internal_arg_type arg_type;
 		typedef typename matrix_traits<Arg>::value_type T;
+		typedef typename vector_eval<arg_type, as_linear_vec, by_scalars>::evaluator_type arg_eval_t;
 
 		LMAT_ENSURE_INLINE
 		single_vec_linear_evaluator(const horizontal_repeat_expr<Arg_HP, Arg, 1>& expr)
@@ -220,9 +245,15 @@ namespace lmat
 		T get_value(const index_t i) const { return m_eval.get_value(i); }
 
 	private:
-		typename vector_eval<arg_type, as_linear_vec, by_scalars>::evaluator_type m_eval;
+		arg_eval_t m_eval;
 	};
 
+
+	template<typename Arg_HP, class Arg>
+	struct percol_eval_state<rep_scalar_percol_evaluator<Arg_HP, Arg> >
+	{
+		typedef nil_eval_state type;
+	};
 
 	template<typename Arg_HP, class Arg>
 	class rep_scalar_percol_evaluator
@@ -249,10 +280,10 @@ namespace lmat
 		}
 
 		LMAT_ENSURE_INLINE
-		T get_value(const index_t) const { return m_val; }
+		T get_value(const nil_eval_state&, const index_t) const { return m_val; }
 
 		LMAT_ENSURE_INLINE
-		void next_column() { }
+		nil_eval_state col_state(const index_t j) const { return nil_eval_state(); }
 
 	private:
 		T m_val;
@@ -292,6 +323,12 @@ namespace lmat
 
 
 	template<typename Arg_HP, class Arg>
+	struct percol_eval_state<repcol_percol_evaluator<Arg_HP, Arg> >
+	{
+		typedef nil_eval_state type;
+	};
+
+	template<typename Arg_HP, class Arg>
 	class repcol_percol_evaluator
 	: public IPerColVectorEvaluator<
 	  	  repcol_percol_evaluator<Arg_HP, Arg>,
@@ -304,20 +341,25 @@ namespace lmat
 		template<int N>
 		LMAT_ENSURE_INLINE
 		repcol_percol_evaluator(const horizontal_repeat_expr<Arg_HP, Arg, N>& expr)
-		: m_colwrap(expr.arg())
-		, m_eval(m_colwrap.ref()) { }
+		: m_colwrap(expr.arg()) { }
 
 		LMAT_ENSURE_INLINE
-		T get_value(const index_t i) const { return m_eval.get_value(i); }
+		T get_value(const nil_eval_state&, const index_t i) const { return m_colwrap[i]; }
 
 		LMAT_ENSURE_INLINE
-		void next_column() { }
+		nil_eval_state col_state(const index_t j) const { return nil_eval_state(); }
 
 	private:
 		typename detail::repcol_ewrapper_map<arg_type>::type m_colwrap;
-		typename vector_eval<arg_type, per_column, by_scalars>::evaluator_type m_eval;
 	};
 
+
+	template<typename Arg_HP, class Arg>
+	struct percol_eval_state<reprow_percol_evaluator<Arg_HP, Arg> >
+	{
+		typedef typename matrix_traits<Arg>::value_type T;
+		typedef T type;
+	};
 
 	template<typename Arg_HP, class Arg>
 	class reprow_percol_evaluator
@@ -332,17 +374,16 @@ namespace lmat
 		template<int N>
 		LMAT_ENSURE_INLINE
 		reprow_percol_evaluator(const vertical_repeat_expr<Arg_HP, Arg, N>& expr)
-		: m_rowwrap(expr.arg()), m_j(0) { }
+		: m_rowwrap(expr.arg()) { }
 
 		LMAT_ENSURE_INLINE
-		T get_value(const index_t ) const { return m_rowwrap[m_j]; }
+		T get_value(const T& s, const index_t ) const { return s; }
 
 		LMAT_ENSURE_INLINE
-		void next_column() { ++ m_j; }
+		T col_state(const index_t j) const { return m_rowwrap[j]; }
 
 	private:
 		typename detail::reprow_ewrapper_map<arg_type>::type m_rowwrap;
-		index_t m_j;
 	};
 
 

@@ -58,6 +58,7 @@ namespace lmat
 
 	// interfaces
 
+
 	template<class Derived, typename T>
 	class ILinearVectorEvaluator
 	{
@@ -71,6 +72,11 @@ namespace lmat
 		}
 	};
 
+
+	template<class Evaluator> struct percol_eval_state;
+
+	struct nil_eval_state { };
+
 	template<class Derived, typename T>
 	class IPerColVectorEvaluator
 	{
@@ -78,15 +84,16 @@ namespace lmat
 		LMAT_CRTP_REF
 
 		LMAT_ENSURE_INLINE
-		T get_value(const index_t i) const
+		T get_value(const typename percol_eval_state<Derived>::type& col_stat,
+				const index_t i) const
 		{
-			return derived().get_value(i);
+			return derived().get_value(col_stat, i);
 		}
 
 		LMAT_ENSURE_INLINE
-		void next_column()
+		typename percol_eval_state<Derived>::type col_state(const index_t j) const
 		{
-			derived().next_column();
+			return derived().col_state(j);
 		}
 	};
 
@@ -107,6 +114,15 @@ namespace lmat
 				Eva>::value;
 	};
 
+
+	// forward declarations
+
+	template<typename T> class continuous_linear_evaluator;
+	template<typename T> class dense_percol_evaluator;
+	template<typename T> class const_linear_evaluator;
+	template<typename T> class const_percol_evaluator;
+	template<typename T> class cached_linear_evaluator;
+	template<typename T> class cached_percol_evaluator;
 
 	// specific evaluators
 
@@ -137,6 +153,32 @@ namespace lmat
 
 
 	template<typename T>
+	class densecol_state
+	{
+	private:
+		const T* m_ptrcol;
+
+	public:
+		LMAT_ENSURE_INLINE
+		densecol_state(const T* p) : m_ptrcol(p) { }
+
+		LMAT_ENSURE_INLINE
+		const T *ptr() const { return m_ptrcol; }
+
+		LMAT_ENSURE_INLINE
+		T operator[] (const index_t i) const
+		{
+			return m_ptrcol[i];
+		}
+	};
+
+	template<typename T>
+	struct percol_eval_state<dense_percol_evaluator<T> >
+	{
+		typedef densecol_state<T> type;
+	};
+
+	template<typename T>
 	class dense_percol_evaluator
 	: public IPerColVectorEvaluator<dense_percol_evaluator<T>, T>
 	{
@@ -149,14 +191,14 @@ namespace lmat
 		{
 		}
 
-		LMAT_ENSURE_INLINE T get_value(const index_t i) const
+		LMAT_ENSURE_INLINE T get_value(const densecol_state<T>& s, const index_t i) const
 		{
-			return m_data[i];
+			return s[i];
 		}
 
-		LMAT_ENSURE_INLINE void next_column()
+		LMAT_ENSURE_INLINE densecol_state<T> col_state(const index_t j) const
 		{
-			m_data += m_ldim;
+			return m_data + m_ldim * j;
 		}
 	private:
 		const index_t m_ldim;
@@ -185,6 +227,11 @@ namespace lmat
 		const T m_val;
 	};
 
+	template<typename T>
+	struct percol_eval_state<const_percol_evaluator<T> >
+	{
+		typedef nil_eval_state type;
+	};
 
 	template<typename T>
 	class const_percol_evaluator
@@ -198,12 +245,15 @@ namespace lmat
 		{
 		}
 
-		LMAT_ENSURE_INLINE T get_value(const index_t i) const
+		LMAT_ENSURE_INLINE T get_value(const nil_eval_state&, const index_t i) const
 		{
 			return m_val;
 		}
 
-		LMAT_ENSURE_INLINE void next_column() { }
+		LMAT_ENSURE_INLINE nil_eval_state col_state(const index_t ) const
+		{
+			return nil_eval_state();
+		}
 
 	private:
 		const T m_val;
@@ -234,6 +284,12 @@ namespace lmat
 
 
 	template<typename T>
+	struct percol_eval_state<cached_percol_evaluator<T> >
+	{
+		typedef densecol_state<T> type;
+	};
+
+	template<typename T>
 	class cached_percol_evaluator
 	: public IPerColVectorEvaluator<cached_percol_evaluator<T>, T>
 	{
@@ -241,24 +297,23 @@ namespace lmat
 		template<class Expr>
 		LMAT_ENSURE_INLINE
 		cached_percol_evaluator(const IMatrixXpr<Expr, T>& X)
-		: m_cache(X), m_ldim(m_cache.lead_dim()), m_data(m_cache.ptr_data())
+		: m_cache(X), m_ldim(m_cache.lead_dim())
 		{
 		}
 
-		LMAT_ENSURE_INLINE T get_value(const index_t i) const
+		LMAT_ENSURE_INLINE T get_value(const densecol_state<T>& s, const index_t i) const
 		{
-			return m_data[i];
+			return s[i];
 		}
 
-		LMAT_ENSURE_INLINE void next_column()
+		LMAT_ENSURE_INLINE densecol_state<T> col_state(const index_t j) const
 		{
-			m_data += m_ldim;
+			return m_cache.ptr_data() + m_ldim * j;
 		}
 
 	private:
 		dense_matrix<T> m_cache;
 		const index_t m_ldim;
-		const T *m_data;
 	};
 
 
@@ -352,12 +407,13 @@ namespace lmat
 			const index_t ldim = dst.lead_dim();
 			T *pd = dst.ptr_data();
 
-			for (index_t j = 0; j < ncols; ++j,
-				pd += ldim, evaluator.next_column())
+			for (index_t j = 0; j < ncols; ++j, pd += ldim)
 			{
+				typename percol_eval_state<Eva>::type s = evaluator.col_state(j);
+
 				for (index_t i = 0; i < CTRows; ++i)
 				{
-					pd[i] = evaluator.get_value(i);
+					pd[i] = evaluator.get_value(s, i);
 				}
 			}
 		}
@@ -378,12 +434,13 @@ namespace lmat
 			const index_t ldim = dst.lead_dim();
 			T *pd = dst.ptr_data();
 
-			for (index_t j = 0; j < ncols; ++j,
-				pd += ldim, evaluator.next_column())
+			for (index_t j = 0; j < ncols; ++j, pd += ldim)
 			{
+				typename percol_eval_state<Eva>::type s = evaluator.col_state(j);
+
 				for (index_t i = 0; i < nrows; ++i)
 				{
-					pd[i] = evaluator.get_value(i);
+					pd[i] = evaluator.get_value(s, i);
 				}
 			}
 		}

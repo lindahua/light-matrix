@@ -35,7 +35,7 @@ namespace lmat { namespace detail {
 		const T* data() const { return m_col.ptr_data(); }
 
 		LMAT_ENSURE_INLINE
-		T operator[] (const index_t j) const { return m_col[j]; }
+		T operator[] (const index_t i) const { return m_col[i]; }
 
 		LMAT_ENSURE_INLINE
 		const col_t& ref() const { return m_col; }
@@ -59,7 +59,7 @@ namespace lmat { namespace detail {
 		const T* data() const { return m_col.ptr_data(); }
 
 		LMAT_ENSURE_INLINE
-		T operator[] (const index_t j) const { return m_col[j]; }
+		T operator[] (const index_t i) const { return m_col[i]; }
 
 		LMAT_ENSURE_INLINE
 		const col_t& ref() const { return m_col; }
