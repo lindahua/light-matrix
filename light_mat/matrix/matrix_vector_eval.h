@@ -11,7 +11,7 @@
 #endif
 
 #ifndef LIGHTMAT_MATRIX_VECTOR_EVAL_H_
-#define LIGHTMAT_MATRIX_VECTOR_VAL_H_
+#define LIGHTMAT_MATRIX_VECTOR_EVAL_H_
 
 #include <light_mat/matrix/matrix_properties.h>
 #include <light_mat/matrix/matrix_classes.h>
@@ -449,6 +449,7 @@ namespace lmat
 		typedef typename generic_vector_eval<Expr, per_column, Means>::evaluator_type evaluator_type;
 		static const int normal_cost = generic_vector_eval<Expr, per_column, Means>::normal_cost;
 		static const int shortv_cost = generic_vector_eval<Expr, per_column, Means>::shortv_cost;
+		static const int cost = generic_vector_eval<Expr, per_column, Means>::cost;
 	};
 
 

@@ -28,29 +28,68 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<class Fun, typename T, class Mat>
+	template<class Fun, class Expr, typename Means>
 	LMAT_ENSURE_INLINE
-	inline typename Fun::result_type
-	linear_scalar_reduce(const Fun& fun, const IMatrixXpr<Mat, T>& X)
+	inline static typename Fun::result_type reduce(const Fun& fun,
+			const IMatrixXpr<Expr, typename Fun::arg_type>& expr,
+			vector_eval_policy<as_linear_vec, Means>)
 	{
-		return detail::full_reduce_linear_internal::evaluate(fun, X.derived());
+		typename vector_eval<Expr, as_linear_vec, Means>::evaluator_type evaluator(expr.derived());
+		return detail::single_vec_reduce<ct_size<Expr>::value, Means>::eval(
+				fun, expr.nelems(), evaluator);
+	}
+
+
+	template<class Fun, class Expr, typename Means>
+	inline static typename Fun::result_type reduce(const Fun& fun,
+			const IMatrixXpr<Expr, typename Fun::arg_type>& expr,
+			vector_eval_policy<per_column, Means>)
+	{
+		typename vector_eval<Expr, per_column, Means>::evaluator_type evaluator(expr.derived());
+		const index_t m = expr.nrows();
+		const index_t n = expr.ncolumns();
+
+		typedef typename Fun::result_type RT;
+
+		RT r = detail::single_vec_reduce<ct_rows<Expr>::value, Means>::eval(
+				fun, m, evaluator);
+
+		for (index_t j = 1; j < n; ++j)
+		{
+			evaluator.next_column();
+
+			RT rj = detail::single_vec_reduce<ct_rows<Expr>::value, Means>::eval(
+					fun, m, evaluator);
+
+			r = fun(r, rj);
+		}
+
+		return r;
 	}
 
 	template<class Fun, typename T, class Mat>
 	LMAT_ENSURE_INLINE
 	inline typename Fun::result_type
-	percol_scalar_reduce(const Fun& fun, const IMatrixXpr<Mat, T>& X)
+	linear_by_scalars_reduce(const Fun& fun, const IMatrixXpr<Mat, T>& X)
 	{
-		return detail::full_reduce_percol_internal::evaluate(fun, X.derived());
+		return reduce(fun, X.derived(), vector_eval_policy<as_linear_vec, by_scalars>());
 	}
+
+	template<class Fun, typename T, class Mat>
+	LMAT_ENSURE_INLINE
+	inline typename Fun::result_type
+	percol_by_scalars_reduce(const Fun& fun, const IMatrixXpr<Mat, T>& X)
+	{
+		return reduce(fun, X.derived(), vector_eval_policy<per_column, by_scalars>());
+	}
+
 
 	template<class Fun, typename T, class Mat>
 	LMAT_ENSURE_INLINE
 	inline typename Fun::result_type
 	reduce(const Fun& fun, const IMatrixXpr<Mat, T>& X)
 	{
-		typedef typename detail::reduce_internal_map<Mat>::type internal_t;
-		return internal_t::evaluate(fun, X.derived());
+		return reduce(fun, X.derived(), typename vector_eval_default_policy<Mat>::type());
 	}
 
 
