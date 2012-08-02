@@ -18,6 +18,7 @@
 namespace lmat
 {
 
+
 	template<class SMat, typename S, typename T>
 	LMAT_ENSURE_INLINE
 	inline typename unary_expr_map<
@@ -26,6 +27,17 @@ namespace lmat
 	cast(const IMatrixXpr<SMat, S>& sexpr, type<T> )
 	{
 		return ewise(type_converter<S, T>(), sexpr.derived());
+	}
+
+
+	template<class SMat, typename S>
+	LMAT_ENSURE_INLINE
+	inline typename unary_expr_map<
+		ewise_t<type_converter<S, bool> >,
+		ref_arg_holder<SMat> >::type
+	to_bool(const IMatrixXpr<SMat, S>& sexpr)
+	{
+		return ewise(type_converter<S, bool>(), sexpr.derived());
 	}
 
 
