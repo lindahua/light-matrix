@@ -110,10 +110,10 @@ set(MATRIX_EWISE_HS
     ${INC}/matrix/matrix_ecomp.h
     ${INC}/matrix/matrix_elogical.h)
     
-set(REPEAT_VECS_HS
+set(MATRIX_REPEAT_HS
     ${INC}/matrix/bits/repeat_vecs_internal.h
-    ${INC}/matrix/repeat_vecs_expr.h
-    ${INC}/matrix/repeat_vecs_eval.h)   
+    ${INC}/matrix/matrix_repeat_expr.h
+    ${INC}/matrix/matrix_repeat_eval.h)   
     
 set(MATRIX_REDUC_HS
     ${INC}/math/reduction_functors.h
@@ -205,13 +205,12 @@ add_executable(test_mat_emath ${EWISE_MAT_EVAL_HS} test_mat_emath.cpp)
 add_executable(test_mat_ecomp ${EWISE_MAT_EVAL_HS} test_mat_ecomp.cpp)
 add_executable(test_mat_elogical ${EWISE_MAT_EVAL_HS} test_mat_elogical.cpp)
 
-set(REP_VECS_HS
+set(MAT_REPEAT_HS
     ${MATRIX_HS}
     ${MATRIX_EVAL_BASE_HS}
-    ${REPEAT_VECS_HS})
+    ${MATRIX_REPEAT_HS})
     
-# add_executable(test_rep_vecs ${REP_VECS_HS} test_rep_vecs.cpp)
-# add_executable(test_rep_veval ${REP_VECS_HS} test_rep_veval.cpp)
+add_executable(test_vec_rep ${MAT_REPEAT_HS} test_vec_rep.cpp)
 
 # add_executable(test_cpd_ewise ${MATRIX_EVAL_HS} test_cpd_ewise.cpp)
 
@@ -253,8 +252,7 @@ set(LMAT_TEST_NAMES
 	test_mat_emath
 	test_mat_ecomp
 	test_mat_elogical
-	# test_rep_vecs
-	# test_rep_veval
+	test_vec_rep
     # test_cpd_ewise
 	# test_mat_reduce
 	# test_partial_reduce

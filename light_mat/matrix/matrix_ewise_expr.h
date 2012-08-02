@@ -20,42 +20,6 @@ namespace lmat
 
 	/********************************************
 	 *
-	 *  Auxiliary devices
-	 *
-	 ********************************************/
-
-	template<class Fun>
-	struct ewise_t
-	{
-		const Fun& fun;
-
-		LMAT_ENSURE_INLINE
-		ewise_t(const Fun& f) : fun(f) { }
-	};
-
-	template<class Fun>
-	LMAT_ENSURE_INLINE
-	inline ewise_t<Fun> ewise(const Fun& f)
-	{
-		return ewise_t<Fun>(f);
-	}
-
-
-	template<class Fun, class Arg>
-	struct unary_expr_verifier<ewise_t<Fun>, Arg>
-	{
-		static const bool value = is_mat_xpr<Arg>::value;
-	};
-
-	template<class Fun, class Arg1, class Arg2>
-	struct binary_expr_verifier<ewise_t<Fun>, Arg1, Arg2>
-	{
-		static const bool value = is_mat_xpr<Arg1>::value && is_mat_xpr<Arg2>::value;
-	};
-
-
-	/********************************************
-	 *
 	 *  Expression classes
 	 *
 	 ********************************************/
@@ -209,6 +173,34 @@ namespace lmat
 	 *  Expression mapping and construction
 	 *
 	 ********************************************/
+
+	template<class Fun>
+	struct ewise_t
+	{
+		const Fun& fun;
+
+		LMAT_ENSURE_INLINE
+		ewise_t(const Fun& f) : fun(f) { }
+	};
+
+	template<class Fun>
+	LMAT_ENSURE_INLINE
+	inline ewise_t<Fun> ewise(const Fun& f)
+	{
+		return ewise_t<Fun>(f);
+	}
+
+	template<class Fun, class Arg>
+	struct unary_expr_verifier<ewise_t<Fun>, Arg>
+	{
+		static const bool value = is_mat_xpr<Arg>::value;
+	};
+
+	template<class Fun, class Arg1, class Arg2>
+	struct binary_expr_verifier<ewise_t<Fun>, Arg1, Arg2>
+	{
+		static const bool value = is_mat_xpr<Arg1>::value && is_mat_xpr<Arg2>::value;
+	};
 
 	template<class Fun, class Arg_Holder>
 	struct unary_expr_map<ewise_t<Fun>, Arg_Holder>

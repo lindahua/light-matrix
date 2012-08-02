@@ -11,7 +11,7 @@
 
 #include <light_mat/matrix/const_matrix.h>
 #include <light_mat/matrix/dense_matrix.h>
-#include <light_mat/matrix/repeat_vecs_expr.h>
+#include <light_mat/matrix/matrix_repeat_eval.h>
 
 using namespace lmat;
 using namespace lmat::test;
@@ -21,16 +21,10 @@ using namespace lmat::test;
 typedef dense_matrix<double, 0, 1> dcol_t;
 typedef dense_matrix<double, 1, 0> drow_t;
 
-template class lmat::repeat_col_expr<dcol_t, DynamicDim>;
-template class lmat::repeat_col_expr<dcol_t, 6>;
-template class lmat::repeat_row_expr<drow_t, DynamicDim>;
-template class lmat::repeat_row_expr<drow_t, 4>;
-
-
-#ifdef LMAT_USE_STATIC_ASSERT
-static_assert(lmat::is_mat_xpr<lmat::repeat_col_expr<dcol_t, DynamicDim> >::value, "Interface verification failed.");
-static_assert(lmat::is_mat_xpr<lmat::repeat_row_expr<drow_t, DynamicDim> >::value, "Interface verification failed.");
-#endif
+template class lmat::horizontal_repeat_expr<ref_arg_holder<dcol_t>, DynamicDim>;
+template class lmat::horizontal_repeat_expr<ref_arg_holder<dcol_t>, 6>;
+template class lmat::vertical_repeat_expr<ref_arg_holder<drow_t>, DynamicDim>;
+template class lmat::vertical_repeat_expr<ref_arg_holder<drow_t>, 4>;
 
 
 N_CASE( repcols, generic )
@@ -39,39 +33,18 @@ N_CASE( repcols, generic )
 	const index_t n = 6;
 
 	typedef dense_matrix<double, N, 1> col_t;
-	typedef repeat_col_expr<col_t, DynamicDim> expr_t;
-	typedef repeat_col_expr<embed_mat<col_t>, DynamicDim> expr_te;
+	typedef horizontal_repeat_expr<ref_arg_holder<col_t>, DynamicDim> expr_t;
 
 	col_t a(m, 1);
 
-#ifdef LMAT_USE_STATIC_ASSERT
-	static_assert( is_same<decltype(repcol(a, n)), expr_t>::value,
-			"Expression type verification failed" );
-
-	static_assert( is_same<decltype(repcol(embed(a), n)), expr_te>::value,
-			"Expression type verification failed" );
-
-	static_assert( ct_rows<expr_t>::value == N, "CT-size verification failed." );
-	static_assert( ct_cols<expr_t>::value == 0, "CT-size verification failed." );
-#endif
-
-	expr_t expr = repcol(a, n);
+	expr_t expr = hrep(a, n);
 
 	ASSERT_EQ( expr.nrows(), m );
 	ASSERT_EQ( expr.ncolumns(), n );
 	ASSERT_EQ( expr.nelems(), m * n);
 	ASSERT_EQ( expr.size(), size_t(m * n) );
 
-	ASSERT_EQ( &(expr.column()), &a );
-
-	expr_te expr1 = repcol(embed(a), n);
-
-	ASSERT_EQ( expr1.nrows(), m );
-	ASSERT_EQ( expr1.ncolumns(), n );
-	ASSERT_EQ( expr1.nelems(), m * n);
-	ASSERT_EQ( expr1.size(), size_t(m * n) );
-
-	ASSERT_NE( &(expr1.column()), &a );
+	ASSERT_EQ( &(expr.arg()), &a );
 }
 
 
@@ -83,39 +56,18 @@ MN_CASE( repcols, generic_fix )
 	const index_t n = N;
 
 	typedef dense_matrix<double, M, 1> col_t;
-	typedef repeat_col_expr<col_t, N> expr_t;
-	typedef repeat_col_expr<embed_mat<col_t>, N> expr_te;
+	typedef horizontal_repeat_expr<ref_arg_holder<col_t>, N> expr_t;
 
 	col_t a(m, 1);
 
-#ifdef LMAT_USE_STATIC_ASSERT
-	static_assert( is_same<decltype(repcol(a, fixed_dim<N>())), expr_t>::value,
-			"Expression type verification failed" );
-
-	static_assert( is_same<decltype(repcol(embed(a), fixed_dim<N>())), expr_te>::value,
-			"Expression type verification failed" );
-
-	static_assert( ct_rows<expr_t>::value == M, "CT-size verification failed." );
-	static_assert( ct_cols<expr_t>::value == N, "CT-size verification failed." );
-#endif
-
-	expr_t expr = repcol(a, fixed_dim<N>());
+	expr_t expr = hrep(a, fixed_dim<N>());
 
 	ASSERT_EQ( expr.nrows(), m );
 	ASSERT_EQ( expr.ncolumns(), n );
 	ASSERT_EQ( expr.nelems(), m * n);
 	ASSERT_EQ( expr.size(), size_t(m * n) );
 
-	ASSERT_EQ( &(expr.column()), &a );
-
-	expr_te expr1 = repcol(embed(a), fixed_dim<N>());
-
-	ASSERT_EQ( expr1.nrows(), m );
-	ASSERT_EQ( expr1.ncolumns(), n );
-	ASSERT_EQ( expr1.nelems(), m * n);
-	ASSERT_EQ( expr1.size(), size_t(m * n) );
-
-	ASSERT_NE( &(expr1.column()), &a );
+	ASSERT_EQ( &(expr.arg()), &a );
 }
 
 
@@ -130,15 +82,7 @@ N_CASE( repcols, const )
 
 	col_t a(m, 1, val);
 
-#ifdef LMAT_USE_STATIC_ASSERT
-	static_assert( is_same<decltype(repcol(a, n)), expr_t>::value,
-			"Expression type verification failed" );
-
-	static_assert( ct_rows<expr_t>::value == N, "CT-size verification failed." );
-	static_assert( ct_cols<expr_t>::value == 0, "CT-size verification failed." );
-#endif
-
-	expr_t expr = repcol(a, n);
+	expr_t expr = hrep(a, n);
 
 	ASSERT_EQ( expr.nrows(), m );
 	ASSERT_EQ( expr.ncolumns(), n );
@@ -162,15 +106,7 @@ MN_CASE( repcols, const_fix )
 
 	col_t a(m, 1, val);
 
-#ifdef LMAT_USE_STATIC_ASSERT
-	static_assert( is_same<decltype(repcol(a, fixed_dim<N>())), expr_t>::value,
-			"Expression type verification failed" );
-
-	static_assert( ct_rows<expr_t>::value == M, "CT-size verification failed." );
-	static_assert( ct_cols<expr_t>::value == N, "CT-size verification failed." );
-#endif
-
-	expr_t expr = repcol(a, fixed_dim<N>());
+	expr_t expr = hrep(a, fixed_dim<N>());
 
 	ASSERT_EQ( expr.nrows(), m );
 	ASSERT_EQ( expr.ncolumns(), n );
@@ -187,38 +123,18 @@ N_CASE( reprows, generic )
 	const index_t n = N == 0 ? 6 : N;
 
 	typedef dense_matrix<double, 1, N> row_t;
-	typedef repeat_row_expr<row_t, DynamicDim> expr_t;
-	typedef repeat_row_expr<embed_mat<row_t>, DynamicDim> expr_te;
+	typedef vertical_repeat_expr<ref_arg_holder<row_t>, DynamicDim> expr_t;
 
 	row_t a(1, n);
 
-#ifdef LMAT_USE_STATIC_ASSERT
-	static_assert( is_same<decltype(reprow(a, m)), expr_t>::value,
-			"Expression type verification failed" );
-	static_assert( is_same<decltype(reprow(embed(a), m)), expr_te>::value,
-			"Expression type verification failed" );
-
-	static_assert( ct_rows<expr_t>::value == 0, "CT-size verification failed." );
-	static_assert( ct_cols<expr_t>::value == N, "CT-size verification failed." );
-#endif
-
-	expr_t expr = reprow(a, m);
+	expr_t expr = vrep(a, m);
 
 	ASSERT_EQ( expr.nrows(), m );
 	ASSERT_EQ( expr.ncolumns(), n );
 	ASSERT_EQ( expr.nelems(), m * n);
 	ASSERT_EQ( expr.size(), size_t(m * n) );
 
-	ASSERT_EQ( &(expr.row()), &a );
-
-	expr_te expr1 = reprow(embed(a), m);
-
-	ASSERT_EQ( expr1.nrows(), m );
-	ASSERT_EQ( expr1.ncolumns(), n );
-	ASSERT_EQ( expr1.nelems(), m * n);
-	ASSERT_EQ( expr1.size(), size_t(m * n) );
-
-	ASSERT_NE( &(expr1.row()), &a );
+	ASSERT_EQ( &(expr.arg()), &a );
 }
 
 
@@ -230,38 +146,18 @@ MN_CASE( reprows, generic_fix )
 	const index_t n = N == 0 ? 6 : N;
 
 	typedef dense_matrix<double, 1, N> row_t;
-	typedef repeat_row_expr<row_t, M> expr_t;
-	typedef repeat_row_expr<embed_mat<row_t>, M> expr_te;
+	typedef vertical_repeat_expr<ref_arg_holder<row_t>, M> expr_t;
 
 	row_t a(1, n);
 
-#ifdef LMAT_USE_STATIC_ASSERT
-	static_assert( is_same<decltype(reprow(a, fixed_dim<M>())), expr_t>::value,
-			"Expression type verification failed" );
-	static_assert( is_same<decltype(reprow(embed(a), fixed_dim<M>())), expr_te>::value,
-			"Expression type verification failed" );
-
-	static_assert( ct_rows<expr_t>::value == M, "CT-size verification failed." );
-	static_assert( ct_cols<expr_t>::value == N, "CT-size verification failed." );
-#endif
-
-	expr_t expr = reprow(a, fixed_dim<M>());
+	expr_t expr = vrep(a, fixed_dim<M>());
 
 	ASSERT_EQ( expr.nrows(), m );
 	ASSERT_EQ( expr.ncolumns(), n );
 	ASSERT_EQ( expr.nelems(), m * n);
 	ASSERT_EQ( expr.size(), size_t(m * n) );
 
-	ASSERT_EQ( &(expr.row()), &a );
-
-	expr_te expr1 = reprow(embed(a), fixed_dim<M>());
-
-	ASSERT_EQ( expr1.nrows(), m );
-	ASSERT_EQ( expr1.ncolumns(), n );
-	ASSERT_EQ( expr1.nelems(), m * n);
-	ASSERT_EQ( expr1.size(), size_t(m * n) );
-
-	ASSERT_NE( &(expr1.row()), &a );
+	ASSERT_EQ( &(expr.arg()), &a );
 }
 
 
@@ -275,16 +171,7 @@ N_CASE( reprows, const )
 	typedef const_matrix<double, 0, N> expr_t;
 
 	row_t a(1, n, val);
-
-#ifdef LMAT_USE_STATIC_ASSERT
-	static_assert( is_same<decltype(reprow(a, m)), expr_t>::value,
-			"Expression type verification failed" );
-
-	static_assert( ct_rows<expr_t>::value == 0, "CT-size verification failed." );
-	static_assert( ct_cols<expr_t>::value == N, "CT-size verification failed." );
-#endif
-
-	expr_t expr = reprow(a, m);
+	expr_t expr = vrep(a, m);
 
 	ASSERT_EQ( expr.nrows(), m );
 	ASSERT_EQ( expr.ncolumns(), n );
@@ -306,16 +193,7 @@ MN_CASE( reprows, const_fix )
 	typedef const_matrix<double, M, N> expr_t;
 
 	row_t a(1, n, val);
-
-#ifdef LMAT_USE_STATIC_ASSERT
-	static_assert( is_same<decltype(reprow(a, fixed_dim<M>())), expr_t>::value,
-			"Expression type verification failed" );
-
-	static_assert( ct_rows<expr_t>::value == M, "CT-size verification failed." );
-	static_assert( ct_cols<expr_t>::value == N, "CT-size verification failed." );
-#endif
-
-	expr_t expr = reprow(a, fixed_dim<M>());
+	expr_t expr = vrep(a, fixed_dim<M>());
 
 	ASSERT_EQ( expr.nrows(), m );
 	ASSERT_EQ( expr.ncolumns(), n );
@@ -323,6 +201,165 @@ MN_CASE( reprows, const_fix )
 	ASSERT_EQ( expr.size(), size_t(m * n) );
 
 	ASSERT_EQ( expr.value(), val );
+}
+
+
+MN_CASE( repcols, eval )
+{
+	const index_t m = M == 0 ? 4 : M;
+	const index_t n = N == 0 ? 6 : N;
+
+	typedef dense_matrix<double, M, 1> col_t;
+
+	col_t col(m, 1);
+	for (index_t i = 0; i < m; ++i) col[i] = double(i + 2);
+
+	typedef horizontal_repeat_expr<ref_arg_holder<col_t>, N> expr_t;
+	expr_t expr = make_expr(hrep_t<N>(n), ref_arg(col));
+
+	ASSERT_EQ( expr.nrows(), m );
+	ASSERT_EQ( expr.ncolumns(), n );
+
+	dense_matrix<double, M, N> R( expr );
+
+	typedef horizontal_repeat_expr<copy_arg_holder<col_t>, N> expr_et;
+	expr_et expr_e = make_expr(hrep_t<N>(n), copy_arg(col));
+
+	ASSERT_EQ( expr_e.nrows(), m );
+	ASSERT_EQ( expr_e.ncolumns(), n );
+
+	dense_matrix<double, M, N> Re(expr_e);
+
+	dense_matrix<double, M, N> R_r(m, n);
+	for (index_t j = 0; j < n; ++j)
+	{
+		for (index_t i = 0; i < m; ++i) R_r(i, j) = col(i, 0);
+	}
+
+	ASSERT_TRUE( is_equal(R, R_r) );
+	ASSERT_TRUE( is_equal(Re, R_r) );
+}
+
+
+MN_CASE( reprows, eval )
+{
+	const index_t m = M == 0 ? 4 : M;
+	const index_t n = N == 0 ? 6 : N;
+
+	typedef dense_matrix<double, 1, N> row_t;
+
+	row_t row(1, n);
+	for (index_t j = 0; j < n; ++j) row[j] = double(j + 2);
+
+	typedef vertical_repeat_expr<ref_arg_holder<row_t>, M> expr_t;
+	expr_t expr = make_expr(vrep_t<M>(m), ref_arg(row));
+
+	ASSERT_EQ( expr.nrows(), m );
+	ASSERT_EQ( expr.ncolumns(), n );
+
+	dense_matrix<double, M, N> R( expr );
+
+	typedef vertical_repeat_expr<copy_arg_holder<row_t>, M> expr_et;
+	expr_et expr_e = make_expr(vrep_t<M>(m), copy_arg(row));
+
+	ASSERT_EQ( expr_e.nrows(), m );
+	ASSERT_EQ( expr_e.ncolumns(), n );
+
+	dense_matrix<double, M, N> Re(expr_e);
+
+	dense_matrix<double, M, N> R_r(m, n);
+	for (index_t j = 0; j < n; ++j)
+	{
+		for (index_t i = 0; i < m; ++i) R_r(i, j) = row(0, j);
+	}
+
+	ASSERT_TRUE( is_equal(R, R_r) );
+}
+
+
+MN_CASE( repcols, vec_eval )
+{
+	const index_t m = M == 0 ? 5 : M;
+	const index_t n = N == 0 ? 6 : N;
+
+	typedef dense_matrix<double, M, 1> col_t;
+	typedef dense_matrix<double, M, N> mat_t;
+
+	col_t col(m, 1);
+	for (index_t i = 0; i < m; ++i) col[i] = double(i+2);
+
+	horizontal_repeat_expr<ref_arg_holder<col_t>, N> expr =
+			make_expr(hrep_t<N>(n), ref_arg(col));
+
+	horizontal_repeat_expr<copy_arg_holder<col_t>, N> expr_e =
+			make_expr(hrep_t<N>(n), copy_arg(col));
+
+	mat_t R_r(m, n);
+	for (index_t j = 0; j < n; ++j)
+	{
+		for (index_t i = 0; i < m; ++i) R_r(i, j) = col(i, 0);
+	}
+
+	mat_t R(m, n);
+
+	fill(R, 0.0);
+	linear_by_scalars_evaluate(expr, R);
+	ASSERT_TRUE( is_equal(R, R_r) );
+
+	fill(R, 0.0);
+	linear_by_scalars_evaluate(expr_e, R);
+	ASSERT_TRUE( is_equal(R, R_r) );
+
+	fill(R, 0.0);
+	percol_by_scalars_evaluate(expr, R);
+	ASSERT_TRUE( is_equal(R, R_r) );
+
+	fill(R, 0.0);
+	percol_by_scalars_evaluate(expr_e, R);
+	ASSERT_TRUE( is_equal(R, R_r) );
+}
+
+
+MN_CASE( reprows, vec_eval )
+{
+	const index_t m = M == 0 ? 5 : M;
+	const index_t n = N == 0 ? 6 : N;
+
+	typedef dense_matrix<double, 1, N> row_t;
+	typedef dense_matrix<double, M, N> mat_t;
+
+	row_t row(1, n);
+	for (index_t j = 0; j < n; ++j) row[j] = double(j+2);
+
+	vertical_repeat_expr<ref_arg_holder<row_t>, M> expr =
+			make_expr(vrep_t<M>(m), ref_arg(row));
+
+	vertical_repeat_expr<copy_arg_holder<row_t>, M> expr_e =
+			make_expr(vrep_t<M>(m), copy_arg(row));
+
+	mat_t R_r(m, n);
+	for (index_t j = 0; j < n; ++j)
+	{
+		for (index_t i = 0; i < m; ++i) R_r(i, j) = row(0, j);
+	}
+
+	mat_t R(m, n);
+
+	fill(R, 0.0);
+	linear_by_scalars_evaluate(expr, R);
+	ASSERT_TRUE( is_equal(R, R_r) );
+
+	fill(R, 0.0);
+	linear_by_scalars_evaluate(expr_e, R);
+	ASSERT_TRUE( is_equal(R, R_r) );
+
+	fill(R, 0.0);
+	percol_by_scalars_evaluate(expr, R);
+	ASSERT_TRUE( is_equal(R, R_r) );
+
+	fill(R, 0.0);
+	percol_by_scalars_evaluate(expr_e, R);
+	ASSERT_TRUE( is_equal(R, R_r) );
 }
 
 
@@ -387,6 +424,26 @@ BEGIN_TPACK( reprows_const_fix )
 	ADD_MN_CASE( reprows, const_fix, 4, 6 )
 END_TPACK
 
+
+
+BEGIN_TPACK( repcols_eval )
+	ADD_MN_CASE_3X3( repcols, eval, 4, 6 )
+END_TPACK
+
+BEGIN_TPACK( reprows_eval )
+	ADD_MN_CASE_3X3( reprows, eval, 4, 6 )
+END_TPACK
+
+BEGIN_TPACK( repcols_vec_eval )
+	ADD_MN_CASE_3X3( repcols, vec_eval, 4, 6 )
+END_TPACK
+
+BEGIN_TPACK( reprows_vec_eval )
+	ADD_MN_CASE_3X3( reprows, vec_eval, 4, 6 )
+END_TPACK
+
+
+
 BEGIN_MAIN_SUITE
 	ADD_TPACK( repcols_generic )
 	ADD_TPACK( repcols_generic_fix )
@@ -397,6 +454,11 @@ BEGIN_MAIN_SUITE
 	ADD_TPACK( reprows_generic_fix )
 	ADD_TPACK( reprows_const )
 	ADD_TPACK( reprows_const_fix )
+
+	ADD_TPACK( repcols_eval )
+	ADD_TPACK( reprows_eval )
+	ADD_TPACK( repcols_vec_eval )
+	ADD_TPACK( reprows_vec_eval )
 END_MAIN_SUITE
 
 

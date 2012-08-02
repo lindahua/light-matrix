@@ -1,7 +1,7 @@
 /**
- * @file repeat_vecs.h
+ * @file matrix_repeat_expr.h
  *
- * Matrices formed by repeating rows/columns
+ * Expressions of repeating matrices
  *
  * @author Dahua Lin
  */
@@ -10,89 +10,14 @@
 #pragma once
 #endif
 
-#ifndef LIGHTMAT_REPEAT_VECS_H_
-#define LIGHTMAT_REPEAT_VECS_H_
+#ifndef LIGHTMAT_MATRIX_REPEAT_EXPR_H_
+#define LIGHTMAT_MATRIX_REPEAT_EXPR_H_
 
 #include <light_mat/matrix/matrix_expr_base.h>
 #include <light_mat/matrix/matrix_shape.h>
 
 namespace lmat
 {
-	/********************************************
-	 *
-	 *  Expression type mapping
-	 *
-	 ********************************************/
-
-	template<class Col, int N>
-	struct repcol_type_map
-	{
-		typedef repeat_col_expr<Col, N> type;
-	};
-
-	template<class Row, int M>
-	struct reprow_type_map
-	{
-		typedef repeat_row_expr<Row, M> type;
-	};
-
-	template<typename T, int Mc, int Nc, int N>
-	struct repcol_type_map<const_matrix<T, Mc, Nc>, N>
-	{
-		typedef const_matrix<T, Mc, N> type;
-	};
-
-	template<typename T, int Mc, int Nc, int M>
-	struct reprow_type_map<const_matrix<T, Mc, Nc>, M>
-	{
-		typedef const_matrix<T, M, Nc> type;
-	};
-
-
-	/********************************************
-	 *
-	 *  Expression traits
-	 *
-	 ********************************************/
-
-	template<class Col, int N>
-	struct matrix_traits<repeat_col_expr<Col, N> >
-	{
-		static const int num_dimensions = 2;
-		static const int compile_time_num_rows = ct_rows<Col>::value;
-		static const int compile_time_num_cols = N;
-
-		static const bool is_readonly = true;
-
-		typedef typename matrix_traits<Col>::value_type value_type;
-	};
-
-	template<class Row, int M>
-	struct matrix_traits<repeat_row_expr<Row, M> >
-	{
-		static const int num_dimensions = 2;
-		static const int compile_time_num_rows = M;
-		static const int compile_time_num_cols = ct_cols<Row>::value;
-
-		static const bool is_readonly = true;
-
-		typedef typename matrix_traits<Row>::value_type value_type;
-	};
-
-	template<class Col, int N, class Dst>
-	struct default_evalctx<repeat_col_expr<Col, N>, Dst>
-	{
-		static const int N_ = binary_ctdim<N, ct_cols<Dst>::value>::value;
-		typedef repcols_evalctx<Col, N_, Dst> type;
-	};
-
-	template<class Row, int M, class Dst>
-	struct default_evalctx<repeat_row_expr<Row, M>, Dst>
-	{
-		static const int M_ = binary_ctdim<M, ct_rows<Dst>::value>::value;
-		typedef reprows_evalctx<Row, M_, Dst> type;
-	};
-
 
 	/********************************************
 	 *
@@ -100,82 +25,61 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<class Col, int N>
-	class repeat_col_expr
-	: public IMatrixXpr<repeat_col_expr<Col, N>, typename matrix_traits<Col>::value_type>
+	// traits
+
+	template<class Arg_Holder, int N>
+	struct matrix_traits<horizontal_repeat_expr<Arg_Holder, N> >
 	{
-#ifdef LMAT_USE_STATIC_ASSERT
-		static_assert(is_mat_xpr<Col>::value, "Col must be a matrix expression class.");
-#endif
+		typedef typename Arg_Holder::arg_type arg_type;
 
-		typedef typename unwrapped_expr<Col>::type arg_expr_t;
+		static const int num_dimensions = 2;
+		static const int compile_time_num_rows = ct_rows<arg_type>::value;
+		static const int compile_time_num_cols = ct_cols<arg_type>::value * N;
 
-	public:
-		typedef typename matrix_traits<Col>::value_type value_type;
+		static const bool is_readonly = true;
 
-		LMAT_ENSURE_INLINE
-		repeat_col_expr(const Col& col, const index_t n)
-		: m_col(col), m_ncols(n)
-		{
-			check_arg( is_column(col), "repeat_col: the input col is NOT a column." );
-		}
+		typedef typename matrix_traits<arg_type>::value_type value_type;
+		typedef typename matrix_traits<arg_type>::domain domain;
+	};
 
-		LMAT_ENSURE_INLINE const arg_expr_t& column() const
-		{
-			return m_col.get();
-		}
+	template<class Arg_Holder, int M>
+	struct matrix_traits<vertical_repeat_expr<Arg_Holder, M> >
+	{
+		typedef typename Arg_Holder::arg_type arg_type;
 
-		LMAT_ENSURE_INLINE index_t nelems() const
-		{
-			return nrows() * ncolumns();
-		}
+		static const int num_dimensions = 2;
+		static const int compile_time_num_rows = ct_rows<arg_type>::value * M;
+		static const int compile_time_num_cols = ct_cols<arg_type>::value;
 
-		LMAT_ENSURE_INLINE size_t size() const
-		{
-			return static_cast<size_t>(nelems());
-		}
+		static const bool is_readonly = true;
 
-		LMAT_ENSURE_INLINE index_t nrows() const
-		{
-			return column().nrows();
-		}
-
-		LMAT_ENSURE_INLINE index_t ncolumns() const
-		{
-			return m_ncols.dim();
-		}
-
-	private:
-		obj_wrapper<Col> m_col;
-		single_dim<N> m_ncols;
+		typedef typename matrix_traits<arg_type>::value_type value_type;
+		typedef typename matrix_traits<arg_type>::domain domain;
 	};
 
 
-	// repeat_row_expr
+	// class definitions
 
-	template<class Row, int M>
-	class repeat_row_expr
-	: public IMatrixXpr<repeat_row_expr<Row, M>, typename matrix_traits<Row>::value_type>
+	template<class Arg_Holder, int N>
+	class horizontal_repeat_expr
+	: public unary_expr<Arg_Holder>
+	, public IMatrixXpr<
+		horizontal_repeat_expr<Arg_Holder, N>,
+		typename matrix_traits<typename Arg_Holder::arg_type>::value_type>
 	{
+		typedef unary_expr<Arg_Holder> base_t;
+		typedef typename base_t::arg_type arg_type;
+
 #ifdef LMAT_USE_STATIC_ASSERT
-		static_assert(is_mat_xpr<Row>::value, "Row must be a matrix expression class.");
+		static_assert(is_mat_xpr<arg_type>::value, "Arg must be a matrix expression class.");
 #endif
 
-		typedef typename unwrapped_expr<Row>::type arg_expr_t;
-
 	public:
-		typedef typename matrix_traits<Row>::value_type value_type;
-
 		LMAT_ENSURE_INLINE
-		repeat_row_expr(const Row& row, const index_t m)
-		: m_row(row), m_nrows(m)
+		horizontal_repeat_expr(const typename base_t::arg_forwarder& arg_fwd, const index_t n)
+		: base_t(arg_fwd), m_n(n)
 		{
-			check_arg( is_row(row), "repeat_row: the input row is NOT a row." );
-		}
-
-		LMAT_ENSURE_INLINE const arg_expr_t& row() const
-		{
-			return m_row.get();
+			check_arg( is_column(this->arg()), "repeat_col: the input argument should be a column." );
 		}
 
 		LMAT_ENSURE_INLINE index_t nelems() const
@@ -190,124 +94,271 @@ namespace lmat
 
 		LMAT_ENSURE_INLINE index_t nrows() const
 		{
-			return m_nrows.dim();
+			return this->arg().nrows();
 		}
 
 		LMAT_ENSURE_INLINE index_t ncolumns() const
 		{
-			return row().ncolumns();
+			return m_n.dim();
 		}
 
 	private:
-		obj_wrapper<Row> m_row;
-		single_dim<M> m_nrows;
+		single_dim<N> m_n;
+	};
+
+
+	// vertical_repeat_expr
+
+	template<class Arg_Holder, int M>
+	class vertical_repeat_expr
+	: public unary_expr<Arg_Holder>
+	, public IMatrixXpr<
+		vertical_repeat_expr<Arg_Holder, M>,
+		typename matrix_traits<typename Arg_Holder::arg_type>::value_type>
+	{
+		typedef unary_expr<Arg_Holder> base_t;
+		typedef typename base_t::arg_type arg_type;
+
+#ifdef LMAT_USE_STATIC_ASSERT
+		static_assert(is_mat_xpr<arg_type>::value, "Arg must be a matrix expression class.");
+#endif
+
+	public:
+		LMAT_ENSURE_INLINE
+		vertical_repeat_expr(const typename base_t::arg_forwarder& arg_fwd, const index_t m)
+		: base_t(arg_fwd), m_m(m)
+		{
+			check_arg( is_row(this->arg()), "repeat_row: the input argument should be a row." );
+		}
+
+		LMAT_ENSURE_INLINE index_t nelems() const
+		{
+			return nrows() * ncolumns();
+		}
+
+		LMAT_ENSURE_INLINE size_t size() const
+		{
+			return static_cast<size_t>(nelems());
+		}
+
+		LMAT_ENSURE_INLINE index_t nrows() const
+		{
+			return m_m.dim();
+		}
+
+		LMAT_ENSURE_INLINE index_t ncolumns() const
+		{
+			return this->arg().ncolumns();
+		}
+
+	private:
+		single_dim<M> m_m;
 	};
 
 
 	/********************************************
 	 *
-	 *  Expression construction
+	 *  Expression mapping construction
 	 *
 	 ********************************************/
 
-	template<typename T, class Col>
-	LMAT_ENSURE_INLINE
-	inline typename repcol_type_map<Col, DynamicDim>::type
-	repcol(const IMatrixXpr<Col, T>& col, const index_t n)
-	{
-		return repeat_col_expr<Col, DynamicDim>(col.derived(), n);
-	}
+	// spec
 
-	template<typename T, class Col, int N>
-	LMAT_ENSURE_INLINE
-	inline typename repcol_type_map<Col, N>::type
-	repcol(const IMatrixXpr<Col, T>& col, fixed_dim<N>)
+	template<int N>
+	struct hrep_t
 	{
-		return repeat_col_expr<Col, N>(col.derived(), N);
-	}
+		LMAT_ENSURE_INLINE
+		hrep_t() { }
 
-	template<typename T, class Row>
-	LMAT_ENSURE_INLINE
-	inline typename reprow_type_map<Row, DynamicDim>::type
-	reprow(const IMatrixXpr<Row, T>& row, const index_t m)
+		LMAT_ENSURE_INLINE
+		hrep_t(const index_t n_)
+		{
+			check_arg( n_ == N, "The input arg to hrep_t should be equal to N" );
+		}
+
+		LMAT_ENSURE_INLINE
+		index_t get_n() const { return N; }
+	};
+
+	template<>
+	struct hrep_t<DynamicDim>
 	{
-		return repeat_row_expr<Row, DynamicDim>(row.derived(), m);
-	}
+		const index_t n;
 
-	template<typename T, class Row, int M>
-	LMAT_ENSURE_INLINE
-	inline typename reprow_type_map<Row, M>::type
-	reprow(const IMatrixXpr<Row, T>& row, fixed_dim<M>)
+		LMAT_ENSURE_INLINE
+		hrep_t(const index_t n_) : n(n_) { }
+
+		LMAT_ENSURE_INLINE
+		index_t get_n() const { return n; }
+	};
+
+	template<int M>
+	struct vrep_t
 	{
-		return repeat_row_expr<Row, M>(row.derived(), M);
-	}
+		LMAT_ENSURE_INLINE
+		vrep_t() { }
 
+		LMAT_ENSURE_INLINE
+		vrep_t(const index_t m_)
+		{
+			check_arg( m_ == M, "The input arg to vrep_t should be equal to N" );
+		}
 
-	template<typename T, int Mc, int Nc>
-	LMAT_ENSURE_INLINE
-	inline const_matrix<T, Mc, DynamicDim>
-	repcol(const const_matrix<T, Mc, Nc>& col, const index_t n)
+		LMAT_ENSURE_INLINE
+		index_t get_m() const { return M; }
+	};
+
+	template<>
+	struct vrep_t<DynamicDim>
 	{
-		return const_matrix<T, Mc, DynamicDim>(col.nrows(), n, col.value());
-	}
+		const index_t m;
+
+		LMAT_ENSURE_INLINE
+		vrep_t(const index_t m_) : m(m_) { }
+
+		LMAT_ENSURE_INLINE
+		index_t get_m() const { return m; }
+	};
+
+
+	// maps
+
+	template<class Arg, int N>
+	struct unary_expr_verifier<hrep_t<N>, Arg>
+	{
+		static const bool value = is_mat_xpr<Arg>::value;
+	};
+
+	template<class Arg, int M>
+	struct unary_expr_verifier<vrep_t<M>, Arg>
+	{
+		static const bool value = is_mat_xpr<Arg>::value;
+	};
+
+
+	template<class Arg_Holder, int N>
+	struct unary_expr_map<hrep_t<N>, Arg_Holder>
+	{
+		typedef horizontal_repeat_expr<Arg_Holder, N> type;
+
+		LMAT_ENSURE_INLINE
+		static type get(const hrep_t<N>& spec,
+				const typename arg_forwarder<Arg_Holder>::type& arg_fwd)
+		{
+			return type(arg_fwd, spec.get_n());
+		}
+	};
+
+	template<class Arg_Holder, int M>
+	struct unary_expr_map<vrep_t<M>, Arg_Holder>
+	{
+		typedef vertical_repeat_expr<Arg_Holder, M> type;
+
+		LMAT_ENSURE_INLINE
+		static type get(const vrep_t<M>& spec,
+				const typename arg_forwarder<Arg_Holder>::type& arg_fwd)
+		{
+			return type(arg_fwd, spec.get_m());
+		}
+	};
 
 	template<typename T, int Mc, int Nc, int N>
-	LMAT_ENSURE_INLINE
-	inline const_matrix<T, Mc, N>
-	repcol(const const_matrix<T, Mc, Nc>& col, fixed_dim<N>)
+	struct unary_expr_map<hrep_t<N>, ref_arg_holder<const_matrix<T, Mc, Nc> > >
 	{
-		return const_matrix<T, Mc, N>(col.nrows(), N, col.value());
-	}
+		typedef const_matrix<T, Mc, N> type;
 
-	template<typename T, int Mc, int Nc>
-	LMAT_ENSURE_INLINE
-	inline const_matrix<T, DynamicDim, Nc>
-	reprow(const const_matrix<T, Mc, Nc>& row, const index_t m)
+		LMAT_ENSURE_INLINE
+		static type get(const hrep_t<N>& spec,
+				const ref_arg_forwarder<const_matrix<T, Mc, Nc> >& arg_fwd)
+		{
+			typedef const_matrix<T, Mc, Nc> arg_t;
+			const arg_t& arg = arg_fwd.arg;
+
+			return type(arg.nrows(), spec.get_n(), arg.value());
+		}
+	};
+
+	template<typename T, int Mc, int Nc, int N>
+	struct unary_expr_map<hrep_t<N>, copy_arg_holder<const_matrix<T, Mc, Nc> > >
 	{
-		return const_matrix<T, DynamicDim, Nc>(m, row.ncolumns(), row.value());
-	}
+		typedef const_matrix<T, Mc, N> type;
+
+		LMAT_ENSURE_INLINE
+		static type get(const hrep_t<N>& spec,
+				const copy_arg_forwarder<const_matrix<T, Mc, Nc> >& arg_fwd)
+		{
+			typedef const_matrix<T, Mc, Nc> arg_t;
+			const arg_t& arg = arg_fwd.arg;
+
+			return type(arg.nrows(), spec.get_n(), arg.value());
+		}
+	};
 
 	template<typename T, int Mc, int Nc, int M>
-	LMAT_ENSURE_INLINE
-	inline const_matrix<T, M, Nc>
-	reprow(const const_matrix<T, Mc, Nc>& row, fixed_dim<M>)
+	struct unary_expr_map<vrep_t<M>, ref_arg_holder<const_matrix<T, Mc, Nc> > >
 	{
-		return const_matrix<T, M, Nc>(M, row.ncolumns(), row.value());
+		typedef const_matrix<T, M, Nc> type;
+
+		LMAT_ENSURE_INLINE
+		static type get(const vrep_t<M>& spec,
+				const ref_arg_forwarder<const_matrix<T, Mc, Nc> >& arg_fwd)
+		{
+			typedef const_matrix<T, Mc, Nc> arg_t;
+			const arg_t& arg = arg_fwd.arg;
+
+			return type(spec.get_m(), arg.ncolumns(), arg.value());
+		}
+	};
+
+	template<typename T, int Mc, int Nc, int M>
+	struct unary_expr_map<vrep_t<M>, copy_arg_holder<const_matrix<T, Mc, Nc> > >
+	{
+		typedef const_matrix<T, M, Nc> type;
+
+		LMAT_ENSURE_INLINE
+		static type get(const vrep_t<M>& spec,
+				const copy_arg_forwarder<const_matrix<T, Mc, Nc> >& arg_fwd)
+		{
+			typedef const_matrix<T, Mc, Nc> arg_t;
+			const arg_t& arg = arg_fwd.arg;
+
+			return type(spec.get_m(), arg.ncolumns(), arg.value());
+		}
+	};
+
+	// construction functions
+
+	template<typename T, class Arg>
+	LMAT_ENSURE_INLINE
+	inline typename unary_expr_map<hrep_t<DynamicDim>, ref_arg_holder<Arg> >::type
+	hrep(const IMatrixXpr<Arg, T>& arg, const index_t n)
+	{
+		return make_expr(hrep_t<DynamicDim>(n), ref_arg(arg.derived()));
 	}
 
-
-	/********************************************
-	 *
-	 *  Transpose
-	 *
-	 ********************************************/
-
-	template<class Col, int N>
-	struct transpose_expr_map<repeat_col_expr<Col, N> >
+	template<typename T, class Arg, int N>
+	LMAT_ENSURE_INLINE
+	inline typename unary_expr_map<hrep_t<N>, ref_arg_holder<Arg> >::type
+	hrep(const IMatrixXpr<Arg, T>& arg, fixed_dim<N>)
 	{
-		typedef repeat_row_expr<
-				embed_mat<typename transpose_expr_map<Col>::type>, N> type;
+		return make_expr(hrep_t<N>(), ref_arg(arg.derived()));
+	}
 
-		LMAT_ENSURE_INLINE
-		static type get(const repeat_col_expr<Col, N>& expr)
-		{
-			return type(embed(expr.column().trans()), expr.ncolumns());
-		}
-	};
-
-
-	template<class Row, int M>
-	struct transpose_expr_map<repeat_row_expr<Row, M> >
+	template<typename T, class Arg>
+	LMAT_ENSURE_INLINE
+	inline typename unary_expr_map<vrep_t<DynamicDim>, ref_arg_holder<Arg> >::type
+	vrep(const IMatrixXpr<Arg, T>& arg, const index_t m)
 	{
-		typedef repeat_col_expr<
-				embed_mat<typename transpose_expr_map<Row>::type>, M> type;
+		return make_expr(vrep_t<DynamicDim>(m), ref_arg(arg.derived()));
+	}
 
-		LMAT_ENSURE_INLINE
-		static type get(const repeat_row_expr<Row, M>& expr)
-		{
-			return type(embed(expr.row().trans()), expr.nrows());
-		}
-	};
+	template<typename T, class Arg, int M>
+	LMAT_ENSURE_INLINE
+	inline typename unary_expr_map<vrep_t<M>, ref_arg_holder<Arg> >::type
+	vrep(const IMatrixXpr<Arg, T>& arg, fixed_dim<M>)
+	{
+		return make_expr(vrep_t<M>(), ref_arg(arg.derived()));
+	}
 
 
 }

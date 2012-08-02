@@ -111,8 +111,8 @@ namespace lmat
 	struct transpose_t { };
 	template<class Arg_Holder> class transpose_expr;
 
-	template<class Arg_Holder, int N> class repeat_col_expr;
-	template<class Arg_Holder, int M> class repeat_row_expr;
+	template<class Arg_Holder, int N> class horizontal_repeat_expr;
+	template<class Arg_Holder, int M> class vertical_repeat_expr;
 
 	struct rowwise { };
 	struct colwise { };
