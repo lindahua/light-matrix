@@ -203,7 +203,7 @@ add_executable(test_dense_cast ${EWISE_MAT_EVAL_HS} test_dense_cast.cpp)
 add_executable(test_mat_arith ${EWISE_MAT_EVAL_HS} test_mat_arith.cpp)
 add_executable(test_mat_emath ${EWISE_MAT_EVAL_HS} test_mat_emath.cpp)
 add_executable(test_mat_ecomp ${EWISE_MAT_EVAL_HS} test_mat_ecomp.cpp)
-# add_executable(test_mat_elogical ${EWISE_MAT_EVAL_HS} test_mat_elogical.cpp)
+add_executable(test_mat_elogical ${EWISE_MAT_EVAL_HS} test_mat_elogical.cpp)
 
 set(REP_VECS_HS
     ${MATRIX_HS}
@@ -252,7 +252,7 @@ set(LMAT_TEST_NAMES
 	test_mat_arith
 	test_mat_emath
 	test_mat_ecomp
-	# test_mat_elogical
+	test_mat_elogical
 	# test_rep_vecs
 	# test_rep_veval
     # test_cpd_ewise
