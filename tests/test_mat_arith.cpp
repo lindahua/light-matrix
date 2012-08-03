@@ -1068,6 +1068,7 @@ END_TPACK
 
 
 BEGIN_MAIN_SUITE
+
 	ADD_TPACK( mat_arith_add )
 	ADD_TPACK( mat_arith_add_ex )
 	ADD_TPACK( mat_arith_add_ip )

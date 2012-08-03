@@ -13,22 +13,6 @@
 using namespace lmat;
 using namespace lmat::test;
 
-#ifdef LMAT_USE_STATIC_ASSERT
-static_assert(is_linear_vector_evaluator<continuous_linear_evaluator<double>, double>::value,
-		"Evaluator interface check failed");
-static_assert(is_linear_vector_evaluator<cached_linear_evaluator<double>, double>::value,
-		"Evaluator interface check failed");
-static_assert(is_linear_vector_evaluator<const_linear_evaluator<double>, double>::value,
-		"Evaluator interface check failed");
-
-static_assert(is_percol_vector_evaluator<dense_percol_evaluator<double>, double>::value,
-		"Evaluator interface check failed");
-static_assert(is_percol_vector_evaluator<cached_percol_evaluator<double>, double>::value,
-		"Evaluator interface check failed");
-static_assert(is_percol_vector_evaluator<const_percol_evaluator<double>, double>::value,
-		"Evaluator interface check failed");
-#endif
-
 
 MN_CASE( linear_veval, continu_linear )
 {
@@ -37,21 +21,25 @@ MN_CASE( linear_veval, continu_linear )
 
 	typedef dense_matrix<double, M, N> mat;
 
-	typedef continuous_linear_evaluator<double> veval;
+	typedef continuous_linear_veval_scheme<double> sch_t;
 
 #ifdef LMAT_USE_STATIC_ASSERT
 	static_assert(is_same<
-			typename vector_eval<mat, as_linear_vec, by_scalars>::evaluator_type,
-			veval>::value,
-			"Evaluator type verification failed");
+			typename vector_eval<mat, as_linear_vec, scalar_kernel_t>::scheme_type,
+			sch_t>::value,
+			"Scheme type verification failed");
 #endif
 
 	mat a(m, n);
-	veval ve(a);
+	sch_t sch(a);
+	const IVecEvalLinearScheme<sch_t, double>& sch_r = sch;
+
+	veval_memacc_kernel<double> ker = sch_r.kernel();
+	const double *st = sch_r.vec_state();
 
 	for (index_t i = 0; i < m * n; ++i)
 	{
-		ASSERT_EQ(ve.get_value(i), a[i]);
+		ASSERT_EQ(ker.get_value(i, st), a[i]);
 	}
 }
 
@@ -64,30 +52,33 @@ MN_CASE( linear_veval, cached_linear )
 
 	typedef ref_matrix_ex<double, M, N> mat_ex;
 
-	typedef continuous_linear_evaluator<double> veval_ex1;
-	typedef cached_linear_evaluator<double> veval_ex;
+	typedef typename
+			if_c<N == 1,
+			continuous_linear_veval_scheme<double>,
+			cached_linear_veval_scheme<double, M, N> >::type sch_t;
 
 #ifdef LMAT_USE_STATIC_ASSERT
 
-	static_assert(
-			(N == 1 && is_same<
-					typename vector_eval<mat_ex, as_linear_vec, by_scalars>::evaluator_type,
-					veval_ex1>::value) ||
-			(N != 1  && is_same<typename vector_eval<mat_ex, as_linear_vec, by_scalars>::evaluator_type,
-					veval_ex>::value),
-			"Evaluator type verification failed");
+	static_assert(is_same<
+			typename vector_eval<mat_ex, as_linear_vec, scalar_kernel_t>::scheme_type,
+			sch_t>::value,
+			"Scheme type verification failed");
 #endif
 
 	scoped_array<double> s(ldim * n);
 	mat_ex a(s.ptr_begin(), m, n, ldim);
 
-	veval_ex ve(a);
+	sch_t sch(a);
+	const IVecEvalLinearScheme<sch_t, double>& sch_r = sch;
+
+	veval_memacc_kernel<double> ker = sch_r.kernel();
+	const double *st = sch_r.vec_state();
 
 	dense_matrix<double, M, N> ar(a);
 
 	for (index_t i = 0; i < m * n; ++i)
 	{
-		ASSERT_EQ(ve.get_value(i), ar[i]);
+		ASSERT_EQ(ker.get_value(i, st), ar[i]);
 	}
 }
 
@@ -98,22 +89,26 @@ MN_CASE( linear_veval, const_linear )
 	const index_t n = N == 0 ? 6 : N;
 
 	typedef const_matrix<double, M, N> mat;
-	typedef const_linear_evaluator<double> veval;
+	typedef const_linear_veval_scheme<double> sch_t;
 
 #ifdef LMAT_USE_STATIC_ASSERT
 	static_assert(is_same<
-			typename vector_eval<mat, as_linear_vec, by_scalars>::evaluator_type,
-			veval>::value,
-			"Evaluator type verification failed");
+			typename vector_eval<mat, as_linear_vec, scalar_kernel_t>::scheme_type,
+			sch_t>::value,
+			"Scheme type verification failed");
 #endif
 
 	const double v = 12.5;
 	mat a(m, n, v);
-	veval ve(a);
+	sch_t sch(a);
+	const IVecEvalLinearScheme<sch_t, double>& sch_r = sch;
+
+	veval_const_kernel<double> ker = sch_r.kernel();
+	double st = sch_r.vec_state();
 
 	for (index_t i = 0; i < m * n; ++i)
 	{
-		ASSERT_EQ(ve.get_value(i), v);
+		ASSERT_EQ(ker.get_value(i, st), v);
 	}
 }
 
@@ -125,28 +120,29 @@ MN_CASE( percol_veval, dense_percol )
 	const index_t n = N == 0 ? 6 : N;
 
 	typedef ref_matrix_ex<double, M, N> mat_ex;
-	typedef dense_percol_evaluator<double> veval_ex;
+	typedef dense_percol_veval_scheme<double> sch_t;
 
 #ifdef LMAT_USE_STATIC_ASSERT
 
 	static_assert(is_same<
-			typename vector_eval<mat_ex, per_column, by_scalars>::evaluator_type,
-			veval_ex>::value,
-			"Evaluator type verification failed");
+			typename vector_eval<mat_ex, per_column, scalar_kernel_t>::scheme_type,
+			sch_t>::value,
+			"Scheme type verification failed");
 #endif
 
 	scoped_array<double> s(ldim * n);
 	mat_ex a(s.ptr_begin(), m, n, ldim);
+	sch_t sch(a);
+	const IVecEvalPerColScheme<sch_t, double>& sch_r = sch;
 
-	veval_ex ve(a);
+	veval_memacc_kernel<double> ker = sch_r.kernel();
 
 	for (index_t j = 0; j < n; ++j)
 	{
-		densecol_state<double> s = ve.col_state(j);
-
+		const double *st = sch_r.col_state(j);
 		for (index_t i = 0; i < m; ++i)
 		{
-			ASSERT_EQ(ve.get_value(s, i), a(i, j));
+			ASSERT_EQ(ker.get_value(i, st), a(i, j));
 		}
 	}
 }
@@ -159,20 +155,22 @@ MN_CASE( percol_veval, cached_percol )
 	const index_t n = N == 0 ? 6 : N;
 
 	typedef ref_matrix_ex<double, M, N> mat_ex;
-	typedef cached_percol_evaluator<double> veval_c;
+	typedef cached_percol_veval_scheme<double, M, N> sch_t;
 
 	scoped_array<double> s(ldim * n);
 	mat_ex a(s.ptr_begin(), m, n, ldim);
+	sch_t sch(a);
+	const IVecEvalPerColScheme<sch_t, double>& sch_r = sch;
 
-	veval_c ve(a);
+	veval_memacc_kernel<double> ker = sch_r.kernel();
 
 	for (index_t j = 0; j < n; ++j)
 	{
-		densecol_state<double> s = ve.col_state(j);
+		const double* s = sch_r.col_state(j);
 
 		for (index_t i = 0; i < m; ++i)
 		{
-			ASSERT_EQ(ve.get_value(s, i), a(i, j));
+			ASSERT_EQ(ker.get_value(i, s), a(i, j));
 		}
 	}
 }
@@ -184,27 +182,32 @@ MN_CASE( percol_veval, const_percol )
 	const index_t n = N == 0 ? 6 : N;
 
 	typedef const_matrix<double, M, N> mat;
-	typedef const_percol_evaluator<double> veval;
+	typedef const_percol_veval_scheme<double> sch_t;
 
 #ifdef LMAT_USE_STATIC_ASSERT
 	static_assert(is_same<
-			typename vector_eval<mat, per_column, by_scalars>::evaluator_type,
-			veval>::value,
-			"Evaluator type verification failed");
+			typename vector_eval<mat, per_column, scalar_kernel_t>::scheme_type,
+			sch_t>::value,
+			"Scheme type verification failed");
 #endif
 
 	const double val = 12.5;
 	mat a(m, n, val);
-	veval ve(a);
+	sch_t sch(a);
+	const IVecEvalPerColScheme<sch_t, double>& sch_r = sch;
+
+	veval_const_kernel<double> ker = sch_r.kernel();
 
 	for (index_t j = 0; j < n; ++j)
 	{
+		double st = sch_r.col_state(j);
 		for (index_t i = 0; i < m; ++i)
 		{
-			ASSERT_EQ(ve.get_value(nil_eval_state(), i), val);
+			ASSERT_EQ(ker.get_value(i, st), val);
 		}
 	}
 }
+
 
 
 MN_CASE( eval_by_scalars, cont_to_cont )
