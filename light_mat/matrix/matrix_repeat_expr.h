@@ -70,7 +70,7 @@ namespace lmat
 #endif
 
 	public:
-		using base_t::arg_type;
+		using typename base_t::arg_type;
 
 		LMAT_ENSURE_INLINE
 		horizontal_repeat_expr(const arg_forwarder<Arg_HP, Arg>& arg_fwd, const index_t n)
@@ -120,7 +120,7 @@ namespace lmat
 #endif
 
 	public:
-		using base_t::arg_type;
+		using typename base_t::arg_type;
 
 		LMAT_ENSURE_INLINE
 		vertical_repeat_expr(const arg_forwarder<Arg_HP, Arg>& arg_fwd, const index_t m)

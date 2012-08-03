@@ -33,7 +33,7 @@ namespace lmat
 	template<class Arg> class evaluated_result;
 
 	template<typename ArgHP, class Arg> struct arg_forwarder;
-	template<typename ArgHP, class Arg> struct arg_holder;
+	template<typename ArgHP, class Arg> class arg_holder;
 
 	// Forwarders
 

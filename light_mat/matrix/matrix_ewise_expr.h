@@ -70,7 +70,7 @@ namespace lmat
 
 	public:
 		typedef typename Fun::result_type value_type;
-		using base_t::arg_type;
+		using typename base_t::arg_type;
 
 		LMAT_ENSURE_INLINE
 		unary_ewise_expr(const Fun& fun,
@@ -122,8 +122,8 @@ namespace lmat
 
 	public:
 		typedef typename Fun::result_type value_type;
-		using base_t::arg1_type;
-		using base_t::arg2_type;
+		using typename base_t::arg1_type;
+		using typename base_t::arg2_type;
 
 		LMAT_ENSURE_INLINE
 		binary_ewise_expr(const Fun& fun,
