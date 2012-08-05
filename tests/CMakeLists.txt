@@ -96,7 +96,8 @@ set(MATRIX_CLASS_HS
 set(MATRIX_EVAL_BASE_HS
     ${INC}/math/math_base.h
     ${INC}/math/functor_base.h
-    ${INC}/matrix/matrix_vector_eval.h
+    ${INC}/matrix/matrix_visitors.h
+    ${INC}/matrix/matrix_visit_eval.h
     ${INC}/matrix/matrix_ewise_eval.h)   
     
 set(MATRIX_EWISE_HS
@@ -219,7 +220,7 @@ set(MAT_REDUC_HS
     ${MATRIX_EVAL_BASE_HS}
     ${MATRIX_REDUC_HS})
     
-# add_executable(test_mat_reduce ${MAT_REDUC_HS} test_mat_reduce.cpp) 
+add_executable(test_mat_reduce ${MAT_REDUC_HS} test_mat_reduce.cpp) 
 # add_executable(test_partial_reduce ${MAT_REDUC_HS} test_partial_reduce.cpp) 
 
 set(MAT_BLAS_HS
@@ -254,7 +255,7 @@ set(LMAT_TEST_NAMES
 	test_mat_elogical
 	test_vec_rep
     # test_cpd_ewise
-	# test_mat_reduce
+	test_mat_reduce
 	# test_partial_reduce
 )
 

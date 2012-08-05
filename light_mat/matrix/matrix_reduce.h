@@ -28,39 +28,47 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<class Fun, class Expr, typename Means>
+	template<class Fun, class Expr, typename KerCate>
 	LMAT_ENSURE_INLINE
 	inline static typename Fun::result_type reduce(const Fun& fun,
 			const IMatrixXpr<Expr, typename Fun::arg_type>& expr,
-			vector_eval_policy<as_linear_vec, Means>)
+			matrix_visit_policy<linear_vis, KerCate>)
 	{
-		typename vector_eval<Expr, as_linear_vec, Means>::evaluator_type evaluator(expr.derived());
-		return detail::single_vec_reduce<ct_size<Expr>::value, Means>::eval(
-				fun, expr.nelems(), evaluator);
+		typedef matrix_visit_setting<linear_vis, KerCate,
+				ct_rows<Expr>::value,
+				ct_cols<Expr>::value> setting_t;
+		typename matrix_vismap<Expr, setting_t>::type visitor(expr.derived());
+
+		return detail::single_vec_reduce<ct_size<Expr>::value, KerCate>::eval(
+				fun, expr.nelems(), visitor);
 	}
 
 
-	template<class Fun, class Expr, typename Means>
+	template<class Fun, class Expr, typename KerCate>
 	inline static typename Fun::result_type reduce(const Fun& fun,
 			const IMatrixXpr<Expr, typename Fun::arg_type>& expr,
-			vector_eval_policy<per_column, Means>)
+			matrix_visit_policy<percol_vis, KerCate>)
 	{
-		typedef typename vector_eval<Expr, per_column, Means>::evaluator_type eval_t;
-		eval_t evaluator(expr.derived());
+		typedef matrix_visit_setting<percol_vis, KerCate,
+				ct_rows<Expr>::value,
+				ct_cols<Expr>::value> setting_t;
+		typedef typename matrix_vismap<Expr, setting_t>::type visitor_t;
+		visitor_t visitor(expr.derived());
+
 		const index_t m = expr.nrows();
 		const index_t n = expr.ncolumns();
 
 		typedef typename Fun::result_type RT;
 
-		RT r = detail::single_vec_reduce<ct_rows<Expr>::value, Means>::eval(
-				fun, m, evaluator, evaluator.col_state(0));
+		RT r = detail::single_vec_reduce<ct_rows<Expr>::value, KerCate>::eval(
+				fun, m, visitor, visitor.col_state(0));
 
 		for (index_t j = 1; j < n; ++j)
 		{
-			typename percol_eval_state<eval_t>::type s = evaluator.col_state(j);
+			typename matrix_visitor_state<visitor_t>::type s = visitor.col_state(j);
 
-			RT rj = detail::single_vec_reduce<ct_rows<Expr>::value, Means>::eval(
-					fun, m, evaluator, s);
+			RT rj = detail::single_vec_reduce<ct_rows<Expr>::value, KerCate>::eval(
+					fun, m, visitor, s);
 
 			r = fun(r, rj);
 		}
@@ -73,7 +81,7 @@ namespace lmat
 	inline typename Fun::result_type
 	linear_by_scalars_reduce(const Fun& fun, const IMatrixXpr<Mat, T>& X)
 	{
-		return reduce(fun, X.derived(), vector_eval_policy<as_linear_vec, by_scalars>());
+		return reduce(fun, X.derived(), matrix_visit_policy<linear_vis, scalar_kernel_t>());
 	}
 
 	template<class Fun, typename T, class Mat>
@@ -81,8 +89,20 @@ namespace lmat
 	inline typename Fun::result_type
 	percol_by_scalars_reduce(const Fun& fun, const IMatrixXpr<Mat, T>& X)
 	{
-		return reduce(fun, X.derived(), vector_eval_policy<per_column, by_scalars>());
+		return reduce(fun, X.derived(), matrix_visit_policy<percol_vis, scalar_kernel_t>());
 	}
+
+
+	template<class Mat>
+	struct default_matrix_reduce_policy
+	{
+		typedef dense_matrix<
+				typename matrix_traits<Mat>::value_type,
+				ct_rows<Mat>::value,
+				ct_cols<Mat>::value> Dst;
+
+		typedef typename default_matrix_visit_policy<Mat, Dst>::type type;
+	};
 
 
 	template<class Fun, typename T, class Mat>
@@ -90,7 +110,8 @@ namespace lmat
 	inline typename Fun::result_type
 	reduce(const Fun& fun, const IMatrixXpr<Mat, T>& X)
 	{
-		return reduce(fun, X.derived(), typename vector_eval_default_policy<Mat>::type());
+		return reduce(fun, X.derived(),
+				typename default_matrix_reduce_policy<Mat>::type());
 	}
 
 

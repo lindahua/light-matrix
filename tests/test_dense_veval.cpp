@@ -8,7 +8,7 @@
 
 #include "test_base.h"
 
-#include <light_mat/matrix/matrix_vector_eval.h>
+#include <light_mat/matrix/matrix_visit_eval.h>
 
 using namespace lmat;
 using namespace lmat::test;
@@ -21,25 +21,23 @@ MN_CASE( linear_veval, continu_linear )
 
 	typedef dense_matrix<double, M, N> mat;
 
-	typedef continuous_linear_veval_scheme<double> sch_t;
+	typedef continuous_linear_mvisitor<double> visitor_t;
 
 #ifdef LMAT_USE_STATIC_ASSERT
 	static_assert(is_same<
-			typename vector_eval<mat, as_linear_vec, scalar_kernel_t>::scheme_type,
-			sch_t>::value,
+			typename matrix_vismap<mat,
+				matrix_visit_policy<linear_vis, scalar_kernel_t> >::type,
+			visitor_t>::value,
 			"Scheme type verification failed");
 #endif
 
 	mat a(m, n);
-	sch_t sch(a);
-	const IVecEvalLinearScheme<sch_t, double>& sch_r = sch;
-
-	veval_memacc_kernel<double> ker = sch_r.kernel();
-	const double *st = sch_r.vec_state();
+	visitor_t visitor(a);
+	const ILinearMatrixScalarVisitor<visitor_t, double>& vis_r = visitor;
 
 	for (index_t i = 0; i < m * n; ++i)
 	{
-		ASSERT_EQ(ker.get_value(i, st), a[i]);
+		ASSERT_EQ(vis_r.get_scalar(i), a[i]);
 	}
 }
 
@@ -54,31 +52,29 @@ MN_CASE( linear_veval, cached_linear )
 
 	typedef typename
 			if_c<N == 1,
-			continuous_linear_veval_scheme<double>,
-			cached_linear_veval_scheme<double, M, N> >::type sch_t;
+			continuous_linear_mvisitor<double>,
+			cached_linear_mvisitor<double, M, N> >::type visitor_t;
 
 #ifdef LMAT_USE_STATIC_ASSERT
 
 	static_assert(is_same<
-			typename vector_eval<mat_ex, as_linear_vec, scalar_kernel_t>::scheme_type,
-			sch_t>::value,
+			typename matrix_vismap<mat_ex,
+				matrix_visit_policy<linear_vis, scalar_kernel_t> >::type,
+			visitor_t>::value,
 			"Scheme type verification failed");
 #endif
 
 	scoped_array<double> s(ldim * n);
 	mat_ex a(s.ptr_begin(), m, n, ldim);
 
-	sch_t sch(a);
-	const IVecEvalLinearScheme<sch_t, double>& sch_r = sch;
-
-	veval_memacc_kernel<double> ker = sch_r.kernel();
-	const double *st = sch_r.vec_state();
+	visitor_t visitor(a);
+	const ILinearMatrixScalarVisitor<visitor_t, double>& vis_r = visitor;
 
 	dense_matrix<double, M, N> ar(a);
 
 	for (index_t i = 0; i < m * n; ++i)
 	{
-		ASSERT_EQ(ker.get_value(i, st), ar[i]);
+		ASSERT_EQ(vis_r.get_scalar(i), ar[i]);
 	}
 }
 
@@ -89,26 +85,24 @@ MN_CASE( linear_veval, const_linear )
 	const index_t n = N == 0 ? 6 : N;
 
 	typedef const_matrix<double, M, N> mat;
-	typedef const_linear_veval_scheme<double> sch_t;
+	typedef const_linear_mvisitor<double> visitor_t;
 
 #ifdef LMAT_USE_STATIC_ASSERT
 	static_assert(is_same<
-			typename vector_eval<mat, as_linear_vec, scalar_kernel_t>::scheme_type,
-			sch_t>::value,
+			typename matrix_vismap<mat,
+				matrix_visit_policy<linear_vis, scalar_kernel_t> >::type,
+			visitor_t>::value,
 			"Scheme type verification failed");
 #endif
 
 	const double v = 12.5;
 	mat a(m, n, v);
-	sch_t sch(a);
-	const IVecEvalLinearScheme<sch_t, double>& sch_r = sch;
-
-	veval_const_kernel<double> ker = sch_r.kernel();
-	double st = sch_r.vec_state();
+	visitor_t visitor(a);
+	const ILinearMatrixScalarVisitor<visitor_t, double>& vis_r = visitor;
 
 	for (index_t i = 0; i < m * n; ++i)
 	{
-		ASSERT_EQ(ker.get_value(i, st), v);
+		ASSERT_EQ(vis_r.get_scalar(i), v);
 	}
 }
 
@@ -120,29 +114,28 @@ MN_CASE( percol_veval, dense_percol )
 	const index_t n = N == 0 ? 6 : N;
 
 	typedef ref_matrix_ex<double, M, N> mat_ex;
-	typedef dense_percol_veval_scheme<double> sch_t;
+	typedef dense_percol_mvisitor<double> visitor_t;
 
 #ifdef LMAT_USE_STATIC_ASSERT
 
 	static_assert(is_same<
-			typename vector_eval<mat_ex, per_column, scalar_kernel_t>::scheme_type,
-			sch_t>::value,
+			typename matrix_vismap<mat_ex,
+				matrix_visit_policy<percol_vis, scalar_kernel_t> >::type,
+			visitor_t>::value,
 			"Scheme type verification failed");
 #endif
 
 	scoped_array<double> s(ldim * n);
 	mat_ex a(s.ptr_begin(), m, n, ldim);
-	sch_t sch(a);
-	const IVecEvalPerColScheme<sch_t, double>& sch_r = sch;
-
-	veval_memacc_kernel<double> ker = sch_r.kernel();
+	visitor_t visitor(a);
+	const IPerColMatrixScalarVisitor<visitor_t, double>& vis_r = visitor;
 
 	for (index_t j = 0; j < n; ++j)
 	{
-		const double *st = sch_r.col_state(j);
+		const double *st = vis_r.col_state(j);
 		for (index_t i = 0; i < m; ++i)
 		{
-			ASSERT_EQ(ker.get_value(i, st), a(i, j));
+			ASSERT_EQ(vis_r.get_scalar(i, st), a(i, j));
 		}
 	}
 }
@@ -155,22 +148,20 @@ MN_CASE( percol_veval, cached_percol )
 	const index_t n = N == 0 ? 6 : N;
 
 	typedef ref_matrix_ex<double, M, N> mat_ex;
-	typedef cached_percol_veval_scheme<double, M, N> sch_t;
+	typedef cached_percol_mvisitor<double, M, N> visitor_t;
 
 	scoped_array<double> s(ldim * n);
 	mat_ex a(s.ptr_begin(), m, n, ldim);
-	sch_t sch(a);
-	const IVecEvalPerColScheme<sch_t, double>& sch_r = sch;
-
-	veval_memacc_kernel<double> ker = sch_r.kernel();
+	visitor_t visitor(a);
+	const IPerColMatrixScalarVisitor<visitor_t, double>& vis_r = visitor;
 
 	for (index_t j = 0; j < n; ++j)
 	{
-		const double* s = sch_r.col_state(j);
+		const double* s = vis_r.col_state(j);
 
 		for (index_t i = 0; i < m; ++i)
 		{
-			ASSERT_EQ(ker.get_value(i, s), a(i, j));
+			ASSERT_EQ(vis_r.get_scalar(i, s), a(i, j));
 		}
 	}
 }
@@ -182,28 +173,27 @@ MN_CASE( percol_veval, const_percol )
 	const index_t n = N == 0 ? 6 : N;
 
 	typedef const_matrix<double, M, N> mat;
-	typedef const_percol_veval_scheme<double> sch_t;
+	typedef const_percol_mvisitor<double> visitor_t;
 
 #ifdef LMAT_USE_STATIC_ASSERT
 	static_assert(is_same<
-			typename vector_eval<mat, per_column, scalar_kernel_t>::scheme_type,
-			sch_t>::value,
+			typename matrix_vismap<mat,
+				matrix_visit_policy<percol_vis, scalar_kernel_t> >::type,
+			visitor_t>::value,
 			"Scheme type verification failed");
 #endif
 
 	const double val = 12.5;
 	mat a(m, n, val);
-	sch_t sch(a);
-	const IVecEvalPerColScheme<sch_t, double>& sch_r = sch;
-
-	veval_const_kernel<double> ker = sch_r.kernel();
+	visitor_t visitor(a);
+	const IPerColMatrixScalarVisitor<visitor_t, double>& vis_r = visitor;
 
 	for (index_t j = 0; j < n; ++j)
 	{
-		double st = sch_r.col_state(j);
+		nil_type st = vis_r.col_state(j);
 		for (index_t i = 0; i < m; ++i)
 		{
-			ASSERT_EQ(ker.get_value(i, st), val);
+			ASSERT_EQ(vis_r.get_scalar(i, st), val);
 		}
 	}
 }

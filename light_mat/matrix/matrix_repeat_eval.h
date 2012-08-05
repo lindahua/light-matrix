@@ -14,7 +14,7 @@
 #define LIGHTMAT_MATRIX_REPEAT_EVAL_H_
 
 #include <light_mat/matrix/matrix_repeat_expr.h>
-#include <light_mat/matrix/matrix_vector_eval.h>
+#include <light_mat/matrix/matrix_visit_eval.h>
 #include "bits/repeat_vecs_internal.h"
 
 namespace lmat
@@ -43,21 +43,18 @@ namespace lmat
 			IDenseMatrix<Dst, typename matrix_traits<Arg>::value_type >& dst,
 			matrix_copy_policy)
 	{
-		typedef horizontal_repeat_expr<Arg_HP, Arg, N> expr_t;
-		typedef typename expr_t::arg_type arg_type;
-
-		const arg_type& s = expr.arg();
+		const Arg& s = expr.arg();
 		typedef typename matrix_traits<Arg>::value_type T;
 
 		if ( is_column(expr) )
 		{
-			const int M = binary_ct_rows<arg_type, Dst>::value;
+			const int M = binary_ct_rows<Arg, Dst>::value;
 			ref_col<T, M> dview(dst.ptr_data(), s.nrows());
 			default_evaluate(s, dview);
 		}
 		else
 		{
-			typedef typename detail::repcol_ewrapper_map<arg_type>::type wrapper_t;
+			typedef typename detail::repcol_ewrapper_map<Arg>::type wrapper_t;
 			wrapper_t col_wrap(s);
 
 			const index_t m = col_wrap.nrows();
@@ -93,15 +90,12 @@ namespace lmat
 			IDenseMatrix<Dst, typename matrix_traits<Arg>::value_type >& dst,
 			matrix_copy_policy)
 	{
-		typedef vertical_repeat_expr<Arg_HP, Arg, M> expr_t;
-		typedef typename expr_t::arg_type arg_type;
-
-		const arg_type& s = expr.arg();
+		const Arg& s = expr.arg();
 		typedef typename matrix_traits<Arg>::value_type T;
 
 		if ( is_row(expr) )
 		{
-			const int N = binary_ct_cols<arg_type, Dst>::value;
+			const int N = binary_ct_cols<Arg, Dst>::value;
 			if (has_continuous_layout(dst))
 			{
 				ref_row<T, N> dview(dst.ptr_data(), s.ncolumns());
@@ -115,7 +109,7 @@ namespace lmat
 		}
 		else
 		{
-			typedef typename detail::reprow_ewrapper_map<arg_type>::type wrapper_t;
+			typedef typename detail::reprow_ewrapper_map<Arg>::type wrapper_t;
 			wrapper_t row_wrap(s);
 
 			const index_t n = row_wrap.ncolumns();
@@ -170,278 +164,260 @@ namespace lmat
 
 	// forward declarations
 
-	template<typename Arg_HP, class Arg> class single_vec_percol_veval_scheme;
-	template<typename Arg_HP, class Arg> class single_vec_linear_veval_scheme;
-	template<typename Arg_HP, class Arg> class rep_scalar_percol_veval_scheme;
-	template<typename Arg_HP, class Arg> class rep_scalar_linear_veval_scheme;
-	template<typename Arg_HP, class Arg> class repcol_percol_veval_scheme;
-	template<typename Arg_HP, class Arg> class reprow_percol_veval_scheme;
+	template<class Arg, int ME, int NE> class single_vec_percol_mvisitor;
+	template<class Arg, int ME, int NE> class single_vec_linear_mvisitor;
+	template<class Arg> class rep_scalar_percol_mvisitor;
+	template<class Arg> class rep_scalar_linear_mvisitor;
+	template<class Arg> class repcol_percol_mvisitor;
+	template<class Arg> class reprow_percol_mvisitor;
 
 	// schemes
 
-	// single_vec_percol_veval_scheme
+	// single_vec_percol_mvisitor
 
-	template<typename Arg_HP, class Arg>
-	struct vector_eval_scheme_traits<single_vec_percol_veval_scheme<Arg_HP, Arg> >
+	template<class Arg, int ME, int NE>
+	struct matrix_visitor_state<single_vec_percol_mvisitor<Arg, ME, NE> >
 	{
-		typedef typename arg_holder<Arg_HP, Arg>::internal_arg_type arg_type;
-		typedef typename vector_eval<arg_type, per_column, scalar_kernel_t>::scheme_type arg_scheme_type;
-		typedef typename vector_eval_scheme_traits<arg_scheme_type>::kernel_type kernel_type;
+		typedef matrix_visit_setting<percol_vis, scalar_kernel_t, ME, NE> setting_t;
+
+		typedef typename matrix_visitor_state<
+					typename matrix_vismap<Arg, setting_t>::type>::type type;
 	};
 
-	template<typename Arg_HP, class Arg>
-	class single_vec_percol_veval_scheme
-	: public IVecEvalPerColScheme<
-	  	  single_vec_percol_veval_scheme<Arg_HP, Arg>,
+	template<class Arg, int ME, int NE>
+	class single_vec_percol_mvisitor
+	: public IPerColMatrixScalarVisitor<
+	  	  single_vec_percol_mvisitor<Arg, ME, NE>,
 	  	  typename matrix_traits<Arg>::value_type>
 	{
 	public:
-		typedef typename arg_holder<Arg_HP, Arg>::internal_arg_type arg_type;
-		typedef typename vector_eval<arg_type, per_column, scalar_kernel_t>::scheme_type arg_scheme_type;
-		typedef typename vector_eval_scheme_traits<arg_scheme_type>::kernel_type kernel_type;
-		typedef typename vector_eval_kernel_state<kernel_type>::type state_t;
+		typedef typename matrix_traits<Arg>::value_type T;
+
+		typedef matrix_visit_setting<percol_vis, scalar_kernel_t, ME, NE> setting_t;
+		typedef typename matrix_vismap<Arg, setting_t>::type arg_visitor_t;
+		typedef typename matrix_visitor_state<arg_visitor_t>::type state_t;
+
+		template<typename Arg_HP>
+		LMAT_ENSURE_INLINE
+		single_vec_percol_mvisitor(const horizontal_repeat_expr<Arg_HP, Arg, 1>& expr)
+		: m_arg_visitor(expr.arg()) { }
+
+		template<typename Arg_HP>
+		LMAT_ENSURE_INLINE
+		single_vec_percol_mvisitor(const vertical_repeat_expr<Arg_HP, Arg, 1>& expr)
+		: m_arg_visitor(expr.arg()) { }
 
 		LMAT_ENSURE_INLINE
-		single_vec_percol_veval_scheme(const horizontal_repeat_expr<Arg_HP, Arg, 1>& expr)
-		: m_arg_sch(expr.arg()) { }
-
-		LMAT_ENSURE_INLINE
-		single_vec_percol_veval_scheme(const vertical_repeat_expr<Arg_HP, Arg, 1>& expr)
-		: m_arg_sch(expr.arg()) { }
-
-		LMAT_ENSURE_INLINE
-		kernel_type kernel() const
+		T get_scalar(const index_t i, const state_t& s) const
 		{
-			return m_arg_sch.kernel();
+			return m_arg_visitor.get_scalar(i, s);
 		}
 
 		LMAT_ENSURE_INLINE
-		state_t col_state(const index_t j) const { return m_arg_sch.col_state(j); }
-
-	private:
-		arg_scheme_type m_arg_sch;
-	};
-
-
-	// single_vec_linear_veval_scheme
-
-	template<typename Arg_HP, class Arg>
-	struct vector_eval_scheme_traits<single_vec_linear_veval_scheme<Arg_HP, Arg> >
-	{
-		typedef typename arg_holder<Arg_HP, Arg>::internal_arg_type arg_type;
-		typedef typename vector_eval<arg_type, as_linear_vec, scalar_kernel_t>::scheme_type arg_scheme_type;
-		typedef typename vector_eval_scheme_traits<arg_scheme_type>::kernel_type kernel_type;
-	};
-
-	template<typename Arg_HP, class Arg>
-	class single_vec_linear_veval_scheme
-	: public IVecEvalLinearScheme<
-	  	  single_vec_linear_veval_scheme<Arg_HP, Arg>,
-	  	  typename matrix_traits<Arg>::value_type>
-	{
-	public:
-		typedef typename arg_holder<Arg_HP, Arg>::internal_arg_type arg_type;
-		typedef typename vector_eval<arg_type, as_linear_vec, scalar_kernel_t>::scheme_type arg_scheme_type;
-		typedef typename vector_eval_scheme_traits<arg_scheme_type>::kernel_type kernel_type;
-		typedef typename vector_eval_kernel_state<kernel_type>::type state_t;
-
-		LMAT_ENSURE_INLINE
-		single_vec_linear_veval_scheme(const horizontal_repeat_expr<Arg_HP, Arg, 1>& expr)
-		: m_arg_sch(expr.arg()) { }
-
-		LMAT_ENSURE_INLINE
-		single_vec_linear_veval_scheme(const vertical_repeat_expr<Arg_HP, Arg, 1>& expr)
-		: m_arg_sch(expr.arg()) { }
-
-		LMAT_ENSURE_INLINE
-		kernel_type kernel() const
+		state_t col_state(const index_t j) const
 		{
-			return m_arg_sch.kernel();
-		}
-
-		LMAT_ENSURE_INLINE
-		state_t vec_state() const
-		{
-			return m_arg_sch.vec_state();
+			return m_arg_visitor.col_state(j);
 		}
 
 	private:
-		arg_scheme_type m_arg_sch;
+		arg_visitor_t m_arg_visitor;
 	};
 
 
-	// rep_scalar_percol_veval_scheme
+	// single_vec_linear_mvisitor
 
-	template<typename Arg_HP, class Arg>
-	struct vector_eval_scheme_traits<rep_scalar_percol_veval_scheme<Arg_HP, Arg> >
-	{
-		typedef typename matrix_traits<Arg>::value_type T;
-		typedef veval_const_kernel<T> kernel_type;
-	};
-
-
-	template<typename Arg_HP, class Arg>
-	class rep_scalar_percol_veval_scheme
-	: public IVecEvalPerColScheme<
-	  	  rep_scalar_percol_veval_scheme<Arg_HP, Arg>,
+	template<class Arg, int ME, int NE>
+	class single_vec_linear_mvisitor
+	: public ILinearMatrixScalarVisitor<
+	  	  single_vec_linear_mvisitor<Arg, ME, NE>,
 	  	  typename matrix_traits<Arg>::value_type>
 	{
 	public:
-		typedef typename arg_holder<Arg_HP, Arg>::internal_arg_type arg_type;
 		typedef typename matrix_traits<Arg>::value_type T;
-		typedef veval_const_kernel<T> kernel_type;
 
-		template<int N>
+		typedef matrix_visit_setting<linear_vis, scalar_kernel_t, ME, NE> setting_t;
+		typedef typename matrix_vismap<Arg, setting_t>::type arg_visitor_t;
+
+		template<typename Arg_HP>
 		LMAT_ENSURE_INLINE
-		rep_scalar_percol_veval_scheme(const horizontal_repeat_expr<Arg_HP, Arg, N>& expr)
+		single_vec_linear_mvisitor(const horizontal_repeat_expr<Arg_HP, Arg, 1>& expr)
+		: m_arg_visitor(expr.arg()) { }
+
+		template<typename Arg_HP>
+		LMAT_ENSURE_INLINE
+		single_vec_linear_mvisitor(const vertical_repeat_expr<Arg_HP, Arg, 1>& expr)
+		: m_arg_visitor(expr.arg()) { }
+
+		LMAT_ENSURE_INLINE
+		T get_scalar(const index_t i) const
+		{
+			return m_arg_visitor.get_scalar(i);
+		}
+
+	private:
+		arg_visitor_t m_arg_visitor;
+	};
+
+
+	// rep_scalar_percol_mvisitor
+
+	template<class Arg>
+	struct matrix_visitor_state<rep_scalar_percol_mvisitor<Arg> >
+	{
+		typedef nil_type type;
+	};
+
+	template<class Arg>
+	class rep_scalar_percol_mvisitor
+	: public IPerColMatrixScalarVisitor<
+	  	  rep_scalar_percol_mvisitor<Arg>,
+	  	  typename matrix_traits<Arg>::value_type>
+	{
+	public:
+		typedef typename matrix_traits<Arg>::value_type T;
+
+		template<typename Arg_HP, int N>
+		LMAT_ENSURE_INLINE
+		rep_scalar_percol_mvisitor(const horizontal_repeat_expr<Arg_HP, Arg, N>& expr)
 		{
 			m_val = to_scalar(expr.arg());
 		}
 
-		template<int M>
+		template<typename Arg_HP, int M>
 		LMAT_ENSURE_INLINE
-		rep_scalar_percol_veval_scheme(const vertical_repeat_expr<Arg_HP, Arg, M>& expr)
+		rep_scalar_percol_mvisitor(const vertical_repeat_expr<Arg_HP, Arg, M>& expr)
 		{
 			m_val = to_scalar(expr.arg());
 		}
 
 		LMAT_ENSURE_INLINE
-		kernel_type kernel() const
+		T get_scalar(const index_t, nil_type) const
 		{
-			return kernel_type();
+			return m_val;
 		}
 
 		LMAT_ENSURE_INLINE
-		T col_state(const index_t j) const { return m_val; }
+		nil_type col_state(const index_t j) const
+		{
+			return nil_type();
+		}
 
 	private:
 		T m_val;
 	};
 
 
-	// rep_scalar_linear_veval_scheme
+	// rep_scalar_linear_mvisitor
 
-	template<typename Arg_HP, class Arg>
-	struct vector_eval_scheme_traits<rep_scalar_linear_veval_scheme<Arg_HP, Arg> >
-	{
-		typedef typename matrix_traits<Arg>::value_type T;
-		typedef veval_const_kernel<T> kernel_type;
-	};
-
-	template<typename Arg_HP, class Arg>
-	class rep_scalar_linear_veval_scheme
-	: public IVecEvalLinearScheme<
-	  	  rep_scalar_linear_veval_scheme<Arg_HP, Arg>,
+	template<class Arg>
+	class rep_scalar_linear_mvisitor
+	: public ILinearMatrixScalarVisitor<
+	  	  rep_scalar_linear_mvisitor<Arg>,
 	  	  typename matrix_traits<Arg>::value_type>
 	{
 	public:
-		typedef typename arg_holder<Arg_HP, Arg>::internal_arg_type arg_type;
 		typedef typename matrix_traits<Arg>::value_type T;
-		typedef veval_const_kernel<T> kernel_type;
 
-		template<int N>
+		template<typename Arg_HP, int N>
 		LMAT_ENSURE_INLINE
-		rep_scalar_linear_veval_scheme(const horizontal_repeat_expr<Arg_HP, Arg, N>& expr)
+		rep_scalar_linear_mvisitor(const horizontal_repeat_expr<Arg_HP, Arg, N>& expr)
 		{
 			m_val = to_scalar(expr.arg());
 		}
 
-		template<int M>
+		template<typename Arg_HP, int M>
 		LMAT_ENSURE_INLINE
-		rep_scalar_linear_veval_scheme(const vertical_repeat_expr<Arg_HP, Arg, M>& expr)
+		rep_scalar_linear_mvisitor(const vertical_repeat_expr<Arg_HP, Arg, M>& expr)
 		{
 			m_val = to_scalar(expr.arg());
 		}
 
 		LMAT_ENSURE_INLINE
-		kernel_type kernel() const
+		T get_scalar(const index_t ) const
 		{
-			return kernel_type();
+			return m_val;
 		}
-
-		LMAT_ENSURE_INLINE
-		T vec_state() const { return m_val; }
 
 	private:
 		T m_val;
 	};
 
-	// repcol_percol_veval_scheme
 
-	template<typename Arg_HP, class Arg>
-	struct vector_eval_scheme_traits<repcol_percol_veval_scheme<Arg_HP, Arg> >
+	// repcol_percol_mvisitor
+
+	template<class Arg>
+	struct matrix_visitor_state<repcol_percol_mvisitor<Arg> >
 	{
-		typedef typename matrix_traits<Arg>::value_type T;
-		typedef veval_memacc_kernel<T> kernel_type;
+		typedef nil_type type;
 	};
 
-
-	template<typename Arg_HP, class Arg>
-	class repcol_percol_veval_scheme
-	: public IVecEvalPerColScheme<
-	  	  repcol_percol_veval_scheme<Arg_HP, Arg>,
+	template<class Arg>
+	class repcol_percol_mvisitor
+	: public IPerColMatrixScalarVisitor<
+	  	  repcol_percol_mvisitor<Arg>,
 	  	  typename matrix_traits<Arg>::value_type>
 	{
 	public:
-		typedef typename arg_holder<Arg_HP, Arg>::internal_arg_type arg_type;
 		typedef typename matrix_traits<Arg>::value_type T;
-		typedef veval_memacc_kernel<T> kernel_type;
 
-		template<int N>
+		template<typename Arg_HP, int N>
 		LMAT_ENSURE_INLINE
-		repcol_percol_veval_scheme(const horizontal_repeat_expr<Arg_HP, Arg, N>& expr)
+		repcol_percol_mvisitor(const horizontal_repeat_expr<Arg_HP, Arg, N>& expr)
 		: m_colwrap(expr.arg()) { }
 
 		LMAT_ENSURE_INLINE
-		kernel_type kernel() const
+		T get_scalar(const index_t i, nil_type) const
 		{
-			return kernel_type();
+			return m_colwrap[i];
 		}
 
 		LMAT_ENSURE_INLINE
-		const T* col_state(const index_t ) const { return m_colwrap.data(); }
+		nil_type col_state(const index_t ) const
+		{
+			return nil_type();
+		}
 
 	private:
-		typename detail::repcol_ewrapper_map<arg_type>::type m_colwrap;
+		typename detail::repcol_ewrapper_map<Arg>::type m_colwrap;
 	};
 
 
-	// reprow_percol_veval_scheme
+	// reprow_percol_mvisitor
 
-	template<typename Arg_HP, class Arg>
-	struct vector_eval_scheme_traits<reprow_percol_veval_scheme<Arg_HP, Arg> >
+	template<class Arg>
+	struct matrix_visitor_state<reprow_percol_mvisitor<Arg> >
 	{
-		typedef typename matrix_traits<Arg>::value_type T;
-		typedef veval_const_kernel<T> kernel_type;
+		typedef typename matrix_traits<Arg>::value_type type;
 	};
 
-	template<typename Arg_HP, class Arg>
-	class reprow_percol_veval_scheme
-	: public IVecEvalPerColScheme<
-	  	  reprow_percol_veval_scheme<Arg_HP, Arg>,
+	template<class Arg>
+	class reprow_percol_mvisitor
+	: public IPerColMatrixScalarVisitor<
+	  	  reprow_percol_mvisitor<Arg>,
 	  	  typename matrix_traits<Arg>::value_type>
 	{
 	public:
-		typedef typename arg_holder<Arg_HP, Arg>::internal_arg_type arg_type;
 		typedef typename matrix_traits<Arg>::value_type T;
-		typedef veval_const_kernel<T> kernel_type;
 
-		template<int N>
+		template<typename Arg_HP, int N>
 		LMAT_ENSURE_INLINE
-		reprow_percol_veval_scheme(const vertical_repeat_expr<Arg_HP, Arg, N>& expr)
+		reprow_percol_mvisitor(const vertical_repeat_expr<Arg_HP, Arg, N>& expr)
 		: m_rowwrap(expr.arg()) { }
 
 		LMAT_ENSURE_INLINE
-		kernel_type kernel() const
+		T get_scalar(const index_t i, const T& s) const
 		{
-			return kernel_type();
+			return s;
 		}
 
 		LMAT_ENSURE_INLINE
-		T col_state(const index_t j) const { return m_rowwrap[j]; }
+		T col_state(const index_t j) const
+		{
+			return m_rowwrap[j];
+		}
 
 	private:
-		typename detail::reprow_ewrapper_map<arg_type>::type m_rowwrap;
+		typename detail::reprow_ewrapper_map<Arg>::type m_rowwrap;
 	};
 
 
@@ -453,88 +429,97 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<typename Arg_HP, class Arg, int N>
-	struct vector_eval<horizontal_repeat_expr<Arg_HP, Arg, N>, as_linear_vec, scalar_kernel_t>
+	template<typename Arg_HP, class Arg, int N, int ME, int NE>
+	struct matrix_vismap<
+		horizontal_repeat_expr<Arg_HP, Arg, N>,
+		matrix_visit_setting<linear_vis, scalar_kernel_t, ME, NE> >
 	{
 		typedef typename matrix_traits<Arg>::value_type T;
 		static const int M = ct_rows<Arg>::value;
 
 		typedef typename
 				if_c<N == 1,
-					single_vec_linear_veval_scheme<Arg_HP, Arg>,
+					single_vec_linear_mvisitor<Arg, ME, NE>,
 					typename
 					if_c<M == 1,
-						rep_scalar_linear_veval_scheme<Arg_HP, Arg>,
-						cached_linear_veval_scheme<T, M, N>
+						rep_scalar_linear_mvisitor<Arg>,
+						cached_linear_mvisitor<T, M, N>
 					>::type
-				>::type scheme_type;
+				>::type type;
 
-		static const int cost = (N == 1 || M == 1) ? 0 : VEC_EVAL_CACHE_COST;
+		static const int cost = (N == 1 || M == 1) ? 0 : MVISIT_CACHE_COST;
 	};
 
-
-	template<typename Arg_HP, class Arg, int M>
-	struct vector_eval<vertical_repeat_expr<Arg_HP, Arg, M>, as_linear_vec, scalar_kernel_t>
+	template<typename Arg_HP, class Arg, int M, int ME, int NE>
+	struct matrix_vismap<
+		vertical_repeat_expr<Arg_HP, Arg, M>,
+		matrix_visit_setting<linear_vis, scalar_kernel_t, ME, NE> >
 	{
 		typedef typename matrix_traits<Arg>::value_type T;
 		static const int N = ct_cols<Arg>::value;
 
 		typedef typename
 				if_c<M == 1,
-					single_vec_linear_veval_scheme<Arg_HP, Arg>,
+					single_vec_linear_mvisitor<Arg, ME, NE>,
 					typename
 					if_c<N == 1,
-						rep_scalar_linear_veval_scheme<Arg_HP, Arg>,
-						cached_linear_veval_scheme<T, M, N>
+						rep_scalar_linear_mvisitor<Arg>,
+						cached_linear_mvisitor<T, M, N>
 					>::type
-				>::type scheme_type;
+				>::type type;
 
-		static const int cost = (M == 1 || N == 1) ? 0 : VEC_EVAL_CACHE_COST;
+		static const int cost = (N == 1 || M == 1) ? 0 : MVISIT_CACHE_COST;
 	};
 
 
-	template<typename Arg_HP, class Arg, int N>
-	struct vector_eval<horizontal_repeat_expr<Arg_HP, Arg, N>, per_column, scalar_kernel_t>
+	template<typename Arg_HP, class Arg, int N, int ME, int NE>
+	struct matrix_vismap<
+		horizontal_repeat_expr<Arg_HP, Arg, N>,
+		matrix_visit_setting<percol_vis, scalar_kernel_t, ME, NE> >
 	{
 		typedef typename matrix_traits<Arg>::value_type T;
 		static const int M = ct_rows<Arg>::value;
 
 		typedef typename
-				if_c<N == 1,
-					single_vec_percol_veval_scheme<Arg_HP, Arg>,
+				if_c<NE == 1,
+					single_vec_percol_mvisitor<Arg, ME, NE>,
 					typename
-					if_c<M == 1,
-						rep_scalar_percol_veval_scheme<Arg_HP, Arg>,
-						repcol_percol_veval_scheme<Arg_HP, Arg>
+					if_c<ME == 1,
+						rep_scalar_percol_mvisitor<Arg>,
+						repcol_percol_mvisitor<Arg>
 					>::type
-				>::type scheme_type;
+				>::type type;
 
 		static const int normal_cost = 0;
 		static const int shortv_cost = SHORTVEC_PERCOL_COST;
-		static const int cost = M < SHORTVEC_LENGTH_THRESHOLD ? shortv_cost : normal_cost;
+		static const int cost = ME < SHORTVEC_LENGTH_THRESHOLD ? shortv_cost : normal_cost;
 	};
 
 
-	template<typename Arg_HP, class Arg, int M>
-	struct vector_eval<vertical_repeat_expr<Arg_HP, Arg, M>, per_column, scalar_kernel_t>
+	template<typename Arg_HP, class Arg, int M, int ME, int NE>
+	struct matrix_vismap<
+		vertical_repeat_expr<Arg_HP, Arg, M>,
+		matrix_visit_setting<percol_vis, scalar_kernel_t, ME, NE> >
 	{
 		typedef typename matrix_traits<Arg>::value_type T;
 		static const int N = ct_cols<Arg>::value;
 
 		typedef typename
-				if_c<M == 1,
-					single_vec_percol_veval_scheme<Arg_HP, Arg>,
+				if_c<ME == 1,
+					single_vec_percol_mvisitor<Arg, ME, NE>,
 					typename
-					if_c<N == 1,
-						rep_scalar_percol_veval_scheme<Arg_HP, Arg>,
-						reprow_percol_veval_scheme<Arg_HP, Arg>
+					if_c<NE == 1,
+						rep_scalar_percol_mvisitor<Arg>,
+						reprow_percol_mvisitor<Arg>
 					>::type
-				>::type scheme_type;
+				>::type type;
 
 		static const int normal_cost = 0;
 		static const int shortv_cost = SHORTVEC_PERCOL_COST;
-		static const int cost = M < SHORTVEC_LENGTH_THRESHOLD ? shortv_cost : normal_cost;
+		static const int cost = ME < SHORTVEC_LENGTH_THRESHOLD ? shortv_cost : normal_cost;
 	};
+
+
 
 }
 

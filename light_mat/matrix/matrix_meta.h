@@ -278,6 +278,13 @@ namespace lmat
 	struct ct_has_continuous_layout { static const bool value = false; };
 
 	template<class Mat>
+	struct is_linear_memory_accessible
+	{
+		static const bool value = is_dense_mat<Mat>::value &&
+				(ct_has_continuous_layout<Mat>::value || ct_is_col<Mat>::value);
+	};
+
+	template<class Mat>
 	struct is_base_aligned { static const bool value = false; };
 
 	template<class Mat>

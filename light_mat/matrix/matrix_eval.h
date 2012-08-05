@@ -21,10 +21,8 @@
 #include <light_mat/matrix/matrix_ecomp.h>
 #include <light_mat/matrix/matrix_elogical.h>
 
-#include <light_mat/matrix/repeat_vecs_expr.h>
-
 #include <light_mat/matrix/matrix_ewise_eval.h>
-#include <light_mat/matrix/repeat_vecs_eval.h>
+#include <light_mat/matrix/matrix_repeat_eval.h>
 
 #include <light_mat/matrix/matrix_reduce.h>
 #include <light_mat/matrix/partial_reduce.h>

@@ -58,19 +58,17 @@ namespace lmat
 
 	template<class Fun, typename Arg_HP, class Arg>
 	class unary_ewise_expr
-	: public unary_expr<Arg_HP, Arg>
+	: public unary_expr_base<Arg_HP, Arg>
 	, public IMatrixXpr<unary_ewise_expr<Fun, Arg_HP, Arg>, typename Fun::result_type>
 	{
-		typedef unary_expr<Arg_HP, Arg> base_t;
-
 #ifdef LMAT_USE_STATIC_ASSERT
 		static_assert(is_unary_ewise_functor<Fun>::value, "Fun must be a unary_ewise_functor");
 		static_assert(is_mat_xpr<Arg>::value, "Arg must be a matrix expression class.");
 #endif
 
 	public:
+		typedef unary_expr_base<Arg_HP, Arg> base_t;
 		typedef typename Fun::result_type value_type;
-		using typename base_t::arg_type;
 
 		LMAT_ENSURE_INLINE
 		unary_ewise_expr(const Fun& fun,
@@ -109,11 +107,9 @@ namespace lmat
 
 	template<class Fun, typename Arg1_HP, class Arg1, typename Arg2_HP, class Arg2>
 	class binary_ewise_expr
-	: public binary_expr<Arg1_HP, Arg1, Arg2_HP, Arg2>
+	: public binary_expr_base<Arg1_HP, Arg1, Arg2_HP, Arg2>
 	, public IMatrixXpr<binary_ewise_expr<Fun, Arg1_HP, Arg1, Arg2_HP, Arg2>, typename Fun::result_type>
 	{
-		typedef binary_expr<Arg1_HP, Arg1, Arg2_HP, Arg2> base_t;
-
 #ifdef LMAT_USE_STATIC_ASSERT
 		static_assert(is_binary_ewise_functor<Fun>::value, "Fun must be a binary_ewise_functor");
 		static_assert(is_mat_xpr<Arg1>::value, "Arg1 must be a matrix expression class.");
@@ -121,9 +117,8 @@ namespace lmat
 #endif
 
 	public:
+		typedef binary_expr_base<Arg1_HP, Arg1, Arg2_HP, Arg2> base_t;
 		typedef typename Fun::result_type value_type;
-		using typename base_t::arg1_type;
-		using typename base_t::arg2_type;
 
 		LMAT_ENSURE_INLINE
 		binary_ewise_expr(const Fun& fun,

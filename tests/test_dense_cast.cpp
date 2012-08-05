@@ -78,8 +78,8 @@ MN_CASE( ref_ex_cast, explicit_cast )
 	const index_t m = M == 0 ? 5 : M;
 	const index_t n = N == 0 ? 6 : N;
 
-	scoped_array<double> sA(ldim_a * n);
-	scoped_array<float> sB(ldim_b * n);
+	scoped_array<double> sA(ldim_a * n, 0.0);
+	scoped_array<float> sB(ldim_b * n, 0.0f);
 
 	ref_matrix_ex<double,  M, N> A(sA.ptr_begin(), m, n, ldim_a);
 	dense_matrix<float, M, N> Br(m, n);

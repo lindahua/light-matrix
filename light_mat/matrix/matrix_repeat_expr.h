@@ -58,19 +58,18 @@ namespace lmat
 
 	template<typename Arg_HP, class Arg, int N>
 	class horizontal_repeat_expr
-	: public unary_expr<Arg_HP, Arg>
+	: public unary_expr_base<Arg_HP, Arg>
 	, public IMatrixXpr<
 		horizontal_repeat_expr<Arg_HP, Arg, N>,
 		typename matrix_traits<Arg>::value_type>
 	{
-		typedef unary_expr<Arg_HP, Arg> base_t;
+		typedef unary_expr_base<Arg_HP, Arg> base_t;
 
 #ifdef LMAT_USE_STATIC_ASSERT
 		static_assert(is_mat_xpr<Arg>::value, "Arg must be a matrix expression class.");
 #endif
 
 	public:
-		using typename base_t::arg_type;
 
 		LMAT_ENSURE_INLINE
 		horizontal_repeat_expr(const arg_forwarder<Arg_HP, Arg>& arg_fwd, const index_t n)
@@ -108,19 +107,18 @@ namespace lmat
 
 	template<typename Arg_HP, class Arg, int M>
 	class vertical_repeat_expr
-	: public unary_expr<Arg_HP, Arg>
+	: public unary_expr_base<Arg_HP, Arg>
 	, public IMatrixXpr<
 		vertical_repeat_expr<Arg_HP, Arg, M>,
 		typename matrix_traits<Arg>::value_type>
 	{
-		typedef unary_expr<Arg_HP, Arg> base_t;
+		typedef unary_expr_base<Arg_HP, Arg> base_t;
 
 #ifdef LMAT_USE_STATIC_ASSERT
 		static_assert(is_mat_xpr<Arg>::value, "Arg must be a matrix expression class.");
 #endif
 
 	public:
-		using typename base_t::arg_type;
 
 		LMAT_ENSURE_INLINE
 		vertical_repeat_expr(const arg_forwarder<Arg_HP, Arg>& arg_fwd, const index_t m)
