@@ -27,8 +27,8 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<class Fun, class Arg>
-	struct matrix_traits<colwise_reduce_expr<Fun, Arg> >
+	template<class Fun, typename Arg_HP, class Arg>
+	struct matrix_traits<colwise_reduce_expr<Fun, Arg_HP, Arg> >
 	{
 		static const int num_dimensions = 2;
 		static const int compile_time_num_rows = 1;
@@ -37,10 +37,11 @@ namespace lmat
 		static const bool is_readonly = true;
 
 		typedef typename Fun::result_type value_type;
+		typedef typename matrix_traits<Arg>::domain domain;
 	};
 
-	template<class Fun, class Arg>
-	struct matrix_traits<rowwise_reduce_expr<Fun, Arg> >
+	template<class Fun, typename Arg_HP, class Arg>
+	struct matrix_traits<rowwise_reduce_expr<Fun, Arg_HP, Arg> >
 	{
 		static const int num_dimensions = 2;
 		static const int compile_time_num_rows = ct_rows<Arg>::value;
@@ -49,52 +50,38 @@ namespace lmat
 		static const bool is_readonly = true;
 
 		typedef typename Fun::result_type value_type;
-	};
-
-	template<class Fun, class Arg, class Dst>
-	struct default_evalctx<colwise_reduce_expr<Fun, Arg>, Dst>
-	{
-		typedef colwise_reduce_evalctx<Fun, Arg, Dst> type;
-	};
-
-	template<class Fun, class Arg, class Dst>
-	struct default_evalctx<rowwise_reduce_expr<Fun, Arg>, Dst>
-	{
-		typedef rowwise_reduce_evalctx<Fun, Arg, Dst> type;
+		typedef typename matrix_traits<Arg>::domain domain;
 	};
 
 
-	template<class Fun, class Arg>
+	template<class Fun, typename Arg_HP, class Arg>
 	class colwise_reduce_expr
-	: public IMatrixXpr<colwise_reduce_expr<Fun, Arg>, typename Fun::result_type>
+	: public unary_expr_base<Arg_HP, Arg>
+	, public IMatrixXpr<
+	  	  colwise_reduce_expr<Fun, Arg_HP, Arg>,
+	  	  typename Fun::result_type>
 	{
 #ifdef LMAT_USE_STATIC_ASSERT
 		static_assert(is_reduction_functor<Fun>::value, "Fun must be a reduction_functor");
 		static_assert(is_mat_xpr<Arg>::value, "Arg must be a matrix expression class.");
 #endif
 
-		typedef typename unwrapped_expr<Arg>::type arg_expr_t;
-
 	public:
+		typedef unary_expr_base<Arg_HP, Arg> base_t;
 		typedef typename Fun::result_type value_type;
 
 		LMAT_ENSURE_INLINE
-		colwise_reduce_expr(const Fun& fun, const Arg& a)
-		: m_fun(fun), m_arg(a) { }
+		colwise_reduce_expr(const Fun& fun, const arg_forwarder<Arg_HP, Arg>& arg_fwd)
+		: base_t(arg_fwd), m_fun(fun) { }
 
 		LMAT_ENSURE_INLINE const Fun& fun() const
 		{
 			return m_fun;
 		}
 
-		LMAT_ENSURE_INLINE const arg_expr_t& arg() const
-		{
-			return m_arg.get();
-		}
-
 		LMAT_ENSURE_INLINE index_t nelems() const
 		{
-			return arg().ncolumns();
+			return this->arg().ncolumns();
 		}
 
 		LMAT_ENSURE_INLINE size_t size() const
@@ -109,46 +96,40 @@ namespace lmat
 
 		LMAT_ENSURE_INLINE index_t ncolumns() const
 		{
-			return arg().ncolumns();
+			return this->arg().ncolumns();
 		}
 
 	private:
 		Fun m_fun;
-		obj_wrapper<Arg> m_arg;
 	};
 
 
-	template<class Fun, class Arg>
+	template<class Fun, typename Arg_HP, class Arg>
 	class rowwise_reduce_expr
-	: public IMatrixXpr<rowwise_reduce_expr<Fun, Arg>, typename Fun::result_type>
+	: public unary_expr_base<Arg_HP, Arg>
+	, public IMatrixXpr<rowwise_reduce_expr<Fun, Arg_HP, Arg>, typename Fun::result_type>
 	{
 #ifdef LMAT_USE_STATIC_ASSERT
 		static_assert(is_reduction_functor<Fun>::value, "Fun must be a reduction_functor");
 		static_assert(is_mat_xpr<Arg>::value, "Arg must be a matrix expression class.");
 #endif
 
-		typedef typename unwrapped_expr<Arg>::type arg_expr_t;
-
 	public:
+		typedef typename unary_expr_base<Arg_HP, Arg> base_t;
 		typedef typename Fun::result_type value_type;
 
 		LMAT_ENSURE_INLINE
-		rowwise_reduce_expr(const Fun& fun, const Arg& a)
-		: m_fun(fun), m_arg(a) { }
+		rowwise_reduce_expr(const Fun& fun, const arg_forwarder<Arg_HP, Arg>& arg_fwd)
+		: base_t(arg_fwd), m_fun(fun) { }
 
 		LMAT_ENSURE_INLINE const Fun& fun() const
 		{
 			return m_fun;
 		}
 
-		LMAT_ENSURE_INLINE const arg_expr_t& arg() const
-		{
-			return m_arg.get();
-		}
-
 		LMAT_ENSURE_INLINE index_t nelems() const
 		{
-			return arg().nrows();
+			return this->arg().nrows();
 		}
 
 		LMAT_ENSURE_INLINE size_t size() const
@@ -158,7 +139,7 @@ namespace lmat
 
 		LMAT_ENSURE_INLINE index_t nrows() const
 		{
-			return arg().nrows();
+			return this->arg().nrows();
 		}
 
 		LMAT_ENSURE_INLINE index_t ncolumns() const
@@ -174,61 +155,97 @@ namespace lmat
 
 	/********************************************
 	 *
-	 *  Generic expressions
+	 *  Expression Maps
+	 *
+	 ********************************************/
+
+	template<class Fun>
+	struct colwise_reduce_t
+	{
+		const Fun& fun;
+
+		LMAT_ENSURE_INLINE
+		colwise_reduce_t(const Fun& f)
+		: fun(f) { }
+	};
+
+	template<class Fun>
+	struct rowwise_reduce_t
+	{
+		const Fun& fun;
+
+		LMAT_ENSURE_INLINE
+		rowwise_reduce_t(const Fun& f)
+		: fun(f) { }
+	};
+
+
+	template<class Fun, class Arg>
+	struct unary_expr_verifier<colwise_reduce_t<Fun>, Arg>
+	{
+		static const bool value = is_mat_xpr<Arg>::value;
+	};
+
+	template<class Fun, class Arg>
+	struct unary_expr_verifier<rowwise_reduce_t<Fun>, Arg>
+	{
+		static const bool value = is_mat_xpr<Arg>::value;
+	};
+
+	template<class Fun, typename Arg_HP, class Arg>
+	struct unary_expr_map<colwise_reduce_t<Fun>, Arg_HP, Arg>
+	{
+		typedef colwise_reduce_expr<Fun, Arg_HP, Arg> type;
+
+		LMAT_ENSURE_INLINE
+		static type get(const colwise_reduce_t<Fun>& spec,
+				const arg_forwarder<Arg_HP, Arg>& arg_fwd)
+		{
+			return type(spec.fun, arg_fwd);
+		}
+	};
+
+	template<class Fun, typename Arg_HP, class Arg>
+	struct unary_expr_map<rowwise_reduce_t<Fun>, Arg_HP, Arg>
+	{
+		typedef rowwise_reduce_expr<Fun, Arg_HP, Arg> type;
+
+		LMAT_ENSURE_INLINE
+		static type get(const rowwise_reduce_t<Fun>& spec,
+				const arg_forwarder<Arg_HP, Arg>& arg_fwd)
+		{
+			return type(spec.fun, arg_fwd);
+		}
+	};
+
+
+	/********************************************
+	 *
+	 *  Generic partial reduction
 	 *
 	 ********************************************/
 
 	template<class Fun, class Arg>
-	struct colwise_reduce_expr_map
-	{
-		typedef colwise_reduce_expr<Fun, Arg> type;
-	};
-
-	template<class Fun, class Arg>
-	struct rowwise_reduce_expr_map
-	{
-		typedef rowwise_reduce_expr<Fun, Arg> type;
-	};
-
-	template<class Fun, class Arg>
 	LMAT_ENSURE_INLINE
-	inline typename colwise_reduce_expr_map<Fun, Arg>::type
+	inline typename unary_expr_map<colwise_reduce_t<Fun>, ref_arg_t, Arg>::type
 	reduce( const Fun& fun,
 			const IMatrixXpr<Arg, typename Fun::arg_type>& arg,
 			colwise )
 	{
-		return colwise_reduce_expr<Fun, Arg>(fun, arg.derived());
+		return unary_expr_map<colwise_reduce_t<Fun>, ref_arg_t, Arg>::get(fun,
+				ref_arg(arg.derived()) );
 	}
 
 	template<class Fun, class Arg>
 	LMAT_ENSURE_INLINE
-	inline typename rowwise_reduce_expr_map<Fun, Arg>::type
+	inline typename unary_expr_map<rowwise_reduce_t<Fun>, ref_arg_t, Arg>::type
 	reduce( const Fun& fun,
 			const IMatrixXpr<Arg, typename Fun::arg_type>& arg,
 			rowwise )
 	{
-		return rowwise_reduce_expr<Fun, Arg>(fun, arg.derived());
+		return unary_expr_map<rowwise_reduce_t<Fun>, ref_arg_t, Arg>::get(fun,
+				ref_arg(arg.derived()) );
 	}
-
-	template<class Fun, class Arg, class Dst>
-	struct colwise_reduce_evalctx
-	{
-		LMAT_ENSURE_INLINE
-		static void evaluate(const colwise_reduce_expr<Fun, Arg>& expr, Dst& dst)
-		{
-			detail::colwise_reduce_internal::eval(expr.fun(), expr.arg(), dst);
-		}
-	};
-
-	template<class Fun, class Arg, class Dst>
-	struct rowwise_reduce_evalctx
-	{
-		LMAT_ENSURE_INLINE
-		static void evaluate(const rowwise_reduce_expr<Fun, Arg>& expr, Dst& dst)
-		{
-			detail::rowwise_reduce_internal::eval(expr.fun(), expr.arg(), dst);
-		}
-	};
 
 
 	/********************************************
