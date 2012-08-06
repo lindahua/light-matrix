@@ -26,7 +26,7 @@ MN_CASE( linear_veval, continu_linear )
 #ifdef LMAT_USE_STATIC_ASSERT
 	static_assert(is_same<
 			typename matrix_vismap<mat,
-				matrix_visit_policy<linear_vis, scalar_kernel_t> >::type,
+				matrix_visit_setting<linear_vis, scalar_kernel_t, M, N> >::type,
 			visitor_t>::value,
 			"Scheme type verification failed");
 #endif
@@ -59,7 +59,7 @@ MN_CASE( linear_veval, cached_linear )
 
 	static_assert(is_same<
 			typename matrix_vismap<mat_ex,
-				matrix_visit_policy<linear_vis, scalar_kernel_t> >::type,
+				matrix_visit_setting<linear_vis, scalar_kernel_t, M, N> >::type,
 			visitor_t>::value,
 			"Scheme type verification failed");
 #endif
@@ -90,7 +90,7 @@ MN_CASE( linear_veval, const_linear )
 #ifdef LMAT_USE_STATIC_ASSERT
 	static_assert(is_same<
 			typename matrix_vismap<mat,
-				matrix_visit_policy<linear_vis, scalar_kernel_t> >::type,
+				matrix_visit_setting<linear_vis, scalar_kernel_t, M, N> >::type,
 			visitor_t>::value,
 			"Scheme type verification failed");
 #endif
@@ -120,7 +120,7 @@ MN_CASE( percol_veval, dense_percol )
 
 	static_assert(is_same<
 			typename matrix_vismap<mat_ex,
-				matrix_visit_policy<percol_vis, scalar_kernel_t> >::type,
+				matrix_visit_setting<percol_vis, scalar_kernel_t, M, N> >::type,
 			visitor_t>::value,
 			"Scheme type verification failed");
 #endif
@@ -178,7 +178,7 @@ MN_CASE( percol_veval, const_percol )
 #ifdef LMAT_USE_STATIC_ASSERT
 	static_assert(is_same<
 			typename matrix_vismap<mat,
-				matrix_visit_policy<percol_vis, scalar_kernel_t> >::type,
+				matrix_visit_setting<percol_vis, scalar_kernel_t, M, N> >::type,
 			visitor_t>::value,
 			"Scheme type verification failed");
 #endif
