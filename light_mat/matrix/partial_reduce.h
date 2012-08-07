@@ -115,7 +115,7 @@ namespace lmat
 #endif
 
 	public:
-		typedef typename unary_expr_base<Arg_HP, Arg> base_t;
+		typedef unary_expr_base<Arg_HP, Arg> base_t;
 		typedef typename Fun::result_type value_type;
 
 		LMAT_ENSURE_INLINE
@@ -149,7 +149,6 @@ namespace lmat
 
 	private:
 		Fun m_fun;
-		obj_wrapper<Arg> m_arg;
 	};
 
 
@@ -177,6 +176,18 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		rowwise_reduce_t(const Fun& f)
 		: fun(f) { }
+	};
+
+	template<class Fun>
+	colwise_reduce_t<Fun> colwise_reduce(const Fun& f)
+	{
+		return colwise_reduce_t<Fun>(f);
+	};
+
+	template<class Fun>
+	rowwise_reduce_t<Fun> rowwise_reduce(const Fun& f)
+	{
+		return colwise_reduce_t<Fun>(f);
 	};
 
 
@@ -221,6 +232,48 @@ namespace lmat
 
 	/********************************************
 	 *
+	 *  Evaluation
+	 *
+	 ********************************************/
+
+	struct partial_reduce_policy { };
+
+	template<class Fun, typename Arg_HP, class Arg, class Dst>
+	struct default_matrix_eval_policy< colwise_reduce_expr<Fun, Arg_HP, Arg>, Dst >
+	{
+		typedef partial_reduce_policy type;
+	};
+
+	template<class Fun, typename Arg_HP, class Arg, class Dst>
+	struct default_matrix_eval_policy< rowwise_reduce_expr<Fun, Arg_HP, Arg>, Dst >
+	{
+		typedef partial_reduce_policy type;
+	};
+
+	template<class Fun, typename Arg_HP, class Arg, class Dst>
+	LMAT_ENSURE_INLINE
+	inline void evaluate(const colwise_reduce_expr<Fun, Arg_HP, Arg>& expr,
+			IDenseMatrix<Dst, typename Fun::result_type>& dst,
+			partial_reduce_policy)
+	{
+		detail::colwise_reduce_internal<scalar_kernel_t>::eval(
+				expr.fun(), expr.arg(), dst.derived());
+	}
+
+	template<class Fun, typename Arg_HP, class Arg, class Dst>
+	LMAT_ENSURE_INLINE
+	inline void evaluate(const rowwise_reduce_expr<Fun, Arg_HP, Arg>& expr,
+			IDenseMatrix<Dst, typename Fun::result_type>& dst,
+			partial_reduce_policy)
+	{
+		detail::rowwise_reduce_internal<scalar_kernel_t>::eval(
+				expr.fun(), expr.arg(), dst.derived());
+	}
+
+
+
+	/********************************************
+	 *
 	 *  Generic partial reduction
 	 *
 	 ********************************************/
@@ -256,25 +309,27 @@ namespace lmat
 
 	// sum
 
-	template<class Arg>
+	template<typename Arg_HP, class Arg>
 	struct colwise_sum_expr_map
 	{
-		typedef typename colwise_reduce_expr_map<
-				sum_fun<typename matrix_traits<Arg>::value_type>,
-				Arg>::type type;
+		typedef typename unary_expr_map<
+				colwise_reduce_t<
+					sum_fun<typename matrix_traits<Arg>::value_type>
+				>, Arg_HP, Arg>::type type;
 	};
 
-	template<class Arg>
+	template<typename Arg_HP, class Arg>
 	struct rowwise_sum_expr_map
 	{
-		typedef typename rowwise_reduce_expr_map<
-				sum_fun<typename matrix_traits<Arg>::value_type>,
-				Arg>::type type;
+		typedef typename unary_expr_map<
+				rowwise_reduce_t<
+					sum_fun<typename matrix_traits<Arg>::value_type>
+				>, Arg_HP, Arg>::type type;
 	};
 
 	template<typename T, class Arg>
 	LMAT_ENSURE_INLINE
-	inline typename colwise_sum_expr_map<Arg>::type
+	inline typename colwise_sum_expr_map<ref_arg_t, Arg>::type
 	sum(const IMatrixXpr<Arg, T>& arg, colwise)
 	{
 		return reduce(sum_fun<T>(), arg.derived(), colwise());
@@ -282,13 +337,13 @@ namespace lmat
 
 	template<typename T, class Arg>
 	LMAT_ENSURE_INLINE
-	inline typename rowwise_sum_expr_map<Arg>::type
+	inline typename rowwise_sum_expr_map<ref_arg_t, Arg>::type
 	sum(const IMatrixXpr<Arg, T>& arg, rowwise)
 	{
 		return reduce(sum_fun<T>(), arg.derived(), rowwise());
 	}
 
-
+/*
 	// mean
 
 	template<class Arg>
@@ -653,6 +708,8 @@ namespace lmat
 						embed(L2norm(a.derived(), rowwise())) *
 						embed(L2norm(b.derived(), rowwise())) );
 	}
+
+	*/
 
 }
 

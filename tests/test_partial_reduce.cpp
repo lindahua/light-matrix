@@ -45,6 +45,7 @@ MN_CASE( colwise_reduce, sum )
 	ASSERT_EQ( r.nrows(), 1 );
 	ASSERT_EQ( r.ncolumns(), n );
 	ASSERT_VEC_EQ( n, r, r0 );
+
 }
 
 MN_CASE( rowwise_reduce, sum )
@@ -77,7 +78,7 @@ MN_CASE( rowwise_reduce, sum )
 	ASSERT_VEC_EQ( m, r, r0 );
 }
 
-
+/*
 MN_CASE( colwise_reduce, mean )
 {
 	typedef dense_matrix<double, M, N> mat_t;
@@ -671,7 +672,7 @@ MN_CASE( rowwise_reduce, nrmdot )
 	ASSERT_VEC_APPROX( m, r, r0, 1.0e-12 );
 }
 
-
+*/
 
 BEGIN_TPACK( colwise_sum )
 	ADD_MN_CASE_3X3( colwise_reduce, sum, DM, DN )
@@ -681,7 +682,7 @@ BEGIN_TPACK( rowwise_sum )
 	ADD_MN_CASE_3X3( rowwise_reduce, sum, DM, DN )
 END_TPACK
 
-
+/*
 BEGIN_TPACK( colwise_mean )
 	ADD_MN_CASE_3X3( colwise_reduce, mean, DM, DN )
 END_TPACK
@@ -755,12 +756,12 @@ END_TPACK
 BEGIN_TPACK( rowwise_nrmdot )
 	ADD_MN_CASE_3X3( rowwise_reduce, nrmdot, DM, DN )
 END_TPACK
-
+*/
 
 BEGIN_MAIN_SUITE
 	ADD_TPACK( colwise_sum )
 	ADD_TPACK( rowwise_sum )
-
+/*
 	ADD_TPACK( colwise_mean )
 	ADD_TPACK( rowwise_mean )
 
@@ -787,7 +788,7 @@ BEGIN_MAIN_SUITE
 
 	ADD_TPACK( colwise_nrmdot )
 	ADD_TPACK( rowwise_nrmdot )
-
+*/
 END_MAIN_SUITE
 
 
