@@ -304,6 +304,148 @@ namespace lmat
 				ref_arg(arg2.derived()));
 	}
 
+
+	/********************************************
+	 *
+	 *  Transpose
+	 *
+	 ********************************************/
+
+	template<class Fun, typename TExpr_HP, typename Arg_HP, class Arg>
+	struct unary_expr_map<ewise_t<Fun>, TExpr_HP, transpose_expr<Arg_HP, Arg> >
+	{
+		typedef typename unary_expr_map<
+					transpose_t,
+					copy_arg_t,
+					typename unary_expr_map<ewise_t<Fun>, Arg_HP, Arg>::type
+				>::type type;
+
+		LMAT_ENSURE_INLINE
+		static type get(const ewise_t<Fun>& spec,
+				const arg_forwarder<TExpr_HP, transpose_expr<Arg_HP, Arg> >& texpr_fwd)
+		{
+			const transpose_expr<Arg_HP, Arg>& texpr = texpr_fwd.arg;
+
+			return make_expr(
+						transpose_t(),
+						copy_arg(
+							make_expr(
+								ewise(spec.fun),
+								arg_forwarder<Arg_HP, Arg>(texpr.arg())
+							)
+						) );
+		}
+	};
+
+	template<class Fun,
+		typename TExpr1_HP, typename Arg1_HP, class Arg1,
+		typename TExpr2_HP, typename Arg2_HP, class Arg2>
+	struct binary_expr_map<ewise_t<Fun>,
+		TExpr1_HP, transpose_expr<Arg1_HP, Arg1>,
+		TExpr2_HP, transpose_expr<Arg2_HP, Arg2> >
+	{
+		typedef typename unary_expr_map<
+					transpose_t,
+					copy_arg_t,
+					typename binary_expr_map<ewise_t<Fun>, Arg1_HP, Arg1, Arg2_HP, Arg2>::type
+				>::type type;
+
+		LMAT_ENSURE_INLINE
+		static type get(const ewise_t<Fun>& spec,
+				const arg_forwarder<TExpr1_HP, transpose_expr<Arg1_HP, Arg1> >& texpr1_fwd,
+				const arg_forwarder<TExpr2_HP, transpose_expr<Arg2_HP, Arg2> >& texpr2_fwd)
+		{
+			const transpose_expr<Arg1_HP, Arg1>& texpr1 = texpr1_fwd.arg;
+			const transpose_expr<Arg2_HP, Arg2>& texpr2 = texpr2_fwd.arg;
+
+			return make_expr(
+						transpose_t(),
+						copy_arg(
+							make_expr(
+								ewise(spec.fun),
+								arg_forwarder<Arg1_HP, Arg1>(texpr1.arg()),
+								arg_forwarder<Arg2_HP, Arg2>(texpr2.arg())
+							)
+						) );
+		}
+	};
+
+
+	template<class Fun,
+		typename TExpr1_HP, typename Arg1_HP, class Arg1,
+		typename CExpr_HP, typename Tc, int Mc, int Nc>
+	struct binary_expr_map<ewise_t<Fun>,
+		TExpr1_HP, transpose_expr<Arg1_HP, Arg1>,
+		CExpr_HP, const_matrix<Tc, Mc, Nc> >
+	{
+		typedef typename unary_expr_map<
+					transpose_t,
+					copy_arg_t,
+					typename binary_expr_map<ewise_t<Fun>,
+						Arg1_HP, Arg1,
+						CExpr_HP, const_matrix<Tc, Nc, Mc> >::type
+				>::type type;
+
+		LMAT_ENSURE_INLINE
+		static type get(const ewise_t<Fun>& spec,
+				const arg_forwarder<TExpr1_HP, transpose_expr<Arg1_HP, Arg1> >& texpr1_fwd,
+				const arg_forwarder<CExpr_HP, const_matrix<Tc, Mc, Nc> >& cexpr_fwd)
+		{
+			const transpose_expr<Arg1_HP, Arg1>& texpr1 = texpr1_fwd.arg;
+			const const_matrix<Tc, Mc, Nc>& cexpr = cexpr_fwd.arg;
+
+			return make_expr(
+						transpose_t(),
+						copy_arg(
+							make_expr(
+								ewise(spec.fun),
+								arg_forwarder<Arg1_HP, Arg1>(texpr1.arg()),
+								copy_arg( const_matrix<Tc, Nc, Mc>(
+										cexpr.ncolumns(), cexpr.nrows(), cexpr.value())
+								)
+							)
+						) );
+		}
+	};
+
+
+	template<class Fun,
+	typename CExpr_HP, typename Tc, int Mc, int Nc,
+		typename TExpr2_HP, typename Arg2_HP, class Arg2>
+	struct binary_expr_map<ewise_t<Fun>,
+		CExpr_HP, const_matrix<Tc, Mc, Nc>,
+		TExpr2_HP, transpose_expr<Arg2_HP, Arg2> >
+	{
+		typedef typename unary_expr_map<
+					transpose_t,
+					copy_arg_t,
+					typename binary_expr_map<ewise_t<Fun>,
+						CExpr_HP, const_matrix<Tc, Nc, Mc>,
+						Arg2_HP, Arg2>::type
+				>::type type;
+
+		LMAT_ENSURE_INLINE
+		static type get(const ewise_t<Fun>& spec,
+				const arg_forwarder<CExpr_HP, const_matrix<Tc, Mc, Nc> >& cexpr_fwd,
+				const arg_forwarder<TExpr2_HP, transpose_expr<Arg2_HP, Arg2> >& texpr2_fwd)
+		{
+			const const_matrix<Tc, Mc, Nc>& cexpr = cexpr_fwd.arg;
+			const transpose_expr<Arg2_HP, Arg2>& texpr2 = texpr2_fwd.arg;
+
+			return make_expr(
+						transpose_t(),
+						copy_arg(
+							make_expr(
+								ewise(spec.fun),
+								copy_arg( const_matrix<Tc, Nc, Mc>(
+										cexpr.ncolumns(), cexpr.nrows(), cexpr.value())
+								),
+								arg_forwarder<Arg2_HP, Arg2>(texpr2.arg())
+							)
+						) );
+		}
+	};
+
 }
 
 #endif 

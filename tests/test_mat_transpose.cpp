@@ -336,7 +336,7 @@ MN_CASE( mat_trans, repcols )
 	col_t col(m, 1);
 	fill_lin(col);
 
-	repeat_col_expr<col_t, N> expr(col, n);
+	horizontal_repeat_expr<ref_arg_t, col_t, N> expr(ref_arg(col), n);
 	dense_matrix<double, M, N> S(expr);
 
 	dense_matrix<double, N, M> T0(n, m, zeros<double>());
@@ -358,7 +358,7 @@ MN_CASE( mat_trans, reprows )
 	row_t row(1, n);
 	fill_lin(row);
 
-	repeat_row_expr<row_t, M> expr(row, m);
+	vertical_repeat_expr<ref_arg_t, row_t, M> expr(ref_arg(row), m);
 	dense_matrix<double, M, N> S(expr);
 
 	dense_matrix<double, N, M> T0(n, m, zeros<double>());
@@ -370,6 +370,7 @@ MN_CASE( mat_trans, reprows )
 	ASSERT_EQ( T.ncolumns(), m );
 	ASSERT_MAT_EQ( n, m, T, T0 );
 }
+
 
 
 BEGIN_TPACK( dense_trans )
@@ -432,7 +433,6 @@ BEGIN_MAIN_SUITE
 
 	ADD_TPACK( unary_ewise_trans )
 	ADD_TPACK( binary_ewise_trans )
-
 	ADD_TPACK( colwise_reduce_trans )
 	ADD_TPACK( rowwise_reduce_trans )
 

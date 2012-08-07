@@ -24,17 +24,17 @@ namespace lmat
 	 *  transpose_base classes
 	 *
 	 ********************************************/
-/*
+
 	// forward declaration
 
-	template<class Col> class contcol_transpose_base;
-	template<class Row> class controw_transpose_base;
-	template<class Row> class regular_row_transpose_base;
-	template<class Mat> class dense_transpose_base;
+	template<typename Arg_HP, class Arg> class contcol_transpose_base;
+	template<typename Arg_HP, class Arg> class controw_transpose_base;
+	template<typename Arg_HP, class Arg> class regular_row_transpose_base;
+	template<typename Arg_HP, class Arg> class dense_transpose_base;
 
-	template<class Expr> class colxpr_transpose_base;
-	template<class Expr> class rowxpr_transpose_base;
-	template<class Expr> class generic_transpose_base;
+	template<typename Arg_HP, class Arg> class colxpr_transpose_base;
+	template<typename Arg_HP, class Arg> class rowxpr_transpose_base;
+	template<typename Arg_HP, class Arg> class generic_transpose_base;
 
 	// traits
 
@@ -47,30 +47,26 @@ namespace lmat
 		static const bool is_linear_accessible = false;
 	};
 
-	template<class Col>
-	struct transpose_base_traits<contcol_transpose_base<Col> >
+	template<typename Arg_HP, class Arg>
+	struct transpose_base_traits<contcol_transpose_base<Arg_HP, Arg> >
 	{
-		typedef typename unwrapped_expr<Col>::type arg_type;
-
 		static const bool has_continuous_layout = false;
-		static const bool is_base_aligned = lmat::is_base_aligned<arg_type>::value;
+		static const bool is_base_aligned = lmat::is_base_aligned<Arg>::value;
 		static const bool is_percol_aligned = false;
 		static const bool is_linear_accessible = true;
 	};
 
-	template<class Row>
-	struct transpose_base_traits<controw_transpose_base<Row> >
+	template<typename Arg_HP, class Arg>
+	struct transpose_base_traits<controw_transpose_base<Arg_HP, Arg> >
 	{
-		typedef typename unwrapped_expr<Row>::type arg_type;
-
 		static const bool has_continuous_layout = false;
-		static const bool is_base_aligned = lmat::is_base_aligned<arg_type>::value;
+		static const bool is_base_aligned = lmat::is_base_aligned<Arg>::value;
 		static const bool is_percol_aligned = is_base_aligned;
 		static const bool is_linear_accessible = true;
 	};
 
-	template<class Row>
-	struct transpose_base_traits<regular_row_transpose_base<Row> >
+	template<typename Arg_HP, class Arg>
+	struct transpose_base_traits<regular_row_transpose_base<Arg_HP, Arg> >
 	{
 		static const bool has_continuous_layout = false;
 		static const bool is_base_aligned = false;
@@ -79,34 +75,33 @@ namespace lmat
 	};
 
 
-	template<class Col>
+	// contcol_transpose_base
+
+	template<typename Arg_HP, class Arg>
 	class contcol_transpose_base
-	: public IDenseMatrix<transpose_expr<Col>, typename matrix_traits<Col>::value_type>
+	: public unary_expr_base<Arg_HP, Arg>
+	, public IDenseMatrix<
+	  	  transpose_expr<Arg_HP, Arg>,
+	  	  typename matrix_traits<Arg>::value_type>
 	{
 	public:
-		LMAT_MAT_TRAITS_CDEFS( typename matrix_traits<Col>::value_type )
-
-		typedef typename unwrapped_expr<Col>::type arg_type;
+		typedef unary_expr_base<Arg_HP, Arg> base_t;
+		LMAT_MAT_TRAITS_CDEFS( typename matrix_traits<Arg>::value_type )
 
 	public:
-		LMAT_ENSURE_INLINE contcol_transpose_base(const Col& col)
-		: m_col(col)
+		LMAT_ENSURE_INLINE contcol_transpose_base(const arg_forwarder<Arg_HP, Arg>& arg_fwd)
+		: base_t(arg_fwd)
 		{
-		}
-
-		LMAT_ENSURE_INLINE const arg_type& arg() const
-		{
-			return m_col.get();
 		}
 
 		LMAT_ENSURE_INLINE index_type nelems() const
 		{
-			return arg().nelems();
+			return this->arg().nelems();
 		}
 
 		LMAT_ENSURE_INLINE size_type size() const
 		{
-			return arg().size();
+			return this->arg().size();
 		}
 
 		LMAT_ENSURE_INLINE index_type nrows() const
@@ -116,7 +111,7 @@ namespace lmat
 
 		LMAT_ENSURE_INLINE index_type ncolumns() const
 		{
-			return arg().nrows();
+			return this->arg().nrows();
 		}
 
 		LMAT_ENSURE_INLINE index_t lead_dim() const
@@ -126,12 +121,12 @@ namespace lmat
 
 		LMAT_ENSURE_INLINE const_pointer ptr_data() const
 		{
-			return arg().ptr_data();
+			return this->arg().ptr_data();
 		}
 
 		LMAT_ENSURE_INLINE const_pointer ptr_col(const index_type j) const
 		{
-			return arg().ptr_data() + j;
+			return this->arg().ptr_data() + j;
 		}
 
 		LMAT_ENSURE_INLINE const_reference elem(const index_type, const index_type j) const
@@ -144,54 +139,49 @@ namespace lmat
 			return ptr_data()[idx];
 		}
 
-	private:
-		obj_wrapper<Col> m_col;
 	};
 
-
-	template<class Col, class DMat>
+	template<typename Arg_HP, class Arg, class DMat>
 	LMAT_ENSURE_INLINE
-	void base_evaluate_to(const contcol_transpose_base<Col>& s,
-			IDenseMatrix<DMat, typename matrix_traits<Col>::value_type>& dst)
+	inline void transbase_evaluate_to(const contcol_transpose_base<Arg_HP, Arg>& s,
+			IDenseMatrix<DMat, typename matrix_traits<Arg>::value_type>& dst)
 	{
 		copy(s.ptr_data(), dst.derived());
 	}
 
 
+	// controw_transpose_base
 
-	template<class Row>
+	template<typename Arg_HP, class Arg>
 	class controw_transpose_base
-	: public IDenseMatrix<transpose_expr<Row>, typename matrix_traits<Row>::value_type>
+	: public unary_expr_base<Arg_HP, Arg>
+	, public IDenseMatrix<
+	  	  transpose_expr<Arg_HP, Arg>,
+	  	  typename matrix_traits<Arg>::value_type>
 	{
 	public:
-		LMAT_MAT_TRAITS_CDEFS( typename matrix_traits<Row>::value_type )
-
-		typedef typename unwrapped_expr<Row>::type arg_type;
+		typedef unary_expr_base<Arg_HP, Arg> base_t;
+		LMAT_MAT_TRAITS_CDEFS( typename matrix_traits<Arg>::value_type )
 
 	public:
-		LMAT_ENSURE_INLINE controw_transpose_base(const Row& row)
-		: m_row(row)
+		LMAT_ENSURE_INLINE controw_transpose_base(const arg_forwarder<Arg_HP, Arg>& arg_fwd)
+		: base_t(arg_fwd)
 		{
-		}
-
-		LMAT_ENSURE_INLINE const arg_type& arg() const
-		{
-			return m_row.get();
 		}
 
 		LMAT_ENSURE_INLINE index_type nelems() const
 		{
-			return arg().nelems();
+			return this->arg().nelems();
 		}
 
 		LMAT_ENSURE_INLINE size_type size() const
 		{
-			return arg().size();
+			return this->arg().size();
 		}
 
 		LMAT_ENSURE_INLINE index_type nrows() const
 		{
-			return arg().ncolumns();
+			return this->arg().ncolumns();
 		}
 
 		LMAT_ENSURE_INLINE index_type ncolumns() const
@@ -206,78 +196,67 @@ namespace lmat
 
 		LMAT_ENSURE_INLINE const_pointer ptr_data() const
 		{
-			return arg().ptr_data();
+			return this->arg().ptr_data();
 		}
 
 		LMAT_ENSURE_INLINE const_pointer ptr_col(const index_type) const
 		{
-			return arg().ptr_data();
+			return this->arg().ptr_data();
 		}
 
 		LMAT_ENSURE_INLINE const_reference elem(const index_type i, const index_type) const
 		{
-			return ptr_data()[i];
+			return this->ptr_data()[i];
 		}
 
 		LMAT_ENSURE_INLINE const_reference operator[] (const index_t idx) const
 		{
-			return ptr_data()[idx];
+			return this->ptr_data()[idx];
 		}
-
-	private:
-		obj_wrapper<Row> m_row;
 	};
 
 
-	template<class Row, class DMat>
+	template<typename Arg_HP, class Arg, class DMat>
 	LMAT_ENSURE_INLINE
-	void base_evaluate_to(const controw_transpose_base<Row>& s,
-			IDenseMatrix<DMat, typename matrix_traits<Row>::value_type>& dst)
+	inline void transbase_evaluate_to(const controw_transpose_base<Arg_HP, Arg>& s,
+			IDenseMatrix<DMat, typename matrix_traits<Arg>::value_type>& dst)
 	{
 		copy(s.ptr_data(), dst.derived());
 	}
-*/
 
 
-	/********************************************
-	 *
-	 *  transpose regular row
-	 *
-	 ********************************************/
-/*
-	template<class Row>
+	// regular_row_transpose_base
+
+	template<typename Arg_HP, class Arg>
 	class regular_row_transpose_base
-	: public IMatrixView<transpose_expr<Row>, typename matrix_traits<Row>::value_type>
+	: public unary_expr_base<Arg_HP, Arg>
+	, public IMatrixView<
+	  	  transpose_expr<Arg_HP, Arg>,
+	  	  typename matrix_traits<Arg>::value_type>
 	{
 	public:
-		LMAT_MAT_TRAITS_CDEFS( typename matrix_traits<Row>::value_type )
-
-		typedef typename unwrapped_expr<Row>::type arg_type;
+		typedef unary_expr_base<Arg_HP, Arg> base_t;
+		LMAT_MAT_TRAITS_CDEFS( typename matrix_traits<Arg>::value_type )
 
 	public:
-		LMAT_ENSURE_INLINE regular_row_transpose_base(const Row& row)
-		: m_row(row)
+		LMAT_ENSURE_INLINE regular_row_transpose_base(const arg_forwarder<Arg_HP, Arg>& arg_fwd)
+		: base_t(arg_fwd)
 		{
-		}
-
-		LMAT_ENSURE_INLINE const arg_type& arg() const
-		{
-			return m_row.get();
 		}
 
 		LMAT_ENSURE_INLINE index_type nelems() const
 		{
-			return arg().nelems();
+			return this->arg().nelems();
 		}
 
 		LMAT_ENSURE_INLINE size_type size() const
 		{
-			return arg().size();
+			return this->arg().size();
 		}
 
 		LMAT_ENSURE_INLINE index_type nrows() const
 		{
-			return arg().ncolumns();
+			return this->arg().ncolumns();
 		}
 
 		LMAT_ENSURE_INLINE index_type ncolumns() const
@@ -287,131 +266,108 @@ namespace lmat
 
 		LMAT_ENSURE_INLINE const_reference elem(const index_type i, const index_type) const
 		{
-			return arg().elem(0, i);
+			return this->arg().elem(0, i);
 		}
 
 		LMAT_ENSURE_INLINE const_reference operator[] (const index_t idx) const
 		{
-			return arg().elem(0, idx);
+			return this->arg().elem(0, idx);
 		}
-
-	private:
-		obj_wrapper<Row> m_row;
 	};
 
-	template<class Row, class DMat>
+	template<typename Arg_HP, class Arg, class DMat>
 	LMAT_ENSURE_INLINE
-	void base_evaluate_to(const regular_row_transpose_base<Row>& s,
-			IDenseMatrix<DMat, typename matrix_traits<Row>::value_type>& dst)
+	inline void transbase_evaluate_to(const regular_row_transpose_base<Arg_HP, Arg>& s,
+			IDenseMatrix<DMat, typename matrix_traits<Arg>::value_type>& dst)
 	{
 		const index_t m = s.nrows();
-		typename matrix_traits<Row>::value_type *pd = dst.ptr_data();
-		const typename unwrapped_expr<Row>::type& row = s.arg();
+		typename matrix_traits<Arg>::value_type *pd = dst.ptr_data();
+		const Arg& arg = s.arg();
 
 		for (index_t i = 0; i < m; ++i)
 		{
-			pd[i] = row.elem(0, i);
+			pd[i] = arg.elem(0, i);
 		}
 	}
 
-*/
 
-	/********************************************
-	 *
-	 *  dense transpose
-	 *
-	 ********************************************/
-/*
-	template<class Mat>
+	// dense_transpose_base
+
+	template<typename Arg_HP, class Arg>
 	class dense_transpose_base
-	: public IMatrixXpr<transpose_expr<Mat>, typename matrix_traits<Mat>::value_type>
+	: public unary_expr_base<Arg_HP, Arg>
+	, public IMatrixXpr<transpose_expr<Arg_HP, Arg>,
+		typename matrix_traits<Arg>::value_type>
 	{
 	public:
-		LMAT_MAT_TRAITS_CDEFS( typename matrix_traits<Mat>::value_type )
-
-		typedef typename unwrapped_expr<Mat>::type arg_type;
+		typedef unary_expr_base<Arg_HP, Arg> base_t;
+		LMAT_MAT_TRAITS_CDEFS( typename matrix_traits<Arg>::value_type )
 
 	public:
-		LMAT_ENSURE_INLINE dense_transpose_base(const Mat& expr)
-		: m_mat(expr)
+		LMAT_ENSURE_INLINE dense_transpose_base(const arg_forwarder<Arg_HP, Arg>& arg_fwd)
+		: base_t(arg_fwd)
 		{
-		}
-
-		LMAT_ENSURE_INLINE const arg_type& arg() const
-		{
-			return m_mat.get();
 		}
 
 		LMAT_ENSURE_INLINE index_type nelems() const
 		{
-			return arg().nelems();
+			return this->arg().nelems();
 		}
 
 		LMAT_ENSURE_INLINE size_type size() const
 		{
-			return arg().size();
+			return this->arg().size();
 		}
 
 		LMAT_ENSURE_INLINE index_type nrows() const
 		{
-			return arg().ncolumns();
+			return this->arg().ncolumns();
 		}
 
 		LMAT_ENSURE_INLINE index_type ncolumns() const
 		{
-			return arg().nrows();
+			return this->arg().nrows();
 		}
-
-	private:
-		obj_wrapper<Mat> m_mat;
 	};
 
-	template<class Mat, class DMat>
+	template<typename Arg_HP, class Arg, class DMat>
 	LMAT_ENSURE_INLINE
-	void base_evaluate_to(const dense_transpose_base<Mat>& s,
-			IDenseMatrix<DMat, typename matrix_traits<Mat>::value_type>& dst)
+	inline void transbase_evaluate_to(const dense_transpose_base<Arg_HP, Arg>& s,
+			IDenseMatrix<DMat, typename matrix_traits<Arg>::value_type>& dst)
 	{
-		const typename unwrapped_expr<Mat>::type& mat = s.arg();
+		const Arg& arg = s.arg();
 
-		detail::transpose(mat.nrows(), mat.ncolumns(),
-				mat.ptr_data(), mat.lead_dim(), dst.ptr_data(), dst.lead_dim());
+		detail::transpose(arg.nrows(), arg.ncolumns(),
+				arg.ptr_data(), arg.lead_dim(), dst.ptr_data(), dst.lead_dim());
 	}
-*/
 
-	/********************************************
-	 *
-	 *  col expression transpose
-	 *
-	 ********************************************/
-/*
-	template<class Expr>
+
+	// colxpr_transpose_base
+
+	template<typename Arg_HP, class Arg>
 	class colxpr_transpose_base
-	: public IMatrixXpr<transpose_expr<Expr>, typename matrix_traits<Expr>::value_type>
+	: public unary_expr_base<Arg_HP, Arg>
+	, public IMatrixXpr<transpose_expr<Arg_HP, Arg>,
+		typename matrix_traits<Arg>::value_type>
 	{
 	public:
-		LMAT_MAT_TRAITS_CDEFS( typename matrix_traits<Expr>::value_type )
-
-		typedef typename unwrapped_expr<Expr>::type arg_type;
+		typedef unary_expr_base<Arg_HP, Arg> base_t;
+		LMAT_MAT_TRAITS_CDEFS( typename matrix_traits<Arg>::value_type )
 
 	public:
-		LMAT_ENSURE_INLINE colxpr_transpose_base(const Expr& expr)
-		: m_expr(expr)
+		LMAT_ENSURE_INLINE colxpr_transpose_base(const arg_forwarder<Arg_HP, Arg>& arg_fwd)
+		: base_t(arg_fwd)
 		{
-		}
-
-		LMAT_ENSURE_INLINE const arg_type& arg() const
-		{
-			return m_expr.get();
 		}
 
 		LMAT_ENSURE_INLINE index_type nelems() const
 		{
-			return arg().nelems();
+			return this->arg().nelems();
 		}
 
 		LMAT_ENSURE_INLINE size_type size() const
 		{
-			return arg().size();
+			return this->arg().size();
 		}
 
 		LMAT_ENSURE_INLINE index_type nrows() const
@@ -421,22 +377,19 @@ namespace lmat
 
 		LMAT_ENSURE_INLINE index_type ncolumns() const
 		{
-			return arg().nrows();
+			return this->arg().nrows();
 		}
-
-	private:
-		obj_wrapper<Expr> m_expr;
 	};
 
-	template<class Expr, class DMat>
-	inline
-	void base_evaluate_to(const colxpr_transpose_base<Expr>& s,
-			IDenseMatrix<DMat, typename matrix_traits<Expr>::value_type>& dst)
+	template<typename Arg_HP, class Arg, class DMat>
+	LMAT_ENSURE_INLINE
+	inline void transbase_evaluate_to(const colxpr_transpose_base<Arg_HP, Arg>& s,
+			IDenseMatrix<DMat, typename matrix_traits<Arg>::value_type>& dst)
 	{
-		typedef typename matrix_traits<Expr>::value_type T;
-		const int Len = binary_ctdim<ct_rows<Expr>::value, ct_cols<DMat>::value>::value;
+		typedef typename matrix_traits<Arg>::value_type T;
+		const int Len = binary_ctdim<ct_rows<Arg>::value, ct_cols<DMat>::value>::value;
 
-		const typename unwrapped_expr<Expr>::type& arg = s.arg();
+		const Arg& arg = s.arg();
 
 		if (has_continuous_layout(dst))
 		{
@@ -453,71 +406,60 @@ namespace lmat
 			}
 		}
 	}
-*/
 
-	/********************************************
-	 *
-	 *  row expression transpose
-	 *
-	 ********************************************/
-/*
-	template<class Expr>
+
+	// rowxpr_transpose_base
+
+	template<typename Arg_HP, class Arg>
 	class rowxpr_transpose_base
-	: public IMatrixXpr<transpose_expr<Expr>, typename matrix_traits<Expr>::value_type>
+	: public unary_expr_base<Arg_HP, Arg>
+	, public IMatrixXpr<transpose_expr<Arg_HP, Arg>,
+		typename matrix_traits<Arg>::value_type>
 	{
 	public:
-		LMAT_MAT_TRAITS_CDEFS( typename matrix_traits<Expr>::value_type )
-
-		typedef typename unwrapped_expr<Expr>::type arg_type;
+		typedef unary_expr_base<Arg_HP, Arg> base_t;
+		LMAT_MAT_TRAITS_CDEFS( typename matrix_traits<Arg>::value_type )
 
 	public:
-		LMAT_ENSURE_INLINE rowxpr_transpose_base(const Expr& expr)
-		: m_expr(expr)
+		LMAT_ENSURE_INLINE rowxpr_transpose_base(const arg_forwarder<Arg_HP, Arg>& arg_fwd)
+		: base_t(arg_fwd)
 		{
-		}
-
-		LMAT_ENSURE_INLINE const arg_type& arg() const
-		{
-			return m_expr.get();
 		}
 
 		LMAT_ENSURE_INLINE index_type nelems() const
 		{
-			return arg().nelems();
+			return this->arg().nelems();
 		}
 
 		LMAT_ENSURE_INLINE size_type size() const
 		{
-			return arg().size();
+			return this->arg().size();
 		}
 
 		LMAT_ENSURE_INLINE index_type nrows() const
 		{
-			return arg().ncolumns();
+			return this->arg().ncolumns();
 		}
 
 		LMAT_ENSURE_INLINE index_type ncolumns() const
 		{
 			return 1;
 		}
-
-	private:
-		obj_wrapper<Expr> m_expr;
 	};
 
-	template<class Expr, class DMat>
-	inline
-	void base_evaluate_to(const rowxpr_transpose_base<Expr>& s,
-			IDenseMatrix<DMat, typename matrix_traits<Expr>::value_type>& dst)
+	template<typename Arg_HP, class Arg, class DMat>
+	LMAT_ENSURE_INLINE
+	inline void transbase_evaluate_to(const rowxpr_transpose_base<Arg_HP, Arg>& s,
+			IDenseMatrix<DMat, typename matrix_traits<Arg>::value_type>& dst)
 	{
-		typedef typename matrix_traits<Expr>::value_type T;
-		const int Len = binary_ctdim<ct_cols<Expr>::value, ct_rows<DMat>::value>::value;
+		typedef typename matrix_traits<Arg>::value_type T;
+		const int Len = binary_ctdim<ct_cols<Arg>::value, ct_rows<DMat>::value>::value;
 
-		const typename unwrapped_expr<Expr>::type& arg = s.arg();
+		const Arg& arg = s.arg();
 		ref_matrix<T, 1, Len> dview(dst.ptr_data(), 1, arg.ncolumns());
 		default_evaluate(arg, dview);
 	}
-*/
+
 
 
 	/********************************************
@@ -525,248 +467,228 @@ namespace lmat
 	 *  generic transpose
 	 *
 	 ********************************************/
-/*
-	template<class Expr>
+
+	template<typename Arg_HP, class Arg>
 	class generic_transpose_base
-	: public IMatrixXpr<transpose_expr<Expr>, typename matrix_traits<Expr>::value_type>
+	: public unary_expr_base<Arg_HP, Arg>
+	, public IMatrixXpr<transpose_expr<Arg_HP, Arg>,
+		typename matrix_traits<Arg>::value_type>
 	{
 	public:
-		LMAT_MAT_TRAITS_CDEFS( typename matrix_traits<Expr>::value_type )
-
-		typedef typename unwrapped_expr<Expr>::type arg_type;
+		typedef unary_expr_base<Arg_HP, Arg> base_t;
+		LMAT_MAT_TRAITS_CDEFS( typename matrix_traits<Arg>::value_type )
 
 	public:
-		LMAT_ENSURE_INLINE generic_transpose_base(const Expr& expr)
-		: m_expr(expr)
+		LMAT_ENSURE_INLINE generic_transpose_base(const arg_forwarder<Arg_HP, Arg>& arg_fwd)
+		: base_t(arg_fwd)
 		{
-		}
-
-		LMAT_ENSURE_INLINE const arg_type& arg() const
-		{
-			return m_expr.get();
 		}
 
 		LMAT_ENSURE_INLINE index_type nelems() const
 		{
-			return arg().nelems();
+			return this->arg().nelems();
 		}
 
 		LMAT_ENSURE_INLINE size_type size() const
 		{
-			return arg().size();
+			return this->arg().size();
 		}
 
 		LMAT_ENSURE_INLINE index_type nrows() const
 		{
-			return arg().ncolumns();
+			return this->arg().ncolumns();
 		}
 
 		LMAT_ENSURE_INLINE index_type ncolumns() const
 		{
-			return arg().nrows();
+			return this->arg().nrows();
 		}
-
-	private:
-		obj_wrapper<Expr> m_expr;
 	};
 
-	template<class Expr, class DMat>
+	template<typename Arg_HP, class Arg, class DMat>
 	LMAT_ENSURE_INLINE
-	void base_evaluate_to(const generic_transpose_base<Expr>& s,
-			IDenseMatrix<DMat, typename matrix_traits<Expr>::value_type>& dst)
+	inline void transbase_evaluate_to(const generic_transpose_base<Arg_HP, Arg>& s,
+			IDenseMatrix<DMat, typename matrix_traits<Arg>::value_type>& dst)
 	{
-		dense_matrix<typename matrix_traits<Expr>::value_type,
-			ct_rows<Expr>::value,
-			ct_cols<Expr>::value> mat = s.arg();
+		dense_matrix<typename matrix_traits<Arg>::value_type,
+			ct_rows<Arg>::value,
+			ct_cols<Arg>::value> mat = s.arg();
 
 		detail::transpose(mat.nrows(), mat.ncolumns(),
 				mat.ptr_data(), mat.lead_dim(), dst.ptr_data(), dst.lead_dim());
 	}
-*/
+
 
 	/********************************************
 	 *
 	 *  base type map
 	 *
 	 ********************************************/
-/*
-	template<typename Expr_>
+
+	template<typename Arg_HP, class Arg>
 	struct matrix_transpose_base_map
 	{
-		typedef typename unwrapped_expr<Expr_>::type Expr;
-
 		typedef typename
-				if_<is_dense_mat<Expr>,
+				if_<is_dense_mat<Arg>,
 					// is dense
 					typename
-					if_<ct_is_col<Expr>,
+					if_<ct_is_col<Arg>,
 						// is column
-						contcol_transpose_base<Expr_>,
+						contcol_transpose_base<Arg_HP, Arg>,
 						typename
-						if_<ct_is_row<Expr>,
+						if_<ct_is_row<Arg>,
 							// is row
 							typename
-							if_<ct_has_continuous_layout<Expr>,
-								controw_transpose_base<Expr_>,
-								regular_row_transpose_base<Expr_>
+							if_<ct_has_continuous_layout<Arg>,
+								controw_transpose_base<Arg_HP, Arg>,
+								regular_row_transpose_base<Arg_HP, Arg>
 							>::type,
 							// is dense matrix (non-vector)
-							dense_transpose_base<Expr_>
+							dense_transpose_base<Arg_HP, Arg>
 						>::type
 					>::type,
 					// non dense
 					typename
-					if_<ct_is_row<Expr>,
+					if_<ct_is_row<Arg>,
 						// is_row
-						rowxpr_transpose_base<Expr_>,
+						rowxpr_transpose_base<Arg_HP, Arg>,
 						typename
-						if_<ct_is_col<Expr>,
+						if_<ct_is_col<Arg>,
 							// is column
-							colxpr_transpose_base<Expr_>,
+							colxpr_transpose_base<Arg_HP, Arg>,
 							// generic non-vector
-							generic_transpose_base<Expr_>
+							generic_transpose_base<Arg_HP, Arg>
 						>::type
 					>::type
 				>::type type;
 	};
-*/
+
 
 	/********************************************
 	 *
 	 *  reflection
 	 *
 	 ********************************************/
-/*
-	template<class Col>
-	LMAT_ENSURE_INLINE
-	const char* trans_base_typename(const contcol_transpose_base<Col>& )
-	{
-		return "contcol";
-	}
 
-	template<class Row>
-	LMAT_ENSURE_INLINE
-	const char* trans_base_typename(const controw_transpose_base<Row>& )
-	{
-		return "controw";
-	}
+#define LMAT_DEFINE_TRANS_BASE_TYPENAME( tyname ) \
+	template<typename Arg_HP, class Arg> \
+	LMAT_ENSURE_INLINE \
+	inline const char* trans_base_typename(const tyname##_transpose_base<Arg_HP, Arg>& ) \
+	{ return #tyname; }
 
-	template<class Row>
-	LMAT_ENSURE_INLINE
-	const char* trans_base_typename(const regular_row_transpose_base<Row>& )
-	{
-		return "regular_row";
-	}
+	LMAT_DEFINE_TRANS_BASE_TYPENAME( contcol )
+	LMAT_DEFINE_TRANS_BASE_TYPENAME( controw )
+	LMAT_DEFINE_TRANS_BASE_TYPENAME( regular_row )
+	LMAT_DEFINE_TRANS_BASE_TYPENAME( dense )
 
-	template<class Mat>
-	LMAT_ENSURE_INLINE
-	const char* trans_base_typename(const dense_transpose_base<Mat>& )
-	{
-		return "dense";
-	}
+	LMAT_DEFINE_TRANS_BASE_TYPENAME( colxpr )
+	LMAT_DEFINE_TRANS_BASE_TYPENAME( rowxpr )
+	LMAT_DEFINE_TRANS_BASE_TYPENAME( generic )
 
-	template<class Expr>
-	LMAT_ENSURE_INLINE
-	const char* trans_base_typename(const colxpr_transpose_base<Expr>& )
-	{
-		return "colxpr";
-	}
-
-	template<class Expr>
-	LMAT_ENSURE_INLINE
-	const char* trans_base_typename(const rowxpr_transpose_base<Expr>& )
-	{
-		return "rowxpr";
-	}
-
-	template<class Expr>
-	LMAT_ENSURE_INLINE
-	const char* trans_base_typename(const generic_transpose_base<Expr>& )
-	{
-		return "generic";
-	}
-*/
 
 	/********************************************
 	 *
 	 *  transpose_expr classes
 	 *
 	 ********************************************/
-/*
+
 	// traits
 
-	template<class Expr>
-	struct matrix_traits<transpose_expr<Expr> >
+	template<typename Arg_HP, class Arg>
+	struct matrix_traits<transpose_expr<Arg_HP, Arg> >
 	{
 		static const int num_dimensions = 2;
-		static const int compile_time_num_rows = ct_cols<Expr>::value;
-		static const int compile_time_num_cols = ct_rows<Expr>::value;
+		static const int compile_time_num_rows = ct_cols<Arg>::value;
+		static const int compile_time_num_cols = ct_rows<Arg>::value;
 
 		static const bool is_readonly = true;
-		typedef typename matrix_traits<Expr>::value_type value_type;
+		typedef typename matrix_traits<Arg>::value_type value_type;
+		typedef typename matrix_traits<Arg>::domain domain;
 	};
 
-	template<class Expr>
-	struct ct_has_continuous_layout<transpose_expr<Expr> >
+	template<typename Arg_HP, class Arg>
+	struct ct_has_continuous_layout<transpose_expr<Arg_HP, Arg> >
 	{
-		typedef typename matrix_transpose_base_map<Expr>::type base_t;
+		typedef typename matrix_transpose_base_map<Arg_HP, Arg>::type base_t;
 		static const bool value = transpose_base_traits<base_t>::has_continuous_layout;
 	};
 
-	template<class Expr>
-	struct is_base_aligned<transpose_expr<Expr> >
+	template<typename Arg_HP, class Arg>
+	struct is_base_aligned<transpose_expr<Arg_HP, Arg> >
 	{
-		typedef typename matrix_transpose_base_map<Expr>::type base_t;
+		typedef typename matrix_transpose_base_map<Arg_HP, Arg>::type base_t;
 		static const bool value = transpose_base_traits<base_t>::is_base_aligned;
 	};
 
-	template<class Expr>
-	struct is_percol_aligned<transpose_expr<Expr> >
+	template<typename Arg_HP, class Arg>
+	struct is_percol_aligned<transpose_expr<Arg_HP, Arg> >
 	{
-		typedef typename matrix_transpose_base_map<Expr>::type base_t;
+		typedef typename matrix_transpose_base_map<Arg_HP, Arg>::type base_t;
 		static const bool value = transpose_base_traits<base_t>::is_percol_aligned;
 	};
 
-	template<class Expr>
-	struct is_linear_accessible<transpose_expr<Expr> >
+	template<typename Arg_HP, class Arg>
+	struct is_linear_accessible<transpose_expr<Arg_HP, Arg> >
 	{
-		typedef typename matrix_transpose_base_map<Expr>::type base_t;
+		typedef typename matrix_transpose_base_map<Arg_HP, Arg>::type base_t;
 		static const bool value = transpose_base_traits<base_t>::is_linear_accessible;
 	};
 
-	template<class Expr, class Dst>
-	struct default_evalctx<transpose_expr<Expr>, Dst>
-	{
-		typedef transpose_evalctx<Expr, Dst> type;
-	};
 
 	// class
 
-	template<class Expr>
-	class transpose_expr : public matrix_transpose_base_map<Expr>::type
+	template<typename Arg_HP, class Arg>
+	class transpose_expr : public matrix_transpose_base_map<Arg_HP, Arg>::type
 	{
-		typedef typename matrix_transpose_base_map<Expr>::type base_t;
+		typedef typename matrix_transpose_base_map<Arg_HP, Arg>::type base_t;
 
 	public:
 		LMAT_ENSURE_INLINE
-		transpose_expr(const Expr& expr)
-		: base_t(expr)
+		transpose_expr(const arg_forwarder<Arg_HP, Arg>& arg_fwd)
+		: base_t(arg_fwd)
 		{
 		}
 	};
+
+
+	template<class Arg>
+	struct unary_expr_verifier<transpose_t, Arg>
+	{
+		static const bool value = is_mat_xpr<Arg>::value;
+	};
+
+	template<typename Arg_HP, class Arg>
+	struct unary_expr_map<transpose_t, Arg_HP, Arg>
+	{
+		typedef transpose_expr<Arg_HP, Arg> type;
+
+		LMAT_ENSURE_INLINE
+		static type get(transpose_t, const arg_forwarder<Arg_HP, Arg>& arg_fwd)
+		{
+			return type(arg_fwd);
+		}
+	};
+
 
 	// evaluation
 
-	template<class Src, class Dst>
-	struct transpose_evalctx
+	struct matrix_transpose_policy { };
+
+	template<typename Arg_HP, class Arg, class Dst>
+	struct default_matrix_eval_policy<transpose_expr<Arg_HP, Arg>, Dst>
 	{
-		LMAT_ENSURE_INLINE
-		static void evaluate(const transpose_expr<Src>& expr, Dst& dst)
-		{
-			base_evaluate_to(expr, dst);
-		}
+		typedef matrix_transpose_policy type;
 	};
-*/
+
+	template<typename Arg_HP, class Arg, class Dst>
+	LMAT_ENSURE_INLINE
+	inline void evaluate(
+			const transpose_expr<Arg_HP, Arg>& expr,
+			IDenseMatrix<Dst, typename matrix_traits<Arg>::value_type>& dst,
+			matrix_transpose_policy)
+	{
+		transbase_evaluate_to(expr, dst.derived());
+	}
 
 
 }

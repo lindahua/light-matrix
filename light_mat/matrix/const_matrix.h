@@ -120,7 +120,7 @@ namespace lmat
 		typedef const_matrix<T, N, M> type;
 
 		LMAT_ENSURE_INLINE
-		static type get(const arg_forwarder<Arg_HP, const_matrix<T, M, N> >& arg_fwd)
+		static type get(transpose_t, const arg_forwarder<Arg_HP, const_matrix<T, M, N> >& arg_fwd)
 		{
 			const const_matrix<T, M, N>& arg = arg_fwd.arg;
 			return type(arg.ncolumns(), arg.nrows(), arg.value());
