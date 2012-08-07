@@ -182,13 +182,13 @@ namespace lmat
 	inline colwise_reduce_t<Fun> colwise_reduce(const Fun& f)
 	{
 		return colwise_reduce_t<Fun>(f);
-	};
+	}
 
 	template<class Fun>
 	inline rowwise_reduce_t<Fun> rowwise_reduce(const Fun& f)
 	{
 		return rowwise_reduce_t<Fun>(f);
-	};
+	}
 
 
 	template<class Fun, class Arg>
