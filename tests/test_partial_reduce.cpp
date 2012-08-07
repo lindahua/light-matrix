@@ -78,7 +78,7 @@ MN_CASE( rowwise_reduce, sum )
 	ASSERT_VEC_EQ( m, r, r0 );
 }
 
-/*
+
 MN_CASE( colwise_reduce, mean )
 {
 	typedef dense_matrix<double, M, N> mat_t;
@@ -672,7 +672,7 @@ MN_CASE( rowwise_reduce, nrmdot )
 	ASSERT_VEC_APPROX( m, r, r0, 1.0e-12 );
 }
 
-*/
+
 
 BEGIN_TPACK( colwise_sum )
 	ADD_MN_CASE_3X3( colwise_reduce, sum, DM, DN )
@@ -682,13 +682,13 @@ BEGIN_TPACK( rowwise_sum )
 	ADD_MN_CASE_3X3( rowwise_reduce, sum, DM, DN )
 END_TPACK
 
-/*
+
 BEGIN_TPACK( colwise_mean )
 	ADD_MN_CASE_3X3( colwise_reduce, mean, DM, DN )
 END_TPACK
 
 BEGIN_TPACK( rowwise_mean )
-	ADD_MN_CASE_3X3( colwise_reduce, mean, DM, DN )
+	ADD_MN_CASE_3X3( rowwise_reduce, mean, DM, DN )
 END_TPACK
 
 
@@ -714,15 +714,16 @@ BEGIN_TPACK( colwise_dot )
 END_TPACK
 
 BEGIN_TPACK( rowwise_dot )
-	ADD_MN_CASE_3X3( colwise_reduce, dot, DM, DN )
+	ADD_MN_CASE_3X3( rowwise_reduce, dot, DM, DN )
 END_TPACK
+
 
 BEGIN_TPACK( colwise_L1norm )
 	ADD_MN_CASE_3X3( colwise_reduce, L1norm, DM, DN )
 END_TPACK
 
 BEGIN_TPACK( rowwise_L1norm )
-	ADD_MN_CASE_3X3( colwise_reduce, L1norm, DM, DN )
+	ADD_MN_CASE_3X3( rowwise_reduce, L1norm, DM, DN )
 END_TPACK
 
 BEGIN_TPACK( colwise_sqL2norm )
@@ -730,7 +731,7 @@ BEGIN_TPACK( colwise_sqL2norm )
 END_TPACK
 
 BEGIN_TPACK( rowwise_sqL2norm )
-	ADD_MN_CASE_3X3( colwise_reduce, sqL2norm, DM, DN )
+	ADD_MN_CASE_3X3( rowwise_reduce, sqL2norm, DM, DN )
 END_TPACK
 
 BEGIN_TPACK( colwise_L2norm )
@@ -738,7 +739,7 @@ BEGIN_TPACK( colwise_L2norm )
 END_TPACK
 
 BEGIN_TPACK( rowwise_L2norm )
-	ADD_MN_CASE_3X3( colwise_reduce, L2norm, DM, DN )
+	ADD_MN_CASE_3X3( rowwise_reduce, L2norm, DM, DN )
 END_TPACK
 
 BEGIN_TPACK( colwise_Linfnorm )
@@ -746,7 +747,7 @@ BEGIN_TPACK( colwise_Linfnorm )
 END_TPACK
 
 BEGIN_TPACK( rowwise_Linfnorm )
-	ADD_MN_CASE_3X3( colwise_reduce, Linfnorm, DM, DN )
+	ADD_MN_CASE_3X3( rowwise_reduce, Linfnorm, DM, DN )
 END_TPACK
 
 BEGIN_TPACK( colwise_nrmdot )
@@ -756,12 +757,12 @@ END_TPACK
 BEGIN_TPACK( rowwise_nrmdot )
 	ADD_MN_CASE_3X3( rowwise_reduce, nrmdot, DM, DN )
 END_TPACK
-*/
+
 
 BEGIN_MAIN_SUITE
 	ADD_TPACK( colwise_sum )
 	ADD_TPACK( rowwise_sum )
-/*
+
 	ADD_TPACK( colwise_mean )
 	ADD_TPACK( rowwise_mean )
 
@@ -788,7 +789,7 @@ BEGIN_MAIN_SUITE
 
 	ADD_TPACK( colwise_nrmdot )
 	ADD_TPACK( rowwise_nrmdot )
-*/
+
 END_MAIN_SUITE
 
 
