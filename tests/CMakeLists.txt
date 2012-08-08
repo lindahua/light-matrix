@@ -213,7 +213,7 @@ set(MAT_REPEAT_HS
     
 add_executable(test_vec_rep ${MAT_REPEAT_HS} test_vec_rep.cpp)
 
-# add_executable(test_cpd_ewise ${MATRIX_EVAL_HS} test_cpd_ewise.cpp)
+add_executable(test_cpd_ewise ${MATRIX_EVAL_HS} test_cpd_ewise.cpp)
 
 set(MAT_REDUC_HS
     ${MATRIX_HS}
@@ -254,7 +254,7 @@ set(LMAT_TEST_NAMES
 	test_mat_ecomp
 	test_mat_elogical
 	test_vec_rep
-    # test_cpd_ewise
+    test_cpd_ewise
 	test_mat_reduce
 	test_partial_reduce
 )

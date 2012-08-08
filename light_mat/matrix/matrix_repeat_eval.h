@@ -481,10 +481,10 @@ namespace lmat
 		static const int M = ct_rows<Arg>::value;
 
 		typedef typename
-				if_c<NE == 1,
+				if_c<N == 1,
 					single_vec_percol_mvisitor<Arg, ME, NE>,
 					typename
-					if_c<ME == 1,
+					if_c<M == 1,
 						rep_scalar_percol_mvisitor<Arg>,
 						repcol_percol_mvisitor<Arg>
 					>::type
@@ -505,10 +505,10 @@ namespace lmat
 		static const int N = ct_cols<Arg>::value;
 
 		typedef typename
-				if_c<ME == 1,
+				if_c<M == 1,
 					single_vec_percol_mvisitor<Arg, ME, NE>,
 					typename
-					if_c<NE == 1,
+					if_c<N == 1,
 						rep_scalar_percol_mvisitor<Arg>,
 						reprow_percol_mvisitor<Arg>
 					>::type

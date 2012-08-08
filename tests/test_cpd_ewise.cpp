@@ -106,7 +106,7 @@ MN_CASE( cpd_expr, axpy_cast )
 	fill_ran(Y, -5.0, 5.0);
 	const float tol = 1.0e-5f;
 
-	dense_matrix<float, M, N> Z = (a * X + Y).template cast<float>();
+	dense_matrix<float, M, N> Z = cast(a * X + Y, type<float>());
 	dense_matrix<float, M, N> R(m, n);
 
 	for (index_t j = 0; j < n; ++j)
@@ -134,9 +134,9 @@ MN_CASE( cpd_expr, pwise_sqdist )
 	const double tol = 1.0e-12;
 
 	dense_matrix<double, M, N> Y =
-			  repcol(sqr(vx), n)
-			+ reprow(sqr(vy), m)
-			- 2.0 * repcol(vx, n) * reprow(vy, m);
+			  hrep(sqr(vx), n)
+			+ vrep(sqr(vy), m)
+			- 2.0 * hrep(vx, n) * vrep(vy, m);
 
 	dense_matrix<double, M, N> R(m, n);
 
@@ -165,9 +165,9 @@ MN_CASE( cpd_expr, pwise_sqdist2 )
 
 
 	dense_matrix<double, M, N> Y =
-			  repcol(sqr(vx), n)
-			+ repcol(sqr(vy), m).trans()
-			- 2.0 * repcol(vx, n) * reprow(vy.trans(), m);
+			  hrep(sqr(vx), n)
+			+ hrep(sqr(vy), m).trans()
+			- 2.0 * hrep(vx, n) * vrep(vy.trans(), m);
 
 	dense_matrix<double, M, N> R(m, n);
 
@@ -199,7 +199,6 @@ END_TPACK
 BEGIN_TPACK( cpd_pwise_sqdist )
 	ADD_MN_CASE_3X3( cpd_expr, pwise_sqdist, 5, 6 )
 END_TPACK
-
 
 BEGIN_TPACK( cpd_pwise_sqdist2 )
 	ADD_MN_CASE_3X3( cpd_expr, pwise_sqdist2, 5, 6 )
