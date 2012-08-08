@@ -50,7 +50,7 @@ namespace lmat
 	template<typename Arg_HP, class Arg>
 	struct transpose_base_traits<contcol_transpose_base<Arg_HP, Arg> >
 	{
-		static const bool has_continuous_layout = false;
+		static const bool has_continuous_layout = true;
 		static const bool is_base_aligned = lmat::is_base_aligned<Arg>::value;
 		static const bool is_percol_aligned = false;
 		static const bool is_linear_accessible = true;
@@ -59,7 +59,7 @@ namespace lmat
 	template<typename Arg_HP, class Arg>
 	struct transpose_base_traits<controw_transpose_base<Arg_HP, Arg> >
 	{
-		static const bool has_continuous_layout = false;
+		static const bool has_continuous_layout = true;
 		static const bool is_base_aligned = lmat::is_base_aligned<Arg>::value;
 		static const bool is_percol_aligned = is_base_aligned;
 		static const bool is_linear_accessible = true;
