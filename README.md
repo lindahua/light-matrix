@@ -1,4 +1,4 @@
-light-matrix
+light-array
 ============
 
-A Light-weight and Fast Template Matrix Library
+A Light-weight and Fast Template Array Library
