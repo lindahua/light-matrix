@@ -13,8 +13,7 @@
 using namespace lmat;
 using namespace lmat::test;
 
-template<class Arr>
-void fill_lin(IArray<Arr, double>& arr)
+void fill_lin(dblock<double>& arr)
 {
 	for (index_t i = 0; i < arr.nelems(); ++i)
 		arr[i] = double(i + 1);
@@ -25,10 +24,10 @@ MN_CASE( mat_eval, dense_mat )
 	const index_t m = M == 0 ? 4 : M;
 	const index_t n = N == 0 ? 5 : N;
 
-	scoped_array<double> s(m * n);
+	dblock<double> s(m * n);
 	fill_lin(s);
 
-	dense_matrix<double, M, N> a(m, n, copy_from(s.ptr_begin()));
+	dense_matrix<double, M, N> a(m, n, copy_from(s.ptr_data()));
 	dense_matrix<double, M, N> r = eval(a);
 
 	ASSERT_EQ( r.nrows(), m );
@@ -43,10 +42,10 @@ MN_CASE( mat_eval, ref_mat )
 	const index_t m = M == 0 ? 4 : M;
 	const index_t n = N == 0 ? 5 : N;
 
-	scoped_array<double> s(m * n);
+	dblock<double> s(m * n);
 	fill_lin(s);
 
-	ref_matrix<double, M, N> a(s.ptr_begin(), m, n);
+	ref_matrix<double, M, N> a(s.ptr_data(), m, n);
 	dense_matrix<double, M, N> r = eval(a);
 
 	ASSERT_EQ( r.nrows(), m );
@@ -62,10 +61,10 @@ MN_CASE( mat_eval, ref_mat_ex )
 	const index_t m = M == 0 ? 4 : M;
 	const index_t n = N == 0 ? 5 : N;
 
-	scoped_array<double> s(ldim * n);
+	dblock<double> s(ldim * n);
 	fill_lin(s);
 
-	ref_matrix_ex<double, M, N> a(s.ptr_begin(), m, n, ldim);
+	ref_matrix_ex<double, M, N> a(s.ptr_data(), m, n, ldim);
 	dense_matrix<double, M, N> r = eval(a);
 
 	ASSERT_EQ( r.nrows(), m );

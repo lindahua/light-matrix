@@ -64,8 +64,8 @@ MN_CASE( linear_veval, cached_linear )
 			"Scheme type verification failed");
 #endif
 
-	scoped_array<double> s(ldim * n);
-	mat_ex a(s.ptr_begin(), m, n, ldim);
+	dblock<double> s(ldim * n);
+	mat_ex a(s.ptr_data(), m, n, ldim);
 
 	visitor_t visitor(a);
 	const ILinearMatrixScalarVisitor<visitor_t, double>& vis_r = visitor;
@@ -125,8 +125,8 @@ MN_CASE( percol_veval, dense_percol )
 			"Scheme type verification failed");
 #endif
 
-	scoped_array<double> s(ldim * n);
-	mat_ex a(s.ptr_begin(), m, n, ldim);
+	dblock<double> s(ldim * n);
+	mat_ex a(s.ptr_data(), m, n, ldim);
 	visitor_t visitor(a);
 	const IPerColMatrixScalarVisitor<visitor_t, double>& vis_r = visitor;
 
@@ -150,8 +150,8 @@ MN_CASE( percol_veval, cached_percol )
 	typedef ref_matrix_ex<double, M, N> mat_ex;
 	typedef cached_percol_mvisitor<double, M, N> visitor_t;
 
-	scoped_array<double> s(ldim * n);
-	mat_ex a(s.ptr_begin(), m, n, ldim);
+	dblock<double> s(ldim * n);
+	mat_ex a(s.ptr_data(), m, n, ldim);
 	visitor_t visitor(a);
 	const IPerColMatrixScalarVisitor<visitor_t, double>& vis_r = visitor;
 
@@ -190,10 +190,9 @@ MN_CASE( percol_veval, const_percol )
 
 	for (index_t j = 0; j < n; ++j)
 	{
-		nil_type st = vis_r.col_state(j);
 		for (index_t i = 0; i < m; ++i)
 		{
-			ASSERT_EQ(vis_r.get_scalar(i, st), val);
+			ASSERT_EQ(vis_r.get_scalar(i, nil_t()), val);
 		}
 	}
 }
@@ -208,7 +207,7 @@ MN_CASE( eval_by_scalars, cont_to_cont )
 	dense_matrix<double, M, N> a(m, n);
 	for (index_t i = 0; i < m * n; ++i) a[i] = double(i+2);
 
-	dense_matrix<double, M, N> b(m, n, zeros<double>());
+	dense_matrix<double, M, N> b(m, n, zero<double>());
 
 	linear_by_scalars_evaluate(a, b);
 	ASSERT_MAT_EQ(m, n, a, b);
@@ -228,9 +227,8 @@ MN_CASE( eval_by_scalars, cont_to_ext )
 	dense_matrix<double, M, N> a(m, n);
 	for (index_t i = 0; i < m * n; ++i) a[i] = double(i+2);
 
-	scoped_array<double> sb(ldim_b * n);
-	fill(sb, 0.0);
-	ref_matrix_ex<double, M, N> b(sb.ptr_begin(), m, n, ldim_b);
+	dblock<double> sb(ldim_b * n, fill(0.0));
+	ref_matrix_ex<double, M, N> b(sb.ptr_data(), m, n, ldim_b);
 
 	percol_by_scalars_evaluate(a, b);
 	ASSERT_MAT_EQ(m, n, a, b);
@@ -242,11 +240,11 @@ MN_CASE( eval_by_scalars, ext_to_cont )
 	const index_t m = M == 0 ? 5 : M;
 	const index_t n = N == 0 ? 6 : N;
 
-	scoped_array<double> sa(ldim_a * n);
+	dblock<double> sa(ldim_a * n);
 	for (index_t i = 0; i < ldim_a * n; ++i) sa[i] = double(i+2);
 
-	ref_matrix_ex<double, M, N> a(sa.ptr_begin(), m, n, ldim_a);
-	dense_matrix<double, M, N> b(m, n, fill_value(0.0));
+	ref_matrix_ex<double, M, N> a(sa.ptr_data(), m, n, ldim_a);
+	dense_matrix<double, M, N> b(m, n, fill(0.0));
 
 	linear_by_scalars_evaluate(a, b);
 	ASSERT_MAT_EQ(m, n, a, b);
@@ -264,14 +262,13 @@ MN_CASE( eval_by_scalars, ext_to_ext )
 	const index_t m = M == 0 ? 5 : M;
 	const index_t n = N == 0 ? 6 : N;
 
-	scoped_array<double> sa(ldim_a * n);
+	dblock<double> sa(ldim_a * n);
 	for (index_t i = 0; i < ldim_a * n; ++i) sa[i] = double(i+2);
 
-	scoped_array<double> sb(ldim_b * n);
-	fill(sb, 0.0);
+	dblock<double> sb(ldim_b * n, fill(0.0));
 
-	ref_matrix_ex<double, M, N> a(sa.ptr_begin(), m, n, ldim_a);
-	ref_matrix_ex<double, M, N> b(sb.ptr_begin(), m, n, ldim_b);
+	ref_matrix_ex<double, M, N> a(sa.ptr_data(), m, n, ldim_a);
+	ref_matrix_ex<double, M, N> b(sb.ptr_data(), m, n, ldim_b);
 
 	percol_by_scalars_evaluate(a, b);
 	ASSERT_MAT_EQ(m, n, a, b);

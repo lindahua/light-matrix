@@ -304,7 +304,7 @@ namespace lmat
 	template<typename T, class Arg, int N>
 	LMAT_ENSURE_INLINE
 	inline typename unary_expr_map<hrep_t<N>, ref_arg_t, Arg>::type
-	hrep(const IMatrixXpr<Arg, T>& arg, fixed_dim<N>)
+	hrep(const IMatrixXpr<Arg, T>& arg, fix_int<N>)
 	{
 		return make_expr(hrep_t<N>(), ref_arg(arg.derived()));
 	}
@@ -320,7 +320,7 @@ namespace lmat
 	template<typename T, class Arg, int M>
 	LMAT_ENSURE_INLINE
 	inline typename unary_expr_map<vrep_t<M>, ref_arg_t, Arg>::type
-	vrep(const IMatrixXpr<Arg, T>& arg, fixed_dim<M>)
+	vrep(const IMatrixXpr<Arg, T>& arg, fix_int<M>)
 	{
 		return make_expr(vrep_t<M>(), ref_arg(arg.derived()));
 	}

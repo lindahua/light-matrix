@@ -74,11 +74,11 @@ MN_CASE( dense_mat, generates )
 	const index_t m = M == 0 ? 3 : M;
 	const index_t n = N == 0 ? 4 : N;
 
-	scoped_array<double> ref(m * n);
+	dblock<double> ref(m * n);
 
 	// zeros
 
-	dense_matrix<double, M, N> a0(m, n, zeros<double>());
+	dense_matrix<double, M, N> a0(m, n, zero<double>());
 	for (index_t i = 0; i < m * n; ++i) ref[i] = double(0);
 
 	ASSERT_EQ(a0.nrows(), m);
@@ -90,7 +90,7 @@ MN_CASE( dense_mat, generates )
 	// fill_value
 
 	const double v1 = 2.5;
-	dense_matrix<double, M, N> a1(m, n, fill_value(v1));
+	dense_matrix<double, M, N> a1(m, n, fill(v1));
 	for (index_t i = 0; i < m * n; ++i) ref[i] = v1;
 
 	ASSERT_EQ(a1.nrows(), m);
@@ -102,7 +102,7 @@ MN_CASE( dense_mat, generates )
 	// copy_value
 
 	for (index_t i = 0; i < m * n; ++i) ref[i] = double(i + 2);
-	dense_matrix<double, M, N> a2(m, n, copy_from(ref.ptr_begin()));
+	dense_matrix<double, M, N> a2(m, n, copy_from(ref.ptr_data()));
 
 	ASSERT_EQ(a2.nrows(), m);
 	ASSERT_EQ(a2.ncolumns(), n);
@@ -117,10 +117,10 @@ MN_CASE( dense_mat, copy_constructs )
 	const index_t m = M == 0 ? 3 : M;
 	const index_t n = N == 0 ? 4 : N;
 
-	scoped_array<double> ref(m * n);
+	dblock<double> ref(m * n);
 
 	for (index_t i = 0; i < m * n; ++i) ref[i] = double(i + 2);
-	dense_matrix<double, M, N> a(m, n, copy_from(ref.ptr_begin()));
+	dense_matrix<double, M, N> a(m, n, copy_from(ref.ptr_data()));
 
 	dense_matrix<double, M, N> a2(a);
 
@@ -140,10 +140,10 @@ MN_CASE( dense_mat, access )
 	const index_t m = M == 0 ? 3 : M;
 	const index_t n = N == 0 ? 4 : N;
 
-	scoped_array<double> ref(m * n);
+	dblock<double> ref(m * n);
 
 	for (index_t i = 0; i < m * n; ++i) ref[i] = double(i + 2);
-	dense_matrix<double, M, N> a(m, n, copy_from(ref.ptr_begin()));
+	dense_matrix<double, M, N> a(m, n, copy_from(ref.ptr_data()));
 	const dense_matrix<double, M, N>& ac = a;
 
 	ASSERT_VEC_EQ(m * n, a, ref);
@@ -234,10 +234,10 @@ MN_CASE( dense_mat, assign )
 	const index_t m = M == 0 ? 3 : M;
 	const index_t n = N == 0 ? 4 : N;
 
-	scoped_array<double> ref(m * n);
+	dblock<double> ref(m * n);
 
 	for (index_t i = 0; i < m * n; ++i) ref[i] = double(i + 2);
-	dense_matrix<double, M, N> s(m, n, copy_from(ref.ptr_begin()));
+	dense_matrix<double, M, N> s(m, n, copy_from(ref.ptr_data()));
 
 	dense_matrix<double, M, N> a;
 
@@ -252,7 +252,7 @@ MN_CASE( dense_mat, assign )
 
 	ASSERT_VEC_EQ( m * n, a, s );
 
-	dense_matrix<double, M, N> b(m, n, zeros<double>());
+	dense_matrix<double, M, N> b(m, n, zero<double>());
 
 	const double *pb = b.ptr_data();
 
@@ -272,7 +272,7 @@ MN_CASE( dense_mat, assign )
 	const index_t m2 = M == 0 ? 5 : M;
 	const index_t n2 = N == 0 ? 6 : N;
 
-	dense_matrix<double, M, N> c(m2, n2, zeros<double>());
+	dense_matrix<double, M, N> c(m2, n2, zero<double>());
 
 	c = s;
 
@@ -292,13 +292,13 @@ MN_CASE( dense_mat, assign_gen )
 	const index_t m = M == 0 ? 3 : M;
 	const index_t n = N == 0 ? 4 : N;
 
-	scoped_array<double> ref(m * n);
+	dblock<double> ref(m * n);
 
 	// zeros
 
-	dense_matrix<double, M, N> a(m, n, fill_value(-1.0));
+	dense_matrix<double, M, N> a(m, n, fill(-1.0));
 
-	a = zeros<double>();
+	a = zero<double>();
 	for (index_t i = 0; i < m * n; ++i) ref[i] = double(0);
 
 	ASSERT_EQ(a.nrows(), m);
@@ -310,7 +310,7 @@ MN_CASE( dense_mat, assign_gen )
 	// fill_value
 
 	const double v1 = 2.5;
-	a = fill_value(v1);
+	a = fill(v1);
 	for (index_t i = 0; i < m * n; ++i) ref[i] = v1;
 
 	ASSERT_EQ(a.nrows(), m);
@@ -322,7 +322,7 @@ MN_CASE( dense_mat, assign_gen )
 	// copy_value
 
 	for (index_t i = 0; i < m * n; ++i) ref[i] = double(i + 2);
-	a = copy_from(ref.ptr_begin());
+	a = copy_from(ref.ptr_data());
 
 	ASSERT_EQ(a.nrows(), m);
 	ASSERT_EQ(a.ncolumns(), n);
@@ -339,14 +339,14 @@ MN_CASE( dense_mat, swap )
 	const index_t m2 = M == 0 ? 6 : M;
 	const index_t n2 = N == 0 ? 5 : N;
 
-	scoped_array<double> s(m * n);
+	dblock<double> s(m * n);
 	for (index_t i = 0; i < m * n; ++i) s[i] = double(i + 2);
 
-	scoped_array<double> s2(m2 * n2);
+	dblock<double> s2(m2 * n2);
 	for (index_t i = 0; i < m2 * n2; ++i) s2[i] = double(2 * i + 3);
 
-	dense_matrix<double, M, N> a(m, n, copy_from(s.ptr_begin()));
-	dense_matrix<double, M, N> a2(m2, n2, copy_from(s2.ptr_begin()));
+	dense_matrix<double, M, N> a(m, n, copy_from(s.ptr_data()));
+	dense_matrix<double, M, N> a2(m2, n2, copy_from(s2.ptr_data()));
 
 	const double *p = a.ptr_data();
 	const double *p2 = a2.ptr_data();

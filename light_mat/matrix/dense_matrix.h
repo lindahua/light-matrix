@@ -102,12 +102,12 @@ namespace lmat
 		{
 		}
 
-		template<class Gen>
+		template<class Setter>
 		LMAT_ENSURE_INLINE dense_matrix(index_t m, index_t n,
-				const IMatrixGenerator<Gen, T>& gen)
+				IMemorySetter<Setter, T> setter)
 		: m_internal(m, n)
 		{
-			gen.generate_to(*this);
+			set_array_memory(*this, setter);
 		}
 
 		LMAT_ENSURE_INLINE dense_matrix(const dense_matrix& s)
@@ -128,10 +128,10 @@ namespace lmat
 		}
 
 	public:
-		template<class Gen>
-		LMAT_ENSURE_INLINE dense_matrix& operator = (const IMatrixGenerator<Gen, T>& gen)
+		template<class Setter>
+		LMAT_ENSURE_INLINE dense_matrix& operator = (IMemorySetter<Setter, T> setter)
 		{
-			gen.generate_to(*this);
+			set_array_memory(*this, setter);
 			return *this;
 		}
 
@@ -257,9 +257,9 @@ namespace lmat
 
 		LMAT_ENSURE_INLINE explicit dense_col(index_t m) : base_mat_t(m, 1) { }
 
-		template<class Gen>
+		template<class Setter>
 		LMAT_ENSURE_INLINE
-		dense_col(index_t m, const IMatrixGenerator<Gen,T>& gen) : base_mat_t(m, 1, gen) { }
+		dense_col(index_t m, IMemorySetter<Setter, T> setter) : base_mat_t(m, 1, setter) { }
 
 		LMAT_ENSURE_INLINE dense_col(const base_mat_t& s) : base_mat_t(s) { }
 
@@ -272,11 +272,11 @@ namespace lmat
 		LMAT_ENSURE_INLINE dense_col(const IMatrixXpr<Expr, T>& r) : base_mat_t(r) { }
 
 	public:
-		template<class Gen>
+		template<class Setter>
 		LMAT_ENSURE_INLINE
-		dense_col& operator = (const IMatrixGenerator<Gen,T>& gen)
+		dense_col& operator = (IMemorySetter<Setter, T> setter)
 		{
-			base_mat_t::operator = (gen);
+			base_mat_t::operator = (setter);
 			return *this;
 		}
 
@@ -318,9 +318,9 @@ namespace lmat
 
 		LMAT_ENSURE_INLINE explicit dense_row(index_t n) : base_mat_t(1, n) { }
 
-		template<class Gen>
+		template<class Setter>
 		LMAT_ENSURE_INLINE
-		dense_row(index_t n, const IMatrixGenerator<Gen,T>& gen) : base_mat_t(1, n, gen) { }
+		dense_row(index_t n, IMemorySetter<Setter,T> setter) : base_mat_t(1, n, setter) { }
 
 		LMAT_ENSURE_INLINE dense_row(const base_mat_t& s) : base_mat_t(s) { }
 
@@ -330,11 +330,11 @@ namespace lmat
 		LMAT_ENSURE_INLINE dense_row(const IMatrixXpr<Expr, T>& r) : base_mat_t(r) { }
 
 	public:
-		template<class Gen>
+		template<class Setter>
 		LMAT_ENSURE_INLINE
-		dense_row& operator = (const IMatrixGenerator<Gen,T>& gen)
+		dense_row& operator = (IMemorySetter<Setter, T> setter)
 		{
-			base_mat_t::operator = (gen);
+			base_mat_t::operator = (setter);
 			return *this;
 		}
 

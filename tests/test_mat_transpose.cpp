@@ -89,9 +89,9 @@ MN_CASE( mat_trans, refex )
 	const char *base_name =
 			N == 1 ? "contcol" : (M == 1 ? "regular_row" : "dense");
 
-	scoped_array<double> sarr(LDim * n, -1.0);
+	dblock<double> sarr(LDim * n, fill(-1.0));
 
-	ref_matrix_ex<double, M, N> S(sarr.ptr_begin(), m, n, LDim);
+	ref_matrix_ex<double, M, N> S(sarr.ptr_data(), m, n, LDim);
 	fill_lin(S);
 
 	ASSERT_STREQ( trans_base_typename(S.trans()), base_name  );
@@ -148,8 +148,8 @@ MN_CASE( mat_trans, unary_ewise )
 
 	ASSERT_MAT_EQ( n, m, T, T0 );
 
-	scoped_array<double> darr(LDim * m, -1.0);
-	ref_matrix_ex<double, N, M> T2(darr.ptr_begin(), n, m, LDim);
+	dblock<double> darr(LDim * m, fill(-1.0));
+	ref_matrix_ex<double, N, M> T2(darr.ptr_data(), n, m, LDim);
 
 	T2 = sqr(S).trans();
 
@@ -182,8 +182,8 @@ MN_CASE( mat_trans, binary_ewise )
 
 	ASSERT_MAT_EQ( n, m, T, T0 );
 
-	scoped_array<double> darr(LDim * m, -1.0);
-	ref_matrix_ex<double, N, M> T2(darr.ptr_begin(), n, m, LDim);
+	dblock<double> darr(LDim * m, fill(-1.0));
+	ref_matrix_ex<double, N, M> T2(darr.ptr_data(), n, m, LDim);
 
 	T2 = (S + S2).trans();
 
@@ -339,7 +339,7 @@ MN_CASE( mat_trans, repcols )
 	horizontal_repeat_expr<ref_arg_t, col_t, N> expr(ref_arg(col), n);
 	dense_matrix<double, M, N> S(expr);
 
-	dense_matrix<double, N, M> T0(n, m, zeros<double>());
+	dense_matrix<double, N, M> T0(n, m, zero<double>());
 	my_transpose(S, T0);
 
 	dense_matrix<double, N, M> T = expr.trans();
@@ -361,7 +361,7 @@ MN_CASE( mat_trans, reprows )
 	vertical_repeat_expr<ref_arg_t, row_t, M> expr(ref_arg(row), m);
 	dense_matrix<double, M, N> S(expr);
 
-	dense_matrix<double, N, M> T0(n, m, zeros<double>());
+	dense_matrix<double, N, M> T0(n, m, zero<double>());
 	my_transpose(S, T0);
 
 	dense_matrix<double, N, M> T = expr.trans();

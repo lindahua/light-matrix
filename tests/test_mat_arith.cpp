@@ -80,15 +80,15 @@ MN_CASE( mat_arith, add )
 
 	// by-scalars evaluation
 
-	mat_t AB_s(m, n, fill_value(0.0));
+	mat_t AB_s(m, n, fill(0.0));
 	linear_by_scalars_evaluate(A + B, AB_s);
 	ASSERT_TRUE( is_equal(AB_s, AB_r) );
 
-	mat_t AC_s(m, n, fill_value(0.0));
+	mat_t AC_s(m, n, fill(0.0));
 	linear_by_scalars_evaluate(A + c, AC_s);
 	ASSERT_TRUE( is_equal(AC_s, AC_r) );
 
-	mat_t CB_s(m, n, fill_value(0.0));
+	mat_t CB_s(m, n, fill(0.0));
 	linear_by_scalars_evaluate(c + B, CB_s);
 	ASSERT_TRUE( is_equal(CB_s, CB_r) );
 }
@@ -102,14 +102,14 @@ MN_CASE( mat_arith, add_ex )
 	const index_t m = M == 0 ? default_m : M;
 	const index_t n = N == 0 ? default_n : N;
 
-	scoped_array<double> sa(LDim * n);
-	scoped_array<double> sb(LDim * n);
+	dblock<double> sa(LDim * n);
+	dblock<double> sb(LDim * n);
 
 	for (index_t i = 0; i < LDim * n; ++i) sa[i] = double(i + 1);
 	for (index_t i = 0; i < LDim * n; ++i) sb[i] = double(2 * i + 3);
 
-	mat_ex_t A(sa.ptr_begin(), m, n, LDim);
-	mat_ex_t B(sb.ptr_begin(), m, n, LDim);
+	mat_ex_t A(sa.ptr_data(), m, n, LDim);
+	mat_ex_t B(sb.ptr_data(), m, n, LDim);
 	double c = 7.0;
 
 	// prepare ground-truth
@@ -139,15 +139,15 @@ MN_CASE( mat_arith, add_ex )
 
 	// by-scalars evaluation
 
-	mat_t AB_s(m, n, fill_value(0.0));
+	mat_t AB_s(m, n, fill(0.0));
 	percol_by_scalars_evaluate(A + B, AB_s);
 	ASSERT_TRUE( is_equal(AB_s, AB_r) );
 
-	mat_t AC_s(m, n, fill_value(0.0));
+	mat_t AC_s(m, n, fill(0.0));
 	percol_by_scalars_evaluate(A + c, AC_s);
 	ASSERT_TRUE( is_equal(AC_s, AC_r) );
 
-	mat_t CB_s(m, n, fill_value(0.0));
+	mat_t CB_s(m, n, fill(0.0));
 	percol_by_scalars_evaluate(c + B, CB_s);
 	ASSERT_TRUE( is_equal(CB_s, CB_r) );
 }
@@ -237,15 +237,15 @@ MN_CASE( mat_arith, sub )
 
 	// by-scalars evaluation
 
-	mat_t AB_s(m, n, fill_value(0.0));
+	mat_t AB_s(m, n, fill(0.0));
 	linear_by_scalars_evaluate(A - B, AB_s);
 	ASSERT_TRUE( is_equal(AB_s, AB_r) );
 
-	mat_t AC_s(m, n, fill_value(0.0));
+	mat_t AC_s(m, n, fill(0.0));
 	linear_by_scalars_evaluate(A - c, AC_s);
 	ASSERT_TRUE( is_equal(AC_s, AC_r) );
 
-	mat_t CB_s(m, n, fill_value(0.0));
+	mat_t CB_s(m, n, fill(0.0));
 	linear_by_scalars_evaluate(c - B, CB_s);
 	ASSERT_TRUE( is_equal(CB_s, CB_r) );
 }
@@ -259,14 +259,14 @@ MN_CASE( mat_arith, sub_ex )
 	const index_t m = M == 0 ? default_m : M;
 	const index_t n = N == 0 ? default_n : N;
 
-	scoped_array<double> sa(LDim * n);
-	scoped_array<double> sb(LDim * n);
+	dblock<double> sa(LDim * n);
+	dblock<double> sb(LDim * n);
 
 	for (index_t i = 0; i < LDim * n; ++i) sa[i] = double(i + 1);
 	for (index_t i = 0; i < LDim * n; ++i) sb[i] = double(2 * i + 3);
 
-	mat_ex_t A(sa.ptr_begin(), m, n, LDim);
-	mat_ex_t B(sb.ptr_begin(), m, n, LDim);
+	mat_ex_t A(sa.ptr_data(), m, n, LDim);
+	mat_ex_t B(sb.ptr_data(), m, n, LDim);
 	double c = 7.0;
 
 	// prepare ground-truth
@@ -296,15 +296,15 @@ MN_CASE( mat_arith, sub_ex )
 
 	// by-scalars evaluation
 
-	mat_t AB_s(m, n, fill_value(0.0));
+	mat_t AB_s(m, n, fill(0.0));
 	percol_by_scalars_evaluate(A - B, AB_s);
 	ASSERT_TRUE( is_equal(AB_s, AB_r) );
 
-	mat_t AC_s(m, n, fill_value(0.0));
+	mat_t AC_s(m, n, fill(0.0));
 	percol_by_scalars_evaluate(A - c, AC_s);
 	ASSERT_TRUE( is_equal(AC_s, AC_r) );
 
-	mat_t CB_s(m, n, fill_value(0.0));
+	mat_t CB_s(m, n, fill(0.0));
 	percol_by_scalars_evaluate(c - B, CB_s);
 	ASSERT_TRUE( is_equal(CB_s, CB_r) );
 }
@@ -382,15 +382,15 @@ MN_CASE( mat_arith, mul )
 
 	// by-scalars evaluation
 
-	mat_t AB_s(m, n, fill_value(0.0));
+	mat_t AB_s(m, n, fill(0.0));
 	linear_by_scalars_evaluate(A * B, AB_s);
 	ASSERT_TRUE( is_equal(AB_s, AB_r) );
 
-	mat_t AC_s(m, n, fill_value(0.0));
+	mat_t AC_s(m, n, fill(0.0));
 	linear_by_scalars_evaluate(A * c, AC_s);
 	ASSERT_TRUE( is_equal(AC_s, AC_r) );
 
-	mat_t CB_s(m, n, fill_value(0.0));
+	mat_t CB_s(m, n, fill(0.0));
 	linear_by_scalars_evaluate(c * B, CB_s);
 	ASSERT_TRUE( is_equal(CB_s, CB_r) );
 }
@@ -404,14 +404,14 @@ MN_CASE( mat_arith, mul_ex )
 	const index_t m = M == 0 ? default_m : M;
 	const index_t n = N == 0 ? default_n : N;
 
-	scoped_array<double> sa(LDim * n);
-	scoped_array<double> sb(LDim * n);
+	dblock<double> sa(LDim * n);
+	dblock<double> sb(LDim * n);
 
 	for (index_t i = 0; i < LDim * n; ++i) sa[i] = double(i + 1);
 	for (index_t i = 0; i < LDim * n; ++i) sb[i] = double(2 * i + 3);
 
-	mat_ex_t A(sa.ptr_begin(), m, n, LDim);
-	mat_ex_t B(sb.ptr_begin(), m, n, LDim);
+	mat_ex_t A(sa.ptr_data(), m, n, LDim);
+	mat_ex_t B(sb.ptr_data(), m, n, LDim);
 	double c = 7.0;
 
 	// prepare ground-truth
@@ -441,15 +441,15 @@ MN_CASE( mat_arith, mul_ex )
 
 	// by-scalars evaluation
 
-	mat_t AB_s(m, n, fill_value(0.0));
+	mat_t AB_s(m, n, fill(0.0));
 	percol_by_scalars_evaluate(A * B, AB_s);
 	ASSERT_TRUE( is_equal(AB_s, AB_r) );
 
-	mat_t AC_s(m, n, fill_value(0.0));
+	mat_t AC_s(m, n, fill(0.0));
 	percol_by_scalars_evaluate(A * c, AC_s);
 	ASSERT_TRUE( is_equal(AC_s, AC_r) );
 
-	mat_t CB_s(m, n, fill_value(0.0));
+	mat_t CB_s(m, n, fill(0.0));
 	percol_by_scalars_evaluate(c * B, CB_s);
 	ASSERT_TRUE( is_equal(CB_s, CB_r) );
 }
@@ -527,15 +527,15 @@ MN_CASE( mat_arith, div )
 
 	// by-scalars evaluation
 
-	mat_t AB_s(m, n, fill_value(0.0));
+	mat_t AB_s(m, n, fill(0.0));
 	linear_by_scalars_evaluate(A / B, AB_s);
 	ASSERT_TRUE( is_equal(AB_s, AB_r) );
 
-	mat_t AC_s(m, n, fill_value(0.0));
+	mat_t AC_s(m, n, fill(0.0));
 	linear_by_scalars_evaluate(A / c, AC_s);
 	ASSERT_TRUE( is_equal(AC_s, AC_r) );
 
-	mat_t CB_s(m, n, fill_value(0.0));
+	mat_t CB_s(m, n, fill(0.0));
 	linear_by_scalars_evaluate(c / B, CB_s);
 	ASSERT_TRUE( is_equal(CB_s, CB_r) );
 }
@@ -549,14 +549,14 @@ MN_CASE( mat_arith, div_ex )
 	const index_t m = M == 0 ? default_m : M;
 	const index_t n = N == 0 ? default_n : N;
 
-	scoped_array<double> sa(LDim * n);
-	scoped_array<double> sb(LDim * n);
+	dblock<double> sa(LDim * n);
+	dblock<double> sb(LDim * n);
 
 	for (index_t i = 0; i < LDim * n; ++i) sa[i] = double(i + 1);
 	for (index_t i = 0; i < LDim * n; ++i) sb[i] = double(1 << (i % 5));
 
-	mat_ex_t A(sa.ptr_begin(), m, n, LDim);
-	mat_ex_t B(sb.ptr_begin(), m, n, LDim);
+	mat_ex_t A(sa.ptr_data(), m, n, LDim);
+	mat_ex_t B(sb.ptr_data(), m, n, LDim);
 	double c = 4.0;
 
 	// prepare ground-truth
@@ -586,15 +586,15 @@ MN_CASE( mat_arith, div_ex )
 
 	// by-scalars evaluation
 
-	mat_t AB_s(m, n, fill_value(0.0));
+	mat_t AB_s(m, n, fill(0.0));
 	percol_by_scalars_evaluate(A / B, AB_s);
 	ASSERT_TRUE( is_equal(AB_s, AB_r) );
 
-	mat_t AC_s(m, n, fill_value(0.0));
+	mat_t AC_s(m, n, fill(0.0));
 	percol_by_scalars_evaluate(A / c, AC_s);
 	ASSERT_TRUE( is_equal(AC_s, AC_r) );
 
-	mat_t CB_s(m, n, fill_value(0.0));
+	mat_t CB_s(m, n, fill(0.0));
 	percol_by_scalars_evaluate(c / B, CB_s);
 	ASSERT_TRUE( is_equal(CB_s, CB_r) );
 }
@@ -659,7 +659,7 @@ MN_CASE( mat_arith, neg )
 
 	// by-scalars evaluation
 
-	mat_t R_s(m, n, fill_value(0.0));
+	mat_t R_s(m, n, fill(0.0));
 	linear_by_scalars_evaluate(-A, R_s);
 	ASSERT_TRUE( is_equal(R_s, R_r) );
 }
@@ -673,9 +673,9 @@ MN_CASE( mat_arith, neg_ex )
 	const index_t m = M == 0 ? default_m : M;
 	const index_t n = N == 0 ? default_n : N;
 
-	scoped_array<double> sa(LDim * n);
+	dblock<double> sa(LDim * n);
 	for (index_t i = 0; i < LDim * n; ++i) sa[i] = double((i+1) * (i % 3 - 1));
-	mat_ex_t A(sa.ptr_begin(), m, n, LDim);
+	mat_ex_t A(sa.ptr_data(), m, n, LDim);
 
 	// prepare ground-truth
 
@@ -690,7 +690,7 @@ MN_CASE( mat_arith, neg_ex )
 
 	// by-scalars evaluation
 
-	mat_t R_s(m, n, fill_value(0.0));
+	mat_t R_s(m, n, fill(0.0));
 	percol_by_scalars_evaluate(-A, R_s);
 	ASSERT_TRUE( is_equal(R_s, R_r) );
 }
@@ -718,7 +718,7 @@ MN_CASE( mat_arith, abs )
 
 	// by-scalars evaluation
 
-	mat_t R_s(m, n, fill_value(0.0));
+	mat_t R_s(m, n, fill(0.0));
 	linear_by_scalars_evaluate(abs(A), R_s);
 	ASSERT_TRUE( is_equal(R_s, R_r) );
 }
@@ -732,9 +732,9 @@ MN_CASE( mat_arith, abs_ex )
 	const index_t m = M == 0 ? default_m : M;
 	const index_t n = N == 0 ? default_n : N;
 
-	scoped_array<double> sa(LDim * n);
+	dblock<double> sa(LDim * n);
 	for (index_t i = 0; i < LDim * n; ++i) sa[i] = double((i+1) * (i % 3 - 1));
-	mat_ex_t A(sa.ptr_begin(), m, n, LDim);
+	mat_ex_t A(sa.ptr_data(), m, n, LDim);
 
 	// prepare ground-truth
 
@@ -749,7 +749,7 @@ MN_CASE( mat_arith, abs_ex )
 
 	// by-scalars evaluation
 
-	mat_t R_s(m, n, fill_value(0.0));
+	mat_t R_s(m, n, fill(0.0));
 	percol_by_scalars_evaluate(abs(A), R_s);
 	ASSERT_TRUE( is_equal(R_s, R_r) );
 }
@@ -782,7 +782,7 @@ MN_CASE( mat_arith, sqr )
 
 	// by-scalars evaluation
 
-	mat_t R_s(m, n, fill_value(0.0));
+	mat_t R_s(m, n, fill(0.0));
 	linear_by_scalars_evaluate(sqr(A), R_s);
 	ASSERT_TRUE( is_equal(R_s, R_r) );
 }
@@ -796,9 +796,9 @@ MN_CASE( mat_arith, sqr_ex )
 	const index_t m = M == 0 ? default_m : M;
 	const index_t n = N == 0 ? default_n : N;
 
-	scoped_array<double> sa(LDim * n);
+	dblock<double> sa(LDim * n);
 	for (index_t i = 0; i < LDim * n; ++i) sa[i] = double((i+1) * (i % 3 - 1));
-	mat_ex_t A(sa.ptr_begin(), m, n, LDim);
+	mat_ex_t A(sa.ptr_data(), m, n, LDim);
 
 	// prepare ground-truth
 
@@ -813,7 +813,7 @@ MN_CASE( mat_arith, sqr_ex )
 
 	// by-scalars evaluation
 
-	mat_t R_s(m, n, fill_value(0.0));
+	mat_t R_s(m, n, fill(0.0));
 	percol_by_scalars_evaluate(sqr(A), R_s);
 	ASSERT_TRUE( is_equal(R_s, R_r) );
 }
@@ -843,7 +843,7 @@ MN_CASE( mat_arith, sqrt )
 
 	// by-scalars evaluation
 
-	mat_t R_s(m, n, fill_value(0.0));
+	mat_t R_s(m, n, fill(0.0));
 	linear_by_scalars_evaluate(sqrt(A), R_s);
 	ASSERT_TRUE( is_approx(R_s, R_r, tol) );
 }
@@ -872,7 +872,7 @@ MN_CASE( mat_arith, rcp )
 
 	// by-scalars evaluation
 
-	mat_t R_s(m, n, fill_value(0.0));
+	mat_t R_s(m, n, fill(0.0));
 	linear_by_scalars_evaluate(rcp(A), R_s);
 	ASSERT_TRUE( is_approx(R_s, R_r, tol) );
 }
@@ -900,7 +900,7 @@ MN_CASE( mat_arith, rsqrt )
 
 	// by-scalars evaluation
 
-	mat_t R_s(m, n, fill_value(0.0));
+	mat_t R_s(m, n, fill(0.0));
 	linear_by_scalars_evaluate(rsqrt(A), R_s);
 	ASSERT_TRUE( is_approx(R_s, R_r, tol) );
 }

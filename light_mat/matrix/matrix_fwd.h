@@ -22,9 +22,6 @@ namespace lmat
 {
 	const int DynamicDim = 0;
 
-	template<int N>
-	struct fixed_dim { static const int value = N; };
-
 	// forward declaration of concepts
 
 
@@ -69,32 +66,32 @@ namespace lmat
 
 	// forward declaration of some important types
 
-	template<typename T, int CTRows=DynamicDim, int CTCols=DynamicDim, typename Align=base_aligned>
+	template<typename T, int CTRows=0, int CTCols=0, typename Align=base_aligned>
 	class dense_matrix;
 
-	template<typename T, int CTRows=DynamicDim, typename Align=base_aligned> class dense_col;
-	template<typename T, int CTCols=DynamicDim, typename Align=base_aligned> class dense_row;
+	template<typename T, int CTRows=0, typename Align=base_aligned> class dense_col;
+	template<typename T, int CTCols=0, typename Align=base_aligned> class dense_row;
 
-	template<typename T, int RowDim=DynamicDim, int ColDim=DynamicDim, typename Align=unaligned>
+	template<typename T, int RowDim=0, int ColDim=0, typename Align=unaligned>
 	class cref_matrix;
 
-	template<typename T, int RowDim=DynamicDim, int ColDim=DynamicDim, typename Align=unaligned>
+	template<typename T, int RowDim=0, int ColDim=0, typename Align=unaligned>
 	class ref_matrix;
 
-	template<typename T, int CTRows=DynamicDim, typename Align=unaligned> class cref_col;
-	template<typename T, int CTRows=DynamicDim, typename Align=unaligned> class ref_col;
-	template<typename T, int CTCols=DynamicDim, typename Align=unaligned> class cref_row;
-	template<typename T, int CTCols=DynamicDim, typename Align=unaligned> class ref_row;
+	template<typename T, int CTRows=0, typename Align=unaligned> class cref_col;
+	template<typename T, int CTRows=0, typename Align=unaligned> class ref_col;
+	template<typename T, int CTCols=0, typename Align=unaligned> class cref_row;
+	template<typename T, int CTCols=0, typename Align=unaligned> class ref_row;
 
-	template<typename T, int CTRows=DynamicDim, int CTCols=DynamicDim, typename Align=unaligned>
+	template<typename T, int CTRows=0, int CTCols=0, typename Align=unaligned>
 	class cref_matrix_ex;
 
-	template<typename T, int CTRows=DynamicDim, int CTCols=DynamicDim, typename Align=unaligned>
+	template<typename T, int CTRows=0, int CTCols=0, typename Align=unaligned>
 	class ref_matrix_ex;
 
 	template<class Mat> class dense_mutable_view;
 
-	template<typename T, int CTRows=DynamicDim, int CTCols=DynamicDim>
+	template<typename T, int CTRows=0, int CTCols=0>
 	class const_matrix;
 
 

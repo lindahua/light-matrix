@@ -293,10 +293,10 @@ namespace lmat
 			return *this;
 		}
 
-		template<class Gen>
-		LMAT_ENSURE_INLINE ref_matrix_ex& operator = (const IMatrixGenerator<Gen, T>& gen)
+		template<class Setter>
+		LMAT_ENSURE_INLINE ref_matrix_ex& operator = (IMemorySetter<Setter, T> setter)
 		{
-			gen.generate_to(*this);
+			set_array_memory(*this, setter);
 			return *this;
 		}
 

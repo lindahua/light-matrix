@@ -51,7 +51,7 @@ MN_CASE( const_mat, access )
 	const double val = 12.5;
 
 	const_matrix<double, M, N> a(m, n, val);
-	dense_matrix<double, M, N> r(m, n, fill_value(val));
+	dense_matrix<double, M, N> r(m, n, fill(val));
 
 	ASSERT_MAT_EQ(m, n, a, r);
 }
@@ -67,7 +67,7 @@ MN_CASE( const_mat, evaluates )
 	const_matrix<double, M, N> a(m, n, val);
 
 	dense_matrix<double, M, N> b = a;
-	dense_matrix<double, M, N> r(m, n, fill_value(val));
+	dense_matrix<double, M, N> r(m, n, fill(val));
 
 	ASSERT_MAT_EQ(m, n, b, r);
 }

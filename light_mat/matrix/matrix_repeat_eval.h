@@ -119,24 +119,24 @@ namespace lmat
 				const index_t m = expr.nrows();
 				if (n == 1)
 				{
-					fill_mem(m, dst.ptr_data(), row_wrap[0]);
+					fill_val(row_wrap[0], m, dst.ptr_data());
 				}
 				else
 				{
 					for (index_t j = 0; j < n; ++j)
-						fill_mem(m, dst.ptr_col(j), row_wrap[j]);
+						fill_val(row_wrap[j], m, dst.ptr_col(j));
 				}
 			}
 			else
 			{
 				if (n == 1)
 				{
-					fill_mem(M, dst.ptr_data(), row_wrap[0]);
+					fill_val(row_wrap[0], M, dst.ptr_data());
 				}
 				else
 				{
 					for (index_t j = 0; j < n; ++j)
-						fill_mem(M, dst.ptr_col(j), row_wrap[j]);
+						fill_val(row_wrap[0], M, dst.ptr_col(j));
 				}
 			}
 		}
@@ -264,7 +264,7 @@ namespace lmat
 	template<class Arg>
 	struct matrix_visitor_state<rep_scalar_percol_mvisitor<Arg> >
 	{
-		typedef nil_type type;
+		typedef nil_t type;
 	};
 
 	template<class Arg>
@@ -291,15 +291,15 @@ namespace lmat
 		}
 
 		LMAT_ENSURE_INLINE
-		T get_scalar(const index_t, nil_type) const
+		T get_scalar(const index_t, nil_t) const
 		{
 			return m_val;
 		}
 
 		LMAT_ENSURE_INLINE
-		nil_type col_state(const index_t j) const
+		nil_t col_state(const index_t j) const
 		{
-			return nil_type();
+			return nil_t();
 		}
 
 	private:
@@ -348,7 +348,7 @@ namespace lmat
 	template<class Arg>
 	struct matrix_visitor_state<repcol_percol_mvisitor<Arg> >
 	{
-		typedef nil_type type;
+		typedef nil_t type;
 	};
 
 	template<class Arg>
@@ -366,15 +366,15 @@ namespace lmat
 		: m_colwrap(expr.arg()) { }
 
 		LMAT_ENSURE_INLINE
-		T get_scalar(const index_t i, nil_type) const
+		T get_scalar(const index_t i, nil_t) const
 		{
 			return m_colwrap[i];
 		}
 
 		LMAT_ENSURE_INLINE
-		nil_type col_state(const index_t ) const
+		nil_t col_state(const index_t ) const
 		{
-			return nil_type();
+			return nil_t();
 		}
 
 	private:

@@ -13,8 +13,21 @@
 #ifndef LIGHTMAT_ARG_CHECK_H_
 #define LIGHTMAT_ARG_CHECK_H_
 
-#include <light_mat/common/lang_base.h>
+#include <light_mat/common/prim_types.h>
 #include <exception>
+
+// Useful macros
+
+#ifdef LMAT_INDEX_CHECKING
+#define LMAT_CHECK_SUBS1(i, n) \
+	::lmat::check_range(i >= 0 && i < n, "Index out of range");
+#define LMAT_CHECK_SUBS2(i, j, m, n) \
+	::lmat::check_range(i >= 0 && i < m && j >= 0 && j < n, "Index out of range");
+#else
+#define LMAT_CHECK_SUBS1(i, n)
+#define LMAT_CHECK_SUBS2(i, j, m, n)
+#endif
+
 
 namespace lmat
 {

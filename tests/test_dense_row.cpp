@@ -73,11 +73,11 @@ N_CASE( dense_row, generates )
 {
 	const index_t n = N == 0 ? 4 : N;
 
-	scoped_array<double> ref(n);
+	dblock<double> ref(n);
 
 	// zeros
 
-	dense_row<double, N> a0(n, zeros<double>());
+	dense_row<double, N> a0(n, zero<double>());
 	for (index_t i = 0; i < n; ++i) ref[i] = double(0);
 
 	ASSERT_EQ(a0.nrows(), 1);
@@ -89,7 +89,7 @@ N_CASE( dense_row, generates )
 	// fill_value
 
 	const double v1 = 2.5;
-	dense_row<double, N> a1(n, fill_value(v1));
+	dense_row<double, N> a1(n, fill(v1));
 	for (index_t i = 0; i < n; ++i) ref[i] = v1;
 
 	ASSERT_EQ(a1.nrows(), 1);
@@ -101,7 +101,7 @@ N_CASE( dense_row, generates )
 	// copy_value
 
 	for (index_t i = 0; i < n; ++i) ref[i] = double(i + 2);
-	dense_row<double, N> a2(n, copy_from(ref.ptr_begin()));
+	dense_row<double, N> a2(n, copy_from(ref.ptr_data()));
 
 	ASSERT_EQ(a2.nrows(), 1);
 	ASSERT_EQ(a2.ncolumns(), n);
@@ -114,10 +114,10 @@ N_CASE( dense_row, copy_constructs )
 {
 	const index_t n = N == 0 ? 4 : N;
 
-	scoped_array<double> ref(n);
+	dblock<double> ref(n);
 
 	for (index_t i = 0; i < n; ++i) ref[i] = double(i + 2);
-	dense_row<double, N> a(n, copy_from(ref.ptr_begin()));
+	dense_row<double, N> a(n, copy_from(ref.ptr_data()));
 
 	dense_row<double, N> a2(a);
 
@@ -182,10 +182,10 @@ N_CASE( dense_row, assign )
 {
 	const index_t n = N == 0 ? 4 : N;
 
-	scoped_array<double> ref(n);
+	dblock<double> ref(n);
 
 	for (index_t i = 0; i < n; ++i) ref[i] = double(i + 2);
-	dense_row<double, N> s(n, copy_from(ref.ptr_begin()));
+	dense_row<double, N> s(n, copy_from(ref.ptr_data()));
 
 	dense_row<double, N> a;
 
@@ -200,7 +200,7 @@ N_CASE( dense_row, assign )
 
 	ASSERT_VEC_EQ( n, a, s );
 
-	dense_row<double, N> b(n, zeros<double>());
+	dense_row<double, N> b(n, zero<double>());
 
 	const double *pb = b.ptr_data();
 
@@ -219,7 +219,7 @@ N_CASE( dense_row, assign )
 
 	const index_t n2 = N == 0 ? 6 : N;
 
-	dense_row<double, N> c(n2, zeros<double>());
+	dense_row<double, N> c(n2, zero<double>());
 
 	c = s;
 
@@ -237,13 +237,13 @@ N_CASE( dense_row, assign_gen )
 {
 	const index_t n = N == 0 ? 4 : N;
 
-	scoped_array<double> ref(n);
+	dblock<double> ref(n);
 
 	// zeros
 
-	dense_row<double, N> a(n, fill_value(-1.0));
+	dense_row<double, N> a(n, fill(-1.0));
 
-	a = zeros<double>();
+	a = zero<double>();
 	for (index_t i = 0; i < n; ++i) ref[i] = double(0);
 
 	ASSERT_EQ(a.nrows(), 1);
@@ -255,7 +255,7 @@ N_CASE( dense_row, assign_gen )
 	// fill_value
 
 	const double v1 = 2.5;
-	a = fill_value(v1);
+	a = fill(v1);
 	for (index_t i = 0; i < n; ++i) ref[i] = v1;
 
 	ASSERT_EQ(a.nrows(), 1);
@@ -267,7 +267,7 @@ N_CASE( dense_row, assign_gen )
 	// copy_value
 
 	for (index_t i = 0; i < n; ++i) ref[i] = double(i + 2);
-	a = copy_from(ref.ptr_begin());
+	a = copy_from(ref.ptr_data());
 
 	ASSERT_EQ(a.nrows(), 1);
 	ASSERT_EQ(a.ncolumns(), n);
@@ -281,14 +281,14 @@ N_CASE( dense_row, swap )
 	const index_t n = N == 0 ? 4 : N;
 	const index_t n2 = N == 0 ? 5 : N;
 
-	scoped_array<double> s(n);
+	dblock<double> s(n);
 	for (index_t i = 0; i < n; ++i) s[i] = double(i + 2);
 
-	scoped_array<double> s2(n2);
+	dblock<double> s2(n2);
 	for (index_t i = 0; i < n2; ++i) s2[i] = double(2 * i + 3);
 
-	dense_row<double, N> a(n, copy_from(s.ptr_begin()));
-	dense_row<double, N> a2(n2, copy_from(s2.ptr_begin()));
+	dense_row<double, N> a(n, copy_from(s.ptr_data()));
+	dense_row<double, N> a2(n2, copy_from(s2.ptr_data()));
 
 	const double *p = a.ptr_data();
 	const double *p2 = a2.ptr_data();

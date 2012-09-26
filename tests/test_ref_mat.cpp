@@ -9,7 +9,7 @@
 #include "test_base.h"
 
 #include <light_mat/matrix/ref_matrix.h>
-#include <light_mat/common/array.h>
+#include <light_mat/common/block.h>
 
 using namespace lmat;
 using namespace lmat::test;
@@ -44,8 +44,8 @@ MN_CASE( cref_mat, constructs )
 	const index_t m = M == 0 ? 3 : M;
 	const index_t n = N == 0 ? 4 : N;
 
-	scoped_array<double> s(m * n);
-	const double *ps = s.ptr_begin();
+	dblock<double> s(m * n);
+	const double *ps = s.ptr_data();
 
 	cref_matrix<double, M, N> a(ps, m, n);
 
@@ -73,8 +73,8 @@ MN_CASE( ref_mat, constructs )
 	const index_t m = M == 0 ? 3 : M;
 	const index_t n = N == 0 ? 4 : N;
 
-	scoped_array<double> s(m * n);
-	double *ps = s.ptr_begin();
+	dblock<double> s(m * n);
+	double *ps = s.ptr_data();
 
 	ref_matrix<double, M, N> a(ps, m, n);
 
@@ -103,10 +103,10 @@ MN_CASE( cref_mat, access )
 	const index_t m = M == 0 ? 3 : M;
 	const index_t n = N == 0 ? 4 : N;
 
-	scoped_array<double> ref(m * n);
+	dblock<double> ref(m * n);
 
 	for (index_t i = 0; i < m * n; ++i) ref[i] = double(i + 2);
-	cref_matrix<double, M, N> a(ref.ptr_begin(), m, n);
+	cref_matrix<double, M, N> a(ref.ptr_data(), m, n);
 	const cref_matrix<double, M, N>& ac = a;
 
 	for (index_t j = 0; j < n; ++j)
@@ -138,10 +138,10 @@ MN_CASE( ref_mat, access )
 	const index_t m = M == 0 ? 3 : M;
 	const index_t n = N == 0 ? 4 : N;
 
-	scoped_array<double> ref(m * n);
+	dblock<double> ref(m * n);
 
 	for (index_t i = 0; i < m * n; ++i) ref[i] = double(i + 2);
-	ref_matrix<double, M, N> a(ref.ptr_begin(), m, n);
+	ref_matrix<double, M, N> a(ref.ptr_data(), m, n);
 	const ref_matrix<double, M, N>& ac = a;
 
 	for (index_t j = 0; j < n; ++j)
@@ -173,11 +173,11 @@ MN_CASE( ref_mat, assign )
 	const index_t m = M == 0 ? 3 : M;
 	const index_t n = N == 0 ? 4 : N;
 
-	scoped_array<double> s1(m * n);
-	scoped_array<double> s2(m * n);
+	dblock<double> s1(m * n);
+	dblock<double> s2(m * n);
 
-	double *ps1 = s1.ptr_begin();
-	double *ps2 = s2.ptr_begin();
+	double *ps1 = s1.ptr_data();
+	double *ps2 = s2.ptr_data();
 
 	for (index_t i = 0; i < m * n; ++i) s1[i] = double(i + 2);
 	for (index_t i = 0; i < m * n; ++i) s2[i] = double(2 * i + 3);
@@ -202,15 +202,14 @@ MN_CASE( ref_mat, assign_gen )
 	const index_t m = M == 0 ? 3 : M;
 	const index_t n = N == 0 ? 4 : N;
 
-	scoped_array<double> ref(m * n);
-	scoped_array<double> s(m * n);
-	fill(s, -1.0);
+	dblock<double> ref(m * n);
+	dblock<double> s(m * n, fill(-1.0));
 
 	// zeros
 
-	ref_matrix<double, M, N> a(s.ptr_begin(), m, n);
+	ref_matrix<double, M, N> a(s.ptr_data(), m, n);
 
-	a = zeros<double>();
+	a = zero<double>();
 	for (index_t i = 0; i < m * n; ++i) ref[i] = double(0);
 
 	ASSERT_EQ(a.nrows(), m);
@@ -222,7 +221,7 @@ MN_CASE( ref_mat, assign_gen )
 	// fill_value
 
 	const double v1 = 2.5;
-	a = fill_value(v1);
+	a = fill(v1);
 	for (index_t i = 0; i < m * n; ++i) ref[i] = v1;
 
 	ASSERT_EQ(a.nrows(), m);
@@ -234,7 +233,7 @@ MN_CASE( ref_mat, assign_gen )
 	// copy_value
 
 	for (index_t i = 0; i < m * n; ++i) ref[i] = double(i + 2);
-	a = copy_from(ref.ptr_begin());
+	a = copy_from(ref.ptr_data());
 
 	ASSERT_EQ(a.nrows(), m);
 	ASSERT_EQ(a.ncolumns(), n);

@@ -13,7 +13,7 @@
 #ifndef LIGHTMAT_MATRIX_FILL_INTERNAL_H_
 #define LIGHTMAT_MATRIX_FILL_INTERNAL_H_
 
-#include <light_mat/common/mem_op.h>
+#include <light_mat/common/memory.h>
 
 namespace lmat { namespace detail {
 
@@ -39,7 +39,7 @@ namespace lmat { namespace detail {
 		static void fill(const T& v,
 				const index_t, const index_t, T *dst)
 		{
-			fill_mem(M * N, dst, v);
+			fill_val(v, M * N, dst);
 		}
 
 		LMAT_ENSURE_INLINE
@@ -48,7 +48,7 @@ namespace lmat { namespace detail {
 		{
 			for (index_t j = 0; j < N; ++j, dst += ldim)
 			{
-				fill_mem(M, dst, v);
+				fill_val(v, M, dst);
 			}
 		}
 	};
@@ -104,14 +104,14 @@ namespace lmat { namespace detail {
 		static void fill(const T& v,
 				const index_t m, const index_t, T *dst)
 		{
-			fill_mem(m, dst, v);
+			fill_val(v, m, dst);
 		}
 
 		LMAT_ENSURE_INLINE
 		static void fill(const T& v,
 				const index_t m, const index_t, T *dst, const index_t ldim)
 		{
-			fill_mem(m, dst, v);
+			fill_val(v, m, dst);
 		}
 	};
 
@@ -136,7 +136,7 @@ namespace lmat { namespace detail {
 		static void fill(const T& v,
 				const index_t, const index_t n, T *dst)
 		{
-			fill_mem(n, dst, v);
+			fill_val(v, n, dst);
 		}
 
 		LMAT_ENSURE_INLINE
@@ -171,7 +171,7 @@ namespace lmat { namespace detail {
 		static void fill(const T& v,
 				const index_t m, const index_t n, T *dst)
 		{
-			fill_mem(m * n, dst, v);
+			fill_val(v, m * n, dst);
 		}
 
 		LMAT_ENSURE_INLINE
@@ -180,7 +180,7 @@ namespace lmat { namespace detail {
 		{
 			for (index_t j = 0; j < n; ++j, dst += ldim)
 			{
-				fill_mem(m, dst, v);
+				fill_val(v, m, dst);
 			}
 		}
 	};

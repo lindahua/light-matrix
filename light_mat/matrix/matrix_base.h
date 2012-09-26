@@ -16,7 +16,9 @@
 #include <light_mat/matrix/matrix_properties.h>
 #include <light_mat/matrix/matrix_shape.h>
 
-#include <light_mat/matrix/matrix_generators.h>
+#include <light_mat/matrix/array_memset.h>
+#include <light_mat/matrix/matrix_copy.h>
+#include <light_mat/matrix/matrix_fill.h>
 #include <light_mat/matrix/matrix_compare.h>
 #include <light_mat/matrix/matrix_print.h>
 

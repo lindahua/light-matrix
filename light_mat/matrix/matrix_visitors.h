@@ -212,7 +212,7 @@ namespace lmat
 	template<typename T>
 	struct matrix_visitor_state<const_percol_mvisitor<T> >
 	{
-		typedef nil_type type;
+		typedef nil_t type;
 	};
 
 	template<typename T>
@@ -227,14 +227,14 @@ namespace lmat
 		{
 		}
 
-		LMAT_ENSURE_INLINE T get_scalar(const index_t, nil_type) const
+		LMAT_ENSURE_INLINE T get_scalar(const index_t, nil_t) const
 		{
 			return m_val;
 		}
 
-		LMAT_ENSURE_INLINE nil_type col_state(const index_t) const
+		LMAT_ENSURE_INLINE nil_t col_state(const index_t) const
 		{
-			return nil_type();
+			return nil_t();
 		}
 
 	private:

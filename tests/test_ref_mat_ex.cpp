@@ -10,7 +10,7 @@
 #include "test_base.h"
 
 #include <light_mat/matrix/ref_matrix_ex.h>
-#include <light_mat/common/array.h>
+#include <light_mat/common/block.h>
 
 using namespace lmat;
 using namespace lmat::test;
@@ -47,8 +47,8 @@ MN_CASE( cref_mat_ex, constructs )
 	const index_t m = M == 0 ? 3 : M;
 	const index_t n = N == 0 ? 4 : N;
 
-	scoped_array<double> s(ldim * n);
-	const double *ps = s.ptr_begin();
+	dblock<double> s(ldim * n);
+	const double *ps = s.ptr_data();
 
 	cref_matrix_ex<double, M, N> a(ps, m, n, ldim);
 
@@ -77,8 +77,8 @@ MN_CASE( ref_mat_ex, constructs )
 	const index_t m = M == 0 ? 3 : M;
 	const index_t n = N == 0 ? 4 : N;
 
-	scoped_array<double> s(ldim * n);
-	double *ps = s.ptr_begin();
+	dblock<double> s(ldim * n);
+	double *ps = s.ptr_data();
 
 	ref_matrix_ex<double, M, N> a(ps, m, n, ldim);
 
@@ -107,10 +107,10 @@ MN_CASE( cref_mat_ex, access )
 	const index_t m = M == 0 ? 3 : M;
 	const index_t n = N == 0 ? 4 : N;
 
-	scoped_array<double> ref(ldim * n);
+	dblock<double> ref(ldim * n);
 
 	for (index_t i = 0; i < ldim * n; ++i) ref[i] = double(i + 2);
-	cref_matrix_ex<double, M, N> a(ref.ptr_begin(), m, n, ldim);
+	cref_matrix_ex<double, M, N> a(ref.ptr_data(), m, n, ldim);
 	const cref_matrix_ex<double, M, N>& ac = a;
 
 	for (index_t j = 0; j < n; ++j)
@@ -154,10 +154,10 @@ MN_CASE( ref_mat_ex, access )
 	const index_t m = M == 0 ? 3 : M;
 	const index_t n = N == 0 ? 4 : N;
 
-	scoped_array<double> ref(ldim * n);
+	dblock<double> ref(ldim * n);
 
 	for (index_t i = 0; i < ldim * n; ++i) ref[i] = double(i + 2);
-	ref_matrix_ex<double, M, N> a(ref.ptr_begin(), m, n, ldim);
+	ref_matrix_ex<double, M, N> a(ref.ptr_data(), m, n, ldim);
 	const ref_matrix_ex<double, M, N>& ac = a;
 
 	for (index_t j = 0; j < n; ++j)
@@ -202,16 +202,16 @@ MN_CASE( ref_mat_ex, assign )
 	const index_t m = M == 0 ? 3 : M;
 	const index_t n = N == 0 ? 4 : N;
 
-	darray<double> s1(ldim1 * n);
-	darray<double> s2(ldim2 * n);
+	dblock<double> s1(ldim1 * n);
+	dblock<double> s2(ldim2 * n);
 
-	double *ps1 = s1.ptr_begin();
-	double *ps2 = s2.ptr_begin();
+	double *ps1 = s1.ptr_data();
+	double *ps2 = s2.ptr_data();
 
 	for (index_t i = 0; i < ldim1 * n; ++i) s1[i] = double(i + 2);
 	for (index_t i = 0; i < ldim2 * n; ++i) s2[i] = double(2 * i + 3);
 
-	darray<double> s1r(s1);
+	dblock<double> s1r(s1);
 
 	ref_matrix_ex<double, M, N> a1(ps1, m, n, ldim1);
 	ref_matrix_ex<double, M, N> a2(ps2, m, n, ldim2);
@@ -245,17 +245,16 @@ MN_CASE( ref_mat_ex, assign_gen )
 	const index_t m = M == 0 ? 3 : M;
 	const index_t n = N == 0 ? 4 : N;
 
-	darray<double> ref(ldim * n);
-	darray<double> s0(ldim * n);
-	fill(s0, -1.0);
-	darray<double> s(s0);
-	double *ps = s.ptr_begin();
+	dblock<double> ref(ldim * n);
+	dblock<double> s0(ldim * n, fill(-1.0));
+	dblock<double> s(s0);
+	double *ps = s.ptr_data();
 
 	// zeros
 
 	ref_matrix_ex<double, M, N> a(ps, m, n, ldim);
 
-	a = zeros<double>();
+	a = zero<double>();
 
 	ref = s0;
 	for (index_t j = 0; j < n; ++j)
@@ -275,7 +274,7 @@ MN_CASE( ref_mat_ex, assign_gen )
 	// fill_value
 
 	const double v1 = 2.5;
-	a = fill_value(v1);
+	a = fill(v1);
 
 	ref = s0;
 	for (index_t j = 0; j < n; ++j)
@@ -294,10 +293,10 @@ MN_CASE( ref_mat_ex, assign_gen )
 
 	// copy_value
 
-	scoped_array<double> cs(m * n);
+	dblock<double> cs(m * n);
 
 	for (index_t i = 0; i < m * n; ++i) cs[i] = double(i + 2);
-	a = copy_from(cs.ptr_begin());
+	a = copy_from(cs.ptr_data());
 
 	ref = s0;
 	for (index_t j = 0; j < n; ++j)
