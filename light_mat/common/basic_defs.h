@@ -15,12 +15,12 @@
 
 #include <light_mat/config/config.h>
 
-#include <light_mat/core/prim_types.h>
-#include <light_mat/core/lang_base.h>
-#include <light_mat/core/mask_type.h>
-#include <light_mat/core/metaprog_base.h>
+#include <light_mat/common/prim_types.h>
+#include <light_mat/common/lang_base.h>
+#include <light_mat/common/mask_type.h>
+#include <light_mat/common/metaprog_base.h>
 
-#include <light_mat/core/type_traits.h>
-#include <light_mat/core/arg_check.h>
+#include <light_mat/common/type_traits.h>
+#include <light_mat/common/arg_check.h>
 
 #endif

@@ -11,7 +11,7 @@
 
 #include <light_mat/matrix/ref_matrix.h>
 #include <light_mat/matrix/ref_matrix_ex.h>
-#include <light_mat/core/array.h>
+#include <light_mat/common/array.h>
 
 using namespace lmat;
 using namespace lmat::test;

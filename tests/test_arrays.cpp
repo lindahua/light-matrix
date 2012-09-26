@@ -8,7 +8,7 @@
 
 #include "test_base.h"
 
-#include <light_mat/core/array.h>
+#include <light_mat/common/array.h>
 #include "mon_alloc.h"
 
 using namespace lmat;

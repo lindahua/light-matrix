@@ -14,7 +14,7 @@
 #define LIGHTMAT_DENSE_MATRIX_INTERNAL_H_
 
 #include <light_mat/matrix/matrix_base.h>
-#include <light_mat/core/array.h>
+#include <light_mat/common/array.h>
 
 namespace lmat { namespace detail {
 

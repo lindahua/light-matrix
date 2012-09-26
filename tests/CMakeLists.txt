@@ -29,16 +29,6 @@ set(TEST_CXX_FLAGS "${LANG_FLAGS} ${WARNING_FLAGS}")
 
 set(CMAKE_CXX_FLAGS "${TEST_CXX_FLAGS}")
 
-# Find third-party libraries
-
-set(CMAKE_MODULE_PATH "../cmake_modules" ${CMAKE_MODULE_PATH})
-
-find_package(MKL)
-
-if (NOT MKL_FOUND)
-    message(FATAL_ERROR "Intel MKL is not found")
-endif (NOT MKL_FOUND)
-
 
 # Header file groups (to be used as dependencies)
 
@@ -49,20 +39,20 @@ set(COMMON_BASIC_HS
     ${INC}/config/user_config.h 
     ${INC}/config/platform_config.h
     ${INC}/config/config.h
-    ${INC}/core/prim_types.h
-    ${INC}/core/lang_base.h
-    ${INC}/core/metaprog_base.h
-    ${INC}/core/mask_type.h
-    ${INC}/core/type_traits.h
-    ${INC}/core/arg_check.h
-    ${INC}/core/range.h
-    ${INC}/core/basic_defs.h
-    ${INC}/core/expr_base.h)
+    ${INC}/common/prim_types.h
+    ${INC}/common/lang_base.h
+    ${INC}/common/metaprog_base.h
+    ${INC}/common/mask_type.h
+    ${INC}/common/type_traits.h
+    ${INC}/common/arg_check.h
+    ${INC}/common/range.h
+    ${INC}/common/basic_defs.h
+    ${INC}/common/expr_base.h)
     
 set(COMMON_ARRAY_HS
-    ${INC}/core/mem_op.h
-    ${INC}/core/mem_alloc.h
-    ${INC}/core/array.h)
+    ${INC}/common/mem_op.h
+    ${INC}/common/mem_alloc.h
+    ${INC}/common/array.h)
     
 set(MATRIX_BASE_HS
     ${INC}/matrix/matrix_fwd.h 
@@ -223,13 +213,6 @@ set(MAT_REDUC_HS
 add_executable(test_mat_reduce ${MAT_REDUC_HS} test_mat_reduce.cpp) 
 add_executable(test_partial_reduce ${MAT_REDUC_HS} test_partial_reduce.cpp) 
 
-set(MAT_BLAS_HS
-    ${MATRIX_HS}
-    ${BLAS_HS})
-    
-add_executable(test_blasl1 ${MAT_BLAS_HS} test_blasl1.cpp)
-add_executable(test_gemv ${MAT_BLAS_HS} test_gemv.cpp)
-
 # Link to test_main
 
 set(LMAT_TEST_NAMES
@@ -258,20 +241,10 @@ set(LMAT_TEST_NAMES
 	test_mat_reduce
 	test_partial_reduce
 )
-
-set(LMAT_LINALG_TEST_NAMES
-    test_blasl1
-    test_gemv
-)
 	
 foreach(tname ${LMAT_TEST_NAMES})
 	target_link_libraries(${tname} test_main)
 endforeach(tname)	
-
-foreach(tname ${LMAT_LINALG_TEST_NAMES})
-    target_link_libraries(${tname} test_main
-        ${MKL_LIBRARY})
-endforeach(tname)
 
 
 # Add tests
@@ -280,7 +253,4 @@ foreach(tname ${LMAT_TEST_NAMES})
 	add_test(NAME ${tname} COMMAND ${tname})
 endforeach(tname)
 
-foreach(tname ${LMAT_LINALG_TEST_NAMES})
-	add_test(NAME ${tname} COMMAND ${tname})
-endforeach(tname)
 

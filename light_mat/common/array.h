@@ -13,8 +13,8 @@
 #ifndef LIGHTMAT_ARRAY_H_
 #define LIGHTMAT_ARRAY_H_
 
-#include <light_mat/core/mem_op.h>
-#include <light_mat/core/mem_alloc.h>
+#include <light_mat/common/mem_op.h>
+#include <light_mat/common/mem_alloc.h>
 
 #include <algorithm>
 

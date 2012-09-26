@@ -13,9 +13,9 @@
 #ifndef LIGHTMAT_MASK_TYPE_H_
 #define LIGHTMAT_MASK_TYPE_H_
 
-#include <light_mat/core/prim_types.h>
-#include <light_mat/core/lang_base.h>
-#include <light_mat/core/type_traits.h>
+#include <light_mat/common/prim_types.h>
+#include <light_mat/common/lang_base.h>
+#include <light_mat/common/type_traits.h>
 
 namespace lmat
 {

@@ -13,9 +13,9 @@
 #ifndef LIGHTMAT_MATRIX_FWD_H_
 #define LIGHTMAT_MATRIX_FWD_H_
 
-#include <light_mat/core/basic_defs.h>
-#include <light_mat/core/range.h>
-#include <light_mat/core/expr_base.h>
+#include <light_mat/common/basic_defs.h>
+#include <light_mat/common/range.h>
+#include <light_mat/common/expr_base.h>
 #include <light_mat/math/functor_base.h>
 
 namespace lmat

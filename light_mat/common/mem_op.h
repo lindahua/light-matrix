@@ -13,7 +13,7 @@
 #ifndef LIGHTMAT_MEM_OP_H_
 #define LIGHTMAT_MEM_OP_H_
 
-#include <light_mat/core/basic_defs.h>
+#include <light_mat/common/basic_defs.h>
 #include <cstring>
 
 namespace lmat

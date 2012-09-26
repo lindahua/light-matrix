@@ -13,7 +13,7 @@
 #ifndef LIGHTMAT_ARG_CHECK_H_
 #define LIGHTMAT_ARG_CHECK_H_
 
-#include <light_mat/core/lang_base.h>
+#include <light_mat/common/lang_base.h>
 #include <exception>
 
 namespace lmat
