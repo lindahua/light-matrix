@@ -293,13 +293,6 @@ namespace lmat
 			return *this;
 		}
 
-		template<class Setter>
-		LMAT_ENSURE_INLINE ref_matrix_ex& operator = (IMemorySetter<Setter, T> setter)
-		{
-			set_array_memory(*this, setter);
-			return *this;
-		}
-
 	public:
 		LMAT_ENSURE_INLINE index_type nelems() const
 		{

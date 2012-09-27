@@ -102,34 +102,12 @@ namespace lmat
 	public:
 		LMAT_CRTP_REF
 
-		LMAT_ENSURE_INLINE void set(T& x) const
+		LMAT_ENSURE_INLINE void set(index_t n, T *p) const
 		{
-			derived().set(x);
+			derived().set(n, p);
 		}
 
-		LMAT_ENSURE_INLINE void set(index_t n, T *x) const
-		{
-			std::printf("copy_from\n");
-			derived().set(n, x);
-		}
 	};
-
-
-	template<typename T>
-	class zero_t : public IMemorySetter<zero_t<T>, T>
-	{
-	public:
-		LMAT_ENSURE_INLINE void set(T& x) const
-		{
-			x = T(0);
-		}
-
-		LMAT_ENSURE_INLINE void set(index_t n, T *x) const
-		{
-			zero_mem(n, x);
-		}
-	};
-
 
 	template<typename T>
 	class copy_t : public IMemorySetter<copy_t<T>, T>
@@ -139,19 +117,13 @@ namespace lmat
 		: m_src(src)
 		{ }
 
-		LMAT_ENSURE_INLINE void set(T& x) const
+		LMAT_ENSURE_INLINE void set(index_t n, T *p) const
 		{
-			x = *(m_src++);
-		}
-
-		LMAT_ENSURE_INLINE void set(index_t n, T *x) const
-		{
-			copy_mem(n, m_src, x);
-			m_src += n;
+			copy_mem(n, m_src, p);
 		}
 
 	private:
-		mutable const T* m_src;
+		const T* m_src;
 	};
 
 
@@ -163,14 +135,9 @@ namespace lmat
 		: m_val(v)
 		{ }
 
-		LMAT_ENSURE_INLINE void set(T& x) const
+		LMAT_ENSURE_INLINE void set(index_t n, T* p) const
 		{
-			x = m_val;
-		}
-
-		LMAT_ENSURE_INLINE void set(index_t n, T *x) const
-		{
-			fill_val(m_val, n, x);
+			fill_val(m_val, n, p);
 		}
 
 	private:
@@ -180,16 +147,8 @@ namespace lmat
 
 	template<typename T>
 	LMAT_ENSURE_INLINE
-	inline zero_t<T> zero()
-	{
-		return zero_t<T>();
-	}
-
-	template<typename T>
-	LMAT_ENSURE_INLINE
 	inline copy_t<T> copy_from(const T* src)
 	{
-		std::printf("copy_from\n");
 		return copy_t<T>(src);
 	}
 

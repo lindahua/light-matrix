@@ -78,7 +78,7 @@ MN_CASE( dense_mat, generates )
 
 	// zeros
 
-	dense_matrix<double, M, N> a0(m, n, zero<double>());
+	dense_matrix<double, M, N> a0(m, n, zero());
 	for (index_t i = 0; i < m * n; ++i) ref[i] = double(0);
 
 	ASSERT_EQ(a0.nrows(), m);
@@ -252,7 +252,7 @@ MN_CASE( dense_mat, assign )
 
 	ASSERT_VEC_EQ( m * n, a, s );
 
-	dense_matrix<double, M, N> b(m, n, zero<double>());
+	dense_matrix<double, M, N> b(m, n, zero());
 
 	const double *pb = b.ptr_data();
 
@@ -272,7 +272,7 @@ MN_CASE( dense_mat, assign )
 	const index_t m2 = M == 0 ? 5 : M;
 	const index_t n2 = N == 0 ? 6 : N;
 
-	dense_matrix<double, M, N> c(m2, n2, zero<double>());
+	dense_matrix<double, M, N> c(m2, n2, zero());
 
 	c = s;
 
@@ -287,30 +287,18 @@ MN_CASE( dense_mat, assign )
 }
 
 
-MN_CASE( dense_mat, assign_gen )
+MN_CASE( dense_mat, import )
 {
 	const index_t m = M == 0 ? 3 : M;
 	const index_t n = N == 0 ? 4 : N;
 
 	dblock<double> ref(m * n);
-
-	// zeros
-
 	dense_matrix<double, M, N> a(m, n, fill(-1.0));
-
-	a = zero<double>();
-	for (index_t i = 0; i < m * n; ++i) ref[i] = double(0);
-
-	ASSERT_EQ(a.nrows(), m);
-	ASSERT_EQ(a.ncolumns(), n);
-	ASSERT_EQ(a.nelems(), m * n);
-	ASSERT_EQ(a.lead_dim(), m);
-	ASSERT_VEC_EQ(m * n, a, ref);
 
 	// fill_value
 
 	const double v1 = 2.5;
-	a = fill(v1);
+	a << v1;
 	for (index_t i = 0; i < m * n; ++i) ref[i] = v1;
 
 	ASSERT_EQ(a.nrows(), m);
@@ -322,7 +310,7 @@ MN_CASE( dense_mat, assign_gen )
 	// copy_value
 
 	for (index_t i = 0; i < m * n; ++i) ref[i] = double(i + 2);
-	a = copy_from(ref.ptr_data());
+	a << ref.ptr_data();
 
 	ASSERT_EQ(a.nrows(), m);
 	ASSERT_EQ(a.ncolumns(), n);
@@ -401,8 +389,8 @@ BEGIN_TPACK( dense_mat_assign )
 	ADD_MN_CASE_3X3( dense_mat, assign, 3, 4 )
 END_TPACK
 
-BEGIN_TPACK( dense_mat_assign_gen )
-	ADD_MN_CASE_3X3( dense_mat, assign_gen, 3, 4 )
+BEGIN_TPACK( dense_mat_import )
+	ADD_MN_CASE_3X3( dense_mat, import, 3, 4 )
 END_TPACK
 
 BEGIN_TPACK( dense_mat_swap )
@@ -417,7 +405,7 @@ BEGIN_MAIN_SUITE
 	ADD_TPACK( dense_mat_access )
 	ADD_TPACK( dense_mat_resize )
 	ADD_TPACK( dense_mat_assign )
-	ADD_TPACK( dense_mat_assign_gen )
+	ADD_TPACK( dense_mat_import )
 	ADD_TPACK( dense_mat_swap )
 END_MAIN_SUITE
 

@@ -339,7 +339,7 @@ MN_CASE( mat_trans, repcols )
 	horizontal_repeat_expr<ref_arg_t, col_t, N> expr(ref_arg(col), n);
 	dense_matrix<double, M, N> S(expr);
 
-	dense_matrix<double, N, M> T0(n, m, zero<double>());
+	dense_matrix<double, N, M> T0(n, m, zero());
 	my_transpose(S, T0);
 
 	dense_matrix<double, N, M> T = expr.trans();
@@ -361,7 +361,7 @@ MN_CASE( mat_trans, reprows )
 	vertical_repeat_expr<ref_arg_t, row_t, M> expr(ref_arg(row), m);
 	dense_matrix<double, M, N> S(expr);
 
-	dense_matrix<double, N, M> T0(n, m, zero<double>());
+	dense_matrix<double, N, M> T0(n, m, zero());
 	my_transpose(S, T0);
 
 	dense_matrix<double, N, M> T = expr.trans();

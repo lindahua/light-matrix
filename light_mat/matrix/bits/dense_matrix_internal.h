@@ -25,10 +25,11 @@ namespace lmat { namespace detail {
 	{
 	public:
 		LMAT_ENSURE_INLINE
-		dense_matrix_internal() { }
+		dense_matrix_internal() : m_blk() { }
 
 		LMAT_ENSURE_INLINE
 		dense_matrix_internal(index_t m, index_t n)
+		: m_blk()
 		{
 			check_arg(m == CTRows && n == CTCols,
 					"Attempted to construct a static dense_matrix with incorrect dimensions.");

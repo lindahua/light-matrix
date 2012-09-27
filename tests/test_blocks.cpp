@@ -67,8 +67,8 @@ SIMPLE_CASE( dblock, construct )
 		ASSERT_VEC_EQ( n, a3, csrc );
 
 		const int zsrc[n] = {0, 0, 0, 0, 0};
-		arr_t a4(n, zero<int>());
-		ASSERT_PENDING( 3 );
+		arr_t a4(n, zero());
+		ASSERT_PENDING( 4 );
 
 		ASSERT_EQ( a4.nelems(), n );
 		ASSERT_NE( a4.ptr_data(), 0 );

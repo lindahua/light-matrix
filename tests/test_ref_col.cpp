@@ -119,28 +119,20 @@ N_CASE( ref_col, assign )
 }
 
 
-N_CASE( ref_col, assign_gen )
+N_CASE( ref_col, import )
 {
 	const index_t n = N == 0 ? 4 : N;
 
 	dblock<double> ref(n);
 	dblock<double> s(n, fill(-1.0));
 
-	// zeros
-
 	double *ps = s.ptr_data();
 	ref_col<double, N> a(ps, n);
-
-	a = zero<double>();
-	for (index_t i = 0; i < n; ++i) ref[i] = double(0);
-
-	ASSERT_EQ(a.ptr_data(), ps);
-	ASSERT_VEC_EQ(n, a, ref);
 
 	// fill_value
 
 	const double v1 = 2.5;
-	a = fill(v1);
+	a << v1;
 	for (index_t i = 0; i < n; ++i) ref[i] = v1;
 
 	ASSERT_EQ(a.ptr_data(), ps);
@@ -149,7 +141,7 @@ N_CASE( ref_col, assign_gen )
 	// copy_value
 
 	for (index_t i = 0; i < n; ++i) ref[i] = double(i + 2);
-	a = copy_from(ref.ptr_data());
+	a << ref.ptr_data();
 
 	ASSERT_EQ(a.ptr_data(), ps);
 	ASSERT_VEC_EQ(n, a, ref);
@@ -174,10 +166,10 @@ BEGIN_TPACK( ref_col_assign )
 	ADD_N_CASE( ref_col, assign, 4 )
 END_TPACK
 
-BEGIN_TPACK( ref_col_assign_gen )
-	ADD_N_CASE( ref_col, assign_gen, 0 )
-	ADD_N_CASE( ref_col, assign_gen, 1 )
-	ADD_N_CASE( ref_col, assign_gen, 4 )
+BEGIN_TPACK( ref_col_import )
+	ADD_N_CASE( ref_col, import, 0 )
+	ADD_N_CASE( ref_col, import, 1 )
+	ADD_N_CASE( ref_col, import, 4 )
 END_TPACK
 
 
@@ -186,7 +178,7 @@ BEGIN_MAIN_SUITE
 
 	ADD_TPACK( ref_col_constructs )
 	ADD_TPACK( ref_col_assign )
-	ADD_TPACK( ref_col_assign_gen )
+	ADD_TPACK( ref_col_import )
 END_MAIN_SUITE
 
 

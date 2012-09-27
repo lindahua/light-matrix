@@ -56,6 +56,14 @@ namespace lmat
 		}
 	}
 
+
+	template<typename T, class DMat>
+	LMAT_ENSURE_INLINE
+	DMat& operator << (IDenseMatrix<DMat, T>& dmat, const T& v)
+	{
+		fill(dmat.derived(), v);
+		return dmat.derived();
+	}
 }
 
 #endif /* MATRIX_FILL_H_ */

@@ -21,7 +21,7 @@ MN_CASE( mat_copy, copy )
 	const index_t n = N == 0 ? 6 : N;
 
 	dblock<double> src(m * n);
-	dblock<double> dst(m * n, zero<double>());
+	dblock<double> dst(m * n, zero());
 
 	for (index_t i = 0; i < m * n; ++i) src[i] = double(i + 2);
 
@@ -44,7 +44,7 @@ MN_CASE( mat_copy, copy_ex )
 	const index_t ldim_b = 8;
 
 	dblock<double> src(ldim_a * n);
-	dblock<double> dst(ldim_b * n, zero<double>());
+	dblock<double> dst(ldim_b * n, zero());
 
 	for (index_t i = 0; i < ldim_a * n; ++i) src[i] = double(i + 2);
 
@@ -55,7 +55,7 @@ MN_CASE( mat_copy, copy_ex )
 
 	ASSERT_MAT_EQ(m, n, a, b);
 
-	dblock<double> ref(ldim_b * n, zero<double>());
+	dblock<double> ref(ldim_b * n, zero());
 
 	for (index_t j = 0; j < n; ++j)
 	{

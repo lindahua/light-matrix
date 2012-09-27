@@ -20,6 +20,14 @@
 namespace lmat
 {
 
+	struct zero_t { };
+
+	LMAT_ENSURE_INLINE
+	inline zero_t zero()
+	{
+		return zero_t();
+	}
+
     /********************************************
      *
      *   Dynamic block
@@ -56,6 +64,15 @@ namespace lmat
 		, m_len(len)
 		, m_ptr(alloc(len))
 		{
+		}
+
+		LMAT_ENSURE_INLINE
+		explicit dblock(index_t len, zero_t, const allocator_type& allocator = allocator_type())
+		: m_allocator(allocator)
+		, m_len(len)
+		, m_ptr(alloc(len))
+		{
+			zero_mem(m_len, m_ptr);
 		}
 
 		template<class Setter>
@@ -242,7 +259,7 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		explicit sblock(const IMemorySetter<Setter, T>& setter)
 		{
-			_apply(setter);
+			setter.set(N, m_arr);
 		}
 
 
@@ -266,7 +283,7 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		sblock& operator = (const IMemorySetter<Setter, T>& setter)
 		{
-			_apply(setter);
+			setter.set(N, m_arr);
 		}
 
 		LMAT_ENSURE_INLINE
@@ -309,21 +326,6 @@ namespace lmat
 		reference operator[] (index_type i)
 		{
 			return m_arr[i];
-		}
-
-	private:
-		template<class Setter>
-		LMAT_ENSURE_INLINE
-		void _apply(const IMemorySetter<Setter, T>& setter)
-		{
-			if (N == 1)
-			{
-				setter.set(m_arr[0]);
-			}
-			else
-			{
-				setter.set(N, m_arr);
-			}
 		}
 
 	private:

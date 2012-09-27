@@ -136,7 +136,7 @@ namespace lmat
 				else
 				{
 					for (index_t j = 0; j < n; ++j)
-						fill_val(row_wrap[0], M, dst.ptr_col(j));
+						fill_val(row_wrap[j], M, dst.ptr_col(j));
 				}
 			}
 		}

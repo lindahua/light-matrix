@@ -78,7 +78,7 @@ N_CASE( dense_col, generates )
 
 	// zeros
 
-	dense_col<double, N> a0(n, zero<double>());
+	dense_col<double, N> a0(n, zero());
 	for (index_t i = 0; i < n; ++i) ref[i] = double(0);
 
 	ASSERT_EQ(a0.nrows(), n);
@@ -201,7 +201,7 @@ N_CASE( dense_col, assign )
 
 	ASSERT_VEC_EQ( n, a, s );
 
-	dense_col<double, N> b(n, zero<double>());
+	dense_col<double, N> b(n, zero());
 
 	const double *pb = b.ptr_data();
 
@@ -220,7 +220,7 @@ N_CASE( dense_col, assign )
 
 	const index_t n2 = N == 0 ? 6 : N;
 
-	dense_col<double, N> c(n2, zero<double>());
+	dense_col<double, N> c(n2, zero());
 
 	c = s;
 
@@ -235,29 +235,18 @@ N_CASE( dense_col, assign )
 }
 
 
-N_CASE( dense_col, assign_gen )
+N_CASE( dense_col, import )
 {
 	const index_t n = N == 0 ? 4 : N;
 
 	dblock<double> ref(n);
 
-	// zeros
-
 	dense_col<double, N> a(n, fill(-1.0));
-
-	a = zero<double>();
-	for (index_t i = 0; i < n; ++i) ref[i] = double(0);
-
-	ASSERT_EQ(a.nrows(), n);
-	ASSERT_EQ(a.ncolumns(), 1);
-	ASSERT_EQ(a.nelems(), n);
-	ASSERT_EQ(a.lead_dim(), n);
-	ASSERT_VEC_EQ(n, a, ref);
 
 	// fill_value
 
 	const double v1 = 2.5;
-	a = fill(v1);
+	a << v1;
 	for (index_t i = 0; i < n; ++i) ref[i] = v1;
 
 	ASSERT_EQ(a.nrows(), n);
@@ -269,7 +258,7 @@ N_CASE( dense_col, assign_gen )
 	// copy_value
 
 	for (index_t i = 0; i < n; ++i) ref[i] = double(i + 2);
-	a = copy_from(ref.ptr_data());
+	a << ref.ptr_data();
 
 	ASSERT_EQ(a.nrows(), n);
 	ASSERT_EQ(a.ncolumns(), 1);
@@ -353,10 +342,10 @@ BEGIN_TPACK( dense_col_assign )
 	ADD_N_CASE( dense_col, assign, 4 )
 END_TPACK
 
-BEGIN_TPACK( dense_col_assign_gen )
-	ADD_N_CASE( dense_col, assign_gen, 0 )
-	ADD_N_CASE( dense_col, assign_gen, 1 )
-	ADD_N_CASE( dense_col, assign_gen, 4 )
+BEGIN_TPACK( dense_col_import )
+	ADD_N_CASE( dense_col, import, 0 )
+	ADD_N_CASE( dense_col, import, 1 )
+	ADD_N_CASE( dense_col, import, 4 )
 END_TPACK
 
 BEGIN_TPACK( dense_col_swap )
@@ -371,7 +360,7 @@ BEGIN_MAIN_SUITE
 	ADD_TPACK( dense_col_copycon )
 	ADD_TPACK( dense_col_resize )
 	ADD_TPACK( dense_col_assign )
-	ADD_TPACK( dense_col_assign_gen )
+	ADD_TPACK( dense_col_import )
 	ADD_TPACK( dense_col_swap )
 END_MAIN_SUITE
 

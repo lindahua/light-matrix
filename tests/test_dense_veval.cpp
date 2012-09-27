@@ -207,7 +207,7 @@ MN_CASE( eval_by_scalars, cont_to_cont )
 	dense_matrix<double, M, N> a(m, n);
 	for (index_t i = 0; i < m * n; ++i) a[i] = double(i+2);
 
-	dense_matrix<double, M, N> b(m, n, zero<double>());
+	dense_matrix<double, M, N> b(m, n, zero());
 
 	linear_by_scalars_evaluate(a, b);
 	ASSERT_MAT_EQ(m, n, a, b);

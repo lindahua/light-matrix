@@ -197,7 +197,7 @@ MN_CASE( ref_mat, assign )
 	ASSERT_VEC_EQ( m * n, a1, a2 );
 }
 
-MN_CASE( ref_mat, assign_gen )
+MN_CASE( ref_mat, import )
 {
 	const index_t m = M == 0 ? 3 : M;
 	const index_t n = N == 0 ? 4 : N;
@@ -205,23 +205,12 @@ MN_CASE( ref_mat, assign_gen )
 	dblock<double> ref(m * n);
 	dblock<double> s(m * n, fill(-1.0));
 
-	// zeros
-
 	ref_matrix<double, M, N> a(s.ptr_data(), m, n);
-
-	a = zero<double>();
-	for (index_t i = 0; i < m * n; ++i) ref[i] = double(0);
-
-	ASSERT_EQ(a.nrows(), m);
-	ASSERT_EQ(a.ncolumns(), n);
-	ASSERT_EQ(a.nelems(), m * n);
-	ASSERT_EQ(a.lead_dim(), m);
-	ASSERT_VEC_EQ(m * n, a, ref);
 
 	// fill_value
 
 	const double v1 = 2.5;
-	a = fill(v1);
+	a << v1;
 	for (index_t i = 0; i < m * n; ++i) ref[i] = v1;
 
 	ASSERT_EQ(a.nrows(), m);
@@ -233,7 +222,7 @@ MN_CASE( ref_mat, assign_gen )
 	// copy_value
 
 	for (index_t i = 0; i < m * n; ++i) ref[i] = double(i + 2);
-	a = copy_from(ref.ptr_data());
+	a << ref.ptr_data();
 
 	ASSERT_EQ(a.nrows(), m);
 	ASSERT_EQ(a.ncolumns(), n);
@@ -264,8 +253,8 @@ BEGIN_TPACK( ref_mat_assign )
 	ADD_MN_CASE_3X3( ref_mat, assign, 3, 4 )
 END_TPACK
 
-BEGIN_TPACK( ref_mat_assign_gen )
-	ADD_MN_CASE_3X3( ref_mat, assign_gen, 3, 4 )
+BEGIN_TPACK( ref_mat_import )
+	ADD_MN_CASE_3X3( ref_mat, import, 3, 4 )
 END_TPACK
 
 
@@ -277,7 +266,7 @@ BEGIN_MAIN_SUITE
 	ADD_TPACK( ref_mat_constructs )
 	ADD_TPACK( ref_mat_access )
 	ADD_TPACK( ref_mat_assign )
-	ADD_TPACK( ref_mat_assign_gen )
+	ADD_TPACK( ref_mat_import )
 END_MAIN_SUITE
 
 

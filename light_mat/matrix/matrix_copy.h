@@ -99,6 +99,15 @@ namespace lmat
 	}
 
 
+	template<typename T, class DMat>
+	LMAT_ENSURE_INLINE
+	DMat& operator << (IDenseMatrix<DMat, T>& dmat, const T *src)
+	{
+		copy(src, dmat.derived());
+		return dmat.derived();
+	}
+
+
 	struct matrix_copy_policy { };
 
 	template<typename T, class LMat, class RMat>

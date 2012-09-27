@@ -238,13 +238,6 @@ namespace lmat
 			return *this;
 		}
 
-		template<class Setter>
-		LMAT_ENSURE_INLINE ref_matrix& operator = (IMemorySetter<Setter, T> setter)
-		{
-			set_array_memory(*this, setter);
-			return *this;
-		}
-
 	public:
 		LMAT_ENSURE_INLINE index_type nelems() const
 		{
@@ -373,12 +366,6 @@ namespace lmat
 			return *this;
 		}
 
-		template<class Setter>
-		LMAT_ENSURE_INLINE ref_col& operator = (IMemorySetter<Setter, T> setter)
-		{
-			base_mat_t::operator = (setter);
-			return *this;
-		}
 	};
 
 
@@ -417,13 +404,6 @@ namespace lmat
 		LMAT_ENSURE_INLINE ref_row& operator = (const IMatrixXpr<Expr, T>& r)
 		{
 			base_mat_t::operator = (r);
-			return *this;
-		}
-
-		template<class Setter>
-		LMAT_ENSURE_INLINE ref_row& operator = (IMemorySetter<Setter, T> setter)
-		{
-			base_mat_t::operator = (setter);
 			return *this;
 		}
 	};
