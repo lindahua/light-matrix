@@ -44,6 +44,17 @@
 	typedef index_t index_type;
 
 
+#ifdef LMAT_ENABLE_INDEX_CHECKING
+#define LMAT_CHECK_IDX(i, n) check_arg(i >= 0 && i < (n), "Index out of range.");
+#define LMAT_CHECK_SUBS(a, i, j) \
+		check_arg(i >= 0 && i < (a).nrows() && j >= 0 && j < (a).ncolumns(), "Subscripts out of range.");
+#else
+#define LMAT_CHECK_IDX(i, n)
+#define LMAT_CHECK_SUBS(a, i, j)
+#endif
+
+
+
 namespace lmat
 {
 
@@ -224,13 +235,13 @@ namespace lmat
 
 		LMAT_ENSURE_INLINE const_reference operator() (const index_type i, const index_type j) const
 		{
-			check_subscripts_in_range(derived(), i, j);
+			LMAT_CHECK_SUBS(*this, i, j)
 			return elem(i, j);
 		}
 
 		LMAT_ENSURE_INLINE reference operator() (const index_type i, const index_type j)
 		{
-			check_subscripts_in_range(derived(), i, j);
+			LMAT_CHECK_SUBS(*this, i, j)
 			return elem(i, j);
 		}
 
@@ -248,6 +259,7 @@ namespace lmat
 		typename colview_map<Derived, whole>::const_type
 		column(const index_type j) const
 		{
+			LMAT_CHECK_IDX(j, this->ncolumns())
 			return colview_map<Derived, whole>::get(derived(), j, whole());
 		}
 
@@ -255,6 +267,7 @@ namespace lmat
 		typename colview_map<Derived, whole>::type
 		column(const index_type j)
 		{
+			LMAT_CHECK_IDX(j, this->ncolumns())
 			return colview_map<Derived, whole>::get(derived(), j, whole());
 		}
 
@@ -263,6 +276,7 @@ namespace lmat
 		typename colview_map<Derived, Range>::const_type
 		operator()(const IRange<Range>& rgn, const index_t j) const
 		{
+			LMAT_CHECK_IDX(j, this->ncolumns())
 			return colview_map<Derived, Range>::get(derived(), j, rgn.derived());
 		}
 
@@ -271,6 +285,7 @@ namespace lmat
 		typename colview_map<Derived, Range>::type
 		operator()(const IRange<Range>& rgn, const index_t j)
 		{
+			LMAT_CHECK_IDX(j, this->ncolumns())
 			return colview_map<Derived, Range>::get(derived(), j, rgn.derived());
 		}
 
@@ -280,6 +295,7 @@ namespace lmat
 		typename rowview_map<Derived, whole>::const_type
 		row(const index_type i) const
 		{
+			LMAT_CHECK_IDX(i, this->nrows())
 			return rowview_map<Derived, whole>::get(derived(), i, whole());
 		}
 
@@ -287,6 +303,7 @@ namespace lmat
 		typename rowview_map<Derived, whole>::type
 		row(const index_type i)
 		{
+			LMAT_CHECK_IDX(i, this->nrows())
 			return rowview_map<Derived, whole>::get(derived(), i, whole());
 		}
 
@@ -295,6 +312,7 @@ namespace lmat
 		typename rowview_map<Derived, Range>::const_type
 		operator()(const index_t i, const IRange<Range>& rgn) const
 		{
+			LMAT_CHECK_IDX(i, this->nrows())
 			return rowview_map<Derived, Range>::get(derived(), i, rgn.derived());
 		}
 
@@ -303,6 +321,7 @@ namespace lmat
 		typename rowview_map<Derived, Range>::type
 		operator()(const index_t i, const IRange<Range>& rgn)
 		{
+			LMAT_CHECK_IDX(i, this->nrows())
 			return rowview_map<Derived, Range>::get(derived(), i, rgn.derived());
 		}
 

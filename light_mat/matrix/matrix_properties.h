@@ -15,6 +15,12 @@
 
 #include <light_mat/matrix/matrix_concepts.h>
 
+#ifdef LMAT_ENABLE_DIM_CHECKING
+#define LMAT_CHECK_SAME_SHAPE(a, b) check_arg(has_same_size((a), (b)), "Inconsistent matrix size.");
+#else
+#define LMAT_CHECK_SAME_SHAPE(a, b)
+#endif
+
 namespace lmat
 {
 	template<class Mat, typename T>
@@ -87,37 +93,6 @@ namespace lmat
 	inline bool has_continuous_layout(const IDenseMatrix<Mat, T>& A)
 	{
 		return ct_has_continuous_layout<Mat>::value || A.lead_dim() == A.nrows();
-	}
-
-	// check
-
-	template<class Mat1, typename T1, class Mat2, typename T2>
-	LMAT_ENSURE_INLINE
-	inline void check_same_size(
-			const IMatrixXpr<Mat1, T1>& A,
-			const IMatrixXpr<Mat2, T2>& B,
-			const char *msg)
-	{
-		check_arg(has_same_size(A, B), msg);
-	}
-
-	template<class Mat, typename T>
-	LMAT_ENSURE_INLINE
-	inline void check_square(
-			const IMatrixXpr<Mat, T>& A,
-			const char *msg)
-	{
-		check_arg(is_square(A), msg);
-	}
-
-	template<class Mat1, typename T1, class Mat2, typename T2>
-	LMAT_ENSURE_INLINE
-	inline void check_same_innerdim(
-			const IMatrixXpr<Mat1, T1>& A,
-			const IMatrixXpr<Mat2, T2>& B,
-			const char *msg)
-	{
-		check_arg(A.ncolumns() == B.nrows(), msg);
 	}
 }
 

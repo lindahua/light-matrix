@@ -126,9 +126,7 @@ namespace lmat
 				const arg_forwarder<Arg2_HP, Arg2>& arg2)
 		: base_t(arg1, arg2), m_fun(fun)
 		{
-			check_same_size(
-					this->first_arg(),
-					this->second_arg(), "arg1 and arg2 must be of the same size.");
+			LMAT_CHECK_SAME_SHAPE(this->first_arg(), this->second_arg())
 		}
 
 		LMAT_ENSURE_INLINE const Fun& fun() const

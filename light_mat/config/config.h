@@ -16,9 +16,14 @@
 #include <light_mat/config/user_config.h>
 #include <light_mat/config/platform_config.h>
 
-#ifndef LMAT_NO_CHECK
-#define LMAT_INDEX_CHECKING
+#if (LMAT_DIAGNOSIS_LEVEL >= 3)
+#define LMAT_ENABLE_INDEX_CHECKING
 #endif
+
+#if (LMAT_DIAGNOSIS_LEVEL >= 1)
+#define LMAT_ENABLE_DIM_CHECKING
+#endif
+
 
 #endif
 

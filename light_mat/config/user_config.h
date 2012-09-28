@@ -13,7 +13,9 @@
 #ifndef LIGHTMAT_USER_CONFIG_H_
 #define LIGHTMAT_USER_CONFIG_H_
 
-// #define LMAT_NO_CHECK
+#ifndef LMAT_DIAGNOSIS_LEVEL
+#define LMAT_DIAGNOSIS_LEVEL 3
+#endif
 
 #define LMAT_INDEX_SIZE 4
 

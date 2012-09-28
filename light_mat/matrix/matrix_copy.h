@@ -63,7 +63,7 @@ namespace lmat
 	inline
 	void copy(const IDenseMatrix<LMat, T>& src, IDenseMatrix<RMat, T>& dst)
 	{
-		check_same_size(src, dst, "copy: inconsistent sizes of src and dst.");
+		LMAT_CHECK_SAME_SHAPE(src, dst)
 
 		typedef typename detail::mat_copier<T,
 				binary_ct_rows<LMat, RMat>::value,
