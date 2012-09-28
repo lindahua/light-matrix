@@ -77,7 +77,6 @@ set(MATRIX_BASE_HS
     
 set(MATRIX_CLASS_HS
     ${INC}/matrix/dense_matrix.h
-    ${INC}/matrix/bits/dense_matrix_internal.h
     ${INC}/matrix/ref_matrix.h
     ${INC}/matrix/ref_matrix_ex.h
     ${INC}/matrix/const_matrix.h
@@ -143,8 +142,7 @@ add_executable(test_blocks ${COMMON_HS} test_blocks.cpp)
 set(DENSE_MAT_HS
     ${COMMON_HS}
     ${MATRIX_BASE_HS}
-    ${INC}/matrix/dense_matrix.h
-    ${INC}/matrix/bits/dense_matrix_internal.h)
+    ${INC}/matrix/dense_matrix.h)
 
 add_executable(test_dense_mat ${DENSE_MAT_HS} test_dense_mat.cpp)
 add_executable(test_dense_col ${DENSE_MAT_HS} test_dense_col.cpp)
