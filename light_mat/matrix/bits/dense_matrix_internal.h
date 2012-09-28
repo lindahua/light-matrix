@@ -78,7 +78,7 @@ namespace lmat { namespace detail {
 
 
 	template<typename T, int CTRows>
-	class dense_matrix_internal<T, CTRows, DynamicDim>
+	class dense_matrix_internal<T, CTRows, 0>
 	{
 	public:
 		LMAT_ENSURE_INLINE
@@ -139,7 +139,7 @@ namespace lmat { namespace detail {
 	};
 
 	template<typename T, int CTCols>
-	class dense_matrix_internal<T, DynamicDim, CTCols>
+	class dense_matrix_internal<T, 0, CTCols>
 	{
 	public:
 		LMAT_ENSURE_INLINE
@@ -201,7 +201,7 @@ namespace lmat { namespace detail {
 
 
 	template<typename T>
-	class dense_matrix_internal<T, DynamicDim, DynamicDim>
+	class dense_matrix_internal<T, 0, 0>
 	{
 	public:
 		LMAT_ENSURE_INLINE

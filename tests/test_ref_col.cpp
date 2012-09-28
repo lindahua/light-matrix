@@ -17,14 +17,14 @@ using namespace lmat::test;
 
 // explicit instantiation
 
-template class lmat::ref_col<double, DynamicDim>;
+template class lmat::ref_col<double, 0>;
 template class lmat::ref_col<double, 4>;
 
 #ifdef LMAT_USE_STATIC_ASSERT
 
 static_assert(lmat::is_base_of<
-		lmat::ref_matrix<double, DynamicDim, 1>,
-		lmat::ref_col<double, DynamicDim> >::value, "Base verification failed.");
+		lmat::ref_matrix<double, 0, 1>,
+		lmat::ref_col<double, 0> >::value, "Base verification failed.");
 
 static_assert(lmat::is_base_of<
 		lmat::ref_matrix<double, 4, 1>,

@@ -395,17 +395,17 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	LMAT_MATRIX_TYPEDEFS2(dense_matrix, mat, DynamicDim, DynamicDim)
+	LMAT_MATRIX_TYPEDEFS2(dense_matrix, mat, 0, 0)
 	LMAT_MATRIX_TYPEDEFS2(dense_matrix, mat22, 2, 2)
 	LMAT_MATRIX_TYPEDEFS2(dense_matrix, mat23, 2, 3)
 	LMAT_MATRIX_TYPEDEFS2(dense_matrix, mat32, 3, 2)
 	LMAT_MATRIX_TYPEDEFS2(dense_matrix, mat33, 3, 3)
 
-	LMAT_MATRIX_TYPEDEFS1(dense_col, col, DynamicDim)
+	LMAT_MATRIX_TYPEDEFS1(dense_col, col, 0)
 	LMAT_MATRIX_TYPEDEFS1(dense_col, col2, 2)
 	LMAT_MATRIX_TYPEDEFS1(dense_col, col3, 3)
 
-	LMAT_MATRIX_TYPEDEFS1(dense_row, row, DynamicDim)
+	LMAT_MATRIX_TYPEDEFS1(dense_row, row, 0)
 	LMAT_MATRIX_TYPEDEFS1(dense_row, row2, 2)
 	LMAT_MATRIX_TYPEDEFS1(dense_row, row3, 3)
 

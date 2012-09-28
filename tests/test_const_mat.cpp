@@ -16,9 +16,9 @@ using namespace lmat::test;
 
 // explicit instantiation
 
-template class lmat::const_matrix<double, DynamicDim, DynamicDim>;
-template class lmat::const_matrix<double, DynamicDim, 4>;
-template class lmat::const_matrix<double, 3, DynamicDim>;
+template class lmat::const_matrix<double, 0, 0>;
+template class lmat::const_matrix<double, 0, 4>;
+template class lmat::const_matrix<double, 3, 0>;
 template class lmat::const_matrix<double, 3, 4>;
 
 #ifdef LMAT_USE_STATIC_ASSERT

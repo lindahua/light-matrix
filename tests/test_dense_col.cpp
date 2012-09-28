@@ -16,14 +16,14 @@ using namespace lmat::test;
 
 // explicit instantiation
 
-template class lmat::dense_col<double, DynamicDim>;
+template class lmat::dense_col<double, 0>;
 template class lmat::dense_col<double, 4>;
 
 #ifdef LMAT_USE_STATIC_ASSERT
 
 static_assert(lmat::is_base_of<
-		lmat::dense_matrix<double, DynamicDim, 1>,
-		lmat::dense_col<double, DynamicDim> >::value, "Base verification failed.");
+		lmat::dense_matrix<double, 0, 1>,
+		lmat::dense_col<double, 0> >::value, "Base verification failed.");
 
 static_assert(lmat::is_base_of<
 		lmat::dense_matrix<double, 4, 1>,

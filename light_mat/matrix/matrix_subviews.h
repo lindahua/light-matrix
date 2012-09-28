@@ -64,8 +64,8 @@ namespace lmat
 	{
 		typedef typename matrix_traits<Mat>::value_type value_type;
 
-		typedef cref_matrix<value_type, DynamicDim, 1> const_type;
-		typedef  ref_matrix<value_type, DynamicDim, 1> non_const_type;
+		typedef cref_matrix<value_type, 0, 1> const_type;
+		typedef  ref_matrix<value_type, 0, 1> non_const_type;
 
 		typedef typename
 				if_<is_readonly_mat<Mat>,
@@ -142,8 +142,8 @@ namespace lmat
 	{
 		typedef typename matrix_traits<Mat>::value_type value_type;
 
-		typedef cref_matrix_ex<value_type, 1, DynamicDim> const_type;
-		typedef  ref_matrix_ex<value_type, 1, DynamicDim> non_const_type;
+		typedef cref_matrix_ex<value_type, 1, 0> const_type;
+		typedef  ref_matrix_ex<value_type, 1, 0> non_const_type;
 
 		typedef typename
 				if_<is_readonly_mat<Mat>,
@@ -280,7 +280,7 @@ namespace lmat
 	struct matview_map<Mat, whole, range>
 	{
 		static const bool is_continuous = ct_has_continuous_layout<Mat>::value;
-		typedef detail::multicol_helper<Mat, DynamicDim, is_continuous> helper_t;
+		typedef detail::multicol_helper<Mat, 0, is_continuous> helper_t;
 
 		typedef typename helper_t::const_type const_type;
 		typedef typename helper_t::type type;
@@ -305,8 +305,8 @@ namespace lmat
 		typedef typename matrix_traits<Mat>::value_type value_type;
 		static const int ctcols = ct_cols<Mat>::value;
 
-		typedef cref_matrix_ex<value_type, DynamicDim, ctcols> const_type;
-		typedef  ref_matrix_ex<value_type, DynamicDim, ctcols> non_const_type;
+		typedef cref_matrix_ex<value_type, 0, ctcols> const_type;
+		typedef  ref_matrix_ex<value_type, 0, ctcols> non_const_type;
 
 		typedef typename
 				if_<is_readonly_mat<Mat>,
@@ -341,8 +341,8 @@ namespace lmat
 	{
 		typedef typename matrix_traits<Mat>::value_type value_type;
 
-		typedef cref_matrix_ex<value_type, DynamicDim, DynamicDim> const_type;
-		typedef  ref_matrix_ex<value_type, DynamicDim, DynamicDim> non_const_type;
+		typedef cref_matrix_ex<value_type, 0, 0> const_type;
+		typedef  ref_matrix_ex<value_type, 0, 0> non_const_type;
 
 		typedef typename
 				if_<is_readonly_mat<Mat>,

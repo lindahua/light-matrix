@@ -177,7 +177,7 @@ namespace lmat
 	};
 
 	template<>
-	struct hrep_t<DynamicDim>
+	struct hrep_t<0>
 	{
 		const index_t n;
 
@@ -205,7 +205,7 @@ namespace lmat
 	};
 
 	template<>
-	struct vrep_t<DynamicDim>
+	struct vrep_t<0>
 	{
 		const index_t m;
 
@@ -295,10 +295,10 @@ namespace lmat
 
 	template<typename T, class Arg>
 	LMAT_ENSURE_INLINE
-	inline typename unary_expr_map<hrep_t<DynamicDim>, ref_arg_t, Arg>::type
+	inline typename unary_expr_map<hrep_t<0>, ref_arg_t, Arg>::type
 	hrep(const IMatrixXpr<Arg, T>& arg, const index_t n)
 	{
-		return make_expr(hrep_t<DynamicDim>(n), ref_arg(arg.derived()));
+		return make_expr(hrep_t<0>(n), ref_arg(arg.derived()));
 	}
 
 	template<typename T, class Arg, int N>
@@ -311,10 +311,10 @@ namespace lmat
 
 	template<typename T, class Arg>
 	LMAT_ENSURE_INLINE
-	inline typename unary_expr_map<vrep_t<DynamicDim>, ref_arg_t, Arg>::type
+	inline typename unary_expr_map<vrep_t<0>, ref_arg_t, Arg>::type
 	vrep(const IMatrixXpr<Arg, T>& arg, const index_t m)
 	{
-		return make_expr(vrep_t<DynamicDim>(m), ref_arg(arg.derived()));
+		return make_expr(vrep_t<0>(m), ref_arg(arg.derived()));
 	}
 
 	template<typename T, class Arg, int M>

@@ -210,13 +210,13 @@ namespace lmat
 	template<class Mat>
 	struct has_dynamic_nrows
 	{
-		static const bool value = ct_rows<Mat>::value == DynamicDim;
+		static const bool value = ct_rows<Mat>::value == 0;
 	};
 
 	template<class Mat>
 	struct has_dynamic_ncols
 	{
-		static const bool value = ct_cols<Mat>::value == DynamicDim;
+		static const bool value = ct_cols<Mat>::value == 0;
 	};
 
 

@@ -18,14 +18,14 @@ using namespace lmat::test;
 
 // explicit instantiation
 
-template class lmat::cref_matrix_ex<double, DynamicDim, DynamicDim>;
-template class lmat::cref_matrix_ex<double, DynamicDim, 4>;
-template class lmat::cref_matrix_ex<double, 3, DynamicDim>;
+template class lmat::cref_matrix_ex<double, 0, 0>;
+template class lmat::cref_matrix_ex<double, 0, 4>;
+template class lmat::cref_matrix_ex<double, 3, 0>;
 template class lmat::cref_matrix_ex<double, 3, 4>;
 
-template class lmat::ref_matrix_ex<double, DynamicDim, DynamicDim>;
-template class lmat::ref_matrix_ex<double, DynamicDim, 4>;
-template class lmat::ref_matrix_ex<double, 3, DynamicDim>;
+template class lmat::ref_matrix_ex<double, 0, 0>;
+template class lmat::ref_matrix_ex<double, 0, 4>;
+template class lmat::ref_matrix_ex<double, 3, 0>;
 template class lmat::ref_matrix_ex<double, 3, 4>;
 
 #ifdef LMAT_USE_STATIC_ASSERT

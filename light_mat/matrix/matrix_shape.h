@@ -42,7 +42,7 @@ namespace lmat
 
 
 	template<>
-	struct single_dim<DynamicDim>
+	struct single_dim<0>
 	{
 		LMAT_ENSURE_INLINE
 		single_dim() : m_dim(0) { }
@@ -134,7 +134,7 @@ namespace lmat
 		struct matrix_shape_internal;
 
 		template<>
-		struct matrix_shape_internal<DynamicDim, DynamicDim, false, false>
+		struct matrix_shape_internal<0, 0, false, false>
 		{
 			index_t _nrows;
 			index_t _ncols;
@@ -160,7 +160,7 @@ namespace lmat
 		};
 
 		template<int N>
-		struct matrix_shape_internal<DynamicDim, N, false, true>
+		struct matrix_shape_internal<0, N, false, true>
 		{
 			index_t _nrows;
 
@@ -187,7 +187,7 @@ namespace lmat
 		};
 
 		template<int M>
-		struct matrix_shape_internal<M, DynamicDim, true, false>
+		struct matrix_shape_internal<M, 0, true, false>
 		{
 			index_t _ncols;
 

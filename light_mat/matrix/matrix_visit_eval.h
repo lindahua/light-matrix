@@ -66,7 +66,7 @@ namespace lmat
 	};
 
 	template<>
-	struct linear_viseval_impl<DynamicDim, scalar_kernel_t>
+	struct linear_viseval_impl<0, scalar_kernel_t>
 	{
 		template<typename T, class Visitor, class Mat>
 		LMAT_ENSURE_INLINE
@@ -117,7 +117,7 @@ namespace lmat
 
 
 	template<int CTCols>
-	struct percol_viseval_impl<DynamicDim, CTCols, scalar_kernel_t>
+	struct percol_viseval_impl<0, CTCols, scalar_kernel_t>
 	{
 		template<typename T, class Visitor, class Mat>
 		LMAT_ENSURE_INLINE

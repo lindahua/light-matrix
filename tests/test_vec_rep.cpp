@@ -21,9 +21,9 @@ using namespace lmat::test;
 typedef dense_matrix<double, 0, 1> dcol_t;
 typedef dense_matrix<double, 1, 0> drow_t;
 
-template class lmat::horizontal_repeat_expr<ref_arg_t, dcol_t, DynamicDim>;
+template class lmat::horizontal_repeat_expr<ref_arg_t, dcol_t, 0>;
 template class lmat::horizontal_repeat_expr<ref_arg_t, dcol_t, 6>;
-template class lmat::vertical_repeat_expr<ref_arg_t, drow_t, DynamicDim>;
+template class lmat::vertical_repeat_expr<ref_arg_t, drow_t, 0>;
 template class lmat::vertical_repeat_expr<ref_arg_t, drow_t, 4>;
 
 
@@ -33,7 +33,7 @@ N_CASE( repcols, generic )
 	const index_t n = 6;
 
 	typedef dense_matrix<double, N, 1> col_t;
-	typedef horizontal_repeat_expr<ref_arg_t, col_t, DynamicDim> expr_t;
+	typedef horizontal_repeat_expr<ref_arg_t, col_t, 0> expr_t;
 
 	col_t a(m, 1);
 
@@ -78,7 +78,7 @@ N_CASE( repcols, const )
 	const double val = 12.5;
 
 	typedef const_matrix<double, N, 1> col_t;
-	typedef const_matrix<double, N, DynamicDim> expr_t;
+	typedef const_matrix<double, N, 0> expr_t;
 
 	col_t a(m, 1, val);
 
@@ -123,7 +123,7 @@ N_CASE( reprows, generic )
 	const index_t n = N == 0 ? 6 : N;
 
 	typedef dense_matrix<double, 1, N> row_t;
-	typedef vertical_repeat_expr<ref_arg_t, row_t, DynamicDim> expr_t;
+	typedef vertical_repeat_expr<ref_arg_t, row_t, 0> expr_t;
 
 	row_t a(1, n);
 

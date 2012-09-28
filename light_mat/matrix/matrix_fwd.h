@@ -20,8 +20,6 @@
 
 namespace lmat
 {
-	const int DynamicDim = 0;
-
 	// forward declaration of concepts
 
 
