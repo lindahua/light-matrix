@@ -145,10 +145,8 @@ namespace lmat
 	template<int N1, int N2>
 	struct binary_ctdim
 	{
-#ifdef LMAT_USE_STATIC_ASSERT
-		static_assert(is_compatible_ctdim<N1, N2>::value, "Incompatible compile-time dimensions.");
-#endif
-		static const int value = N1 > N2 ? N1 : N2;
+		static const int _maybe_value_ = N1 > N2 ? N1 : N2;
+		static const int value = enable_int_if<is_compatible_ctdim<N1, N2>, _maybe_value_>::value;
 	};
 
 

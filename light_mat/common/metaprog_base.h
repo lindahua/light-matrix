@@ -95,6 +95,26 @@ namespace lmat
 		typedef typename enable_if_c<CondT::value, T>::type type;
 	};
 
+	template<bool Cond, int Val>
+	struct enable_int_if_c;
+
+	template<int Val>
+	struct enable_int_if_c<true, Val>
+	{
+		static const int value = Val;
+	};
+
+	template<int Val>
+	struct enable_int_if_c<false, Val> { };
+
+	template<typename CondT, int Val>
+	struct enable_int_if
+	{
+		static const int value = enable_int_if_c<CondT::value, Val>::value;
+	};
+
+
+
 }
 
 #endif
