@@ -35,10 +35,6 @@ set(CMAKE_MODULE_PATH "../cmake_modules" ${CMAKE_MODULE_PATH})
 
 find_package(MKL)
 
-if (NOT MKL_FOUND)
-    message(FATAL_ERROR "Intel MKL is not found")
-endif (NOT MKL_FOUND)
-
 
 # Header file groups (to be used as dependencies)
 
@@ -223,12 +219,17 @@ set(MAT_REDUC_HS
 add_executable(test_mat_reduce ${MAT_REDUC_HS} test_mat_reduce.cpp) 
 add_executable(test_partial_reduce ${MAT_REDUC_HS} test_partial_reduce.cpp) 
 
-set(MAT_BLAS_HS
-    ${MATRIX_HS}
-    ${BLAS_HS})
+if (MKL_FOUND)
+
+    set(MAT_BLAS_HS
+        ${MATRIX_HS}
+        ${BLAS_HS})
     
-add_executable(test_blasl1 ${MAT_BLAS_HS} test_blasl1.cpp)
-add_executable(test_gemv ${MAT_BLAS_HS} test_gemv.cpp)
+    add_executable(test_blasl1 ${MAT_BLAS_HS} test_blasl1.cpp)
+    add_executable(test_gemv ${MAT_BLAS_HS} test_gemv.cpp)
+
+endif (MKL_FOUND)
+
 
 # Link to test_main
 
@@ -259,20 +260,25 @@ set(LMAT_TEST_NAMES
 	test_partial_reduce
 )
 
-set(LMAT_LINALG_TEST_NAMES
-    test_blasl1
-    test_gemv
-)
+
 	
 foreach(tname ${LMAT_TEST_NAMES})
 	target_link_libraries(${tname} test_main)
 endforeach(tname)	
+
+if (MKL_FOUND)
+
+set(LMAT_LINALG_TEST_NAMES
+    test_blasl1
+    test_gemv
+)
 
 foreach(tname ${LMAT_LINALG_TEST_NAMES})
     target_link_libraries(${tname} test_main
         ${MKL_LIBRARY})
 endforeach(tname)
 
+endif (MKL_FOUND)
 
 # Add tests
 
@@ -280,7 +286,13 @@ foreach(tname ${LMAT_TEST_NAMES})
 	add_test(NAME ${tname} COMMAND ${tname})
 endforeach(tname)
 
+if (MKL_FOUND)
+
 foreach(tname ${LMAT_LINALG_TEST_NAMES})
 	add_test(NAME ${tname} COMMAND ${tname})
 endforeach(tname)
+
+endif (MKL_FOUND)
+
+
 
