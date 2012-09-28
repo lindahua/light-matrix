@@ -56,7 +56,6 @@ set(MATRIX_BASE_HS
     ${INC}/matrix/matrix_shape.h
     ${INC}/matrix/matrix_concepts.h
     ${INC}/matrix/matrix_properties.h
-    ${INC}/matrix/array_memset.h
     ${INC}/matrix/bits/matrix_fill_internal.h
     ${INC}/matrix/bits/matrix_copy_internal.h
     ${INC}/matrix/bits/matrix_compare_internal.h
