@@ -140,7 +140,7 @@ namespace lmat
 
 		LMAT_ENSURE_INLINE
 		cref_matrix_ex(const T* pdata, index_type m, index_type n, index_type ldim)
-		: m_data(pdata), m_shape(m, n), m_ldim(ldim)
+		: m_data(pdata), m_shape(m, n), m_layout(ldim)
 		{
 		}
 
@@ -170,7 +170,7 @@ namespace lmat
 
 		LMAT_ENSURE_INLINE index_type lead_dim() const
 		{
-			return m_ldim;
+			return m_layout.lead_dim;
 		}
 
 		LMAT_ENSURE_INLINE const_pointer ptr_data() const
@@ -185,7 +185,7 @@ namespace lmat
 
 		LMAT_ENSURE_INLINE index_type offset(const index_type i, const index_type j) const
 		{
-			return m_shape.offset(m_ldim, i, j);
+			return sub2offset(m_layout, m_shape, i, j);
 		}
 
 		LMAT_ENSURE_INLINE const_reference elem(const index_type i, const index_type j) const
@@ -201,7 +201,7 @@ namespace lmat
 	private:
 		const T *m_data;
 		matrix_shape<CTRows, CTCols> m_shape;
-		const index_type m_ldim;
+		column_major_layout_ex m_layout;
 
 	}; // end class cref_matrix_ex
 
@@ -272,7 +272,7 @@ namespace lmat
 	public:
 		LMAT_ENSURE_INLINE
 		ref_matrix_ex(T* pdata, index_type m, index_type n, index_type ldim)
-		: m_data(pdata), m_shape(m, n), m_ldim(ldim)
+		: m_data(pdata), m_shape(m, n), m_layout(ldim)
 		{
 		}
 
@@ -316,7 +316,7 @@ namespace lmat
 
 		LMAT_ENSURE_INLINE index_type lead_dim() const
 		{
-			return m_ldim;
+			return m_layout.lead_dim;
 		}
 
 		LMAT_ENSURE_INLINE const_pointer ptr_data() const
@@ -341,7 +341,7 @@ namespace lmat
 
 		LMAT_ENSURE_INLINE index_type offset(const index_type i, const index_type j) const
 		{
-			return m_shape.offset(m_ldim, i, j);
+			return sub2offset(m_layout, m_shape, i, j);
 		}
 
 		LMAT_ENSURE_INLINE const_reference elem(const index_type i, const index_type j) const
@@ -373,7 +373,7 @@ namespace lmat
 	private:
 		T *m_data;
 		matrix_shape<CTRows, CTCols> m_shape;
-		const index_type m_ldim;
+		column_major_layout_ex m_layout;
 
 	}; // end ref_matrix_ex
 

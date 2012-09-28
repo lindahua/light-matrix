@@ -95,11 +95,11 @@ namespace lmat
 
 		LMAT_ENSURE_INLINE index_t ncolumns() const
 		{
-			return m_n.dim();
+			return m_n.value();
 		}
 
 	private:
-		single_dim<N> m_n;
+		dimension<N> m_n;
 	};
 
 
@@ -139,7 +139,7 @@ namespace lmat
 
 		LMAT_ENSURE_INLINE index_t nrows() const
 		{
-			return m_m.dim();
+			return m_m.value();
 		}
 
 		LMAT_ENSURE_INLINE index_t ncolumns() const
@@ -148,7 +148,7 @@ namespace lmat
 		}
 
 	private:
-		single_dim<M> m_m;
+		dimension<M> m_m;
 	};
 
 

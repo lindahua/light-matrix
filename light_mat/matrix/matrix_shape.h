@@ -20,41 +20,45 @@ namespace lmat
 
 	/********************************************
 	 *
-	 *  single_dim
+	 *  single dimension
 	 *
 	 ********************************************/
 
 	template<int N>
-	struct single_dim
+	class dimension
 	{
+	public:
 		LMAT_ENSURE_INLINE
-		single_dim() { }
+		dimension() { }
 
 		LMAT_ENSURE_INLINE
-		single_dim(const index_t n)
+		dimension(const index_t n)
 		{
-			check_arg(n == N, "single_dim: the input dimension is invalid.");
+			check_arg(n == N,
+					"The input dimension is invalid.");
 		}
 
 		LMAT_ENSURE_INLINE
-		index_t dim() const { return N; }
+		index_t value() const { return N; }
 	};
 
 
 	template<>
-	struct single_dim<0>
+	class dimension<0>
 	{
+	public:
 		LMAT_ENSURE_INLINE
-		single_dim() : m_dim(0) { }
+		dimension() : m_dim(0) { }
 
 		LMAT_ENSURE_INLINE
-		single_dim(const index_t n) : m_dim(n)
+		dimension(const index_t n) : m_dim(n)
 		{ }
 
 		LMAT_ENSURE_INLINE
-		index_t dim() const { return m_dim; }
+		index_t value() const { return m_dim; }
 
-		const index_t m_dim;
+	private:
+		index_t m_dim;
 	};
 
 
@@ -64,212 +68,114 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	namespace detail
-	{
-
-		template<bool IsRow, bool IsCol> struct matrix_index_helper;
-
-		template<> struct matrix_index_helper<false, false>
-		{
-			LMAT_ENSURE_INLINE
-			static index_t offset(const index_t ldim, const index_t i, const index_t j)
-			{
-				return i + j * ldim;
-			}
-
-			LMAT_ENSURE_INLINE
-			static index_t offset_c(const index_t ldim, const index_t i, const index_t j)
-			{
-				return i + j * ldim;
-			}
-		};
-
-		template<> struct matrix_index_helper<false, true>
-		{
-			LMAT_ENSURE_INLINE
-			static index_t offset(const index_t ldim, const index_t i, const index_t j)
-			{
-				return i;
-			}
-
-			LMAT_ENSURE_INLINE
-			static index_t offset_c(const index_t ldim, const index_t i, const index_t j)
-			{
-				return i;
-			}
-		};
-
-		template<> struct matrix_index_helper<true, false>
-		{
-			LMAT_ENSURE_INLINE
-			static index_t offset(const index_t ldim, const index_t i, const index_t j)
-			{
-				return j * ldim;
-			}
-
-			LMAT_ENSURE_INLINE
-			static index_t offset_c(const index_t ldim, const index_t i, const index_t j)
-			{
-				return j;
-			}
-		};
-
-		template<> struct matrix_index_helper<true, true>
-		{
-			LMAT_ENSURE_INLINE
-			static index_t offset(const index_t ldim, const index_t i, const index_t j)
-			{
-				return 0;
-			}
-
-			LMAT_ENSURE_INLINE
-			static index_t offset_c(const index_t ldim, const index_t i, const index_t j)
-			{
-				return 0;
-			}
-		};
-
-
-		template<int M, int N, bool MFixed, bool NFixed>
-		struct matrix_shape_internal;
-
-		template<>
-		struct matrix_shape_internal<0, 0, false, false>
-		{
-			index_t _nrows;
-			index_t _ncols;
-
-			LMAT_ENSURE_INLINE
-			matrix_shape_internal() : _nrows(0), _ncols(0) { }
-
-			LMAT_ENSURE_INLINE
-			matrix_shape_internal(const index_t m, const index_t n)
-			: _nrows(m), _ncols(n)
-			{
-			}
-
-			LMAT_ENSURE_INLINE void reset(const index_t m, const index_t n)
-			{
-				_nrows = m;
-				_ncols = n;
-			}
-
-			LMAT_ENSURE_INLINE index_t nrows() const { return _nrows; }
-			LMAT_ENSURE_INLINE index_t ncolumns() const { return _ncols; }
-			LMAT_ENSURE_INLINE index_t nelems() const { return _nrows * _ncols; }
-		};
-
-		template<int N>
-		struct matrix_shape_internal<0, N, false, true>
-		{
-			index_t _nrows;
-
-			LMAT_ENSURE_INLINE
-			matrix_shape_internal() : _nrows(0) { }
-
-			LMAT_ENSURE_INLINE
-			matrix_shape_internal(const index_t m, const index_t n)
-			: _nrows(m)
-			{
-				check_arg(n == N,
-						"Attempted to construct a matrix with incorrect #columns.");
-			}
-
-			LMAT_ENSURE_INLINE void reset(const index_t m, const index_t n)
-			{
-				check_arg(n == N, "Attempted to resize to incorrect #columns");
-				_nrows = m;
-			}
-
-			LMAT_ENSURE_INLINE index_t nrows() const { return _nrows; }
-			LMAT_ENSURE_INLINE index_t ncolumns() const { return N; }
-			LMAT_ENSURE_INLINE index_t nelems() const { return _nrows * N; }
-		};
-
-		template<int M>
-		struct matrix_shape_internal<M, 0, true, false>
-		{
-			index_t _ncols;
-
-			LMAT_ENSURE_INLINE
-			matrix_shape_internal() : _ncols(0) { }
-
-			LMAT_ENSURE_INLINE
-			matrix_shape_internal(const index_t m, const index_t n)
-			: _ncols(n)
-			{
-				check_arg(m == M,
-						"Attempted to construct a matrix with incorrect #rows.");
-			}
-
-			LMAT_ENSURE_INLINE void reset(const index_t m, const index_t n)
-			{
-				check_arg(m == M, "Attempted to resize to incorrect #rows");
-				_ncols = n;
-			}
-
-			LMAT_ENSURE_INLINE index_t nrows() const { return M; }
-			LMAT_ENSURE_INLINE index_t ncolumns() const { return _ncols; }
-			LMAT_ENSURE_INLINE index_t nelems() const { return M * _ncols; }
-		};
-
-		template<int M, int N>
-		struct matrix_shape_internal<M, N, true, true>
-		{
-			LMAT_ENSURE_INLINE
-			matrix_shape_internal() { }
-
-			LMAT_ENSURE_INLINE
-			matrix_shape_internal(const index_t m, const index_t n)
-			{
-				check_arg(m == M && n == N,
-						"Attempted to construct a matrix with incorrect size.");
-			}
-
-			LMAT_ENSURE_INLINE void reset(const index_t m, const index_t n)
-			{
-				check_arg(m == M && n == N, "Attempted to resize to incorrect size.");
-			}
-
-			LMAT_ENSURE_INLINE index_t nrows() const { return M; }
-			LMAT_ENSURE_INLINE index_t ncolumns() const { return N; }
-			LMAT_ENSURE_INLINE index_t nelems() const { return M * N; }
-		};
-	}
-
 	template<int M, int N>
 	class matrix_shape
 	{
 	public:
-		LMAT_ENSURE_INLINE
-		matrix_shape() { };
+		LMAT_ENSURE_INLINE matrix_shape() { }
 
-		LMAT_ENSURE_INLINE
-		matrix_shape(const index_t m, const index_t n)
-		: m_internal(m, n) { }
+		LMAT_ENSURE_INLINE matrix_shape(const index_t m, const index_t n)
+		: m_dim0(m), m_dim1(n) { }
 
-		LMAT_ENSURE_INLINE void reset(const index_t m, const index_t n)
+		LMAT_ENSURE_INLINE index_t nrows() const
 		{
-			m_internal.reset(m, n);
+			return m_dim0.value();
 		}
 
-		LMAT_ENSURE_INLINE index_t nrows() const { return m_internal.nrows(); }
-		LMAT_ENSURE_INLINE index_t ncolumns() const { return m_internal.ncolumns(); }
-		LMAT_ENSURE_INLINE index_t nelems() const { return m_internal.nelems(); }
-
-		LMAT_ENSURE_INLINE index_t offset(const index_t ldim, const index_t i, const index_t j) const
+		LMAT_ENSURE_INLINE index_t ncolumns() const
 		{
-			return detail::matrix_index_helper<M==1, N==1>::offset(ldim, i, j);
+			return m_dim1.value();
 		}
 
-		LMAT_ENSURE_INLINE index_t offset_c(const index_t i, const index_t j) const
+		LMAT_ENSURE_INLINE index_t nelems() const
 		{
-			return detail::matrix_index_helper<M==1, N==1>::offset(nrows(), i, j);
+			return m_dim0.value() * m_dim1.value();
 		}
 
 	private:
-		detail::matrix_shape_internal<M, N, (M>0), (N>0)> m_internal;
+		dimension<M> m_dim0;
+		dimension<N> m_dim1;
 	};
+
+
+	/********************************************
+	 *
+	 *  indexing
+	 *
+	 ********************************************/
+
+	struct column_major_layout { };
+
+	template<int M, int N>
+	LMAT_ENSURE_INLINE
+	inline index_t sub2offset(column_major_layout,
+			const matrix_shape<M, N>& shape, index_t i, index_t j)
+	{
+		return i + shape.nrows() * j;
+	}
+
+	template<int M>
+	LMAT_ENSURE_INLINE
+	inline index_t sub2offset(column_major_layout,
+			const matrix_shape<M, 1>& shape, index_t i, index_t j)
+	{
+		return i;
+	}
+
+	template<int N>
+	LMAT_ENSURE_INLINE
+	inline index_t sub2offset(column_major_layout,
+			const matrix_shape<1, N>& shape, index_t i, index_t j)
+	{
+		return shape.nrows() * j;
+	}
+
+	LMAT_ENSURE_INLINE
+	inline index_t sub2offset(column_major_layout,
+			const matrix_shape<1, 1>& shape, index_t i, index_t j)
+	{
+		return 0;
+	}
+
+
+	struct column_major_layout_ex
+	{
+		const index_t lead_dim;
+
+		LMAT_ENSURE_INLINE
+		column_major_layout_ex(index_t ld) : lead_dim(ld) { }
+	};
+
+	template<int M, int N>
+	LMAT_ENSURE_INLINE
+	inline index_t sub2offset(const column_major_layout_ex& layout,
+			const matrix_shape<M, N>& shape, index_t i, index_t j)
+	{
+		return i + layout.lead_dim * j;
+	}
+
+	template<int M>
+	LMAT_ENSURE_INLINE
+	inline index_t sub2offset(const column_major_layout_ex& layout,
+			const matrix_shape<M, 1>& shape, index_t i, index_t j)
+	{
+		return i;
+	}
+
+	template<int N>
+	LMAT_ENSURE_INLINE
+	inline index_t sub2offset(const column_major_layout_ex& layout,
+			const matrix_shape<1, N>& shape, index_t i, index_t j)
+	{
+		return layout.lead_dim * j;
+	}
+
+	LMAT_ENSURE_INLINE
+	inline index_t sub2offset(const column_major_layout_ex& layout,
+			const matrix_shape<1, 1>& shape, index_t i, index_t j)
+	{
+		return 0;
+	}
 
 }
 

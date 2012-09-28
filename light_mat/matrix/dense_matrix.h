@@ -13,7 +13,10 @@
 #ifndef LIGHTMAT_DENSE_MATRIX_H_
 #define LIGHTMAT_DENSE_MATRIX_H_
 
-#include "bits/dense_matrix_internal.h"
+#include <light_mat/matrix/matrix_base.h>
+#include <light_mat/common/block.h>
+
+#include <algorithm> // for std::swap
 
 namespace lmat
 {
@@ -70,6 +73,71 @@ namespace lmat
 
 	/********************************************
 	 *
+	 *  storage
+	 *
+	 ********************************************/
+
+	namespace detail
+	{
+		template<typename T, int CTSize>
+		class dense_mat_storage
+		{
+#ifdef LMAT_USE_STATIC_ASSERT
+			static_assert(CTSize > 0, "CTSize must be a positive integer");
+#endif
+		public:
+			LMAT_ENSURE_INLINE
+			dense_mat_storage() : m_block() { }
+
+			LMAT_ENSURE_INLINE
+			dense_mat_storage(index_t siz) : m_block() { }
+
+			LMAT_ENSURE_INLINE
+			const T* pdata() const { return m_block.ptr_data(); }
+
+			LMAT_ENSURE_INLINE
+			T* pdata() { return m_block.ptr_data(); }
+
+			LMAT_ENSURE_INLINE
+			void swap(dense_mat_storage& other)
+			{
+				m_block.swap(other.m_block);
+			}
+
+		private:
+			sblock<T, CTSize> m_block;
+		};
+
+
+		template<typename T>
+		class dense_mat_storage<T, 0>
+		{
+		public:
+			LMAT_ENSURE_INLINE
+			dense_mat_storage() : m_block() { }
+
+			LMAT_ENSURE_INLINE
+			dense_mat_storage(index_t siz) : m_block(siz) { }
+
+			LMAT_ENSURE_INLINE
+			const T* pdata() const { return m_block.ptr_data(); }
+
+			LMAT_ENSURE_INLINE
+			T* pdata() { return m_block.ptr_data(); }
+
+			LMAT_ENSURE_INLINE
+			void swap(dense_mat_storage& other)
+			{
+				m_block.swap(other.m_block);
+			}
+
+		private:
+			dblock<T> m_block;
+		};
+	}
+
+	/********************************************
+	 *
 	 *  dense_matrix
 	 *
 	 ********************************************/
@@ -93,44 +161,53 @@ namespace lmat
 
 	public:
 		LMAT_ENSURE_INLINE dense_matrix()
-		: m_internal()
+		: m_shape()
+		, m_store()
 		{
 		}
 
 		LMAT_ENSURE_INLINE dense_matrix(index_t m, index_t n)
-		: m_internal(m, n)
+		: m_shape(m, n)
+		, m_store(m_shape.nelems())
 		{
 		}
 
 		LMAT_ENSURE_INLINE dense_matrix(index_t m, index_t n, zero_t)
-		: m_internal(m, n)
+		: m_shape(m, n)
+		, m_store(m_shape.nelems())
 		{
-			zero_mem(m * n, m_internal.ptr_data());
+			zero_mem(m * n, m_store.pdata());
 		}
 
 		template<class Setter>
 		LMAT_ENSURE_INLINE dense_matrix(index_t m, index_t n,
 				const IMemorySetter<Setter, T>& setter)
-		: m_internal(m, n)
+		: m_shape(m, n)
+		, m_store(m_shape.nelems())
 		{
-			setter.set(m * n, m_internal.ptr_data());
+			setter.set(m * n, m_store.pdata());
 		}
 
 		LMAT_ENSURE_INLINE dense_matrix(const dense_matrix& s)
-		: m_internal(s.m_internal)
+		: m_shape(s.m_shape)
+		, m_store(s.m_store)
 		{
 		}
 
 		template<class Expr>
 		LMAT_ENSURE_INLINE dense_matrix(const IMatrixXpr<Expr, T>& r)
-		: m_internal(r.nrows(), r.ncolumns())
+		: m_shape(r.nrows(), r.ncolumns())
+		, m_store(m_shape.nelems())
 		{
 			default_evaluate(r, *this);
 		}
 
 		LMAT_ENSURE_INLINE void swap(dense_matrix& s)
 		{
-			m_internal.swap(s.m_internal);
+			using std::swap;
+
+			swap(m_shape, s.m_shape);
+			m_store.swap(s.m_store);
 		}
 
 	public:
@@ -155,7 +232,7 @@ namespace lmat
 	public:
 		LMAT_ENSURE_INLINE index_type nelems() const
 		{
-			return m_internal.nelems();
+			return m_shape.nelems();
 		}
 
 		LMAT_ENSURE_INLINE size_type size() const
@@ -165,27 +242,27 @@ namespace lmat
 
 		LMAT_ENSURE_INLINE index_type nrows() const
 		{
-			return m_internal.nrows();
+			return m_shape.nrows();
 		}
 
 		LMAT_ENSURE_INLINE index_type ncolumns() const
 		{
-			return m_internal.ncolumns();
+			return m_shape.ncolumns();
 		}
 
 		LMAT_ENSURE_INLINE index_type lead_dim() const
 		{
-			return m_internal.nrows();
+			return m_shape.nrows();
 		}
 
 		LMAT_ENSURE_INLINE const_pointer ptr_data() const
 		{
-			return m_internal.ptr_data();
+			return m_store.pdata();
 		}
 
 		LMAT_ENSURE_INLINE pointer ptr_data()
 		{
-			return m_internal.ptr_data();
+			return m_store.pdata();
 		}
 
 		LMAT_ENSURE_INLINE const_pointer ptr_col(const index_type j) const
@@ -200,7 +277,7 @@ namespace lmat
 
 		LMAT_ENSURE_INLINE index_type offset(const index_type i, const index_type j) const
 		{
-			return m_internal.offset(i, j);
+			return sub2offset(column_major_layout(), m_shape, i, j);
 		}
 
 		LMAT_ENSURE_INLINE const_reference elem(const index_type i, const index_type j) const
@@ -225,11 +302,24 @@ namespace lmat
 
 		LMAT_ENSURE_INLINE void require_size(index_type m, index_type n)
 		{
-			m_internal.resize(m, n);
+			if (!(m == nrows() && n == ncolumns()))
+			{
+				matrix_shape<CTRows, CTCols> new_shape(m, n);
+
+				if (new_shape.nelems() != nelems())
+				{
+					storage_t new_store(new_shape.nelems());
+					m_store.swap(new_store);
+				}
+				m_shape = new_shape;
+			}
 		}
 
 	private:
-		detail::dense_matrix_internal<T, CTRows, CTCols> m_internal;
+		typedef detail::dense_mat_storage<T, CTRows * CTCols> storage_t;
+
+		matrix_shape<CTRows, CTCols> m_shape;
+		storage_t m_store;
 	};
 
 
@@ -266,9 +356,6 @@ namespace lmat
 		LMAT_ENSURE_INLINE dense_col(const base_mat_t& s) : base_mat_t(s) { }
 
 		LMAT_ENSURE_INLINE dense_col(const dense_col& s) : base_mat_t(s) { }
-
-		template<class Other>
-		LMAT_ENSURE_INLINE dense_col(const IMatrixView<Other, T>& r) : base_mat_t(r) { }
 
 		template<class Expr>
 		LMAT_ENSURE_INLINE dense_col(const IMatrixXpr<Expr, T>& r) : base_mat_t(r) { }

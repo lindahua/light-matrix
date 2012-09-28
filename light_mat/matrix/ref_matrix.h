@@ -132,7 +132,7 @@ namespace lmat
 
 		LMAT_ENSURE_INLINE index_type offset(const index_type i, const index_type j) const
 		{
-			return m_shape.offset_c(i, j);
+			return sub2offset(column_major_layout(), m_shape, i, j);
 		}
 
 		LMAT_ENSURE_INLINE const_reference elem(const index_type i, const index_type j) const
@@ -286,7 +286,7 @@ namespace lmat
 
 		LMAT_ENSURE_INLINE index_type offset(const index_type i, const index_type j) const
 		{
-			return m_shape.offset_c(i, j);
+			return sub2offset(column_major_layout(), m_shape, i, j);
 		}
 
 		LMAT_ENSURE_INLINE const_reference elem(const index_type i, const index_type j) const
