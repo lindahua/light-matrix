@@ -13,7 +13,7 @@
 #ifndef LIGHTMAT_MATRIX_COPY_INTERNAL_H_
 #define LIGHTMAT_MATRIX_COPY_INTERNAL_H_
 
-#include <light_mat/core/mem_op.h>
+#include <light_mat/common/memory.h>
 
 namespace lmat { namespace detail {
 

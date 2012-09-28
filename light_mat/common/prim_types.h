@@ -1,7 +1,7 @@
 /**
- * @file lang_base.h
+ * @file prim_types.h
  *
- * @brief Basic language support facilities.
+ * @brief Declaration of primitive types
  *
  * @author Dahua Lin
  */
@@ -10,12 +10,21 @@
 #pragma once
 #endif
 
-#ifndef LIGHTMAT_LANG_BASE_H_
-#define LIGHTMAT_LANG_BASE_H_
+#ifndef LIGHTMAT_PRIM_TYPES_H_
+#define LIGHTMAT_PRIM_TYPES_H_
 
 #include <light_mat/config/config.h>
 
-// useful macros
+#include <cstddef>
+
+#ifdef LMAT_USE_C11_STDLIB
+#include <cstdint>
+#else
+#include <tr1/cstdint>
+#endif
+
+
+// Useful macros
 
 #if LIGHTMAT_PLATFORM == LIGHTMAT_POSIX
 
@@ -39,8 +48,34 @@
 		LMAT_ENSURE_INLINE const Derived& derived() const { return *(static_cast<const Derived*>(this)); } \
 		LMAT_ENSURE_INLINE Derived& derived() { return *(static_cast<Derived*>(this)); }
 
+
 namespace lmat
 {
+	struct nil_t { };
+
+	// primitive types
+
+	using LMAT_TR1::int8_t;
+	using LMAT_TR1::int16_t;
+	using LMAT_TR1::int32_t;
+	using LMAT_TR1::int64_t;
+
+	using LMAT_TR1::uint8_t;
+	using LMAT_TR1::uint16_t;
+	using LMAT_TR1::uint32_t;
+	using LMAT_TR1::uint64_t;
+
+	using std::ptrdiff_t;
+	using std::size_t;
+
+#if (LMAT_INDEX_SIZE == 4)
+	typedef int32_t index_t;
+#elif (LMAT_INDEX_SIZE == 8)
+	typedef int64_t index_t;
+#else
+#error Invalid value for LMAT_INDEX_SIZE
+#endif
+
 	/**
 	 * @brief The base class to ensure derived classes to be non-copyable.
 	 */

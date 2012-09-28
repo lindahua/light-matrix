@@ -13,7 +13,7 @@
 #ifndef MON_ALLOC_H_
 #define MON_ALLOC_H_
 
-#include <light_mat/core/basic_defs.h>
+#include <light_mat/common/basic_defs.h>
 #include <map>
 #include <stdexcept>
 

@@ -293,13 +293,6 @@ namespace lmat
 			return *this;
 		}
 
-		template<class Gen>
-		LMAT_ENSURE_INLINE ref_matrix_ex& operator = (const IMatrixGenerator<Gen, T>& gen)
-		{
-			gen.generate_to(*this);
-			return *this;
-		}
-
 	public:
 		LMAT_ENSURE_INLINE index_type nelems() const
 		{

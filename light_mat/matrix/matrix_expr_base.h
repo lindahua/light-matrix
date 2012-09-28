@@ -15,7 +15,7 @@
 
 #include <light_mat/matrix/matrix_properties.h>
 #include <light_mat/math/functor_base.h>
-#include <light_mat/core/expr_base.h>
+#include <light_mat/common/expr_base.h>
 
 // Useful macros
 

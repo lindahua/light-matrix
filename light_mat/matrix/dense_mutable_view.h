@@ -43,9 +43,9 @@ namespace lmat
 		}
 
 		template<class Gen>
-		LMAT_ENSURE_INLINE const dense_mutable_view& operator = (const IMatrixGenerator<Gen, value_type>& gen) const
+		LMAT_ENSURE_INLINE const dense_mutable_view& operator = (IMemorySetter<Gen, value_type> setter) const
 		{
-			gen.generate_to(*this);
+			set_array_memory(*this, setter);
 			return *this;
 		}
 

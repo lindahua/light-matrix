@@ -13,7 +13,7 @@
 #ifndef LIGHTMAT_MATRIX_COMPARE_INTERNAL_H_
 #define LIGHTMAT_MATRIX_COMPARE_INTERNAL_H_
 
-#include <light_mat/core/mem_op.h>
+#include <light_mat/common/memory.h>
 
 namespace lmat { namespace detail {
 
@@ -27,13 +27,13 @@ namespace lmat { namespace detail {
 		{
 			if (ldim_a == M && ldim_b == M)
 			{
-				return mem_equal(M * N, a, b);
+				return bitwise_equal(M * N, a, b);
 			}
 			else
 			{
 				for (index_t j = 0; j < N; ++j, a+=ldim_a, b+=ldim_b)
 				{
-					if (!mem_equal(M, a, b)) return false;
+					if (!bitwise_equal(M, a, b)) return false;
 				}
 				return true;
 			}
@@ -60,7 +60,7 @@ namespace lmat { namespace detail {
 				const T *a, const index_t,
 				const T *b, const index_t)
 		{
-			return mem_equal(m, a, b);
+			return bitwise_equal(m, a, b);
 		}
 	};
 
@@ -74,7 +74,7 @@ namespace lmat { namespace detail {
 		{
 			if (ldim_a == 1 && ldim_b == 1)
 			{
-				return mem_equal(n, a, b);
+				return bitwise_equal(n, a, b);
 			}
 			else
 			{
@@ -99,11 +99,11 @@ namespace lmat { namespace detail {
 
 			if (n == 1)
 			{
-				eq = mem_equal(m, a, b);
+				eq = bitwise_equal(m, a, b);
 			}
 			else if (ldim_a == m && ldim_b == m)
 			{
-				eq = mem_equal(m * n, a, b);
+				eq = bitwise_equal(m * n, a, b);
 			}
 			else if (m == 1)
 			{
@@ -122,7 +122,7 @@ namespace lmat { namespace detail {
 				eq = true;
 				for (index_t j = 0; j < n; ++j, a += ldim_a, b += ldim_b)
 				{
-					if ( !mem_equal(m, a, b) )
+					if ( !bitwise_equal(m, a, b) )
 					{
 						eq = false;
 						break;

@@ -48,10 +48,10 @@ MN_CASE( mat_reduce, sum_ex )
 	const index_t m = M == 0 ? DM : M;
 	const index_t n = N == 0 ? DN : N;
 
-	scoped_array<double> src(LDim * n);
+	dblock<double> src(LDim * n);
 	for (index_t i = 0; i < LDim * n; ++i) src[i] = double(i + 1);
 
-	mat_ex A(src.ptr_begin(), m, n, LDim);
+	mat_ex A(src.ptr_data(), m, n, LDim);
 
 	// prepare ground-truth
 
@@ -123,10 +123,10 @@ MN_CASE( mat_reduce, maximum_ex )
 	const index_t m = M == 0 ? DM : M;
 	const index_t n = N == 0 ? DN : N;
 
-	scoped_array<double> src(LDim * n);
+	dblock<double> src(LDim * n);
 	for (index_t i = 0; i < LDim * n; ++i) src[i] = double((i + 1) * (10 - 2 * i));
 
-	mat_ex A(src.ptr_begin(), m, n, LDim);
+	mat_ex A(src.ptr_data(), m, n, LDim);
 
 	// prepare ground-truth
 
@@ -176,10 +176,10 @@ MN_CASE( mat_reduce, minimum_ex )
 	const index_t m = M == 0 ? DM : M;
 	const index_t n = N == 0 ? DN : N;
 
-	scoped_array<double> src(LDim * n);
+	dblock<double> src(LDim * n);
 	for (index_t i = 0; i < LDim * n; ++i) src[i] = double((i + 1) * (i - 10));
 
-	mat_ex A(src.ptr_begin(), m, n, LDim);
+	mat_ex A(src.ptr_data(), m, n, LDim);
 
 	// prepare ground-truth
 

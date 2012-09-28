@@ -10,7 +10,7 @@
 
 #include <light_mat/matrix/ref_matrix.h>
 #include <light_mat/matrix/ref_matrix_ex.h>
-#include <light_mat/core/array.h>
+#include <light_mat/common/block.h>
 
 using namespace lmat;
 using namespace lmat::test;
@@ -20,14 +20,13 @@ MN_CASE( mat_copy, copy )
 	const index_t m = M == 0 ? 5 : M;
 	const index_t n = N == 0 ? 6 : N;
 
-	darray<double> src(m * n);
-	darray<double> dst(m * n);
-	fill(dst, 0.0);
+	dblock<double> src(m * n);
+	dblock<double> dst(m * n, zero());
 
 	for (index_t i = 0; i < m * n; ++i) src[i] = double(i + 2);
 
-	ref_matrix<double, M, N> a(src.ptr_begin(), m, n);
-	ref_matrix<double, M, N> b(dst.ptr_begin(), m, n);
+	ref_matrix<double, M, N> a(src.ptr_data(), m, n);
+	ref_matrix<double, M, N> b(dst.ptr_data(), m, n);
 
 	copy(a, b);
 
@@ -44,21 +43,19 @@ MN_CASE( mat_copy, copy_ex )
 	const index_t ldim_a = 7;
 	const index_t ldim_b = 8;
 
-	darray<double> src(ldim_a * n);
-	darray<double> dst(ldim_b * n);
-	fill(dst, 0.0);
+	dblock<double> src(ldim_a * n);
+	dblock<double> dst(ldim_b * n, zero());
 
 	for (index_t i = 0; i < ldim_a * n; ++i) src[i] = double(i + 2);
 
-	ref_matrix_ex<double, M, N> a(src.ptr_begin(), m, n, ldim_a);
-	ref_matrix_ex<double, M, N> b(dst.ptr_begin(), m, n, ldim_b);
+	ref_matrix_ex<double, M, N> a(src.ptr_data(), m, n, ldim_a);
+	ref_matrix_ex<double, M, N> b(dst.ptr_data(), m, n, ldim_b);
 
 	copy(a, b);
 
 	ASSERT_MAT_EQ(m, n, a, b);
 
-	darray<double> ref(ldim_b * n);
-	fill(ref, 0.0);
+	dblock<double> ref(ldim_b * n, zero());
 
 	for (index_t j = 0; j < n; ++j)
 	{

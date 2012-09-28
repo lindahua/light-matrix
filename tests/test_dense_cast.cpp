@@ -15,14 +15,6 @@
 using namespace lmat;
 using namespace lmat::test;
 
-#ifdef LMAT_USE_STATIC_ASSERT
-static_assert( is_implicitly_convertible<float, double>::value == true,
-		"implicitly_convertible test failed");
-static_assert( is_implicitly_convertible<double, float>::value == false,
-		"implicitly_convertible test failed");
-#endif
-
-
 
 MN_CASE( dense_cast, explicit_cast )
 {
@@ -50,10 +42,10 @@ MN_CASE( ref_cast, explicit_cast )
 	const index_t m = M == 0 ? 5 : M;
 	const index_t n = N == 0 ? 6 : N;
 
-	scoped_array<double> sA(m * n);
-	scoped_array<float> sB(m * n);
+	dblock<double> sA(m * n);
+	dblock<float> sB(m * n);
 
-	ref_matrix<double, M, N> A(sA.ptr_begin(), m, n);
+	ref_matrix<double, M, N> A(sA.ptr_data(), m, n);
 	dense_matrix<float, M, N> Br(m, n);
 
 	for (index_t i = 0; i < m * n; ++i)
@@ -63,7 +55,7 @@ MN_CASE( ref_cast, explicit_cast )
 		Br[i] = float(v);
 	}
 
-	ref_matrix<float, M, N> B(sB.ptr_begin(), m, n);
+	ref_matrix<float, M, N> B(sB.ptr_data(), m, n);
 	B = to_f32(A);
 
 	ASSERT_TRUE( is_equal(B, Br) );
@@ -78,10 +70,10 @@ MN_CASE( ref_ex_cast, explicit_cast )
 	const index_t m = M == 0 ? 5 : M;
 	const index_t n = N == 0 ? 6 : N;
 
-	scoped_array<double> sA(ldim_a * n, 0.0);
-	scoped_array<float> sB(ldim_b * n, 0.0f);
+	dblock<double> sA(ldim_a * n, zero());
+	dblock<float> sB(ldim_b * n, zero());
 
-	ref_matrix_ex<double,  M, N> A(sA.ptr_begin(), m, n, ldim_a);
+	ref_matrix_ex<double,  M, N> A(sA.ptr_data(), m, n, ldim_a);
 	dense_matrix<float, M, N> Br(m, n);
 
 	for (index_t j = 0; j < n; ++j)
@@ -94,7 +86,7 @@ MN_CASE( ref_ex_cast, explicit_cast )
 		}
 	}
 
-	ref_matrix_ex<float, M, N> B(sB.ptr_begin(), m, n, ldim_b);
+	ref_matrix_ex<float, M, N> B(sB.ptr_data(), m, n, ldim_b);
 	B = to_f32(A);
 
 	ASSERT_TRUE( is_equal(B, Br) );

@@ -13,9 +13,8 @@
 #ifndef LIGHTMAT_MASK_TYPE_H_
 #define LIGHTMAT_MASK_TYPE_H_
 
-#include <light_mat/core/prim_types.h>
-#include <light_mat/core/lang_base.h>
-#include <light_mat/core/type_traits.h>
+#include <light_mat/common/prim_types.h>
+#include <light_mat/common/type_traits.h>
 
 namespace lmat
 {
@@ -176,19 +175,6 @@ namespace lmat
 		{
 			return vint ^ r.vint;
 		}
-	};
-
-
-	template<typename T>
-	struct is_implicitly_convertible<mask_t<T>, bool>
-	{
-		static const bool value = true;
-	};
-
-	template<typename T>
-	struct is_implicitly_convertible<bool, mask_t<T> >
-	{
-		static const bool value = true;
 	};
 
 

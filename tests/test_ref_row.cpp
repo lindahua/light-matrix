@@ -10,7 +10,7 @@
 #include "test_base.h"
 
 #include <light_mat/matrix/ref_matrix.h>
-#include <light_mat/core/array.h>
+#include <light_mat/common/block.h>
 
 using namespace lmat;
 using namespace lmat::test;
@@ -36,8 +36,8 @@ N_CASE( cref_row, constructs )
 {
 	const index_t n = N == 0 ? 4 : N;
 
-	scoped_array<double> s(n);
-	const double *ps = s.ptr_begin();
+	dblock<double> s(n);
+	const double *ps = s.ptr_data();
 
 	cref_row<double, N> a(ps, n);
 
@@ -65,8 +65,8 @@ N_CASE( ref_row, constructs )
 {
 	const index_t n = N == 0 ? 4 : N;
 
-	scoped_array<double> s(n);
-	double *ps = s.ptr_begin();
+	dblock<double> s(n);
+	double *ps = s.ptr_data();
 
 	ref_row<double, N> a(ps, n);
 
@@ -94,11 +94,11 @@ N_CASE( ref_row, assign )
 {
 	const index_t n = N == 0 ? 4 : N;
 
-	scoped_array<double> s1(n);
-	scoped_array<double> s2(n);
+	dblock<double> s1(n);
+	dblock<double> s2(n);
 
-	double *ps1 = s1.ptr_begin();
-	double *ps2 = s2.ptr_begin();
+	double *ps1 = s1.ptr_data();
+	double *ps2 = s2.ptr_data();
 
 	for (index_t i = 0; i < n; ++i) s1[i] = double(i + 2);
 	for (index_t i = 0; i < n; ++i) s2[i] = double(2 * i + 3);
@@ -119,29 +119,20 @@ N_CASE( ref_row, assign )
 }
 
 
-N_CASE( ref_row, assign_gen )
+N_CASE( ref_row, import )
 {
 	const index_t n = N == 0 ? 4 : N;
 
-	scoped_array<double> ref(n);
-	scoped_array<double> s(n);
-	fill(s, -1.0);
+	dblock<double> ref(n);
+	dblock<double> s(n, fill(-1.0));
 
-	// zeros
-
-	double *ps = s.ptr_begin();
+	double *ps = s.ptr_data();
 	ref_row<double, N> a(ps, n);
-
-	a = zeros<double>();
-	for (index_t i = 0; i < n; ++i) ref[i] = double(0);
-
-	ASSERT_EQ(a.ptr_data(), ps);
-	ASSERT_VEC_EQ(n, a, ref);
 
 	// fill_value
 
 	const double v1 = 2.5;
-	a = fill_value(v1);
+	a << v1;
 	for (index_t i = 0; i < n; ++i) ref[i] = v1;
 
 	ASSERT_EQ(a.ptr_data(), ps);
@@ -150,7 +141,7 @@ N_CASE( ref_row, assign_gen )
 	// copy_value
 
 	for (index_t i = 0; i < n; ++i) ref[i] = double(i + 2);
-	a = copy_from(ref.ptr_begin());
+	a << ref.ptr_data();
 
 	ASSERT_EQ(a.ptr_data(), ps);
 	ASSERT_VEC_EQ(n, a, ref);
@@ -175,10 +166,10 @@ BEGIN_TPACK( ref_row_assign )
 	ADD_N_CASE( ref_row, assign, 4 )
 END_TPACK
 
-BEGIN_TPACK( ref_row_assign_gen )
-	ADD_N_CASE( ref_row, assign_gen, 0 )
-	ADD_N_CASE( ref_row, assign_gen, 1 )
-	ADD_N_CASE( ref_row, assign_gen, 4 )
+BEGIN_TPACK( ref_row_import )
+	ADD_N_CASE( ref_row, import, 0 )
+	ADD_N_CASE( ref_row, import, 1 )
+	ADD_N_CASE( ref_row, import, 4 )
 END_TPACK
 
 
@@ -187,7 +178,7 @@ BEGIN_MAIN_SUITE
 
 	ADD_TPACK( ref_row_constructs )
 	ADD_TPACK( ref_row_assign )
-	ADD_TPACK( ref_row_assign_gen )
+	ADD_TPACK( ref_row_import )
 END_MAIN_SUITE
 
 

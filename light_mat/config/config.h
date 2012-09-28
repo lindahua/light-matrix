@@ -16,5 +16,9 @@
 #include <light_mat/config/user_config.h>
 #include <light_mat/config/platform_config.h>
 
+#ifndef LMAT_NO_CHECK
+#define LMAT_INDEX_CHECKING
+#endif
+
 #endif
 

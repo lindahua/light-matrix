@@ -17,8 +17,6 @@
 
 namespace lmat
 {
-	struct nil_type { };
-
 	struct true_t
 	{
 		static const bool value = true;
@@ -31,6 +29,27 @@ namespace lmat
 
 	template<typename T>
 	struct type{ };
+
+	template<int I>
+	struct fix_int
+	{
+		static const int value = I;
+	};
+
+
+	// compile-time logical operations
+
+	template<typename CondT1, typename CondT2>
+	struct and_
+	{
+		static const bool value = CondT1::value && CondT2::value;
+	};
+
+	template<typename CondT1, typename CondT2>
+	struct or_
+	{
+		static const bool value = CondT1::value || CondT2::value;
+	};
 
 
 	// meta if statement
@@ -56,20 +75,6 @@ namespace lmat
 		typedef typename if_c<CondT::value, Ttrue, Tfalse>::type type;
 	};
 
-	// and, or
-
-	template<typename CondT1, typename CondT2>
-	struct and_
-	{
-		static const bool value = CondT1::value && CondT2::value;
-	};
-
-	template<typename CondT1, typename CondT2>
-	struct or_
-	{
-		static const bool value = CondT1::value || CondT2::value;
-	};
-
 	// enable_if
 
 	template<bool Cond, typename T>
@@ -93,3 +98,5 @@ namespace lmat
 }
 
 #endif
+
+

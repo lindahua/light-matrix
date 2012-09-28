@@ -29,11 +29,11 @@ set(TEST_CXX_FLAGS "${LANG_FLAGS} ${WARNING_FLAGS}")
 
 set(CMAKE_CXX_FLAGS "${TEST_CXX_FLAGS}")
 
+
 # Find third-party libraries
 
-set(CMAKE_MODULE_PATH "../cmake_modules" ${CMAKE_MODULE_PATH})
-
-find_package(MKL)
+# set(CMAKE_MODULE_PATH "../cmake_modules" ${CMAKE_MODULE_PATH})
+# find_package(MKL)
 
 
 # Header file groups (to be used as dependencies)
@@ -41,24 +41,20 @@ find_package(MKL)
 set(INC ../light_mat)
 set(EXECUTABLE_OUTPUT_PATH bin)
 
-set(COMMON_BASIC_HS 
+set(COMMON_HS 
     ${INC}/config/user_config.h 
     ${INC}/config/platform_config.h
     ${INC}/config/config.h
-    ${INC}/core/prim_types.h
-    ${INC}/core/lang_base.h
-    ${INC}/core/metaprog_base.h
-    ${INC}/core/mask_type.h
-    ${INC}/core/type_traits.h
-    ${INC}/core/arg_check.h
-    ${INC}/core/range.h
-    ${INC}/core/basic_defs.h
-    ${INC}/core/expr_base.h)
-    
-set(COMMON_ARRAY_HS
-    ${INC}/core/mem_op.h
-    ${INC}/core/mem_alloc.h
-    ${INC}/core/array.h)
+    ${INC}/common/prim_types.h
+    ${INC}/common/metaprog_base.h
+    ${INC}/common/mask_type.h
+    ${INC}/common/type_traits.h
+    ${INC}/common/arg_check.h
+    ${INC}/common/range.h
+    ${INC}/common/basic_defs.h    
+    ${INC}/common/memory.h
+    ${INC}/common/block.h
+    ${INC}/common/expr_base.h)
     
 set(MATRIX_BASE_HS
     ${INC}/matrix/matrix_fwd.h 
@@ -66,7 +62,6 @@ set(MATRIX_BASE_HS
     ${INC}/matrix/matrix_shape.h
     ${INC}/matrix/matrix_concepts.h
     ${INC}/matrix/matrix_properties.h
-    ${INC}/matrix/matrix_generators.h
     ${INC}/matrix/bits/matrix_fill_internal.h
     ${INC}/matrix/bits/matrix_copy_internal.h
     ${INC}/matrix/bits/matrix_compare_internal.h
@@ -124,33 +119,29 @@ set(BLAS_HS
     ${INC}/linalg/blas_extern.h
     ${INC}/linalg/bits/matrix_blasl1_internal.h
     ${INC}/linalg/matrix_blasl1.h)    
-          
-set(CORE_HS
-    ${COMMON_BASIC_HS}
-    ${COMMON_ARRAY_HS})
-    
+              
 set(MATRIX_HS
-    ${CORE_HS}
+    ${COMMON_HS}
     ${MATRIX_BASE_HS}
     ${MATRIX_CLASS_HS})   
     
 set(MATRIX_EVAL_HS
-    ${CORE_HS}
+    ${COMMON_HS}
     ${MATRIX_BASE_HS}
     ${MATRIX_CLASS_HS}
     ${MATRIX_EVAL_BASE_HS}
     ${MATRIX_EWISE_HS}
-    ${REPEAT_VECS_HS}
+    ${MATRIX_REPEAT_HS}
     ${MATRIX_REDUC_HS})    
     
 # Executables
 
 add_library(test_main STATIC test_main.cpp)
 
-add_executable(test_arrays ${CORE_HS} test_arrays.cpp)
+add_executable(test_blocks ${COMMON_HS} test_blocks.cpp)
 
 set(DENSE_MAT_HS
-    ${CORE_HS}
+    ${COMMON_HS}
     ${MATRIX_BASE_HS}
     ${INC}/matrix/dense_matrix.h
     ${INC}/matrix/bits/dense_matrix_internal.h)
@@ -160,7 +151,7 @@ add_executable(test_dense_col ${DENSE_MAT_HS} test_dense_col.cpp)
 add_executable(test_dense_row ${DENSE_MAT_HS} test_dense_row.cpp)  
 
 set(CONST_MAT_HS
-    ${CORE_HS}
+    ${COMMON_HS}
     ${MATRIX_BASE_HS}
     ${INC}/matrix/const_matrix.h
     ${INC}/matrix/dense_matrix.h)
@@ -168,7 +159,7 @@ set(CONST_MAT_HS
 add_executable(test_const_mat ${CONST_MAT_HS} test_const_mat.cpp)
 
 set(REF_MAT_HS
-    ${CORE_HS}
+    ${COMMON_HS}
     ${MATRIX_BASE_HS}
     ${INC}/matrix/ref_matrix.h
     ${INC}/matrix/ref_matrix_ex.h)
@@ -219,22 +210,10 @@ set(MAT_REDUC_HS
 add_executable(test_mat_reduce ${MAT_REDUC_HS} test_mat_reduce.cpp) 
 add_executable(test_partial_reduce ${MAT_REDUC_HS} test_partial_reduce.cpp) 
 
-if (MKL_FOUND)
-
-    set(MAT_BLAS_HS
-        ${MATRIX_HS}
-        ${BLAS_HS})
-    
-    add_executable(test_blasl1 ${MAT_BLAS_HS} test_blasl1.cpp)
-    add_executable(test_gemv ${MAT_BLAS_HS} test_gemv.cpp)
-
-endif (MKL_FOUND)
-
-
 # Link to test_main
 
 set(LMAT_TEST_NAMES
-	test_arrays
+	test_blocks
 	test_dense_mat
 	test_dense_col
 	test_dense_row
@@ -259,26 +238,11 @@ set(LMAT_TEST_NAMES
 	test_mat_reduce
 	test_partial_reduce
 )
-
-
 	
 foreach(tname ${LMAT_TEST_NAMES})
 	target_link_libraries(${tname} test_main)
 endforeach(tname)	
 
-if (MKL_FOUND)
-
-set(LMAT_LINALG_TEST_NAMES
-    test_blasl1
-    test_gemv
-)
-
-foreach(tname ${LMAT_LINALG_TEST_NAMES})
-    target_link_libraries(${tname} test_main
-        ${MKL_LIBRARY})
-endforeach(tname)
-
-endif (MKL_FOUND)
 
 # Add tests
 
@@ -286,13 +250,7 @@ foreach(tname ${LMAT_TEST_NAMES})
 	add_test(NAME ${tname} COMMAND ${tname})
 endforeach(tname)
 
-if (MKL_FOUND)
 
-foreach(tname ${LMAT_LINALG_TEST_NAMES})
-	add_test(NAME ${tname} COMMAND ${tname})
-endforeach(tname)
-
-endif (MKL_FOUND)
 
 
 

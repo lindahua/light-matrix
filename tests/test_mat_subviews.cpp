@@ -14,8 +14,7 @@ using namespace lmat::test;
 
 // auxiliary functions
 
-template<class Arr>
-void fill_lin(IArray<Arr, double>& arr)
+void fill_lin(dblock<double>& arr)
 {
 	for (index_t i = 0; i < arr.nelems(); ++i)
 		arr[i] = double(i + 1);
@@ -49,10 +48,10 @@ MN_CASE( mat_subview, col )
 	const index_t n = N == 0 ? 8 : N;
 	const index_t ldim_ex = 10;
 
-	scoped_array<double> s(ldim_ex * n);
+	dblock<double> s(ldim_ex * n);
 	fill_lin(s);
 
-	rmat a(s.ptr_begin(), m, n);
+	rmat a(s.ptr_data(), m, n);
 	const rmat& ac = a;
 
 	for (index_t j = 0; j < n; ++j)
@@ -62,7 +61,7 @@ MN_CASE( mat_subview, col )
 		ASSERT_TRUE( is_equal(ac.column(j), r) );
 	}
 
-	rmat_ex b(s.ptr_begin(), m, n, ldim_ex);
+	rmat_ex b(s.ptr_data(), m, n, ldim_ex);
 	const rmat_ex& bc = b;
 
 	for (index_t j = 0; j < n; ++j)
@@ -92,10 +91,10 @@ MN_CASE( mat_subview, row )
 	const index_t n = N == 0 ? 8 : N;
 	const index_t ldim_ex = 10;
 
-	scoped_array<double> s(ldim_ex * n);
+	dblock<double> s(ldim_ex * n);
 	fill_lin(s);
 
-	rmat a(s.ptr_begin(), m, n);
+	rmat a(s.ptr_data(), m, n);
 	const rmat& ac = a;
 
 	for (index_t i = 0; i < m; ++i)
@@ -105,7 +104,7 @@ MN_CASE( mat_subview, row )
 		ASSERT_TRUE( is_equal(ac.row(i), r) );
 	}
 
-	rmat_ex b(s.ptr_begin(), m, n, ldim_ex);
+	rmat_ex b(s.ptr_data(), m, n, ldim_ex);
 	const rmat_ex& bc = b;
 
 	for (index_t i = 0; i < m; ++i)
@@ -135,10 +134,10 @@ MN_CASE( mat_subview, col_whole )
 	const index_t n = N == 0 ? 8 : N;
 	const index_t ldim_ex = 10;
 
-	scoped_array<double> s(ldim_ex * n);
+	dblock<double> s(ldim_ex * n);
 	fill_lin(s);
 
-	rmat a(s.ptr_begin(), m, n);
+	rmat a(s.ptr_data(), m, n);
 	const rmat& ac = a;
 
 	for (index_t j = 0; j < n; ++j)
@@ -148,7 +147,7 @@ MN_CASE( mat_subview, col_whole )
 		ASSERT_TRUE( is_equal(ac(whole(), j), r) );
 	}
 
-	rmat_ex b(s.ptr_begin(), m, n, ldim_ex);
+	rmat_ex b(s.ptr_data(), m, n, ldim_ex);
 	const rmat_ex& bc = b;
 
 	for (index_t j = 0; j < n; ++j)
@@ -178,10 +177,10 @@ MN_CASE( mat_subview, row_whole )
 	const index_t n = N == 0 ? 8 : N;
 	const index_t ldim_ex = 10;
 
-	scoped_array<double> s(ldim_ex * n);
+	dblock<double> s(ldim_ex * n);
 	fill_lin(s);
 
-	rmat a(s.ptr_begin(), m, n);
+	rmat a(s.ptr_data(), m, n);
 	const rmat& ac = a;
 
 	for (index_t i = 0; i < m; ++i)
@@ -191,7 +190,7 @@ MN_CASE( mat_subview, row_whole )
 		ASSERT_TRUE( is_equal(ac(i, whole()), r) );
 	}
 
-	rmat_ex b(s.ptr_begin(), m, n, ldim_ex);
+	rmat_ex b(s.ptr_data(), m, n, ldim_ex);
 	const rmat_ex& bc = b;
 
 	for (index_t i = 0; i < m; ++i)
@@ -233,10 +232,10 @@ MN_CASE( mat_subview, col_range )
 		i1 = m;
 	}
 
-	scoped_array<double> s(ldim_ex * n);
+	dblock<double> s(ldim_ex * n);
 	fill_lin(s);
 
-	rmat a(s.ptr_begin(), m, n);
+	rmat a(s.ptr_data(), m, n);
 	const rmat& ac = a;
 
 	for (index_t j = 0; j < n; ++j)
@@ -246,7 +245,7 @@ MN_CASE( mat_subview, col_range )
 		ASSERT_TRUE( is_equal(ac(colon(i0, i1), j), r) );
 	}
 
-	rmat_ex b(s.ptr_begin(), m, n, ldim_ex);
+	rmat_ex b(s.ptr_data(), m, n, ldim_ex);
 	const rmat_ex& bc = b;
 
 	for (index_t j = 0; j < n; ++j)
@@ -288,10 +287,10 @@ MN_CASE( mat_subview, row_range )
 		j1 = n;
 	}
 
-	scoped_array<double> s(ldim_ex * n);
+	dblock<double> s(ldim_ex * n);
 	fill_lin(s);
 
-	rmat a(s.ptr_begin(), m, n);
+	rmat a(s.ptr_data(), m, n);
 	const rmat& ac = a;
 
 	for (index_t i = 0; i < m; ++i)
@@ -301,7 +300,7 @@ MN_CASE( mat_subview, row_range )
 		ASSERT_TRUE( is_equal(ac(i, colon(j0, j1)), r) );
 	}
 
-	rmat_ex b(s.ptr_begin(), m, n, ldim_ex);
+	rmat_ex b(s.ptr_data(), m, n, ldim_ex);
 	const rmat_ex& bc = b;
 
 	for (index_t i = 0; i < m; ++i)
@@ -331,17 +330,17 @@ MN_CASE( mat_subview, whole_whole )
 	const index_t n = N == 0 ? 8 : N;
 	const index_t ldim_ex = 10;
 
-	scoped_array<double> s(ldim_ex * n);
+	dblock<double> s(ldim_ex * n);
 	fill_lin(s);
 
-	rmat a(s.ptr_begin(), m, n);
+	rmat a(s.ptr_data(), m, n);
 	const rmat& ac = a;
 
 	mat_f64 ra = extract_block(a, 0, m, 0, n);
 	ASSERT_TRUE( is_equal(a(whole(), whole()), ra) );
 	ASSERT_TRUE( is_equal(ac(whole(), whole()), ra) );
 
-	rmat_ex b(s.ptr_begin(), m, n, ldim_ex);
+	rmat_ex b(s.ptr_data(), m, n, ldim_ex);
 	const rmat_ex& bc = b;
 
 	mat_f64 rb = extract_block(b, 0, m, 0, n);
@@ -373,17 +372,17 @@ MN_CASE( mat_subview, whole_range )
 		j0 = 0; j1 = n;
 	}
 
-	scoped_array<double> s(ldim_ex * n);
+	dblock<double> s(ldim_ex * n);
 	fill_lin(s);
 
-	rmat a(s.ptr_begin(), m, n);
+	rmat a(s.ptr_data(), m, n);
 	const rmat& ac = a;
 
 	mat_f64 ra = extract_block(a, 0, m, j0, j1 - j0);
 	ASSERT_TRUE( is_equal(a(whole(), colon(j0, j1)), ra) );
 	ASSERT_TRUE( is_equal(ac(whole(), colon(j0, j1)), ra) );
 
-	rmat_ex b(s.ptr_begin(), m, n, ldim_ex);
+	rmat_ex b(s.ptr_data(), m, n, ldim_ex);
 	const rmat_ex& bc = b;
 
 	mat_f64 rb = extract_block(b, 0, m, j0, j1 - j0);
@@ -415,17 +414,17 @@ MN_CASE( mat_subview, range_whole )
 		i0 = 0; i1 = m;
 	}
 
-	scoped_array<double> s(ldim_ex * n);
+	dblock<double> s(ldim_ex * n);
 	fill_lin(s);
 
-	rmat a(s.ptr_begin(), m, n);
+	rmat a(s.ptr_data(), m, n);
 	const rmat& ac = a;
 
 	mat_f64 ra = extract_block(a, i0, i1 - i0, 0, n);
 	ASSERT_TRUE( is_equal(a(colon(i0, i1), whole()), ra) );
 	ASSERT_TRUE( is_equal(ac(colon(i0, i1), whole()), ra) );
 
-	rmat_ex b(s.ptr_begin(), m, n, ldim_ex);
+	rmat_ex b(s.ptr_data(), m, n, ldim_ex);
 	const rmat_ex& bc = b;
 
 	mat_f64 rb = extract_block(b, i0, i1 - i0, 0, n);
@@ -467,17 +466,17 @@ MN_CASE( mat_subview, range_range )
 		j0 = 0; j1 = n;
 	}
 
-	scoped_array<double> s(ldim_ex * n);
+	dblock<double> s(ldim_ex * n);
 	fill_lin(s);
 
-	rmat a(s.ptr_begin(), m, n);
+	rmat a(s.ptr_data(), m, n);
 	const rmat& ac = a;
 
 	mat_f64 ra = extract_block(a, i0, i1 - i0, j0, j1 - j0);
 	ASSERT_TRUE( is_equal(a(colon(i0, i1), colon(j0, j1)), ra) );
 	ASSERT_TRUE( is_equal(ac(colon(i0, i1), colon(j0, j1)), ra) );
 
-	rmat_ex b(s.ptr_begin(), m, n, ldim_ex);
+	rmat_ex b(s.ptr_data(), m, n, ldim_ex);
 	const rmat_ex& bc = b;
 
 	mat_f64 rb = extract_block(b, i0, i1 - i0, j0, j1 - j0);

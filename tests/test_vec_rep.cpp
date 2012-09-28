@@ -60,7 +60,7 @@ MN_CASE( repcols, generic_fix )
 
 	col_t a(m, 1);
 
-	expr_t expr = hrep(a, fixed_dim<N>());
+	expr_t expr = hrep(a, fix_int<N>());
 
 	ASSERT_EQ( expr.nrows(), m );
 	ASSERT_EQ( expr.ncolumns(), n );
@@ -106,7 +106,7 @@ MN_CASE( repcols, const_fix )
 
 	col_t a(m, 1, val);
 
-	expr_t expr = hrep(a, fixed_dim<N>());
+	expr_t expr = hrep(a, fix_int<N>());
 
 	ASSERT_EQ( expr.nrows(), m );
 	ASSERT_EQ( expr.ncolumns(), n );
@@ -150,7 +150,7 @@ MN_CASE( reprows, generic_fix )
 
 	row_t a(1, n);
 
-	expr_t expr = vrep(a, fixed_dim<M>());
+	expr_t expr = vrep(a, fix_int<M>());
 
 	ASSERT_EQ( expr.nrows(), m );
 	ASSERT_EQ( expr.ncolumns(), n );
@@ -193,7 +193,7 @@ MN_CASE( reprows, const_fix )
 	typedef const_matrix<double, M, N> expr_t;
 
 	row_t a(1, n, val);
-	expr_t expr = vrep(a, fixed_dim<M>());
+	expr_t expr = vrep(a, fix_int<M>());
 
 	ASSERT_EQ( expr.nrows(), m );
 	ASSERT_EQ( expr.ncolumns(), n );
