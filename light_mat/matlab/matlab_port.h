@@ -41,6 +41,37 @@ namespace lmat { namespace matlab {
 		return cref_row<T>(m.data<T>(), m.nelems());
 	}
 
+	template<class Mat, typename T>
+	LMAT_ENSURE_INLINE
+	inline marray to_marray(const IMatrixXpr<Mat, T>& in)
+	{
+		marray r = marray::numeric_matrix<T>(in.nrows(), in.ncolumns());
+
+		typedef ref_matrix<T, ct_rows<Mat>::value, ct_cols<Mat>::value> view_t;
+		view_t view(r.data<T>(), in.nrows(), in.ncolumns());
+		view = in;
+
+		return r;
+	}
+
+	template<typename T>
+	LMAT_ENSURE_INLINE
+	inline marray to_marray(const T *src, index_t m, index_t n)
+	{
+		marray r = marray::numeric_matrix<T>(m, n);
+		copy_mem(m * n, src, r.data<T>());
+		return r;
+	}
+
+	template<typename T>
+	LMAT_ENSURE_INLINE
+	inline marray to_marray(const double *src, index_t m, index_t n)
+	{
+		marray r = marray::double_matrix(m, n);
+		copy_mem(m * n, src, r.data<T>());
+		return r;
+	}
+
 } }
 
 
