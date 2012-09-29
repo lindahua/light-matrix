@@ -215,12 +215,14 @@ namespace lmat
 
 		LMAT_ENSURE_INLINE const_pointer ptr_col(const index_type j) const
 		{
-			return derived().ptr_col(j);
+			LMAT_CHECK_IDX(j, ncolumns())
+			return ptr_data() + j * lead_dim();
 		}
 
 		LMAT_ENSURE_INLINE pointer ptr_col(const index_type j)
 		{
-			return derived().ptr_col(j);
+			LMAT_CHECK_IDX(j, ncolumns())
+			return ptr_data() + j * lead_dim();
 		}
 
 		LMAT_ENSURE_INLINE const_reference elem(const index_type i, const index_type j) const

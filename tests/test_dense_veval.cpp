@@ -14,6 +14,21 @@ using namespace lmat;
 using namespace lmat::test;
 
 
+template<typename T, class Mat>
+inline void fill_lin(IDenseMatrix<Mat, T>& mat)
+{
+	T v = T(1.0);
+	for (index_t j = 0; j < mat.ncolumns(); ++j)
+	{
+		for (index_t i = 0; i < mat.nrows(); ++i)
+		{
+			mat.elem(i, j) = v;
+			v += T(1);
+		}
+	}
+}
+
+
 MN_CASE( linear_veval, continu_linear )
 {
 	const index_t m = M == 0 ? 5 : M;
@@ -32,6 +47,8 @@ MN_CASE( linear_veval, continu_linear )
 #endif
 
 	mat a(m, n);
+	fill_lin(a);
+
 	visitor_t visitor(a);
 	const ILinearMatrixScalarVisitor<visitor_t, double>& vis_r = visitor;
 
@@ -66,6 +83,7 @@ MN_CASE( linear_veval, cached_linear )
 
 	dblock<double> s(ldim * n);
 	mat_ex a(s.ptr_data(), m, n, ldim);
+	fill_lin(a);
 
 	visitor_t visitor(a);
 	const ILinearMatrixScalarVisitor<visitor_t, double>& vis_r = visitor;
@@ -97,6 +115,7 @@ MN_CASE( linear_veval, const_linear )
 
 	const double v = 12.5;
 	mat a(m, n, v);
+
 	visitor_t visitor(a);
 	const ILinearMatrixScalarVisitor<visitor_t, double>& vis_r = visitor;
 
@@ -127,6 +146,8 @@ MN_CASE( percol_veval, dense_percol )
 
 	dblock<double> s(ldim * n);
 	mat_ex a(s.ptr_data(), m, n, ldim);
+	fill_lin(a);
+
 	visitor_t visitor(a);
 	const IPerColMatrixScalarVisitor<visitor_t, double>& vis_r = visitor;
 
@@ -152,6 +173,8 @@ MN_CASE( percol_veval, cached_percol )
 
 	dblock<double> s(ldim * n);
 	mat_ex a(s.ptr_data(), m, n, ldim);
+	fill_lin(a);
+
 	visitor_t visitor(a);
 	const IPerColMatrixScalarVisitor<visitor_t, double>& vis_r = visitor;
 
@@ -185,6 +208,7 @@ MN_CASE( percol_veval, const_percol )
 
 	const double val = 12.5;
 	mat a(m, n, val);
+
 	visitor_t visitor(a);
 	const IPerColMatrixScalarVisitor<visitor_t, double>& vis_r = visitor;
 
@@ -205,7 +229,7 @@ MN_CASE( eval_by_scalars, cont_to_cont )
 	const index_t n = N == 0 ? 6 : N;
 
 	dense_matrix<double, M, N> a(m, n);
-	for (index_t i = 0; i < m * n; ++i) a[i] = double(i+2);
+	fill_lin(a);
 
 	dense_matrix<double, M, N> b(m, n, zero());
 
@@ -225,7 +249,7 @@ MN_CASE( eval_by_scalars, cont_to_ext )
 	const index_t n = N == 0 ? 6 : N;
 
 	dense_matrix<double, M, N> a(m, n);
-	for (index_t i = 0; i < m * n; ++i) a[i] = double(i+2);
+	fill_lin(a);
 
 	dblock<double> sb(ldim_b * n, fill(0.0));
 	ref_matrix_ex<double, M, N> b(sb.ptr_data(), m, n, ldim_b);

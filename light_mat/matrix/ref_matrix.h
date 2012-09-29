@@ -125,11 +125,6 @@ namespace lmat
 			return m_data;
 		}
 
-		LMAT_ENSURE_INLINE const_pointer ptr_col(const index_type j) const
-		{
-			return m_data + j * lead_dim();
-		}
-
 		LMAT_ENSURE_INLINE index_type offset(const index_type i, const index_type j) const
 		{
 			return sub2offset(column_major_layout(), m_shape, i, j);
@@ -142,6 +137,7 @@ namespace lmat
 
 		LMAT_ENSURE_INLINE const_reference operator[] (const index_type i) const
 		{
+			LMAT_CHECK_IDX(i, nelems())
 			return m_data[i];
 		}
 
@@ -274,16 +270,6 @@ namespace lmat
 			return m_data;
 		}
 
-		LMAT_ENSURE_INLINE const_pointer ptr_col(const index_type j) const
-		{
-			return m_data + j * lead_dim();
-		}
-
-		LMAT_ENSURE_INLINE pointer ptr_col(const index_type j)
-		{
-			return m_data + j * lead_dim();
-		}
-
 		LMAT_ENSURE_INLINE index_type offset(const index_type i, const index_type j) const
 		{
 			return sub2offset(column_major_layout(), m_shape, i, j);
@@ -301,11 +287,13 @@ namespace lmat
 
 		LMAT_ENSURE_INLINE const_reference operator[] (const index_type i) const
 		{
+			LMAT_CHECK_IDX(i, nelems())
 			return m_data[i];
 		}
 
 		LMAT_ENSURE_INLINE reference operator[] (const index_type i)
 		{
+			LMAT_CHECK_IDX(i, nelems())
 			return m_data[i];
 		}
 

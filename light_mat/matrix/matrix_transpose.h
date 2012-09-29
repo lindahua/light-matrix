@@ -124,11 +124,6 @@ namespace lmat
 			return this->arg().ptr_data();
 		}
 
-		LMAT_ENSURE_INLINE const_pointer ptr_col(const index_type j) const
-		{
-			return this->arg().ptr_data() + j;
-		}
-
 		LMAT_ENSURE_INLINE const_reference elem(const index_type, const index_type j) const
 		{
 			return ptr_data()[j];
@@ -136,6 +131,7 @@ namespace lmat
 
 		LMAT_ENSURE_INLINE const_reference operator[] (const index_t idx) const
 		{
+			LMAT_CHECK_IDX(idx, ncolumns())
 			return ptr_data()[idx];
 		}
 
@@ -199,11 +195,6 @@ namespace lmat
 			return this->arg().ptr_data();
 		}
 
-		LMAT_ENSURE_INLINE const_pointer ptr_col(const index_type) const
-		{
-			return this->arg().ptr_data();
-		}
-
 		LMAT_ENSURE_INLINE const_reference elem(const index_type i, const index_type) const
 		{
 			return this->ptr_data()[i];
@@ -211,6 +202,7 @@ namespace lmat
 
 		LMAT_ENSURE_INLINE const_reference operator[] (const index_t idx) const
 		{
+			LMAT_CHECK_IDX(idx, nrows())
 			return this->ptr_data()[idx];
 		}
 	};
@@ -271,6 +263,7 @@ namespace lmat
 
 		LMAT_ENSURE_INLINE const_reference operator[] (const index_t idx) const
 		{
+			LMAT_CHECK_IDX(idx, nrows())
 			return this->arg().elem(0, idx);
 		}
 	};
