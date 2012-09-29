@@ -24,73 +24,73 @@ namespace lmat { namespace matlab {
 	 *
 	 ********************************************/
 
-	template<class Args, template<typename T> class Runner>
-	inline void dispatch_for_fptypes(mxClassID cid, Args& args,
-			const char* type_err_id, const char* type_err_msg)
+	template<class Program>
+	inline void dispatch_for_fptypes(Program& program)
 	{
-		switch (cid)
+		switch (program.class_id())
 		{
 		case mxDOUBLE_CLASS:
-			Runner<double>::run(args);
+			program.template run<double>();
 			break;
 
 		case mxSINGLE_CLASS:
-			Runner<float>::run(args);
+			program.template run<float>();
 			break;
 
 		default:
-			mexErrMsgIdAndTxt(type_err_id, type_err_msg);
+			mexErrMsgIdAndTxt("light_mat:matlab:type_error",
+					"Unexpected class for dispatch_for_fptypes");
 		}
 	}
 
-	template<class Args, template<typename T> class Runner>
-	inline void dispatch_for_numtypes(mxClassID cid, Args& args,
-			const char* type_err_id, const char* type_err_msg)
+	template<class Program>
+	inline void dispatch_for_numtypes(Program& program)
 	{
-		switch (cid)
+		switch (program.class_id())
 		{
 		case mxDOUBLE_CLASS:
-			Runner<double>::run(args);
+			program.template run<double>();
 			break;
 
 		case mxSINGLE_CLASS:
-			Runner<float>::run(args);
+			program.template run<float>();
 			break;
 
 		case mxINT32_CLASS:
-			Runner<int32_t>::run(args);
+			program.template run<int32_t>();
 			break;
 
 		case mxUINT32_CLASS:
-			Runner<uint32_t>::run(args);
+			program.template run<uint32_t>();
 			break;
 
 		case mxINT16_CLASS:
-			Runner<int16_t>::run(args);
+			program.template run<int16_t>();
 			break;
 
 		case mxUINT16_CLASS:
-			Runner<uint16_t>::run(args);
+			program.template run<uint16_t>();
 			break;
 
 		case mxINT8_CLASS:
-			Runner<int8_t>::run(args);
+			program.template run<int8_t>();
 			break;
 
 		case mxUINT8_CLASS:
-			Runner<uint8_t>::run(args);
+			program.template run<uint8_t>();
 			break;
 
 		case mxINT64_CLASS:
-			Runner<int64_t>::run(args);
+			program.template run<int64_t>();
 			break;
 
 		case mxUINT64_CLASS:
-			Runner<uint64_t>::run(args);
+			program.template run<uint64_t>();
 			break;
 
 		default:
-			mexErrMsgIdAndTxt(type_err_id, type_err_msg);
+			mexErrMsgIdAndTxt("light_mat:matlab:type_error",
+					"Unexpected class for dispatch_for_numtypes");
 		}
 	}
 
