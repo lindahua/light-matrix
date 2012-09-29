@@ -29,9 +29,23 @@ namespace lmat { namespace matlab {
 
 	template<typename T>
 	LMAT_ENSURE_INLINE
+	inline ref_matrix<T> view2d(marray m)
+	{
+		return ref_matrix<T>(m.data<T>(), m.nrows(), m.ncolumns());
+	}
+
+	template<typename T>
+	LMAT_ENSURE_INLINE
 	inline cref_col<T> view_as_col(const_marray m)
 	{
 		return cref_col<T>(m.data<T>(), m.nelems());
+	}
+
+	template<typename T>
+	LMAT_ENSURE_INLINE
+	inline ref_col<T> view_as_col(marray m)
+	{
+		return ref_col<T>(m.data<T>(), m.nelems());
 	}
 
 	template<typename T>
@@ -40,6 +54,14 @@ namespace lmat { namespace matlab {
 	{
 		return cref_row<T>(m.data<T>(), m.nelems());
 	}
+
+	template<typename T>
+	LMAT_ENSURE_INLINE
+	inline ref_row<T> view_as_row(marray m)
+	{
+		return ref_row<T>(m.data<T>(), m.nelems());
+	}
+
 
 	template<class Mat, typename T>
 	LMAT_ENSURE_INLINE

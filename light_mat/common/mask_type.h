@@ -22,7 +22,9 @@ namespace lmat
 	template<typename T>
 	class mask_t
 	{
+#ifdef LMAT_USE_STATIC_ASSERT
 		static_assert(is_integral<T>::value, "T must be an integral type.");
+#endif
 
 	private:
 		T value;

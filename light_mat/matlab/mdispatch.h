@@ -13,7 +13,7 @@
 #ifndef LIGHTMAT_MDISPATCH_H_
 #define LIGHTMAT_MDISPATCH_H_
 
-#include <marray.h>
+#include <light_mat/matlab/marray.h>
 
 namespace lmat { namespace matlab {
 

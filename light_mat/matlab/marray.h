@@ -75,7 +75,7 @@ namespace lmat { namespace matlab {
 			return mxGetClassID(m_pm);
 		}
 
-		LMAT_ENSURE_INLINE mxClassID class_name() const
+		LMAT_ENSURE_INLINE const char* class_name() const
 		{
 			return mxGetClassName(m_pm);
 		}
@@ -312,22 +312,22 @@ namespace lmat { namespace matlab {
 
 		LMAT_ENSURE_INLINE const mxArray *get() const
 		{
-			return m_pm;
+			return this->m_pm;
 		}
 
 		LMAT_ENSURE_INLINE mxArray *get()
 		{
-			return m_pm;
+			return this->m_pm;
 		}
 
 		LMAT_ENSURE_INLINE operator mxArray*()
 		{
-			return m_pm;
+			return this->m_pm;
 		}
 
 		LMAT_ENSURE_INLINE void destroy()
 		{
-			mxDestroyArray(m_pm);
+			mxDestroyArray(this->m_pm);
 		}
 
 	public:
@@ -335,34 +335,34 @@ namespace lmat { namespace matlab {
 
 		LMAT_ENSURE_INLINE const double *ptr_real() const
 		{
-			return mxGetPr(m_pm);
+			return mxGetPr(this->m_pm);
 		}
 
 		LMAT_ENSURE_INLINE double *ptr_real()
 		{
-			return mxGetPr(m_pm);
+			return mxGetPr(this->m_pm);
 		}
 
 		LMAT_ENSURE_INLINE const double *ptr_imag() const
 		{
-			return mxGetPi(m_pm);
+			return mxGetPi(this->m_pm);
 		}
 
 		LMAT_ENSURE_INLINE double *ptr_imag()
 		{
-			return mxGetPi(m_pm);
+			return mxGetPi(this->m_pm);
 		}
 
 		template<typename T>
 		LMAT_ENSURE_INLINE const T* data() const
 		{
-			return (const T*)mxGetData(m_pm);
+			return (const T*)mxGetData(this->m_pm);
 		}
 
 		template<typename T>
 		LMAT_ENSURE_INLINE T* data()
 		{
-			return (T*)mxGetData(m_pm);
+			return (T*)mxGetData(this->m_pm);
 		}
 
 	public:
@@ -372,25 +372,25 @@ namespace lmat { namespace matlab {
 		LMAT_ENSURE_INLINE
 		void set_property(index_t i, const char* name, const_marray v)
 		{
-			mxSetProperty(m_pm, mwIndex(i), name, v.m_pm);
+			mxSetProperty(this->m_pm, mwIndex(i), name, v.get());
 		}
 
 		LMAT_ENSURE_INLINE
-		void set_field(index_t i, const char* name, const_marray v)
+		void set_field(index_t i, const char* name, marray v)
 		{
-			mxSetField(m_pm, mwIndex(i), name, v.m_pm);
+			mxSetField(this->m_pm, mwIndex(i), name, v.get());
 		}
 
 		LMAT_ENSURE_INLINE
-		void set_field_bynum(index_t i, int fieldnum, const_marray v)
+		void set_field_bynum(index_t i, int fieldnum, marray v)
 		{
-			mxSetFieldByNumber(m_pm, mwIndex(i), fieldnum, v.m_pm);
+			mxSetFieldByNumber(this->m_pm, mwIndex(i), fieldnum, v.get());
 		}
 
 		LMAT_ENSURE_INLINE
-		void set_cell(index_t i, const_marray v)
+		void set_cell(index_t i, marray v)
 		{
-			mxSetCell(m_pm, (mwIndex)(i), v.m_pm);
+			mxSetCell(this->m_pm, (mwIndex)(i), v.get());
 		}
 
 	public:
