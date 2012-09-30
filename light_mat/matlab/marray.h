@@ -170,6 +170,11 @@ namespace lmat { namespace matlab {
 			return mxIsSparse(m_pm);
 		}
 
+		LMAT_ENSURE_INLINE bool is_complex() const
+		{
+			return mxIsComplex(m_pm);
+		}
+
 	public:
 		// Size
 
