@@ -462,6 +462,12 @@ namespace lmat { namespace matlab {
 		}
 
 		LMAT_ENSURE_INLINE
+		static marray from_logical_scalar(bool v)
+		{
+			return mxCreateLogicalScalar(v);
+		}
+
+		LMAT_ENSURE_INLINE
 		static marray from_string(const char* str)
 		{
 			return mxCreateString(str);
