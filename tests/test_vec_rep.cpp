@@ -42,7 +42,6 @@ N_CASE( repcols, generic )
 	ASSERT_EQ( expr.nrows(), m );
 	ASSERT_EQ( expr.ncolumns(), n );
 	ASSERT_EQ( expr.nelems(), m * n);
-	ASSERT_EQ( expr.size(), size_t(m * n) );
 
 	ASSERT_EQ( &(expr.arg()), &a );
 }
@@ -65,7 +64,6 @@ MN_CASE( repcols, generic_fix )
 	ASSERT_EQ( expr.nrows(), m );
 	ASSERT_EQ( expr.ncolumns(), n );
 	ASSERT_EQ( expr.nelems(), m * n);
-	ASSERT_EQ( expr.size(), size_t(m * n) );
 
 	ASSERT_EQ( &(expr.arg()), &a );
 }
@@ -87,7 +85,6 @@ N_CASE( repcols, const )
 	ASSERT_EQ( expr.nrows(), m );
 	ASSERT_EQ( expr.ncolumns(), n );
 	ASSERT_EQ( expr.nelems(), m * n);
-	ASSERT_EQ( expr.size(), size_t(m * n) );
 
 	ASSERT_EQ( expr.value(), val );
 }
@@ -111,7 +108,6 @@ MN_CASE( repcols, const_fix )
 	ASSERT_EQ( expr.nrows(), m );
 	ASSERT_EQ( expr.ncolumns(), n );
 	ASSERT_EQ( expr.nelems(), m * n);
-	ASSERT_EQ( expr.size(), size_t(m * n) );
 
 	ASSERT_EQ( expr.value(), val );
 }
@@ -132,7 +128,6 @@ N_CASE( reprows, generic )
 	ASSERT_EQ( expr.nrows(), m );
 	ASSERT_EQ( expr.ncolumns(), n );
 	ASSERT_EQ( expr.nelems(), m * n);
-	ASSERT_EQ( expr.size(), size_t(m * n) );
 
 	ASSERT_EQ( &(expr.arg()), &a );
 }
@@ -155,7 +150,6 @@ MN_CASE( reprows, generic_fix )
 	ASSERT_EQ( expr.nrows(), m );
 	ASSERT_EQ( expr.ncolumns(), n );
 	ASSERT_EQ( expr.nelems(), m * n);
-	ASSERT_EQ( expr.size(), size_t(m * n) );
 
 	ASSERT_EQ( &(expr.arg()), &a );
 }
@@ -176,7 +170,6 @@ N_CASE( reprows, const )
 	ASSERT_EQ( expr.nrows(), m );
 	ASSERT_EQ( expr.ncolumns(), n );
 	ASSERT_EQ( expr.nelems(), m * n);
-	ASSERT_EQ( expr.size(), size_t(m * n) );
 
 	ASSERT_EQ( expr.value(), val );
 }
@@ -198,7 +191,6 @@ MN_CASE( reprows, const_fix )
 	ASSERT_EQ( expr.nrows(), m );
 	ASSERT_EQ( expr.ncolumns(), n );
 	ASSERT_EQ( expr.nelems(), m * n);
-	ASSERT_EQ( expr.size(), size_t(m * n) );
 
 	ASSERT_EQ( expr.value(), val );
 }

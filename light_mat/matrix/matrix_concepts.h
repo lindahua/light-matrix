@@ -22,16 +22,12 @@
 	typedef const value_type& const_reference; \
 	typedef typename mat_access<D>::pointer pointer; \
 	typedef typename mat_access<D>::reference reference; \
-	typedef size_t size_type; \
-	typedef index_t difference_type; \
 	typedef index_t index_type;
 
 #define LMAT_MAT_TRAITS_CDEFS(T) \
 	typedef T value_type; \
 	typedef const value_type* const_pointer; \
 	typedef const value_type& const_reference; \
-	typedef size_t size_type; \
-	typedef index_t difference_type; \
 	typedef index_t index_type;
 
 #define LMAT_MAT_TRAITS_DEFS(T) \
@@ -40,8 +36,6 @@
 	typedef const value_type& const_reference; \
 	typedef value_type* pointer; \
 	typedef value_type& reference; \
-	typedef size_t size_type; \
-	typedef index_t difference_type; \
 	typedef index_t index_type;
 
 
@@ -78,11 +72,6 @@ namespace lmat
 		LMAT_ENSURE_INLINE index_type nelems() const
 		{
 			return derived().nelems();
-		}
-
-		LMAT_ENSURE_INLINE size_type size() const
-		{
-			return derived().size();
 		}
 
 		LMAT_ENSURE_INLINE index_type nrows() const
@@ -139,11 +128,6 @@ namespace lmat
 			return derived().nelems();
 		}
 
-		LMAT_ENSURE_INLINE size_type size() const
-		{
-			return derived().size();
-		}
-
 		LMAT_ENSURE_INLINE index_type nrows() const
 		{
 			return derived().nrows();
@@ -182,11 +166,6 @@ namespace lmat
 		LMAT_ENSURE_INLINE index_type nelems() const
 		{
 			return derived().nelems();
-		}
-
-		LMAT_ENSURE_INLINE size_type size() const
-		{
-			return derived().size();
 		}
 
 		LMAT_ENSURE_INLINE index_type nrows() const

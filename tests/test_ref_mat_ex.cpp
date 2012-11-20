@@ -56,7 +56,6 @@ MN_CASE( cref_mat_ex, constructs )
 	ASSERT_EQ(a.ncolumns(), n);
 	ASSERT_EQ(a.nelems(), m * n);
 	ASSERT_EQ(a.lead_dim(), ldim);
-	ASSERT_EQ(a.size(), (size_t)a.nelems() );
 
 	ASSERT_EQ(a.ptr_data(), ps);
 
@@ -66,7 +65,6 @@ MN_CASE( cref_mat_ex, constructs )
 	ASSERT_EQ(a2.ncolumns(), n);
 	ASSERT_EQ(a2.nelems(), m * n);
 	ASSERT_EQ(a2.lead_dim(), ldim);
-	ASSERT_EQ(a2.size(), (size_t)a2.nelems() );
 
 	ASSERT_EQ(a2.ptr_data(), ps);
 }
@@ -86,7 +84,6 @@ MN_CASE( ref_mat_ex, constructs )
 	ASSERT_EQ(a.ncolumns(), n);
 	ASSERT_EQ(a.nelems(), m * n);
 	ASSERT_EQ(a.lead_dim(), ldim);
-	ASSERT_EQ(a.size(), (size_t)a.nelems() );
 
 	ASSERT_EQ(a.ptr_data(), ps);
 
@@ -96,7 +93,6 @@ MN_CASE( ref_mat_ex, constructs )
 	ASSERT_EQ(a2.ncolumns(), n);
 	ASSERT_EQ(a2.nelems(), m * n);
 	ASSERT_EQ(a2.lead_dim(), ldim);
-	ASSERT_EQ(a2.size(), (size_t)a2.nelems() );
 
 	ASSERT_EQ(a2.ptr_data(), ps);
 }

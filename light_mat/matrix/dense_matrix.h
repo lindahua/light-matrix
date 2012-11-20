@@ -220,11 +220,6 @@ namespace lmat
 			return m_shape.nelems();
 		}
 
-		LMAT_ENSURE_INLINE size_type size() const
-		{
-			return static_cast<size_type>(nelems());
-		}
-
 		LMAT_ENSURE_INLINE index_type nrows() const
 		{
 			return m_shape.nrows();

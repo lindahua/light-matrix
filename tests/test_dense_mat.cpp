@@ -40,8 +40,6 @@ MN_CASE( dense_mat, constructs )
 	ASSERT_EQ(a0.nelems(), M * N);
 	ASSERT_EQ(a0.lead_dim(), M);
 
-	ASSERT_EQ(a0.size(), (size_t)a0.nelems() );
-
 	if (M > 0 && N > 0)
 	{
 		ASSERT_TRUE(a0.ptr_data() != 0);
@@ -63,7 +61,6 @@ MN_CASE( dense_mat, constructs )
 	ASSERT_EQ(a1.nelems(), m * n);
 	ASSERT_EQ(a1.lead_dim(), m);
 
-	ASSERT_EQ(a1.size(), (size_t)a1.nelems() );
 	ASSERT_TRUE(a1.ptr_data() != 0);
 
 }

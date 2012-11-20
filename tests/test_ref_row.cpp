@@ -45,7 +45,6 @@ N_CASE( cref_row, constructs )
 	ASSERT_EQ(a.ncolumns(), n);
 	ASSERT_EQ(a.nelems(), n);
 	ASSERT_EQ(a.lead_dim(), 1);
-	ASSERT_EQ(a.size(), (size_t)a.nelems() );
 
 	ASSERT_EQ(a.ptr_data(), ps);
 
@@ -55,7 +54,6 @@ N_CASE( cref_row, constructs )
 	ASSERT_EQ(a2.ncolumns(), n);
 	ASSERT_EQ(a2.nelems(), n);
 	ASSERT_EQ(a2.lead_dim(), 1);
-	ASSERT_EQ(a2.size(), (size_t)a2.nelems() );
 
 	ASSERT_EQ(a.ptr_data(), ps);
 }
@@ -74,7 +72,6 @@ N_CASE( ref_row, constructs )
 	ASSERT_EQ(a.ncolumns(), n);
 	ASSERT_EQ(a.nelems(), n);
 	ASSERT_EQ(a.lead_dim(), 1);
-	ASSERT_EQ(a.size(), (size_t)a.nelems() );
 
 	ASSERT_EQ(a.ptr_data(), ps);
 
@@ -84,7 +81,6 @@ N_CASE( ref_row, constructs )
 	ASSERT_EQ(a2.ncolumns(), n);
 	ASSERT_EQ(a2.nelems(), n);
 	ASSERT_EQ(a2.lead_dim(), 1);
-	ASSERT_EQ(a2.size(), (size_t)a2.nelems() );
 
 	ASSERT_EQ(a.ptr_data(), ps);
 }

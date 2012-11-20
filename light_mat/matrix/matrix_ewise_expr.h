@@ -85,11 +85,6 @@ namespace lmat
 			return this->arg().nelems();
 		}
 
-		LMAT_ENSURE_INLINE size_t size() const
-		{
-			return this->arg().size();
-		}
-
 		LMAT_ENSURE_INLINE index_t nrows() const
 		{
 			return this->arg().nrows();
@@ -137,11 +132,6 @@ namespace lmat
 		LMAT_ENSURE_INLINE index_t nelems() const
 		{
 			return this->first_arg().nelems();
-		}
-
-		LMAT_ENSURE_INLINE size_t size() const
-		{
-			return this->first_arg().size();
 		}
 
 		LMAT_ENSURE_INLINE index_t nrows() const

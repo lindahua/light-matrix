@@ -38,7 +38,6 @@ MN_CASE( const_mat, constructs )
 	ASSERT_EQ(a.nrows(), m);
 	ASSERT_EQ(a.ncolumns(), n);
 	ASSERT_EQ(a.nelems(), m * n);
-	ASSERT_EQ(a.size(), size_t(m * n));
 
 	ASSERT_EQ(a.value(), val);
 }

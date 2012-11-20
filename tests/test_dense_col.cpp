@@ -43,8 +43,6 @@ N_CASE( dense_col, constructs )
 	ASSERT_EQ(a0.nelems(), N);
 	ASSERT_EQ(a0.lead_dim(), N);
 
-	ASSERT_EQ(a0.size(), (size_t)a0.nelems() );
-
 	if (N > 0)
 	{
 		ASSERT_TRUE(a0.ptr_data() != 0);
@@ -65,7 +63,6 @@ N_CASE( dense_col, constructs )
 	ASSERT_EQ(a1.nelems(), n);
 	ASSERT_EQ(a1.lead_dim(), n);
 
-	ASSERT_EQ(a1.size(), (size_t)a1.nelems() );
 	ASSERT_TRUE(a1.ptr_data() != 0);
 }
 

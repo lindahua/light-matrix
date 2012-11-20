@@ -91,11 +91,6 @@ namespace lmat
 			return this->arg().nelems();
 		}
 
-		LMAT_ENSURE_INLINE size_type size() const
-		{
-			return this->arg().size();
-		}
-
 		LMAT_ENSURE_INLINE index_type nrows() const
 		{
 			return 1;
@@ -160,11 +155,6 @@ namespace lmat
 		LMAT_ENSURE_INLINE index_type nelems() const
 		{
 			return this->arg().nelems();
-		}
-
-		LMAT_ENSURE_INLINE size_type size() const
-		{
-			return this->arg().size();
 		}
 
 		LMAT_ENSURE_INLINE index_type nrows() const
@@ -233,11 +223,6 @@ namespace lmat
 			return this->arg().nelems();
 		}
 
-		LMAT_ENSURE_INLINE size_type size() const
-		{
-			return this->arg().size();
-		}
-
 		LMAT_ENSURE_INLINE index_type nrows() const
 		{
 			return this->arg().ncolumns();
@@ -299,11 +284,6 @@ namespace lmat
 			return this->arg().nelems();
 		}
 
-		LMAT_ENSURE_INLINE size_type size() const
-		{
-			return this->arg().size();
-		}
-
 		LMAT_ENSURE_INLINE index_type nrows() const
 		{
 			return this->arg().ncolumns();
@@ -348,11 +328,6 @@ namespace lmat
 		LMAT_ENSURE_INLINE index_type nelems() const
 		{
 			return this->arg().nelems();
-		}
-
-		LMAT_ENSURE_INLINE size_type size() const
-		{
-			return this->arg().size();
 		}
 
 		LMAT_ENSURE_INLINE index_type nrows() const
@@ -416,11 +391,6 @@ namespace lmat
 			return this->arg().nelems();
 		}
 
-		LMAT_ENSURE_INLINE size_type size() const
-		{
-			return this->arg().size();
-		}
-
 		LMAT_ENSURE_INLINE index_type nrows() const
 		{
 			return this->arg().ncolumns();
@@ -472,11 +442,6 @@ namespace lmat
 		LMAT_ENSURE_INLINE index_type nelems() const
 		{
 			return this->arg().nelems();
-		}
-
-		LMAT_ENSURE_INLINE size_type size() const
-		{
-			return this->arg().size();
 		}
 
 		LMAT_ENSURE_INLINE index_type nrows() const
