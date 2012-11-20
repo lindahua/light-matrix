@@ -23,8 +23,8 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<typename T, int CTRows, int CTCols, typename Align>
-	struct matrix_traits<cref_matrix<T, CTRows, CTCols, Align> >
+	template<typename T, int CTRows, int CTCols>
+	struct matrix_traits<cref_matrix<T, CTRows, CTCols> >
 	{
 		static const int num_dimensions = 2;
 		static const int compile_time_num_rows = CTRows;
@@ -36,40 +36,27 @@ namespace lmat
 		typedef cpu_domain domain;
 	};
 
-	template<typename T, int CTRows, int CTCols, typename Align>
-	struct ct_has_continuous_layout<cref_matrix<T, CTRows, CTCols, Align> >
+	template<typename T, int CTRows, int CTCols>
+	struct ct_has_continuous_layout<cref_matrix<T, CTRows, CTCols> >
 	{
 		static const bool value = true;
 	};
 
-	template<typename T, int CTRows, int CTCols, typename Align>
-	struct is_base_aligned<cref_matrix<T, CTRows, CTCols, Align> >
-	{
-		static const bool value = is_base_aligned_from_tag<Align>::value;
-	};
-
-	template<typename T, int CTRows, int CTCols, typename Align>
-	struct is_percol_aligned<cref_matrix<T, CTRows, CTCols, Align> >
-	{
-		static const bool value = is_percol_aligned_from_tag<Align>::value;
-	};
-
-
-	template<typename T, int CTRows, int CTCols, typename Align>
-	struct is_linear_accessible<cref_matrix<T, CTRows, CTCols, Align> >
+	template<typename T, int CTRows, int CTCols>
+	struct is_linear_accessible<cref_matrix<T, CTRows, CTCols> >
 	{
 		static const bool value = true;
 	};
 
-	template<typename T, int CTRows, int CTCols, typename Align, class DMat>
-	struct default_matrix_eval_policy<cref_matrix<T, CTRows, CTCols, Align>, DMat>
+	template<typename T, int CTRows, int CTCols, class DMat>
+	struct default_matrix_eval_policy<cref_matrix<T, CTRows, CTCols>, DMat>
 	{
 		typedef matrix_copy_policy type;
 	};
 
 
-	template<typename T, int CTRows, int CTCols, typename Align>
-	class cref_matrix : public IDenseMatrix<cref_matrix<T, CTRows, CTCols, Align>, T>
+	template<typename T, int CTRows, int CTCols>
+	class cref_matrix : public IDenseMatrix<cref_matrix<T, CTRows, CTCols>, T>
 	{
 #ifdef LMAT_USE_STATIC_ASSERT
 		static_assert(is_supported_matrix_value_type<T>::value,
@@ -155,8 +142,8 @@ namespace lmat
 	 ********************************************/
 
 
-	template<typename T, int CTRows, int CTCols, typename Align>
-	struct matrix_traits<ref_matrix<T, CTRows, CTCols, Align> >
+	template<typename T, int CTRows, int CTCols>
+	struct matrix_traits<ref_matrix<T, CTRows, CTCols> >
 	{
 		static const int num_dimensions = 2;
 		static const int compile_time_num_rows = CTRows;
@@ -168,39 +155,27 @@ namespace lmat
 		typedef cpu_domain domain;
 	};
 
-	template<typename T, int CTRows, int CTCols, typename Align>
-	struct ct_has_continuous_layout<ref_matrix<T, CTRows, CTCols, Align> >
+	template<typename T, int CTRows, int CTCols>
+	struct ct_has_continuous_layout<ref_matrix<T, CTRows, CTCols> >
 	{
 		static const bool value = true;
 	};
 
-	template<typename T, int CTRows, int CTCols, typename Align>
-	struct is_base_aligned<ref_matrix<T, CTRows, CTCols, Align> >
-	{
-		static const bool value = is_base_aligned_from_tag<Align>::value;
-	};
-
-	template<typename T, int CTRows, int CTCols, typename Align>
-	struct is_percol_aligned<ref_matrix<T, CTRows, CTCols, Align> >
-	{
-		static const bool value = is_percol_aligned_from_tag<Align>::value;
-	};
-
-	template<typename T, int CTRows, int CTCols, typename Align>
-	struct is_linear_accessible<ref_matrix<T, CTRows, CTCols, Align> >
+	template<typename T, int CTRows, int CTCols>
+	struct is_linear_accessible<ref_matrix<T, CTRows, CTCols> >
 	{
 		static const bool value = true;
 	};
 
-	template<typename T, int CTRows, int CTCols, typename Align, class DMat>
-	struct default_matrix_eval_policy<ref_matrix<T, CTRows, CTCols, Align>, DMat>
+	template<typename T, int CTRows, int CTCols, class DMat>
+	struct default_matrix_eval_policy<ref_matrix<T, CTRows, CTCols>, DMat>
 	{
 		typedef matrix_copy_policy type;
 	};
 
 
-	template<typename T, int CTRows, int CTCols, typename Align>
-	class ref_matrix : public IDenseMatrix<ref_matrix<T, CTRows, CTCols, Align>, T>
+	template<typename T, int CTRows, int CTCols>
+	class ref_matrix : public IDenseMatrix<ref_matrix<T, CTRows, CTCols>, T>
 	{
 #ifdef LMAT_USE_STATIC_ASSERT
 		static_assert(is_supported_matrix_value_type<T>::value,
@@ -316,8 +291,8 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<typename T, int CTRows, typename Align>
-	class cref_col: public cref_matrix<T, CTRows, 1, Align>
+	template<typename T, int CTRows>
+	class cref_col: public cref_matrix<T, CTRows, 1>
 	{
 		typedef cref_matrix<T, CTRows, 1> base_mat_t;
 
@@ -329,8 +304,8 @@ namespace lmat
 		: base_mat_t(pdata, m, 1) { }
 	};
 
-	template<typename T, int CTRows, typename Align>
-	class ref_col: public ref_matrix<T, CTRows, 1, Align>
+	template<typename T, int CTRows>
+	class ref_col: public ref_matrix<T, CTRows, 1>
 	{
 		typedef ref_matrix<T, CTRows, 1> base_mat_t;
 
@@ -357,8 +332,8 @@ namespace lmat
 	};
 
 
-	template<typename T, int CTCols, typename Align>
-	class cref_row: public cref_matrix<T, 1, CTCols, Align>
+	template<typename T, int CTCols>
+	class cref_row: public cref_matrix<T, 1, CTCols>
 	{
 		typedef cref_matrix<T, 1, CTCols> base_mat_t;
 
@@ -370,8 +345,8 @@ namespace lmat
 		: base_mat_t(pdata, 1, n) { }
 	};
 
-	template<typename T, int CTCols, typename Align>
-	class ref_row: public ref_matrix<T, 1, CTCols, Align>
+	template<typename T, int CTCols>
+	class ref_row: public ref_matrix<T, 1, CTCols>
 	{
 		typedef ref_matrix<T, 1, CTCols> base_mat_t;
 

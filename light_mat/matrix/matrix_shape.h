@@ -74,27 +74,106 @@ namespace lmat
 	public:
 		LMAT_ENSURE_INLINE matrix_shape() { }
 
-		LMAT_ENSURE_INLINE matrix_shape(const index_t m, const index_t n)
-		: m_dim0(m), m_dim1(n) { }
+		LMAT_ENSURE_INLINE matrix_shape(index_t, index_t) { }
 
 		LMAT_ENSURE_INLINE index_t nrows() const
 		{
-			return m_dim0.value();
+			return M;
 		}
 
 		LMAT_ENSURE_INLINE index_t ncolumns() const
 		{
-			return m_dim1.value();
+			return N;
 		}
 
 		LMAT_ENSURE_INLINE index_t nelems() const
 		{
-			return m_dim0.value() * m_dim1.value();
+			return M * N;
+		}
+	};
+
+	template<int M>
+	class matrix_shape<M, 0>
+	{
+	public:
+		LMAT_ENSURE_INLINE matrix_shape() : m_ncols(0) { }
+
+		LMAT_ENSURE_INLINE matrix_shape(index_t, index_t n) : m_ncols(n) { }
+
+		LMAT_ENSURE_INLINE index_t nrows() const
+		{
+			return M;
+		}
+
+		LMAT_ENSURE_INLINE index_t ncolumns() const
+		{
+			return m_ncols;
+		}
+
+		LMAT_ENSURE_INLINE index_t nelems() const
+		{
+			return M * m_ncols;
 		}
 
 	private:
-		dimension<M> m_dim0;
-		dimension<N> m_dim1;
+		index_t m_ncols;
+	};
+
+
+	template<int N>
+	class matrix_shape<0, N>
+	{
+	public:
+		LMAT_ENSURE_INLINE matrix_shape() : m_nrows(0) { }
+
+		LMAT_ENSURE_INLINE matrix_shape(index_t m, index_t) : m_nrows(m) { }
+
+		LMAT_ENSURE_INLINE index_t nrows() const
+		{
+			return m_nrows;
+		}
+
+		LMAT_ENSURE_INLINE index_t ncolumns() const
+		{
+			return N;
+		}
+
+		LMAT_ENSURE_INLINE index_t nelems() const
+		{
+			return m_nrows * N;
+		}
+
+	private:
+		index_t m_nrows;
+	};
+
+
+	template<>
+	class matrix_shape<0, 0>
+	{
+	public:
+		LMAT_ENSURE_INLINE matrix_shape() : m_nrows(0), m_ncols(0) { }
+
+		LMAT_ENSURE_INLINE matrix_shape(index_t m, index_t n) : m_nrows(m), m_ncols(n) { }
+
+		LMAT_ENSURE_INLINE index_t nrows() const
+		{
+			return m_nrows;
+		}
+
+		LMAT_ENSURE_INLINE index_t ncolumns() const
+		{
+			return m_ncols;
+		}
+
+		LMAT_ENSURE_INLINE index_t nelems() const
+		{
+			return m_nrows * m_ncols;
+		}
+
+	private:
+		index_t m_nrows;
+		index_t m_ncols;
 	};
 
 

@@ -49,42 +49,29 @@ namespace lmat
 	template<class Derived, typename T> class IMatrixView;
 	template<class Derived, typename T> class IDenseMatrix;
 
-	// alignment tags
-
-	struct unaligned { };
-	struct base_aligned { };
-	struct percol_aligned { };
-
-	template<typename T>
-	struct is_align_tag { static const bool value = false; };
-
-	template<> struct is_align_tag<unaligned> { static const bool value = true; };
-	template<> struct is_align_tag<base_aligned> { static const bool value = true; };
-	template<> struct is_align_tag<percol_aligned> { static const bool value = true; };
-
 	// forward declaration of some important types
 
-	template<typename T, int CTRows=0, int CTCols=0, typename Align=base_aligned>
+	template<typename T, int CTRows=0, int CTCols=0>
 	class dense_matrix;
 
-	template<typename T, int CTRows=0, typename Align=base_aligned> class dense_col;
-	template<typename T, int CTCols=0, typename Align=base_aligned> class dense_row;
+	template<typename T, int CTRows=0> class dense_col;
+	template<typename T, int CTCols=0> class dense_row;
 
-	template<typename T, int RowDim=0, int ColDim=0, typename Align=unaligned>
+	template<typename T, int RowDim=0, int ColDim=0>
 	class cref_matrix;
 
-	template<typename T, int RowDim=0, int ColDim=0, typename Align=unaligned>
+	template<typename T, int RowDim=0, int ColDim=0>
 	class ref_matrix;
 
-	template<typename T, int CTRows=0, typename Align=unaligned> class cref_col;
-	template<typename T, int CTRows=0, typename Align=unaligned> class ref_col;
-	template<typename T, int CTCols=0, typename Align=unaligned> class cref_row;
-	template<typename T, int CTCols=0, typename Align=unaligned> class ref_row;
+	template<typename T, int CTRows=0> class cref_col;
+	template<typename T, int CTRows=0> class ref_col;
+	template<typename T, int CTCols=0> class cref_row;
+	template<typename T, int CTCols=0> class ref_row;
 
-	template<typename T, int CTRows=0, int CTCols=0, typename Align=unaligned>
+	template<typename T, int CTRows=0, int CTCols=0>
 	class cref_matrix_ex;
 
-	template<typename T, int CTRows=0, int CTCols=0, typename Align=unaligned>
+	template<typename T, int CTRows=0, int CTCols=0>
 	class ref_matrix_ex;
 
 	template<class Mat> class dense_mutable_view;

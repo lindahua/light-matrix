@@ -27,8 +27,8 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<typename T, int CTRows, int CTCols, typename Align>
-	struct matrix_traits<dense_matrix<T, CTRows, CTCols, Align> >
+	template<typename T, int CTRows, int CTCols>
+	struct matrix_traits<dense_matrix<T, CTRows, CTCols> >
 	{
 		static const int num_dimensions = 2;
 		static const int compile_time_num_rows = CTRows;
@@ -40,32 +40,20 @@ namespace lmat
 		typedef cpu_domain domain;
 	};
 
-	template<typename T, int CTRows, int CTCols, typename Align>
-	struct ct_has_continuous_layout<dense_matrix<T, CTRows, CTCols, Align> >
+	template<typename T, int CTRows, int CTCols>
+	struct ct_has_continuous_layout<dense_matrix<T, CTRows, CTCols> >
 	{
 		static const bool value = true;
 	};
 
-	template<typename T, int CTRows, int CTCols, typename Align>
-	struct is_base_aligned<dense_matrix<T, CTRows, CTCols, Align> >
+	template<typename T, int CTRows, int CTCols>
+	struct is_linear_accessible<dense_matrix<T, CTRows, CTCols> >
 	{
 		static const bool value = true;
 	};
 
-	template<typename T, int CTRows, int CTCols, typename Align>
-	struct is_percol_aligned<dense_matrix<T, CTRows, CTCols, Align> >
-	{
-		static const bool value = is_same<Align, percol_aligned>::value;
-	};
-
-	template<typename T, int CTRows, int CTCols, typename Align>
-	struct is_linear_accessible<dense_matrix<T, CTRows, CTCols, Align> >
-	{
-		static const bool value = true;
-	};
-
-	template<typename T, int CTRows, int CTCols, typename Align, class DMat>
-	struct default_matrix_eval_policy<dense_matrix<T, CTRows, CTCols, Align>, DMat>
+	template<typename T, int CTRows, int CTCols, class DMat>
+	struct default_matrix_eval_policy<dense_matrix<T, CTRows, CTCols>, DMat>
 	{
 		typedef matrix_copy_policy type;
 	};
@@ -142,8 +130,8 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<typename T, int CTRows, int CTCols, typename Align>
-	class dense_matrix : public IDenseMatrix<dense_matrix<T, CTRows, CTCols, Align>, T>
+	template<typename T, int CTRows, int CTCols>
+	class dense_matrix : public IDenseMatrix<dense_matrix<T, CTRows, CTCols>, T>
 	{
 #ifdef LMAT_USE_STATIC_ASSERT
 		static_assert(is_supported_matrix_value_type<T>::value,
@@ -151,9 +139,6 @@ namespace lmat
 
 		static_assert(CTRows >= 0 && CTCols >= 0,
 				"CTRows and CTCols must be non-negative numbers.");
-
-		static_assert(is_same<Align, base_aligned>::value,
-				"Align must be base_aligned in current version.");
 #endif
 
 	public:
@@ -329,10 +314,10 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<typename T, int CTRows, typename Align>
-	class dense_col : public dense_matrix<T, CTRows, 1, Align>
+	template<typename T, int CTRows>
+	class dense_col : public dense_matrix<T, CTRows, 1>
 	{
-		typedef dense_matrix<T, CTRows, 1, Align> base_mat_t;
+		typedef dense_matrix<T, CTRows, 1> base_mat_t;
 
 	public:
 		LMAT_ENSURE_INLINE dense_col() : base_mat_t(CTRows, 1) { }
@@ -382,10 +367,10 @@ namespace lmat
 	};
 
 
-	template<typename T, int CTCols, typename Align>
-	class dense_row : public dense_matrix<T, 1, CTCols, Align>
+	template<typename T, int CTCols>
+	class dense_row : public dense_matrix<T, 1, CTCols>
 	{
-		typedef dense_matrix<T, 1, CTCols, Align> base_mat_t;
+		typedef dense_matrix<T, 1, CTCols> base_mat_t;
 
 	public:
 		LMAT_ENSURE_INLINE dense_row() : base_mat_t(1, CTCols) { }

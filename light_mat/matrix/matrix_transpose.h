@@ -42,8 +42,6 @@ namespace lmat
 	struct transpose_base_traits
 	{
 		static const bool has_continuous_layout = false;
-		static const bool is_base_aligned = false;
-		static const bool is_percol_aligned = false;
 		static const bool is_linear_accessible = false;
 	};
 
@@ -51,8 +49,6 @@ namespace lmat
 	struct transpose_base_traits<contcol_transpose_base<Arg_HP, Arg> >
 	{
 		static const bool has_continuous_layout = true;
-		static const bool is_base_aligned = lmat::is_base_aligned<Arg>::value;
-		static const bool is_percol_aligned = false;
 		static const bool is_linear_accessible = true;
 	};
 
@@ -60,8 +56,6 @@ namespace lmat
 	struct transpose_base_traits<controw_transpose_base<Arg_HP, Arg> >
 	{
 		static const bool has_continuous_layout = true;
-		static const bool is_base_aligned = lmat::is_base_aligned<Arg>::value;
-		static const bool is_percol_aligned = is_base_aligned;
 		static const bool is_linear_accessible = true;
 	};
 
@@ -69,8 +63,6 @@ namespace lmat
 	struct transpose_base_traits<regular_row_transpose_base<Arg_HP, Arg> >
 	{
 		static const bool has_continuous_layout = false;
-		static const bool is_base_aligned = false;
-		static const bool is_percol_aligned = false;
 		static const bool is_linear_accessible = true;
 	};
 
@@ -604,20 +596,6 @@ namespace lmat
 	{
 		typedef typename matrix_transpose_base_map<Arg_HP, Arg>::type base_t;
 		static const bool value = transpose_base_traits<base_t>::has_continuous_layout;
-	};
-
-	template<typename Arg_HP, class Arg>
-	struct is_base_aligned<transpose_expr<Arg_HP, Arg> >
-	{
-		typedef typename matrix_transpose_base_map<Arg_HP, Arg>::type base_t;
-		static const bool value = transpose_base_traits<base_t>::is_base_aligned;
-	};
-
-	template<typename Arg_HP, class Arg>
-	struct is_percol_aligned<transpose_expr<Arg_HP, Arg> >
-	{
-		typedef typename matrix_transpose_base_map<Arg_HP, Arg>::type base_t;
-		static const bool value = transpose_base_traits<base_t>::is_percol_aligned;
 	};
 
 	template<typename Arg_HP, class Arg>

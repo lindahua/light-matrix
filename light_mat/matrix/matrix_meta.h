@@ -283,28 +283,8 @@ namespace lmat
 	};
 
 	template<class Mat>
-	struct is_base_aligned { static const bool value = false; };
-
-	template<class Mat>
-	struct is_percol_aligned { static const bool value = false; };
-
-	template<class Mat>
 	struct is_linear_accessible { static const bool value = false; };
 
-	template<typename Tag>
-	struct is_base_aligned_from_tag
-	{
-		static const bool value =
-				is_same<Tag, base_aligned>::value ||
-				is_same<Tag, percol_aligned>::value;
-	};
-
-	template<typename Tag>
-	struct is_percol_aligned_from_tag
-	{
-		static const bool value =
-				is_same<Tag, percol_aligned>::value;
-	};
 
 }
 
