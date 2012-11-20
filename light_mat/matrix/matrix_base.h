@@ -14,7 +14,6 @@
 #define LIGHTMAT_MATRIX_BASE_H_
 
 #include <light_mat/matrix/matrix_properties.h>
-#include <light_mat/matrix/matrix_shape.h>
 
 #include <light_mat/matrix/matrix_copy.h>
 #include <light_mat/matrix/matrix_fill.h>

@@ -14,6 +14,7 @@
 #define LIGHTMAT_MATRIX_CONCEPTS_H_
 
 #include <light_mat/matrix/matrix_meta.h>
+#include <light_mat/matrix/matrix_shape.h>
 
 #define LMAT_MAT_TRAITS_DEFS_FOR_BASE(D, T) \
 	typedef T value_type; \
