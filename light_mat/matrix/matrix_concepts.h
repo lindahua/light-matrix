@@ -14,7 +14,6 @@
 #define LIGHTMAT_MATRIX_CONCEPTS_H_
 
 #include <light_mat/matrix/matrix_meta.h>
-#include <light_mat/matrix/matrix_shape.h>
 
 #define LMAT_MAT_TRAITS_DEFS_FOR_BASE(D, T) \
 	typedef T value_type; \
@@ -83,7 +82,7 @@ namespace lmat
 		{
 			return derived().ncolumns();
 		}
-
+/*
 		LMAT_ENSURE_INLINE
 		typename unary_expr_map<transpose_t, ref_arg_t, Derived>::type
 		trans() const
@@ -91,7 +90,7 @@ namespace lmat
 			return unary_expr_map<transpose_t, ref_arg_t, Derived>::get(
 					transpose_t(), ref_arg(derived()));
 		}
-
+*/
 	}; // end class IMatrixBase
 
 
@@ -114,49 +113,10 @@ namespace lmat
 
 
 	/**
-	 * The interfaces for matrix views
-	 */
-	template<class Derived, typename T>
-	class IMatrixView : public IMatrixXpr<Derived, T>
-	{
-	public:
-		LMAT_MAT_TRAITS_DEFS_FOR_BASE(Derived, T)
-		LMAT_CRTP_REF
-
-		LMAT_ENSURE_INLINE index_type nelems() const
-		{
-			return derived().nelems();
-		}
-
-		LMAT_ENSURE_INLINE index_type nrows() const
-		{
-			return derived().nrows();
-		}
-
-		LMAT_ENSURE_INLINE index_type ncolumns() const
-		{
-			return derived().ncolumns();
-		}
-
-		LMAT_ENSURE_INLINE value_type elem(const index_type i, const index_type j) const
-		{
-			return derived().elem(i, j);
-		}
-
-		LMAT_ENSURE_INLINE value_type operator() (const index_type i, const index_type j) const
-		{
-			check_subscripts_in_range(*this, i, j);
-			return elem(i, j);
-		}
-
-	}; // end class IDenseMatrixView
-
-
-	/**
 	 * The interfaces for matrix blocks
 	 */
 	template<class Derived, typename T>
-	class IDenseMatrix : public IMatrixView<Derived, T>
+	class IDenseMatrix : public IMatrixXpr<Derived, T>
 	{
 	public:
 		LMAT_MAT_TRAITS_DEFS_FOR_BASE(Derived, T)
@@ -178,9 +138,14 @@ namespace lmat
 			return derived().ncolumns();
 		}
 
-		LMAT_ENSURE_INLINE index_t lead_dim() const
+		LMAT_ENSURE_INLINE index_type row_stride() const
 		{
-			return derived().lead_dim();
+			return derived().row_stride();
+		}
+
+		LMAT_ENSURE_INLINE index_type col_stride() const
+		{
+			return derived().col_stride();
 		}
 
 		LMAT_ENSURE_INLINE const_pointer ptr_data() const
@@ -196,13 +161,13 @@ namespace lmat
 		LMAT_ENSURE_INLINE const_pointer ptr_col(const index_type j) const
 		{
 			LMAT_CHECK_IDX(j, ncolumns())
-			return ptr_data() + j * lead_dim();
+			return derived().ptr_col(j);
 		}
 
 		LMAT_ENSURE_INLINE pointer ptr_col(const index_type j)
 		{
 			LMAT_CHECK_IDX(j, ncolumns())
-			return ptr_data() + j * lead_dim();
+			return derived().ptr_col(j);
 		}
 
 		LMAT_ENSURE_INLINE const_reference elem(const index_type i, const index_type j) const
@@ -227,11 +192,6 @@ namespace lmat
 			return elem(i, j);
 		}
 
-
-		LMAT_ENSURE_INLINE void require_size(const index_type m, const index_type n)
-		{
-			derived().require_size(m, n);
-		}
 
 	public:
 
@@ -334,7 +294,7 @@ namespace lmat
 
 	/********************************************
 	 *
-	 *  matrix assignment
+	 *  matrix evaluation
 	 *
 	 ********************************************/
 
@@ -350,22 +310,28 @@ namespace lmat
 				has_compatible_ct_size<DMat, SExpr>::value;
 	};
 
+	struct undefined_eval_scheme { };
+
+	template<class SExpr, class DMat>
+	struct default_matrix_eval_scheme
+	{
+		typedef typename
+				if_<is_dense_mat<SExpr>,
+					matrix_copy_scheme<SExpr, DMat>,
+					undefined_eval_scheme
+				>::type type;
+	};
+
+
 	template<typename T, class SExpr, class DMat>
 	LMAT_ENSURE_INLINE
 	inline typename enable_if<matrix_eval_verifier<SExpr, DMat>, void>::type
 	default_evaluate(const IMatrixXpr<SExpr, T>& sexpr, IDenseMatrix<DMat, T>& dmat)
 	{
-		typedef typename default_matrix_eval_policy<SExpr, DMat>::type policy_t;
-		evaluate(sexpr.derived(), dmat.derived(), policy_t());
-	}
+		typedef typename default_matrix_eval_scheme<SExpr, DMat>::type scheme_t;
 
-	template<typename T, class LMat, class RExpr>
-	LMAT_ENSURE_INLINE
-	inline typename enable_if<matrix_eval_verifier<RExpr, LMat>, void>::type
-	default_assign(IDenseMatrix<LMat, T>& lhs, const IMatrixXpr<RExpr, T>& rhs)
-	{
-		lhs.require_size(rhs.nrows(), rhs.ncolumns());
-		default_evaluate(rhs, lhs);
+		scheme_t scheme(sexpr.derived(), dmat.derived());
+		scheme.evaluate();
 	}
 
 }

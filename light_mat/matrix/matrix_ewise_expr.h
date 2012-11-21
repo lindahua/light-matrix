@@ -28,8 +28,8 @@ namespace lmat
 	struct matrix_traits<unary_ewise_expr<Fun, Arg_HP, Arg> >
 	{
 		static const int num_dimensions = 2;
-		static const int compile_time_num_rows = ct_rows<Arg>::value;
-		static const int compile_time_num_cols = ct_cols<Arg>::value;
+		static const int ct_num_rows = ct_rows<Arg>::value;
+		static const int ct_num_cols = ct_cols<Arg>::value;
 
 		static const bool is_readonly = true;
 
@@ -46,8 +46,8 @@ namespace lmat
 #endif
 
 		static const int num_dimensions = 2;
-		static const int compile_time_num_rows = binary_ct_rows<Arg1, Arg2>::value;
-		static const int compile_time_num_cols = binary_ct_cols<Arg1, Arg2>::value;
+		static const int ct_num_rows = binary_ct_rows<Arg1, Arg2>::value;
+		static const int ct_num_cols = binary_ct_cols<Arg1, Arg2>::value;
 
 		static const bool is_readonly = true;
 

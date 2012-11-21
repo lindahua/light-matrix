@@ -121,19 +121,25 @@ namespace lmat
 	template<class Mat>
 	struct ct_rows
 	{
-		static const int value = matrix_traits<Mat>::compile_time_num_rows;
+		static const int value = matrix_traits<Mat>::ct_num_rows;
 	};
 
 	template<class Mat>
 	struct ct_cols
 	{
-		static const int value = matrix_traits<Mat>::compile_time_num_cols;
+		static const int value = matrix_traits<Mat>::ct_num_cols;
 	};
 
 	template<class Mat>
 	struct ct_size
 	{
 		static const int value = ct_rows<Mat>::value * ct_cols<Mat>::value;
+	};
+
+	template<class Mat>
+	struct matrix_shape_type
+	{
+		typedef matrix_shape<ct_rows<Mat>::value, ct_cols<Mat>::value> type;
 	};
 
 	template<int N1, int N2>
@@ -168,6 +174,15 @@ namespace lmat
 		static const int value = binary_ct_rows<Mat1, Mat2>::value * binary_ct_cols<Mat1, Mat2>::value;
 	};
 
+	template<class Mat1, class Mat2>
+	struct binary_shape_type
+	{
+		static const int ct_nrows = binary_ct_rows<Mat1, Mat2>::value;
+		static const int ct_ncols = binary_ct_cols<Mat1, Mat2>::value;
+		typedef matrix_shape<ct_nrows, ct_ncols> type;
+	};
+
+
 	template<class LMat, class RMat>
 	struct has_compatible_ct_size
 	{
@@ -175,7 +190,6 @@ namespace lmat
 				is_compatible_ctdim<ct_rows<LMat>::value, ct_rows<RMat>::value>::value &&
 				is_compatible_ctdim<ct_cols<LMat>::value, ct_cols<RMat>::value>::value;
 	};
-
 
 	template<class Mat>
 	struct ct_is_row
@@ -268,23 +282,23 @@ namespace lmat
 
 	/********************************************
 	 *
-	 *  Default attributes
+	 *  Layout attributes
 	 *
 	 ********************************************/
 
 	template<class Mat>
-	struct ct_has_continuous_layout { static const bool value = false; };
-
-	template<class Mat>
-	struct is_linear_memory_accessible
+	struct ct_is_continuous
 	{
-		static const bool value = is_dense_mat<Mat>::value &&
-				(ct_has_continuous_layout<Mat>::value || ct_is_col<Mat>::value);
+		typedef typename matrix_traits<Mat>::layout_type layout_type;
+		static const bool value = layout_traits<layout_type>::ct_is_continuous;
 	};
 
 	template<class Mat>
-	struct is_linear_accessible { static const bool value = false; };
-
+	struct ct_is_percol_continuous
+	{
+		typedef typename matrix_traits<Mat>::layout_type layout_type;
+		static const bool value = layout_traits<layout_type>::ct_is_percol_continuous;
+	};
 
 }
 

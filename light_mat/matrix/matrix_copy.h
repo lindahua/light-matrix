@@ -13,7 +13,7 @@
 #ifndef LIGHTMAT_MATRIX_COPY_H_
 #define LIGHTMAT_MATRIX_COPY_H_
 
-#include <light_mat/matrix/matrix_properties.h>
+
 #include "bits/matrix_copy_internal.h"
 
 namespace lmat
@@ -22,40 +22,16 @@ namespace lmat
 	LMAT_ENSURE_INLINE
 	void copy(const T *ps, IDenseMatrix<RMat, T>& dst)
 	{
-		typedef typename detail::mat_copier<T,
-				ct_rows<RMat>::value,
-				ct_cols<RMat>::value>::type copier_t;
-
-		if (has_continuous_layout(dst))
-		{
-			copier_t::copy(dst.nrows(), dst.ncolumns(),
-					ps, dst.ptr_data());
-		}
-		else
-		{
-			copier_t::copy(dst.nrows(), dst.ncolumns(),
-					ps, dst.ptr_data(), dst.lead_dim());
-		}
+		typedef typename detail::mat_copier_p_map<RMat>::type copier_t;
+		copier_t::copy(ps, dst.derived());
 	}
 
 	template<typename T, class LMat>
 	LMAT_ENSURE_INLINE
 	void copy(const IDenseMatrix<LMat, T>& src, T* pd)
 	{
-		typedef typename detail::mat_copier<T,
-				ct_rows<LMat>::value,
-				ct_cols<LMat>::value>::type copier_t;
-
-		if (has_continuous_layout(src))
-		{
-			copier_t::copy(src.nrows(), src.ncolumns(),
-					src.ptr_data(), pd);
-		}
-		else
-		{
-			copier_t::copy(src.nrows(), src.ncolumns(),
-					src.ptr_data(), src.lead_dim(), pd);
-		}
+		typedef typename detail::mat_copier_p_map<LMat>::type copier_t;
+		copier_t::copy(src.derived(), pd);
 	}
 
 
@@ -65,37 +41,8 @@ namespace lmat
 	{
 		LMAT_CHECK_SAME_SHAPE(src, dst)
 
-		typedef typename detail::mat_copier<T,
-				binary_ct_rows<LMat, RMat>::value,
-				binary_ct_cols<LMat, RMat>::value>::type copier_t;
-
-		if (has_continuous_layout(src))
-		{
-			if (has_continuous_layout(dst))
-			{
-				copier_t::copy(src.nrows(), src.ncolumns(),
-						src.ptr_data(), dst.ptr_data());
-			}
-			else
-			{
-				copier_t::copy(src.nrows(), src.ncolumns(),
-						src.ptr_data(), dst.ptr_data(), dst.lead_dim());
-			}
-		}
-		else
-		{
-			if (has_continuous_layout(dst))
-			{
-				copier_t::copy(src.nrows(), src.ncolumns(),
-						src.ptr_data(), src.lead_dim(), dst.ptr_data());
-			}
-			else
-			{
-				copier_t::copy(src.nrows(), src.ncolumns(),
-						src.ptr_data(), src.lead_dim(),
-						dst.ptr_data(), dst.lead_dim());
-			}
-		}
+		typedef typename detail::mat_copier_map<LMat, RMat>::type copier_t;
+		copier_t::copy(src.derived(), dst.derived());
 	}
 
 
@@ -108,14 +55,25 @@ namespace lmat
 	}
 
 
-	struct matrix_copy_policy { };
-
-	template<typename T, class LMat, class RMat>
-	LMAT_ENSURE_INLINE
-	void evaluate(const IDenseMatrix<LMat, T>& src, IDenseMatrix<RMat, T>& dst, matrix_copy_policy)
+	template<class SMat, class DMat>
+	struct matrix_copy_scheme
 	{
-		copy(src.derived(), dst.derived());
-	}
+		const SMat& smat;
+		DMat& dmat;
+
+		LMAT_ENSURE_INLINE
+		matrix_copy_scheme(const SMat& sm, DMat& dm)
+		: smat(sm), dmat(dm) { }
+
+		LMAT_ENSURE_INLINE
+		void evaluate()
+		{
+			typedef typename detail::mat_copier_map<SMat, DMat>::type copier_t;
+			copier_t::copy(smat, dmat);
+		}
+	};
+
+
 }
 
 #endif 

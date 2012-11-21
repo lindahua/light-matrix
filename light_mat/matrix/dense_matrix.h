@@ -13,7 +13,7 @@
 #ifndef LIGHTMAT_DENSE_MATRIX_H_
 #define LIGHTMAT_DENSE_MATRIX_H_
 
-#include <light_mat/matrix/matrix_base.h>
+#include <light_mat/matrix/dense_mat_base.h>
 #include <light_mat/common/block.h>
 
 #include <algorithm> // for std::swap
@@ -31,31 +31,14 @@ namespace lmat
 	struct matrix_traits<dense_matrix<T, CTRows, CTCols> >
 	{
 		static const int num_dimensions = 2;
-		static const int compile_time_num_rows = CTRows;
-		static const int compile_time_num_cols = CTCols;
+		static const int ct_num_rows = CTRows;
+		static const int ct_num_cols = CTCols;
 
 		static const bool is_readonly = false;
 
 		typedef T value_type;
+		typedef continuous_layout_cm<CTRows, CTCols> layout_type;
 		typedef cpu_domain domain;
-	};
-
-	template<typename T, int CTRows, int CTCols>
-	struct ct_has_continuous_layout<dense_matrix<T, CTRows, CTCols> >
-	{
-		static const bool value = true;
-	};
-
-	template<typename T, int CTRows, int CTCols>
-	struct is_linear_accessible<dense_matrix<T, CTRows, CTCols> >
-	{
-		static const bool value = true;
-	};
-
-	template<typename T, int CTRows, int CTCols, class DMat>
-	struct default_matrix_eval_policy<dense_matrix<T, CTRows, CTCols>, DMat>
-	{
-		typedef matrix_copy_policy type;
 	};
 
 
@@ -87,6 +70,12 @@ namespace lmat
 			T* pdata() { return m_block.ptr_data(); }
 
 			LMAT_ENSURE_INLINE
+			index_t capacity() const
+			{
+				return m_block.nelems();
+			}
+
+			LMAT_ENSURE_INLINE
 			void swap(dense_mat_storage& other)
 			{
 				m_block.swap(other.m_block);
@@ -114,6 +103,12 @@ namespace lmat
 			T* pdata() { return m_block.ptr_data(); }
 
 			LMAT_ENSURE_INLINE
+			index_t capacity() const
+			{
+				return m_block.nelems();
+			}
+
+			LMAT_ENSURE_INLINE
 			void swap(dense_mat_storage& other)
 			{
 				m_block.swap(other.m_block);
@@ -131,7 +126,7 @@ namespace lmat
 	 ********************************************/
 
 	template<typename T, int CTRows, int CTCols>
-	class dense_matrix : public IDenseMatrix<dense_matrix<T, CTRows, CTCols>, T>
+	class dense_matrix : public dense_mat_base<dense_matrix<T, CTRows, CTCols>, T>
 	{
 #ifdef LMAT_USE_STATIC_ASSERT
 		static_assert(is_supported_matrix_value_type<T>::value,
@@ -143,46 +138,39 @@ namespace lmat
 
 	public:
 		LMAT_MAT_TRAITS_DEFS(T)
+		typedef continuous_layout_cm<CTRows, CTCols> layout_type;
 
 	public:
 		LMAT_ENSURE_INLINE dense_matrix()
-		: m_shape()
+		: m_layout()
 		, m_store()
 		{
 		}
 
 		LMAT_ENSURE_INLINE dense_matrix(index_t m, index_t n)
-		: m_shape(m, n)
-		, m_store(m_shape.nelems())
+		: m_layout(m, n)
+		, m_store(m_layout.nelems())
 		{
-		}
-
-		LMAT_ENSURE_INLINE dense_matrix(index_t m, index_t n, zero_t)
-		: m_shape(m, n)
-		, m_store(m_shape.nelems())
-		{
-			zero_mem(m * n, m_store.pdata());
 		}
 
 		template<class Setter>
-		LMAT_ENSURE_INLINE dense_matrix(index_t m, index_t n,
-				const IMemorySetter<Setter, T>& setter)
-		: m_shape(m, n)
-		, m_store(m_shape.nelems())
+		LMAT_ENSURE_INLINE dense_matrix(index_t m, index_t n, const IMemorySetter<Setter>& setter)
+		: m_layout(m, n)
+		, m_store(m_layout.nelems())
 		{
-			setter.set(m * n, m_store.pdata());
+			apply(setter.derived(), m * n, m_store.pdata());
 		}
 
 		LMAT_ENSURE_INLINE dense_matrix(const dense_matrix& s)
-		: m_shape(s.m_shape)
+		: m_layout(s.m_layout)
 		, m_store(s.m_store)
 		{
 		}
 
 		template<class Expr>
 		LMAT_ENSURE_INLINE dense_matrix(const IMatrixXpr<Expr, T>& r)
-		: m_shape(r.nrows(), r.ncolumns())
-		, m_store(m_shape.nelems())
+		: m_layout(r.nrows(), r.ncolumns())
+		, m_store(m_layout.nelems())
 		{
 			default_evaluate(r, *this);
 		}
@@ -191,7 +179,7 @@ namespace lmat
 		{
 			using std::swap;
 
-			swap(m_shape, s.m_shape);
+			swap(m_layout, s.m_layout);
 			m_store.swap(s.m_store);
 		}
 
@@ -201,38 +189,22 @@ namespace lmat
 		{
 			if (this != &r)
 			{
-				default_assign(*this, r);
+				assign(r);
 			}
-
 			return *this;
 		}
 
 		template<class Expr>
 		LMAT_ENSURE_INLINE dense_matrix& operator = (const IMatrixXpr<Expr, T>& r)
 		{
-			default_assign(*this, r);
+			assign(r);
 			return *this;
 		}
 
 	public:
-		LMAT_ENSURE_INLINE index_type nelems() const
+		LMAT_ENSURE_INLINE const layout_type& layout() const
 		{
-			return m_shape.nelems();
-		}
-
-		LMAT_ENSURE_INLINE index_type nrows() const
-		{
-			return m_shape.nrows();
-		}
-
-		LMAT_ENSURE_INLINE index_type ncolumns() const
-		{
-			return m_shape.ncolumns();
-		}
-
-		LMAT_ENSURE_INLINE index_type lead_dim() const
-		{
-			return m_shape.nrows();
+			return m_layout;
 		}
 
 		LMAT_ENSURE_INLINE const_pointer ptr_data() const
@@ -245,52 +217,33 @@ namespace lmat
 			return m_store.pdata();
 		}
 
-		LMAT_ENSURE_INLINE index_type offset(const index_type i, const index_type j) const
-		{
-			return sub2offset(column_major_layout(), m_shape, i, j);
-		}
-
-		LMAT_ENSURE_INLINE const_reference elem(const index_type i, const index_type j) const
-		{
-			return ptr_data()[offset(i, j)];
-		}
-
-		LMAT_ENSURE_INLINE reference elem(const index_type i, const index_type j)
-		{
-			return ptr_data()[offset(i, j)];
-		}
-
-		LMAT_ENSURE_INLINE const_reference operator[] (const index_type i) const
-		{
-			LMAT_CHECK_IDX(i, nelems())
-			return ptr_data()[i];
-		}
-
-		LMAT_ENSURE_INLINE reference operator[] (const index_type i)
-		{
-			LMAT_CHECK_IDX(i, nelems())
-			return ptr_data()[i];
-		}
-
 		LMAT_ENSURE_INLINE void require_size(index_type m, index_type n)
 		{
-			if (!(m == nrows() && n == ncolumns()))
+			if (!(m == this->nrows() && n == this->ncolumns()))
 			{
-				matrix_shape<CTRows, CTCols> new_shape(m, n);
+				layout_type new_layout(m, n);
 
-				if (new_shape.nelems() != nelems())
+				if (m_store.capacity() != new_layout.nelems())
 				{
-					storage_t new_store(new_shape.nelems());
+					storage_t new_store(new_layout.nelems());
 					m_store.swap(new_store);
 				}
-				m_shape = new_shape;
+				m_layout = new_layout;
 			}
+		}
+
+	private:
+		template<class Expr>
+		LMAT_ENSURE_INLINE void assign(const IMatrixXpr<Expr, T>& r)
+		{
+			require_size(r.nrows(), r.ncolumns());
+			default_evaluate(r, *this);
 		}
 
 	private:
 		typedef detail::dense_mat_storage<T, CTRows * CTCols> storage_t;
 
-		matrix_shape<CTRows, CTCols> m_shape;
+		layout_type m_layout;
 		storage_t m_store;
 	};
 
@@ -319,15 +272,11 @@ namespace lmat
 
 		LMAT_ENSURE_INLINE explicit dense_col(index_t m) : base_mat_t(m, 1) { }
 
-		LMAT_ENSURE_INLINE dense_col(index_t m, zero_t) : base_mat_t(m, 1, zero_t()) { }
-
 		template<class Setter>
 		LMAT_ENSURE_INLINE
-		dense_col(index_t m, const IMemorySetter<Setter, T>& setter) : base_mat_t(m, 1, setter) { }
+		dense_col(index_t m, const IMemorySetter<Setter>& setter) : base_mat_t(m, 1, setter) { }
 
 		LMAT_ENSURE_INLINE dense_col(const base_mat_t& s) : base_mat_t(s) { }
-
-		LMAT_ENSURE_INLINE dense_col(const dense_col& s) : base_mat_t(s) { }
 
 		template<class Expr>
 		LMAT_ENSURE_INLINE dense_col(const IMatrixXpr<Expr, T>& r) : base_mat_t(r) { }
@@ -347,17 +296,9 @@ namespace lmat
 			return *this;
 		}
 
-	public:
-		LMAT_ENSURE_INLINE
-		void require_size(index_t m, index_t n)
+		LMAT_ENSURE_INLINE void require_size(index_t m)
 		{
-			base_mat_t::require_size(m, n);
-		}
-
-		LMAT_ENSURE_INLINE
-		void require_size(index_t n)
-		{
-			base_mat_t::require_size(n, 1);
+			base_mat_t::require_size(m, 1);
 		}
 	};
 
@@ -372,21 +313,16 @@ namespace lmat
 
 		LMAT_ENSURE_INLINE explicit dense_row(index_t n) : base_mat_t(1, n) { }
 
-		LMAT_ENSURE_INLINE dense_row(index_t n, zero_t) : base_mat_t(1, n, zero_t()) { }
-
 		template<class Setter>
 		LMAT_ENSURE_INLINE
-		dense_row(index_t n, const IMemorySetter<Setter,T>& setter) : base_mat_t(1, n, setter) { }
+		dense_row(index_t n, const IMemorySetter<Setter>& setter) : base_mat_t(1, n, setter) { }
 
 		LMAT_ENSURE_INLINE dense_row(const base_mat_t& s) : base_mat_t(s) { }
-
-		LMAT_ENSURE_INLINE dense_row(const dense_row& s) : base_mat_t(s) { }
 
 		template<class Expr>
 		LMAT_ENSURE_INLINE dense_row(const IMatrixXpr<Expr, T>& r) : base_mat_t(r) { }
 
 	public:
-
 		LMAT_ENSURE_INLINE dense_row& operator = (const base_mat_t& r)
 		{
 			base_mat_t::operator = (r);
@@ -400,15 +336,7 @@ namespace lmat
 			return *this;
 		}
 
-	public:
-		LMAT_ENSURE_INLINE
-		void require_size(index_t m, index_t n)
-		{
-			base_mat_t::require_size(m, n);
-		}
-
-		LMAT_ENSURE_INLINE
-		void require_size(index_t n)
+		LMAT_ENSURE_INLINE void require_size(index_t n)
 		{
 			base_mat_t::require_size(1, n);
 		}

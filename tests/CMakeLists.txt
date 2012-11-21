@@ -53,10 +53,13 @@ set(COMMON_HS
     ${INC}/common/range.h
     ${INC}/common/basic_defs.h    
     ${INC}/common/memory.h
+    ${INC}/common/vec_algs.h
     ${INC}/common/block.h
     ${INC}/common/expr_base.h)
     
 set(MATRIX_BASE_HS
+    ${INC}/matrix/matrix_shape.h
+    ${INC}/matrix/matrix_layout.h
     ${INC}/matrix/matrix_fwd.h 
     ${INC}/matrix/matrix_meta.h
     ${INC}/matrix/matrix_shape.h
@@ -76,9 +79,11 @@ set(MATRIX_BASE_HS
     ${INC}/matrix/matrix_base.h)
     
 set(MATRIX_CLASS_HS
+    ${INC}/matrix/dense_mat_base.h
     ${INC}/matrix/dense_matrix.h
     ${INC}/matrix/ref_matrix.h
-    ${INC}/matrix/ref_matrix_ex.h
+    ${INC}/matrix/ref_block.h
+    ${INC}/matrix/ref_grid.h
     ${INC}/matrix/const_matrix.h
     ${INC}/matrix/dense_mutable_view.h
     ${INC}/matrix/matrix_classes.h)
@@ -137,6 +142,7 @@ set(MATRIX_EVAL_HS
 
 add_library(test_main STATIC test_main.cpp)
 
+add_executable(test_memory ${COMMON_HS} test_memory.cpp)
 add_executable(test_blocks ${COMMON_HS} test_blocks.cpp)
 
 set(DENSE_MAT_HS
@@ -145,8 +151,7 @@ set(DENSE_MAT_HS
     ${INC}/matrix/dense_matrix.h)
 
 add_executable(test_dense_mat ${DENSE_MAT_HS} test_dense_mat.cpp)
-add_executable(test_dense_col ${DENSE_MAT_HS} test_dense_col.cpp)
-add_executable(test_dense_row ${DENSE_MAT_HS} test_dense_row.cpp)  
+add_executable(test_dense_vec ${DENSE_MAT_HS} test_dense_vec.cpp) 
 
 set(CONST_MAT_HS
     ${COMMON_HS}
@@ -160,81 +165,82 @@ set(REF_MAT_HS
     ${COMMON_HS}
     ${MATRIX_BASE_HS}
     ${INC}/matrix/ref_matrix.h
-    ${INC}/matrix/ref_matrix_ex.h)
+    ${INC}/matrix/ref_block.h
+    ${INC}/matrix/ref_grid.h)
     
 add_executable(test_ref_mat ${REF_MAT_HS} test_ref_mat.cpp)
-add_executable(test_ref_col ${REF_MAT_HS} test_ref_col.cpp)
-add_executable(test_ref_row ${REF_MAT_HS} test_ref_row.cpp)
-add_executable(test_ref_mat_ex ${REF_MAT_HS} test_ref_mat_ex.cpp)
+add_executable(test_ref_vec ${REF_MAT_HS} test_ref_vec.cpp)
+add_executable(test_ref_block ${REF_MAT_HS} test_ref_block.cpp)
+add_executable(test_ref_grid ${REF_MAT_HS} test_ref_grid.cpp)
 
 add_executable(test_mat_copy ${REF_MAT_HS} test_mat_copy.cpp)
-add_executable(test_mat_compare ${REF_MAT_HS} test_mat_compare.cpp)
+# add_executable(test_mat_compare ${REF_MAT_HS} test_mat_compare.cpp)
 
 add_executable(test_dense_eval ${MATRIX_HS} test_dense_eval.cpp)
-add_executable(test_mat_subviews ${MATRIX_HS} test_mat_subviews.cpp)
-add_executable(test_mat_transpose ${MATRIX_HS} test_mat_transpose.cpp)
+# add_executable(test_mat_subviews ${MATRIX_HS} test_mat_subviews.cpp)
+# add_executable(test_mat_transpose ${MATRIX_HS} test_mat_transpose.cpp)
 
 set(BASIC_MAT_EVAL_HS
     ${MATRIX_HS}
     ${MATRIX_EVAL_BASE_HS})
     
-add_executable(test_dense_veval ${BASIC_MAT_EVAL_HS} test_dense_veval.cpp)
+# add_executable(test_dense_veval ${BASIC_MAT_EVAL_HS} test_dense_veval.cpp)
 
 set(EWISE_MAT_EVAL_HS
     ${MATRIX_HS}
     ${MATRIX_EVAL_BASE_HS}
     ${MATRIX_EWISE_HS})
 
-add_executable(test_dense_cast ${EWISE_MAT_EVAL_HS} test_dense_cast.cpp)   
-add_executable(test_mat_arith ${EWISE_MAT_EVAL_HS} test_mat_arith.cpp)
-add_executable(test_mat_emath ${EWISE_MAT_EVAL_HS} test_mat_emath.cpp)
-add_executable(test_mat_ecomp ${EWISE_MAT_EVAL_HS} test_mat_ecomp.cpp)
-add_executable(test_mat_elogical ${EWISE_MAT_EVAL_HS} test_mat_elogical.cpp)
+# add_executable(test_dense_cast ${EWISE_MAT_EVAL_HS} test_dense_cast.cpp)   
+# add_executable(test_mat_arith ${EWISE_MAT_EVAL_HS} test_mat_arith.cpp)
+# add_executable(test_mat_emath ${EWISE_MAT_EVAL_HS} test_mat_emath.cpp)
+# add_executable(test_mat_ecomp ${EWISE_MAT_EVAL_HS} test_mat_ecomp.cpp)
+# add_executable(test_mat_elogical ${EWISE_MAT_EVAL_HS} test_mat_elogical.cpp)
 
 set(MAT_REPEAT_HS
     ${MATRIX_HS}
     ${MATRIX_EVAL_BASE_HS}
     ${MATRIX_REPEAT_HS})
     
-add_executable(test_vec_rep ${MAT_REPEAT_HS} test_vec_rep.cpp)
+# add_executable(test_vec_rep ${MAT_REPEAT_HS} test_vec_rep.cpp)
 
-add_executable(test_cpd_ewise ${MATRIX_EVAL_HS} test_cpd_ewise.cpp)
+# add_executable(test_cpd_ewise ${MATRIX_EVAL_HS} test_cpd_ewise.cpp)
 
 set(MAT_REDUC_HS
     ${MATRIX_HS}
     ${MATRIX_EVAL_BASE_HS}
     ${MATRIX_REDUC_HS})
     
-add_executable(test_mat_reduce ${MAT_REDUC_HS} test_mat_reduce.cpp) 
-add_executable(test_partial_reduce ${MAT_REDUC_HS} test_partial_reduce.cpp) 
+# add_executable(test_mat_reduce ${MAT_REDUC_HS} test_mat_reduce.cpp) 
+# add_executable(test_partial_reduce ${MAT_REDUC_HS} test_partial_reduce.cpp) 
 
 # Link to test_main
 
 set(LMAT_TEST_NAMES
+    test_memory
 	test_blocks
 	test_dense_mat
-	test_dense_col
-	test_dense_row
+	test_dense_vec
 	test_const_mat
 	test_ref_mat
-	test_ref_col
-	test_ref_row
-	test_ref_mat_ex
+	test_ref_vec
+	test_ref_block
+	test_ref_grid
 	test_mat_copy
-	test_mat_compare
+	# test_mat_compare
 	test_dense_eval
-	test_mat_subviews
-	test_mat_transpose
-	test_dense_veval
-	test_dense_cast
-	test_mat_arith
-	test_mat_emath
-	test_mat_ecomp
-	test_mat_elogical
-	test_vec_rep
-    test_cpd_ewise
-	test_mat_reduce
-	test_partial_reduce
+	# test_mat_subviews
+	# test_mat_transpose
+	# test_dense_veval
+	# test_dense_cast
+	# test_mat_arith
+	# test_mat_emath
+	# test_mat_ecomp
+	# test_mat_elogical
+	# test_vec_rep
+    # test_cpd_ewise
+	# test_mat_reduce
+	# test_partial_reduce
 )
 	
 foreach(tname ${LMAT_TEST_NAMES})

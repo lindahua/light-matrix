@@ -15,8 +15,11 @@
 
 #include <light_mat/common/basic_defs.h>
 #include <light_mat/common/range.h>
+#include <light_mat/common/memory.h>
 #include <light_mat/common/expr_base.h>
 #include <light_mat/math/functor_base.h>
+
+#include <light_mat/matrix/matrix_shape.h>
 
 namespace lmat
 {
@@ -31,9 +34,9 @@ namespace lmat
 	 *   - num_dimensions:	an int value, which must be set to 2
 	 *   					(reserved for future extension)
 	 *
-	 *   - compile_time_num_rows:	compile-time number of rows
-	 *   - compile_time_num_cols:	compile-time number of columns
-	 *   - is_readonly:				whether the contents can be modified
+	 *   - ct_num_rows:		compile-time number of rows
+	 *   - ct_num_cols:		compile-time number of columns
+	 *   - is_readonly:		whether the contents can be modified
 	 *
 	 *	 - value_type:			the type of element value
 	 *	 - domain:				the domain (e.g. cpu_domain, cuda_domain)
@@ -43,6 +46,7 @@ namespace lmat
 	struct cpu_domain { };
 	struct cuda_domain { };
 
+	template<class Layout> struct layout_traits;
 	template<class Derived> struct matrix_traits;
 
 	template<class Derived, typename T> class IMatrixXpr;
@@ -68,11 +72,11 @@ namespace lmat
 	template<typename T, int CTCols=0> class cref_row;
 	template<typename T, int CTCols=0> class ref_row;
 
-	template<typename T, int CTRows=0, int CTCols=0>
-	class cref_matrix_ex;
+	template<typename T, int CTRows=0, int CTCols=0> class cref_block;
+	template<typename T, int CTRows=0, int CTCols=0> class ref_block;
 
-	template<typename T, int CTRows=0, int CTCols=0>
-	class ref_matrix_ex;
+	template<typename T, int CTRows=0, int CTCols=0> class cref_grid;
+	template<typename T, int CTRows=0, int CTCols=0> class ref_grid;
 
 	template<class Mat> class dense_mutable_view;
 
@@ -110,7 +114,8 @@ namespace lmat
 
 	// evaluation
 
-	template<class Expr, class Dst> struct default_matrix_eval_policy;
+	template<class SExpr, class Dst> struct default_matrix_eval_scheme;
+	template<class SMat, class DMat> struct matrix_copy_scheme;
 }
 
 // Useful macros

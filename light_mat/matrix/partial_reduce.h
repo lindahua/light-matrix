@@ -31,8 +31,8 @@ namespace lmat
 	struct matrix_traits<colwise_reduce_expr<Fun, Arg_HP, Arg> >
 	{
 		static const int num_dimensions = 2;
-		static const int compile_time_num_rows = 1;
-		static const int compile_time_num_cols = ct_cols<Arg>::value;
+		static const int ct_num_rows = 1;
+		static const int ct_num_cols = ct_cols<Arg>::value;
 
 		static const bool is_readonly = true;
 
@@ -44,8 +44,8 @@ namespace lmat
 	struct matrix_traits<rowwise_reduce_expr<Fun, Arg_HP, Arg> >
 	{
 		static const int num_dimensions = 2;
-		static const int compile_time_num_rows = ct_rows<Arg>::value;
-		static const int compile_time_num_cols = 1;
+		static const int ct_num_rows = ct_rows<Arg>::value;
+		static const int ct_num_cols = 1;
 
 		static const bool is_readonly = true;
 

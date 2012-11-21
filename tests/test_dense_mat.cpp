@@ -21,12 +21,20 @@ template class lmat::dense_matrix<double, 3, 0>;
 template class lmat::dense_matrix<double, 3, 4>;
 
 #ifdef LMAT_USE_STATIC_ASSERT
-
 static_assert(lmat::is_mat_xpr<lmat::dense_matrix<double> >::value, "Interface verification failed.");
-static_assert(lmat::is_mat_view<lmat::dense_matrix<double> >::value, "Interface verification failed.");
 static_assert(lmat::is_dense_mat<lmat::dense_matrix<double> >::value, "Interface verification failed.");
-
 #endif
+
+
+template<int M, int N>
+inline void verify_layout(const dense_matrix<double, M, N>& a, index_t m, index_t n)
+{
+	ASSERT_EQ(a.nrows(), m);
+	ASSERT_EQ(a.ncolumns(), n);
+	ASSERT_EQ(a.nelems(), m * n);
+	ASSERT_EQ(a.row_stride(), 1);
+	ASSERT_EQ(a.col_stride(), m);
+}
 
 
 MN_CASE( dense_mat, constructs )
@@ -35,10 +43,7 @@ MN_CASE( dense_mat, constructs )
 
 	dense_matrix<double, M, N> a0;
 
-	ASSERT_EQ(a0.nrows(), M);
-	ASSERT_EQ(a0.ncolumns(), N);
-	ASSERT_EQ(a0.nelems(), M * N);
-	ASSERT_EQ(a0.lead_dim(), M);
+	verify_layout(a0, M, N);
 
 	if (M > 0 && N > 0)
 	{
@@ -56,11 +61,7 @@ MN_CASE( dense_mat, constructs )
 
 	dense_matrix<double, M, N> a1(m, n);
 
-	ASSERT_EQ(a1.nrows(), m);
-	ASSERT_EQ(a1.ncolumns(), n);
-	ASSERT_EQ(a1.nelems(), m * n);
-	ASSERT_EQ(a1.lead_dim(), m);
-
+	verify_layout(a1, m, n);
 	ASSERT_TRUE(a1.ptr_data() != 0);
 
 }
@@ -78,10 +79,7 @@ MN_CASE( dense_mat, generates )
 	dense_matrix<double, M, N> a0(m, n, zero());
 	for (index_t i = 0; i < m * n; ++i) ref[i] = double(0);
 
-	ASSERT_EQ(a0.nrows(), m);
-	ASSERT_EQ(a0.ncolumns(), n);
-	ASSERT_EQ(a0.nelems(), m * n);
-	ASSERT_EQ(a0.lead_dim(), m);
+	verify_layout(a0, m, n);
 	ASSERT_VEC_EQ(m * n, a0, ref);
 
 	// fill_value
@@ -90,10 +88,7 @@ MN_CASE( dense_mat, generates )
 	dense_matrix<double, M, N> a1(m, n, fill(v1));
 	for (index_t i = 0; i < m * n; ++i) ref[i] = v1;
 
-	ASSERT_EQ(a1.nrows(), m);
-	ASSERT_EQ(a1.ncolumns(), n);
-	ASSERT_EQ(a1.nelems(), m * n);
-	ASSERT_EQ(a1.lead_dim(), m);
+	verify_layout(a1, m, n);
 	ASSERT_VEC_EQ(m * n, a1, ref);
 
 	// copy_value
@@ -101,10 +96,7 @@ MN_CASE( dense_mat, generates )
 	for (index_t i = 0; i < m * n; ++i) ref[i] = double(i + 2);
 	dense_matrix<double, M, N> a2(m, n, copy_from(ref.ptr_data()));
 
-	ASSERT_EQ(a2.nrows(), m);
-	ASSERT_EQ(a2.ncolumns(), n);
-	ASSERT_EQ(a2.nelems(), m * n);
-	ASSERT_EQ(a2.lead_dim(), m);
+	verify_layout(a2, m, n);
 	ASSERT_VEC_EQ(m * n, a2, ref);
 }
 
@@ -121,11 +113,7 @@ MN_CASE( dense_mat, copy_constructs )
 
 	dense_matrix<double, M, N> a2(a);
 
-	ASSERT_EQ(a2.nrows(), m);
-	ASSERT_EQ(a2.ncolumns(), n);
-	ASSERT_EQ(a2.nelems(), m * n);
-	ASSERT_EQ(a2.lead_dim(), m);
-
+	verify_layout(a2, m, n);
 	ASSERT_NE(a.ptr_data(), a2.ptr_data());
 
 	ASSERT_VEC_EQ(m * n, a, a2);
@@ -181,20 +169,12 @@ MN_CASE( dense_mat, resize )
 
 	dense_matrix<double, M, N> a(m, n);
 
-	ASSERT_EQ(a.nrows(), m);
-	ASSERT_EQ(a.ncolumns(), n);
-	ASSERT_EQ(a.nelems(), m * n);
-	ASSERT_EQ(a.lead_dim(), m);
-
+	verify_layout(a, m, n);
 	const double *p1 = a.ptr_data();
 
 	a.require_size(m2, n2);
 
-	ASSERT_EQ(a.nrows(), m2);
-	ASSERT_EQ(a.ncolumns(), n2);
-	ASSERT_EQ(a.nelems(), m2 * n2);
-	ASSERT_EQ(a.lead_dim(), m2);
-
+	verify_layout(a, m2, n2);
 	const double *p2 = a.ptr_data();
 
 	if (m2 * n2 == m * n)
@@ -208,11 +188,7 @@ MN_CASE( dense_mat, resize )
 
 	a.require_size(m3, n3);
 
-	ASSERT_EQ(a.nrows(), m3);
-	ASSERT_EQ(a.ncolumns(), n3);
-	ASSERT_EQ(a.nelems(), m3 * n3);
-	ASSERT_EQ(a.lead_dim(), m3);
-
+	verify_layout(a, m3, n3);
 	const double *p3 = a.ptr_data();
 
 	if (m2 * n2 == m3 * n3)
@@ -240,12 +216,9 @@ MN_CASE( dense_mat, assign )
 
 	a = s;
 
+	verify_layout(a, m, n);
 	ASSERT_NE( a.ptr_data(), 0 );
 	ASSERT_NE( a.ptr_data(), s.ptr_data() );
-	ASSERT_EQ( a.nrows(), m);
-	ASSERT_EQ( a.ncolumns(), n);
-	ASSERT_EQ( a.nelems(), m * n);
-	ASSERT_EQ( a.lead_dim(), m);
 
 	ASSERT_VEC_EQ( m * n, a, s );
 
@@ -258,11 +231,9 @@ MN_CASE( dense_mat, assign )
 
 	b = s;
 
+	verify_layout(b, m, n);
 	ASSERT_EQ( b.ptr_data(), pb );
-	ASSERT_EQ( b.nrows(), m);
-	ASSERT_EQ( b.ncolumns(), n);
-	ASSERT_EQ( b.nelems(), m * n);
-	ASSERT_EQ( b.lead_dim(), m);
+
 
 	ASSERT_VEC_EQ( m * n, b, s );
 
@@ -273,12 +244,9 @@ MN_CASE( dense_mat, assign )
 
 	c = s;
 
+	verify_layout(c, m, n);
 	ASSERT_NE( c.ptr_data(), 0 );
 	ASSERT_NE( c.ptr_data(), s.ptr_data() );
-	ASSERT_EQ( c.nrows(), m);
-	ASSERT_EQ( c.ncolumns(), n);
-	ASSERT_EQ( c.nelems(), m * n);
-	ASSERT_EQ( c.lead_dim(), m);
 
 	ASSERT_VEC_EQ( m * n, c, s );
 }
@@ -298,10 +266,7 @@ MN_CASE( dense_mat, import )
 	a << v1;
 	for (index_t i = 0; i < m * n; ++i) ref[i] = v1;
 
-	ASSERT_EQ(a.nrows(), m);
-	ASSERT_EQ(a.ncolumns(), n);
-	ASSERT_EQ(a.nelems(), m * n);
-	ASSERT_EQ(a.lead_dim(), m);
+	verify_layout(a, m, n);
 	ASSERT_VEC_EQ(m * n, a, ref);
 
 	// copy_value
@@ -309,10 +274,7 @@ MN_CASE( dense_mat, import )
 	for (index_t i = 0; i < m * n; ++i) ref[i] = double(i + 2);
 	a << ref.ptr_data();
 
-	ASSERT_EQ(a.nrows(), m);
-	ASSERT_EQ(a.ncolumns(), n);
-	ASSERT_EQ(a.nelems(), m * n);
-	ASSERT_EQ(a.lead_dim(), m);
+	verify_layout(a, m, n);
 	ASSERT_VEC_EQ(m * n, a, ref);
 }
 
@@ -338,13 +300,8 @@ MN_CASE( dense_mat, swap )
 
 	swap(a, a2);
 
-	ASSERT_EQ( a.nrows(), m2 );
-	ASSERT_EQ( a.ncolumns(), n2 );
-	ASSERT_EQ( a.nelems(), m2 * n2 );
-
-	ASSERT_EQ( a2.nrows(), m );
-	ASSERT_EQ( a2.ncolumns(), n );
-	ASSERT_EQ( a2.nelems(), m * n );
+	verify_layout(a, m2, n2);
+	verify_layout(a2, m, n);
 
 	if (M == 0 || N == 0)
 	{

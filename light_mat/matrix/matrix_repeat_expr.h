@@ -31,8 +31,8 @@ namespace lmat
 	struct matrix_traits<horizontal_repeat_expr<Arg_HP, Arg, N> >
 	{
 		static const int num_dimensions = 2;
-		static const int compile_time_num_rows = ct_rows<Arg>::value;
-		static const int compile_time_num_cols = ct_cols<Arg>::value * N;
+		static const int ct_num_rows = ct_rows<Arg>::value;
+		static const int ct_num_cols = ct_cols<Arg>::value * N;
 
 		static const bool is_readonly = true;
 
@@ -44,8 +44,8 @@ namespace lmat
 	struct matrix_traits<vertical_repeat_expr<Arg_HP, Arg, M> >
 	{
 		static const int num_dimensions = 2;
-		static const int compile_time_num_rows = ct_rows<Arg>::value * M;
-		static const int compile_time_num_cols = ct_cols<Arg>::value;
+		static const int ct_num_rows = ct_rows<Arg>::value * M;
+		static const int ct_num_cols = ct_cols<Arg>::value;
 
 		static const bool is_readonly = true;
 

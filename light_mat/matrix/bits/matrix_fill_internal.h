@@ -13,199 +13,187 @@
 #ifndef LIGHTMAT_MATRIX_FILL_INTERNAL_H_
 #define LIGHTMAT_MATRIX_FILL_INTERNAL_H_
 
-#include <light_mat/common/memory.h>
+#include <light_mat/matrix/matrix_properties.h>
 
 namespace lmat { namespace detail {
 
-	template<typename T, int M, int N>
-	struct fixed_mat_fill
+	template<typename T, class DMat>
+	struct scalar_filler
 	{
 		LMAT_ENSURE_INLINE
-		static void zero(const index_t, const index_t, T *dst)
+		static void zero(DMat& dmat)
 		{
-			zero_mem(M * N, dst);
+			set_zero_value(*dmat.ptr_data());
 		}
 
 		LMAT_ENSURE_INLINE
-		static void zero(const index_t, const index_t, T *dst, const index_t ldim)
+		static void fill(const T& v, DMat& dmat)
 		{
-			for (index_t j = 0; j < N; ++j, dst += ldim)
+			*dmat.ptr_data() = v;
+		}
+	};
+
+
+	template<typename T, class DMat>
+	struct column_filler
+	{
+		LMAT_ENSURE_INLINE
+		static void zero(DMat& dmat)
+		{
+			if (dmat.row_stride() == 1)
 			{
-				zero_mem(M, dst);
+				zero_vec(dmat.nrows(), dmat.ptr_data());
+			}
+			else
+			{
+				zero_vec(dmat.nrows(), dmat.ptr_data(), dmat.row_stride());
 			}
 		}
 
 		LMAT_ENSURE_INLINE
-		static void fill(const T& v,
-				const index_t, const index_t, T *dst)
+		static void fill(const T& v, DMat& dmat)
 		{
-			fill_val(v, M * N, dst);
-		}
-
-		LMAT_ENSURE_INLINE
-		static void fill(const T& v,
-				const index_t, const index_t, T *dst, const index_t ldim)
-		{
-			for (index_t j = 0; j < N; ++j, dst += ldim)
+			if (dmat.row_stride() == 1)
 			{
-				fill_val(v, M, dst);
+				fill_vec(v, dmat.nrows(), dmat.ptr_data());
+			}
+			else
+			{
+				fill_vec(v, dmat.nrows(), dmat.ptr_data(), dmat.row_stride());
 			}
 		}
 	};
 
 
-	template<typename T>
-	struct scalar_fill
+	template<typename T, class DMat>
+	struct row_filler
 	{
 		LMAT_ENSURE_INLINE
-		static void zero(const index_t, const index_t, T *dst)
+		static void zero(DMat& dmat)
 		{
-			dst[0] = T(0);
-		}
-
-		LMAT_ENSURE_INLINE
-		static void zero(const index_t, const index_t, T *dst, const index_t)
-		{
-			dst[0] = T(0);
-		}
-
-		LMAT_ENSURE_INLINE
-		static void fill(const T& v,
-				const index_t, const index_t, T *dst)
-		{
-			dst[0] = v;
-		}
-
-		LMAT_ENSURE_INLINE
-		static void fill(const T& v,
-				const index_t, const index_t, T *dst, const index_t)
-		{
-			dst[0] = v;
-		}
-	};
-
-
-	template<typename T>
-	struct col_fill
-	{
-		LMAT_ENSURE_INLINE
-		static void zero(const index_t m, const index_t, T *dst)
-		{
-			zero_mem(m, dst);
-		}
-
-		LMAT_ENSURE_INLINE
-		static void zero(const index_t m, const index_t, T *dst, const index_t)
-		{
-			zero_mem(m, dst);
-		}
-
-		LMAT_ENSURE_INLINE
-		static void fill(const T& v,
-				const index_t m, const index_t, T *dst)
-		{
-			fill_val(v, m, dst);
-		}
-
-		LMAT_ENSURE_INLINE
-		static void fill(const T& v,
-				const index_t m, const index_t, T *dst, const index_t ldim)
-		{
-			fill_val(v, m, dst);
-		}
-	};
-
-
-	template<typename T>
-	struct row_fill
-	{
-		LMAT_ENSURE_INLINE
-		static void zero(const index_t, const index_t n, T *dst)
-		{
-			zero_mem(n, dst);
-		}
-
-		LMAT_ENSURE_INLINE
-		static void zero(const index_t, const index_t n, T *dst, const index_t ldim)
-		{
-			for (index_t j = 0; j < n; ++j)
-				dst[j * ldim] = T(0);
-		}
-
-		LMAT_ENSURE_INLINE
-		static void fill(const T& v,
-				const index_t, const index_t n, T *dst)
-		{
-			fill_val(v, n, dst);
-		}
-
-		LMAT_ENSURE_INLINE
-		static void fill(const T& v,
-				const index_t, const index_t n, T *dst, const index_t ldim)
-		{
-			for (index_t j = 0; j < n; ++j)
-				dst[j * ldim] = v;
-		}
-	};
-
-
-	template<typename T>
-	struct mat_fill
-	{
-		LMAT_ENSURE_INLINE
-		static void zero(const index_t m, const index_t n, T *dst)
-		{
-			zero_mem(m * n, dst);
-		}
-
-		LMAT_ENSURE_INLINE
-		static void zero(const index_t m, const index_t n, T *dst, const index_t ldim)
-		{
-			for (index_t j = 0; j < n; ++j, dst += ldim)
+			if (dmat.col_stride() == 1)
 			{
-				zero_mem(m, dst);
+				zero_vec(dmat.ncolumns(), dmat.ptr_data());
+			}
+			else
+			{
+				zero_vec(dmat.ncolumns(), dmat.ptr_data(), dmat.col_stride());
 			}
 		}
 
 		LMAT_ENSURE_INLINE
-		static void fill(const T& v,
-				const index_t m, const index_t n, T *dst)
+		static void fill(const T& v, DMat& dmat)
 		{
-			fill_val(v, m * n, dst);
-		}
-
-		LMAT_ENSURE_INLINE
-		static void fill(const T& v,
-				const index_t m, const index_t n, T *dst, const index_t ldim)
-		{
-			for (index_t j = 0; j < n; ++j, dst += ldim)
+			if (dmat.col_stride() == 1)
 			{
-				fill_val(v, m, dst);
+				fill_vec(v, dmat.ncolumns(), dmat.ptr_data());
+			}
+			else
+			{
+				fill_vec(v, dmat.ncolumns(), dmat.ptr_data(), dmat.col_stride());
 			}
 		}
 	};
 
-	template<typename T, int M, int N>
+
+	template<typename T, class DMat>
 	struct mat_filler
 	{
+		LMAT_ENSURE_INLINE
+		static void zero(DMat& dmat)
+		{
+			const index_t m = dmat.nrows();
+			const index_t n = dmat.ncolumns();
+
+			if (n == 1)
+			{
+				column_filler<T, DMat>::zero(dmat);
+			}
+			else if (m == 1)
+			{
+				row_filler<T, DMat>::zero(dmat);
+			}
+			else
+			{
+				const index_t rs = dmat.row_stride();
+
+				if (rs == 1)
+				{
+					for (index_t j = 0; j < n; ++j)
+					{
+						zero_vec(m, dmat.ptr_col(j));
+					}
+				}
+				else
+				{
+					for (index_t j = 0; j < n; ++j)
+					{
+						zero_vec(m, dmat.ptr_col(j), rs);
+					}
+				}
+			}
+		}
+
+		LMAT_ENSURE_INLINE
+		static void fill(const T& v, DMat& dmat)
+		{
+			const index_t m = dmat.nrows();
+			const index_t n = dmat.ncolumns();
+
+			if (n == 1)
+			{
+				column_filler<T, DMat>::fill(v, dmat);
+			}
+			else if (m == 1)
+			{
+				row_filler<T, DMat>::fill(v, dmat);
+			}
+			else
+			{
+				const index_t rs = dmat.row_stride();
+
+				if (rs == 1)
+				{
+					for (index_t j = 0; j < n; ++j)
+					{
+						fill_vec(v, m, dmat.ptr_col(j));
+					}
+				}
+				else
+				{
+					for (index_t j = 0; j < n; ++j)
+					{
+						fill_vec(v, m, dmat.ptr_col(j), rs);
+					}
+				}
+			}
+		}
+	};
+
+
+	template<class DMat>
+	struct mat_filler_map
+	{
+		typedef typename matrix_traits<DMat>::value_type T;
+		static const int M = ct_rows<DMat>::value;
+		static const int N = ct_cols<DMat>::value;
+
 		typedef typename
-				if_c<(N == 1),
+				if_c<N == 1,
 					typename
-					if_c<(M == 1),
-						scalar_fill<T>, // N == 1 && M == 1
-						col_fill<T> 	// N == 1 && M != 1
+					if_c<M == 1,
+						scalar_filler<T, DMat>,
+						column_filler<T, DMat>
 					>::type,
 					typename
-					if_c<(M == 1),
-						row_fill<T>,	// N != 1 && M == 1
-						typename
-						if_c<((M > 0) && (N > 0)),
-							fixed_mat_fill<T, M, N>, 	// M > 1 && N > 1
-							mat_fill<T> 				// otherwise
-						>::type
+					if_c<M == 1,
+						row_filler<T, DMat>,
+						mat_filler<T, DMat>
 					>::type
 				>::type type;
 	};
+
+
 
 } }
 

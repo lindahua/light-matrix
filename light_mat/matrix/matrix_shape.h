@@ -15,8 +15,38 @@
 
 #include <light_mat/common/basic_defs.h>
 
+#if LMAT_DIAGNOSIS_LEVEL >= 1
+#define LMAT_CHECK_DIM_VALIDITY(ct_dim, d) dim_checker<ct_dim>::check(d);
+#else
+#define LMAT_CHECK_DIM_VALIDITY(ct_dim, d)
+#endif
+
 namespace lmat
 {
+	/********************************************
+	 *
+	 *  dim checker
+	 *
+	 ********************************************/
+
+	template<int N>
+	struct dim_checker
+	{
+		LMAT_ENSURE_INLINE
+		static void check(index_t d)
+		{
+			check_arg(d == N, "Input dimension is incompatible with the compile-time spec.");
+		}
+	};
+
+	template<>
+	struct dim_checker<0>
+	{
+		LMAT_ENSURE_INLINE
+		static void check(index_t d) { }
+	};
+
+
 
 	/********************************************
 	 *
@@ -34,8 +64,7 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		dimension(const index_t n)
 		{
-			check_arg(n == N,
-					"The input dimension is invalid.");
+			LMAT_CHECK_DIM_VALIDITY(N, n)
 		}
 
 		LMAT_ENSURE_INLINE
@@ -74,7 +103,11 @@ namespace lmat
 	public:
 		LMAT_ENSURE_INLINE matrix_shape() { }
 
-		LMAT_ENSURE_INLINE matrix_shape(index_t, index_t) { }
+		LMAT_ENSURE_INLINE matrix_shape(index_t m, index_t n)
+		{
+			LMAT_CHECK_DIM_VALIDITY(M, m)
+			LMAT_CHECK_DIM_VALIDITY(N, n)
+		}
 
 		LMAT_ENSURE_INLINE index_t nrows() const
 		{
@@ -98,7 +131,11 @@ namespace lmat
 	public:
 		LMAT_ENSURE_INLINE matrix_shape() : m_ncols(0) { }
 
-		LMAT_ENSURE_INLINE matrix_shape(index_t, index_t n) : m_ncols(n) { }
+		LMAT_ENSURE_INLINE matrix_shape(index_t m, index_t n)
+		: m_ncols(n)
+		{
+			LMAT_CHECK_DIM_VALIDITY(M, m)
+		}
 
 		LMAT_ENSURE_INLINE index_t nrows() const
 		{
@@ -126,7 +163,11 @@ namespace lmat
 	public:
 		LMAT_ENSURE_INLINE matrix_shape() : m_nrows(0) { }
 
-		LMAT_ENSURE_INLINE matrix_shape(index_t m, index_t) : m_nrows(m) { }
+		LMAT_ENSURE_INLINE matrix_shape(index_t m, index_t n)
+		: m_nrows(m)
+		{
+			LMAT_CHECK_DIM_VALIDITY(N, n)
+		}
 
 		LMAT_ENSURE_INLINE index_t nrows() const
 		{
@@ -175,86 +216,6 @@ namespace lmat
 		index_t m_nrows;
 		index_t m_ncols;
 	};
-
-
-	/********************************************
-	 *
-	 *  indexing
-	 *
-	 ********************************************/
-
-	struct column_major_layout { };
-
-	template<int M, int N>
-	LMAT_ENSURE_INLINE
-	inline index_t sub2offset(column_major_layout,
-			const matrix_shape<M, N>& shape, index_t i, index_t j)
-	{
-		return i + shape.nrows() * j;
-	}
-
-	template<int M>
-	LMAT_ENSURE_INLINE
-	inline index_t sub2offset(column_major_layout,
-			const matrix_shape<M, 1>& shape, index_t i, index_t j)
-	{
-		return i;
-	}
-
-	template<int N>
-	LMAT_ENSURE_INLINE
-	inline index_t sub2offset(column_major_layout,
-			const matrix_shape<1, N>& shape, index_t i, index_t j)
-	{
-		return shape.nrows() * j;
-	}
-
-	LMAT_ENSURE_INLINE
-	inline index_t sub2offset(column_major_layout,
-			const matrix_shape<1, 1>& shape, index_t i, index_t j)
-	{
-		return 0;
-	}
-
-
-	struct column_major_layout_ex
-	{
-		const index_t lead_dim;
-
-		LMAT_ENSURE_INLINE
-		column_major_layout_ex(index_t ld) : lead_dim(ld) { }
-	};
-
-	template<int M, int N>
-	LMAT_ENSURE_INLINE
-	inline index_t sub2offset(const column_major_layout_ex& layout,
-			const matrix_shape<M, N>& shape, index_t i, index_t j)
-	{
-		return i + layout.lead_dim * j;
-	}
-
-	template<int M>
-	LMAT_ENSURE_INLINE
-	inline index_t sub2offset(const column_major_layout_ex& layout,
-			const matrix_shape<M, 1>& shape, index_t i, index_t j)
-	{
-		return i;
-	}
-
-	template<int N>
-	LMAT_ENSURE_INLINE
-	inline index_t sub2offset(const column_major_layout_ex& layout,
-			const matrix_shape<1, N>& shape, index_t i, index_t j)
-	{
-		return layout.lead_dim * j;
-	}
-
-	LMAT_ENSURE_INLINE
-	inline index_t sub2offset(const column_major_layout_ex& layout,
-			const matrix_shape<1, 1>& shape, index_t i, index_t j)
-	{
-		return 0;
-	}
 
 }
 

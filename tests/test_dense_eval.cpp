@@ -64,7 +64,7 @@ MN_CASE( mat_eval, ref_mat_ex )
 	dblock<double> s(ldim * n);
 	fill_lin(s);
 
-	ref_matrix_ex<double, M, N> a(s.ptr_data(), m, n, ldim);
+	ref_block<double, M, N> a(s.ptr_data(), m, n, ldim);
 	dense_matrix<double, M, N> r = eval(a);
 
 	ASSERT_EQ( r.nrows(), m );

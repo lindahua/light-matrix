@@ -9,7 +9,7 @@
 #include "test_base.h"
 
 #include <light_mat/matrix/ref_matrix.h>
-#include <light_mat/matrix/ref_matrix_ex.h>
+#include <light_mat/matrix/ref_block.h>
 #include <light_mat/common/block.h>
 
 using namespace lmat;
@@ -48,8 +48,8 @@ MN_CASE( mat_copy, copy_ex )
 
 	for (index_t i = 0; i < ldim_a * n; ++i) src[i] = double(i + 2);
 
-	ref_matrix_ex<double, M, N> a(src.ptr_data(), m, n, ldim_a);
-	ref_matrix_ex<double, M, N> b(dst.ptr_data(), m, n, ldim_b);
+	ref_block<double, M, N> a(src.ptr_data(), m, n, ldim_a);
+	ref_block<double, M, N> b(dst.ptr_data(), m, n, ldim_b);
 
 	copy(a, b);
 

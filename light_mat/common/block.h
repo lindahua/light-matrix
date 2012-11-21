@@ -20,14 +20,6 @@
 namespace lmat
 {
 
-	struct zero_t { };
-
-	LMAT_ENSURE_INLINE
-	inline zero_t zero()
-	{
-		return zero_t();
-	}
-
     /********************************************
      *
      *   Dynamic block
@@ -66,24 +58,15 @@ namespace lmat
 		{
 		}
 
-		LMAT_ENSURE_INLINE
-		explicit dblock(index_t len, zero_t, const allocator_type& allocator = allocator_type())
-		: m_allocator(allocator)
-		, m_len(len)
-		, m_ptr(alloc(len))
-		{
-			zero_mem(m_len, m_ptr);
-		}
-
 		template<class Setter>
 		LMAT_ENSURE_INLINE
-		explicit dblock(index_t len, const IMemorySetter<Setter, T>& setter,
+		explicit dblock(index_t len, const IMemorySetter<Setter>& setter,
 				const allocator_type& allocator = allocator_type())
 		: m_allocator(allocator)
 		, m_len(len)
 		, m_ptr(alloc(len))
 		{
-			setter.set(m_len, m_ptr);
+			apply(setter.derived(), len, m_ptr);
 		}
 
 		LMAT_ENSURE_INLINE
@@ -92,7 +75,7 @@ namespace lmat
 		, m_len(s.nelems())
 		, m_ptr(alloc(m_len))
 		{
-			copy_mem(m_len, s.ptr_data(), m_ptr);
+			copy_vec(m_len, s.ptr_data(), m_ptr);
 		}
 
 		LMAT_ENSURE_INLINE
@@ -119,7 +102,7 @@ namespace lmat
 			{
 				if (nelems() == r.nelems())  // no need to re-allocate memory
 				{
-					copy_mem(nelems(), r.ptr_data(), this->ptr_data());
+					copy_vec(nelems(), r.ptr_data(), this->ptr_data());
 				}
 				else
 				{
@@ -133,9 +116,9 @@ namespace lmat
 
 		template<class Setter>
 		LMAT_ENSURE_INLINE
-		dblock& operator = (const IMemorySetter<Setter, T>& setter)
+		dblock& operator = (const IMemorySetter<Setter>& setter)
 		{
-			setter.set(m_len, m_ptr);
+			apply(setter.derived(), m_len, m_ptr);
 			return *this;
 		}
 
@@ -257,16 +240,16 @@ namespace lmat
 
 		template<class Setter>
 		LMAT_ENSURE_INLINE
-		explicit sblock(const IMemorySetter<Setter, T>& setter)
+		explicit sblock(const IMemorySetter<Setter>& setter)
 		{
-			setter.set(N, m_arr);
+			apply(setter.derived(), N, m_arr);
 		}
 
 
 		LMAT_ENSURE_INLINE
 		sblock(const sblock& src)
 		{
-			copy_mem(N, src.m_arr, m_arr);
+			copy_vec(N, src.m_arr, m_arr);
 		}
 
 		LMAT_ENSURE_INLINE
@@ -274,25 +257,25 @@ namespace lmat
 		{
 			if (this != &src)
 			{
-				copy_mem(N, src.m_arr, m_arr);
+				copy_vec(N, src.m_arr, m_arr);
 			}
 			return *this;
 		}
 
 		template<class Setter>
 		LMAT_ENSURE_INLINE
-		sblock& operator = (const IMemorySetter<Setter, T>& setter)
+		sblock& operator = (const IMemorySetter<Setter>& setter)
 		{
-			setter.set(N, m_arr);
+			apply(setter.derived(), N, m_arr);
 		}
 
 		LMAT_ENSURE_INLINE
 		void swap(sblock& r)
 		{
 			T tmp[N];
-			copy_mem(N, m_arr, tmp);
-			copy_mem(N, r.m_arr, m_arr);
-			copy_mem(N, tmp, r.m_arr);
+			copy_vec(N, m_arr, tmp);
+			copy_vec(N, r.m_arr, m_arr);
+			copy_vec(N, tmp, r.m_arr);
 		}
 
 	public:

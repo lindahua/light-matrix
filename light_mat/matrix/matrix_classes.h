@@ -15,7 +15,8 @@
 
 #include <light_mat/matrix/dense_matrix.h>
 #include <light_mat/matrix/ref_matrix.h>
-#include <light_mat/matrix/ref_matrix_ex.h>
+#include <light_mat/matrix/ref_block.h>
+#include <light_mat/matrix/ref_grid.h>
 #include <light_mat/matrix/const_matrix.h>
 #include <light_mat/matrix/dense_mutable_view.h>
 

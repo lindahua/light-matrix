@@ -42,13 +42,6 @@ namespace lmat
 			return *this;
 		}
 
-		template<class Gen>
-		LMAT_ENSURE_INLINE const dense_mutable_view& operator = (IMemorySetter<Gen, value_type> setter) const
-		{
-			set_array_memory(*this, setter);
-			return *this;
-		}
-
 	}; // end dense_wref_mat
 }
 

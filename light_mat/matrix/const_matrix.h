@@ -23,8 +23,8 @@ namespace lmat
 	struct matrix_traits<const_matrix<T, CTRows, CTCols> >
 	{
 		static const int num_dimensions = 2;
-		static const int compile_time_num_rows = CTRows;
-		static const int compile_time_num_cols = CTCols;
+		static const int ct_num_rows = CTRows;
+		static const int ct_num_cols = CTCols;
 
 		static const bool is_readonly = true;
 
@@ -32,23 +32,9 @@ namespace lmat
 		typedef cpu_domain domain;
 	};
 
-	template<typename T, int CTRows, int CTCols>
-	struct is_linear_accessible<const_matrix<T, CTRows, CTCols> >
-	{
-		static const bool value = true;
-	};
-
-	struct matrix_fill_policy { };
-
-	template<typename T, int CTRows, int CTCols, class DMat>
-	struct default_matrix_eval_policy<const_matrix<T, CTRows, CTCols>, DMat>
-	{
-		typedef matrix_fill_policy type;
-	};
-
 
 	template<typename T, int CTRows, int CTCols>
-	class const_matrix : public IMatrixView<const_matrix<T, CTRows, CTCols>, T>
+	class const_matrix : public IMatrixXpr<const_matrix<T, CTRows, CTCols>, T>
 	{
 #ifdef LMAT_USE_STATIC_ASSERT
 		static_assert(is_supported_matrix_value_type<T>::value,
@@ -81,16 +67,6 @@ namespace lmat
 			return m_val;
 		}
 
-		LMAT_ENSURE_INLINE T elem(const index_type, const index_type) const
-		{
-			return m_val;
-		}
-
-		LMAT_ENSURE_INLINE T operator[] (const index_type) const
-		{
-			return m_val;
-		}
-
 	private:
 		matrix_shape<CTRows, CTCols> m_shape;
 		const T m_val;
@@ -99,12 +75,31 @@ namespace lmat
 
 	// Evaluation
 
-	template<typename T, int M, int N, class Dst>
-	LMAT_ENSURE_INLINE
-	void evaluate(const const_matrix<T, M, N>& mat, IDenseMatrix<Dst, T>& dst, matrix_fill_policy)
+	template<int M0, int N0, class DMat>
+	struct const_matrix_eval_scheme
 	{
-		fill(dst, mat.value());
-	}
+		typedef typename matrix_traits<DMat>::value_type T;
+
+		T val;
+		DMat& dmat;
+
+		LMAT_ENSURE_INLINE
+		const_matrix_eval_scheme(const const_matrix<T, M0, N0>& sm, DMat& dm)
+		: val(sm.value()), dmat(dm) { }
+
+		LMAT_ENSURE_INLINE
+		void evaluate()
+		{
+			fill(dmat, val);
+		}
+	};
+
+
+	template<typename T, int CTRows, int CTCols, class DMat>
+	struct default_matrix_eval_scheme<const_matrix<T, CTRows, CTCols>, DMat>
+	{
+		typedef const_matrix_eval_scheme<CTRows, CTCols, DMat> type;
+	};
 
 
 	// Transpose

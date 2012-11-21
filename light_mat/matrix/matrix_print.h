@@ -19,7 +19,7 @@
 namespace lmat
 {
 	template<typename T, class Mat>
-	inline void printf_mat(const char *fmt, const IMatrixView<Mat, T>& X,
+	inline void printf_mat(const char *fmt, const IDenseMatrix<Mat, T>& X,
 			const char *pre_line=LMAT_NULL, const char *delim="\n")
 	{
 		index_t m = X.nrows();

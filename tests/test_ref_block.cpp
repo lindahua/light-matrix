@@ -1,7 +1,7 @@
 /**
- * @file test_ref_mat_ex.cpp
+ * @file test_ref_block.cpp
  *
- * Unit testing of cref_matrix_ex and ref_matrix_ex
+ * Unit testing of cref_block and ref_block
  *
  * @author Dahua Lin
  */
@@ -9,7 +9,7 @@
 
 #include "test_base.h"
 
-#include <light_mat/matrix/ref_matrix_ex.h>
+#include <light_mat/matrix/ref_block.h>
 #include <light_mat/common/block.h>
 
 using namespace lmat;
@@ -18,30 +18,51 @@ using namespace lmat::test;
 
 // explicit instantiation
 
-template class lmat::cref_matrix_ex<double, 0, 0>;
-template class lmat::cref_matrix_ex<double, 0, 4>;
-template class lmat::cref_matrix_ex<double, 3, 0>;
-template class lmat::cref_matrix_ex<double, 3, 4>;
+template class lmat::cref_block<double, 0, 0>;
+template class lmat::cref_block<double, 0, 4>;
+template class lmat::cref_block<double, 3, 0>;
+template class lmat::cref_block<double, 3, 4>;
 
-template class lmat::ref_matrix_ex<double, 0, 0>;
-template class lmat::ref_matrix_ex<double, 0, 4>;
-template class lmat::ref_matrix_ex<double, 3, 0>;
-template class lmat::ref_matrix_ex<double, 3, 4>;
+template class lmat::ref_block<double, 0, 0>;
+template class lmat::ref_block<double, 0, 4>;
+template class lmat::ref_block<double, 3, 0>;
+template class lmat::ref_block<double, 3, 4>;
 
 #ifdef LMAT_USE_STATIC_ASSERT
 
-static_assert(lmat::is_mat_xpr<lmat::cref_matrix_ex<double> >::value, "Interface verification failed.");
-static_assert(lmat::is_mat_view<lmat::cref_matrix_ex<double> >::value, "Interface verification failed.");
-static_assert(lmat::is_dense_mat<lmat::cref_matrix_ex<double> >::value, "Interface verification failed.");
+static_assert(lmat::is_mat_xpr<lmat::cref_block<double> >::value, "Interface verification failed.");
+static_assert(lmat::is_dense_mat<lmat::cref_block<double> >::value, "Interface verification failed.");
 
-static_assert(lmat::is_mat_xpr<lmat::ref_matrix_ex<double> >::value, "Interface verification failed.");
-static_assert(lmat::is_mat_view<lmat::ref_matrix_ex<double> >::value, "Interface verification failed.");
-static_assert(lmat::is_dense_mat<lmat::ref_matrix_ex<double> >::value, "Interface verification failed.");
+static_assert(lmat::is_mat_xpr<lmat::ref_block<double> >::value, "Interface verification failed.");
+static_assert(lmat::is_dense_mat<lmat::ref_block<double> >::value, "Interface verification failed.");
 
 #endif
 
 
-MN_CASE( cref_mat_ex, constructs )
+template<int M, int N>
+inline void verify_layout(const cref_block<double, M, N>& mat,
+		index_t m, index_t n, index_t ldim)
+{
+	ASSERT_EQ( mat.nrows(), m );
+	ASSERT_EQ( mat.ncolumns(), n );
+	ASSERT_EQ( mat.nelems(), m * n );
+	ASSERT_EQ( mat.row_stride(), 1 );
+	ASSERT_EQ( mat.col_stride(), ldim );
+}
+
+template<int M, int N>
+inline void verify_layout(const ref_block<double, M, N>& mat,
+		index_t m, index_t n, index_t ldim)
+{
+	ASSERT_EQ( mat.nrows(), m );
+	ASSERT_EQ( mat.ncolumns(), n );
+	ASSERT_EQ( mat.nelems(), m * n );
+	ASSERT_EQ( mat.row_stride(), 1 );
+	ASSERT_EQ( mat.col_stride(), ldim );
+}
+
+
+MN_CASE( cref_block, constructs )
 {
 	const index_t ldim = 7;
 	const index_t m = M == 0 ? 3 : M;
@@ -50,26 +71,18 @@ MN_CASE( cref_mat_ex, constructs )
 	dblock<double> s(ldim * n);
 	const double *ps = s.ptr_data();
 
-	cref_matrix_ex<double, M, N> a(ps, m, n, ldim);
+	cref_block<double, M, N> a(ps, m, n, ldim);
 
-	ASSERT_EQ(a.nrows(), m);
-	ASSERT_EQ(a.ncolumns(), n);
-	ASSERT_EQ(a.nelems(), m * n);
-	ASSERT_EQ(a.lead_dim(), ldim);
-
+	verify_layout(a, m, n, ldim);
 	ASSERT_EQ(a.ptr_data(), ps);
 
-	cref_matrix_ex<double, M, N> a2(a);
-
-	ASSERT_EQ(a2.nrows(), m);
-	ASSERT_EQ(a2.ncolumns(), n);
-	ASSERT_EQ(a2.nelems(), m * n);
-	ASSERT_EQ(a2.lead_dim(), ldim);
+	cref_block<double, M, N> a2(a);
+	verify_layout(a2, m, n, ldim);
 
 	ASSERT_EQ(a2.ptr_data(), ps);
 }
 
-MN_CASE( ref_mat_ex, constructs )
+MN_CASE( ref_block, constructs )
 {
 	const index_t ldim = 7;
 	const index_t m = M == 0 ? 3 : M;
@@ -78,26 +91,18 @@ MN_CASE( ref_mat_ex, constructs )
 	dblock<double> s(ldim * n);
 	double *ps = s.ptr_data();
 
-	ref_matrix_ex<double, M, N> a(ps, m, n, ldim);
+	ref_block<double, M, N> a(ps, m, n, ldim);
 
-	ASSERT_EQ(a.nrows(), m);
-	ASSERT_EQ(a.ncolumns(), n);
-	ASSERT_EQ(a.nelems(), m * n);
-	ASSERT_EQ(a.lead_dim(), ldim);
-
+	verify_layout(a, m, n, ldim);
 	ASSERT_EQ(a.ptr_data(), ps);
 
-	ref_matrix_ex<double, M, N> a2(a);
+	ref_block<double, M, N> a2(a);
 
-	ASSERT_EQ(a2.nrows(), m);
-	ASSERT_EQ(a2.ncolumns(), n);
-	ASSERT_EQ(a2.nelems(), m * n);
-	ASSERT_EQ(a2.lead_dim(), ldim);
-
+	verify_layout(a2, m, n, ldim);
 	ASSERT_EQ(a2.ptr_data(), ps);
 }
 
-MN_CASE( cref_mat_ex, access )
+MN_CASE( cref_block, access )
 {
 	const index_t ldim = 7;
 	const index_t m = M == 0 ? 3 : M;
@@ -106,8 +111,8 @@ MN_CASE( cref_mat_ex, access )
 	dblock<double> ref(ldim * n);
 
 	for (index_t i = 0; i < ldim * n; ++i) ref[i] = double(i + 2);
-	cref_matrix_ex<double, M, N> a(ref.ptr_data(), m, n, ldim);
-	const cref_matrix_ex<double, M, N>& ac = a;
+	cref_block<double, M, N> a(ref.ptr_data(), m, n, ldim);
+	const cref_block<double, M, N>& ac = a;
 
 	for (index_t j = 0; j < n; ++j)
 	{
@@ -144,7 +149,7 @@ MN_CASE( cref_mat_ex, access )
 }
 
 
-MN_CASE( ref_mat_ex, access )
+MN_CASE( ref_block, access )
 {
 	const index_t ldim = 7;
 	const index_t m = M == 0 ? 3 : M;
@@ -153,8 +158,8 @@ MN_CASE( ref_mat_ex, access )
 	dblock<double> ref(ldim * n);
 
 	for (index_t i = 0; i < ldim * n; ++i) ref[i] = double(i + 2);
-	ref_matrix_ex<double, M, N> a(ref.ptr_data(), m, n, ldim);
-	const ref_matrix_ex<double, M, N>& ac = a;
+	ref_block<double, M, N> a(ref.ptr_data(), m, n, ldim);
+	const ref_block<double, M, N>& ac = a;
 
 	for (index_t j = 0; j < n; ++j)
 	{
@@ -191,7 +196,7 @@ MN_CASE( ref_mat_ex, access )
 }
 
 
-MN_CASE( ref_mat_ex, assign )
+MN_CASE( ref_block, assign )
 {
 	const index_t ldim1 = 7;
 	const index_t ldim2 = 9;
@@ -209,8 +214,8 @@ MN_CASE( ref_mat_ex, assign )
 
 	dblock<double> s1r(s1);
 
-	ref_matrix_ex<double, M, N> a1(ps1, m, n, ldim1);
-	ref_matrix_ex<double, M, N> a2(ps2, m, n, ldim2);
+	ref_block<double, M, N> a1(ps1, m, n, ldim1);
+	ref_block<double, M, N> a2(ps2, m, n, ldim2);
 
 	ASSERT_EQ( a1.ptr_data(), ps1 );
 	ASSERT_EQ( a2.ptr_data(), ps2 );
@@ -235,7 +240,7 @@ MN_CASE( ref_mat_ex, assign )
 }
 
 
-MN_CASE( ref_mat_ex, import )
+MN_CASE( ref_block, import )
 {
 	const index_t ldim = 7;
 	const index_t m = M == 0 ? 3 : M;
@@ -246,7 +251,7 @@ MN_CASE( ref_mat_ex, import )
 	dblock<double> s(s0);
 	double *ps = s.ptr_data();
 
-	ref_matrix_ex<double, M, N> a(ps, m, n, ldim);
+	ref_block<double, M, N> a(ps, m, n, ldim);
 
 	// fill_value
 
@@ -260,10 +265,7 @@ MN_CASE( ref_mat_ex, import )
 			ref[i + j * ldim] = v1;
 	}
 
-	ASSERT_EQ(a.nrows(), m);
-	ASSERT_EQ(a.ncolumns(), n);
-	ASSERT_EQ(a.nelems(), m * n);
-	ASSERT_EQ(a.lead_dim(), ldim);
+	verify_layout(a, m, n, ldim);
 	ASSERT_EQ(a.ptr_data(), ps);
 
 	ASSERT_VEC_EQ(ldim * n, ps, ref);
@@ -282,10 +284,7 @@ MN_CASE( ref_mat_ex, import )
 			ref[i + j * ldim] = cs[i + j * m];
 	}
 
-	ASSERT_EQ(a.nrows(), m);
-	ASSERT_EQ(a.ncolumns(), n);
-	ASSERT_EQ(a.nelems(), m * n);
-	ASSERT_EQ(a.lead_dim(), ldim);
+	verify_layout(a, m, n, ldim);
 	ASSERT_EQ(a.ptr_data(), ps);
 
 	ASSERT_VEC_EQ(ldim * n, ps, ref);
@@ -294,39 +293,39 @@ MN_CASE( ref_mat_ex, import )
 
 
 
-BEGIN_TPACK( cref_mat_ex_constructs )
-	ADD_MN_CASE_3X3( cref_mat_ex, constructs, 3, 4 )
+BEGIN_TPACK( cref_block_constructs )
+	ADD_MN_CASE_3X3( cref_block, constructs, 3, 4 )
 END_TPACK
 
-BEGIN_TPACK( ref_mat_ex_constructs )
-	ADD_MN_CASE_3X3( ref_mat_ex, constructs, 3, 4 )
+BEGIN_TPACK( ref_block_constructs )
+	ADD_MN_CASE_3X3( ref_block, constructs, 3, 4 )
 END_TPACK
 
-BEGIN_TPACK( cref_mat_ex_access )
-	ADD_MN_CASE_3X3( cref_mat_ex, access, 3, 4 )
+BEGIN_TPACK( cref_block_access )
+	ADD_MN_CASE_3X3( cref_block, access, 3, 4 )
 END_TPACK
 
-BEGIN_TPACK( ref_mat_ex_access )
-	ADD_MN_CASE_3X3( ref_mat_ex, access, 3, 4 )
+BEGIN_TPACK( ref_block_access )
+	ADD_MN_CASE_3X3( ref_block, access, 3, 4 )
 END_TPACK
 
-BEGIN_TPACK( ref_mat_ex_assign )
-	ADD_MN_CASE_3X3( ref_mat_ex, assign, 3, 4 )
+BEGIN_TPACK( ref_block_assign )
+	ADD_MN_CASE_3X3( ref_block, assign, 3, 4 )
 END_TPACK
 
-BEGIN_TPACK( ref_mat_ex_import )
-	ADD_MN_CASE_3X3( ref_mat_ex, import, 3, 4 )
+BEGIN_TPACK( ref_block_import )
+	ADD_MN_CASE_3X3( ref_block, import, 3, 4 )
 END_TPACK
 
 
 BEGIN_MAIN_SUITE
-	ADD_TPACK( cref_mat_ex_constructs )
-	ADD_TPACK( cref_mat_ex_access )
+	ADD_TPACK( cref_block_constructs )
+	ADD_TPACK( cref_block_access )
 
-	ADD_TPACK( ref_mat_ex_constructs )
-	ADD_TPACK( ref_mat_ex_access )
-	ADD_TPACK( ref_mat_ex_assign )
-	ADD_TPACK( ref_mat_ex_import )
+	ADD_TPACK( ref_block_constructs )
+	ADD_TPACK( ref_block_access )
+	ADD_TPACK( ref_block_assign )
+	ADD_TPACK( ref_block_import )
 END_MAIN_SUITE
 
 

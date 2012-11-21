@@ -30,14 +30,33 @@ template class lmat::ref_matrix<double, 3, 4>;
 #ifdef LMAT_USE_STATIC_ASSERT
 
 static_assert(lmat::is_mat_xpr<lmat::cref_matrix<double> >::value, "Interface verification failed.");
-static_assert(lmat::is_mat_view<lmat::cref_matrix<double> >::value, "Interface verification failed.");
 static_assert(lmat::is_dense_mat<lmat::cref_matrix<double> >::value, "Interface verification failed.");
 
 static_assert(lmat::is_mat_xpr<lmat::ref_matrix<double> >::value, "Interface verification failed.");
-static_assert(lmat::is_mat_view<lmat::ref_matrix<double> >::value, "Interface verification failed.");
 static_assert(lmat::is_dense_mat<lmat::ref_matrix<double> >::value, "Interface verification failed.");
 
 #endif
+
+
+template<int M, int N>
+inline void verify_layout(const cref_matrix<double, M, N>& a, index_t m, index_t n)
+{
+	ASSERT_EQ(a.nrows(), m);
+	ASSERT_EQ(a.ncolumns(), n);
+	ASSERT_EQ(a.nelems(), m * n);
+	ASSERT_EQ(a.row_stride(), 1);
+	ASSERT_EQ(a.col_stride(), m);
+}
+
+template<int M, int N>
+inline void verify_layout(const ref_matrix<double, M, N>& a, index_t m, index_t n)
+{
+	ASSERT_EQ(a.nrows(), m);
+	ASSERT_EQ(a.ncolumns(), n);
+	ASSERT_EQ(a.nelems(), m * n);
+	ASSERT_EQ(a.row_stride(), 1);
+	ASSERT_EQ(a.col_stride(), m);
+}
 
 MN_CASE( cref_mat, constructs )
 {
@@ -49,20 +68,12 @@ MN_CASE( cref_mat, constructs )
 
 	cref_matrix<double, M, N> a(ps, m, n);
 
-	ASSERT_EQ(a.nrows(), m);
-	ASSERT_EQ(a.ncolumns(), n);
-	ASSERT_EQ(a.nelems(), m * n);
-	ASSERT_EQ(a.lead_dim(), m);
-
+	verify_layout(a, m, n);
 	ASSERT_EQ(a.ptr_data(), ps);
 
 	cref_matrix<double, M, N> a2(a);
 
-	ASSERT_EQ(a2.nrows(), m);
-	ASSERT_EQ(a2.ncolumns(), n);
-	ASSERT_EQ(a2.nelems(), m * n);
-	ASSERT_EQ(a2.lead_dim(), m);
-
+	verify_layout(a2, m, n);
 	ASSERT_EQ(a2.ptr_data(), ps);
 }
 
@@ -76,20 +87,12 @@ MN_CASE( ref_mat, constructs )
 
 	ref_matrix<double, M, N> a(ps, m, n);
 
-	ASSERT_EQ(a.nrows(), m);
-	ASSERT_EQ(a.ncolumns(), n);
-	ASSERT_EQ(a.nelems(), m * n);
-	ASSERT_EQ(a.lead_dim(), m);
-
+	verify_layout(a, m, n);
 	ASSERT_EQ(a.ptr_data(), ps);
 
 	ref_matrix<double, M, N> a2(a);
 
-	ASSERT_EQ(a2.nrows(), m);
-	ASSERT_EQ(a2.ncolumns(), n);
-	ASSERT_EQ(a2.nelems(), m * n);
-	ASSERT_EQ(a2.lead_dim(), m);
-
+	verify_layout(a2, m, n);
 	ASSERT_EQ(a2.ptr_data(), ps);
 }
 
@@ -209,10 +212,6 @@ MN_CASE( ref_mat, import )
 	a << v1;
 	for (index_t i = 0; i < m * n; ++i) ref[i] = v1;
 
-	ASSERT_EQ(a.nrows(), m);
-	ASSERT_EQ(a.ncolumns(), n);
-	ASSERT_EQ(a.nelems(), m * n);
-	ASSERT_EQ(a.lead_dim(), m);
 	ASSERT_VEC_EQ(m * n, a, ref);
 
 	// copy_value
@@ -220,10 +219,6 @@ MN_CASE( ref_mat, import )
 	for (index_t i = 0; i < m * n; ++i) ref[i] = double(i + 2);
 	a << ref.ptr_data();
 
-	ASSERT_EQ(a.nrows(), m);
-	ASSERT_EQ(a.ncolumns(), n);
-	ASSERT_EQ(a.nelems(), m * n);
-	ASSERT_EQ(a.lead_dim(), m);
 	ASSERT_VEC_EQ(m * n, a, ref);
 }
 
