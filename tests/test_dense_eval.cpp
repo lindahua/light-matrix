@@ -55,7 +55,7 @@ MN_CASE( mat_eval, ref_mat )
 	ASSERT_MAT_EQ(m, n, a, r);
 }
 
-MN_CASE( mat_eval, ref_mat_ex )
+MN_CASE( mat_eval, ref_block )
 {
 	const index_t ldim = 7;
 	const index_t m = M == 0 ? 4 : M;
@@ -74,6 +74,27 @@ MN_CASE( mat_eval, ref_mat_ex )
 	ASSERT_MAT_EQ(m, n, a, r);
 }
 
+MN_CASE( mat_eval, ref_grid )
+{
+	const index_t m = M == 0 ? 4 : M;
+	const index_t n = N == 0 ? 5 : N;
+	const index_t rs = 2;
+	const index_t cs = 9;
+
+	dblock<double> s(cs * n);
+	fill_lin(s);
+
+	ref_grid<double, M, N> a(s.ptr_data(), m, n, rs, cs);
+	dense_matrix<double, M, N> r = eval(a);
+
+	ASSERT_EQ( r.nrows(), m );
+	ASSERT_EQ( r.ncolumns(), n );
+	ASSERT_NE( r.ptr_data(), a.ptr_data() );
+
+	ASSERT_MAT_EQ(m, n, a, r);
+}
+
+
 BEGIN_TPACK( dense_mat_eval )
 	ADD_MN_CASE_3X3( mat_eval, dense_mat, 4, 5 );
 END_TPACK
@@ -82,14 +103,20 @@ BEGIN_TPACK( ref_mat_eval )
 	ADD_MN_CASE_3X3( mat_eval, ref_mat, 4, 5 );
 END_TPACK
 
-BEGIN_TPACK( ref_mat_ex_eval )
-	ADD_MN_CASE_3X3( mat_eval, ref_mat_ex, 4, 5 );
+BEGIN_TPACK( ref_block_eval )
+	ADD_MN_CASE_3X3( mat_eval, ref_block, 4, 5 );
 END_TPACK
+
+BEGIN_TPACK( ref_grid_eval )
+	ADD_MN_CASE_3X3( mat_eval, ref_grid, 4, 5 );
+END_TPACK
+
 
 BEGIN_MAIN_SUITE
 	ADD_TPACK( dense_mat_eval )
 	ADD_TPACK( ref_mat_eval )
-	ADD_TPACK( ref_mat_ex_eval )
+	ADD_TPACK( ref_block_eval )
+	ADD_TPACK( ref_grid_eval )
 END_MAIN_SUITE
 
 
