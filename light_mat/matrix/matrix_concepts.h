@@ -82,15 +82,7 @@ namespace lmat
 		{
 			return derived().ncolumns();
 		}
-/*
-		LMAT_ENSURE_INLINE
-		typename unary_expr_map<transpose_t, ref_arg_t, Derived>::type
-		trans() const
-		{
-			return unary_expr_map<transpose_t, ref_arg_t, Derived>::get(
-					transpose_t(), ref_arg(derived()));
-		}
-*/
+
 	}; // end class IMatrixBase
 
 

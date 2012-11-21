@@ -84,7 +84,6 @@ set(MATRIX_CLASS_HS
     ${INC}/matrix/ref_matrix.h
     ${INC}/matrix/ref_block.h
     ${INC}/matrix/ref_grid.h
-    ${INC}/matrix/const_matrix.h
     ${INC}/matrix/dense_mutable_view.h
     ${INC}/matrix/matrix_classes.h)
     
@@ -153,14 +152,6 @@ set(DENSE_MAT_HS
 add_executable(test_dense_mat ${DENSE_MAT_HS} test_dense_mat.cpp)
 add_executable(test_dense_vec ${DENSE_MAT_HS} test_dense_vec.cpp) 
 
-set(CONST_MAT_HS
-    ${COMMON_HS}
-    ${MATRIX_BASE_HS}
-    ${INC}/matrix/const_matrix.h
-    ${INC}/matrix/dense_matrix.h)
-
-add_executable(test_const_mat ${CONST_MAT_HS} test_const_mat.cpp)
-
 set(REF_MAT_HS
     ${COMMON_HS}
     ${MATRIX_BASE_HS}
@@ -222,7 +213,6 @@ set(LMAT_TEST_NAMES
 	test_blocks
 	test_dense_mat
 	test_dense_vec
-	test_const_mat
 	test_ref_mat
 	test_ref_vec
 	test_ref_block
