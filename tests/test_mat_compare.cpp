@@ -10,129 +10,323 @@
 #include "test_base.h"
 
 #include <light_mat/matrix/ref_matrix.h>
-#include <light_mat/matrix/ref_matrix_ex.h>
+#include <light_mat/matrix/ref_block.h>
+#include <light_mat/matrix/ref_grid.h>
 #include <light_mat/common/block.h>
 
 using namespace lmat;
 using namespace lmat::test;
 
-MN_CASE( mat_equal, equal )
+using namespace lmat;
+using namespace lmat::test;
+
+const index_t cs_a = 11;
+const index_t cs_b = 12;
+const index_t rs_a = 2;
+const index_t rs_b = 3;
+
+const index_t LDim = 12;
+
+// Auxiliary classes
+
+template<template<typename T1, int R1, int C1> class SClassT, int M, int N> struct mat_maker;
+
+template<int M, int N>
+struct mat_maker<ref_matrix, M, N>
 {
-	const index_t m = M == 0 ? 5 : M;
-	const index_t n = N == 0 ? 6 : N;
+	static ref_matrix<double, M, N> get_a(double *p, index_t m, index_t n)
+	{
+		return ref_matrix<double, M, N>(p, m, n);
+	}
 
-	dblock<double> sa(m * n);
-	for (index_t i = 0; i < m * n; ++i) sa[i] = double(i + 2);
+	static ref_matrix<double, M, N> get_b(double *p, index_t m, index_t n)
+	{
+		return ref_matrix<double, M, N>(p, m, n);
+	}
+};
 
-	dblock<double> sb(sa);
+template<int M, int N>
+struct mat_maker<ref_block, M, N>
+{
+	static ref_block<double, M, N> get_a(double *p, index_t m, index_t n)
+	{
+		return ref_block<double, M, N>(p, m, n, cs_a);
+	}
 
-	ref_matrix<double, M, N> a(sa.ptr_data(), m, n);
-	ref_matrix<double, M, N> b(sb.ptr_data(), m, n);
+	static ref_block<double, M, N> get_b(double *p, index_t m, index_t n)
+	{
+		return ref_block<double, M, N>(p, m, n, cs_b);
+	}
+};
+
+template<int M, int N>
+struct mat_maker<ref_grid, M, N>
+{
+	static ref_grid<double, M, N> get_a(double *p, index_t m, index_t n)
+	{
+		return ref_grid<double, M, N>(p, m, n, rs_a, cs_a);
+	}
+
+	static ref_grid<double, M, N> get_b(double *p, index_t m, index_t n)
+	{
+		return ref_grid<double, M, N>(p, m, n, rs_b, cs_b);
+	}
+};
+
+
+
+template<
+	template<typename T1, int R1, int C1> class AClassT,
+	template<typename T2, int R2, int C2> class BClassT,
+	int M, int N>
+void test_matrix_equal()
+{
+	const index_t m = M == 0 ? 3 : M;
+	const index_t n = N == 0 ? 4 : N;
+
+	dblock<double> a_mem(LDim * n, zero());
+	dblock<double> b_mem(LDim * n, zero());
+
+	AClassT<double, M, N> a = mat_maker<AClassT, M, N>::get_a(a_mem.ptr_data(), m, n);
+	BClassT<double, M, N> b = mat_maker<BClassT, M, N>::get_b(b_mem.ptr_data(), m, n);
+
+	for (index_t j = 0; j < n; ++j)
+	{
+		for (index_t i = 0; i < m; ++i)
+		{
+			a(i, j) = b(i, j) = double(2 * i + 3 * j + 1);
+		}
+	}
 
 	ASSERT_TRUE( is_equal(a, b) );
 
-	sb[m * n - 1] = double(-1);
+	b(m-1, n-1) += 1.0;
 
 	ASSERT_FALSE( is_equal(a, b) );
 }
 
 
-MN_CASE( mat_equal, equal_ex )
+template<
+	template<typename T1, int R1, int C1> class AClassT,
+	template<typename T2, int R2, int C2> class BClassT,
+	int M, int N>
+void test_matrix_approx()
 {
-	const index_t m = M == 0 ? 5 : M;
-	const index_t n = N == 0 ? 6 : N;
+	const index_t m = M == 0 ? 3 : M;
+	const index_t n = N == 0 ? 4 : N;
 
-	const index_t ldim_a = 7;
-	const index_t ldim_b = 8;
+	dblock<double> a_mem(LDim * n, zero());
+	dblock<double> b_mem(LDim * n, zero());
 
-	dblock<double> sa(ldim_a * n, fill(0.0));
-	dblock<double> sb(ldim_b * n, fill(0.0));
-
-	ref_matrix_ex<double, M, N> a(sa.ptr_data(), m, n, ldim_a);
-	ref_matrix_ex<double, M, N> b(sb.ptr_data(), m, n, ldim_b);
+	AClassT<double, M, N> a = mat_maker<AClassT, M, N>::get_a(a_mem.ptr_data(), m, n);
+	BClassT<double, M, N> b = mat_maker<BClassT, M, N>::get_b(b_mem.ptr_data(), m, n);
 
 	for (index_t j = 0; j < n; ++j)
-		for (index_t i = 0; i < m; ++i) a(i, j) = b(i, j) = double(1 + i + j * m);
+	{
+		for (index_t i = 0; i < m; ++i)
+		{
+			a(i, j) = b(i, j) = double(2 * i + 3 * j + 1);
+		}
+	}
 
-	ASSERT_TRUE( is_equal(a, b) );
+	ASSERT_TRUE( is_approx(a, b, 1.0e-3) );
 
-	b(m-1, n-1) = double(-1);
+	b(m-1, n-1) += 1.0;
 
-	ASSERT_FALSE( is_equal(a, b) );
+	ASSERT_FALSE( is_approx(a, b, 1.0e-3) );
+	ASSERT_TRUE( is_approx(a, b, 1.2) );
 }
 
 
-MN_CASE( mat_approx, approx )
+MN_CASE( mat_equal, cont_to_cont )
 {
-	const index_t m = M == 0 ? 5 : M;
-	const index_t n = N == 0 ? 6 : N;
-
-	dblock<double> sa(m * n);
-	for (index_t i = 0; i < m * n; ++i) sa[i] = double(i + 2);
-
-	dblock<double> sb(sa);
-
-	ref_matrix<double, M, N> a(sa.ptr_data(), m, n);
-	ref_matrix<double, M, N> b(sb.ptr_data(), m, n);
-
-	ASSERT_TRUE( is_approx(a, b, 0.1) );
-
-	sb[m * n - 1] = double(-1);
-
-	ASSERT_FALSE( is_approx(a, b, 0.1) );
-	ASSERT_TRUE( is_approx(a, b, 1000.0) );
+	test_matrix_equal<ref_matrix, ref_matrix, M, N>();
 }
 
-
-MN_CASE( mat_approx, approx_ex )
+MN_CASE( mat_equal, cont_to_bloc )
 {
-	const index_t m = M == 0 ? 5 : M;
-	const index_t n = N == 0 ? 6 : N;
+	test_matrix_equal<ref_matrix, ref_block, M, N>();
+}
 
-	const index_t ldim_a = 7;
-	const index_t ldim_b = 8;
+MN_CASE( mat_equal, cont_to_grid )
+{
+	test_matrix_equal<ref_matrix, ref_grid, M, N>();
+}
 
-	dblock<double> sa(ldim_a * n, fill(0.0));
-	dblock<double> sb(ldim_b * n, fill(0.0));
+MN_CASE( mat_equal, bloc_to_cont )
+{
+	test_matrix_equal<ref_block, ref_matrix, M, N>();
+}
 
-	ref_matrix_ex<double, M, N> a(sa.ptr_data(), m, n, ldim_a);
-	ref_matrix_ex<double, M, N> b(sb.ptr_data(), m, n, ldim_b);
+MN_CASE( mat_equal, bloc_to_bloc )
+{
+	test_matrix_equal<ref_block, ref_block, M, N>();
+}
 
-	for (index_t j = 0; j < n; ++j)
-		for (index_t i = 0; i < m; ++i) a(i, j) = b(i, j) = double(1 + i + j * m);
+MN_CASE( mat_equal, bloc_to_grid )
+{
+	test_matrix_equal<ref_block, ref_grid, M, N>();
+}
 
-	ASSERT_TRUE( is_approx(a, b, 0.1) );
+MN_CASE( mat_equal, grid_to_cont )
+{
+	test_matrix_equal<ref_grid, ref_matrix, M, N>();
+}
 
-	b(m-1, n-1) = double(-1);
+MN_CASE( mat_equal, grid_to_bloc )
+{
+	test_matrix_equal<ref_grid, ref_block, M, N>();
+}
 
-	ASSERT_FALSE( is_approx(a, b, 0.1) );
-	ASSERT_TRUE( is_approx(a, b, 1000.0) );
+MN_CASE( mat_equal, grid_to_grid )
+{
+	test_matrix_equal<ref_grid, ref_grid, M, N>();
+}
+
+
+MN_CASE( mat_approx, cont_to_cont )
+{
+	test_matrix_approx<ref_matrix, ref_matrix, M, N>();
+}
+
+MN_CASE( mat_approx, cont_to_bloc )
+{
+	test_matrix_approx<ref_matrix, ref_block, M, N>();
+}
+
+MN_CASE( mat_approx, cont_to_grid )
+{
+	test_matrix_approx<ref_matrix, ref_grid, M, N>();
+}
+
+MN_CASE( mat_approx, bloc_to_cont )
+{
+	test_matrix_approx<ref_block, ref_matrix, M, N>();
+}
+
+MN_CASE( mat_approx, bloc_to_bloc )
+{
+	test_matrix_approx<ref_block, ref_block, M, N>();
+}
+
+MN_CASE( mat_approx, bloc_to_grid )
+{
+	test_matrix_approx<ref_block, ref_grid, M, N>();
+}
+
+MN_CASE( mat_approx, grid_to_cont )
+{
+	test_matrix_approx<ref_grid, ref_matrix, M, N>();
+}
+
+MN_CASE( mat_approx, grid_to_bloc )
+{
+	test_matrix_approx<ref_grid, ref_block, M, N>();
+}
+
+MN_CASE( mat_approx, grid_to_grid )
+{
+	test_matrix_approx<ref_grid, ref_grid, M, N>();
 }
 
 
 
-BEGIN_TPACK( mat_equal )
-	ADD_MN_CASE_3X3( mat_equal, equal, 5, 6 );
+BEGIN_TPACK( mat_equal_cc )
+	ADD_MN_CASE_3X3( mat_equal, cont_to_cont, 3, 4 );
 END_TPACK
 
-BEGIN_TPACK( mat_equal_ex )
-	ADD_MN_CASE_3X3( mat_equal, equal_ex, 5, 6 );
+BEGIN_TPACK( mat_equal_cb )
+	ADD_MN_CASE_3X3( mat_equal, cont_to_bloc, 3, 4 );
 END_TPACK
 
-BEGIN_TPACK( mat_approx )
-	ADD_MN_CASE_3X3( mat_approx, approx, 5, 6 );
+BEGIN_TPACK( mat_equal_cg )
+	ADD_MN_CASE_3X3( mat_equal, cont_to_grid, 3, 4 );
 END_TPACK
 
-BEGIN_TPACK( mat_approx_ex )
-	ADD_MN_CASE_3X3( mat_approx, approx_ex, 5, 6 );
+BEGIN_TPACK( mat_equal_bc )
+	ADD_MN_CASE_3X3( mat_equal, bloc_to_cont, 3, 4 );
 END_TPACK
+
+BEGIN_TPACK( mat_equal_bb )
+	ADD_MN_CASE_3X3( mat_equal, bloc_to_bloc, 3, 4 );
+END_TPACK
+
+BEGIN_TPACK( mat_equal_bg )
+	ADD_MN_CASE_3X3( mat_equal, bloc_to_grid, 3, 4 );
+END_TPACK
+
+BEGIN_TPACK( mat_equal_gc )
+	ADD_MN_CASE_3X3( mat_equal, grid_to_cont, 3, 4 );
+END_TPACK
+
+BEGIN_TPACK( mat_equal_gb )
+	ADD_MN_CASE_3X3( mat_equal, grid_to_bloc, 3, 4 );
+END_TPACK
+
+BEGIN_TPACK( mat_equal_gg )
+	ADD_MN_CASE_3X3( mat_equal, grid_to_grid, 3, 4 );
+END_TPACK
+
+
+BEGIN_TPACK( mat_approx_cc )
+	ADD_MN_CASE_3X3( mat_approx, cont_to_cont, 3, 4 );
+END_TPACK
+
+BEGIN_TPACK( mat_approx_cb )
+	ADD_MN_CASE_3X3( mat_approx, cont_to_bloc, 3, 4 );
+END_TPACK
+
+BEGIN_TPACK( mat_approx_cg )
+	ADD_MN_CASE_3X3( mat_approx, cont_to_grid, 3, 4 );
+END_TPACK
+
+BEGIN_TPACK( mat_approx_bc )
+	ADD_MN_CASE_3X3( mat_approx, bloc_to_cont, 3, 4 );
+END_TPACK
+
+BEGIN_TPACK( mat_approx_bb )
+	ADD_MN_CASE_3X3( mat_approx, bloc_to_bloc, 3, 4 );
+END_TPACK
+
+BEGIN_TPACK( mat_approx_bg )
+	ADD_MN_CASE_3X3( mat_approx, bloc_to_grid, 3, 4 );
+END_TPACK
+
+BEGIN_TPACK( mat_approx_gc )
+	ADD_MN_CASE_3X3( mat_approx, grid_to_cont, 3, 4 );
+END_TPACK
+
+BEGIN_TPACK( mat_approx_gb )
+	ADD_MN_CASE_3X3( mat_approx, grid_to_bloc, 3, 4 );
+END_TPACK
+
+BEGIN_TPACK( mat_approx_gg )
+	ADD_MN_CASE_3X3( mat_approx, grid_to_grid, 3, 4 );
+END_TPACK
+
 
 BEGIN_MAIN_SUITE
-	ADD_TPACK( mat_equal )
-	ADD_TPACK( mat_equal_ex )
-	ADD_TPACK( mat_approx )
-	ADD_TPACK( mat_approx_ex )
+	ADD_TPACK( mat_equal_cc )
+	ADD_TPACK( mat_equal_cb )
+	ADD_TPACK( mat_equal_cg )
+	ADD_TPACK( mat_equal_bc )
+	ADD_TPACK( mat_equal_bb )
+	ADD_TPACK( mat_equal_bg )
+	ADD_TPACK( mat_equal_gc )
+	ADD_TPACK( mat_equal_gb )
+	ADD_TPACK( mat_equal_gg )
+
+	ADD_TPACK( mat_approx_cc )
+	ADD_TPACK( mat_approx_cb )
+	ADD_TPACK( mat_approx_cg )
+	ADD_TPACK( mat_approx_bc )
+	ADD_TPACK( mat_approx_bb )
+	ADD_TPACK( mat_approx_bg )
+	ADD_TPACK( mat_approx_gc )
+	ADD_TPACK( mat_approx_gb )
+	ADD_TPACK( mat_approx_gg )
 END_MAIN_SUITE
+
 
 
 

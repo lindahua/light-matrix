@@ -151,7 +151,7 @@ namespace lmat { namespace detail {
 				{
 					for (index_t j = 0; j < n; ++j, dst += m)
 					{
-						fill_vec(m, mat.ptr_col(j), rs, dst);
+						copy_vec(m, mat.ptr_col(j), rs, dst);
 					}
 				}
 			}

@@ -175,7 +175,7 @@ add_executable(test_ref_grid ${REF_MAT_HS} test_ref_grid.cpp)
 
 add_executable(test_mat_fill ${REF_MAT_HS} test_mat_fill.cpp)
 add_executable(test_mat_copy ${REF_MAT_HS} test_mat_copy.cpp)
-# add_executable(test_mat_compare ${REF_MAT_HS} test_mat_compare.cpp)
+add_executable(test_mat_compare ${REF_MAT_HS} test_mat_compare.cpp)
 
 add_executable(test_dense_eval ${MATRIX_HS} test_dense_eval.cpp)
 # add_executable(test_mat_subviews ${MATRIX_HS} test_mat_subviews.cpp)
@@ -229,7 +229,7 @@ set(LMAT_TEST_NAMES
 	test_ref_grid
 	test_mat_fill
 	test_mat_copy
-	# test_mat_compare
+	test_mat_compare
 	test_dense_eval
 	# test_mat_subviews
 	# test_mat_transpose

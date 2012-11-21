@@ -13,7 +13,6 @@
 using namespace lmat;
 using namespace lmat::test;
 
-
 inline void fill_lin(index_t n, double *x)
 {
 	for (index_t i = 0; i < n; ++i) x[i] = double(i + 1);
