@@ -17,6 +17,11 @@ using namespace lmat::test;
 
 // explicit instantiation
 
+template class lmat::cref_col<double, 0>;
+template class lmat::cref_col<double, 4>;
+template class lmat::cref_row<double, 0>;
+template class lmat::cref_row<double, 4>;
+
 template class lmat::ref_col<double, 0>;
 template class lmat::ref_col<double, 4>;
 template class lmat::ref_row<double, 0>;

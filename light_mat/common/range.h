@@ -22,11 +22,30 @@ namespace lmat
 	{
 	public:
 		LMAT_CRTP_REF
+
+		LMAT_ENSURE_INLINE index_t get_num(index_t dim) const
+		{
+			return derived().get_num(dim);
+		}
+
+		LMAT_ENSURE_INLINE index_t get_offset(index_t dim, index_t i) const
+		{
+			return derived().get_offset(dim, i);
+		}
 	};
 
 
-	struct whole : public IRange<whole>
+	class whole : public IRange<whole>
 	{
+		LMAT_ENSURE_INLINE index_t get_num(index_t dim) const
+		{
+			return dim;
+		}
+
+		LMAT_ENSURE_INLINE index_t get_offset(index_t, index_t i) const
+		{
+			return i;
+		}
 	};
 
 	class range : public IRange<range>
@@ -51,6 +70,16 @@ namespace lmat
 		LMAT_ENSURE_INLINE index_t num() const
 		{
 			return m_num;
+		}
+
+		LMAT_ENSURE_INLINE index_t get_num(index_t ) const
+		{
+			return m_num;
+		}
+
+		LMAT_ENSURE_INLINE index_t get_offset(index_t, index_t i) const
+		{
+			return m_begin + i;
 		}
 
 	private:
@@ -86,6 +115,16 @@ namespace lmat
 		LMAT_ENSURE_INLINE index_t step() const
 		{
 			return m_step;
+		}
+
+		LMAT_ENSURE_INLINE index_t get_num(index_t ) const
+		{
+			return m_num;
+		}
+
+		LMAT_ENSURE_INLINE index_t get_offset(index_t, index_t i) const
+		{
+			return m_begin + i * m_step;
 		}
 
 	private:

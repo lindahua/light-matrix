@@ -61,10 +61,10 @@ namespace lmat
 	template<typename T, int CTRows=0> class dense_col;
 	template<typename T, int CTCols=0> class dense_row;
 
-	template<typename T, int RowDim=0, int ColDim=0>
+	template<typename T, int CTRows=0, int CTCols=0>
 	class cref_matrix;
 
-	template<typename T, int RowDim=0, int ColDim=0>
+	template<typename T, int CTRows=0, int CTCols=0>
 	class ref_matrix;
 
 	template<typename T, int CTRows=0> class cref_col;
@@ -77,6 +77,11 @@ namespace lmat
 
 	template<typename T, int CTRows=0, int CTCols=0> class cref_grid;
 	template<typename T, int CTRows=0, int CTCols=0> class ref_grid;
+
+	template<typename T, int CTRows=0> class cstep_col;
+	template<typename T, int CTRows=0> class step_col;
+	template<typename T, int CTCols=0> class cstep_row;
+	template<typename T, int CTCols=0> class step_row;
 
 	template<class Mat> class dense_mutable_view;
 
