@@ -37,6 +37,7 @@ namespace lmat
 
 	class whole : public IRange<whole>
 	{
+	public:
 		LMAT_ENSURE_INLINE index_t get_num(index_t dim) const
 		{
 			return dim;
