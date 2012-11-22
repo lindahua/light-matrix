@@ -42,7 +42,7 @@ dense_matrix<T> extract_block(const IDenseMatrix<LMat, T>& src,
 MN_CASE( mat_subview, col )
 {
 	typedef ref_matrix<double, M, N> rmat;
-	typedef ref_matrix_ex<double, M, N> rmat_ex;
+	typedef ref_block<double, M, N> rmat_ex;
 
 	const index_t m = M == 0 ? 7 : M;
 	const index_t n = N == 0 ? 8 : N;
@@ -85,7 +85,7 @@ MN_CASE( mat_subview, col )
 MN_CASE( mat_subview, row )
 {
 	typedef ref_matrix<double, M, N> rmat;
-	typedef ref_matrix_ex<double, M, N> rmat_ex;
+	typedef ref_block<double, M, N> rmat_ex;
 
 	const index_t m = M == 0 ? 7 : M;
 	const index_t n = N == 0 ? 8 : N;
@@ -128,7 +128,7 @@ MN_CASE( mat_subview, row )
 MN_CASE( mat_subview, col_whole )
 {
 	typedef ref_matrix<double, M, N> rmat;
-	typedef ref_matrix_ex<double, M, N> rmat_ex;
+	typedef ref_block<double, M, N> rmat_ex;
 
 	const index_t m = M == 0 ? 7 : M;
 	const index_t n = N == 0 ? 8 : N;
@@ -171,7 +171,7 @@ MN_CASE( mat_subview, col_whole )
 MN_CASE( mat_subview, row_whole )
 {
 	typedef ref_matrix<double, M, N> rmat;
-	typedef ref_matrix_ex<double, M, N> rmat_ex;
+	typedef ref_block<double, M, N> rmat_ex;
 
 	const index_t m = M == 0 ? 7 : M;
 	const index_t n = N == 0 ? 8 : N;
@@ -214,7 +214,7 @@ MN_CASE( mat_subview, row_whole )
 MN_CASE( mat_subview, col_range )
 {
 	typedef ref_matrix<double, M, N> rmat;
-	typedef ref_matrix_ex<double, M, N> rmat_ex;
+	typedef ref_block<double, M, N> rmat_ex;
 
 	const index_t m = M == 0 ? 7 : M;
 	const index_t n = N == 0 ? 8 : N;
@@ -269,7 +269,7 @@ MN_CASE( mat_subview, col_range )
 MN_CASE( mat_subview, row_range )
 {
 	typedef ref_matrix<double, M, N> rmat;
-	typedef ref_matrix_ex<double, M, N> rmat_ex;
+	typedef ref_block<double, M, N> rmat_ex;
 
 	const index_t m = M == 0 ? 7 : M;
 	const index_t n = N == 0 ? 8 : N;
@@ -324,7 +324,7 @@ MN_CASE( mat_subview, row_range )
 MN_CASE( mat_subview, whole_whole )
 {
 	typedef ref_matrix<double, M, N> rmat;
-	typedef ref_matrix_ex<double, M, N> rmat_ex;
+	typedef ref_block<double, M, N> rmat_ex;
 
 	const index_t m = M == 0 ? 7 : M;
 	const index_t n = N == 0 ? 8 : N;
@@ -356,7 +356,7 @@ MN_CASE( mat_subview, whole_whole )
 MN_CASE( mat_subview, whole_range )
 {
 	typedef ref_matrix<double, M, N> rmat;
-	typedef ref_matrix_ex<double, M, N> rmat_ex;
+	typedef ref_block<double, M, N> rmat_ex;
 
 	const index_t m = M == 0 ? 7 : M;
 	const index_t n = N == 0 ? 8 : N;
@@ -398,7 +398,7 @@ MN_CASE( mat_subview, whole_range )
 MN_CASE( mat_subview, range_whole )
 {
 	typedef ref_matrix<double, M, N> rmat;
-	typedef ref_matrix_ex<double, M, N> rmat_ex;
+	typedef ref_block<double, M, N> rmat_ex;
 
 	const index_t m = M == 0 ? 7 : M;
 	const index_t n = N == 0 ? 8 : N;
@@ -440,7 +440,7 @@ MN_CASE( mat_subview, range_whole )
 MN_CASE( mat_subview, range_range )
 {
 	typedef ref_matrix<double, M, N> rmat;
-	typedef ref_matrix_ex<double, M, N> rmat_ex;
+	typedef ref_block<double, M, N> rmat_ex;
 
 	const index_t m = M == 0 ? 7 : M;
 	const index_t n = N == 0 ? 8 : N;

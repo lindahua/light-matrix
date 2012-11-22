@@ -125,13 +125,13 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		static const_type get(const Mat& mat, const index_t i, whole)
 		{
-			return const_type(mat.ptr_data() + i, 1, mat.ncolumns(), mat.lead_dim());
+			return const_type(mat.ptr_data() + i, 1, mat.ncolumns(), mat.col_stride());
 		}
 
 		LMAT_ENSURE_INLINE
 		static type get(Mat& mat, const index_t i, whole)
 		{
-			return _type(mat.ptr_data() + i, 1, mat.ncolumns(), mat.lead_dim());
+			return _type(mat.ptr_data() + i, 1, mat.ncolumns(), mat.col_stride());
 		}
 
 	};
@@ -160,13 +160,13 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		static const_type get(const Mat& mat, const index_t i, const range& rg)
 		{
-			return const_type(mat.ptr_col(rg.begin_index()) + i, 1, rg.num(), mat.lead_dim());
+			return const_type(mat.ptr_col(rg.begin_index()) + i, 1, rg.num(), mat.col_stride());
 		}
 
 		LMAT_ENSURE_INLINE
 		static type get(Mat& mat, const index_t i, const range& rg)
 		{
-			return _type(mat.ptr_col(rg.begin_index()) + i, 1, rg.num(), mat.lead_dim());
+			return _type(mat.ptr_col(rg.begin_index()) + i, 1, rg.num(), mat.col_stride());
 		}
 
 	};
@@ -242,13 +242,13 @@ namespace lmat
 			LMAT_ENSURE_INLINE
 			static const_type get(const Mat& mat, const index_t j, const index_t n)
 			{
-				return const_type(mat.ptr_col(j), mat.nrows(), n, mat.lead_dim());
+				return const_type(mat.ptr_col(j), mat.nrows(), n, mat.col_stride());
 			}
 
 			LMAT_ENSURE_INLINE
 			static type get(Mat& mat, const index_t j, const index_t n)
 			{
-				return _type(mat.ptr_col(j), mat.nrows(), n, mat.lead_dim());
+				return _type(mat.ptr_col(j), mat.nrows(), n, mat.col_stride());
 			}
 		};
 	}
@@ -324,14 +324,14 @@ namespace lmat
 		static const_type get(const Mat& mat, const range& rg, whole)
 		{
 			return const_type(mat.ptr_data() + rg.begin_index(), rg.num(),
-					mat.ncolumns(), mat.lead_dim());
+					mat.ncolumns(), mat.col_stride());
 		}
 
 		LMAT_ENSURE_INLINE
 		static type get(Mat& mat, const range& rg, whole)
 		{
 			return _type(mat.ptr_data() + rg.begin_index(), rg.num(),
-					mat.ncolumns(), mat.lead_dim());
+					mat.ncolumns(), mat.col_stride());
 		}
 	};
 
@@ -361,7 +361,7 @@ namespace lmat
 		{
 			return const_type(
 					mat.ptr_col(crg.begin_index()) + rrg.begin_index(),
-					rrg.num(), crg.num(), mat.lead_dim());
+					rrg.num(), crg.num(), mat.col_stride());
 		}
 
 		LMAT_ENSURE_INLINE
@@ -369,7 +369,7 @@ namespace lmat
 		{
 			return _type(
 					mat.ptr_col(crg.begin_index()) + rrg.begin_index(),
-					rrg.num(), crg.num(), mat.lead_dim());
+					rrg.num(), crg.num(), mat.col_stride());
 		}
 	};
 

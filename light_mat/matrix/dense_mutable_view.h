@@ -13,7 +13,7 @@
 #ifndef LIGHTMAT_DENSE_MUTABLE_VIEW_H_
 #define LIGHTMAT_DENSE_MUTABLE_VIEW_H_
 
-#include <light_mat/matrix/matrix_base.h>
+#include <light_mat/matrix/matrix_concepts.h>
 
 namespace lmat
 {
@@ -38,9 +38,17 @@ namespace lmat
 		template<class Expr>
 		LMAT_ENSURE_INLINE const dense_mutable_view& operator = (const IMatrixXpr<Expr, value_type>& r) const
 		{
-			default_assign(const_cast<dense_mutable_view&>(*this), r);
+			(const_cast<dense_mutable_view*>(this))->assign(r);
 			return *this;
 		}
+
+	private:
+		template<class Expr>
+		LMAT_ENSURE_INLINE void assign(const IMatrixXpr<Expr, value_type>& r)
+		{
+			Mat::operator = (r);
+		}
+
 
 	}; // end dense_wref_mat
 }
