@@ -175,6 +175,25 @@ row_f64 extract_row(const Mat& mat, index_t i, const Rgn& rgn)
 }
 
 
+template<class Mat>
+col_f64 extract_diag(const Mat& mat)
+{
+	const index_t m = mat.nrows();
+	const index_t n = mat.ncolumns();
+	const index_t len = m < n ? m : n;
+
+	col_f64 dv(len);
+
+	for (index_t i = 0; i < len; ++i)
+	{
+		dv[i] = mat(i, i);
+	}
+
+	return dv;
+}
+
+
+
 template<template<typename T, int R, int C> class ClassT, int M, int N>
 void test_col_view()
 {
@@ -413,6 +432,44 @@ void test_row_vrange()
 }
 
 
+template<template<typename T, int R, int C> class ClassT, int M, int N>
+void test_diag_view()
+{
+	const index_t m = M == 0 ? DM : M;
+	const index_t n = N == 0 ? DN : N;
+	const index_t dlen = m < n ? m : n;
+
+	typedef mat_maker<ClassT, M, N> maker_t;
+	typedef typename maker_t::cmat_t cmat_t;
+	typedef typename maker_t::mat_t mat_t;
+
+	typedef typename diagview_map<mat_t>::const_type cdview_t;
+	typedef typename diagview_map<mat_t>::_type dview_t;
+
+	const index_t max_size = maker_t::max_size(m, n);
+
+	dblock<double> s(max_size, zero());
+	fill_lin(s);
+
+	cmat_t a = maker_t::get_cmat(s.ptr_data(), m, n);
+	mat_t b = maker_t::get_mat(s.ptr_data(), m, n);
+
+	col_f64 dv_ref = extract_diag(a);
+
+	cdview_t dv_c = a.diag();
+	dview_t dv_u = b.diag();
+
+	ASSERT_EQ(dv_c.nrows(), dlen);
+	ASSERT_EQ(dv_c.ncolumns(), 1);
+	ASSERT_EQ(dv_u.nrows(), dlen);
+	ASSERT_EQ(dv_u.ncolumns(), 1);
+
+	ASSERT_VEC_EQ(dlen, dv_c, dv_ref);
+	ASSERT_VEC_EQ(dlen, dv_u, dv_ref);
+
+}
+
+
 
 
 // Columns
@@ -640,6 +697,24 @@ N_CASE( row_subvec, step_of_grid )
 }
 
 
+// diag-view
+
+MN_CASE( diagview, of_mat )
+{
+	test_diag_view<ref_matrix, M, N>();
+}
+
+MN_CASE( diagview, of_block )
+{
+	test_diag_view<ref_block, M, N>();
+}
+
+MN_CASE( diagview, of_grid )
+{
+	test_diag_view<ref_grid, M, N>();
+}
+
+
 
 
 BEGIN_TPACK( colview_of_mat )
@@ -740,6 +815,19 @@ BEGIN_TPACK( rowstep_of_grid )
 END_TPACK
 
 
+BEGIN_TPACK( diagview_of_mat )
+	ADD_MN_CASE_3X3( diagview, of_mat, DM, DN )
+END_TPACK
+
+BEGIN_TPACK( diagview_of_block )
+	ADD_MN_CASE_3X3( diagview, of_block, DM, DN )
+END_TPACK
+
+BEGIN_TPACK( diagview_of_grid )
+	ADD_MN_CASE_3X3( diagview, of_grid, DM, DN )
+END_TPACK
+
+
 BEGIN_TPACK( col_subvec )
 	ADD_N_CASE( col_subvec, whole_of_mat, 0 )
 	ADD_N_CASE( col_subvec, whole_of_block, 1 )
@@ -808,6 +896,13 @@ BEGIN_MAIN_SUITE
 
 	ADD_TPACK( col_subvec )
 	ADD_TPACK( row_subvec )
+
+	// diag view
+
+	ADD_TPACK( diagview_of_mat )
+	ADD_TPACK( diagview_of_block )
+	ADD_TPACK( diagview_of_grid )
+
 END_MAIN_SUITE
 
 

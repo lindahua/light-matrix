@@ -94,6 +94,7 @@ namespace lmat
 	template<class Mat, typename Range> struct vecview_map;
 	template<class Mat, typename RowRange> struct colview_map;
 	template<class Mat, typename ColRange> struct rowview_map;
+	template<class Mat> struct diagview_map;
 	template<class Mat, typename RowRange, typename ColRange> struct matview_map;
 
 	template<class Fun, typename Arg_HP, class Arg> class unary_ewise_expr;

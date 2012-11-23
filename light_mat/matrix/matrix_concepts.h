@@ -310,6 +310,19 @@ namespace lmat
 					row_rgn.derived(), col_rgn.derived());
 		}
 
+		// diagonal view
+
+		LMAT_ENSURE_INLINE
+		typename diagview_map<Derived>::const_type diag() const
+		{
+			return diagview_map<Derived>::get(derived());
+		}
+
+		LMAT_ENSURE_INLINE
+		typename diagview_map<Derived>::type diag()
+		{
+			return diagview_map<Derived>::get(derived());
+		}
 
 	}; // end class IDenseMatrixBlock
 

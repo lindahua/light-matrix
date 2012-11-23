@@ -123,6 +123,56 @@ namespace lmat
 	};
 
 
+	// diagonal views
+
+	template<class Mat>
+	struct diagview_map
+	{
+		typedef typename matrix_traits<Mat>::value_type value_type;
+
+		static const int M = ct_rows<Mat>::value;
+		static const int N = ct_cols<Mat>::value;
+		static const int L = M < N ? M : N;
+
+		typedef cref_grid<value_type, L, 1> const_type;
+
+		typedef typename
+				if_<is_readonly_mat<Mat>,
+					cref_grid<value_type, L, 1>,
+					 ref_grid<value_type, L, 1>
+				>::type type;
+
+		typedef typename
+				if_<is_readonly_mat<Mat>,
+					const_type,
+					dense_mutable_view<type>
+				>::type _type;
+
+		LMAT_ENSURE_INLINE
+		static const_type get(const Mat& mat)
+		{
+			const index_t m = mat.nrows();
+			const index_t n = mat.ncolumns();
+			const index_t len = m < n ? m : n;
+			const index_t step = mat.row_stride() + mat.col_stride();
+
+			return const_type(mat.ptr_data(), len, 1, step, 0);
+		}
+
+		LMAT_ENSURE_INLINE
+		static _type get(Mat& mat)
+		{
+			const index_t m = mat.nrows();
+			const index_t n = mat.ncolumns();
+			const index_t len = m < n ? m : n;
+			const index_t step = mat.row_stride() + mat.col_stride();
+
+			return type(mat.ptr_data(), len, 1, step, 0);
+		}
+	};
+
+
+
 	// mat views
 
 	template<class Mat, class RowRange, class ColRange>
