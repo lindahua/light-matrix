@@ -162,6 +162,18 @@ namespace lmat
 			return derived().ptr_col(j);
 		}
 
+		LMAT_ENSURE_INLINE const_pointer ptr_row(const index_type i) const
+		{
+			LMAT_CHECK_IDX(i, nrows())
+			return derived().ptr_row(i);
+		}
+
+		LMAT_ENSURE_INLINE pointer ptr_row(const index_type i)
+		{
+			LMAT_CHECK_IDX(i, nrows())
+			return derived().ptr_row(i);
+		}
+
 		LMAT_ENSURE_INLINE const_reference elem(const index_type i, const index_type j) const
 		{
 			return derived().elem(i, j);
@@ -186,6 +198,24 @@ namespace lmat
 
 
 	public:
+
+		// sub-vector views (only apply to compile-time vectors)
+
+		template<class Range>
+		LMAT_ENSURE_INLINE
+		typename vecview_map<Derived, Range>::const_type
+		operator() (const IRange<Range>& rgn) const
+		{
+			return vecview_map<Derived, Range>::get(derived(), rgn.derived());
+		}
+
+		template<class Range>
+		LMAT_ENSURE_INLINE
+		typename vecview_map<Derived, Range>::type
+		operator() (const IRange<Range>& rgn)
+		{
+			return vecview_map<Derived, Range>::get(derived(), rgn.derived());
+		}
 
 		// column views
 

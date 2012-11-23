@@ -88,6 +88,16 @@ namespace lmat
 			return ptr_data() + layout().col_offset(j);
 		}
 
+		LMAT_ENSURE_INLINE const_pointer ptr_row(const index_type i) const
+		{
+			return ptr_data() + layout().row_offset(i);
+		}
+
+		LMAT_ENSURE_INLINE pointer ptr_row(const index_type i)
+		{
+			return ptr_data() + layout().row_offset(i);
+		}
+
 		LMAT_ENSURE_INLINE const_reference elem(const index_type i, const index_type j) const
 		{
 			return ptr_data()[layout().offset(i, j)];

@@ -61,7 +61,7 @@ namespace lmat
 		static const int ct_num_cols = N;
 
 		static const bool ct_is_continuous = (M == 1 && N == 1);
-		static const bool ct_is_percol_continuous = N == 1;
+		static const bool ct_is_percol_continuous = M == 1;
 
 		typedef matrix_shape<M, N> shape_type;
 	};
@@ -133,6 +133,12 @@ namespace lmat
 		index_t col_offset(index_t j) const
 		{
 			return derived().col_offset(j);
+		}
+
+		LMAT_ENSURE_INLINE
+		index_t row_offset(index_t i) const
+		{
+			return derived().row_offset(i);
 		}
 
 	};
@@ -243,6 +249,12 @@ namespace lmat
 		index_t col_offset(index_t j) const
 		{
 			return m_shape.nrows() * j;
+		}
+
+		LMAT_ENSURE_INLINE
+		index_t row_offset(index_t i) const
+		{
+			return i;
 		}
 
 		LMAT_ENSURE_INLINE
@@ -377,6 +389,12 @@ namespace lmat
 		}
 
 		LMAT_ENSURE_INLINE
+		index_t row_offset(index_t i) const
+		{
+			return i;
+		}
+
+		LMAT_ENSURE_INLINE
 		index_t lin_offset(index_t i) const
 		{
 			return detail::block_cm_linoffset(m_shape, i, m_leaddim);
@@ -508,6 +526,12 @@ namespace lmat
 		index_t col_offset(index_t j) const
 		{
 			return m_colstride * j;
+		}
+
+		LMAT_ENSURE_INLINE
+		index_t row_offset(index_t i) const
+		{
+			return i * m_rowstride;
 		}
 
 		LMAT_ENSURE_INLINE

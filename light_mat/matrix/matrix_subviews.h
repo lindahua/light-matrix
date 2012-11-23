@@ -13,365 +13,114 @@
 #ifndef LIGHTMAT_MATRIX_SUBVIEWS_H_
 #define LIGHTMAT_MATRIX_SUBVIEWS_H_
 
-#include <light_mat/matrix/matrix_meta.h>
+#include "bits/matrix_colviews_internal.h"
+#include "bits/matrix_rowviews_internal.h"
 
 namespace lmat
 {
-	/********************************************
-	 *
-	 *  column views
-	 *
-	 ********************************************/
 
-	template<class Mat>
-	struct colview_map<Mat, whole>
+	// column views
+
+	template<class Mat, class Rgn>
+	struct colview_map
 	{
-		typedef typename matrix_traits<Mat>::value_type value_type;
+		static const bool is_percol_cont = ct_is_percol_continuous<Mat>::value;
+		static const bool is_readonly = is_readonly_mat<Mat>::value;
 
-		static const int ctrows = ct_rows<Mat>::value;
+		typedef detail::colview_helper<Mat, Rgn, is_percol_cont, true> chelper_t;
+		typedef detail::colview_helper<Mat, Rgn, is_percol_cont, is_readonly> helper_t;
 
-		typedef cref_matrix<value_type, ctrows, 1> const_type;
-		typedef  ref_matrix<value_type, ctrows, 1> non_const_type;
-
-		typedef typename
-				if_<is_readonly_mat<Mat>,
-					const_type,
-					non_const_type
-				>::type _type;
-
-		typedef typename
-				if_<is_readonly_mat<Mat>,
-					const_type,
-					dense_mutable_view<non_const_type>
-				>::type type;
-
-		LMAT_ENSURE_INLINE
-		static const_type get(const Mat& mat, const index_t j, whole)
-		{
-			return const_type(mat.ptr_col(j), mat.nrows(), 1);
-		}
-
-		LMAT_ENSURE_INLINE
-		static type get(Mat& mat, const index_t j, whole)
-		{
-			return _type(mat.ptr_col(j), mat.nrows(), 1);
-		}
-	};
-
-
-	template<class Mat>
-	struct colview_map<Mat, range>
-	{
-		typedef typename matrix_traits<Mat>::value_type value_type;
-
-		typedef cref_matrix<value_type, 0, 1> const_type;
-		typedef  ref_matrix<value_type, 0, 1> non_const_type;
-
-		typedef typename
-				if_<is_readonly_mat<Mat>,
-					const_type,
-					non_const_type
-				>::type _type;
-
-		typedef typename
-				if_<is_readonly_mat<Mat>,
-					const_type,
-					dense_mutable_view<non_const_type>
-				>::type type;
-
-		LMAT_ENSURE_INLINE
-		static const_type get(const Mat& mat, const index_t j, const range &rg)
-		{
-			return const_type(mat.ptr_col(j) + rg.begin_index(), rg.num(), 1);
-		}
-
-		LMAT_ENSURE_INLINE
-		static type get(Mat& mat, const index_t j, const range& rg)
-		{
-			return _type(mat.ptr_col(j) + rg.begin_index(), rg.num(), 1);
-		}
-	};
-
-
-
-	/********************************************
-	 *
-	 *  row views
-	 *
-	 ********************************************/
-
-	template<class Mat>
-	struct rowview_map<Mat, whole>
-	{
-		typedef typename matrix_traits<Mat>::value_type value_type;
-
-		static const int ctcols = ct_cols<Mat>::value;
-
-		typedef cref_block<value_type, 1, ctcols> const_type;
-		typedef  ref_block<value_type, 1, ctcols> non_const_type;
-
-		typedef typename
-				if_<is_readonly_mat<Mat>,
-					const_type,
-					non_const_type
-				>::type _type;
-
-		typedef typename
-				if_<is_readonly_mat<Mat>,
-					const_type,
-					dense_mutable_view<non_const_type>
-				>::type type;
-
-		LMAT_ENSURE_INLINE
-		static const_type get(const Mat& mat, const index_t i, whole)
-		{
-			return const_type(mat.ptr_data() + i, 1, mat.ncolumns(), mat.col_stride());
-		}
-
-		LMAT_ENSURE_INLINE
-		static type get(Mat& mat, const index_t i, whole)
-		{
-			return _type(mat.ptr_data() + i, 1, mat.ncolumns(), mat.col_stride());
-		}
-
-	};
-
-
-	template<class Mat>
-	struct rowview_map<Mat, range>
-	{
-		typedef typename matrix_traits<Mat>::value_type value_type;
-
-		typedef cref_block<value_type, 1, 0> const_type;
-		typedef  ref_block<value_type, 1, 0> non_const_type;
-
-		typedef typename
-				if_<is_readonly_mat<Mat>,
-					const_type,
-					non_const_type
-				>::type _type;
-
-		typedef typename
-				if_<is_readonly_mat<Mat>,
-					const_type,
-					dense_mutable_view<non_const_type>
-				>::type type;
-
-		LMAT_ENSURE_INLINE
-		static const_type get(const Mat& mat, const index_t i, const range& rg)
-		{
-			return const_type(mat.ptr_col(rg.begin_index()) + i, 1, rg.num(), mat.col_stride());
-		}
-
-		LMAT_ENSURE_INLINE
-		static type get(Mat& mat, const index_t i, const range& rg)
-		{
-			return _type(mat.ptr_col(rg.begin_index()) + i, 1, rg.num(), mat.col_stride());
-		}
-
-	};
-
-
-
-	/********************************************
-	 *
-	 *  subviews
-	 *
-	 ********************************************/
-
-	namespace detail
-	{
-		template<class Mat, int CTCols, bool IsCont> struct multicol_helper;
-
-		template<class Mat, int CTCols>
-		struct multicol_helper<Mat, CTCols, true>
-		{
-			typedef typename matrix_traits<Mat>::value_type value_type;
-			static const int ctrows = ct_rows<Mat>::value;
-
-			typedef cref_matrix<value_type, ctrows, CTCols> const_type;
-			typedef  ref_matrix<value_type, ctrows, CTCols> non_const_type;
-
-			typedef typename
-					if_<is_readonly_mat<Mat>,
-						const_type,
-						non_const_type
-					>::type _type;
-
-			typedef typename
-					if_<is_readonly_mat<Mat>,
-						const_type,
-						dense_mutable_view<non_const_type>
-					>::type type;
-
-			LMAT_ENSURE_INLINE
-			static const_type get(const Mat& mat, const index_t j, const index_t n)
-			{
-				return const_type(mat.ptr_col(j), mat.nrows(), n);
-			}
-
-			LMAT_ENSURE_INLINE
-			static type get(Mat& mat, const index_t j, const index_t n)
-			{
-				return _type(mat.ptr_col(j), mat.nrows(), n);
-			}
-		};
-
-
-		template<class Mat, int CTCols>
-		struct multicol_helper<Mat, CTCols, false>
-		{
-			typedef typename matrix_traits<Mat>::value_type value_type;
-			static const int ctrows = ct_rows<Mat>::value;
-
-			typedef cref_block<value_type, ctrows, CTCols> const_type;
-			typedef  ref_block<value_type, ctrows, CTCols> non_const_type;
-
-			typedef typename
-					if_<is_readonly_mat<Mat>,
-						const_type,
-						non_const_type
-					>::type _type;
-
-			typedef typename
-					if_<is_readonly_mat<Mat>,
-						const_type,
-						dense_mutable_view<non_const_type>
-					>::type type;
-
-			LMAT_ENSURE_INLINE
-			static const_type get(const Mat& mat, const index_t j, const index_t n)
-			{
-				return const_type(mat.ptr_col(j), mat.nrows(), n, mat.col_stride());
-			}
-
-			LMAT_ENSURE_INLINE
-			static type get(Mat& mat, const index_t j, const index_t n)
-			{
-				return _type(mat.ptr_col(j), mat.nrows(), n, mat.col_stride());
-			}
-		};
-	}
-
-	template<class Mat>
-	struct matview_map<Mat, whole, whole>
-	{
-		static const bool is_continuous = ct_is_continuous<Mat>::value;
-		typedef detail::multicol_helper<Mat, ct_cols<Mat>::value, is_continuous> helper_t;
-
-		typedef typename helper_t::const_type const_type;
+		typedef typename chelper_t::type const_type;
 		typedef typename helper_t::type type;
 
+		typedef typename
+				if_<is_readonly_mat<Mat>,
+					const_type,
+					dense_mutable_view<type>
+				>::type _type;
+
 		LMAT_ENSURE_INLINE
-		static const_type get(const Mat& mat, whole, whole)
+		static const_type get(const Mat& mat, const index_t j, const Rgn& rgn)
 		{
-			return helper_t::get(mat, 0, mat.ncolumns());
+			return chelper_t::get(mat, j, rgn);
 		}
 
 		LMAT_ENSURE_INLINE
-		static type get(Mat& mat, whole, whole)
+		static _type get(Mat& mat, const index_t j, const Rgn& rgn)
 		{
-			return helper_t::get(mat, 0, mat.ncolumns());
+			return helper_t::get(mat, j, rgn);
 		}
 	};
 
 
-	template<class Mat>
-	struct matview_map<Mat, whole, range>
-	{
-		static const bool is_continuous = ct_is_continuous<Mat>::value;
-		typedef detail::multicol_helper<Mat, 0, is_continuous> helper_t;
+	// row views
 
-		typedef typename helper_t::const_type const_type;
+	template<class Mat, class Rgn>
+	struct rowview_map
+	{
+		static const bool is_perrow_cont = ct_is_continuous<Mat>::value && ct_is_row<Mat>::value;
+		static const bool is_readonly = is_readonly_mat<Mat>::value;
+
+		typedef detail::rowview_helper<Mat, Rgn, is_perrow_cont, true> chelper_t;
+		typedef detail::rowview_helper<Mat, Rgn, is_perrow_cont, is_readonly> helper_t;
+
+		typedef typename chelper_t::type const_type;
 		typedef typename helper_t::type type;
 
-		LMAT_ENSURE_INLINE
-		static const_type get(const Mat& mat, whole, const range& rg)
-		{
-			return helper_t::get(mat, rg.begin_index(), rg.num());
-		}
-
-		LMAT_ENSURE_INLINE
-		static type get(Mat& mat, whole, const range& rg)
-		{
-			return helper_t::get(mat, rg.begin_index(), rg.num());
-		}
-	};
-
-
-	template<class Mat>
-	struct matview_map<Mat, range, whole>
-	{
-		typedef typename matrix_traits<Mat>::value_type value_type;
-		static const int ctcols = ct_cols<Mat>::value;
-
-		typedef cref_block<value_type, 0, ctcols> const_type;
-		typedef  ref_block<value_type, 0, ctcols> non_const_type;
-
 		typedef typename
 				if_<is_readonly_mat<Mat>,
 					const_type,
-					non_const_type
+					dense_mutable_view<type>
 				>::type _type;
 
-		typedef typename
-				if_<is_readonly_mat<Mat>,
-					const_type,
-					dense_mutable_view<non_const_type>
-				>::type type;
-
 		LMAT_ENSURE_INLINE
-		static const_type get(const Mat& mat, const range& rg, whole)
+		static const_type get(const Mat& mat, const index_t i, const Rgn& rgn)
 		{
-			return const_type(mat.ptr_data() + rg.begin_index(), rg.num(),
-					mat.ncolumns(), mat.col_stride());
+			return chelper_t::get(mat, i, rgn);
 		}
 
 		LMAT_ENSURE_INLINE
-		static type get(Mat& mat, const range& rg, whole)
+		static _type get(Mat& mat, const index_t i, const Rgn& rgn)
 		{
-			return _type(mat.ptr_data() + rg.begin_index(), rg.num(),
-					mat.ncolumns(), mat.col_stride());
+			return helper_t::get(mat, i, rgn);
 		}
 	};
 
 
-	template<class Mat>
-	struct matview_map<Mat, range, range>
+	// vec views
+
+	struct NO_VECVIEWS_FOR_NON_COMPILE_TIME_VECTORS { };
+
+	template<class Mat, class Rgn>
+	struct vecview_map
 	{
-		typedef typename matrix_traits<Mat>::value_type value_type;
-
-		typedef cref_block<value_type, 0, 0> const_type;
-		typedef  ref_block<value_type, 0, 0> non_const_type;
-
 		typedef typename
-				if_<is_readonly_mat<Mat>,
-					const_type,
-					non_const_type
-				>::type _type;
+				if_<ct_is_col<Mat>,
+					colview_map<Mat, Rgn>,
+					typename
+					if_<ct_is_row<Mat>,
+						rowview_map<Mat, Rgn>,
+						NO_VECVIEWS_FOR_NON_COMPILE_TIME_VECTORS
+					>::type
+				>::type intern_t;
 
-		typedef typename
-				if_<is_readonly_mat<Mat>,
-					const_type,
-					dense_mutable_view<non_const_type>
-				>::type type;
+		typedef typename intern_t::const_type const_type;
+		typedef typename intern_t::type type;
+		typedef typename intern_t::_type _type;
 
 		LMAT_ENSURE_INLINE
-		static const_type get(const Mat& mat, const range& rrg, const range& crg)
+		static const_type get(const Mat& mat, const Rgn& rgn)
 		{
-			return const_type(
-					mat.ptr_col(crg.begin_index()) + rrg.begin_index(),
-					rrg.num(), crg.num(), mat.col_stride());
+			return intern_t::get(mat, 0, rgn);
 		}
 
 		LMAT_ENSURE_INLINE
-		static type get(Mat& mat, const range& rrg, const range& crg)
+		static _type get(Mat& mat, const Rgn& rgn)
 		{
-			return _type(
-					mat.ptr_col(crg.begin_index()) + rrg.begin_index(),
-					rrg.num(), crg.num(), mat.col_stride());
+			return intern_t::get(mat, 0, rgn);
 		}
 	};
+
 
 }
 

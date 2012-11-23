@@ -186,7 +186,7 @@ void test_col_view()
 	typedef typename maker_t::mat_t mat_t;
 
 	typedef typename colview_map<mat_t, whole>::const_type ccol_t;
-	typedef typename colview_map<mat_t, whole>::non_const_type col_t;
+	typedef typename colview_map<mat_t, whole>::_type col_t;
 
 	const index_t max_size = maker_t::max_size(m, n);
 
@@ -225,7 +225,7 @@ void test_col_range()
 	typedef typename maker_t::mat_t mat_t;
 
 	typedef typename colview_map<mat_t, Rgn>::const_type ccol_t;
-	typedef typename colview_map<mat_t, Rgn>::non_const_type col_t;
+	typedef typename colview_map<mat_t, Rgn>::_type col_t;
 
 	const index_t max_size = maker_t::max_size(m, n);
 
@@ -267,7 +267,7 @@ void test_row_view()
 	typedef typename maker_t::mat_t mat_t;
 
 	typedef typename rowview_map<mat_t, whole>::const_type crow_t;
-	typedef typename rowview_map<mat_t, whole>::non_const_type row_t;
+	typedef typename rowview_map<mat_t, whole>::type row_t;
 
 	const index_t max_size = maker_t::max_size(m, n);
 
@@ -306,7 +306,7 @@ void test_row_range()
 	typedef typename maker_t::mat_t mat_t;
 
 	typedef typename rowview_map<mat_t, Rgn>::const_type crow_t;
-	typedef typename rowview_map<mat_t, Rgn>::non_const_type row_t;
+	typedef typename rowview_map<mat_t, Rgn>::type row_t;
 
 	const index_t max_size = maker_t::max_size(m, n);
 
@@ -337,7 +337,85 @@ void test_row_range()
 }
 
 
+template<template<typename T, int R, int C> class ClassT, class Rgn, int M>
+void test_col_vrange()
+{
+	const index_t m = M == 0 ? DM : M;
 
+	typedef mat_maker<ClassT, M, 1> maker_t;
+	typedef typename maker_t::cmat_t cmat_t;
+	typedef typename maker_t::mat_t mat_t;
+
+	typedef typename colview_map<mat_t, Rgn>::const_type ccol_t;
+	typedef typename colview_map<mat_t, Rgn>::_type col_t;
+
+	const index_t max_size = maker_t::max_size(m, 1);
+
+	dblock<double> s(max_size, zero());
+	fill_lin(s);
+
+	cmat_t a = maker_t::get_cmat(s.ptr_data(), m, 1);
+	mat_t b = maker_t::get_mat(s.ptr_data(), m, 1);
+
+	Rgn rgn = range_maker<Rgn>::get(m);
+	const index_t len = rgn.get_num(m);
+
+	col_f64 col_ref = extract_col(a, 0, rgn);
+
+	ccol_t col_c = a(rgn);
+	col_t col_u = b(rgn);
+
+	ASSERT_EQ(col_c.nrows(), len);
+	ASSERT_EQ(col_c.ncolumns(), 1);
+	ASSERT_EQ(col_u.nrows(), len);
+	ASSERT_EQ(col_u.ncolumns(), 1);
+
+	ASSERT_VEC_EQ(len, col_c, col_ref);
+	ASSERT_VEC_EQ(len, col_u, col_ref);
+}
+
+
+template<template<typename T, int R, int C> class ClassT, class Rgn, int N>
+void test_row_vrange()
+{
+	const index_t n = N == 0 ? DN : N;
+
+	typedef mat_maker<ClassT, 1, N> maker_t;
+	typedef typename maker_t::cmat_t cmat_t;
+	typedef typename maker_t::mat_t mat_t;
+
+	typedef typename rowview_map<mat_t, Rgn>::const_type crow_t;
+	typedef typename rowview_map<mat_t, Rgn>::_type row_t;
+
+	const index_t max_size = maker_t::max_size(1, n);
+
+	dblock<double> s(max_size, zero());
+	fill_lin(s);
+
+	cmat_t a = maker_t::get_cmat(s.ptr_data(), 1, n);
+	mat_t b = maker_t::get_mat(s.ptr_data(), 1, n);
+
+	Rgn rgn = range_maker<Rgn>::get(n);
+	const index_t len = rgn.get_num(n);
+
+	row_f64 row_ref = extract_row(a, 0, rgn);
+
+	crow_t row_c = a(rgn);
+	row_t row_u = b(rgn);
+
+	ASSERT_EQ(row_c.nrows(), 1);
+	ASSERT_EQ(row_c.ncolumns(), len);
+	ASSERT_EQ(row_u.nrows(), 1);
+	ASSERT_EQ(row_u.ncolumns(), len);
+
+	ASSERT_VEC_EQ(len, row_c, row_ref);
+	ASSERT_VEC_EQ(len, row_u, row_ref);
+}
+
+
+
+
+// Columns
 
 MN_CASE( colview, of_mat )
 {
@@ -347,6 +425,11 @@ MN_CASE( colview, of_mat )
 MN_CASE( colview, of_block )
 {
 	test_col_view<ref_block, M, N>();
+}
+
+MN_CASE( colview, of_grid )
+{
+	test_col_view<ref_grid, M, N>();
 }
 
 MN_CASE( colwhole, of_mat )
@@ -359,6 +442,11 @@ MN_CASE( colwhole, of_block )
 	test_col_range<ref_block, whole, M, N>();
 }
 
+MN_CASE( colwhole, of_grid )
+{
+	test_col_range<ref_grid, whole, M, N>();
+}
+
 MN_CASE( colrange, of_mat )
 {
 	test_col_range<ref_matrix, range, M, N>();
@@ -369,6 +457,28 @@ MN_CASE( colrange, of_block )
 	test_col_range<ref_block, range, M, N>();
 }
 
+MN_CASE( colrange, of_grid )
+{
+	test_col_range<ref_grid, range, M, N>();
+}
+
+MN_CASE( colstep, of_mat )
+{
+	test_col_range<ref_matrix, step_range, M, N>();
+}
+
+MN_CASE( colstep, of_block )
+{
+	test_col_range<ref_block, step_range, M, N>();
+}
+
+MN_CASE( colstep, of_grid )
+{
+	test_col_range<ref_grid, step_range, M, N>();
+}
+
+
+// Rows
 
 MN_CASE( rowview, of_mat )
 {
@@ -378,6 +488,11 @@ MN_CASE( rowview, of_mat )
 MN_CASE( rowview, of_block )
 {
 	test_row_view<ref_block, M, N>();
+}
+
+MN_CASE( rowview, of_grid )
+{
+	test_row_view<ref_grid, M, N>();
 }
 
 MN_CASE( rowwhole, of_mat )
@@ -390,6 +505,11 @@ MN_CASE( rowwhole, of_block )
 	test_row_range<ref_block, whole, M, N>();
 }
 
+MN_CASE( rowwhole, of_grid )
+{
+	test_row_range<ref_grid, whole, M, N>();
+}
+
 MN_CASE( rowrange, of_mat )
 {
 	test_row_range<ref_matrix, range, M, N>();
@@ -399,6 +519,126 @@ MN_CASE( rowrange, of_block )
 {
 	test_row_range<ref_block, range, M, N>();
 }
+
+MN_CASE( rowrange, of_grid )
+{
+	test_row_range<ref_grid, range, M, N>();
+}
+
+MN_CASE( rowstep, of_mat )
+{
+	test_row_range<ref_matrix, step_range, M, N>();
+}
+
+MN_CASE( rowstep, of_block )
+{
+	test_row_range<ref_block, step_range, M, N>();
+}
+
+MN_CASE( rowstep, of_grid )
+{
+	test_row_range<ref_grid, step_range, M, N>();
+}
+
+
+// V-Range
+
+
+// sub-vec of column
+
+N_CASE( col_subvec, whole_of_mat )
+{
+	test_col_vrange<ref_matrix, whole, N>();
+}
+
+N_CASE( col_subvec, whole_of_block )
+{
+	test_col_vrange<ref_block, whole, N>();
+}
+
+N_CASE( col_subvec, whole_of_grid )
+{
+	test_col_vrange<ref_grid, whole, N>();
+}
+
+N_CASE( col_subvec, range_of_mat )
+{
+	test_col_vrange<ref_matrix, range, N>();
+}
+
+N_CASE( col_subvec, range_of_block )
+{
+	test_col_vrange<ref_block, range, N>();
+}
+
+N_CASE( col_subvec, range_of_grid )
+{
+	test_col_vrange<ref_grid, range, N>();
+}
+
+N_CASE( col_subvec, step_of_mat )
+{
+	test_col_vrange<ref_matrix, step_range, N>();
+}
+
+N_CASE( col_subvec, step_of_block )
+{
+	test_col_vrange<ref_block, step_range, N>();
+}
+
+N_CASE( col_subvec, step_of_grid )
+{
+	test_col_vrange<ref_grid, step_range, N>();
+}
+
+
+// sub-vec of row
+
+N_CASE( row_subvec, whole_of_mat )
+{
+	test_row_vrange<ref_matrix, whole, N>();
+}
+
+N_CASE( row_subvec, whole_of_block )
+{
+	test_row_vrange<ref_block, whole, N>();
+}
+
+N_CASE( row_subvec, whole_of_grid )
+{
+	test_row_vrange<ref_grid, whole, N>();
+}
+
+N_CASE( row_subvec, range_of_mat )
+{
+	test_row_vrange<ref_matrix, range, N>();
+}
+
+N_CASE( row_subvec, range_of_block )
+{
+	test_row_vrange<ref_block, range, N>();
+}
+
+N_CASE( row_subvec, range_of_grid )
+{
+	test_row_vrange<ref_grid, range, N>();
+}
+
+N_CASE( row_subvec, step_of_mat )
+{
+	test_row_vrange<ref_matrix, step_range, N>();
+}
+
+N_CASE( row_subvec, step_of_block )
+{
+	test_row_vrange<ref_block, step_range, N>();
+}
+
+N_CASE( row_subvec, step_of_grid )
+{
+	test_row_vrange<ref_grid, step_range, N>();
+}
+
 
 
 
@@ -410,12 +650,20 @@ BEGIN_TPACK( colview_of_block )
 	ADD_MN_CASE_3X3( colview, of_block, DM, DN )
 END_TPACK
 
+BEGIN_TPACK( colview_of_grid )
+	ADD_MN_CASE_3X3( colview, of_grid, DM, DN )
+END_TPACK
+
 BEGIN_TPACK( colwhole_of_mat )
 	ADD_MN_CASE_3X3( colwhole, of_mat, DM, DN )
 END_TPACK
 
 BEGIN_TPACK( colwhole_of_block )
 	ADD_MN_CASE_3X3( colwhole, of_block, DM, DN )
+END_TPACK
+
+BEGIN_TPACK( colwhole_of_grid )
+	ADD_MN_CASE_3X3( colwhole, of_grid, DM, DN )
 END_TPACK
 
 BEGIN_TPACK( colrange_of_mat )
@@ -426,12 +674,33 @@ BEGIN_TPACK( colrange_of_block )
 	ADD_MN_CASE_3X3( colrange, of_block, DM, DN )
 END_TPACK
 
+BEGIN_TPACK( colrange_of_grid )
+	ADD_MN_CASE_3X3( colrange, of_grid, DM, DN )
+END_TPACK
+
+BEGIN_TPACK( colstep_of_mat )
+	ADD_MN_CASE_3X3( colstep, of_mat, DM, DN )
+END_TPACK
+
+BEGIN_TPACK( colstep_of_block )
+	ADD_MN_CASE_3X3( colstep, of_block, DM, DN )
+END_TPACK
+
+BEGIN_TPACK( colstep_of_grid )
+	ADD_MN_CASE_3X3( colstep, of_grid, DM, DN )
+END_TPACK
+
+
 BEGIN_TPACK( rowview_of_mat )
 	ADD_MN_CASE_3X3( rowview, of_mat, DM, DN )
 END_TPACK
 
 BEGIN_TPACK( rowview_of_block )
 	ADD_MN_CASE_3X3( rowview, of_block, DM, DN )
+END_TPACK
+
+BEGIN_TPACK( rowview_of_grid )
+	ADD_MN_CASE_3X3( rowview, of_grid, DM, DN )
 END_TPACK
 
 BEGIN_TPACK( rowwhole_of_mat )
@@ -442,6 +711,10 @@ BEGIN_TPACK( rowwhole_of_block )
 	ADD_MN_CASE_3X3( rowwhole, of_block, DM, DN )
 END_TPACK
 
+BEGIN_TPACK( rowwhole_of_grid )
+	ADD_MN_CASE_3X3( rowwhole, of_grid, DM, DN )
+END_TPACK
+
 BEGIN_TPACK( rowrange_of_mat )
 	ADD_MN_CASE_3X3( rowrange, of_mat, DM, DN )
 END_TPACK
@@ -450,21 +723,91 @@ BEGIN_TPACK( rowrange_of_block )
 	ADD_MN_CASE_3X3( rowrange, of_block, DM, DN )
 END_TPACK
 
+BEGIN_TPACK( rowrange_of_grid )
+	ADD_MN_CASE_3X3( rowrange, of_grid, DM, DN )
+END_TPACK
+
+BEGIN_TPACK( rowstep_of_mat )
+	ADD_MN_CASE_3X3( rowstep, of_mat, DM, DN )
+END_TPACK
+
+BEGIN_TPACK( rowstep_of_block )
+	ADD_MN_CASE_3X3( rowstep, of_block, DM, DN )
+END_TPACK
+
+BEGIN_TPACK( rowstep_of_grid )
+	ADD_MN_CASE_3X3( rowstep, of_grid, DM, DN )
+END_TPACK
+
+
+BEGIN_TPACK( col_subvec )
+	ADD_N_CASE( col_subvec, whole_of_mat, 0 )
+	ADD_N_CASE( col_subvec, whole_of_block, 1 )
+	ADD_N_CASE( col_subvec, whole_of_grid, DM )
+
+	ADD_N_CASE( col_subvec, range_of_mat, 0 )
+	ADD_N_CASE( col_subvec, range_of_block, 1 )
+	ADD_N_CASE( col_subvec, range_of_grid, DM )
+
+	ADD_N_CASE( col_subvec, step_of_mat, 0 )
+	ADD_N_CASE( col_subvec, step_of_block, 1 )
+	ADD_N_CASE( col_subvec, step_of_grid, DM )
+END_TPACK
+
+BEGIN_TPACK( row_subvec )
+	ADD_N_CASE( row_subvec, whole_of_mat, 0 )
+	ADD_N_CASE( row_subvec, whole_of_grid, DM )
+
+	ADD_N_CASE( row_subvec, range_of_mat, 0 )
+	ADD_N_CASE( row_subvec, range_of_grid, DM )
+
+	ADD_N_CASE( row_subvec, step_of_mat, 0 )
+	ADD_N_CASE( row_subvec, step_of_grid, DM )
+END_TPACK
+
+
 
 BEGIN_MAIN_SUITE
+	// col views
+
 	ADD_TPACK( colview_of_mat )
 	ADD_TPACK( colview_of_block )
+	ADD_TPACK( colview_of_grid )
+
 	ADD_TPACK( colwhole_of_mat )
 	ADD_TPACK( colwhole_of_block )
+	ADD_TPACK( colwhole_of_grid )
+
 	ADD_TPACK( colrange_of_mat )
 	ADD_TPACK( colrange_of_block )
+	ADD_TPACK( colrange_of_grid )
+
+	ADD_TPACK( colstep_of_mat )
+	ADD_TPACK( colstep_of_block )
+	ADD_TPACK( colstep_of_grid )
+
+	// row views
 
 	ADD_TPACK( rowview_of_mat )
 	ADD_TPACK( rowview_of_block )
+	ADD_TPACK( rowview_of_grid )
+
 	ADD_TPACK( rowwhole_of_mat )
 	ADD_TPACK( rowwhole_of_block )
+	ADD_TPACK( rowwhole_of_grid )
+
 	ADD_TPACK( rowrange_of_mat )
 	ADD_TPACK( rowrange_of_block )
+	ADD_TPACK( rowrange_of_grid )
+
+	ADD_TPACK( rowstep_of_mat )
+	ADD_TPACK( rowstep_of_block )
+	ADD_TPACK( rowstep_of_grid )
+
+	// sub vectors
+
+	ADD_TPACK( col_subvec )
+	ADD_TPACK( row_subvec )
 END_MAIN_SUITE
 
 

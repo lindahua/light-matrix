@@ -91,6 +91,7 @@ namespace lmat
 
 	// expressions
 
+	template<class Mat, typename Range> struct vecview_map;
 	template<class Mat, typename RowRange> struct colview_map;
 	template<class Mat, typename ColRange> struct rowview_map;
 	template<class Mat, typename RowRange, typename ColRange> struct matview_map;
