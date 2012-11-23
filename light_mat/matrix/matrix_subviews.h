@@ -15,6 +15,7 @@
 
 #include "bits/matrix_colviews_internal.h"
 #include "bits/matrix_rowviews_internal.h"
+#include "bits/matrix_matviews_internal.h"
 
 namespace lmat
 {
@@ -118,6 +119,40 @@ namespace lmat
 		static _type get(Mat& mat, const Rgn& rgn)
 		{
 			return intern_t::get(mat, 0, rgn);
+		}
+	};
+
+
+	// mat views
+
+	template<class Mat, class RowRange, class ColRange>
+	struct matview_map
+	{
+		static const int cont_level = detail::matview_cont_level<Mat>::value;
+		static const bool is_readonly = is_readonly_mat<Mat>::value;
+
+		typedef detail::matview_helper<Mat, RowRange, ColRange, cont_level, true> chelper_t;
+		typedef detail::matview_helper<Mat, RowRange, ColRange, cont_level, is_readonly> helper_t;
+
+		typedef typename chelper_t::type const_type;
+		typedef typename helper_t::type type;
+
+		typedef typename
+				if_<is_readonly_mat<Mat>,
+					const_type,
+					dense_mutable_view<type>
+				>::type _type;
+
+		LMAT_ENSURE_INLINE
+		static const_type get(const Mat& mat, const RowRange &r, const ColRange& c)
+		{
+			return chelper_t::get(mat, r, c);
+		}
+
+		LMAT_ENSURE_INLINE
+		static _type get(Mat& mat, const RowRange &r, const ColRange& c)
+		{
+			return helper_t::get(mat, r, c);
 		}
 	};
 

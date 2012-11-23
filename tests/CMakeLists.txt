@@ -175,6 +175,7 @@ add_executable(test_mat_compare ${REF_MAT_HS} test_mat_compare.cpp)
 
 add_executable(test_dense_eval ${MATRIX_HS} test_dense_eval.cpp)
 add_executable(test_mat_vecviews ${MATRIX_HS} test_mat_vecviews.cpp)
+add_executable(test_mat_matviews ${MATRIX_HS} test_mat_matviews.cpp)
 # add_executable(test_mat_transpose ${MATRIX_HS} test_mat_transpose.cpp)
 
 set(BASIC_MAT_EVAL_HS
@@ -228,6 +229,7 @@ set(LMAT_TEST_NAMES
 	test_mat_compare
 	test_dense_eval
 	test_mat_vecviews
+	test_mat_matviews
 	# test_mat_transpose
 	# test_dense_veval
 	# test_dense_cast
