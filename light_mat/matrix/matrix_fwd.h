@@ -85,39 +85,13 @@ namespace lmat
 
 	template<class Mat> class dense_mutable_view;
 
-	template<typename T, int CTRows=0, int CTCols=0>
-	class const_matrix;
-
-
-	// expressions
+	// subviews
 
 	template<class Mat, typename Range> struct vecview_map;
 	template<class Mat, typename RowRange> struct colview_map;
 	template<class Mat, typename ColRange> struct rowview_map;
 	template<class Mat> struct diagview_map;
 	template<class Mat, typename RowRange, typename ColRange> struct matview_map;
-
-	template<class Fun, typename Arg_HP, class Arg> class unary_ewise_expr;
-
-	template<class Fun,
-		typename Arg1_HP, class Arg1,
-		typename Arg2_HP, class Arg2> class binary_ewise_expr;
-
-	template<class Fun,
-		typename Arg1_HP, class Arg1,
-		typename Arg2_HP, class Arg2> class ternary_ewise_expr;
-
-	struct transpose_t { };
-	template<typename Arg_HP, class Arg> class transpose_expr;
-
-	template<typename Arg_HP, class Arg, int N> class horizontal_repeat_expr;
-	template<typename Arg_HP, class Arg, int M> class vertical_repeat_expr;
-
-	struct rowwise { };
-	struct colwise { };
-
-	template<class Fun, typename Arg_HP, class Arg> class colwise_reduce_expr;
-	template<class Fun, typename Arg_HP, class Arg> class rowwise_reduce_expr;
 
 	// evaluation
 

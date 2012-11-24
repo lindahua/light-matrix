@@ -300,6 +300,12 @@ namespace lmat
 		static const bool value = layout_traits<layout_type>::ct_is_percol_continuous;
 	};
 
+	template<class Mat>
+	struct ct_supports_linear_index
+	{
+		static const bool value = ct_is_continuous<Mat>::value || ct_is_vector<Mat>::value;
+	};
+
 }
 
 #endif /* MATRIX_META_H_ */
