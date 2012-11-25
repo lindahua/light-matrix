@@ -18,9 +18,28 @@
 
 namespace lmat
 {
+	// arithmetic operations
+
+	LMAT_DEFINE_NUMERIC_BINARY_OP( add_t )
+	LMAT_DEFINE_NUMERIC_BINARY_OP( subtract_t )
+	LMAT_DEFINE_NUMERIC_BINARY_OP( multiply_t )
+	LMAT_DEFINE_NUMERIC_BINARY_OP( divide_t )
+
+	LMAT_DEFINE_NUMERIC_UNARY_OP( negate_t )
+	LMAT_DEFINE_NUMERIC_UNARY_OP( abs_t )
+
+	LMAT_DEFINE_NUMERIC_BINARY_OP( max_t )
+	LMAT_DEFINE_NUMERIC_BINARY_OP( min_t )
+
+	// define functors
+
 	template<typename T>
-	struct add_op : public binary_numeric_ewise_functor<T>
+	struct add_fun
 	{
+		LMAT_ENSURE_INLINE add_fun() { }
+
+		LMAT_ENSURE_INLINE add_fun( add_t ) { }
+
 		LMAT_ENSURE_INLINE T operator() (const T& x, const T& y) const
 		{
 			return x + y;
@@ -28,8 +47,12 @@ namespace lmat
 	};
 
 	template<typename T>
-	struct sub_op : public binary_numeric_ewise_functor<T>
+	struct subtract_fun
 	{
+		LMAT_ENSURE_INLINE subtract_fun() { }
+
+		LMAT_ENSURE_INLINE subtract_fun( subtract_t ) { }
+
 		LMAT_ENSURE_INLINE T operator() (const T& x, const T& y) const
 		{
 			return x - y;
@@ -37,8 +60,12 @@ namespace lmat
 	};
 
 	template<typename T>
-	struct mul_op : public binary_numeric_ewise_functor<T>
+	struct multiply_fun
 	{
+		LMAT_ENSURE_INLINE multiply_fun() { }
+
+		LMAT_ENSURE_INLINE multiply_fun( multiply_t ) { }
+
 		LMAT_ENSURE_INLINE T operator() (const T& x, const T& y) const
 		{
 			return x * y;
@@ -46,8 +73,12 @@ namespace lmat
 	};
 
 	template<typename T>
-	struct div_op : public binary_numeric_ewise_functor<T>
+	struct divide_fun
 	{
+		LMAT_ENSURE_INLINE divide_fun() { }
+
+		LMAT_ENSURE_INLINE divide_fun( divide_t ) { }
+
 		LMAT_ENSURE_INLINE T operator() (const T& x, const T& y) const
 		{
 			return x / y;
@@ -55,17 +86,25 @@ namespace lmat
 	};
 
 	template<typename T>
-	struct neg_op : public unary_numeric_ewise_functor<T>
+	struct negate_fun
 	{
+		LMAT_ENSURE_INLINE negate_fun() { }
+
+		LMAT_ENSURE_INLINE negate_fun( negate_t ) { }
+
 		LMAT_ENSURE_INLINE T operator() (const T& x) const
 		{
-			return - x;
+			return -x;
 		}
 	};
 
 	template<typename T>
-	struct abs_fun : public unary_numeric_ewise_functor<T>
+	struct abs_fun
 	{
+		LMAT_ENSURE_INLINE abs_fun() { }
+
+		LMAT_ENSURE_INLINE abs_fun( abs_t ) { }
+
 		LMAT_ENSURE_INLINE T operator() (const T& x) const
 		{
 			return math::abs(x);
@@ -73,57 +112,44 @@ namespace lmat
 	};
 
 	template<typename T>
-	struct sqr_fun : public unary_numeric_ewise_functor<T>
+	struct max_fun
 	{
-		LMAT_ENSURE_INLINE T operator() (const T& x) const
+		LMAT_ENSURE_INLINE max_fun() { }
+
+		LMAT_ENSURE_INLINE max_fun( max_t ) { }
+
+		LMAT_ENSURE_INLINE T operator() (const T& x, const T& y) const
 		{
-			return math::sqr(x);
+			return (math::max)(x, y);
 		}
 	};
 
 	template<typename T>
-	struct rcp_fun : public unary_numeric_ewise_functor<T>
+	struct min_fun
 	{
-		LMAT_ENSURE_INLINE T operator() (const T& x) const
+		LMAT_ENSURE_INLINE min_fun() { }
+
+		LMAT_ENSURE_INLINE min_fun( min_t ) { }
+
+		LMAT_ENSURE_INLINE T operator() (const T& x, const T& y) const
 		{
-			return math::rcp(x);
+			return (math::min)(x, y);
 		}
 	};
 
-	template<typename T>
-	struct sqrt_fun : public unary_numeric_ewise_functor<T>
-	{
-		LMAT_ENSURE_INLINE T operator() (const T& x) const
-		{
-			return math::sqrt(x);
-		}
-	};
 
-	template<typename T>
-	struct rsqrt_fun : public unary_numeric_ewise_functor<T>
-	{
-		LMAT_ENSURE_INLINE T operator() (const T& x) const
-		{
-			return math::rsqrt(x);
-		}
-	};
+	// functor maps
 
-	// declaration as ewise functors
+	LMAT_DEFINE_NUMERIC_BINARY_FUNMAP( add_t,      scalar_kernel_t, add_fun )
+	LMAT_DEFINE_NUMERIC_BINARY_FUNMAP( subtract_t, scalar_kernel_t, subtract_fun )
+	LMAT_DEFINE_NUMERIC_BINARY_FUNMAP( multiply_t, scalar_kernel_t, multiply_fun )
+	LMAT_DEFINE_NUMERIC_BINARY_FUNMAP( divide_t,   scalar_kernel_t, divide_fun )
 
-	LMAT_DECLARE_AS_BINARY_EWISE_TFUNCTOR( add_op, true )
-	LMAT_DECLARE_AS_BINARY_EWISE_TFUNCTOR( sub_op, true )
-	LMAT_DECLARE_AS_BINARY_EWISE_TFUNCTOR( mul_op, true )
-	LMAT_DECLARE_AS_BINARY_EWISE_TFUNCTOR( div_op, true )
+	LMAT_DEFINE_NUMERIC_UNARY_FUNMAP( negate_t, scalar_kernel_t, negate_fun )
+	LMAT_DEFINE_NUMERIC_UNARY_FUNMAP( abs_t,    scalar_kernel_t, abs_fun )
 
-	LMAT_DECLARE_AS_UNARY_EWISE_TFUNCTOR( neg_op, true )
-	LMAT_DECLARE_AS_UNARY_EWISE_TFUNCTOR( abs_fun, true )
-	LMAT_DECLARE_AS_UNARY_EWISE_TFUNCTOR( sqr_fun, true )
-	LMAT_DECLARE_AS_UNARY_EWISE_TFUNCTOR( sqrt_fun, true )
-	LMAT_DECLARE_AS_UNARY_EWISE_TFUNCTOR( rcp_fun, true )
-	LMAT_DECLARE_AS_UNARY_EWISE_TFUNCTOR( rsqrt_fun, true )
-
-	LMAT_DEFINE_BINARY_NUMERIC_EWISE_TFUNCTOR( min_fun, (math::min), true )
-	LMAT_DEFINE_BINARY_NUMERIC_EWISE_TFUNCTOR( max_fun, (math::max), true )
+	LMAT_DEFINE_NUMERIC_BINARY_FUNMAP( max_t, scalar_kernel_t, max_fun )
+	LMAT_DEFINE_NUMERIC_BINARY_FUNMAP( min_t, scalar_kernel_t, min_fun )
 }
 
 

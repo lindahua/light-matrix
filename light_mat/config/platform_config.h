@@ -43,7 +43,7 @@
 
 		#define LMAT_USE_C11_STDLIB
 		#define LMAT_USE_STATIC_ASSERT
-		#define LMAT_HAS_CXX11_MATH
+		#define LMAT_HAS_C99_MATH
 		#define LMAT_HAS_DECLTYPE
 
 		#if (__clang_major__ >= 3)
@@ -56,10 +56,11 @@
 		#endif
 		#define LIGHTMAT_COMPILER LIGHTMAT_GCC
 
+		#define LMAT_HAS_C99_MATH
+
 		#if (defined(__GXX_EXPERIMENTAL_CXX0X__))
 			#define LMAT_USE_C11_STDLIB
 			#define LMAT_USE_STATIC_ASSERT
-			#define LMAT_HAS_CXX11_MATH
 			#define LMAT_HAS_DECLTYPE
 
 			#if (__GNUC__ == 4 && __GNUC_MINOR >= 6)

@@ -13,7 +13,7 @@
 #ifndef LIGHTMAT_MATRIX_ARITH_H_
 #define LIGHTMAT_MATRIX_ARITH_H_
 
-#include <light_mat/matrix/matrix_ewise_expr.h>
+#include <light_mat/matexpr/matrix_ewise_expr.h>
 #include <light_mat/math/arith_functors.h>
 
 namespace lmat
@@ -21,25 +21,21 @@ namespace lmat
 
 	/********************************************
 	 *
-	 *  Specific Expressions
+	 *  Expressions
 	 *
 	 ********************************************/
 
-	LMAT_DEFINE_BINARY_MATFUNCTION_EX( operator +, add_op )
-	LMAT_DEFINE_BINARY_MATFUNCTION_EX( operator -, sub_op )
-	LMAT_DEFINE_BINARY_MATFUNCTION_EX( operator *, mul_op )
-	LMAT_DEFINE_BINARY_MATFUNCTION_EX( operator /, div_op )
+	LMAT_DEFINE_BINARY_MATFUNCTION( operator +, add_t )
+	LMAT_DEFINE_BINARY_MATFUNCTION( operator -, subtract_t )
+	LMAT_DEFINE_BINARY_MATFUNCTION( operator *, multiply_t )
+	LMAT_DEFINE_BINARY_MATFUNCTION( operator /, divide_t )
 
-	LMAT_DEFINE_UNARY_MATFUNCTION( operator -, neg_op )
+	LMAT_DEFINE_UNARY_MATFUNCTION( operator -, negate_t )
 
-	LMAT_DEFINE_UNARY_MATFUNCTION( abs, abs_fun )
-	LMAT_DEFINE_UNARY_MATFUNCTION( sqr, sqr_fun )
-	LMAT_DEFINE_UNARY_MATFUNCTION( sqrt, sqrt_fun )
-	LMAT_DEFINE_UNARY_MATFUNCTION( rcp, rcp_fun )
-	LMAT_DEFINE_UNARY_MATFUNCTION( rsqrt, rsqrt_fun )
+	LMAT_DEFINE_UNARY_MATFUNCTION( abs, abs_t )
 
-	LMAT_DEFINE_BINARY_MATFUNCTION_EX( max, max_fun )
-	LMAT_DEFINE_BINARY_MATFUNCTION_EX( min, min_fun )
+	LMAT_DEFINE_BINARY_MATFUNCTION( (max), max_t )
+	LMAT_DEFINE_BINARY_MATFUNCTION( (min), min_t )
 
 	/********************************************
 	 *
@@ -103,9 +99,7 @@ namespace lmat
 		return A.derived();
 	}
 
-
 }
 
-
-
 #endif /* MATRIX_ARITH_H_ */
+

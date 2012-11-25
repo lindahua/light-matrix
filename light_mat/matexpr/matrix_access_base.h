@@ -14,6 +14,7 @@
 #define LIGHTMAT_MATRIX_ACCESS_BASE_H_
 
 #include <light_mat/matrix/matrix_meta.h>
+#include <light_mat/math/functor_base.h>
 
 namespace lmat
 {
@@ -22,11 +23,6 @@ namespace lmat
 	 *  Types for Matrix Access
 	 *
 	 ********************************************/
-
-	// kernel categories
-
-	struct scalar_kernel_t { };
-	struct simd_kernel_t { };
 
 	// matrix access categories
 
@@ -44,6 +40,9 @@ namespace lmat
 		 static const int ct_rows = ME;
 		 static const int ct_cols = NE;
 	};
+
+	template<class Xpr, int M, int N, typename AccCate, typename KerCate>
+	struct macc_cost;
 
 	template<class SExpr, class AccCate, class KerCate>
 	struct macc_accessor_map;
@@ -72,7 +71,7 @@ namespace lmat
 	};
 
 
-	template<class Visitor>
+	template<class Accessor>
 	struct percol_macc_state_map { };
 
 	template<class Derived, typename T>

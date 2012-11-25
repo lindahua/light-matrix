@@ -14,152 +14,108 @@
 #define LIGHTMAT_FUNCTOR_BASE_H_
 
 #include <light_mat/common/basic_defs.h>
+#include <functional>
 
 namespace lmat
 {
-	// element-wise functors
+	// kernel categories
 
-	template<class Fun>
-	struct is_unary_ewise_functor
+	struct scalar_kernel_t { };
+	struct simd_kernel_t { };
+
+	// operation type testing
+
+	template<typename Op>
+	struct is_unary_op
 	{
 		static const bool value = false;
 	};
 
-	template<class Fun>
-	struct is_binary_ewise_functor
+	template<typename Op>
+	struct is_binary_op
 	{
 		static const bool value = false;
 	};
 
-	template<class Fun>
-	struct supports_simd
+	template<typename Op>
+	struct is_ternary_op
 	{
 		static const bool value = false;
 	};
 
-	template<typename Arg, typename Result>
-	struct unary_ewise_functor
-	{
-		typedef Arg arg_type;
-		typedef Result result_type;
-	};
+	// maps
 
-	template<typename Arg1, typename Arg2, typename Result>
-	struct binary_ewise_functor
-	{
-		typedef Arg1 first_arg_type;
-		typedef Arg2 second_arg_type;
-		typedef Result result_type;
-	};
+	template<typename Op, typename T>
+	struct unary_op_result;
 
-	template<typename T>
-	struct unary_numeric_ewise_functor : public unary_ewise_functor<T, T> { };
+	template<typename Op, typename T1, typename T2>
+	struct binary_op_result;
 
-	template<typename T>
-	struct binary_numeric_ewise_functor : public binary_ewise_functor<T, T, T> { };
-
-	template<typename T>
-	struct unary_mpred_ewise_functor : public unary_ewise_functor<T, mask_t<T> > { };
-
-	template<typename T>
-	struct binary_mpred_ewise_functor : public binary_ewise_functor<T, T, mask_t<T> > { };
-
-	template<typename T>
-	struct unary_mask_ewise_functor : public unary_ewise_functor<mask_t<T>, mask_t<T> > { };
-
-	template<typename T>
-	struct binary_mask_ewise_functor : public binary_ewise_functor<mask_t<T>, mask_t<T>, mask_t<T> > { };
+	template<typename Op, typename T1, typename T2, typename T3>
+	struct ternary_op_result;
 
 
-	// conversion
+	template<typename Op, typename Ker, typename T>
+	struct unary_op_fun;
 
-	template<typename S, typename T>
-	struct type_converter : public unary_ewise_functor<S, T>
-	{
-		LMAT_ENSURE_INLINE
-		T operator() (const S& s) const
-		{
-			return T(s);
-		}
-	};
+	template<typename Op, typename Ker, typename T1, typename T2>
+	struct binary_op_fun;
 
-	template<typename S, typename T>
-	struct is_unary_ewise_functor<type_converter<S, T> >
-	{
-		static const bool value = true;
-	};
+	template<typename Op, typename Ker, typename T1, typename T2, typename T3>
+	struct ternary_op_fun;
 
-
-	// reduction functors
-
-	template<class Fun>
-	struct is_reduction_functor
-	{
-		static const bool value = false;
-	};
-
-	template<typename Arg, typename Result>
-	struct reduction_functor
-	{
-		typedef Arg arg_type;
-		typedef Result result_type;
-	};
 }
 
-// Useful macros
+/************************************************
+ *
+ *  Useful macros
+ *
+ ************************************************/
 
-#define LMAT_DECLARE_AS_UNARY_EWISE_FUNCTOR( Fun, SuppSIMD ) \
-	template<> \
-	struct is_unary_ewise_functor< Fun > { static const bool value = true; }; \
-	template<> \
-	struct supports_simd< Fun > { static const bool value = SuppSIMD; };
+// for numeric operations
 
-#define LMAT_DECLARE_AS_BINARY_EWISE_FUNCTOR( Fun, SuppSIMD ) \
-	template<> \
-	struct is_binary_ewise_functor< Fun > { static const bool value = true; }; \
-	template<> \
-	struct supports_simd< Fun > { static const bool value = SuppSIMD; };
+#define LMAT_DEFINE_NUMERIC_UNARY_OP(Op) \
+	struct Op { }; \
+	template<> struct is_unary_op<Op> { static const bool value = true; }; \
+	template<typename T> \
+	struct unary_op_result<Op, T> { typedef T type; };
 
+#define LMAT_DEFINE_NUMERIC_BINARY_OP(Op) \
+	struct Op { }; \
+	template<> struct is_binary_op<Op> { static const bool value = true; }; \
+	template<typename T> \
+	struct binary_op_result<Op, T, T> { typedef T type; };
 
-#define LMAT_DECLARE_AS_UNARY_EWISE_TFUNCTOR( FunT, SuppSIMD ) \
+#define LMAT_DEFINE_NUMERIC_UNARY_FUNMAP(Op, Ker, TFun) \
 	template<typename T> \
-	struct is_unary_ewise_functor< FunT<T> > { static const bool value = true; }; \
-	template<typename T> \
-	struct supports_simd< FunT<T> > { static const bool value = SuppSIMD; };
+	struct unary_op_fun<Op, Ker, T> { typedef TFun<T> type; };
 
-#define LMAT_DECLARE_AS_BINARY_EWISE_TFUNCTOR( FunT, SuppSIMD ) \
+#define LMAT_DEFINE_NUMERIC_BINARY_FUNMAP(Op, Ker, TFun) \
 	template<typename T> \
-	struct is_binary_ewise_functor< FunT<T> > { static const bool value = true; }; \
-	template<typename T> \
-	struct supports_simd< FunT<T> > { static const bool value = SuppSIMD; };
+	struct binary_op_fun<Op, Ker, T, T> { typedef TFun<T> type; };
 
+// for real-number operations
 
-#define LMAT_DEFINE_UNARY_NUMERIC_EWISE_TFUNCTOR( FunT, ImplFun, SuppSIMD ) \
-	template<typename T> \
-	struct FunT : public unary_numeric_ewise_functor<T> { \
-		T operator()(const T& x) const { return ImplFun(x); } \
-	}; \
-	template<typename T> \
-	struct is_unary_ewise_functor< FunT<T> > { static const bool value = true; }; \
-	template<typename T> \
-	struct supports_simd< FunT<T> > { static const bool value = SuppSIMD; };
+#define LMAT_DEFINE_REAL_UNARY_OP(Op) \
+	struct Op { }; \
+	template<> struct is_unary_op<Op> { static const bool value = true; }; \
+	template<> struct unary_op_result<Op, float> { typedef float type; }; \
+	template<> struct unary_op_result<Op, double> { typedef float type; };
 
-#define LMAT_DEFINE_BINARY_NUMERIC_EWISE_TFUNCTOR( FunT, ImplFun, SuppSIMD ) \
-	template<typename T> \
-	struct FunT : public binary_numeric_ewise_functor<T> { \
-		T operator()(const T& x, const T& y) const { return ImplFun(x, y); } \
-	}; \
-	template<typename T> \
-	struct is_binary_ewise_functor< FunT<T> > { static const bool value = true; }; \
-	template<typename T> \
-	struct supports_simd< FunT<T> > { static const bool value = SuppSIMD; };
+#define LMAT_DEFINE_REAL_BINARY_OP(Op) \
+	struct Op { }; \
+	template<> struct is_binary_op<Op> { static const bool value = true; }; \
+	template<> struct binary_op_result<Op, float, float> { typedef float type; }; \
+	template<> struct binary_op_result<Op, double, double> { typedef double type; };
 
+#define LMAT_DEFINE_REAL_UNARY_FUNMAP(Op, Ker, TFun) \
+	template<> struct unary_op_fun<Op, Ker, float> { typedef TFun<float> type; }; \
+	template<> struct unary_op_fun<Op, Ker, double> { typedef TFun<double> type; };
 
-#define LMAT_DECLARE_AS_REDUCTION_TFUNCTOR( FunT, SuppSIMD ) \
-	template<typename T> \
-	struct is_reduction_functor< FunT<T> > { static const bool value = true; }; \
-	template<typename T> \
-	struct supports_simd< FunT<T> > { static const bool value = SuppSIMD; };
+#define LMAT_DEFINE_REAL_BINARY_FUNMAP(Op, Ker, TFun) \
+	template<> struct binary_op_fun<Op, Ker, float, float> { typedef TFun<float> type; }; \
+	template<> struct binary_op_fun<Op, Ker, double, double> { typedef TFun<double> type; };
+
 
 #endif 
 

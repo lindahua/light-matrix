@@ -85,6 +85,18 @@ namespace lmat
 				cpu_domain>::value;
 	};
 
+	template<class LMat, class RMat>
+	struct binary_domain
+	{
+#ifdef LMAT_USE_STATIC_ASSERT
+		static_assert( has_same_domain<LMat, RMat>::value,
+				"LMat and RMat have different domains." );
+#endif
+
+		typedef typename matrix_traits<LMat>::domain type;
+	};
+
+
 	/********************************************
 	 *
 	 *  Type related tools
@@ -105,7 +117,7 @@ namespace lmat
 	{
 #ifdef LMAT_USE_STATIC_ASSERT
 		static_assert( has_same_value_type<LMat, RMat>::value,
-				"LMat and RMat have different value_type." );
+				"LMat and RMat have different value_types." );
 #endif
 
 		typedef typename matrix_traits<LMat>::value_type type;

@@ -16,49 +16,159 @@
 #include <light_mat/math/functor_base.h>
 #include <light_mat/math/math_base.h>
 
+
+#define LMAT_DEFINE_UNARY_MATH_FUNCTOR( fname ) \
+	template<typename T> struct fname##_fun { \
+		LMAT_ENSURE_INLINE fname##_fun() { } \
+		LMAT_ENSURE_INLINE fname##_fun( fname##_t ) { } \
+		LMAT_ENSURE_INLINE T operator() (const T& x) const { return math::fname(x); } \
+	}; \
+	LMAT_DEFINE_REAL_UNARY_FUNMAP( fname##_t, scalar_kernel_t, fname##_fun )
+
+#define LMAT_DEFINE_BINARY_MATH_FUNCTOR( fname ) \
+	template<typename T> struct fname##_fun { \
+		LMAT_ENSURE_INLINE fname##_fun() { } \
+		LMAT_ENSURE_INLINE fname##_fun( fname##_t ) { } \
+		LMAT_ENSURE_INLINE T operator() (const T& x, const T& y) const { return math::fname(x, y); } \
+	}; \
+	LMAT_DEFINE_REAL_BINARY_FUNMAP( fname##_t, scalar_kernel_t, fname##_fun )
+
+
 namespace lmat
 {
-	LMAT_DEFINE_BINARY_NUMERIC_EWISE_TFUNCTOR( pow_fun,  math::pow, true )
+	/********************************************
+	 *
+	 *  elementary math operations
+	 *
+	 ********************************************/
 
-	LMAT_DEFINE_UNARY_NUMERIC_EWISE_TFUNCTOR( floor_fun, math::floor, true )
-	LMAT_DEFINE_UNARY_NUMERIC_EWISE_TFUNCTOR( ceil_fun,  math::ceil, true )
+	// power & module
 
-	LMAT_DEFINE_UNARY_NUMERIC_EWISE_TFUNCTOR( exp_fun,   math::exp, true )
-	LMAT_DEFINE_UNARY_NUMERIC_EWISE_TFUNCTOR( log_fun,   math::log, true )
-	LMAT_DEFINE_UNARY_NUMERIC_EWISE_TFUNCTOR( log10_fun, math::log10, true )
+	LMAT_DEFINE_NUMERIC_UNARY_OP( sqr_t )
+	LMAT_DEFINE_NUMERIC_UNARY_OP( cube_t )
 
-	LMAT_DEFINE_UNARY_NUMERIC_EWISE_TFUNCTOR( sin_fun, math::sin, true )
-	LMAT_DEFINE_UNARY_NUMERIC_EWISE_TFUNCTOR( cos_fun, math::cos, true )
-	LMAT_DEFINE_UNARY_NUMERIC_EWISE_TFUNCTOR( tan_fun, math::tan, true )
+	LMAT_DEFINE_REAL_UNARY_OP( sqrt_t )
+	LMAT_DEFINE_REAL_UNARY_OP( cbrt_t )
 
-	LMAT_DEFINE_UNARY_NUMERIC_EWISE_TFUNCTOR( asin_fun, math::asin, true )
-	LMAT_DEFINE_UNARY_NUMERIC_EWISE_TFUNCTOR( acos_fun, math::acos, true )
-	LMAT_DEFINE_UNARY_NUMERIC_EWISE_TFUNCTOR( atan_fun, math::atan, true )
-	LMAT_DEFINE_BINARY_NUMERIC_EWISE_TFUNCTOR( atan2_fun, math::atan2, true )
+	LMAT_DEFINE_REAL_UNARY_OP( rcp_t )
+	LMAT_DEFINE_REAL_UNARY_OP( rsqrt_t )
 
-	LMAT_DEFINE_UNARY_NUMERIC_EWISE_TFUNCTOR( sinh_fun, math::sinh, true )
-	LMAT_DEFINE_UNARY_NUMERIC_EWISE_TFUNCTOR( cosh_fun, math::cosh, true )
-	LMAT_DEFINE_UNARY_NUMERIC_EWISE_TFUNCTOR( tanh_fun, math::tanh, true )
+	LMAT_DEFINE_REAL_BINARY_OP( pow_t )
+	LMAT_DEFINE_REAL_BINARY_OP( mod_t )
+	LMAT_DEFINE_REAL_BINARY_OP( hypot_t )
 
-#ifdef LMAT_HAS_CXX11_MATH
+	// rounding
 
-	LMAT_DEFINE_UNARY_NUMERIC_EWISE_TFUNCTOR( round_fun, math::round, true )
-	LMAT_DEFINE_UNARY_NUMERIC_EWISE_TFUNCTOR( trunc_fun, math::trunc, true )
+	LMAT_DEFINE_REAL_UNARY_OP( floor_t )
+	LMAT_DEFINE_REAL_UNARY_OP( ceil_t )
+	LMAT_DEFINE_REAL_UNARY_OP( round_t )
+	LMAT_DEFINE_REAL_UNARY_OP( trunc_t )
 
-	LMAT_DEFINE_UNARY_NUMERIC_EWISE_TFUNCTOR( cbrt_fun,  math::cbrt, true )
-	LMAT_DEFINE_BINARY_NUMERIC_EWISE_TFUNCTOR( hypot_fun, math::hypot, true )
+	// exponential and logarithm
 
-	LMAT_DEFINE_UNARY_NUMERIC_EWISE_TFUNCTOR( exp2_fun, math::exp2, true )
-	LMAT_DEFINE_UNARY_NUMERIC_EWISE_TFUNCTOR( log2_fun, math::log2, true )
-	LMAT_DEFINE_UNARY_NUMERIC_EWISE_TFUNCTOR( expm1_fun, math::expm1, true )
-	LMAT_DEFINE_UNARY_NUMERIC_EWISE_TFUNCTOR( log1p_fun, math::log1p, true )
+	LMAT_DEFINE_REAL_UNARY_OP( exp_t )
+	LMAT_DEFINE_REAL_UNARY_OP( exp2_t )
+	LMAT_DEFINE_REAL_UNARY_OP( log_t )
+	LMAT_DEFINE_REAL_UNARY_OP( log2_t )
+	LMAT_DEFINE_REAL_UNARY_OP( log10_t )
 
-	LMAT_DEFINE_UNARY_NUMERIC_EWISE_TFUNCTOR( asinh_fun, math::asinh, true )
-	LMAT_DEFINE_UNARY_NUMERIC_EWISE_TFUNCTOR( acosh_fun, math::acosh, true )
-	LMAT_DEFINE_UNARY_NUMERIC_EWISE_TFUNCTOR( atanh_fun, math::atanh, true )
+	LMAT_DEFINE_REAL_UNARY_OP( expm1_t )
+	LMAT_DEFINE_REAL_UNARY_OP( log1p_t )
+
+	// trigonometry
+
+	LMAT_DEFINE_REAL_UNARY_OP( sin_t )
+	LMAT_DEFINE_REAL_UNARY_OP( cos_t )
+	LMAT_DEFINE_REAL_UNARY_OP( tan_t )
+
+	LMAT_DEFINE_REAL_UNARY_OP( asin_t )
+	LMAT_DEFINE_REAL_UNARY_OP( acos_t )
+	LMAT_DEFINE_REAL_UNARY_OP( atan_t )
+
+	LMAT_DEFINE_REAL_BINARY_OP( atan2_t )
+
+	// hyperbolic
+
+	LMAT_DEFINE_REAL_UNARY_OP( sinh_t )
+	LMAT_DEFINE_REAL_UNARY_OP( cosh_t )
+	LMAT_DEFINE_REAL_UNARY_OP( tanh_t )
+
+	LMAT_DEFINE_REAL_UNARY_OP( asinh_t )
+	LMAT_DEFINE_REAL_UNARY_OP( acosh_t )
+	LMAT_DEFINE_REAL_UNARY_OP( atanh_t )
+
+	// error & gamma
+
+	LMAT_DEFINE_REAL_UNARY_OP( erf_t )
+	LMAT_DEFINE_REAL_UNARY_OP( erfc_t )
+	LMAT_DEFINE_REAL_UNARY_OP( lgamma_t )
+	LMAT_DEFINE_REAL_UNARY_OP( tgamma_t )
+
+
+	/********************************************
+	 *
+	 *  functor classes
+	 *
+	 ********************************************/
+
+	LMAT_DEFINE_UNARY_MATH_FUNCTOR( sqr )
+	LMAT_DEFINE_UNARY_MATH_FUNCTOR( cube )
+	LMAT_DEFINE_UNARY_MATH_FUNCTOR( sqrt )
+	LMAT_DEFINE_UNARY_MATH_FUNCTOR( rcp )
+	LMAT_DEFINE_UNARY_MATH_FUNCTOR( rsqrt )
+
+	LMAT_DEFINE_BINARY_MATH_FUNCTOR( pow )
+	LMAT_DEFINE_BINARY_MATH_FUNCTOR( mod )
+
+	LMAT_DEFINE_UNARY_MATH_FUNCTOR( floor )
+	LMAT_DEFINE_UNARY_MATH_FUNCTOR( ceil )
+
+	LMAT_DEFINE_UNARY_MATH_FUNCTOR( exp )
+	LMAT_DEFINE_UNARY_MATH_FUNCTOR( log )
+	LMAT_DEFINE_UNARY_MATH_FUNCTOR( log10 )
+
+	LMAT_DEFINE_UNARY_MATH_FUNCTOR( sin )
+	LMAT_DEFINE_UNARY_MATH_FUNCTOR( cos )
+	LMAT_DEFINE_UNARY_MATH_FUNCTOR( tan )
+
+	LMAT_DEFINE_UNARY_MATH_FUNCTOR( asin )
+	LMAT_DEFINE_UNARY_MATH_FUNCTOR( acos )
+	LMAT_DEFINE_UNARY_MATH_FUNCTOR( atan )
+
+	LMAT_DEFINE_BINARY_MATH_FUNCTOR( atan2 )
+
+	LMAT_DEFINE_UNARY_MATH_FUNCTOR( sinh )
+	LMAT_DEFINE_UNARY_MATH_FUNCTOR( cosh )
+	LMAT_DEFINE_UNARY_MATH_FUNCTOR( tanh )
+
+
+#ifdef LMAT_HAS_C99_MATH
+
+	LMAT_DEFINE_UNARY_MATH_FUNCTOR( cbrt )
+	LMAT_DEFINE_BINARY_MATH_FUNCTOR( hypot )
+
+	LMAT_DEFINE_UNARY_MATH_FUNCTOR( round )
+	LMAT_DEFINE_UNARY_MATH_FUNCTOR( trunc )
+
+	LMAT_DEFINE_UNARY_MATH_FUNCTOR( exp2 )
+	LMAT_DEFINE_UNARY_MATH_FUNCTOR( log2 )
+	LMAT_DEFINE_UNARY_MATH_FUNCTOR( expm1 )
+	LMAT_DEFINE_UNARY_MATH_FUNCTOR( log1p )
+
+	LMAT_DEFINE_UNARY_MATH_FUNCTOR( asinh )
+	LMAT_DEFINE_UNARY_MATH_FUNCTOR( acosh )
+	LMAT_DEFINE_UNARY_MATH_FUNCTOR( atanh )
+
+	LMAT_DEFINE_UNARY_MATH_FUNCTOR( erf )
+	LMAT_DEFINE_UNARY_MATH_FUNCTOR( erfc )
+	LMAT_DEFINE_UNARY_MATH_FUNCTOR( lgamma )
+	LMAT_DEFINE_UNARY_MATH_FUNCTOR( tgamma )
 
 #endif
 
 }
 
 #endif /* EMATH_FUNCTORS_H_ */
+
+
+

@@ -242,9 +242,11 @@ namespace lmat
 		};
 	}
 
+	template<class SExpr, typename AccCate, typename KerCate>
+	struct generic_macc_accessor_map;
 
 	template<class SExpr>
-	struct macc_accessor_map<SExpr, linear_macc, scalar_kernel_t>
+	struct generic_macc_accessor_map<SExpr, linear_macc, scalar_kernel_t>
 	{
 		typedef typename matrix_traits<SExpr>::value_type T;
 
@@ -260,7 +262,7 @@ namespace lmat
 
 
 	template<class SExpr>
-	struct macc_accessor_map<SExpr, percol_macc, scalar_kernel_t>
+	struct generic_macc_accessor_map<SExpr, percol_macc, scalar_kernel_t>
 	{
 		typedef typename matrix_traits<SExpr>::value_type T;
 
@@ -279,21 +281,29 @@ namespace lmat
 	};
 
 
+	template<class SExpr, typename AccCate, typename KerCate>
+	struct macc_accessor_map
+	{
+		typedef typename generic_macc_accessor_map<SExpr, AccCate, KerCate>::type type;
+	};
+
+
 	/********************************************
 	 *
 	 *  cost model
 	 *
 	 ********************************************/
 
-	template<class Xpr, int M, int N, typename AccCate, typename KerCate>
-	struct macc_cost;
-
 	const int MACC_CACHE_COST = 1200;
 	const int MACC_SHORT_PERCOL_COST = 100;
 	const int MACC_SHORTCOL_UBOUND = 4;
 
+
+	template<class Xpr, int M, int N, typename AccCate, typename KerCate>
+	struct generic_macc_cost;
+
 	template<class Xpr, int M, int N, typename KerCate>
-	struct macc_cost<Xpr, M, N, linear_macc, KerCate>
+	struct generic_macc_cost<Xpr, M, N, linear_macc, KerCate>
 	{
 		static const bool support_dense_linear =
 				detail::macc_support_dense_linear<Xpr, is_dense_mat<Xpr>::value>::value;
@@ -302,7 +312,7 @@ namespace lmat
 	};
 
 	template<class Xpr, int M, int N, typename KerCate>
-	struct macc_cost<Xpr, M, N, percol_macc, KerCate>
+	struct generic_macc_cost<Xpr, M, N, percol_macc, KerCate>
 	{
 		static const bool is_dense = is_dense_mat<Xpr>::value;
 
@@ -316,23 +326,11 @@ namespace lmat
 	};
 
 
-	template<class SExpr, class DMat>
-	struct default_macc_setting
+	template<class Xpr, int M, int N, typename AccCate, typename KerCate>
+	struct macc_cost
 	{
-		static const int M = binary_ct_rows<SExpr, DMat>::value;
-		static const int N = binary_ct_cols<SExpr, DMat>::value;
-
-		static const int linacc_cost = macc_cost<SExpr, M, N, linear_macc, scalar_kernel_t>::value;
-		static const int percol_cost = macc_cost<SExpr, M, N, percol_macc, scalar_kernel_t>::value;
-
-		static const int use_linear =
-				ct_supports_linear_index<DMat>::value &&
-				(linacc_cost <= percol_cost);
-
-		typedef scalar_kernel_t ker_category;
-		typedef typename if_c<use_linear, linear_macc, percol_macc>::type acc_category;
-
-		typedef macc_setting<acc_category, ker_category, M, N> type;
+		static const int value =
+				generic_macc_cost<Xpr, M, N, AccCate, KerCate>::value;
 	};
 
 

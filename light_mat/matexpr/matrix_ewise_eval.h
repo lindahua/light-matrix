@@ -13,268 +13,511 @@
 #ifndef LIGHTMAT_MATRIX_EWISE_EVAL_H_
 #define LIGHTMAT_MATRIX_EWISE_EVAL_H_
 
-#include <light_mat/matrix/matrix_ewise_expr.h>
-#include <light_mat/matrix/matrix_visit_eval.h>
+#include <light_mat/matexpr/matrix_ewise_expr.h>
+#include <light_mat/matexpr/matrix_acc_eval.h>
 #include <utility>
 
 namespace lmat
 {
 
-	// forward
+	// forward declaration
 
-	template<typename VisSetting, class Fun, class Arg>
-	class unary_ewise_mvisitor;
+	template<typename Acc, typename Ker, typename Op, class Arg>
+	class unary_ewise_accessor;
 
-	template<typename VisSetting, class Fun, class Arg1, class Arg2>
-	class binary_ewise_mvisitor;
+	template<typename Acc, typename Ker, typename Op, class Arg1, class Arg2>
+	class binary_ewise_accessor;
 
+	template<typename Acc, typename Ker, typename Op, typename T1, class Arg2>
+	class binary_fix1st_ewise_accessor;
 
-	/********************************************
-	 *
-	 *  State maps
-	 *
-	 ********************************************/
-
-	template<typename KerCate, int ME, int NE, class Arg>
-	struct unary_ewise_percol_vstate
-	{
-		typedef matrix_visit_setting<percol_vis, KerCate, ME, NE> setting_t;
-
-		typedef typename matrix_visitor_state<
-					typename matrix_vismap<Arg, setting_t>::type
-				>::type type;
-	};
-
-	template<typename KerCate, int ME, int NE, class Arg1, class Arg2>
-	struct binary_ewise_percol_vstate
-	{
-		typedef matrix_visit_setting<percol_vis, KerCate, ME, NE> setting_t;
-
-		typedef typename matrix_visitor_state<
-					typename matrix_vismap<Arg1, setting_t>::type
-				>::type arg1_state_t;
-
-		typedef typename matrix_visitor_state<
-					typename matrix_vismap<Arg2, setting_t>::type
-				>::type arg2_state_t;
-
-		typedef std::pair<arg1_state_t, arg2_state_t> type;
-	};
-
-
-	template<typename VisSetting, class Fun, class Arg>
-	struct matrix_visitor_state<unary_ewise_mvisitor<VisSetting, Fun, Arg> >
-	{
-		typedef typename unary_ewise_percol_vstate<
-				typename VisSetting::kernel_category,
-				VisSetting::ct_rows, VisSetting::ct_cols, Arg>::type type;
-	};
-
-	template<typename VisSetting, class Fun, class Arg1, class Arg2>
-	struct matrix_visitor_state<binary_ewise_mvisitor<VisSetting, Fun, Arg1, Arg2> >
-	{
-		typedef typename binary_ewise_percol_vstate<
-				typename VisSetting::kernel_category,
-				VisSetting::ct_rows, VisSetting::ct_cols, Arg1, Arg2>::type type;
-	};
+	template<typename Acc, typename Ker, typename Op, class Arg1, typename T2>
+	class binary_fix2nd_ewise_accessor;
 
 
 	/********************************************
 	 *
-	 *  Visitors
+	 *  Evaluation scheme maps
 	 *
 	 ********************************************/
 
-	// unary
+	// eval_scheme
 
-	template<int ME, int NE, class Fun, class Arg>
-	class unary_ewise_mvisitor<
-				matrix_visit_setting<linear_vis, scalar_kernel_t, ME, NE>, Fun, Arg>
-	: public ILinearMatrixScalarVisitor<unary_ewise_mvisitor<
-	  	  	  	matrix_visit_setting<linear_vis, scalar_kernel_t, ME, NE>, Fun, Arg>,
-	  	  	  	typename Fun::result_type>
+	template<typename Op, typename Arg_HP, class Arg, class DMat>
+	struct default_matrix_eval_scheme<unary_ewise_expr<Op, Arg_HP, Arg>, DMat>
 	{
+		typedef unary_ewise_expr<Op, Arg_HP, Arg> expr_t;
+		typedef typename default_macc_eval_scheme<expr_t, DMat>::type type;
+	};
+
+	template<typename Op, typename Arg1_HP, class Arg1, typename Arg2_HP, class Arg2, class DMat>
+	struct default_matrix_eval_scheme<binary_ewise_expr<Op, Arg1_HP, Arg1, Arg2_HP, Arg2>, DMat>
+	{
+		typedef binary_ewise_expr<Op, Arg1_HP, Arg1, Arg2_HP, Arg2> expr_t;
+		typedef typename default_macc_eval_scheme<expr_t, DMat>::type type;
+	};
+
+	template<typename Op, typename T1, typename Arg2_HP, class Arg2, class DMat>
+	struct default_matrix_eval_scheme<binary_fix1st_ewise_expr<Op, T1, Arg2_HP, Arg2>, DMat>
+	{
+		typedef binary_fix1st_ewise_expr<Op, T1, Arg2_HP, Arg2> expr_t;
+		typedef typename default_macc_eval_scheme<expr_t, DMat>::type type;
+	};
+
+	template<typename Op, typename Arg1_HP, class Arg1, typename T2, class DMat>
+	struct default_matrix_eval_scheme<binary_fix2nd_ewise_expr<Op, Arg1_HP, Arg1, T2>, DMat>
+	{
+		typedef binary_fix2nd_ewise_expr<Op, Arg1_HP, Arg1, T2> expr_t;
+		typedef typename default_macc_eval_scheme<expr_t, DMat>::type type;
+	};
+
+
+	// accessors
+
+	template<typename Op, typename Arg_HP, class Arg, typename Acc, typename Ker>
+	struct macc_accessor_map<unary_ewise_expr<Op, Arg_HP, Arg>, Acc, Ker>
+	{
+		typedef unary_ewise_accessor<Acc, Ker, Op, Arg> type;
+	};
+
+	template<typename Op, typename Arg1_HP, class Arg1, typename Arg2_HP, class Arg2, typename Acc, typename Ker>
+	struct macc_accessor_map<binary_ewise_expr<Op, Arg1_HP, Arg1, Arg2_HP, Arg2>, Acc, Ker>
+	{
+		typedef binary_ewise_accessor<Acc, Ker, Op, Arg1, Arg2> type;
+	};
+
+	template<typename Op, typename T1, typename Arg2_HP, class Arg2, typename Acc, typename Ker>
+	struct macc_accessor_map<binary_fix1st_ewise_expr<Op, T1, Arg2_HP, Arg2>, Acc, Ker>
+	{
+		typedef binary_fix1st_ewise_accessor<Acc, Ker, Op, T1, Arg2> type;
+	};
+
+	template<typename Op, typename Arg1_HP, class Arg1, typename T2, typename Acc, typename Ker>
+	struct macc_accessor_map<binary_fix2nd_ewise_expr<Op, Arg1_HP, Arg1, T2>, Acc, Ker>
+	{
+		typedef binary_fix2nd_ewise_accessor<Acc, Ker, Op, Arg1, T2> type;
+	};
+
+
+
+	/********************************************
+	 *
+	 *  cost model
+	 *
+	 ********************************************/
+
+	template<typename Op, typename Arg_HP, class Arg,
+		int M, int N, typename AccCate, typename KerCate>
+	struct macc_cost<unary_ewise_expr<Op, Arg_HP, Arg>, M, N, AccCate, KerCate>
+	{
+		static const int value = macc_cost<Arg, M, N, AccCate, KerCate>::value;
+	};
+
+	template<typename Op, typename Arg1_HP, class Arg1, typename Arg2_HP, class Arg2,
+		int M, int N, typename AccCate, typename KerCate>
+	struct macc_cost<binary_ewise_expr<Op, Arg1_HP, Arg1, Arg2_HP, Arg2>, M, N, AccCate, KerCate>
+	{
+		static const int value =
+				macc_cost<Arg1, M, N, AccCate, KerCate>::value +
+				macc_cost<Arg2, M, N, AccCate, KerCate>::value;
+	};
+
+	template<typename Op, typename T1, typename Arg2_HP, class Arg2,
+		int M, int N, typename AccCate, typename KerCate>
+	struct macc_cost<binary_fix1st_ewise_expr<Op, T1, Arg2_HP, Arg2>, M, N, AccCate, KerCate>
+	{
+		static const int value = macc_cost<Arg2, M, N, AccCate, KerCate>::value;
+	};
+
+	template<typename Op, typename Arg1_HP, class Arg1, typename T2,
+		int M, int N, typename AccCate, typename KerCate>
+	struct macc_cost<binary_fix2nd_ewise_expr<Op, Arg1_HP, Arg1, T2>, M, N, AccCate, KerCate>
+	{
+		static const int value = macc_cost<Arg1, M, N, AccCate, KerCate>::value;
+	};
+
+
+
+	/********************************************
+	 *
+	 *  helpers
+	 *
+	 ********************************************/
+
+	template<typename Acc, typename Ker, typename Op, class Arg>
+	struct unary_ewise_accbase
+	{
+		typedef typename matrix_traits<Arg>::value_type arg_value_type;
+		typedef typename unary_op_result<Op, arg_value_type>::type value_type;
+
+		typedef typename
+				if_<is_same<Acc, linear_macc>,
+					ILinearMatrixScalarAccessor<unary_ewise_accessor<Acc, Ker, Op, Arg>, value_type>,
+					IPerColMatrixScalarAccessor<unary_ewise_accessor<Acc, Ker, Op, Arg>, value_type>
+				>::type base_type;
+	};
+
+	template<typename Acc, typename Ker, typename Op, class Arg1, class Arg2>
+	struct binary_ewise_accbase
+	{
+		typedef typename matrix_traits<Arg1>::value_type arg1_value_type;
+		typedef typename matrix_traits<Arg2>::value_type arg2_value_type;
+		typedef typename binary_op_result<Op, arg1_value_type, arg2_value_type>::type value_type;
+
+		typedef typename
+				if_<is_same<Acc, linear_macc>,
+					ILinearMatrixScalarAccessor<binary_ewise_accessor<Acc, Ker, Op, Arg1, Arg2>, value_type>,
+					IPerColMatrixScalarAccessor<binary_ewise_accessor<Acc, Ker, Op, Arg1, Arg2>, value_type>
+				>::type base_type;
+	};
+
+	template<typename Acc, typename Ker, typename Op, typename T1, class Arg2>
+	struct binary_fix1st_ewise_accbase
+	{
+		typedef typename matrix_traits<Arg2>::value_type arg2_value_type;
+		typedef typename binary_op_result<Op, T1, arg2_value_type>::type value_type;
+
+		typedef typename
+				if_<is_same<Acc, linear_macc>,
+					ILinearMatrixScalarAccessor<binary_fix1st_ewise_accessor<Acc, Ker, Op, T1, Arg2>, value_type>,
+					IPerColMatrixScalarAccessor<binary_fix1st_ewise_accessor<Acc, Ker, Op, T1, Arg2>, value_type>
+				>::type base_type;
+	};
+
+
+	template<typename Acc, typename Ker, typename Op, class Arg1, typename T2>
+	struct binary_fix2nd_ewise_accbase
+	{
+		typedef typename matrix_traits<Arg1>::value_type arg1_value_type;
+		typedef typename binary_op_result<Op, arg1_value_type, T2>::type value_type;
+
+		typedef typename
+				if_<is_same<Acc, linear_macc>,
+					ILinearMatrixScalarAccessor<binary_fix2nd_ewise_accessor<Acc, Ker, Op, Arg1, T2>, value_type>,
+					IPerColMatrixScalarAccessor<binary_fix2nd_ewise_accessor<Acc, Ker, Op, Arg1, T2>, value_type>
+				>::type base_type;
+	};
+
+
+	/********************************************
+	 *
+	 *  Linear scalar accessors
+	 *
+	 ********************************************/
+
+	template<typename Op, class Arg>
+	class unary_ewise_accessor<linear_macc, scalar_kernel_t, Op, Arg>
+	: public unary_ewise_accbase<linear_macc, scalar_kernel_t, Op, Arg>::base_type
+	{
+		typedef typename matrix_traits<Arg>::value_type arg_value_type;
+		typedef typename unary_op_result<Op, arg_value_type>::type value_type;
+
+		typedef typename unary_op_fun<Op, scalar_kernel_t, arg_value_type>::type fun_t;
+		typedef typename macc_accessor_map<Arg, linear_macc, scalar_kernel_t>::type arg_accessor_t;
+
 	public:
-		typedef matrix_visit_setting<linear_vis, scalar_kernel_t, ME, NE> setting_t;
-		typedef typename matrix_vismap<Arg, setting_t>::type arg_visitor_t;
 
 		template<typename Arg_HP>
-		LMAT_ENSURE_INLINE
-		unary_ewise_mvisitor(const unary_ewise_expr<Fun, Arg_HP, Arg>& expr)
-		: m_fun(expr.fun()), m_arg_visitor(expr.arg())
-		{
-		}
+		unary_ewise_accessor(const unary_ewise_expr<Op, Arg_HP, Arg>& expr)
+		: m_fun(expr.op()), m_arg_acc(expr.arg()) { }
 
 		LMAT_ENSURE_INLINE
-		typename Fun::result_type get_scalar(const index_t i) const
+		value_type get_scalar(const index_t i) const
 		{
-			return m_fun(m_arg_visitor.get_scalar(i));
+			return m_fun(m_arg_acc.get_scalar(i));
 		}
 
 	private:
-		Fun m_fun;
-		arg_visitor_t m_arg_visitor;
+		fun_t m_fun;
+		arg_accessor_t m_arg_acc;
 	};
 
 
-
-
-	template<int ME, int NE, class Fun, class Arg>
-	class unary_ewise_mvisitor<
-				matrix_visit_setting<percol_vis, scalar_kernel_t, ME, NE>, Fun, Arg>
-	: public IPerColMatrixScalarVisitor<unary_ewise_mvisitor<
-	  	  	  	matrix_visit_setting<percol_vis, scalar_kernel_t, ME, NE>, Fun, Arg>,
-	  	  	  	typename Fun::result_type>
+	template<typename Op, class Arg1, class Arg2>
+	class binary_ewise_accessor<linear_macc, scalar_kernel_t, Op, Arg1, Arg2>
+	: public binary_ewise_accbase<linear_macc, scalar_kernel_t, Op, Arg1, Arg2>::base_type
 	{
+		typedef typename matrix_traits<Arg1>::value_type arg1_value_type;
+		typedef typename matrix_traits<Arg2>::value_type arg2_value_type;
+		typedef typename binary_op_result<Op, arg1_value_type, arg2_value_type>::type value_type;
+
+		typedef typename binary_op_fun<Op, scalar_kernel_t, arg1_value_type, arg2_value_type>::type fun_t;
+		typedef typename macc_accessor_map<Arg1, linear_macc, scalar_kernel_t>::type arg1_accessor_t;
+		typedef typename macc_accessor_map<Arg2, linear_macc, scalar_kernel_t>::type arg2_accessor_t;
+
 	public:
-		typedef matrix_visit_setting<percol_vis, scalar_kernel_t, ME, NE> setting_t;
-		typedef typename matrix_vismap<Arg, setting_t>::type arg_visitor_t;
-		typedef typename unary_ewise_percol_vstate<scalar_kernel_t, ME, NE, Arg>::type state_t;
-
-		template<typename Arg_HP>
-		LMAT_ENSURE_INLINE
-		unary_ewise_mvisitor(const unary_ewise_expr<Fun, Arg_HP, Arg>& expr)
-		: m_fun(expr.fun()), m_arg_visitor(expr.arg())
-		{
-		}
-
-		LMAT_ENSURE_INLINE
-		typename Fun::result_type get_scalar(const index_t i, const state_t& s) const
-		{
-			return m_fun(m_arg_visitor.get_scalar(i, s));
-		}
-
-		LMAT_ENSURE_INLINE
-		state_t col_state(const index_t j) const
-		{
-			return m_arg_visitor.col_state(j);
-		}
-
-	private:
-		Fun m_fun;
-		arg_visitor_t m_arg_visitor;
-	};
-
-
-	// binary
-
-	template<int ME, int NE, class Fun, class Arg1, class Arg2>
-	class binary_ewise_mvisitor<
-				matrix_visit_setting<linear_vis, scalar_kernel_t, ME, NE>, Fun, Arg1, Arg2>
-	: public ILinearMatrixScalarVisitor<binary_ewise_mvisitor<
-	  	  	  	matrix_visit_setting<linear_vis, scalar_kernel_t, ME, NE>, Fun, Arg1, Arg2>,
-	  	  	  	typename Fun::result_type>
-	{
-	public:
-		typedef matrix_visit_setting<linear_vis, scalar_kernel_t, ME, NE> setting_t;
-		typedef typename matrix_vismap<Arg1, setting_t>::type arg1_visitor_t;
-		typedef typename matrix_vismap<Arg2, setting_t>::type arg2_visitor_t;
 
 		template<typename Arg1_HP, typename Arg2_HP>
-		LMAT_ENSURE_INLINE
-		binary_ewise_mvisitor(const binary_ewise_expr<Fun, Arg1_HP, Arg1, Arg2_HP, Arg2>& expr)
-		: m_fun(expr.fun()), m_arg1_visitor(expr.first_arg()), m_arg2_visitor(expr.second_arg())
-		{
-		}
+		binary_ewise_accessor(const binary_ewise_expr<Op, Arg1_HP, Arg1, Arg2_HP, Arg2>& expr)
+		: m_fun(expr.op()), m_arg1_acc(expr.first_arg()), m_arg2_acc(expr.second_arg()) { }
 
 		LMAT_ENSURE_INLINE
-		typename Fun::result_type get_scalar(const index_t i) const
+		value_type get_scalar(const index_t i) const
 		{
-			return m_fun(
-					m_arg1_visitor.get_scalar(i),
-					m_arg2_visitor.get_scalar(i));
+			return m_fun(m_arg1_acc.get_scalar(i), m_arg2_acc.get_scalar(i));
 		}
 
 	private:
-		Fun m_fun;
-		arg1_visitor_t m_arg1_visitor;
-		arg2_visitor_t m_arg2_visitor;
+		fun_t m_fun;
+		arg1_accessor_t m_arg1_acc;
+		arg2_accessor_t m_arg2_acc;
 	};
 
 
-	template<int ME, int NE, class Fun, class Arg1, class Arg2>
-	class binary_ewise_mvisitor<
-				matrix_visit_setting<percol_vis, scalar_kernel_t, ME, NE>, Fun, Arg1, Arg2>
-	: public IPerColMatrixScalarVisitor<binary_ewise_mvisitor<
-	  	  	  	matrix_visit_setting<percol_vis, scalar_kernel_t, ME, NE>, Fun, Arg1, Arg2>,
-	  	  	  	typename Fun::result_type>
+	template<typename Op, typename T1, class Arg2>
+	class binary_fix1st_ewise_accessor<linear_macc, scalar_kernel_t, Op, T1, Arg2>
+	: public binary_fix1st_ewise_accbase<linear_macc, scalar_kernel_t, Op, T1, Arg2>::base_type
 	{
+		typedef typename matrix_traits<Arg2>::value_type arg2_value_type;
+		typedef typename binary_op_result<Op, T1, arg2_value_type>::type value_type;
+
+		typedef typename binary_op_fun<Op, scalar_kernel_t, T1, arg2_value_type>::type fun_t;
+		typedef typename macc_accessor_map<Arg2, linear_macc, scalar_kernel_t>::type arg2_accessor_t;
+
 	public:
-		typedef matrix_visit_setting<percol_vis, scalar_kernel_t, ME, NE> setting_t;
-		typedef typename matrix_vismap<Arg1, setting_t>::type arg1_visitor_t;
-		typedef typename matrix_vismap<Arg2, setting_t>::type arg2_visitor_t;
-		typedef typename binary_ewise_percol_vstate<scalar_kernel_t, ME, NE, Arg1, Arg2>::type state_t;
 
-		template<typename Arg1_HP, typename Arg2_HP>
-		LMAT_ENSURE_INLINE
-		binary_ewise_mvisitor(const binary_ewise_expr<Fun, Arg1_HP, Arg1, Arg2_HP, Arg2>& expr)
-		: m_fun(expr.fun()), m_arg1_visitor(expr.first_arg()), m_arg2_visitor(expr.second_arg())
-		{
-		}
+		template<typename Arg2_HP>
+		binary_fix1st_ewise_accessor(const binary_fix1st_ewise_expr<Op, T1, Arg2_HP, Arg2>& expr)
+		: m_fun(expr.op()), m_arg1v(expr.arg1_value()), m_arg2_acc(expr.arg()) { }
 
 		LMAT_ENSURE_INLINE
-		typename Fun::result_type get_scalar(const index_t i, const state_t& s) const
+		value_type get_scalar(const index_t i) const
 		{
-			return m_fun(
-					m_arg1_visitor.get_scalar(i, s.first),
-					m_arg2_visitor.get_scalar(i, s.second));
-		}
-
-		LMAT_ENSURE_INLINE
-		state_t col_state(const index_t j) const
-		{
-			return state_t(m_arg1_visitor.col_state(j), m_arg2_visitor.col_state(j));
+			return m_fun(m_arg1v, m_arg2_acc.get_scalar(i));
 		}
 
 	private:
-		Fun m_fun;
-		arg1_visitor_t m_arg1_visitor;
-		arg2_visitor_t m_arg2_visitor;
+		fun_t m_fun;
+		const T1& m_arg1v;
+		arg2_accessor_t m_arg2_acc;
 	};
 
+
+	template<typename Op, class Arg1, typename T2>
+	class binary_fix2nd_ewise_accessor<linear_macc, scalar_kernel_t, Op, Arg1, T2>
+	: public binary_fix2nd_ewise_accbase<linear_macc, scalar_kernel_t, Op, Arg1, T2>::base_type
+	{
+		typedef typename matrix_traits<Arg1>::value_type arg1_value_type;
+		typedef typename binary_op_result<Op, arg1_value_type, T2>::type value_type;
+
+		typedef typename binary_op_fun<Op, scalar_kernel_t, arg1_value_type, T2>::type fun_t;
+		typedef typename macc_accessor_map<Arg1, linear_macc, scalar_kernel_t>::type arg1_accessor_t;
+
+	public:
+
+		template<typename Arg1_HP>
+		binary_fix2nd_ewise_accessor(const binary_fix2nd_ewise_expr<Op, Arg1_HP, Arg1, T2>& expr)
+		: m_fun(expr.op()), m_arg1_acc(expr.arg()), m_arg2v(expr.arg2_value()) { }
+
+		LMAT_ENSURE_INLINE
+		value_type get_scalar(const index_t i) const
+		{
+			return m_fun(m_arg1_acc.get_scalar(i), m_arg2v);
+		}
+
+	private:
+		fun_t m_fun;
+		arg1_accessor_t m_arg1_acc;
+		const T2& m_arg2v;
+	};
 
 
 	/********************************************
 	 *
-	 *  Evaluator dispatch
+	 *  Percol scalar accessors
 	 *
 	 ********************************************/
 
-	template<typename Fun, typename Arg_HP, class Arg, typename Setting>
-	struct matrix_vismap<
-		unary_ewise_expr<Fun, Arg_HP, Arg>, Setting>
+	template<typename Op, class Arg>
+	struct percol_macc_state_map<
+		unary_ewise_accessor<percol_macc, scalar_kernel_t, Op, Arg> >
 	{
-		typedef unary_ewise_mvisitor<Setting, Fun, Arg> type;
-		static const int cost = matrix_vismap<Arg, Setting>::cost;
+		typedef typename macc_accessor_map<Arg, percol_macc, scalar_kernel_t>::type arg_accessor_t;
+		typedef typename percol_macc_state_map<arg_accessor_t>::type type;
+	};
+
+	template<typename Op, class Arg>
+	class unary_ewise_accessor<percol_macc, scalar_kernel_t, Op, Arg>
+	: public unary_ewise_accbase<percol_macc, scalar_kernel_t, Op, Arg>::base_type
+	{
+		typedef typename matrix_traits<Arg>::value_type arg_value_type;
+		typedef typename unary_op_result<Op, arg_value_type>::type value_type;
+
+		typedef typename unary_op_fun<Op, scalar_kernel_t, arg_value_type>::type fun_t;
+		typedef typename macc_accessor_map<Arg, percol_macc, scalar_kernel_t>::type arg_accessor_t;
+
+		typedef typename percol_macc_state_map<arg_accessor_t>::type col_state_t;
+
+	public:
+
+		template<typename Arg_HP>
+		unary_ewise_accessor(const unary_ewise_expr<Op, Arg_HP, Arg>& expr)
+		: m_fun(expr.op()), m_arg_acc(expr.arg()) { }
+
+		LMAT_ENSURE_INLINE
+		value_type get_scalar(const index_t i, const col_state_t& s) const
+		{
+			return m_fun(m_arg_acc.get_scalar(i, s));
+		}
+
+		LMAT_ENSURE_INLINE
+		col_state_t col_state(const index_t j) const
+		{
+			return m_arg_acc.col_state(j);
+		}
+
+	private:
+		fun_t m_fun;
+		arg_accessor_t m_arg_acc;
 	};
 
 
-	template<typename Fun, typename Arg1_HP, class Arg1, typename Arg2_HP, class Arg2, typename Setting>
-	struct matrix_vismap<
-		binary_ewise_expr<Fun, Arg1_HP, Arg1, Arg2_HP, Arg2>, Setting>
+	template<typename Op, class Arg1, class Arg2>
+	struct percol_macc_state_map<
+		binary_ewise_accessor<percol_macc, scalar_kernel_t, Op, Arg1, Arg2> >
 	{
-		typedef binary_ewise_mvisitor<Setting, Fun, Arg1, Arg2> type;
-
-		static const int cost =
-				matrix_vismap<Arg1, Setting>::cost +
-				matrix_vismap<Arg2, Setting>::cost;
+		typedef typename macc_accessor_map<Arg1, percol_macc, scalar_kernel_t>::type arg1_accessor_t;
+		typedef typename macc_accessor_map<Arg2, percol_macc, scalar_kernel_t>::type arg2_accessor_t;
+		typedef typename std::pair<
+				typename percol_macc_state_map<arg1_accessor_t>::type,
+				typename percol_macc_state_map<arg2_accessor_t>::type> type;
 	};
 
 
-	template<typename Fun, typename Arg_HP, class Arg, class Dst>
-	struct default_matrix_eval_policy<unary_ewise_expr<Fun, Arg_HP, Arg>, Dst>
+	template<typename Op, class Arg1, class Arg2>
+	class binary_ewise_accessor<percol_macc, scalar_kernel_t, Op, Arg1, Arg2>
+	: public binary_ewise_accbase<percol_macc, scalar_kernel_t, Op, Arg1, Arg2>::base_type
 	{
-		typedef unary_ewise_expr<Fun, Arg_HP, Arg> expr_t;
-		typedef typename default_matrix_visit_policy<expr_t, Dst>::type type;
+		typedef typename matrix_traits<Arg1>::value_type arg1_value_type;
+		typedef typename matrix_traits<Arg2>::value_type arg2_value_type;
+		typedef typename binary_op_result<Op, arg1_value_type, arg2_value_type>::type value_type;
+
+		typedef typename binary_op_fun<Op, scalar_kernel_t, arg1_value_type, arg2_value_type>::type fun_t;
+		typedef typename macc_accessor_map<Arg1, percol_macc, scalar_kernel_t>::type arg1_accessor_t;
+		typedef typename macc_accessor_map<Arg2, percol_macc, scalar_kernel_t>::type arg2_accessor_t;
+
+		typedef typename percol_macc_state_map<arg1_accessor_t>::type arg1_col_state_t;
+		typedef typename percol_macc_state_map<arg2_accessor_t>::type arg2_col_state_t;
+		typedef typename std::pair<arg1_col_state_t, arg2_col_state_t> col_state_t;
+
+	public:
+
+		template<typename Arg1_HP, typename Arg2_HP>
+		binary_ewise_accessor(const binary_ewise_expr<Op, Arg1_HP, Arg1, Arg2_HP, Arg2>& expr)
+		: m_fun(expr.op()), m_arg1_acc(expr.first_arg()), m_arg2_acc(expr.second_arg()) { }
+
+		LMAT_ENSURE_INLINE
+		value_type get_scalar(const index_t i, const col_state_t& s) const
+		{
+			return m_fun(m_arg1_acc.get_scalar(i, s.first), m_arg2_acc.get_scalar(i, s.second));
+		}
+
+		LMAT_ENSURE_INLINE
+		col_state_t col_state(const index_t j) const
+		{
+			return col_state_t(m_arg1_acc.col_state(j), m_arg2_acc.col_state(j));
+		}
+
+	private:
+		fun_t m_fun;
+		arg1_accessor_t m_arg1_acc;
+		arg2_accessor_t m_arg2_acc;
 	};
 
-	template<typename Fun, typename Arg1_HP, class Arg1, typename Arg2_HP, class Arg2, class Dst>
-	struct default_matrix_eval_policy<binary_ewise_expr<Fun, Arg1_HP, Arg1, Arg2_HP, Arg2>, Dst>
+
+	template<typename Op, typename T1, class Arg2>
+	struct percol_macc_state_map<
+		binary_fix1st_ewise_accessor<percol_macc, scalar_kernel_t, Op, T1, Arg2> >
 	{
-		typedef binary_ewise_expr<Fun, Arg1_HP, Arg1, Arg2_HP, Arg2> expr_t;
-		typedef typename default_matrix_visit_policy<expr_t, Dst>::type type;
+		typedef typename macc_accessor_map<Arg2, percol_macc, scalar_kernel_t>::type arg2_accessor_t;
+		typedef typename percol_macc_state_map<arg2_accessor_t>::type type;
 	};
 
+
+	template<typename Op, typename T1, class Arg2>
+	class binary_fix1st_ewise_accessor<percol_macc, scalar_kernel_t, Op, T1, Arg2>
+	: public binary_fix1st_ewise_accbase<percol_macc, scalar_kernel_t, Op, T1, Arg2>::base_type
+	{
+		typedef typename matrix_traits<Arg2>::value_type arg2_value_type;
+		typedef typename binary_op_result<Op, T1, arg2_value_type>::type value_type;
+
+		typedef typename binary_op_fun<Op, scalar_kernel_t, T1, arg2_value_type>::type fun_t;
+		typedef typename macc_accessor_map<Arg2, percol_macc, scalar_kernel_t>::type arg2_accessor_t;
+
+		typedef typename percol_macc_state_map<arg2_accessor_t>::type col_state_t;
+
+	public:
+
+		template<typename Arg_HP>
+		binary_fix1st_ewise_accessor(const binary_fix1st_ewise_expr<Op, T1, Arg_HP, Arg2>& expr)
+		: m_fun(expr.op()), m_arg1v(expr.arg1_value()), m_arg2_acc(expr.arg()) { }
+
+		LMAT_ENSURE_INLINE
+		value_type get_scalar(const index_t i, const col_state_t& s) const
+		{
+			return m_fun(m_arg1v, m_arg2_acc.get_scalar(i, s));
+		}
+
+		LMAT_ENSURE_INLINE
+		col_state_t col_state(const index_t j) const
+		{
+			return m_arg2_acc.col_state(j);
+		}
+
+	private:
+		fun_t m_fun;
+		const T1& m_arg1v;
+		arg2_accessor_t m_arg2_acc;
+	};
+
+
+	template<typename Op, class Arg1, typename T2>
+	struct percol_macc_state_map<
+		binary_fix2nd_ewise_accessor<percol_macc, scalar_kernel_t, Op, Arg1, T2> >
+	{
+		typedef typename macc_accessor_map<Arg1, percol_macc, scalar_kernel_t>::type arg1_accessor_t;
+		typedef typename percol_macc_state_map<arg1_accessor_t>::type type;
+	};
+
+
+	template<typename Op, class Arg1, typename T2>
+	class binary_fix2nd_ewise_accessor<percol_macc, scalar_kernel_t, Op, Arg1, T2>
+	: public binary_fix2nd_ewise_accbase<percol_macc, scalar_kernel_t, Op, Arg1, T2>::base_type
+	{
+		typedef typename matrix_traits<Arg1>::value_type arg1_value_type;
+		typedef typename binary_op_result<Op, arg1_value_type, T2>::type value_type;
+
+		typedef typename binary_op_fun<Op, scalar_kernel_t, arg1_value_type, T2>::type fun_t;
+		typedef typename macc_accessor_map<Arg1, percol_macc, scalar_kernel_t>::type arg1_accessor_t;
+
+		typedef typename percol_macc_state_map<arg1_accessor_t>::type col_state_t;
+
+	public:
+
+		template<typename Arg_HP>
+		binary_fix2nd_ewise_accessor(const binary_fix2nd_ewise_expr<Op, Arg_HP, Arg1, T2>& expr)
+		: m_fun(expr.op()), m_arg1_acc(expr.arg()), m_arg2v(expr.arg2_value()) { }
+
+		LMAT_ENSURE_INLINE
+		value_type get_scalar(const index_t i, const col_state_t& s) const
+		{
+			return m_fun(m_arg1_acc.get_scalar(i, s), m_arg2v);
+		}
+
+		LMAT_ENSURE_INLINE
+		col_state_t col_state(const index_t j) const
+		{
+			return m_arg1_acc.col_state(j);
+		}
+
+	private:
+		fun_t m_fun;
+		arg1_accessor_t m_arg1_acc;
+		const T2& m_arg2v;
+	};
 }
 
-#endif /* MATRIX_EWISE_EVAL_H_ */
+#endif
+
+
+

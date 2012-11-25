@@ -13,12 +13,31 @@
 #ifndef LIGHTMAT_MATRIX_ACC_EVAL_H_
 #define LIGHTMAT_MATRIX_ACC_EVAL_H_
 
-#include <light_mat/matexpr/matrix_access_base.h>
+#include <light_mat/matexpr/dense_accessors.h>
 
 namespace lmat
 {
 
 	template<class SExpr, class DMat, class Setting> struct macc_eval_scheme;
+
+	template<class SExpr, class DMat>
+	struct default_macc_setting
+	{
+		static const int M = binary_ct_rows<SExpr, DMat>::value;
+		static const int N = binary_ct_cols<SExpr, DMat>::value;
+
+		static const int linacc_cost = macc_cost<SExpr, M, N, linear_macc, scalar_kernel_t>::value;
+		static const int percol_cost = macc_cost<SExpr, M, N, percol_macc, scalar_kernel_t>::value;
+
+		static const int use_linear =
+				ct_supports_linear_index<DMat>::value &&
+				(linacc_cost <= percol_cost);
+
+		typedef scalar_kernel_t ker_category;
+		typedef typename if_c<use_linear, linear_macc, percol_macc>::type acc_category;
+
+		typedef macc_setting<acc_category, ker_category, M, N> type;
+	};
 
 	template<class SExpr, class DMat>
 	struct default_macc_eval_scheme
