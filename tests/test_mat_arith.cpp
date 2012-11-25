@@ -8,6 +8,7 @@
 
 #include "test_base.h"
 
+#include <light_mat/matrix/matrix_classes.h>
 #include <light_mat/matexpr/matrix_arith.h>
 #include <light_mat/matexpr/matrix_ewise_eval.h>
 
@@ -471,6 +472,59 @@ MN_CASE( mat_arith, min )
 }
 
 
+MN_CASE( mat_arith_ex,  add_block_to_block )
+{
+	const index_t m = M == 0 ? DM : M;
+	const index_t n = N == 0 ? DN : N;
+
+	double v = 1.5;
+	dblock<double> blk_x(LDim * n);
+	dblock<double> blk_y(LDim * n, fill(v));
+
+	for (index_t i = 0; i < LDim * n; ++i) blk_x[i] = double(i+1);
+
+	cref_block<double, M, N> x(blk_x.ptr_data(), m, n, LDim);
+	ref_block<double, M, N> y(blk_y.ptr_data(), m, n, LDim);
+
+	dense_matrix<double, M, N> r(m, n);
+	for (index_t j = 0; j < n; ++j)
+	{
+		for (index_t i = 0; i < m; ++i) r(i, j) = x(i, j) + v;
+	}
+
+	y += x;
+
+	ASSERT_MAT_EQ(m, n, y, r);
+}
+
+MN_CASE( mat_arith_ex,  negate_block )
+{
+	const index_t m = M == 0 ? DM : M;
+	const index_t n = N == 0 ? DN : N;
+
+	double v = 1.5;
+	dblock<double> blk_x(LDim * n);
+	dblock<double> blk_y(LDim * n, fill(v));
+
+	for (index_t i = 0; i < LDim * n; ++i) blk_x[i] = double(i+1);
+
+	cref_block<double, M, N> x(blk_x.ptr_data(), m, n, LDim);
+	ref_block<double, M, N> y(blk_y.ptr_data(), m, n, LDim);
+
+	dense_matrix<double, M, N> r(m, n);
+	for (index_t j = 0; j < n; ++j)
+	{
+		for (index_t i = 0; i < m; ++i) r(i, j) = - x(i, j);
+	}
+
+	y = -x;
+
+	ASSERT_MAT_EQ(m, n, y, r);
+}
+
+
+
+
 
 BEGIN_TPACK( mat_arith_add )
 	ADD_MN_CASE_3X3( mat_arith, add, DM, DN )
@@ -525,6 +579,14 @@ BEGIN_TPACK( mat_arith_min )
 END_TPACK
 
 
+BEGIN_TPACK( mat_arith_ex_add_block )
+	ADD_MN_CASE_3X3( mat_arith_ex, add_block_to_block, DM, DN )
+END_TPACK
+
+BEGIN_TPACK( mat_arith_ex_neg_block )
+	ADD_MN_CASE_3X3( mat_arith_ex, negate_block, DM, DN )
+END_TPACK
+
 
 BEGIN_MAIN_SUITE
 
@@ -542,6 +604,9 @@ BEGIN_MAIN_SUITE
 
 	ADD_TPACK( mat_arith_max )
 	ADD_TPACK( mat_arith_min )
+
+	ADD_TPACK( mat_arith_ex_add_block )
+	ADD_TPACK( mat_arith_ex_neg_block )
 
 END_MAIN_SUITE
 
