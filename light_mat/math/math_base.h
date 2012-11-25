@@ -15,7 +15,7 @@
 
 #include <light_mat/common/basic_defs.h>
 #include <cstdlib>
-#include <math.h>
+#include <cmath>
 
 #define LMAT_IMPORT_STDMATH_UFUN( funname, fun ) \
 	LMAT_ENSURE_INLINE inline float funname(float x) { return ::fun##f(x); } \
@@ -35,20 +35,18 @@ namespace lmat { namespace math {
 
 	// abs
 
-	LMAT_ENSURE_INLINE inline int abs(int x) { return std::abs(x); }
-	LMAT_ENSURE_INLINE inline long abs(long x) { return std::abs(x); }
-	LMAT_IMPORT_STDMATH_UFUN( abs, fabs )
+	using std::abs;
 
 	// floor & ceil
 
-	LMAT_IMPORT_STDMATH_UFUN( floor, floor )
-	LMAT_IMPORT_STDMATH_UFUN( ceil, ceil )
+	using std::floor;
+	using std::ceil;
 
 	// power & module
 
-	LMAT_IMPORT_STDMATH_UFUN( sqrt, sqrt )
-	LMAT_IMPORT_STDMATH_BFUN( pow, pow )
-	LMAT_IMPORT_STDMATH_BFUN( mod, fmod )
+	using std::sqrt;
+	using std::pow;
+	using std::fmod;
 
 	LMAT_ENSURE_INLINE inline int    sqr(int    x) { return x * x; }
 	LMAT_ENSURE_INLINE inline long   sqr(long   x) { return x * x; }
@@ -63,32 +61,31 @@ namespace lmat { namespace math {
 	LMAT_ENSURE_INLINE inline float  rcp(float  x) { return 1.0f / x; }
 	LMAT_ENSURE_INLINE inline double rcp(double x) { return 1.0 / x; }
 
-	LMAT_ENSURE_INLINE inline float  rsqrt(float  x) { return 1.0f / ::sqrtf(x); }
-	LMAT_ENSURE_INLINE inline double rsqrt(double x) { return 1.0 / ::sqrt(x); }
+	LMAT_ENSURE_INLINE inline float  rsqrt(float  x) { return 1.0f / sqrt(x); }
+	LMAT_ENSURE_INLINE inline double rsqrt(double x) { return 1.0 / sqrt(x); }
 
 	// exp & log
 
-	LMAT_IMPORT_STDMATH_UFUN( exp, exp )
-	LMAT_IMPORT_STDMATH_UFUN( log, log )
-	LMAT_IMPORT_STDMATH_UFUN( log10, log10 )
+	using std::exp;
+	using std::log;
+	using std::log10;
 
 	// trigonometry
 
-	LMAT_IMPORT_STDMATH_UFUN( sin, sin )
-	LMAT_IMPORT_STDMATH_UFUN( cos, cos )
-	LMAT_IMPORT_STDMATH_UFUN( tan, atan )
+	using std::sin;
+	using std::cos;
+	using std::tan;
 
-	LMAT_IMPORT_STDMATH_UFUN( asin, asin )
-	LMAT_IMPORT_STDMATH_UFUN( acos, acos )
-	LMAT_IMPORT_STDMATH_UFUN( atan, atan )
-
-	LMAT_IMPORT_STDMATH_BFUN( atan2, atan2 )
+	using std::asin;
+	using std::acos;
+	using std::atan;
+	using std::atan2;
 
 	// hyperbolic
 
-	LMAT_IMPORT_STDMATH_UFUN( sinh, sinh )
-	LMAT_IMPORT_STDMATH_UFUN( cosh, cosh )
-	LMAT_IMPORT_STDMATH_UFUN( tanh, atanh )
+	using std::sinh;
+	using std::cosh;
+	using std::tanh;
 
 	// max & min
 
