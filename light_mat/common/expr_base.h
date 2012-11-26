@@ -58,14 +58,14 @@ namespace lmat
 
 	template<class Arg>
 	LMAT_ENSURE_INLINE
-	arg_forwarder<ref_arg_t, Arg> ref_arg(const Arg& arg)
+	inline arg_forwarder<ref_arg_t, Arg> ref_arg(const Arg& arg)
 	{
 		return arg_forwarder<ref_arg_t, Arg>(arg);
 	}
 
 	template<class Arg>
 	LMAT_ENSURE_INLINE
-	arg_forwarder<copy_arg_t, Arg> copy_arg(const Arg& arg)
+	inline arg_forwarder<copy_arg_t, Arg> copy_arg(const Arg& arg)
 	{
 		return arg_forwarder<copy_arg_t, Arg>(arg);
 	}
@@ -262,7 +262,7 @@ namespace lmat
 	template<typename Spec,
 		typename Arg_HP, class Arg>
 	LMAT_ENSURE_INLINE
-	typename enable_if<
+	inline typename enable_if<
 		unary_expr_verifier<Spec, Arg>,
 		typename unary_expr_map<Spec,
 			Arg_HP, Arg
@@ -280,7 +280,7 @@ namespace lmat
 		typename Arg1_HP, class Arg1,
 		typename Arg2_HP, class Arg2>
 	LMAT_ENSURE_INLINE
-	typename enable_if<
+	inline typename enable_if<
 		binary_expr_verifier<Spec, Arg1, Arg2>,
 		typename binary_expr_map<Spec,
 			Arg1_HP, Arg1,
@@ -302,7 +302,7 @@ namespace lmat
 		typename Arg2_HP, class Arg2,
 		typename Arg3_HP, class Arg3>
 	LMAT_ENSURE_INLINE
-	typename enable_if<
+	inline typename enable_if<
 		ternary_expr_verifier<Spec, Arg1, Arg2, Arg3>,
 		typename ternary_expr_map<Spec,
 			Arg1_HP, Arg1,

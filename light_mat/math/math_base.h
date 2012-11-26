@@ -121,8 +121,8 @@ namespace lmat { namespace math {
 	LMAT_IMPORT_STDMATH_UFUN( round, round )
 	LMAT_IMPORT_STDMATH_UFUN( trunc, trunc )
 
-	LMAT_ENSURE_INLINE long lround( float x ) { return ::lrintf(x); }
-	LMAT_ENSURE_INLINE long lround( double x ) { return ::lrint(x); }
+	LMAT_ENSURE_INLINE inline long lround( float x ) { return ::lrintf(x); }
+	LMAT_ENSURE_INLINE inline long lround( double x ) { return ::lrint(x); }
 
 	// power
 
@@ -152,14 +152,14 @@ namespace lmat { namespace math {
 
 	// classification
 
-	LMAT_ENSURE_INLINE bool is_inf(float x) { return (bool)isinf(x); }
-	LMAT_ENSURE_INLINE bool is_inf(double x) { return (bool)isinf(x); }
+	LMAT_ENSURE_INLINE inline bool is_inf(float x) { return (bool)isinf(x); }
+	LMAT_ENSURE_INLINE inline bool is_inf(double x) { return (bool)isinf(x); }
 
-	LMAT_ENSURE_INLINE bool is_finite(float x) { return (bool)isfinite(x); }
-	LMAT_ENSURE_INLINE bool is_finite(double x) { return (bool)isfinite(x); }
+	// LMAT_ENSURE_INLINE bool is_finite(float x) { return (bool)isfinite(x); }
+	// LMAT_ENSURE_INLINE bool is_finite(double x) { return (bool)isfinite(x); }
 
-	LMAT_ENSURE_INLINE bool is_nan(float x) { return (bool)isnan(x); }
-	LMAT_ENSURE_INLINE bool is_nan(double x) { return (bool)isnan(x); }
+	LMAT_ENSURE_INLINE inline bool is_nan(float x) { return (bool)isnan(x); }
+	LMAT_ENSURE_INLINE inline bool is_nan(double x) { return (bool)isnan(x); }
 
 #endif
 

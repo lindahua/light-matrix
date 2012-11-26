@@ -351,7 +351,7 @@ namespace lmat
 
 	template<typename T, class Expr>
 	LMAT_ENSURE_INLINE
-	dense_matrix<T, ct_rows<Expr>::value, ct_cols<Expr>::value>
+	inline dense_matrix<T, ct_rows<Expr>::value, ct_cols<Expr>::value>
 	eval(const IMatrixXpr<Expr, T>& expr)
 	{
 		return dense_matrix<T, ct_rows<Expr>::value, ct_cols<Expr>::value>(
@@ -360,7 +360,7 @@ namespace lmat
 
 	template<typename T, class Expr, class Context>
 	LMAT_ENSURE_INLINE
-	dense_matrix<T, ct_rows<Expr>::value, ct_cols<Expr>::value>
+	inline dense_matrix<T, ct_rows<Expr>::value, ct_cols<Expr>::value>
 	eval(const IMatrixXpr<Expr, T>& expr, const Context& ctx)
 	{
 		dense_matrix<T, ct_rows<Expr>::value, ct_cols<Expr>::value> r(expr.nrows(), expr.ncolumns());
@@ -369,7 +369,7 @@ namespace lmat
 
 	template<typename T, class Expr>
 	LMAT_ENSURE_INLINE
-	T to_scalar(const IMatrixXpr<Expr, T>& expr)
+	inline T to_scalar(const IMatrixXpr<Expr, T>& expr)
 	{
 		dense_matrix<T,1,1> r(expr);
 		return r[0];

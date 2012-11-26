@@ -99,7 +99,6 @@ namespace lmat { namespace detail {
 	template<typename T, class DMat>
 	struct mat_filler
 	{
-		LMAT_ENSURE_INLINE
 		static void zero(DMat& dmat)
 		{
 			const index_t m = dmat.nrows();
@@ -134,7 +133,6 @@ namespace lmat { namespace detail {
 			}
 		}
 
-		LMAT_ENSURE_INLINE
 		static void fill(const T& v, DMat& dmat)
 		{
 			const index_t m = dmat.nrows();

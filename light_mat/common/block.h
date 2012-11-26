@@ -204,7 +204,7 @@ namespace lmat
 
 	template<typename T, class Allocator>
 	LMAT_ENSURE_INLINE
-	void swap(dblock<T, Allocator>& a, dblock<T, Allocator>& b)
+	inline void swap(dblock<T, Allocator>& a, dblock<T, Allocator>& b)
 	{
 		a.swap(b);
 	}
@@ -318,7 +318,7 @@ namespace lmat
 
 	template<typename T, int N>
 	LMAT_ENSURE_INLINE
-	void swap(sblock<T, N>& a, sblock<T, N>& b)
+	inline void swap(sblock<T, N>& a, sblock<T, N>& b)
 	{
 		a.swap(b);
 	}

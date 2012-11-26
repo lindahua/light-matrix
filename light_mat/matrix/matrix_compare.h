@@ -21,7 +21,7 @@ namespace lmat
 {
 	template<typename T, class LMat, class RMat>
 	LMAT_ENSURE_INLINE
-	bool is_equal(const IDenseMatrix<LMat, T>& a, const IDenseMatrix<RMat, T>& b)
+	inline bool is_equal(const IDenseMatrix<LMat, T>& a, const IDenseMatrix<RMat, T>& b)
 	{
 		typedef typename detail::mat_comparer_map<LMat, RMat>::type comparer_t;
 
@@ -30,7 +30,7 @@ namespace lmat
 
 	template<typename T, class LMat, class RMat>
 	LMAT_ENSURE_INLINE
-	bool is_approx(const IDenseMatrix<LMat, T>& a, const IDenseMatrix<RMat, T>& b, const T& tol)
+	inline bool is_approx(const IDenseMatrix<LMat, T>& a, const IDenseMatrix<RMat, T>& b, const T& tol)
 	{
 		typedef typename detail::mat_approx_comparer_map<LMat, RMat>::type comparer_t;
 

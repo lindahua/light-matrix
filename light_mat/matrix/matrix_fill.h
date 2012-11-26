@@ -20,7 +20,7 @@ namespace lmat
 {
 	template<typename T, class Mat>
 	LMAT_ENSURE_INLINE
-	void zero(IDenseMatrix<Mat, T>& dst)
+	inline void zero(IDenseMatrix<Mat, T>& dst)
 	{
 		typedef typename detail::mat_filler_map<Mat>::type filler_t;
 		filler_t::zero(dst.derived());
@@ -28,7 +28,7 @@ namespace lmat
 
 	template<typename T, class Mat>
 	LMAT_ENSURE_INLINE
-	void fill(IDenseMatrix<Mat, T>& dst, const T& val)
+	inline void fill(IDenseMatrix<Mat, T>& dst, const T& val)
 	{
 		typedef typename detail::mat_filler_map<Mat>::type filler_t;
 		filler_t::fill(val, dst.derived());
@@ -36,7 +36,7 @@ namespace lmat
 
 	template<typename T, class DMat>
 	LMAT_ENSURE_INLINE
-	DMat& operator << (IDenseMatrix<DMat, T>& dmat, const T& v)
+	inline DMat& operator << (IDenseMatrix<DMat, T>& dmat, const T& v)
 	{
 		fill(dmat.derived(), v);
 		return dmat.derived();

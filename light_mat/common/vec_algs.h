@@ -23,8 +23,7 @@ namespace lmat
 	// vec_all
 
 	template<typename Pred, typename T>
-	LMAT_ENSURE_INLINE
-	bool vec_all(Pred pred, const index_t n, const T *a)
+	inline bool vec_all(Pred pred, const index_t n, const T *a)
 	{
 		for (index_t i = 0; i < n; ++i)
 		{
@@ -34,8 +33,7 @@ namespace lmat
 	}
 
 	template<typename Pred, typename T>
-	LMAT_ENSURE_INLINE
-	bool vec_all(Pred pred, const index_t n, const T *a, index_t astep)
+	inline bool vec_all(Pred pred, const index_t n, const T *a, index_t astep)
 	{
 		for (index_t i = 0; i < n; ++i)
 		{
@@ -45,8 +43,7 @@ namespace lmat
 	}
 
 	template<typename Pred, typename Ta, typename Tb>
-	LMAT_ENSURE_INLINE
-	bool vec_all(Pred pred, const index_t n, const Ta *a, const Tb *b)
+	inline bool vec_all(Pred pred, const index_t n, const Ta *a, const Tb *b)
 	{
 		for (index_t i = 0; i < n; ++i)
 		{
@@ -56,8 +53,7 @@ namespace lmat
 	}
 
 	template<typename Pred, typename Ta, typename Tb>
-	LMAT_ENSURE_INLINE
-	bool vec_all(Pred pred, const index_t n, const Ta *a, index_t astep, const Tb *b)
+	inline bool vec_all(Pred pred, const index_t n, const Ta *a, index_t astep, const Tb *b)
 	{
 		for (index_t i = 0; i < n; ++i)
 		{
@@ -67,8 +63,7 @@ namespace lmat
 	}
 
 	template<typename Pred, typename Ta, typename Tb>
-	LMAT_ENSURE_INLINE
-	bool vec_all(Pred pred, const index_t n, const Ta *a, const Tb *b, index_t bstep)
+	inline bool vec_all(Pred pred, const index_t n, const Ta *a, const Tb *b, index_t bstep)
 	{
 		for (index_t i = 0; i < n; ++i)
 		{
@@ -78,8 +73,7 @@ namespace lmat
 	}
 
 	template<typename Pred, typename Ta, typename Tb>
-	LMAT_ENSURE_INLINE
-	bool vec_all(Pred pred, const index_t n, const Ta *a, index_t astep, const Tb *b, index_t bstep)
+	inline bool vec_all(Pred pred, const index_t n, const Ta *a, index_t astep, const Tb *b, index_t bstep)
 	{
 		for (index_t i = 0; i < n; ++i)
 		{
@@ -92,8 +86,7 @@ namespace lmat
 	// vec_any
 
 	template<typename Pred, typename T>
-	LMAT_ENSURE_INLINE
-	bool vec_any(Pred pred, const index_t n, const T *a)
+	inline bool vec_any(Pred pred, const index_t n, const T *a)
 	{
 		for (index_t i = 0; i < n; ++i)
 		{
@@ -103,8 +96,7 @@ namespace lmat
 	}
 
 	template<typename Pred, typename T>
-	LMAT_ENSURE_INLINE
-	bool vec_any(Pred pred, const index_t n, const T *a, index_t astep)
+	inline bool vec_any(Pred pred, const index_t n, const T *a, index_t astep)
 	{
 		for (index_t i = 0; i < n; ++i)
 		{
@@ -114,8 +106,7 @@ namespace lmat
 	}
 
 	template<typename Pred, typename Ta, typename Tb>
-	LMAT_ENSURE_INLINE
-	bool vec_any(Pred pred, const index_t n, const Ta *a, const Tb *b)
+	inline bool vec_any(Pred pred, const index_t n, const Ta *a, const Tb *b)
 	{
 		for (index_t i = 0; i < n; ++i)
 		{
@@ -125,8 +116,7 @@ namespace lmat
 	}
 
 	template<typename Pred, typename Ta, typename Tb>
-	LMAT_ENSURE_INLINE
-	bool vec_any(Pred pred, const index_t n, const Ta *a, index_t astep, const Tb *b)
+	inline bool vec_any(Pred pred, const index_t n, const Ta *a, index_t astep, const Tb *b)
 	{
 		for (index_t i = 0; i < n; ++i)
 		{
@@ -136,8 +126,7 @@ namespace lmat
 	}
 
 	template<typename Pred, typename Ta, typename Tb>
-	LMAT_ENSURE_INLINE
-	bool vec_any(Pred pred, const index_t n, const Ta *a, const Tb *b, index_t bstep)
+	inline bool vec_any(Pred pred, const index_t n, const Ta *a, const Tb *b, index_t bstep)
 	{
 		for (index_t i = 0; i < n; ++i)
 		{
@@ -147,8 +136,7 @@ namespace lmat
 	}
 
 	template<typename Pred, typename Ta, typename Tb>
-	LMAT_ENSURE_INLINE
-	bool vec_any(Pred pred, const index_t n, const Ta *a, index_t astep, const Tb *b, index_t bstep)
+	inline bool vec_any(Pred pred, const index_t n, const Ta *a, index_t astep, const Tb *b, index_t bstep)
 	{
 		for (index_t i = 0; i < n; ++i)
 		{
@@ -161,43 +149,37 @@ namespace lmat
 	// vec_equal
 
 	template<typename T>
-	LMAT_ENSURE_INLINE
-	bool vec_equal(const index_t n, const T *a, const T& v)
+	inline bool vec_equal(const index_t n, const T *a, const T& v)
 	{
 		return vec_all(std::bind2nd(std::equal_to<T>(), v), n, a);
 	}
 
 	template<typename T>
-	LMAT_ENSURE_INLINE
-	bool vec_equal(const index_t n, const T *a, index_t astep, const T& v)
+	inline bool vec_equal(const index_t n, const T *a, index_t astep, const T& v)
 	{
 		return vec_all(std::bind2nd(std::equal_to<T>(), v), n, a, astep);
 	}
 
 	template<typename T>
-	LMAT_ENSURE_INLINE
-	bool vec_equal(const index_t n, const T *a, const T *b)
+	inline bool vec_equal(const index_t n, const T *a, const T *b)
 	{
 		return vec_all(std::equal_to<T>(), n, a, b);
 	}
 
 	template<typename T>
-	LMAT_ENSURE_INLINE
-	bool vec_equal(const index_t n, const T *a, index_t astep, const T *b)
+	inline bool vec_equal(const index_t n, const T *a, index_t astep, const T *b)
 	{
 		return vec_all(std::equal_to<T>(), n, a, astep, b);
 	}
 
 	template<typename T>
-	LMAT_ENSURE_INLINE
-	bool vec_equal(const index_t n, const T *a, const T *b, index_t bstep)
+	inline bool vec_equal(const index_t n, const T *a, const T *b, index_t bstep)
 	{
 		return vec_all(std::equal_to<T>(), n, a, b, bstep);
 	}
 
 	template<typename T>
-	LMAT_ENSURE_INLINE
-	bool vec_equal(const index_t n, const T *a, index_t astep, const T *b, index_t bstep)
+	inline bool vec_equal(const index_t n, const T *a, index_t astep, const T *b, index_t bstep)
 	{
 		return vec_all(std::equal_to<T>(), n, a, astep, b, bstep);
 	}
@@ -234,43 +216,37 @@ namespace lmat
 
 
 	template<typename T>
-	LMAT_ENSURE_INLINE
-	bool vec_approx(const index_t n, const T *a, const T& v, const T& tol)
+	inline bool vec_approx(const index_t n, const T *a, const T& v, const T& tol)
 	{
 		return vec_all(std::bind2nd(approx_to<T>(tol), v), n, a);
 	}
 
 	template<typename T>
-	LMAT_ENSURE_INLINE
-	bool vec_approx(const index_t n, const T *a, index_t astep, const T& v, const T& tol)
+	inline bool vec_approx(const index_t n, const T *a, index_t astep, const T& v, const T& tol)
 	{
 		return vec_all(std::bind2nd(approx_to<T>(tol), v), n, a, astep);
 	}
 
 	template<typename T>
-	LMAT_ENSURE_INLINE
-	bool vec_approx(const index_t n, const T *a, const T *b, const T& tol)
+	inline bool vec_approx(const index_t n, const T *a, const T *b, const T& tol)
 	{
 		return vec_all(approx_to<T>(tol), n, a, b);
 	}
 
 	template<typename T>
-	LMAT_ENSURE_INLINE
-	bool vec_approx(const index_t n, const T *a, index_t astep, const T *b, const T& tol)
+	inline bool vec_approx(const index_t n, const T *a, index_t astep, const T *b, const T& tol)
 	{
 		return vec_all(approx_to<T>(tol), n, a, astep, b);
 	}
 
 	template<typename T>
-	LMAT_ENSURE_INLINE
-	bool vec_approx(const index_t n, const T *a, const T *b, index_t bstep, const T& tol)
+	inline bool vec_approx(const index_t n, const T *a, const T *b, index_t bstep, const T& tol)
 	{
 		return vec_all(approx_to<T>(tol), n, a, b, bstep);
 	}
 
 	template<typename T>
-	LMAT_ENSURE_INLINE
-	bool vec_approx(const index_t n, const T *a, index_t astep, const T *b, index_t bstep, const T& tol)
+	inline bool vec_approx(const index_t n, const T *a, index_t astep, const T *b, index_t bstep, const T& tol)
 	{
 		return vec_all(approx_to<T>(tol), n, a, astep, b, bstep);
 	}

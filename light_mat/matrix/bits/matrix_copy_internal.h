@@ -122,7 +122,6 @@ namespace lmat { namespace detail {
 	template<typename T, class Mat>
 	struct genmat_copier_p
 	{
-		LMAT_ENSURE_INLINE
 		static void copy(const Mat& mat, T *dst)
 		{
 			const index_t m = mat.nrows();
@@ -157,7 +156,6 @@ namespace lmat { namespace detail {
 			}
 		}
 
-		LMAT_ENSURE_INLINE
 		static void copy(const T *src, Mat& mat)
 		{
 			const index_t m = mat.nrows();
