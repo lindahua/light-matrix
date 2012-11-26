@@ -128,6 +128,7 @@ void test_acc_eval()
 
 	typedef macc_scheme<AccCate, KerCate, M, N> scheme_t;
 
+	fill(dmat, 0.0);
 	scheme_t sch = scheme_t::get_default(smat, dmat);
 	sch.evaluate(smat, dmat);
 
