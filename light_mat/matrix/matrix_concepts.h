@@ -326,49 +326,6 @@ namespace lmat
 
 	}; // end class IDenseMatrixBlock
 
-
-	/********************************************
-	 *
-	 *  matrix evaluation
-	 *
-	 ********************************************/
-
-	template<class SExpr, class DMat>
-	struct matrix_eval_verifier
-	{
-		static const bool value =
-				is_dense_mat<DMat>::value &&
-				!is_readonly_mat<DMat>::value &&
-				is_mat_xpr<SExpr>::value &&
-				has_same_domain<SExpr, DMat>::value &&
-				has_same_value_type<SExpr, DMat>::value &&
-				has_compatible_ct_size<DMat, SExpr>::value;
-	};
-
-	struct undefined_eval_scheme { };
-
-	template<class SExpr, class DMat>
-	struct default_matrix_eval_scheme
-	{
-		typedef typename
-				if_<is_dense_mat<SExpr>,
-					matrix_copy_scheme<SExpr, DMat>,
-					undefined_eval_scheme
-				>::type type;
-	};
-
-
-	template<typename T, class SExpr, class DMat>
-	LMAT_ENSURE_INLINE
-	inline typename enable_if<matrix_eval_verifier<SExpr, DMat>, void>::type
-	default_evaluate(const IMatrixXpr<SExpr, T>& sexpr, IDenseMatrix<DMat, T>& dmat)
-	{
-		typedef typename default_matrix_eval_scheme<SExpr, DMat>::type scheme_t;
-
-		scheme_t scheme(sexpr.derived(), dmat.derived());
-		scheme.evaluate();
-	}
-
 }
 
 #endif /* MATRIX_CONCEPTS_H_ */

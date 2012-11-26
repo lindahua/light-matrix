@@ -10,7 +10,6 @@
 
 #include <light_mat/matrix/matrix_classes.h>
 #include <light_mat/matexpr/dense_accessors.h>
-#include <light_mat/matexpr/matrix_acc_eval.h>
 
 using namespace lmat;
 using namespace lmat::test;
@@ -127,10 +126,10 @@ void test_acc_eval()
 	smat_t smat = mat_maker<ClassT1, M, N>::get_cmat(sblk.ptr_data(), m, n);
 	dmat_t dmat = mat_maker<ClassT2, M, N>::get_mat(dblk.ptr_data(), m, n);
 
-	typedef macc_setting<AccCate, KerCate, M, N> setting_t;
+	typedef macc_scheme<AccCate, KerCate, M, N> scheme_t;
 
-	macc_eval_scheme<smat_t, dmat_t, setting_t> scheme(smat, dmat);
-	scheme.evaluate();
+	scheme_t sch = scheme_t::get_default(smat, dmat);
+	sch.evaluate(smat, dmat);
 
 	ASSERT_MAT_EQ(m, n, smat, dmat);
 }

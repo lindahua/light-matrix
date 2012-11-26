@@ -318,6 +318,25 @@ namespace lmat
 		static const bool value = ct_is_continuous<Mat>::value || ct_is_vector<Mat>::value;
 	};
 
+
+	/********************************************
+	 *
+	 *  Evaluation
+	 *
+	 ********************************************/
+
+	template<class SExpr, class DMat>
+	struct matrix_eval_verifier
+	{
+		static const bool value =
+				is_dense_mat<DMat>::value &&
+				!is_readonly_mat<DMat>::value &&
+				is_mat_xpr<SExpr>::value &&
+				has_same_domain<SExpr, DMat>::value &&
+				has_same_value_type<SExpr, DMat>::value &&
+				has_compatible_ct_size<DMat, SExpr>::value;
+	};
+
 }
 
 #endif /* MATRIX_META_H_ */

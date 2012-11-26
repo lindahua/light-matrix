@@ -96,7 +96,8 @@ namespace lmat
 	// evaluation
 
 	template<class SExpr, class Dst> struct default_matrix_eval_scheme;
-	template<class SMat, class DMat> struct matrix_copy_scheme;
+	struct undefined_eval_scheme { };
+
 }
 
 // Useful macros

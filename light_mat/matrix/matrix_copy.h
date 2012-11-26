@@ -13,7 +13,6 @@
 #ifndef LIGHTMAT_MATRIX_COPY_H_
 #define LIGHTMAT_MATRIX_COPY_H_
 
-
 #include "bits/matrix_copy_internal.h"
 
 namespace lmat
@@ -55,24 +54,48 @@ namespace lmat
 	}
 
 
-	template<class SMat, class DMat>
+	template<int M, int N>
 	struct matrix_copy_scheme
 	{
-		const SMat& smat;
-		DMat& dmat;
+		matrix_shape<M, N> m_shape;
 
-		LMAT_ENSURE_INLINE
-		matrix_copy_scheme(const SMat& sm, DMat& dm)
-		: smat(sm), dmat(dm) { }
+		matrix_copy_scheme(const index_t m, const index_t n)
+		: m_shape(m, n) { }
 
+		template<class SExpr, class DMat>
 		LMAT_ENSURE_INLINE
-		void evaluate()
+		void evaluate(const SExpr& sexpr, DMat& dmat)
 		{
-			typedef typename detail::mat_copier_map<SMat, DMat>::type copier_t;
-			copier_t::copy(smat, dmat);
+			copy(sexpr, dmat);
 		}
 	};
 
+
+	template<typename T, class SExpr, class DMat>
+	LMAT_ENSURE_INLINE
+	inline matrix_copy_scheme<
+		binary_ct_rows<SExpr, DMat>::value,
+		binary_ct_cols<SExpr, DMat>::value>
+	get_default_eval_scheme(
+			const IDenseMatrix<SExpr, T>& sexpr,
+			IDenseMatrix<DMat, T>& dmat)
+	{
+		const int M = binary_ct_rows<SExpr, DMat>::value;
+		const int N = binary_ct_cols<SExpr, DMat>::value;
+
+		return matrix_copy_scheme<M, N>(dmat.nrows(), dmat.ncolumns());
+	}
+
+	template<typename T, class SExpr, class DMat>
+	LMAT_ENSURE_INLINE
+	inline typename enable_if<matrix_eval_verifier<SExpr, DMat>, void>::type
+	default_evaluate(const IMatrixXpr<SExpr, T>& sexpr, IDenseMatrix<DMat, T>& dmat)
+	{
+		const SExpr& s = sexpr.derived();
+		DMat& t = dmat.derived();
+
+		get_default_eval_scheme(s, t).evaluate(s, t);
+	}
 
 }
 

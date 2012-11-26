@@ -294,16 +294,11 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	const int MACC_CACHE_COST = 1200;
-	const int MACC_SHORT_PERCOL_COST = 100;
-	const int MACC_SHORTCOL_UBOUND = 4;
-
-
-	template<class Xpr, int M, int N, typename AccCate, typename KerCate>
+	template<class Xpr, typename AccCate, typename KerCate>
 	struct generic_macc_cost;
 
-	template<class Xpr, int M, int N, typename KerCate>
-	struct generic_macc_cost<Xpr, M, N, linear_macc, KerCate>
+	template<class Xpr, typename KerCate>
+	struct generic_macc_cost<Xpr, linear_macc, KerCate>
 	{
 		static const bool support_dense_linear =
 				detail::macc_support_dense_linear<Xpr, is_dense_mat<Xpr>::value>::value;
@@ -311,26 +306,20 @@ namespace lmat
 		static const int value = support_dense_linear ? 0 : MACC_CACHE_COST;
 	};
 
-	template<class Xpr, int M, int N, typename KerCate>
-	struct generic_macc_cost<Xpr, M, N, percol_macc, KerCate>
+	template<class Xpr, typename KerCate>
+	struct generic_macc_cost<Xpr, percol_macc, KerCate>
 	{
 		static const bool is_dense = is_dense_mat<Xpr>::value;
 
-		static const bool is_short_vec =
-				M > 0 && M <= MACC_SHORTCOL_UBOUND;
-
-		static const int value_c = is_dense ? 0 : MACC_CACHE_COST;
-		static const int value_a = is_short_vec ? MACC_SHORT_PERCOL_COST : 0;
-
-		static const int value = value_c + value_a;
+		static const int value = is_dense ? 0 : MACC_CACHE_COST;
 	};
 
 
-	template<class Xpr, int M, int N, typename AccCate, typename KerCate>
+	template<class Xpr, typename AccCate, typename KerCate>
 	struct macc_cost
 	{
 		static const int value =
-				generic_macc_cost<Xpr, M, N, AccCate, KerCate>::value;
+				generic_macc_cost<Xpr, AccCate, KerCate>::value;
 	};
 
 

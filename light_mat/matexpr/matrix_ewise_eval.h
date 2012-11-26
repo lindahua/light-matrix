@@ -14,7 +14,7 @@
 #define LIGHTMAT_MATRIX_EWISE_EVAL_H_
 
 #include <light_mat/matexpr/matrix_ewise_expr.h>
-#include <light_mat/matexpr/matrix_acc_eval.h>
+#include <light_mat/matexpr/dense_accessors.h>
 #include <utility>
 
 namespace lmat
@@ -41,35 +41,53 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	// eval_scheme
+	// default evaluate scheme
 
-	template<typename Op, typename Arg_HP, class Arg, class DMat>
-	struct default_matrix_eval_scheme<unary_ewise_expr<Op, Arg_HP, Arg>, DMat>
+	template<typename Op, typename Arg_HP, class Arg, class DMat, typename DT>
+	LMAT_ENSURE_INLINE
+	inline typename default_macc_scheme<unary_ewise_expr<Op, Arg_HP, Arg>, DMat>::type
+	get_default_eval_scheme(
+			const unary_ewise_expr<Op, Arg_HP, Arg>& sexpr,
+			IDenseMatrix<DMat, DT>& dmat)
 	{
 		typedef unary_ewise_expr<Op, Arg_HP, Arg> expr_t;
-		typedef typename default_macc_eval_scheme<expr_t, DMat>::type type;
-	};
+		return default_macc_scheme<expr_t, DMat>::get(sexpr, dmat.derived());
+	}
 
-	template<typename Op, typename Arg1_HP, class Arg1, typename Arg2_HP, class Arg2, class DMat>
-	struct default_matrix_eval_scheme<binary_ewise_expr<Op, Arg1_HP, Arg1, Arg2_HP, Arg2>, DMat>
+	template<typename Op, typename Arg1_HP, class Arg1, typename Arg2_HP, class Arg2, class DMat, typename DT>
+	LMAT_ENSURE_INLINE
+	inline typename default_macc_scheme<binary_ewise_expr<Op, Arg1_HP, Arg1, Arg2_HP, Arg2>, DMat>::type
+	get_default_eval_scheme(
+			const binary_ewise_expr<Op, Arg1_HP, Arg1, Arg2_HP, Arg2>& sexpr,
+			IDenseMatrix<DMat, DT>& dmat)
 	{
 		typedef binary_ewise_expr<Op, Arg1_HP, Arg1, Arg2_HP, Arg2> expr_t;
-		typedef typename default_macc_eval_scheme<expr_t, DMat>::type type;
-	};
+		return default_macc_scheme<expr_t, DMat>::get(sexpr, dmat.derived());
+	}
 
-	template<typename Op, typename T1, typename Arg2_HP, class Arg2, class DMat>
-	struct default_matrix_eval_scheme<binary_fix1st_ewise_expr<Op, T1, Arg2_HP, Arg2>, DMat>
+	template<typename Op, typename T1, typename Arg2_HP, class Arg2, class DMat, typename DT>
+	LMAT_ENSURE_INLINE
+	inline typename default_macc_scheme<binary_fix1st_ewise_expr<Op, T1, Arg2_HP, Arg2>, DMat>::type
+	get_default_eval_scheme(
+			const binary_fix1st_ewise_expr<Op, T1, Arg2_HP, Arg2>& sexpr,
+			IDenseMatrix<DMat, DT>& dmat)
 	{
 		typedef binary_fix1st_ewise_expr<Op, T1, Arg2_HP, Arg2> expr_t;
-		typedef typename default_macc_eval_scheme<expr_t, DMat>::type type;
-	};
+		return default_macc_scheme<expr_t, DMat>::get(sexpr, dmat.derived());
+	}
 
-	template<typename Op, typename Arg1_HP, class Arg1, typename T2, class DMat>
-	struct default_matrix_eval_scheme<binary_fix2nd_ewise_expr<Op, Arg1_HP, Arg1, T2>, DMat>
+	template<typename Op, typename Arg1_HP, class Arg1, typename T2, class DMat, typename DT>
+	LMAT_ENSURE_INLINE
+	inline typename default_macc_scheme<binary_fix2nd_ewise_expr<Op, Arg1_HP, Arg1, T2>, DMat>::type
+	get_default_eval_scheme(
+			const binary_fix2nd_ewise_expr<Op, Arg1_HP, Arg1, T2>& sexpr,
+			IDenseMatrix<DMat, DT>& dmat)
 	{
 		typedef binary_fix2nd_ewise_expr<Op, Arg1_HP, Arg1, T2> expr_t;
-		typedef typename default_macc_eval_scheme<expr_t, DMat>::type type;
-	};
+		return default_macc_scheme<expr_t, DMat>::get(sexpr, dmat.derived());
+	}
+
+
 
 
 	// accessors
@@ -107,33 +125,33 @@ namespace lmat
 	 ********************************************/
 
 	template<typename Op, typename Arg_HP, class Arg,
-		int M, int N, typename AccCate, typename KerCate>
-	struct macc_cost<unary_ewise_expr<Op, Arg_HP, Arg>, M, N, AccCate, KerCate>
+		typename AccCate, typename KerCate>
+	struct macc_cost<unary_ewise_expr<Op, Arg_HP, Arg>, AccCate, KerCate>
 	{
-		static const int value = macc_cost<Arg, M, N, AccCate, KerCate>::value;
+		static const int value = macc_cost<Arg, AccCate, KerCate>::value;
 	};
 
 	template<typename Op, typename Arg1_HP, class Arg1, typename Arg2_HP, class Arg2,
-		int M, int N, typename AccCate, typename KerCate>
-	struct macc_cost<binary_ewise_expr<Op, Arg1_HP, Arg1, Arg2_HP, Arg2>, M, N, AccCate, KerCate>
+		typename AccCate, typename KerCate>
+	struct macc_cost<binary_ewise_expr<Op, Arg1_HP, Arg1, Arg2_HP, Arg2>, AccCate, KerCate>
 	{
 		static const int value =
-				macc_cost<Arg1, M, N, AccCate, KerCate>::value +
-				macc_cost<Arg2, M, N, AccCate, KerCate>::value;
+				macc_cost<Arg1, AccCate, KerCate>::value +
+				macc_cost<Arg2, AccCate, KerCate>::value;
 	};
 
 	template<typename Op, typename T1, typename Arg2_HP, class Arg2,
-		int M, int N, typename AccCate, typename KerCate>
-	struct macc_cost<binary_fix1st_ewise_expr<Op, T1, Arg2_HP, Arg2>, M, N, AccCate, KerCate>
+		typename AccCate, typename KerCate>
+	struct macc_cost<binary_fix1st_ewise_expr<Op, T1, Arg2_HP, Arg2>, AccCate, KerCate>
 	{
-		static const int value = macc_cost<Arg2, M, N, AccCate, KerCate>::value;
+		static const int value = macc_cost<Arg2, AccCate, KerCate>::value;
 	};
 
 	template<typename Op, typename Arg1_HP, class Arg1, typename T2,
-		int M, int N, typename AccCate, typename KerCate>
-	struct macc_cost<binary_fix2nd_ewise_expr<Op, Arg1_HP, Arg1, T2>, M, N, AccCate, KerCate>
+		typename AccCate, typename KerCate>
+	struct macc_cost<binary_fix2nd_ewise_expr<Op, Arg1_HP, Arg1, T2>, AccCate, KerCate>
 	{
-		static const int value = macc_cost<Arg1, M, N, AccCate, KerCate>::value;
+		static const int value = macc_cost<Arg1, AccCate, KerCate>::value;
 	};
 
 
