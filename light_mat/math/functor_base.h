@@ -101,7 +101,7 @@ namespace lmat
 	struct Op { }; \
 	template<> struct is_unary_op<Op> { static const bool value = true; }; \
 	template<> struct unary_op_result<Op, float> { typedef float type; }; \
-	template<> struct unary_op_result<Op, double> { typedef float type; };
+	template<> struct unary_op_result<Op, double> { typedef double type; };
 
 #define LMAT_DEFINE_REAL_BINARY_OP(Op) \
 	struct Op { }; \

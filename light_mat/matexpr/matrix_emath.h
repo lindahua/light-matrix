@@ -32,7 +32,7 @@ namespace lmat
 	LMAT_DEFINE_UNARY_MATFUNCTION( rsqrt, rsqrt_t )
 
 	LMAT_DEFINE_BINARY_MATFUNCTION( pow, pow_t )
-	LMAT_DEFINE_BINARY_MATFUNCTION( mod, mod_t )
+	LMAT_DEFINE_BINARY_MATFUNCTION( fmod, fmod_t )
 
 	LMAT_DEFINE_UNARY_MATFUNCTION( floor, floor_t )
 	LMAT_DEFINE_UNARY_MATFUNCTION( ceil,  ceil_t )
@@ -57,7 +57,7 @@ namespace lmat
 #ifdef LMAT_HAS_C99_MATH
 
 	LMAT_DEFINE_UNARY_MATFUNCTION( cbrt,  cbrt_t )
-	LMAT_DEFINE_UNARY_MATFUNCTION( hypot, hypot_t )
+	LMAT_DEFINE_BINARY_MATFUNCTION( hypot, hypot_t )
 
 	LMAT_DEFINE_UNARY_MATFUNCTION( round, round_t )
 	LMAT_DEFINE_UNARY_MATFUNCTION( trunc, trunc_t )
