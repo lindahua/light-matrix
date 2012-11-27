@@ -89,11 +89,12 @@ namespace lmat
 
 #define LMAT_DEFINE_NUMERIC_UNARY_FUNMAP(Op, Ker, TFun) \
 	template<typename T> \
-	struct unary_op_fun<Op, Ker, T> { typedef TFun<T> type; };
+	struct unary_op_fun<Op, scalar_kernel_t, T> { typedef TFun<T> type; };
 
 #define LMAT_DEFINE_NUMERIC_BINARY_FUNMAP(Op, Ker, TFun) \
 	template<typename T> \
-	struct binary_op_fun<Op, Ker, T, T> { typedef TFun<T> type; };
+	struct binary_op_fun<Op, scalar_kernel_t, T, T> { typedef TFun<T> type; };
+
 
 // for real-number operations
 
@@ -110,12 +111,54 @@ namespace lmat
 	template<> struct binary_op_result<Op, double, double> { typedef double type; };
 
 #define LMAT_DEFINE_REAL_UNARY_FUNMAP(Op, Ker, TFun) \
-	template<> struct unary_op_fun<Op, Ker, float> { typedef TFun<float> type; }; \
-	template<> struct unary_op_fun<Op, Ker, double> { typedef TFun<double> type; };
+	template<> struct unary_op_fun<Op, scalar_kernel_t, float> { typedef TFun<float> type; }; \
+	template<> struct unary_op_fun<Op, scalar_kernel_t, double> { typedef TFun<double> type; };
 
 #define LMAT_DEFINE_REAL_BINARY_FUNMAP(Op, Ker, TFun) \
-	template<> struct binary_op_fun<Op, Ker, float, float> { typedef TFun<float> type; }; \
-	template<> struct binary_op_fun<Op, Ker, double, double> { typedef TFun<double> type; };
+	template<> struct binary_op_fun<Op, scalar_kernel_t, float, float> { typedef TFun<float> type; }; \
+	template<> struct binary_op_fun<Op, scalar_kernel_t, double, double> { typedef TFun<double> type; };
+
+// for general predicates
+
+#define LMAT_DEFINE_UNARY_PRED_OP(Op) \
+	struct Op { }; \
+	template<> struct is_unary_op<Op> { static const bool value = true; }; \
+	template<typename T> \
+	struct unary_op_result<Op, T> { typedef bool type; };
+
+#define LMAT_DEFINE_BINARY_PRED_OP(Op) \
+	struct Op { }; \
+	template<> struct is_binary_op<Op> { static const bool value = true; }; \
+	template<typename T> \
+	struct binary_op_result<Op, T, T> { typedef bool type; };
+
+#define LMAT_DEFINE_UNARY_PRED_FUNMAP(Op, Ker, TFun) \
+	template<typename T> \
+	struct unary_op_fun<Op, scalar_kernel_t, T> { typedef TFun<T> type; };
+
+#define LMAT_DEFINE_BINARY_PRED_FUNMAP(Op, Ker, TFun) \
+	template<typename T> \
+	struct binary_op_fun<Op, scalar_kernel_t, T, T> { typedef TFun<T> type; };
+
+
+// for logical operations
+
+#define LMAT_DEFINE_LOGICAL_UNARY_OP(Op) \
+	struct Op { }; \
+	template<> struct is_unary_op<Op> { static const bool value = true; }; \
+	template<> struct unary_op_result<Op, bool> { typedef bool type; };
+
+#define LMAT_DEFINE_LOGICAL_BINARY_OP(Op) \
+	struct Op { }; \
+	template<> struct is_binary_op<Op> { static const bool value = true; }; \
+	template<> struct binary_op_result<Op, bool, bool> { typedef bool type; };
+
+#define LMAT_DEFINE_LOGICAL_UNARY_FUNMAP(Op, Ker, TFun) \
+	template<> struct unary_op_fun<Op, scalar_kernel_t, bool> { typedef TFun<bool> type; };
+
+#define LMAT_DEFINE_LOGICAL_BINARY_FUNMAP(Op, Ker, TFun) \
+	template<> struct binary_op_fun<Op, scalar_kernel_t, bool, bool> { typedef TFun<bool> type; };
+
 
 
 #endif 
