@@ -154,10 +154,10 @@ namespace lmat
 	template<> struct binary_op_result<Op, bool, bool> { typedef bool type; };
 
 #define LMAT_DEFINE_LOGICAL_UNARY_FUNMAP(Op, Ker, TFun) \
-	template<> struct unary_op_fun<Op, scalar_kernel_t, bool> { typedef TFun<bool> type; };
+	template<> struct unary_op_fun<Op, scalar_kernel_t, bool> { typedef TFun type; };
 
 #define LMAT_DEFINE_LOGICAL_BINARY_FUNMAP(Op, Ker, TFun) \
-	template<> struct binary_op_fun<Op, scalar_kernel_t, bool, bool> { typedef TFun<bool> type; };
+	template<> struct binary_op_fun<Op, scalar_kernel_t, bool, bool> { typedef TFun type; };
 
 
 

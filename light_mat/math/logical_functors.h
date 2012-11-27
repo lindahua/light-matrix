@@ -21,7 +21,7 @@
 		LMAT_ENSURE_INLINE fname##_fun( fname##_t ) { } \
 		LMAT_ENSURE_INLINE bool operator() (const bool& x) const { return expr; } \
 	}; \
-	LMAT_DEFINE_NUMERIC_UNARY_FUNMAP( fname##_t, scalar_kernel_t, fname##_fun )
+	LMAT_DEFINE_LOGICAL_UNARY_FUNMAP( fname##_t, scalar_kernel_t, fname##_fun )
 
 #define LMAT_DEFINE_BINARY_LOGICAL_FUNCTOR( fname, expr ) \
 	struct fname##_fun { \
@@ -29,7 +29,7 @@
 		LMAT_ENSURE_INLINE fname##_fun( fname##_t ) { } \
 		LMAT_ENSURE_INLINE bool operator() (const bool& x, const bool& y) const { return expr; } \
 	}; \
-	LMAT_DEFINE_NUMERIC_BINARY_FUNMAP( fname##_t, scalar_kernel_t, fname##_fun )
+	LMAT_DEFINE_LOGICAL_BINARY_FUNMAP( fname##_t, scalar_kernel_t, fname##_fun )
 
 
 namespace lmat
