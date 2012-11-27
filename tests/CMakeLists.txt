@@ -109,8 +109,7 @@ set(MATRIX_EWISE_HS
     
 set(MATRIX_REPEAT_HS
     ${INC}/matexpr/bits/repeat_vecs_internal.h
-    ${INC}/matexpr/matrix_repeat_expr.h
-    ${INC}/matexpr/matrix_repeat_eval.h)   
+    ${INC}/matexpr/vector_repeat.h)   
     
 set(MATRIX_REDUC_HS
     ${INC}/math/reduction_functors.h
@@ -202,7 +201,7 @@ set(MAT_REPEAT_HS
     ${MATEXPR_BASE_HS}
     ${MATRIX_REPEAT_HS})
     
-# add_executable(test_vec_rep ${MAT_REPEAT_HS} test_vec_rep.cpp)
+add_executable(test_vec_rep ${MAT_REPEAT_HS} test_vec_rep.cpp)
 
 set(MAT_REDUC_HS
     ${MATRIX_HS}
@@ -239,7 +238,7 @@ set(LMAT_TEST_NAMES
 	test_mat_ecomp
 	test_mat_elogical
 	test_mat_cast
-	# test_vec_rep
+	test_vec_rep
 	# test_mat_reduce
 	# test_partial_reduce
 	# test_mat_transpose

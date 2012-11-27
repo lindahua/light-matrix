@@ -9,448 +9,401 @@
 
 #include "test_base.h"
 
-#include <light_mat/matrix/const_matrix.h>
-#include <light_mat/matrix/dense_matrix.h>
-#include <light_mat/matrix/matrix_repeat_eval.h>
+#include <light_mat/matexpr/matrix_arith.h>
+#include <light_mat/matexpr/vector_repeat.h>
 
 using namespace lmat;
 using namespace lmat::test;
 
-// explicit instantiation
 
-typedef dense_matrix<double, 0, 1> dcol_t;
-typedef dense_matrix<double, 1, 0> drow_t;
+// Auxiliary facilities
 
-template class lmat::horizontal_repeat_expr<ref_arg_t, dcol_t, 0>;
-template class lmat::horizontal_repeat_expr<ref_arg_t, dcol_t, 6>;
-template class lmat::vertical_repeat_expr<ref_arg_t, drow_t, 0>;
-template class lmat::vertical_repeat_expr<ref_arg_t, drow_t, 4>;
-
-
-N_CASE( repcols, generic )
+inline void fill_lin(dblock<double>& a)
 {
-	const index_t m = N == 0 ? 4 : N;
-	const index_t n = 6;
-
-	typedef dense_matrix<double, N, 1> col_t;
-	typedef horizontal_repeat_expr<ref_arg_t, col_t, 0> expr_t;
-
-	col_t a(m, 1);
-
-	expr_t expr = hrep(a, n);
-
-	ASSERT_EQ( expr.nrows(), m );
-	ASSERT_EQ( expr.ncolumns(), n );
-	ASSERT_EQ( expr.nelems(), m * n);
-
-	ASSERT_EQ( &(expr.arg()), &a );
-}
-
-
-MN_CASE( repcols, generic_fix )
-{
-	check_arg(N > 0, "N must be positive");
-
-	const index_t m = M == 0 ? 4 : M;
-	const index_t n = N;
-
-	typedef dense_matrix<double, M, 1> col_t;
-	typedef horizontal_repeat_expr<ref_arg_t, col_t, N> expr_t;
-
-	col_t a(m, 1);
-
-	expr_t expr = hrep(a, fix_int<N>());
-
-	ASSERT_EQ( expr.nrows(), m );
-	ASSERT_EQ( expr.ncolumns(), n );
-	ASSERT_EQ( expr.nelems(), m * n);
-
-	ASSERT_EQ( &(expr.arg()), &a );
-}
-
-
-N_CASE( repcols, const )
-{
-	const index_t m = N == 0 ? 4 : N;
-	const index_t n = 6;
-	const double val = 12.5;
-
-	typedef const_matrix<double, N, 1> col_t;
-	typedef const_matrix<double, N, 0> expr_t;
-
-	col_t a(m, 1, val);
-
-	expr_t expr = hrep(a, n);
-
-	ASSERT_EQ( expr.nrows(), m );
-	ASSERT_EQ( expr.ncolumns(), n );
-	ASSERT_EQ( expr.nelems(), m * n);
-
-	ASSERT_EQ( expr.value(), val );
-}
-
-
-MN_CASE( repcols, const_fix )
-{
-	check_arg(N > 0, "N must be positive");
-
-	const index_t m = M == 0 ? 4 : M;
-	const index_t n = N;
-	const double val = 12.5;
-
-	typedef const_matrix<double, M, 1> col_t;
-	typedef const_matrix<double, M, N> expr_t;
-
-	col_t a(m, 1, val);
-
-	expr_t expr = hrep(a, fix_int<N>());
-
-	ASSERT_EQ( expr.nrows(), m );
-	ASSERT_EQ( expr.ncolumns(), n );
-	ASSERT_EQ( expr.nelems(), m * n);
-
-	ASSERT_EQ( expr.value(), val );
-}
-
-
-N_CASE( reprows, generic )
-{
-	const index_t m = 4;
-	const index_t n = N == 0 ? 6 : N;
-
-	typedef dense_matrix<double, 1, N> row_t;
-	typedef vertical_repeat_expr<ref_arg_t, row_t, 0> expr_t;
-
-	row_t a(1, n);
-
-	expr_t expr = vrep(a, m);
-
-	ASSERT_EQ( expr.nrows(), m );
-	ASSERT_EQ( expr.ncolumns(), n );
-	ASSERT_EQ( expr.nelems(), m * n);
-
-	ASSERT_EQ( &(expr.arg()), &a );
-}
-
-
-MN_CASE( reprows, generic_fix )
-{
-	check_arg(M > 0, "M must be positive");
-
-	const index_t m = M;
-	const index_t n = N == 0 ? 6 : N;
-
-	typedef dense_matrix<double, 1, N> row_t;
-	typedef vertical_repeat_expr<ref_arg_t, row_t, M> expr_t;
-
-	row_t a(1, n);
-
-	expr_t expr = vrep(a, fix_int<M>());
-
-	ASSERT_EQ( expr.nrows(), m );
-	ASSERT_EQ( expr.ncolumns(), n );
-	ASSERT_EQ( expr.nelems(), m * n);
-
-	ASSERT_EQ( &(expr.arg()), &a );
-}
-
-
-N_CASE( reprows, const )
-{
-	const index_t m = 4;
-	const index_t n = N == 0 ? 6 : N;
-	const double val = 12.5;
-
-	typedef const_matrix<double, 1, N> row_t;
-	typedef const_matrix<double, 0, N> expr_t;
-
-	row_t a(1, n, val);
-	expr_t expr = vrep(a, m);
-
-	ASSERT_EQ( expr.nrows(), m );
-	ASSERT_EQ( expr.ncolumns(), n );
-	ASSERT_EQ( expr.nelems(), m * n);
-
-	ASSERT_EQ( expr.value(), val );
-}
-
-MN_CASE( reprows, const_fix )
-{
-	check_arg(M > 0, "M must be positive");
-
-	const index_t m = M;
-	const index_t n = N == 0 ? 6 : N;
-	const double val = 12.5;
-
-	typedef const_matrix<double, 1, N> row_t;
-	typedef const_matrix<double, M, N> expr_t;
-
-	row_t a(1, n, val);
-	expr_t expr = vrep(a, fix_int<M>());
-
-	ASSERT_EQ( expr.nrows(), m );
-	ASSERT_EQ( expr.ncolumns(), n );
-	ASSERT_EQ( expr.nelems(), m * n);
-
-	ASSERT_EQ( expr.value(), val );
-}
-
-
-MN_CASE( repcols, eval )
-{
-	const index_t m = M == 0 ? 4 : M;
-	const index_t n = N == 0 ? 6 : N;
-
-	typedef dense_matrix<double, M, 1> col_t;
-
-	col_t col(m, 1);
-	for (index_t i = 0; i < m; ++i) col[i] = double(i + 2);
-
-	typedef horizontal_repeat_expr<ref_arg_t, col_t, N> expr_t;
-	expr_t expr = make_expr(hrep_t<N>(n), ref_arg(col));
-
-	ASSERT_EQ( expr.nrows(), m );
-	ASSERT_EQ( expr.ncolumns(), n );
-
-	dense_matrix<double, M, N> R( expr );
-
-	typedef horizontal_repeat_expr<copy_arg_t, col_t, N> expr_et;
-	expr_et expr_e = make_expr(hrep_t<N>(n), copy_arg(col));
-
-	ASSERT_EQ( expr_e.nrows(), m );
-	ASSERT_EQ( expr_e.ncolumns(), n );
-
-	dense_matrix<double, M, N> Re(expr_e);
-
-	dense_matrix<double, M, N> R_r(m, n);
-	for (index_t j = 0; j < n; ++j)
+	const index_t n = a.nelems();
+	for (index_t i = 0; i < n; ++i)
 	{
-		for (index_t i = 0; i < m; ++i) R_r(i, j) = col(i, 0);
+		a[i] = double(i+1);
+	}
+}
+
+const index_t DM = 7;
+const index_t DN = 8;
+const index_t rs = 2;
+const index_t cs = 15;
+const index_t LDim = 15;
+
+template<template<typename T, int R, int C> class ClassT, int M, int N>
+struct mat_maker;
+
+template<int M, int N>
+struct mat_maker<ref_matrix, M, N>
+{
+	typedef cref_matrix<double, M, N> cmat_t;
+	typedef ref_matrix<double, M, N> mat_t;
+
+	static index_t max_size(index_t m, index_t n)
+	{
+		return m * n;
 	}
 
-	ASSERT_TRUE( is_equal(R, R_r) );
-	ASSERT_TRUE( is_equal(Re, R_r) );
-}
-
-
-MN_CASE( reprows, eval )
-{
-	const index_t m = M == 0 ? 4 : M;
-	const index_t n = N == 0 ? 6 : N;
-
-	typedef dense_matrix<double, 1, N> row_t;
-
-	row_t row(1, n);
-	for (index_t j = 0; j < n; ++j) row[j] = double(j + 2);
-
-	typedef vertical_repeat_expr<ref_arg_t, row_t, M> expr_t;
-	expr_t expr = make_expr(vrep_t<M>(m), ref_arg(row));
-
-	ASSERT_EQ( expr.nrows(), m );
-	ASSERT_EQ( expr.ncolumns(), n );
-
-	dense_matrix<double, M, N> R( expr );
-
-	typedef vertical_repeat_expr<copy_arg_t, row_t, M> expr_et;
-	expr_et expr_e = make_expr(vrep_t<M>(m), copy_arg(row));
-
-	ASSERT_EQ( expr_e.nrows(), m );
-	ASSERT_EQ( expr_e.ncolumns(), n );
-
-	dense_matrix<double, M, N> Re(expr_e);
-
-	dense_matrix<double, M, N> R_r(m, n);
-	for (index_t j = 0; j < n; ++j)
+	static cmat_t get_cmat(const double *p, index_t m, index_t n)
 	{
-		for (index_t i = 0; i < m; ++i) R_r(i, j) = row(0, j);
+		return cmat_t(p, m, n);
 	}
 
-	ASSERT_TRUE( is_equal(R, R_r) );
-}
-
-
-MN_CASE( repcols, vec_eval )
-{
-	const index_t m = M == 0 ? 5 : M;
-	const index_t n = N == 0 ? 6 : N;
-
-	typedef dense_matrix<double, M, 1> col_t;
-	typedef dense_matrix<double, M, N> mat_t;
-
-	col_t col(m, 1);
-	for (index_t i = 0; i < m; ++i) col[i] = double(i+2);
-
-	horizontal_repeat_expr<ref_arg_t, col_t, N> expr =
-			make_expr(hrep_t<N>(n), ref_arg(col));
-
-	horizontal_repeat_expr<copy_arg_t, col_t, N> expr_e =
-			make_expr(hrep_t<N>(n), copy_arg(col));
-
-	mat_t R_r(m, n);
-	for (index_t j = 0; j < n; ++j)
+	static mat_t get_mat(double *p, index_t m, index_t n)
 	{
-		for (index_t i = 0; i < m; ++i) R_r(i, j) = col(i, 0);
+		return mat_t(p, m, n);
+	}
+};
+
+template<int M, int N>
+struct mat_maker<ref_block, M, N>
+{
+	typedef cref_block<double, M, N> cmat_t;
+	typedef ref_block<double, M, N> mat_t;
+
+	static index_t max_size(index_t m, index_t n)
+	{
+		return LDim * n;
 	}
 
-	mat_t R(m, n);
-
-	fill(R, 0.0);
-	linear_by_scalars_evaluate(expr, R);
-	ASSERT_TRUE( is_equal(R, R_r) );
-
-	fill(R, 0.0);
-	linear_by_scalars_evaluate(expr_e, R);
-	ASSERT_TRUE( is_equal(R, R_r) );
-
-	fill(R, 0.0);
-	percol_by_scalars_evaluate(expr, R);
-	ASSERT_TRUE( is_equal(R, R_r) );
-
-	fill(R, 0.0);
-	percol_by_scalars_evaluate(expr_e, R);
-	ASSERT_TRUE( is_equal(R, R_r) );
-}
-
-
-MN_CASE( reprows, vec_eval )
-{
-	const index_t m = M == 0 ? 5 : M;
-	const index_t n = N == 0 ? 6 : N;
-
-	typedef dense_matrix<double, 1, N> row_t;
-	typedef dense_matrix<double, M, N> mat_t;
-
-	row_t row(1, n);
-	for (index_t j = 0; j < n; ++j) row[j] = double(j+2);
-
-	vertical_repeat_expr<ref_arg_t, row_t, M> expr =
-			make_expr(vrep_t<M>(m), ref_arg(row));
-
-	vertical_repeat_expr<copy_arg_t, row_t, M> expr_e =
-			make_expr(vrep_t<M>(m), copy_arg(row));
-
-	mat_t R_r(m, n);
-	for (index_t j = 0; j < n; ++j)
+	static cmat_t get_cmat(const double *p, index_t m, index_t n)
 	{
-		for (index_t i = 0; i < m; ++i) R_r(i, j) = row(0, j);
+		return cmat_t(p, m, n, cs);
 	}
 
-	mat_t R(m, n);
+	static mat_t get_mat(double *p, index_t m, index_t n)
+	{
+		return mat_t(p, m, n, cs);
+	}
+};
 
-	fill(R, 0.0);
-	linear_by_scalars_evaluate(expr, R);
-	ASSERT_TRUE( is_equal(R, R_r) );
+template<int M, int N>
+struct mat_maker<ref_grid, M, N>
+{
+	typedef cref_grid<double, M, N> cmat_t;
+	typedef ref_grid<double, M, N> mat_t;
 
-	fill(R, 0.0);
-	linear_by_scalars_evaluate(expr_e, R);
-	ASSERT_TRUE( is_equal(R, R_r) );
+	static index_t max_size(index_t m, index_t n)
+	{
+		return LDim * n;
+	}
 
-	fill(R, 0.0);
-	percol_by_scalars_evaluate(expr, R);
-	ASSERT_TRUE( is_equal(R, R_r) );
+	static cmat_t get_cmat(const double *p, index_t m, index_t n)
+	{
+		return cmat_t(p, m, n, rs, cs);
+	}
 
-	fill(R, 0.0);
-	percol_by_scalars_evaluate(expr_e, R);
-	ASSERT_TRUE( is_equal(R, R_r) );
+	static mat_t get_mat(double *p, index_t m, index_t n)
+	{
+		return mat_t(p, m, n, rs, cs);
+	}
+};
+
+
+template<
+	template<typename T1, int M1, int N1> class ClassT1,
+	template<typename T2, int M2, int N2> class ClassT2,
+	int M, int N>
+void test_repcols()
+{
+	const index_t m = M == 0 ? DM : M;
+	const index_t n = N == 0 ? DN : N;
+
+	const index_t max_size1 = mat_maker<ClassT1, M, 1>::max_size(m, 1);
+	const index_t max_size2 = mat_maker<ClassT2, M, N>::max_size(m, n);
+
+	dblock<double> sblk(max_size1, zero());
+	dblock<double> dblk(max_size2, zero());
+
+	fill_lin(sblk);
+
+	typedef typename mat_maker<ClassT1, M, 1>::cmat_t scol_t;
+	typedef typename mat_maker<ClassT2, M, N>::mat_t dmat_t;
+
+	scol_t scol = mat_maker<ClassT1, M, 1>::get_cmat(sblk.ptr_data(), m, 1);
+
+	dense_matrix<double, M, N> rmat(m, n);
+	for (index_t j = 0; j < n; ++j)
+	{
+		for (index_t i = 0; i < m; ++i)
+		{
+			rmat(i, j) = scol[i];
+		}
+	}
+
+	ASSERT_EQ( rep_col(scol, n).nrows(), m );
+	ASSERT_EQ( rep_col(scol, n).ncolumns(), n );
+
+	dmat_t dmat = mat_maker<ClassT2, M, N>::get_mat(dblk.ptr_data(), m, n);
+	if (N == 0)
+	{
+		dmat = rep_col(scol, n);
+	}
+	else
+	{
+		dmat = rep_col(scol, fix_int<N>());
+	}
+
+	ASSERT_MAT_EQ( m, n, dmat, rmat );
+
+	// access-based evaluation
+
+	typedef macc_scheme<percol_macc, scalar_kernel_t, M, N> scheme_t;
+	fill(dmat, 0.0);
+	scheme_t sch = scheme_t::get_default(rep_col(scol, n), dmat);
+	sch.evaluate(rep_col(scol, n), dmat);
+	ASSERT_MAT_EQ(m, n, dmat, rmat );
+}
+
+template<
+	template<typename T1, int M1, int N1> class ClassT1,
+	template<typename T2, int M2, int N2> class ClassT2,
+	int M, int N>
+void test_reprows()
+{
+	const index_t m = M == 0 ? DM : M;
+	const index_t n = N == 0 ? DN : N;
+
+	const index_t max_size1 = mat_maker<ClassT1, 1, N>::max_size(1, n);
+	const index_t max_size2 = mat_maker<ClassT2, M, N>::max_size(m, n);
+
+	dblock<double> sblk(max_size1, zero());
+	dblock<double> dblk(max_size2, zero());
+
+	fill_lin(sblk);
+
+	typedef typename mat_maker<ClassT1, 1, N>::cmat_t srow_t;
+	typedef typename mat_maker<ClassT2, M, N>::mat_t dmat_t;
+
+	srow_t srow = mat_maker<ClassT1, 1, N>::get_cmat(sblk.ptr_data(), 1, n);
+
+	dense_matrix<double, M, N> rmat(m, n);
+	for (index_t j = 0; j < n; ++j)
+	{
+		for (index_t i = 0; i < m; ++i)
+		{
+			rmat(i, j) = srow[j];
+		}
+	}
+
+	ASSERT_EQ( rep_row(srow, m).nrows(), m );
+	ASSERT_EQ( rep_row(srow, m).ncolumns(), n );
+
+	dmat_t dmat = mat_maker<ClassT2, M, N>::get_mat(dblk.ptr_data(), m, n);
+	if (M == 0)
+	{
+		dmat = rep_row(srow, m);
+	}
+	else
+	{
+		dmat = rep_row(srow, fix_int<M>());
+	}
+
+	ASSERT_MAT_EQ( m, n, dmat, rmat );
+
+	// access-based evaluation
+
+	typedef macc_scheme<percol_macc, scalar_kernel_t, M, N> scheme_t;
+	fill(dmat, 0.0);
+	scheme_t sch = scheme_t::get_default(rep_row(srow, m), dmat);
+	sch.evaluate(rep_row(srow, m), dmat);
+	ASSERT_MAT_EQ(m, n, dmat, rmat );
 }
 
 
-BEGIN_TPACK( repcols_generic )
-	ADD_N_CASE( repcols, generic, 0 )
-	ADD_N_CASE( repcols, generic, 1 )
-	ADD_N_CASE( repcols, generic, 4 )
-END_TPACK
+template<
+	template<typename T2, int M2, int N2> class ClassT2,
+	int M, int N>
+void test_repcols_ex()
+{
+	const index_t m = M == 0 ? DM : M;
+	const index_t n = N == 0 ? DN : N;
 
-BEGIN_TPACK( repcols_generic_fix )
-	ADD_MN_CASE( repcols, generic_fix, 0, 1 )
-	ADD_MN_CASE( repcols, generic_fix, 1, 1 )
-	ADD_MN_CASE( repcols, generic_fix, 4, 1 )
-	ADD_MN_CASE( repcols, generic_fix, 0, 6 )
-	ADD_MN_CASE( repcols, generic_fix, 1, 6 )
-	ADD_MN_CASE( repcols, generic_fix, 4, 6 )
-END_TPACK
+	const index_t max_size2 = mat_maker<ClassT2, M, N>::max_size(m, n);
 
-BEGIN_TPACK( repcols_const )
-	ADD_N_CASE( repcols, const, 0 )
-	ADD_N_CASE( repcols, const, 1 )
-	ADD_N_CASE( repcols, const, 4 )
-END_TPACK
-
-BEGIN_TPACK( repcols_const_fix )
-	ADD_MN_CASE( repcols, const_fix, 0, 1 )
-	ADD_MN_CASE( repcols, const_fix, 1, 1 )
-	ADD_MN_CASE( repcols, const_fix, 4, 1 )
-	ADD_MN_CASE( repcols, const_fix, 0, 6 )
-	ADD_MN_CASE( repcols, const_fix, 1, 6 )
-	ADD_MN_CASE( repcols, const_fix, 4, 6 )
-END_TPACK
+	dblock<double> dblk(max_size2, zero());
 
 
-BEGIN_TPACK( reprows_generic )
-	ADD_N_CASE( reprows, generic, 0 )
-	ADD_N_CASE( reprows, generic, 1 )
-	ADD_N_CASE( reprows, generic, 6 )
-END_TPACK
+	typedef typename mat_maker<ClassT2, M, N>::mat_t dmat_t;
 
-BEGIN_TPACK( reprows_generic_fix )
-	ADD_MN_CASE( reprows, generic_fix, 1, 0 )
-	ADD_MN_CASE( reprows, generic_fix, 1, 1 )
-	ADD_MN_CASE( reprows, generic_fix, 1, 6 )
-	ADD_MN_CASE( reprows, generic_fix, 4, 0 )
-	ADD_MN_CASE( reprows, generic_fix, 4, 1 )
-	ADD_MN_CASE( reprows, generic_fix, 4, 6 )
-END_TPACK
+	dense_col<double, M> scol(m);
+	for (index_t i = 0; i < m; ++i) scol[i] = double(i+1);
 
-BEGIN_TPACK( reprows_const )
-	ADD_N_CASE( reprows, const, 0 )
-	ADD_N_CASE( reprows, const, 1 )
-	ADD_N_CASE( reprows, const, 6 )
-END_TPACK
+	dense_matrix<double, M, N> rmat(m, n);
+	for (index_t j = 0; j < n; ++j)
+	{
+		for (index_t i = 0; i < m; ++i)
+		{
+			rmat(i, j) = scol[i] * 2.0 + 1.0;
+		}
+	}
 
-BEGIN_TPACK( reprows_const_fix )
-	ADD_MN_CASE( reprows, const_fix, 1, 0 )
-	ADD_MN_CASE( reprows, const_fix, 1, 1 )
-	ADD_MN_CASE( reprows, const_fix, 1, 6 )
-	ADD_MN_CASE( reprows, const_fix, 4, 0 )
-	ADD_MN_CASE( reprows, const_fix, 4, 1 )
-	ADD_MN_CASE( reprows, const_fix, 4, 6 )
-END_TPACK
+	ASSERT_EQ( rep_col(scol, n).nrows(), m );
+	ASSERT_EQ( rep_col(scol, n).ncolumns(), n );
+
+	dmat_t dmat = mat_maker<ClassT2, M, N>::get_mat(dblk.ptr_data(), m, n);
+	if (N == 0)
+	{
+		dmat = rep_col(scol * 2.0 + 1.0, n);
+	}
+	else
+	{
+		dmat = rep_col(scol * 2.0 + 1.0, fix_int<N>());
+	}
+
+	ASSERT_MAT_EQ( m, n, dmat, rmat );
+
+	// access-based evaluation
+
+	typedef macc_scheme<percol_macc, scalar_kernel_t, M, N> scheme_t;
+	fill(dmat, 0.0);
+	scheme_t sch = scheme_t::get_default(rep_col(scol * 2.0 + 1.0, n), dmat);
+	sch.evaluate(rep_col(scol * 2.0 + 1.0, n), dmat);
+	ASSERT_MAT_EQ(m, n, dmat, rmat );
+}
+
+
+template<
+	template<typename T2, int M2, int N2> class ClassT2,
+	int M, int N>
+void test_reprows_ex()
+{
+	const index_t m = M == 0 ? DM : M;
+	const index_t n = N == 0 ? DN : N;
+
+	const index_t max_size2 = mat_maker<ClassT2, M, N>::max_size(m, n);
+
+	dblock<double> dblk(max_size2, zero());
+
+	typedef typename mat_maker<ClassT2, M, N>::mat_t dmat_t;
+
+	dense_row<double, N> srow(n);
+	for (index_t j = 0; j < n; ++j) srow[j] = double(j+1);
+
+	dense_matrix<double, M, N> rmat(m, n);
+	for (index_t j = 0; j < n; ++j)
+	{
+		for (index_t i = 0; i < m; ++i)
+		{
+			rmat(i, j) = srow[j] * 2.0 + 1.0;
+		}
+	}
+
+	ASSERT_EQ( rep_row(srow, m).nrows(), m );
+	ASSERT_EQ( rep_row(srow, m).ncolumns(), n );
+
+	dmat_t dmat = mat_maker<ClassT2, M, N>::get_mat(dblk.ptr_data(), m, n);
+	if (M == 0)
+	{
+		dmat = rep_row(srow * 2.0 + 1.0, m);
+	}
+	else
+	{
+		dmat = rep_row(srow * 2.0 + 1.0, fix_int<M>());
+	}
+
+	ASSERT_MAT_EQ( m, n, dmat, rmat );
+
+	// access-based evaluation
+
+	typedef macc_scheme<percol_macc, scalar_kernel_t, M, N> scheme_t;
+	fill(dmat, 0.0);
+	scheme_t sch = scheme_t::get_default(rep_row(srow * 2.0 + 1.0, m), dmat);
+	sch.evaluate(rep_row(srow * 2.0 + 1.0, m), dmat);
+	ASSERT_MAT_EQ(m, n, dmat, rmat );
+}
 
 
 
-BEGIN_TPACK( repcols_eval )
-	ADD_MN_CASE_3X3( repcols, eval, 4, 6 )
-END_TPACK
+#define TEST_REPCOLS( sform, dform, name ) \
+	MN_CASE( test_repcols, name ) { \
+		test_repcols<sform, dform, M, N>(); } \
+	BEGIN_TPACK( test_repcols_##name ) \
+		ADD_MN_CASE_3X3( test_repcols, name, DM, DN ) \
+	END_TPACK
 
-BEGIN_TPACK( reprows_eval )
-	ADD_MN_CASE_3X3( reprows, eval, 4, 6 )
-END_TPACK
+#define TEST_REPROWS( sform, dform, name ) \
+	MN_CASE( test_reprows, name ) { \
+		test_reprows<sform, dform, M, N>(); } \
+	BEGIN_TPACK( test_reprows_##name ) \
+		ADD_MN_CASE_3X3( test_reprows, name, DM, DN ) \
+	END_TPACK
 
-BEGIN_TPACK( repcols_vec_eval )
-	ADD_MN_CASE_3X3( repcols, vec_eval, 4, 6 )
-END_TPACK
+#define TEST_REPCOLS_EX( dform, name ) \
+	MN_CASE( test_repcols, name ) { \
+		test_repcols_ex<dform, M, N>(); } \
+	BEGIN_TPACK( test_repcols_##name ) \
+		ADD_MN_CASE_3X3( test_repcols, name, DM, DN ) \
+	END_TPACK
 
-BEGIN_TPACK( reprows_vec_eval )
-	ADD_MN_CASE_3X3( reprows, vec_eval, 4, 6 )
-END_TPACK
+#define TEST_REPROWS_EX( dform, name ) \
+	MN_CASE( test_reprows, name ) { \
+		test_reprows_ex<dform, M, N>(); } \
+	BEGIN_TPACK( test_reprows_##name ) \
+		ADD_MN_CASE_3X3( test_reprows, name, DM, DN ) \
+	END_TPACK
 
+
+TEST_REPCOLS( ref_matrix, ref_matrix, mat_to_mat )
+TEST_REPCOLS( ref_matrix, ref_block,  mat_to_blk )
+TEST_REPCOLS( ref_matrix, ref_grid,   mat_to_grid )
+TEST_REPCOLS( ref_block,  ref_matrix, blk_to_mat )
+TEST_REPCOLS( ref_block,  ref_block,  blk_to_blk )
+TEST_REPCOLS( ref_block,  ref_grid,   blk_to_grid )
+TEST_REPCOLS( ref_grid,   ref_matrix, grid_to_mat )
+TEST_REPCOLS( ref_grid,   ref_block,  grid_to_blk )
+TEST_REPCOLS( ref_grid,   ref_grid,   grid_to_grid )
+
+TEST_REPROWS( ref_matrix, ref_matrix, mat_to_mat )
+TEST_REPROWS( ref_matrix, ref_block,  mat_to_blk )
+TEST_REPROWS( ref_matrix, ref_grid,   mat_to_grid )
+TEST_REPROWS( ref_block,  ref_matrix, blk_to_mat )
+TEST_REPROWS( ref_block,  ref_block,  blk_to_blk )
+TEST_REPROWS( ref_block,  ref_grid,   blk_to_grid )
+TEST_REPROWS( ref_grid,   ref_matrix, grid_to_mat )
+TEST_REPROWS( ref_grid,   ref_block,  grid_to_blk )
+TEST_REPROWS( ref_grid,   ref_grid,   grid_to_grid )
+
+TEST_REPCOLS_EX( ref_matrix, xpr_to_mat )
+TEST_REPCOLS_EX( ref_block,  xpr_to_blk )
+TEST_REPCOLS_EX( ref_grid,   xpr_to_grid )
+
+TEST_REPROWS_EX( ref_matrix, xpr_to_mat )
+TEST_REPROWS_EX( ref_block,  xpr_to_blk )
+TEST_REPROWS_EX( ref_grid,   xpr_to_grid )
 
 
 BEGIN_MAIN_SUITE
-	ADD_TPACK( repcols_generic )
-	ADD_TPACK( repcols_generic_fix )
-	ADD_TPACK( repcols_const )
-	ADD_TPACK( repcols_const_fix )
+	ADD_TPACK( test_repcols_mat_to_mat )
+	ADD_TPACK( test_repcols_mat_to_blk )
+	ADD_TPACK( test_repcols_mat_to_grid )
+	ADD_TPACK( test_repcols_blk_to_mat )
+	ADD_TPACK( test_repcols_blk_to_blk )
+	ADD_TPACK( test_repcols_blk_to_grid )
+	ADD_TPACK( test_repcols_grid_to_mat )
+	ADD_TPACK( test_repcols_grid_to_blk )
+	ADD_TPACK( test_repcols_grid_to_grid )
 
-	ADD_TPACK( reprows_generic )
-	ADD_TPACK( reprows_generic_fix )
-	ADD_TPACK( reprows_const )
-	ADD_TPACK( reprows_const_fix )
+	ADD_TPACK( test_reprows_mat_to_mat )
+	ADD_TPACK( test_reprows_mat_to_blk )
+	ADD_TPACK( test_reprows_mat_to_grid )
+	ADD_TPACK( test_reprows_blk_to_mat )
+	ADD_TPACK( test_reprows_blk_to_blk )
+	ADD_TPACK( test_reprows_blk_to_grid )
+	ADD_TPACK( test_reprows_grid_to_mat )
+	ADD_TPACK( test_reprows_grid_to_blk )
+	ADD_TPACK( test_reprows_grid_to_grid )
 
-	ADD_TPACK( repcols_eval )
-	ADD_TPACK( reprows_eval )
-	ADD_TPACK( repcols_vec_eval )
-	ADD_TPACK( reprows_vec_eval )
+	ADD_TPACK( test_repcols_xpr_to_mat )
+	ADD_TPACK( test_repcols_xpr_to_blk )
+	ADD_TPACK( test_repcols_xpr_to_grid )
+
+	ADD_TPACK( test_reprows_xpr_to_mat )
+	ADD_TPACK( test_reprows_xpr_to_blk )
+	ADD_TPACK( test_reprows_xpr_to_grid )
 END_MAIN_SUITE
 
 

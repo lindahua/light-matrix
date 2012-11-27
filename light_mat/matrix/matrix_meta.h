@@ -313,6 +313,68 @@ namespace lmat
 	};
 
 
+	namespace detail
+	{
+		template<class Mat, bool IsDense>
+		struct _ct_is_continuous_ex
+		{
+			static const bool value = ct_is_continuous<Mat>::value;
+		};
+
+		template<class Mat, bool IsDense>
+		struct _ct_is_percol_continuous_ex
+		{
+			static const bool value = ct_is_percol_continuous<Mat>::value;
+		};
+
+		template<class Mat, bool IsDense>
+		struct _ct_supports_linear_index_ex
+		{
+			static const bool value = ct_supports_linear_index<Mat>::value;
+		};
+
+		template<class Mat>
+		struct _ct_is_continuous_ex<Mat, false>
+		{
+			static const bool value = false;
+		};
+
+		template<class Mat>
+		struct _ct_is_percol_continuous_ex<Mat, false>
+		{
+			static const bool value = false;
+		};
+
+		template<class Mat>
+		struct _ct_supports_linear_index_ex<Mat, false>
+		{
+			static const bool value = false;
+		};
+	}
+
+	template<class Mat>
+	struct ct_is_continuous_ex
+	{
+		static const bool value =
+				detail::_ct_is_continuous_ex<Mat, is_dense_mat<Mat>::value>::value;
+	};
+
+	template<class Mat>
+	struct ct_is_percol_continuous_ex
+	{
+		static const bool value =
+				detail::_ct_is_percol_continuous_ex<Mat, is_dense_mat<Mat>::value>::value;
+	};
+
+	template<class Mat>
+	struct ct_supports_linear_index_ex
+	{
+		static const bool value =
+				detail::_ct_supports_linear_index_ex<Mat, is_dense_mat<Mat>::value>::value;
+	};
+
+
+
 	/********************************************
 	 *
 	 *  Evaluation

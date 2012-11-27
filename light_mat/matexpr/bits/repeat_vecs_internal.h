@@ -17,108 +17,248 @@
 
 namespace lmat { namespace detail {
 
-	template<class Col>
-	struct repcol_cached_ewrapper
+	template<typename T, int M, int N, class Arg, class DMat>
+	inline void repcol_evaluate(const matrix_shape<M, N>& shape,
+			const IDenseMatrix<Arg, T>& arg_,
+			IDenseMatrix<DMat, T>& dmat_)
 	{
-		typedef typename matrix_traits<Col>::value_type T;
-		typedef dense_matrix<T, ct_rows<Col>::value, 1> col_t;
-		col_t m_col;
+		typedef typename colview_map<DMat, whole>::type col_t;
 
-		LMAT_ENSURE_INLINE
-		repcol_cached_ewrapper(const Col& col)
-		: m_col(col) { }
+		const Arg& arg = arg_.derived();
+		DMat& dmat = dmat_.derived();
 
-		LMAT_ENSURE_INLINE
-		index_t nrows() const { return m_col.nrows(); }
+		const index_t n = shape.ncolumns();
 
-		LMAT_ENSURE_INLINE
-		const T* data() const { return m_col.ptr_data(); }
+		if (n == 1)
+		{
+			col_t col(dmat.column(0));
+			copy(arg, col);
+		}
+		else
+		{
+			const index_t m = shape.nrows();
+			if (m == 1)
+			{
+				const T v = *arg.ptr_data();
+				fill(dmat, v);
+			}
+			else
+			{
+				const index_t rs = arg.row_stride();
+				if (rs == 1)
+				{
+					for (index_t j = 0; j < n; ++j)
+					{
+						col_t col(dmat.column(j));
+						copy(arg, col);
+					}
+				}
+				else
+				{
+					dense_matrix<T, M, 1> cache(arg);
+					for (index_t j = 0; j < n; ++j)
+					{
+						col_t col(dmat.column(j));
+						copy(arg, col);
+					}
+				}
+			}
+		}
+	}
 
-		LMAT_ENSURE_INLINE
-		T operator[] (const index_t i) const { return m_col[i]; }
 
+	template<typename T, int M, int N, class Arg, class DMat>
+	inline void repcol_evaluate(const matrix_shape<M, N>& shape,
+			const IMatrixXpr<Arg, T>& arg_,
+			IDenseMatrix<DMat, T>& dmat_)
+	{
+		typedef typename colview_map<DMat, whole>::type col_t;
+
+		const Arg& arg = arg_.derived();
+		DMat& dmat = dmat_.derived();
+
+		const index_t n = shape.ncolumns();
+
+		if (n == 1)
+		{
+			col_t col(dmat.column(0));
+			default_evaluate(arg, col);
+		}
+		else
+		{
+			dense_matrix<T, M, 1> cache(arg);
+
+			const index_t m = shape.nrows();
+			if (m == 1)
+			{
+				T v = *cache.ptr_data();
+				fill(dmat, v);
+			}
+			else
+			{
+				for (index_t j = 0; j < n; ++j)
+				{
+					col_t col(dmat.column(j));
+					copy(cache, col);
+				}
+			}
+		}
+	}
+
+
+	template<typename T, int M, int N, class Arg, class DMat>
+	inline void reprow_evaluate(const matrix_shape<M, N>& shape,
+			const IDenseMatrix<Arg, T>& arg_,
+			IDenseMatrix<DMat, T>& dmat_)
+	{
+		typedef typename rowview_map<DMat, whole>::type row_t;
+		typedef typename colview_map<DMat, whole>::type col_t;
+
+		const Arg& arg = arg_.derived();
+		DMat& dmat = dmat_.derived();
+
+		const index_t m = shape.nrows();
+
+		if (m == 1)
+		{
+			row_t row(dmat.row(0));
+			copy(arg, row);
+		}
+		else
+		{
+			const index_t n = shape.ncolumns();
+			if (n == 1)
+			{
+				T v = *arg.ptr_data();
+				fill(dmat, v);
+			}
+			else
+			{
+				for (index_t j = 0; j < n; ++j)
+				{
+					T v = arg(0, j);
+					col_t col(dmat.column(j));
+					fill(col, v);
+				}
+			}
+		}
+	}
+
+
+	template<typename T, int M, int N, class Arg, class DMat>
+	inline void reprow_evaluate(const matrix_shape<M, N>& shape,
+			const IMatrixXpr<Arg, T>& arg_,
+			IDenseMatrix<DMat, T>& dmat_)
+	{
+		typedef typename rowview_map<DMat, whole>::type row_t;
+		typedef typename colview_map<DMat, whole>::type col_t;
+
+		const Arg& arg = arg_.derived();
+		DMat& dmat = dmat_.derived();
+
+		const index_t m = shape.nrows();
+
+		if (m == 1)
+		{
+			row_t row(dmat.row(0));
+			default_evaluate(arg, row);
+		}
+		else
+		{
+			dense_matrix<T, 1, N> cache(arg);
+			const index_t n = shape.ncolumns();
+
+			if (n == 1)
+			{
+				T v = *cache.ptr_data();
+				fill(dmat, v);
+			}
+			else
+			{
+				for (index_t j = 0; j < n; ++j)
+				{
+					T v = cache[j];
+					col_t col(dmat.column(j));
+					fill(col, v);
+				}
+			}
+		}
+	}
+
+
+	template<typename T, int M, bool IsDense> struct repcol_cap;
+
+	template<typename T, int M>
+	struct repcol_cap<T, M, true>
+	{
+		const bool to_cache;
+		dense_col<T> cache;
+		const T *pdata;
+
+		template<class Arg>
 		LMAT_ENSURE_INLINE
-		const col_t& ref() const { return m_col; }
+		repcol_cap(const Arg& arg)
+		: to_cache(arg.row_stride() != 1)
+		, cache(to_cache ? arg.nrows() : 0)
+		, pdata(to_cache ? cache.ptr_data() : arg.ptr_data())
+		{
+			if (to_cache)
+			{
+				copy(arg, cache);
+			}
+		}
 	};
 
-	template<class Col>
-	struct repcol_ref_ewrapper
+	template<typename T, int M>
+	struct repcol_cap<T, M, false>
 	{
-		typedef typename matrix_traits<Col>::value_type T;
-		typedef Col col_t;
-		const col_t& m_col;
+		dense_col<T> cache;
+		const T *pdata;
 
+		template<class Arg>
 		LMAT_ENSURE_INLINE
-		repcol_ref_ewrapper(const Col& col)
-		: m_col(col) { }
-
-		LMAT_ENSURE_INLINE
-		index_t nrows() const { return m_col.nrows(); }
-
-		LMAT_ENSURE_INLINE
-		const T* data() const { return m_col.ptr_data(); }
-
-		LMAT_ENSURE_INLINE
-		T operator[] (const index_t i) const { return m_col[i]; }
-
-		LMAT_ENSURE_INLINE
-		const col_t& ref() const { return m_col; }
+		repcol_cap(const Arg& arg)
+		: cache(arg)
+		, pdata(cache.ptr_data())
+		{ }
 	};
 
-	template<class Row>
-	struct reprow_cached_ewrapper
+	template<class Arg, bool SupportsLinearIndex> struct reprow_cap;
+
+	template<class Arg>
+	struct reprow_cap<Arg, true>
 	{
-		typedef typename matrix_traits<Row>::value_type T;
-		typedef dense_matrix<T, 1, ct_cols<Row>::value> row_t;
-		row_t m_row;
+		typedef typename matrix_traits<Arg>::value_type T;
+		const Arg& arg;
 
 		LMAT_ENSURE_INLINE
-		reprow_cached_ewrapper(const Row& row)
-		: m_row(row) { }
+		reprow_cap(const Arg& arg_)
+		: arg(arg_) { }
 
 		LMAT_ENSURE_INLINE
-		index_t ncolumns() const { return m_row.ncolumns(); }
-
-		LMAT_ENSURE_INLINE
-		T operator[] (const index_t j) const { return m_row[j]; }
+		T operator[] (const index_t j) const
+		{
+			return arg[j];
+		}
 	};
 
-	template<class Row>
-	struct reprow_ref_ewrapper
+	template<class Arg>
+	struct reprow_cap<Arg, false>
 	{
-		typedef typename matrix_traits<Row>::value_type T;
-		typedef Row row_t;
-		const row_t& m_row;
+		typedef typename matrix_traits<Arg>::value_type T;
+		dense_row<T, ct_cols<Arg>::value> cache;
 
 		LMAT_ENSURE_INLINE
-		reprow_ref_ewrapper(const Row& row)
-		: m_row(row) { }
+		reprow_cap(const Arg& arg_)
+		: cache(arg_) { }
 
 		LMAT_ENSURE_INLINE
-		index_t ncolumns() const { return m_row.ncolumns(); }
-
-		LMAT_ENSURE_INLINE
-		T operator[] (const index_t j) const { return m_row(0, j); }
+		T operator[] (const index_t j) const
+		{
+			return cache[j];
+		}
 	};
 
-
-	template<class Col>
-	struct repcol_ewrapper_map
-	{
-		typedef typename
-				if_<is_dense_mat<Col>,
-					repcol_ref_ewrapper<Col>,
-					repcol_cached_ewrapper<Col> >::type type;
-	};
-
-	template<class Row>
-	struct reprow_ewrapper_map
-	{
-		typedef typename
-				if_<is_dense_mat<Row>,
-					reprow_ref_ewrapper<Row>,
-					reprow_cached_ewrapper<Row> >::type type;
-	};
 
 } }
 
