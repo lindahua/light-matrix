@@ -30,12 +30,6 @@ namespace lmat
 		static const bool value = lmat::is_pod<T>::value;
 	};
 
-	template<class T>
-	struct is_supported_matrix_value_type< mask_t<T> >
-	{
-		static const bool value = is_supported_matrix_value_type<T>::value;
-	};
-
 	template<class Derived, template<class D, typename T> class Interface>
 	struct has_matrix_interface
 	{

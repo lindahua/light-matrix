@@ -47,7 +47,6 @@ set(COMMON_HS
     ${INC}/config/config.h
     ${INC}/common/prim_types.h
     ${INC}/common/metaprog_base.h
-    ${INC}/common/mask_type.h
     ${INC}/common/type_traits.h
     ${INC}/common/arg_check.h
     ${INC}/common/range.h
@@ -99,7 +98,7 @@ set(MATRIX_EWISE_HS
     ${INC}/math/arith_functors.h
     ${INC}/math/emath_functors.h
     ${INC}/math/comp_functors.h
-    ${INC}/math/mask_functors.h
+    ${INC}/math/logical_functors.h
     ${INC}/matexpr/matrix_ewise_expr.h
     ${INC}/matexpr/matrix_ewise_eval.h
     ${INC}/matexpr/matrix_cast.h
@@ -194,7 +193,7 @@ set(EWISE_MAT_EVAL_HS
 
 add_executable(test_mat_arith ${EWISE_MAT_EVAL_HS} test_mat_arith.cpp)
 add_executable(test_mat_emath ${EWISE_MAT_EVAL_HS} test_mat_emath.cpp)
-# add_executable(test_mat_ecomp ${EWISE_MAT_EVAL_HS} test_mat_ecomp.cpp)
+add_executable(test_mat_ecomp ${EWISE_MAT_EVAL_HS} test_mat_ecomp.cpp)
 # add_executable(test_mat_elogical ${EWISE_MAT_EVAL_HS} test_mat_elogical.cpp)
 # add_executable(test_dense_cast ${EWISE_MAT_EVAL_HS} test_dense_cast.cpp) 
 
@@ -237,7 +236,7 @@ set(LMAT_TEST_NAMES
 	test_dense_acc
 	test_mat_arith
 	test_mat_emath
-	# test_mat_ecomp
+	test_mat_ecomp
 	# test_mat_elogical
 	# test_dense_cast
 	# test_vec_rep

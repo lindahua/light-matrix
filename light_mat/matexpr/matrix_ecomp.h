@@ -13,24 +13,17 @@
 #ifndef LIGHTMAT_MATRIX_ECOMP_H_
 #define LIGHTMAT_MATRIX_ECOMP_H_
 
-#include <light_mat/matrix/matrix_ewise_expr.h>
+#include <light_mat/matexpr/matrix_ewise_eval.h>
 #include <light_mat/math/comp_functors.h>
 
 namespace lmat
 {
-
-	/********************************************
-	 *
-	 *  Specific Expressions
-	 *
-	 ********************************************/
-
-	LMAT_DEFINE_BINARY_MATFUNCTION_EX( operator ==, eq_op )
-	LMAT_DEFINE_BINARY_MATFUNCTION_EX( operator !=, ne_op )
-	LMAT_DEFINE_BINARY_MATFUNCTION_EX( operator <, lt_op )
-	LMAT_DEFINE_BINARY_MATFUNCTION_EX( operator <=, le_op )
-	LMAT_DEFINE_BINARY_MATFUNCTION_EX( operator >, gt_op )
-	LMAT_DEFINE_BINARY_MATFUNCTION_EX( operator >=, ge_op )
+	LMAT_DEFINE_BINARY_MATFUNCTION( operator ==, eq_t )
+	LMAT_DEFINE_BINARY_MATFUNCTION( operator !=, ne_t )
+	LMAT_DEFINE_BINARY_MATFUNCTION( operator >=, ge_t )
+	LMAT_DEFINE_BINARY_MATFUNCTION( operator >,  gt_t )
+	LMAT_DEFINE_BINARY_MATFUNCTION( operator <=, le_t )
+	LMAT_DEFINE_BINARY_MATFUNCTION( operator <,  lt_t )
 }
 
 #endif 

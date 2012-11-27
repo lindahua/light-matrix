@@ -13,62 +13,41 @@
 #ifndef LIGHTMAT_MATRIX_ELOGICAL_H_
 #define LIGHTMAT_MATRIX_ELOGICAL_H_
 
-#include <light_mat/matrix/matrix_ewise_expr.h>
-#include <light_mat/math/mask_functors.h>
+#include <light_mat/matexpr/matrix_ewise_eval.h>
+#include <light_mat/math/logical_functors.h>
+
+
+#define LMAT_DEFINE_UNARY_LOGICAL_MATFUNCTION( Fname, Op ) \
+		template<class Arg> \
+		LMAT_ENSURE_INLINE \
+		inline typename unary_expr_map<ewise_t<Op>, ref_arg_t, Arg>::type \
+		Fname (const IMatrixXpr<Arg, bool>& arg) \
+		{ return ewise( Op(), arg ); }
+
+#define LMAT_DEFINE_BINARY_LOGICAL_MATFUNCTION( Fname, Op ) \
+		template<class Arg1, class Arg2> \
+		LMAT_ENSURE_INLINE \
+		inline typename binary_expr_map<ewise_t<Op>, ref_arg_t, Arg1, ref_arg_t, Arg2>::type \
+		Fname (const IMatrixXpr<Arg1, bool>& arg1, const IMatrixXpr<Arg2, bool>& arg2) \
+		{ return ewise( Op(), arg1, arg2 ); } \
+		template<class Arg2> \
+		LMAT_ENSURE_INLINE \
+		inline typename unary_expr_map<ewise_fix1st_t<Op, bool>, ref_arg_t, Arg2>::type \
+		Fname (const bool& arg1v, const IMatrixXpr<Arg2, bool>& arg2) \
+		{ return ewise_fix1st( Op(), arg1v, arg2 ); } \
+		template<class Arg1> \
+		LMAT_ENSURE_INLINE \
+		inline typename unary_expr_map<ewise_fix2nd_t<Op, bool>, ref_arg_t, Arg1>::type \
+		Fname (const IMatrixXpr<Arg1, bool>& arg1, const bool& arg2v) \
+		{ return ewise_fix2nd( Op(), arg1, arg2v ); }
+
 
 namespace lmat
 {
-	// not
-
-	template<typename T, class Mat>
-	LMAT_ENSURE_INLINE
-	inline typename unary_expr_map<
-		ewise_t<mask_not_op<T> >,
-		ref_arg_t, Mat >::type
-	operator ~ (const IMatrixXpr<Mat, mask_t<T> >& A)
-	{
-		return ewise(mask_not_op<T>(), A.derived());
-	}
-
-	// and
-
-	template<typename T, class LMat, class RMat>
-	LMAT_ENSURE_INLINE
-	inline typename binary_expr_map<
-		ewise_t<mask_and_op<T> >,
-		ref_arg_t, LMat,
-		ref_arg_t, RMat >::type
-	operator & (const IMatrixXpr<LMat, mask_t<T> >& A, const IMatrixXpr<RMat, mask_t<T> >& B)
-	{
-		return ewise(mask_and_op<T>(), A.derived(), B.derived());
-	}
-
-	// or
-
-	template<typename T, class LMat, class RMat>
-	LMAT_ENSURE_INLINE
-	inline typename binary_expr_map<
-		ewise_t<mask_or_op<T> >,
-		ref_arg_t, LMat,
-		ref_arg_t, RMat >::type
-	operator | (const IMatrixXpr<LMat, mask_t<T> >& A, const IMatrixXpr<RMat, mask_t<T> >& B)
-	{
-		return ewise(mask_or_op<T>(), A.derived(), B.derived());
-	}
-
-	// xor
-
-	template<typename T, class LMat, class RMat>
-	LMAT_ENSURE_INLINE
-	inline typename binary_expr_map<
-		ewise_t<mask_xor_op<T> >,
-		ref_arg_t, LMat,
-		ref_arg_t, RMat >::type
-	operator ^ (const IMatrixXpr<LMat, mask_t<T> >& A, const IMatrixXpr<RMat, mask_t<T> >& B)
-	{
-		return ewise(mask_xor_op<T>(), A.derived(), B.derived());
-	}
-
+	LMAT_DEFINE_UNARY_LOGICAL_MATFUNCTION ( operator ~, not_t )
+	LMAT_DEFINE_BINARY_LOGICAL_MATFUNCTION( operator &, and_t )
+	LMAT_DEFINE_BINARY_LOGICAL_MATFUNCTION( operator |, or_t )
+	LMAT_DEFINE_BINARY_LOGICAL_MATFUNCTION( operator ^, xor_t )
 }
 
 #endif 

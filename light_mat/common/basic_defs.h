@@ -16,7 +16,6 @@
 #include <light_mat/config/config.h>
 
 #include <light_mat/common/prim_types.h>
-#include <light_mat/common/mask_type.h>
 #include <light_mat/common/metaprog_base.h>
 
 #include <light_mat/common/type_traits.h>

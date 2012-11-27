@@ -8,15 +8,13 @@
 
 #include "test_base.h"
 
-#include <light_mat/matrix/matrix_cast.h>
-#include <light_mat/matrix/matrix_ecomp.h>
-#include <light_mat/matrix/matrix_ewise_eval.h>
+#include <light_mat/matexpr/matrix_ecomp.h>
 
 using namespace lmat;
 using namespace lmat::test;
 
-const int default_m = 8;
-const int default_n = 6;
+const int DM = 8;
+const int DN = 6;
 const index_t LDim = 12;
 
 MN_CASE( mat_ecomp, eq )
@@ -24,8 +22,8 @@ MN_CASE( mat_ecomp, eq )
 	typedef dense_matrix<double, M, N> mat_t;
 	typedef dense_matrix<bool, M, N> bmat_t;
 
-	const index_t m = M == 0 ? default_m : M;
-	const index_t n = N == 0 ? default_n : N;
+	const index_t m = M == 0 ? DM : M;
+	const index_t n = N == 0 ? DN : N;
 
 	mat_t A(m, n);
 	mat_t B(m, n);
@@ -47,28 +45,14 @@ MN_CASE( mat_ecomp, eq )
 
 	// default evaluation
 
-	bmat_t AB = to_bool(A == B);
+	bmat_t AB = (A == B);
 	ASSERT_TRUE( is_equal(AB, AB_r) );
 
-	bmat_t AC = to_bool(A == c);
+	bmat_t AC = (A == c);
 	ASSERT_TRUE( is_equal(AC, AC_r) );
 
-	bmat_t CB = to_bool(c == B);
+	bmat_t CB = (c == B);
 	ASSERT_TRUE( is_equal(CB, CB_r) );
-
-	// by-scalars evaluation
-
-	bmat_t AB_s(m, n);
-	linear_by_scalars_evaluate(to_bool(A == B), AB_s);
-	ASSERT_TRUE( is_equal(AB_s, AB_r) );
-
-	bmat_t AC_s(m, n);
-	linear_by_scalars_evaluate(to_bool(A == c), AC_s);
-	ASSERT_TRUE( is_equal(AC_s, AC_r) );
-
-	bmat_t CB_s(m, n);
-	linear_by_scalars_evaluate(to_bool(c == B), CB_s);
-	ASSERT_TRUE( is_equal(CB_s, CB_r) );
 }
 
 
@@ -77,8 +61,8 @@ MN_CASE( mat_ecomp, ne )
 	typedef dense_matrix<double, M, N> mat_t;
 	typedef dense_matrix<bool, M, N> bmat_t;
 
-	const index_t m = M == 0 ? default_m : M;
-	const index_t n = N == 0 ? default_n : N;
+	const index_t m = M == 0 ? DM : M;
+	const index_t n = N == 0 ? DN : N;
 
 	mat_t A(m, n);
 	mat_t B(m, n);
@@ -100,28 +84,15 @@ MN_CASE( mat_ecomp, ne )
 
 	// default evaluation
 
-	bmat_t AB = to_bool(A != B);
+	bmat_t AB = (A != B);
 	ASSERT_TRUE( is_equal(AB, AB_r) );
 
-	bmat_t AC = to_bool(A != c);
+	bmat_t AC = (A != c);
 	ASSERT_TRUE( is_equal(AC, AC_r) );
 
-	bmat_t CB = to_bool(c != B);
+	bmat_t CB = (c != B);
 	ASSERT_TRUE( is_equal(CB, CB_r) );
 
-	// by-scalars evaluation
-
-	bmat_t AB_s(m, n);
-	linear_by_scalars_evaluate(to_bool(A != B), AB_s);
-	ASSERT_TRUE( is_equal(AB_s, AB_r) );
-
-	bmat_t AC_s(m, n);
-	linear_by_scalars_evaluate(to_bool(A != c), AC_s);
-	ASSERT_TRUE( is_equal(AC_s, AC_r) );
-
-	bmat_t CB_s(m, n);
-	linear_by_scalars_evaluate(to_bool(c != B), CB_s);
-	ASSERT_TRUE( is_equal(CB_s, CB_r) );
 }
 
 
@@ -130,8 +101,8 @@ MN_CASE( mat_ecomp, le )
 	typedef dense_matrix<double, M, N> mat_t;
 	typedef dense_matrix<bool, M, N> bmat_t;
 
-	const index_t m = M == 0 ? default_m : M;
-	const index_t n = N == 0 ? default_n : N;
+	const index_t m = M == 0 ? DM : M;
+	const index_t n = N == 0 ? DN : N;
 
 	mat_t A(m, n);
 	mat_t B(m, n);
@@ -153,28 +124,15 @@ MN_CASE( mat_ecomp, le )
 
 	// default evaluation
 
-	bmat_t AB = to_bool(A <= B);
+	bmat_t AB = (A <= B);
 	ASSERT_TRUE( is_equal(AB, AB_r) );
 
-	bmat_t AC = to_bool(A <= c);
+	bmat_t AC = (A <= c);
 	ASSERT_TRUE( is_equal(AC, AC_r) );
 
-	bmat_t CB = to_bool(c <= B);
+	bmat_t CB = (c <= B);
 	ASSERT_TRUE( is_equal(CB, CB_r) );
 
-	// by-scalars evaluation
-
-	bmat_t AB_s(m, n);
-	linear_by_scalars_evaluate(to_bool(A <= B), AB_s);
-	ASSERT_TRUE( is_equal(AB_s, AB_r) );
-
-	bmat_t AC_s(m, n);
-	linear_by_scalars_evaluate(to_bool(A <= c), AC_s);
-	ASSERT_TRUE( is_equal(AC_s, AC_r) );
-
-	bmat_t CB_s(m, n);
-	linear_by_scalars_evaluate(to_bool(c <= B), CB_s);
-	ASSERT_TRUE( is_equal(CB_s, CB_r) );
 }
 
 
@@ -183,8 +141,8 @@ MN_CASE( mat_ecomp, lt )
 	typedef dense_matrix<double, M, N> mat_t;
 	typedef dense_matrix<bool, M, N> bmat_t;
 
-	const index_t m = M == 0 ? default_m : M;
-	const index_t n = N == 0 ? default_n : N;
+	const index_t m = M == 0 ? DM : M;
+	const index_t n = N == 0 ? DN : N;
 
 	mat_t A(m, n);
 	mat_t B(m, n);
@@ -206,28 +164,14 @@ MN_CASE( mat_ecomp, lt )
 
 	// default evaluation
 
-	bmat_t AB = to_bool(A < B);
+	bmat_t AB = (A < B);
 	ASSERT_TRUE( is_equal(AB, AB_r) );
 
-	bmat_t AC = to_bool(A < c);
+	bmat_t AC = (A < c);
 	ASSERT_TRUE( is_equal(AC, AC_r) );
 
-	bmat_t CB = to_bool(c < B);
+	bmat_t CB = (c < B);
 	ASSERT_TRUE( is_equal(CB, CB_r) );
-
-	// by-scalars evaluation
-
-	bmat_t AB_s(m, n);
-	linear_by_scalars_evaluate(to_bool(A < B), AB_s);
-	ASSERT_TRUE( is_equal(AB_s, AB_r) );
-
-	bmat_t AC_s(m, n);
-	linear_by_scalars_evaluate(to_bool(A < c), AC_s);
-	ASSERT_TRUE( is_equal(AC_s, AC_r) );
-
-	bmat_t CB_s(m, n);
-	linear_by_scalars_evaluate(to_bool(c < B), CB_s);
-	ASSERT_TRUE( is_equal(CB_s, CB_r) );
 }
 
 
@@ -236,8 +180,8 @@ MN_CASE( mat_ecomp, ge )
 	typedef dense_matrix<double, M, N> mat_t;
 	typedef dense_matrix<bool, M, N> bmat_t;
 
-	const index_t m = M == 0 ? default_m : M;
-	const index_t n = N == 0 ? default_n : N;
+	const index_t m = M == 0 ? DM : M;
+	const index_t n = N == 0 ? DN : N;
 
 	mat_t A(m, n);
 	mat_t B(m, n);
@@ -259,28 +203,14 @@ MN_CASE( mat_ecomp, ge )
 
 	// default evaluation
 
-	bmat_t AB = to_bool(A >= B);
+	bmat_t AB = (A >= B);
 	ASSERT_TRUE( is_equal(AB, AB_r) );
 
-	bmat_t AC = to_bool(A >= c);
+	bmat_t AC = (A >= c);
 	ASSERT_TRUE( is_equal(AC, AC_r) );
 
-	bmat_t CB = to_bool(c >= B);
+	bmat_t CB = (c >= B);
 	ASSERT_TRUE( is_equal(CB, CB_r) );
-
-	// by-scalars evaluation
-
-	bmat_t AB_s(m, n);
-	linear_by_scalars_evaluate(to_bool(A >= B), AB_s);
-	ASSERT_TRUE( is_equal(AB_s, AB_r) );
-
-	bmat_t AC_s(m, n);
-	linear_by_scalars_evaluate(to_bool(A >= c), AC_s);
-	ASSERT_TRUE( is_equal(AC_s, AC_r) );
-
-	bmat_t CB_s(m, n);
-	linear_by_scalars_evaluate(to_bool(c >= B), CB_s);
-	ASSERT_TRUE( is_equal(CB_s, CB_r) );
 }
 
 
@@ -289,8 +219,8 @@ MN_CASE( mat_ecomp, gt )
 	typedef dense_matrix<double, M, N> mat_t;
 	typedef dense_matrix<bool, M, N> bmat_t;
 
-	const index_t m = M == 0 ? default_m : M;
-	const index_t n = N == 0 ? default_n : N;
+	const index_t m = M == 0 ? DM : M;
+	const index_t n = N == 0 ? DN : N;
 
 	mat_t A(m, n);
 	mat_t B(m, n);
@@ -312,53 +242,39 @@ MN_CASE( mat_ecomp, gt )
 
 	// default evaluation
 
-	bmat_t AB = to_bool(A > B);
+	bmat_t AB = (A > B);
 	ASSERT_TRUE( is_equal(AB, AB_r) );
 
-	bmat_t AC = to_bool(A > c);
+	bmat_t AC = (A > c);
 	ASSERT_TRUE( is_equal(AC, AC_r) );
 
-	bmat_t CB = to_bool(c > B);
+	bmat_t CB = (c > B);
 	ASSERT_TRUE( is_equal(CB, CB_r) );
-
-	// by-scalars evaluation
-
-	bmat_t AB_s(m, n);
-	linear_by_scalars_evaluate(to_bool(A > B), AB_s);
-	ASSERT_TRUE( is_equal(AB_s, AB_r) );
-
-	bmat_t AC_s(m, n);
-	linear_by_scalars_evaluate(to_bool(A > c), AC_s);
-	ASSERT_TRUE( is_equal(AC_s, AC_r) );
-
-	bmat_t CB_s(m, n);
-	linear_by_scalars_evaluate(to_bool(c > B), CB_s);
-	ASSERT_TRUE( is_equal(CB_s, CB_r) );
 }
 
 
 BEGIN_TPACK( mat_ecomp_eq )
-	ADD_MN_CASE_3X3( mat_ecomp, eq, default_m, default_n )
+	ADD_MN_CASE_3X3( mat_ecomp, eq, DM, DN )
 END_TPACK
 
 BEGIN_TPACK( mat_ecomp_ne )
-	ADD_MN_CASE_3X3( mat_ecomp, ne, default_m, default_n )
+	ADD_MN_CASE_3X3( mat_ecomp, ne, DM, DN )
 END_TPACK
 
 BEGIN_TPACK( mat_ecomp_le )
-	ADD_MN_CASE_3X3( mat_ecomp, le, default_m, default_n )
+	ADD_MN_CASE_3X3( mat_ecomp, le, DM, DN )
 END_TPACK
 
 BEGIN_TPACK( mat_ecomp_lt )
-	ADD_MN_CASE_3X3( mat_ecomp, lt, default_m, default_n )
+	ADD_MN_CASE_3X3( mat_ecomp, lt, DM, DN )
 END_TPACK
 
 BEGIN_TPACK( mat_ecomp_ge )
-	ADD_MN_CASE_3X3( mat_ecomp, ge, default_m, default_n )
+	ADD_MN_CASE_3X3( mat_ecomp, ge, DM, DN )
 END_TPACK
 
 BEGIN_TPACK( mat_ecomp_gt )
-	ADD_MN_CASE_3X3( mat_ecomp, gt, default_m, default_n )
+	ADD_MN_CASE_3X3( mat_ecomp, gt, DM, DN )
 END_TPACK
 
 
