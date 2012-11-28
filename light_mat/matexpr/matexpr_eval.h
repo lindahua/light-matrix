@@ -14,17 +14,19 @@
 #define LIGHTMAT_MATRIX_EVAL_H_
 
 #include <light_mat/matrix/matrix_classes.h>
+#include <light_mat/matexpr/matrix_ewise_eval.h>
 
-#include <light_mat/matrix/matrix_cast.h>
-#include <light_mat/matrix/matrix_arith.h>
-#include <light_mat/matrix/matrix_emath.h>
-#include <light_mat/matrix/matrix_ecomp.h>
-#include <light_mat/matrix/matrix_elogical.h>
+#include <light_mat/matexpr/matrix_arith.h>
+#include <light_mat/matexpr/matrix_emath.h>
+#include <light_mat/matexpr/matrix_ecomp.h>
+#include <light_mat/matexpr/matrix_elogical.h>
+#include <light_mat/matexpr/matrix_cast.h>
 
-#include <light_mat/matrix/matrix_ewise_eval.h>
-#include <light_mat/matrix/matrix_repeat_eval.h>
+#include <light_mat/matexpr/vector_repeat.h>
 
-#include <light_mat/matrix/matrix_reduce.h>
-#include <light_mat/matrix/partial_reduce.h>
+#include <light_mat/matexpr/matrix_transpose.h>
+
+#include <light_mat/matexpr/matrix_reduce.h>
+#include <light_mat/matexpr/partial_reduce.h>
 
 #endif

@@ -7,7 +7,7 @@
  */
 
 #include "test_base.h"
-#include <light_mat/matrix/matrix_eval.h>
+#include <light_mat/matexpr/matexpr_eval.h>
 #include <string>
 
 using namespace lmat;

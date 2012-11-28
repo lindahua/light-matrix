@@ -24,7 +24,7 @@ using namespace lmat;
 const index_t DM = DEFAULT_M_VALUE;
 const index_t DN = DEFAULT_N_VALUE;
 const index_t rs = 2;
-const index_t cs = rs * DEFAULT_M_VALUE + 1;
+const index_t cs = (DM > DN ? DM : DN) * rs + 1;
 const index_t LDim = cs;
 
 template<template<typename T, int R, int C> class ClassT, int M, int N>

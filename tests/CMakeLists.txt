@@ -203,6 +203,13 @@ set(MAT_REPEAT_HS
     
 add_executable(test_vec_rep ${MAT_REPEAT_HS} test_vec_rep.cpp)
 
+set(MAT_TRANS_HS
+    ${MATRIX_HS}
+    ${MATEXPR_BASE_HS}
+    ${MATRIX_TRANS_HS})
+    
+add_executable(test_direct_trans ${MAT_TRANS_HS} test_direct_trans.cpp)
+
 set(MAT_REDUC_HS
     ${MATRIX_HS}
     ${MATEXPR_BASE_HS}
@@ -211,7 +218,6 @@ set(MAT_REDUC_HS
 # add_executable(test_mat_reduce ${MAT_REDUC_HS} test_mat_reduce.cpp) 
 # add_executable(test_partial_reduce ${MAT_REDUC_HS} test_partial_reduce.cpp) 
 
-# add_executable(test_mat_transpose ${MATRIX_EVAL_HS} test_mat_transpose.cpp)
 # add_executable(test_cpd_ewise ${MATRIX_EVAL_HS} test_cpd_ewise.cpp)
 
 # Link to test_main
@@ -239,9 +245,9 @@ set(LMAT_TEST_NAMES
 	test_mat_elogical
 	test_mat_cast
 	test_vec_rep
+	test_direct_trans
 	# test_mat_reduce
 	# test_partial_reduce
-	# test_mat_transpose
 	# test_cpd_ewise
 )
 	
