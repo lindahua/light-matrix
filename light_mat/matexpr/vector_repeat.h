@@ -309,9 +309,9 @@ namespace lmat
 		repcol_scheme(index_t m, index_t n)
 		: shape(m, n) { }
 
-		template<class SExpr, class DMat>
+		template<typename Arg_HP, class Arg, class DMat>
 		LMAT_ENSURE_INLINE
-		void evaluate(const SExpr& sexpr, DMat& dmat)
+		void evaluate(const repeat_col_expr<Arg_HP, Arg, N>& sexpr, DMat& dmat)
 		{
 			detail::repcol_evaluate(shape, sexpr.arg(), dmat);
 		}
@@ -326,9 +326,9 @@ namespace lmat
 		reprow_scheme(index_t m, index_t n)
 		: shape(m, n) { }
 
-		template<class SExpr, class DMat>
+		template<typename Arg_HP, class Arg, class DMat>
 		LMAT_ENSURE_INLINE
-		void evaluate(const SExpr& sexpr, DMat& dmat)
+		void evaluate(const repeat_row_expr<Arg_HP, Arg, M>& sexpr, DMat& dmat)
 		{
 			detail::reprow_evaluate(shape, sexpr.arg(), dmat);
 		}

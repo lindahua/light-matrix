@@ -7,15 +7,14 @@
  */
 
 #include "test_base.h"
-#include <light_mat/matexpr/matexpr_eval.h>
+#include "multimat_supp.h"
+
+#include <light_mat/matexpr/matrix_arith.h>
+#include <light_mat/matexpr/matrix_transpose.h>
 #include <string>
 
 using namespace lmat;
 using namespace lmat::test;
-
-const int DM = 6;
-const int DN = 7;
-const int LDim = 9;
 
 template<class Mat>
 void fill_lin(Mat& A)
@@ -33,414 +32,161 @@ void fill_lin(Mat& A)
 	}
 }
 
-template<class SMat, class DMat>
-void my_transpose(const SMat& S, DMat& D)
-{
-	const index_t m = S.nrows();
-	const index_t n = S.ncolumns();
 
-	for (index_t j = 0; j < n; ++j)
+template<
+	template<typename T1, int M1, int N1> class ClassT1,
+	template<typename T2, int M2, int N2> class ClassT2,
+	int M, int N
+>
+void test_mat_transpose()
+{
+	const index_t m = M == 0 ? DM : M;
+	const index_t n = N == 0 ? DN : N;
+
+	const index_t max_dim = m > n ? m : n;
+
+	dblock<double> sblk(LDim * max_dim, zero());
+	dblock<double> dblk(LDim * max_dim, zero());
+
+	for (index_t i = 0; i < sblk.nelems(); ++i) sblk[i] = double(i + 1);
+
+	// M x N ==> N x M
+
+	typedef typename mat_maker<ClassT1, M, N>::cmat_t cmat_t;
+	typedef typename mat_maker<ClassT2, N, M>::mat_t mat_t;
+
+	cmat_t smat = mat_maker<ClassT1, M, N>::get_cmat(sblk.ptr_data(), m, n);
+	mat_t dmat = mat_maker<ClassT2, N, M>::get_mat(dblk.ptr_data(), n, m);
+
+	dmat = trans(smat);
+
+	dense_matrix<double, N, M> rmat(n, m);
+	for (index_t i = 0; i < m; ++i)
 	{
-		for (index_t i = 0; i < m; ++i)
-		{
-			D(j, i) = S(i, j);
-		}
+		for (index_t j = 0; j < n; ++j) rmat(j, i) = smat(i, j);
 	}
+
+	ASSERT_MAT_EQ(n, m, dmat, rmat);
+
+	// N x M ==> M x N
+
+	typedef typename mat_maker<ClassT1, N, M>::cmat_t cmat2_t;
+	typedef typename mat_maker<ClassT2, M, N>::mat_t mat2_t;
+
+	dblk = zero();
+
+	cmat2_t smat2 = mat_maker<ClassT1, N, M>::get_cmat(sblk.ptr_data(), n, m);
+	mat2_t dmat2 = mat_maker<ClassT2, M, N>::get_mat(dblk.ptr_data(), m, n);
+
+	dmat2 = trans(smat2);
+
+	dense_matrix<double, M, N> rmat2(m, n);
+	for (index_t i = 0; i < m; ++i)
+	{
+		for (index_t j = 0; j < n; ++j) rmat2(i, j) = smat2(j, i);
+	}
+
+	ASSERT_MAT_EQ(m, n, dmat2, rmat2);
 }
 
 
-MN_CASE( mat_trans, dense )
+template<
+	template<typename T2, int M2, int N2> class ClassT2,
+	int M, int N
+>
+void test_xpr_transpose()
 {
 	const index_t m = M == 0 ? DM : M;
 	const index_t n = N == 0 ? DN : N;
 
-	std::string base_name =
-			N == 1 ? "contcol" : (M == 1 ? "controw" : "dense");
+	const index_t max_dim = m > n ? m : n;
 
-	dense_matrix<double, M, N> S(m, n);
-	fill_lin(S);
+	dblock<double> dblk(LDim * max_dim, zero());
 
-	ASSERT_STREQ( trans_base_typename(S.trans()), base_name  );
+	// M x N ==> N x M
 
-	dense_matrix<double, N, M> T0(n, m);
-	my_transpose(S, T0);
+	dense_matrix<double, M, N> smat(m, n);
+	for (index_t i = 0; i < m * n; ++i) smat[i] = double(i+1);
 
-	dense_matrix<double, N, M> T = S.trans();
+	typedef typename mat_maker<ClassT2, N, M>::mat_t mat_t;
+	mat_t dmat = mat_maker<ClassT2, N, M>::get_mat(dblk.ptr_data(), n, m);
 
-	ASSERT_EQ( T.nrows(), n );
-	ASSERT_EQ( T.ncolumns(), m );
+	dmat = trans(smat * 2.0 + 1.0);
 
-	ASSERT_MAT_EQ( n, m, T, T0 );
+	dense_matrix<double, N, M> rmat(n, m);
+	for (index_t i = 0; i < m; ++i)
+	{
+		for (index_t j = 0; j < n; ++j) rmat(j, i) = smat(i, j) * 2.0 + 1.0;
+	}
 
-	dense_matrix<double, M, N> R = T.trans();
+	ASSERT_MAT_EQ(n, m, dmat, rmat);
 
-	ASSERT_EQ( R.nrows(), m );
-	ASSERT_EQ( R.ncolumns(), n );
+	// N x M ==> M x N
 
-	ASSERT_MAT_EQ( m, n, R, S );
-}
+	dense_matrix<double, N, M> smat2(n, m);
+	for (index_t i = 0; i < n * m; ++i) smat2[i] = double(i+1);
 
+	typedef typename mat_maker<ClassT2, M, N>::mat_t mat2_t;
+	mat2_t dmat2 = mat_maker<ClassT2, M, N>::get_mat(dblk.ptr_data(), m, n);
 
-MN_CASE( mat_trans, refex )
-{
-	const index_t m = M == 0 ? DM : M;
-	const index_t n = N == 0 ? DN : N;
+	dmat2 = trans(smat2 * 2.0 + 1.0);
 
-	const char *base_name =
-			N == 1 ? "contcol" : (M == 1 ? "regular_row" : "dense");
+	dense_matrix<double, M, N> rmat2(m, n);
+	for (index_t i = 0; i < m; ++i)
+	{
+		for (index_t j = 0; j < n; ++j) rmat2(i, j) = smat2(j, i) * 2.0 + 1.0;
+	}
 
-	dblock<double> sarr(LDim * n, fill(-1.0));
-
-	ref_matrix_ex<double, M, N> S(sarr.ptr_data(), m, n, LDim);
-	fill_lin(S);
-
-	ASSERT_STREQ( trans_base_typename(S.trans()), base_name  );
-
-	dense_matrix<double, N, M> T0(n, m);
-	my_transpose(S, T0);
-
-	dense_matrix<double, N, M> T = S.trans();
-
-	ASSERT_EQ( T.nrows(), n );
-	ASSERT_EQ( T.ncolumns(), m );
-
-	ASSERT_MAT_EQ( n, m, T, T0 );
-}
-
-
-MN_CASE( mat_trans, const )
-{
-	const index_t m = M == 0 ? DM : M;
-	const index_t n = N == 0 ? DN : N;
-
-	double v = 12.5;
-	const_matrix<double, M, N> S(m, n, v);
-
-	const_matrix<double, N, M> T = S.trans();
-
-	ASSERT_EQ( T.nrows(), n );
-	ASSERT_EQ( T.ncolumns(), m );
-	ASSERT_EQ( T.value(), v );
-}
-
-
-MN_CASE( mat_trans, unary_ewise )
-{
-	const index_t m = M == 0 ? DM : M;
-	const index_t n = N == 0 ? DN : N;
-
-	std::string base_name =
-			M == 1 ? "rowxpr" : (N == 1 ? "colxpr" : "generic");
-
-	dense_matrix<double, M, N> S(m, n);
-	fill_lin(S);
-
-	ASSERT_STREQ( trans_base_typename(sqr(S).trans()), base_name );
-
-	dense_matrix<double, M, N> R = sqr(S);
-	dense_matrix<double, N, M> T0(n, m);
-	my_transpose(R, T0);
-
-	dense_matrix<double, N, M> T = sqr(S).trans();
-
-	ASSERT_EQ( T.nrows(), n );
-	ASSERT_EQ( T.ncolumns(), m );
-
-	ASSERT_MAT_EQ( n, m, T, T0 );
-
-	dblock<double> darr(LDim * m, fill(-1.0));
-	ref_matrix_ex<double, N, M> T2(darr.ptr_data(), n, m, LDim);
-
-	T2 = sqr(S).trans();
-
-	ASSERT_MAT_EQ( n, m, T2, T0 );
-}
-
-
-MN_CASE( mat_trans, binary_ewise )
-{
-	const index_t m = M == 0 ? DM : M;
-	const index_t n = N == 0 ? DN : N;
-
-	std::string base_name =
-			M == 1 ? "rowxpr" : (N == 1 ? "colxpr" : "generic");
-
-	dense_matrix<double, M, N> S(m, n);
-	fill_lin(S);
-	dense_matrix<double, M, N> S2 = sqr(S);
-
-	ASSERT_STREQ( trans_base_typename((S + S2).trans()), base_name );
-
-	dense_matrix<double, M, N> R = S + S2;
-	dense_matrix<double, N, M> T0(n, m);
-	my_transpose(R, T0);
-
-	dense_matrix<double, N, M> T = (S + S2).trans();
-
-	ASSERT_EQ( T.nrows(), n );
-	ASSERT_EQ( T.ncolumns(), m );
-
-	ASSERT_MAT_EQ( n, m, T, T0 );
-
-	dblock<double> darr(LDim * m, fill(-1.0));
-	ref_matrix_ex<double, N, M> T2(darr.ptr_data(), n, m, LDim);
-
-	T2 = (S + S2).trans();
-
-	ASSERT_MAT_EQ( n, m, T2, T0 );
-}
-
-
-MN_CASE( mat_trans, colwise_reduce )
-{
-	const index_t m = M == 0 ? DM : M;
-	const index_t n = N == 0 ? DN : N;
-
-	std::string base_name = "rowxpr";
-
-	dense_matrix<double, M, N> S(m, n);
-	fill_lin(S);
-	ASSERT_STREQ( trans_base_typename(sum(S, colwise()).trans()), base_name );
-
-	dense_matrix<double, 1, N> R = sum(S, colwise());
-	dense_matrix<double, N, 1> T0(n, 1);
-	my_transpose(R, T0);
-
-	dense_matrix<double, N, 1> T = sum(S, colwise()).trans();
-
-	ASSERT_EQ( T.nrows(), n );
-	ASSERT_EQ( T.ncolumns(), 1 );
-
-	ASSERT_MAT_EQ( n, 1, T, T0 );
-}
-
-
-MN_CASE( mat_trans, rowwise_reduce )
-{
-	const index_t m = M == 0 ? DM : M;
-	const index_t n = N == 0 ? DN : N;
-
-	std::string base_name = M == 1 ? "rowxpr" : "colxpr";
-
-	dense_matrix<double, M, N> S(m, n);
-	fill_lin(S);
-
-	ASSERT_STREQ( trans_base_typename(sum(S, rowwise()).trans()), base_name );
-
-	dense_matrix<double, M, 1> R = sum(S, rowwise());
-	dense_matrix<double, 1, M> T0(1, m);
-	my_transpose(R, T0);
-
-	dense_matrix<double, 1, M> T = sum(S, rowwise()).trans();
-
-	ASSERT_EQ( T.nrows(), 1 );
-	ASSERT_EQ( T.ncolumns(), m );
-
-	ASSERT_MAT_EQ( 1, m, T, T0 );
-}
-
-
-MN_CASE( mat_trans, unary_with_targ )
-{
-	const index_t m = M == 0 ? DM : M;
-	const index_t n = N == 0 ? DN : N;
-
-	dense_matrix<double, M, N> S(m, n);
-	fill_lin(S);
-
-	dense_matrix<double, M, N> R = sqr(S);
-	dense_matrix<double, N, M> T0(n, m);
-	my_transpose(R, T0);
-
-	dense_matrix<double, N, M> T = sqr(S.trans());
-
-	ASSERT_EQ( T.nrows(), n );
-	ASSERT_EQ( T.ncolumns(), m );
-
-	ASSERT_MAT_EQ( n, m, T, T0 );
-}
-
-
-MN_CASE( mat_trans, binary_with_targ )
-{
-	const index_t m = M == 0 ? DM : M;
-	const index_t n = N == 0 ? DN : N;
-
-	dense_matrix<double, M, N> A(m, n);
-	fill_lin(A);
-	dense_matrix<double, N, M> AT = A.trans();
-
-	dense_matrix<double, M, N> B = sqr(A);
-	dense_matrix<double, N, M> BT = B.trans();
-
-	dense_matrix<double, M, N> R = A + B;
-
-	dense_matrix<double, M, N> T1 = AT.trans() + BT.trans();
-
-	ASSERT_EQ( T1.nrows(), m );
-	ASSERT_EQ( T1.ncolumns(), n );
-	ASSERT_MAT_EQ( m, n, T1, R );
-
-	dense_matrix<double, M, N> T2 = AT.trans() + B;
-
-	ASSERT_EQ( T2.nrows(), m );
-	ASSERT_EQ( T2.ncolumns(), n );
-	ASSERT_MAT_EQ( m, n, T2, R );
-
-	dense_matrix<double, M, N> T3 = A + BT.trans();
-
-	ASSERT_EQ( T3.nrows(), m );
-	ASSERT_EQ( T3.ncolumns(), n );
-	ASSERT_MAT_EQ( m, n, T3, R );
-}
-
-
-MN_CASE( mat_trans, binary_c_with_targ )
-{
-	const index_t m = M == 0 ? DM : M;
-	const index_t n = N == 0 ? DN : N;
-
-	dense_matrix<double, M, N> A(m, n);
-	fill_lin(A);
-
-	double bv = 12.5;
-
-	dense_matrix<double, M, N> R1 = A - bv;
-	dense_matrix<double, N, M> R1t(n, m);
-	my_transpose(R1, R1t);
-
-	dense_matrix<double, M, N> R2 = bv - A;
-	dense_matrix<double, N, M> R2t(n, m);
-	my_transpose(R2, R2t);
-
-	dense_matrix<double, N, M> T1 = A.trans() - bv;
-
-	ASSERT_EQ( T1.nrows(), n );
-	ASSERT_EQ( T1.ncolumns(), m );
-	ASSERT_MAT_EQ( n, m, T1, R1t );
-
-	dense_matrix<double, N, M> T2 = bv - A.trans();
-
-	ASSERT_EQ( T1.nrows(), n );
-	ASSERT_EQ( T1.ncolumns(), m );
-	ASSERT_MAT_EQ( n, m, T2, R2t );
-}
-
-
-MN_CASE( mat_trans, repcols )
-{
-	const index_t m = M == 0 ? DM : M;
-	const index_t n = N == 0 ? DN : N;
-
-	typedef dense_matrix<double, M, 1> col_t;
-	col_t col(m, 1);
-	fill_lin(col);
-
-	horizontal_repeat_expr<ref_arg_t, col_t, N> expr(ref_arg(col), n);
-	dense_matrix<double, M, N> S(expr);
-
-	dense_matrix<double, N, M> T0(n, m, zero());
-	my_transpose(S, T0);
-
-	dense_matrix<double, N, M> T = expr.trans();
-
-	ASSERT_EQ( T.nrows(), n );
-	ASSERT_EQ( T.ncolumns(), m );
-	ASSERT_MAT_EQ( n, m, T, T0 );
-}
-
-MN_CASE( mat_trans, reprows )
-{
-	const index_t m = M == 0 ? DM : M;
-	const index_t n = N == 0 ? DN : N;
-
-	typedef dense_matrix<double, 1, N> row_t;
-	row_t row(1, n);
-	fill_lin(row);
-
-	vertical_repeat_expr<ref_arg_t, row_t, M> expr(ref_arg(row), m);
-	dense_matrix<double, M, N> S(expr);
-
-	dense_matrix<double, N, M> T0(n, m, zero());
-	my_transpose(S, T0);
-
-	dense_matrix<double, N, M> T = expr.trans();
-
-	ASSERT_EQ( T.nrows(), n );
-	ASSERT_EQ( T.ncolumns(), m );
-	ASSERT_MAT_EQ( n, m, T, T0 );
+	ASSERT_MAT_EQ(m, n, dmat2, rmat2);
 }
 
 
 
-BEGIN_TPACK( dense_trans )
-	ADD_MN_CASE_3X3( mat_trans, dense, DM, DN )
-END_TPACK
+#define TEST_MAT_TRANS( sform, dform, name ) \
+	MN_CASE( mat_trans, name ) \
+	{ test_mat_transpose<sform, dform, M, N>(); } \
+	BEGIN_TPACK( mat_trans_##name ) \
+	ADD_MN_CASE_3X3( mat_trans, name, DM, DN ) \
+	END_TPACK
 
-BEGIN_TPACK( refex_trans )
-	ADD_MN_CASE_3X3( mat_trans, refex, DM, DN )
-END_TPACK
+#define TEST_XPR_TRANS( dform, name ) \
+	MN_CASE( mat_trans, name ) \
+	{ test_xpr_transpose<dform, M, N>(); } \
+	BEGIN_TPACK( mat_trans_##name ) \
+	ADD_MN_CASE_3X3( mat_trans, name, DM, DN ) \
+	END_TPACK
 
-BEGIN_TPACK( const_trans )
-	ADD_MN_CASE_3X3( mat_trans, const, DM, DN )
-END_TPACK
+TEST_MAT_TRANS( ref_matrix, ref_matrix, mat_to_mat )
+TEST_MAT_TRANS( ref_matrix, ref_block, mat_to_blk )
+TEST_MAT_TRANS( ref_matrix, ref_grid, mat_to_grid )
 
+TEST_MAT_TRANS( ref_block, ref_matrix, blk_to_mat )
+TEST_MAT_TRANS( ref_block, ref_block, blk_to_blk )
+TEST_MAT_TRANS( ref_block, ref_grid, blk_to_grid )
 
-BEGIN_TPACK( unary_ewise_trans )
-	ADD_MN_CASE_3X3( mat_trans, unary_ewise, DM, DN )
-END_TPACK
+TEST_MAT_TRANS( ref_grid, ref_matrix, grid_to_mat )
+TEST_MAT_TRANS( ref_grid, ref_block, grid_to_blk )
+TEST_MAT_TRANS( ref_grid, ref_grid, grid_to_grid )
 
-BEGIN_TPACK( binary_ewise_trans )
-	ADD_MN_CASE_3X3( mat_trans, binary_ewise, DM, DN )
-END_TPACK
-
-
-BEGIN_TPACK( colwise_reduce_trans )
-	ADD_MN_CASE_3X3( mat_trans, colwise_reduce, DM, DN )
-END_TPACK
-
-BEGIN_TPACK( rowwise_reduce_trans )
-	ADD_MN_CASE_3X3( mat_trans, rowwise_reduce, DM, DN )
-END_TPACK
-
-
-BEGIN_TPACK( unary_ewise_with_targ )
-	ADD_MN_CASE_3X3( mat_trans, unary_with_targ, DM, DN )
-END_TPACK
-
-BEGIN_TPACK( binary_ewise_with_targ )
-	ADD_MN_CASE_3X3( mat_trans, binary_with_targ, DM, DN )
-END_TPACK
-
-BEGIN_TPACK( binary_c_ewise_with_targ )
-	ADD_MN_CASE_3X3( mat_trans, binary_c_with_targ, DM, DN )
-END_TPACK
-
-
-BEGIN_TPACK( repcols_trans )
-	ADD_MN_CASE_3X3( mat_trans, repcols, DM, DN )
-END_TPACK
-
-BEGIN_TPACK( reprows_trans )
-	ADD_MN_CASE_3X3( mat_trans, reprows, DM, DN )
-END_TPACK
-
+TEST_XPR_TRANS( ref_matrix, xpr_to_mat )
+TEST_XPR_TRANS( ref_block, xpr_to_blk )
+TEST_XPR_TRANS( ref_grid, xpr_to_grid )
 
 BEGIN_MAIN_SUITE
-	ADD_TPACK( dense_trans )
-	ADD_TPACK( refex_trans )
-	ADD_TPACK( const_trans )
+	ADD_TPACK( mat_trans_mat_to_mat )
+	ADD_TPACK( mat_trans_mat_to_blk )
+	ADD_TPACK( mat_trans_mat_to_grid )
 
-	ADD_TPACK( unary_ewise_trans )
-	ADD_TPACK( binary_ewise_trans )
-	ADD_TPACK( colwise_reduce_trans )
-	ADD_TPACK( rowwise_reduce_trans )
+	ADD_TPACK( mat_trans_blk_to_mat )
+	ADD_TPACK( mat_trans_blk_to_blk )
+	ADD_TPACK( mat_trans_blk_to_grid )
 
-	ADD_TPACK( unary_ewise_with_targ )
-	ADD_TPACK( binary_ewise_with_targ )
-	ADD_TPACK( binary_c_ewise_with_targ )
+	ADD_TPACK( mat_trans_grid_to_mat )
+	ADD_TPACK( mat_trans_grid_to_blk )
+	ADD_TPACK( mat_trans_grid_to_grid )
 
-	ADD_TPACK( repcols_trans )
-	ADD_TPACK( reprows_trans )
+	ADD_TPACK( mat_trans_xpr_to_mat )
+	ADD_TPACK( mat_trans_xpr_to_blk )
+	ADD_TPACK( mat_trans_xpr_to_grid )
 END_MAIN_SUITE
 

@@ -25,7 +25,6 @@ namespace lmat
 	template<typename Op, typename T1, typename Arg2_HP, class Arg2> class binary_fix1st_ewise_expr;
 	template<typename Op, typename Arg1_HP, class Arg1, typename T2> class binary_fix2nd_ewise_expr;
 
-	struct transpose_t { };
 	template<typename Arg_HP, class Arg> class transpose_expr;
 
 	template<typename Arg_HP, class Arg, int N> class repeat_col_expr;

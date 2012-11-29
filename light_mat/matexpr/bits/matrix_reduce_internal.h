@@ -14,100 +14,153 @@
 #define LIGHTMAT_MATRIX_REDUCE_INTERNAL_H_
 
 #include <light_mat/matrix/matrix_properties.h>
-#include <light_mat/matrix/matrix_visitors.h>
+#include <light_mat/math/reduction_functors.h>
 
 namespace lmat { namespace detail {
 
-	template<int CTLen, typename KerCate> struct single_vec_reduce;
+	template<typename RT, int CTLen, typename KerCate> struct vec_reduce;
 
-
-	template<int CTLen>
-	struct single_vec_reduce<CTLen, scalar_kernel_t>
+	template<typename RT, int CTLen>
+	struct vec_reduce<RT, CTLen, scalar_kernel_t>
 	{
 		template<class Fun, class Vec>
 		LMAT_ENSURE_INLINE
-		static typename Fun::result_type eval(const Fun& fun, const index_t, const Vec& vec)
+		static RT eval(const Fun& fun, const index_t, const Vec& vec)
 		{
-			typename Fun::result_type r = fun(vec.get_scalar(0));
+			RT r = fun.transform(vec.get_scalar(0));
 			for (index_t i = 1; i < CTLen; ++i)
 			{
-				r = fun(r, vec.get_scalar(i));
+				r = fun.combine(r, fun.transform(vec.get_scalar(i)));
+			}
+			return r;
+		}
+
+		template<class Fun, class Vec1, class Vec2>
+		LMAT_ENSURE_INLINE
+		static RT eval(const Fun& fun, const index_t, const Vec1& vec1, const Vec2& vec2)
+		{
+			RT r = fun.transform(vec1.get_scalar(0), vec2.get_scalar(0));
+			for (index_t i = 1; i < CTLen; ++i)
+			{
+				r = fun.combine(r, fun.transform(vec1.get_scalar(i), vec2.get_scalar(i)));
 			}
 			return r;
 		}
 
 		template<class Fun, class Vec, typename State>
 		LMAT_ENSURE_INLINE
-		static typename Fun::result_type eval(const Fun& fun, const index_t, const Vec& vec, const State& s)
+		static RT eval_s(const Fun& fun, const index_t, const Vec& vec, const State& s)
 		{
-			typename Fun::result_type r = fun(vec.get_scalar(0, s));
+			RT r = fun.transform(vec.get_scalar(0, s));
 			for (index_t i = 1; i < CTLen; ++i)
 			{
-				r = fun(r, vec.get_scalar(i, s));
+				r = fun.combine(r, fun.transform(vec.get_scalar(i, s)));
+			}
+			return r;
+		}
+
+		template<class Fun, class Vec1, typename State1, class Vec2, typename State2>
+		LMAT_ENSURE_INLINE
+		static RT eval_s(const Fun& fun, const index_t,
+				const Vec1& vec1, const State1& s1, const Vec2& vec2, const State2& s2)
+		{
+			RT r = fun.transform(vec1.get_scalar(0, s1), vec2.get_scalar(0, s2));
+			for (index_t i = 1; i < CTLen; ++i)
+			{
+				r = fun.combine(r, fun.transform(vec1.get_scalar(i, s1), vec2.get_scalar(i, s2)));
 			}
 			return r;
 		}
 	};
 
-	template<>
-	struct single_vec_reduce<0, scalar_kernel_t>
+
+	template<typename RT>
+	struct vec_reduce<RT, 0, scalar_kernel_t>
 	{
 		template<class Fun, class Vec>
 		LMAT_ENSURE_INLINE
-		static typename Fun::result_type eval(const Fun& fun, const index_t len, const Vec& vec)
+		static RT eval(const Fun& fun, const index_t len, const Vec& vec)
 		{
-			if (len > 0)
+			RT r = fun.transform(vec.get_scalar(0));
+			for (index_t i = 1; i < len; ++i)
 			{
-				typename Fun::result_type r = fun(vec.get_scalar(0));
-				for (index_t i = 1; i < len; ++i)
-				{
-					r = fun(r, vec.get_scalar(i));
-				}
-				return r;
+				r = fun.combine(r, fun.transform(vec.get_scalar(i)));
 			}
-			else
+			return r;
+		}
+
+		template<class Fun, class Vec1, class Vec2>
+		LMAT_ENSURE_INLINE
+		static RT eval(const Fun& fun, const index_t len, const Vec1& vec1, const Vec2& vec2)
+		{
+			RT r = fun.transform(vec1.get_scalar(0), vec2.get_scalar(0));
+			for (index_t i = 1; i < len; ++i)
 			{
-				return fun();
+				r = fun.combine(r, fun.transform(vec1.get_scalar(i), vec2.get_scalar(i)));
 			}
+			return r;
 		}
 
 		template<class Fun, class Vec, typename State>
 		LMAT_ENSURE_INLINE
-		static typename Fun::result_type eval(const Fun& fun, const index_t len, const Vec& vec, const State& s)
+		static RT eval_s(const Fun& fun, const index_t len, const Vec& vec, const State& s)
 		{
-			if (len > 0)
+			RT r = fun.transform(vec.get_scalar(0, s));
+			for (index_t i = 1; i < len; ++i)
 			{
-				typename Fun::result_type r = fun(vec.get_scalar(0, s));
-				for (index_t i = 1; i < len; ++i)
-				{
-					r = fun(r, vec.get_scalar(i, s));
-				}
-				return r;
+				r = fun.combine(r, fun.transform(vec.get_scalar(i, s)));
 			}
-			else
+			return r;
+		}
+
+		template<class Fun, class Vec1, typename State1, class Vec2, typename State2>
+		LMAT_ENSURE_INLINE
+		static RT eval_s(const Fun& fun, const index_t len,
+				const Vec1& vec1, const State1& s1, const Vec2& vec2, const State2& s2)
+		{
+			RT r = fun.transform(vec1.get_scalar(0, s1), vec2.get_scalar(0, s2));
+			for (index_t i = 1; i < len; ++i)
 			{
-				return fun();
+				r = fun.combine(r, fun.transform(vec1.get_scalar(i, s1), vec2.get_scalar(i, s2)));
 			}
+			return r;
 		}
 	};
 
-	template<>
-	struct single_vec_reduce<1, scalar_kernel_t>
+
+	template<typename RT>
+	struct vec_reduce<RT, 1, scalar_kernel_t>
 	{
 		template<class Fun, class Vec>
 		LMAT_ENSURE_INLINE
-		static typename Fun::result_type eval(const Fun& fun, const index_t, const Vec& vec)
+		static RT eval(const Fun& fun, const index_t len, const Vec& vec)
 		{
-			return fun(vec.get_scalar(0));
+			return fun.transform(vec.get_scalar(0));
+		}
+
+		template<class Fun, class Vec1, class Vec2>
+		LMAT_ENSURE_INLINE
+		static RT eval(const Fun& fun, const index_t len, const Vec1& vec1, const Vec2& vec2)
+		{
+			return fun.transform(vec1.get_scalar(0), vec2.get_scalar(0));
 		}
 
 		template<class Fun, class Vec, typename State>
 		LMAT_ENSURE_INLINE
-		static typename Fun::result_type eval(const Fun& fun, const index_t, const Vec& vec, const State& s)
+		static RT eval_s(const Fun& fun, const index_t len, const Vec& vec, const State& s)
 		{
-			return fun(vec.get_scalar(0, s));
+			return fun.transform(vec.get_scalar(0, s));
+		}
+
+		template<class Fun, class Vec1, typename State1, class Vec2, typename State2>
+		LMAT_ENSURE_INLINE
+		static RT eval_s(const Fun& fun, const index_t len,
+				const Vec1& vec1, const State1& s1, const Vec2& vec2, const State2& s2)
+		{
+			return fun.transform(vec1.get_scalar(0, s1), vec2.get_scalar(0, s2));
 		}
 	};
+
 
 
 } }

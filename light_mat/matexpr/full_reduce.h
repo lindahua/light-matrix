@@ -1,7 +1,7 @@
 /**
- * @file matrix_reduce.h
+ * @file full_reduce.h
  *
- * Matrix reduction expression
+ * Full matrix reduction expression
  *
  * @author Dahua Lin
  */
@@ -13,190 +13,172 @@
 #ifndef LIGHTMAT_MATRIX_REDUCE_H_
 #define LIGHTMAT_MATRIX_REDUCE_H_
 
-#include <light_mat/math/reduction_functors.h>
-#include <light_mat/matrix/matrix_arith.h>
-#include <light_mat/matrix/matrix_ewise_eval.h>
-
+#include <light_mat/matexpr/dense_accessors.h>
 #include "bits/matrix_reduce_internal.h"
 
 namespace lmat
 {
-
 	/********************************************
 	 *
 	 *  generic reduction functions
 	 *
 	 ********************************************/
 
-	template<class Fun, class Expr, typename KerCate>
-	LMAT_ENSURE_INLINE
-	inline static typename Fun::result_type reduce(const Fun& fun,
-			const IMatrixXpr<Expr, typename Fun::arg_type>& expr,
-			matrix_visit_policy<linear_vis, KerCate>)
+	template<typename Op, typename T, class Xpr>
+	inline typename unary_reduc_result<Op, T>::type
+	reduce(Op op, const IMatrixXpr<Xpr, T>& xpr, scalar_kernel_t, linear_macc)
 	{
-		typedef matrix_visit_setting<linear_vis, KerCate,
-				ct_rows<Expr>::value,
-				ct_cols<Expr>::value> setting_t;
-		typename matrix_vismap<Expr, setting_t>::type visitor(expr.derived());
+		typedef typename macc_accessor_map<Xpr, scalar_kernel_t, linear_macc>::type accessor_t;
+		typedef typename unary_reduc_result<Op, T>::type result_t;
+		typedef typename unary_reduc_fun<Op, scalar_kernel_t, T>::type fun_t;
 
-		return detail::single_vec_reduce<ct_size<Expr>::value, KerCate>::eval(
-				fun, expr.nelems(), visitor);
-	}
+		fun_t fun(op);
+		accessor_t acc(xpr.derived());
+		const index_t n = xpr.nelems();
 
-
-	template<class Fun, class Expr, typename KerCate>
-	inline static typename Fun::result_type reduce(const Fun& fun,
-			const IMatrixXpr<Expr, typename Fun::arg_type>& expr,
-			matrix_visit_policy<percol_vis, KerCate>)
-	{
-		typedef matrix_visit_setting<percol_vis, KerCate,
-				ct_rows<Expr>::value,
-				ct_cols<Expr>::value> setting_t;
-		typedef typename matrix_vismap<Expr, setting_t>::type visitor_t;
-		visitor_t visitor(expr.derived());
-
-		const index_t m = expr.nrows();
-		const index_t n = expr.ncolumns();
-
-		typedef typename Fun::result_type RT;
-
-		RT r = detail::single_vec_reduce<ct_rows<Expr>::value, KerCate>::eval(
-				fun, m, visitor, visitor.col_state(0));
-
-		for (index_t j = 1; j < n; ++j)
+		if (n > 0)
 		{
-			typename matrix_visitor_state<visitor_t>::type s = visitor.col_state(j);
-
-			RT rj = detail::single_vec_reduce<ct_rows<Expr>::value, KerCate>::eval(
-					fun, m, visitor, s);
-
-			r = fun(r, rj);
+			return detail::vec_reduce<
+					result_t, ct_size<Xpr>::value, scalar_kernel_t>::eval(fun, n, acc);
 		}
-
-		return r;
+		else
+		{
+			return fun.empty_value();
+		}
 	}
 
-	template<class Fun, typename T, class Mat>
+
+	template<typename Op, typename T1, class Xpr1, typename T2, class Xpr2>
+	inline typename binary_reduc_result<Op, T1, T2>::type
+	reduce(Op op, const IMatrixXpr<Xpr1, T1>& xpr1, const IMatrixXpr<Xpr2, T2>& xpr2, scalar_kernel_t, linear_macc)
+	{
+		typedef typename macc_accessor_map<Xpr1, scalar_kernel_t, linear_macc>::type accessor1_t;
+		typedef typename macc_accessor_map<Xpr2, scalar_kernel_t, linear_macc>::type accessor2_t;
+
+		typedef typename binary_reduc_result<Op, T1, T2>::type result_t;
+		typedef typename binary_reduc_fun<Op, scalar_kernel_t, T1, T2>::type fun_t;
+
+		fun_t fun(op);
+		accessor1_t acc1(xpr1.derived());
+		accessor1_t acc2(xpr2.derived());
+
+		const index_t n = xpr1.nelems();
+
+		if (n > 0)
+		{
+			return detail::vec_reduce<
+					result_t, binary_ct_size<Xpr1, Xpr2>::value, scalar_kernel_t>::eval(fun, n, acc1, acc2);
+		}
+		else
+		{
+			return fun.empty_value();
+		}
+	}
+
+
+	template<typename Op, typename T, class Xpr>
+	inline typename unary_reduc_result<Op, T>::type
+	reduce(Op op, const IMatrixXpr<Xpr, T>& xpr, scalar_kernel_t, percol_macc)
+	{
+		typedef typename macc_accessor_map<Xpr, scalar_kernel_t, percol_macc>::type accessor_t;
+		typedef typename percol_macc_state_map<accessor_t>::type col_state_t;
+
+		typedef typename unary_reduc_result<Op, T>::type result_t;
+		typedef typename unary_reduc_fun<Op, scalar_kernel_t, T>::type fun_t;
+
+		typedef detail::vec_reduce<result_t, ct_rows<Xpr>::value, scalar_kernel_t> impl_t;
+
+		fun_t fun(op);
+		accessor_t acc(xpr.derived());
+
+		const index_t m = xpr.nrows();
+		const index_t n = xpr.ncolumns();
+
+		if (n > 0)
+		{
+			col_state_t s0 = acc.col_state(0);
+			result_t r = impl_t::eval_s(fun, m, acc, s0);
+
+			if (n > 1)
+			{
+				for (index_t j = 1; j < n; ++j)
+				{
+					col_state_t s = acc.col_state(j);
+					r = fun.combine(r, impl_t::eval_s(fun, m, acc, s));
+				}
+			}
+
+			return r;
+		}
+		else
+		{
+			return fun.empty_value();
+		}
+	}
+
+
+	template<typename Op, typename T1, class Xpr1, typename T2, class Xpr2>
+	inline typename binary_reduc_result<Op, T1, T2>::type
+	reduce(Op op, const IMatrixXpr<Xpr1, T1>& xpr1, class IMatrixXpr<Xpr2, T2>& xpr2, scalar_kernel_t, percol_macc)
+	{
+		typedef typename macc_accessor_map<Xpr1, scalar_kernel_t, percol_macc>::type accessor1_t;
+		typedef typename percol_macc_state_map<accessor1_t>::type col_state1_t;
+		typedef typename macc_accessor_map<Xpr2, scalar_kernel_t, percol_macc>::type accessor2_t;
+		typedef typename percol_macc_state_map<accessor2_t>::type col_state2_t;
+
+		typedef typename binary_reduc_result<Op, T1, T2>::type result_t;
+		typedef typename binary_reduc_fun<Op, scalar_kernel_t, T1, T2>::type fun_t;
+
+		typedef detail::vec_reduce<result_t, binary_ct_rows<Xpr1, Xpr2>::value, scalar_kernel_t> impl_t;
+
+		fun_t fun(op);
+		accessor1_t acc1(xpr1.derived());
+		accessor1_t acc2(xpr2.derived());
+
+		const index_t m = xpr1.nrows();
+		const index_t n = xpr2.ncolumns();
+
+		if (n > 0)
+		{
+			col_state1_t s0_1 = acc1.col_state(0);
+			col_state1_t s0_2 = acc2.col_state(0);
+			result_t r = impl_t::eval_s(fun, m, acc1, s0_1, acc2, s0_2);
+
+			if (n > 1)
+			{
+				for (index_t j = 1; j < n; ++j)
+				{
+					col_state1_t s1 = acc1.col_state(j);
+					col_state1_t s2 = acc2.col_state(j);
+
+					r = fun.combine(r, impl_t::eval_s(fun, m, acc1, s1, acc2, s2));
+				}
+			}
+
+			return r;
+		}
+		else
+		{
+			return fun.empty_value();
+		}
+	}
+
+
+	template<typename Op, typename T, class Xpr>
 	LMAT_ENSURE_INLINE
-	inline typename Fun::result_type
-	linear_by_scalars_reduce(const Fun& fun, const IMatrixXpr<Mat, T>& X)
+	inline typename unary_reduc_result<Op, T>::type
+	reduce(Op op, const IMatrixXpr<Xpr, T>& xpr)
 	{
-		return reduce(fun, X.derived(), matrix_visit_policy<linear_vis, scalar_kernel_t>());
-	}
+		typedef dense_matrix<T, ct_rows<Xpr>::value, ct_cols<Xpr>::value> dmat_t;
+		typedef default_macc_scheme<Xpr, dmat_t> scheme_t;
 
-	template<class Fun, typename T, class Mat>
-	LMAT_ENSURE_INLINE
-	inline typename Fun::result_type
-	percol_by_scalars_reduce(const Fun& fun, const IMatrixXpr<Mat, T>& X)
-	{
-		return reduce(fun, X.derived(), matrix_visit_policy<percol_vis, scalar_kernel_t>());
-	}
+		typedef typename scheme_t::kernel_category ker_t;
+		typedef typename scheme_t::access_category acc_t;
 
-
-	template<class Mat>
-	struct default_matrix_reduce_policy
-	{
-		typedef dense_matrix<
-				typename matrix_traits<Mat>::value_type,
-				ct_rows<Mat>::value,
-				ct_cols<Mat>::value> Dst;
-
-		typedef typename default_matrix_visit_policy<Mat, Dst>::type type;
-	};
-
-
-	template<class Fun, typename T, class Mat>
-	LMAT_ENSURE_INLINE
-	inline typename Fun::result_type
-	reduce(const Fun& fun, const IMatrixXpr<Mat, T>& X)
-	{
-		return reduce(fun, X.derived(),
-				typename default_matrix_reduce_policy<Mat>::type());
+		return reduce(op, xpr, ker_t(), acc_t());
 	}
 
 
-	/********************************************
-	 *
-	 *  specific reduction functions
-	 *
-	 ********************************************/
-
-	template<typename T, class Mat>
-	LMAT_ENSURE_INLINE
-	T sum(const IMatrixXpr<Mat, T>& X)
-	{
-		return reduce(sum_fun<T>(), X);
-	}
-
-	template<typename T, class Mat>
-	LMAT_ENSURE_INLINE
-	T mean(const IMatrixXpr<Mat, T>& X)
-	{
-		return sum(X.derived()) / T(X.nelems());
-	}
-
-	template<typename T, class Mat>
-	LMAT_ENSURE_INLINE
-	T prod(const IMatrixXpr<Mat, T>& X)
-	{
-		return reduce(prod_fun<T>(), X);
-	}
-
-	template<typename T, class Mat>
-	LMAT_ENSURE_INLINE
-	T maximum(const IMatrixXpr<Mat, T>& X)
-	{
-		return reduce(maximum_fun<T>(), X);
-	}
-
-	template<typename T, class Mat>
-	LMAT_ENSURE_INLINE
-	T minimum(const IMatrixXpr<Mat, T>& X)
-	{
-		return reduce(minimum_fun<T>(), X);
-	}
-
-	template<typename T, class LMat, class RMat>
-	LMAT_ENSURE_INLINE
-	T dot(const IMatrixXpr<LMat, T>& X, const IMatrixXpr<RMat, T>& Y)
-	{
-		return sum(X.derived() * Y.derived());
-	}
-
-	template<typename T, class Mat>
-	LMAT_ENSURE_INLINE
-	T L1norm(const IMatrixXpr<Mat, T>& X)
-	{
-		return sum(abs(X));
-	}
-
-	template<typename T, class Mat>
-	LMAT_ENSURE_INLINE
-	T sqL2norm(const IMatrixXpr<Mat, T>& X)
-	{
-		return sum(sqr(X));
-	}
-
-	template<typename T, class Mat>
-	LMAT_ENSURE_INLINE
-	T L2norm(const IMatrixXpr<Mat, T>& X)
-	{
-		return math::sqrt(sqL2norm(X));
-	}
-
-	template<typename T, class Mat>
-	LMAT_ENSURE_INLINE
-	T Linfnorm(const IMatrixXpr<Mat, T>& X)
-	{
-		return X.nelems() > 0 ? maximum(abs(X)) : T(0);
-	}
-
-	template<typename T, class LMat, class RMat>
-	LMAT_ENSURE_INLINE
-	T nrmdot(const IMatrixXpr<LMat, T>& X, const IMatrixXpr<RMat, T>& Y)
-	{
-		return dot(X, Y) / (L2norm(X) * L2norm(Y));
-	}
 }
 
 #endif /* MATRIX_REDUC_EXPR_H_ */

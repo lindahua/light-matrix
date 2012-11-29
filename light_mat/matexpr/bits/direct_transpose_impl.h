@@ -18,6 +18,26 @@
 namespace lmat { namespace detail {
 
 	template<typename T>
+	LMAT_ENSURE_INLINE
+	inline void vec_transpose(index_t len, const T *src, index_t src_step, T *dst, index_t dst_step)
+	{
+		if (src_step == 1)
+		{
+			if (dst_step == 1)
+				copy_vec(len, src, dst);
+			else
+				copy_vec(len, src, dst, dst_step);
+		}
+		else
+		{
+			if (dst_step == 1)
+				copy_vec(len, src, src_step, dst);
+			else
+				copy_vec(len, src, src_step, dst, dst_step);
+		}
+	}
+
+	template<typename T>
 	inline void simple_transpose(index_t m, index_t n,
 			const T *src, index_t src_rs, index_t src_cs,
 			T *dst, index_t dst_rs, index_t dst_cs)  // m x n --> n x m

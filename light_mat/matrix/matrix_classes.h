@@ -17,6 +17,8 @@
 #include <light_mat/matrix/ref_matrix.h>
 #include <light_mat/matrix/ref_block.h>
 #include <light_mat/matrix/ref_grid.h>
+#include <light_mat/matrix/step_vecs.h>
+
 #include <light_mat/matrix/dense_mutable_view.h>
 
 #endif
