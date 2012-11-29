@@ -28,27 +28,23 @@ inline void fill_lin(dblock<double>& a)
 
 
 template<
-	template<typename T1, int M1, int N1> class ClassT1,
-	template<typename T2, int M2, int N2> class ClassT2,
+	typename Tag1, typename Tag2,
 	typename AccCate, typename KerCate, int M, int N>
 void test_acc_eval()
 {
+	typedef typename mat_maker<Tag1, double, M, N>::cmat_t smat_t;
+	typedef typename mat_maker<Tag2, double, M, N>::mat_t dmat_t;
+
 	const index_t m = M == 0 ? DM : M;
 	const index_t n = N == 0 ? DN : N;
 
-	const index_t max_size1 = mat_maker<ClassT1, M, N>::max_size(m, n);
-	const index_t max_size2 = mat_maker<ClassT2, M, N>::max_size(m, n);
+	mat_maker<Tag1, double, M, N> src(m, n);
+	mat_maker<Tag2, double, M, N> dst(m, n);
 
-	dblock<double> sblk(max_size1, zero());
-	dblock<double> dblk(max_size2, zero());
+	src.fill_lin();
 
-	fill_lin(sblk);
-
-	typedef typename mat_maker<ClassT1, M, N>::cmat_t smat_t;
-	typedef typename mat_maker<ClassT2, M, N>::mat_t dmat_t;
-
-	smat_t smat = mat_maker<ClassT1, M, N>::get_cmat(sblk.ptr_data(), m, n);
-	dmat_t dmat = mat_maker<ClassT2, M, N>::get_mat(dblk.ptr_data(), m, n);
+	smat_t smat = src.get_cmat();
+	dmat_t dmat = dst.get_mat();
 
 	typedef macc_scheme<AccCate, KerCate, M, N> scheme_t;
 
@@ -60,235 +56,84 @@ void test_acc_eval()
 }
 
 
-MN_CASE( linear_scalar, mat_to_mat )
-{
-	test_acc_eval<ref_matrix, ref_matrix,
-		linear_macc, scalar_kernel_t, M, N>();
-}
+#define TEST_ACC_EVAL( pname, acc, ker, stag, dtag ) \
+	MN_CASE( pname, stag##_to_##dtag ) { \
+		test_acc_eval<stag, dtag, acc, ker, M, N>(); } \
+	BEGIN_TPACK( pname##_##stag##_to_##dtag ) \
+		ADD_MN_CASE_3X3( pname, stag##_to_##dtag, DM, DN ) \
+	END_TPACK
 
-MN_CASE( linear_scalar, mat_to_bloc )
-{
-	test_acc_eval<ref_matrix, ref_block,
-		linear_macc, scalar_kernel_t, M, N>();
-}
+#define TEST_ACC_EVAL_V( pname, acc, ker, stag, dtag ) \
+	MN_CASE( pname, stag##_to_##dtag ) { \
+		test_acc_eval<stag, dtag, acc, ker, M, N>(); } \
+	BEGIN_TPACK( pname##_##stag##_to_##dtag ) \
+		ADD_MN_CASE( pname, stag##_to_##dtag, 1, 1 ) \
+		ADD_MN_CASE( pname, stag##_to_##dtag, 0, 1 ) \
+		ADD_MN_CASE( pname, stag##_to_##dtag, DM, 1 ) \
+		ADD_MN_CASE( pname, stag##_to_##dtag, 1, 0 ) \
+		ADD_MN_CASE( pname, stag##_to_##dtag, 1, DN ) \
+	END_TPACK
 
-MN_CASE( linear_scalar, mat_to_grid )
-{
-	test_acc_eval<ref_matrix, ref_grid,
-		linear_macc, scalar_kernel_t, M, N>();
-}
+#define TEST_LINEAR_SCALAR( stag, dtag ) \
+	TEST_ACC_EVAL( linear_scalar, linear_macc, scalar_kernel_t, stag, dtag )
 
-MN_CASE( linear_scalar, bloc_to_mat )
-{
-	test_acc_eval<ref_block, ref_matrix,
-		linear_macc, scalar_kernel_t, M, N>();
-}
+#define TEST_LINEAR_SCALAR_V( stag, dtag ) \
+	TEST_ACC_EVAL_V( linear_scalar, linear_macc, scalar_kernel_t, stag, dtag )
 
-MN_CASE( linear_scalar, bloc_to_bloc )
-{
-	test_acc_eval<ref_block, ref_block,
-		linear_macc, scalar_kernel_t, M, N>();
-}
+#define ADD_LINEAR_SCALAR_PACK( stag, dtag ) \
+	ADD_TPACK( linear_scalar_##stag##_to_##dtag )
 
-MN_CASE( linear_scalar, bloc_to_grid )
-{
-	test_acc_eval<ref_block, ref_grid,
-		linear_macc, scalar_kernel_t, M, N>();
-}
+#define TEST_PERCOL_SCALAR( stag, dtag ) \
+	TEST_ACC_EVAL( percol_scalar, percol_macc, scalar_kernel_t, stag, dtag )
 
-MN_CASE( linear_scalar, grid_to_mat )
-{
-	test_acc_eval<ref_grid, ref_matrix,
-		linear_macc, scalar_kernel_t, M, N>();
-}
+#define ADD_PERCOL_SCALAR_PACK( stag, dtag ) \
+	ADD_TPACK( percol_scalar_##stag##_to_##dtag )
 
-MN_CASE( linear_scalar, grid_to_bloc )
-{
-	test_acc_eval<ref_grid, ref_block,
-		linear_macc, scalar_kernel_t, M, N>();
-}
+TEST_LINEAR_SCALAR( cont, cont )
+TEST_LINEAR_SCALAR( bloc, cont )
+TEST_LINEAR_SCALAR( grid, cont )
 
-MN_CASE( linear_scalar, grid_to_grid )
-{
-	test_acc_eval<ref_grid, ref_grid,
-		linear_macc, scalar_kernel_t, M, N>();
-}
+TEST_LINEAR_SCALAR_V( cont, bloc )
+TEST_LINEAR_SCALAR_V( bloc, bloc )
+TEST_LINEAR_SCALAR_V( grid, bloc )
 
+TEST_LINEAR_SCALAR_V( cont, grid )
+TEST_LINEAR_SCALAR_V( bloc, grid )
+TEST_LINEAR_SCALAR_V( grid, grid )
 
-MN_CASE( percol_scalar, mat_to_mat )
-{
-	test_acc_eval<ref_matrix, ref_matrix,
-		percol_macc, scalar_kernel_t, M, N>();
-}
+TEST_PERCOL_SCALAR( cont, cont )
+TEST_PERCOL_SCALAR( bloc, cont )
+TEST_PERCOL_SCALAR( grid, cont )
 
-MN_CASE( percol_scalar, mat_to_bloc )
-{
-	test_acc_eval<ref_matrix, ref_block,
-		percol_macc, scalar_kernel_t, M, N>();
-}
+TEST_PERCOL_SCALAR( cont, bloc )
+TEST_PERCOL_SCALAR( bloc, bloc )
+TEST_PERCOL_SCALAR( grid, bloc )
 
-MN_CASE( percol_scalar, mat_to_grid )
-{
-	test_acc_eval<ref_matrix, ref_grid,
-		percol_macc, scalar_kernel_t, M, N>();
-}
-
-MN_CASE( percol_scalar, bloc_to_mat )
-{
-	test_acc_eval<ref_block, ref_matrix,
-		percol_macc, scalar_kernel_t, M, N>();
-}
-
-MN_CASE( percol_scalar, bloc_to_bloc )
-{
-	test_acc_eval<ref_block, ref_block,
-		percol_macc, scalar_kernel_t, M, N>();
-}
-
-MN_CASE( percol_scalar, bloc_to_grid )
-{
-	test_acc_eval<ref_block, ref_grid,
-		percol_macc, scalar_kernel_t, M, N>();
-}
-
-MN_CASE( percol_scalar, grid_to_mat )
-{
-	test_acc_eval<ref_grid, ref_matrix,
-		percol_macc, scalar_kernel_t, M, N>();
-}
-
-MN_CASE( percol_scalar, grid_to_bloc )
-{
-	test_acc_eval<ref_grid, ref_block,
-		percol_macc, scalar_kernel_t, M, N>();
-}
-
-MN_CASE( percol_scalar, grid_to_grid )
-{
-	test_acc_eval<ref_grid, ref_grid,
-		percol_macc, scalar_kernel_t, M, N>();
-}
-
-
-
-BEGIN_TPACK( linear_scalar_mat_to_mat )
-	ADD_MN_CASE_3X3( linear_scalar, mat_to_mat, DM, DN )
-END_TPACK
-
-BEGIN_TPACK( linear_scalar_mat_to_bloc )
-	ADD_MN_CASE( linear_scalar, mat_to_bloc, 1, 1 )
-	ADD_MN_CASE( linear_scalar, mat_to_bloc, 0, 1 )
-	ADD_MN_CASE( linear_scalar, mat_to_bloc, DM, 1 )
-	ADD_MN_CASE( linear_scalar, mat_to_bloc, 1, 0 )
-	ADD_MN_CASE( linear_scalar, mat_to_bloc, 1, DN )
-END_TPACK
-
-BEGIN_TPACK( linear_scalar_mat_to_grid )
-	ADD_MN_CASE( linear_scalar, mat_to_grid, 1, 1 )
-	ADD_MN_CASE( linear_scalar, mat_to_grid, 0, 1 )
-	ADD_MN_CASE( linear_scalar, mat_to_grid, DM, 1 )
-	ADD_MN_CASE( linear_scalar, mat_to_grid, 1, 0 )
-	ADD_MN_CASE( linear_scalar, mat_to_grid, 1, DN )
-END_TPACK
-
-BEGIN_TPACK( linear_scalar_bloc_to_mat )
-	ADD_MN_CASE_3X3( linear_scalar, bloc_to_mat, DM, DN )
-END_TPACK
-
-BEGIN_TPACK( linear_scalar_bloc_to_bloc )
-	ADD_MN_CASE( linear_scalar, bloc_to_bloc, 1, 1 )
-	ADD_MN_CASE( linear_scalar, bloc_to_bloc, 0, 1 )
-	ADD_MN_CASE( linear_scalar, bloc_to_bloc, DM, 1 )
-	ADD_MN_CASE( linear_scalar, bloc_to_bloc, 1, 0 )
-	ADD_MN_CASE( linear_scalar, bloc_to_bloc, 1, DN )
-END_TPACK
-
-BEGIN_TPACK( linear_scalar_bloc_to_grid )
-	ADD_MN_CASE( linear_scalar, bloc_to_grid, 1, 1 )
-	ADD_MN_CASE( linear_scalar, bloc_to_grid, 0, 1 )
-	ADD_MN_CASE( linear_scalar, bloc_to_grid, DM, 1 )
-	ADD_MN_CASE( linear_scalar, bloc_to_grid, 1, 0 )
-	ADD_MN_CASE( linear_scalar, bloc_to_grid, 1, DN )
-END_TPACK
-
-BEGIN_TPACK( linear_scalar_grid_to_mat )
-	ADD_MN_CASE_3X3( linear_scalar, grid_to_mat, DM, DN )
-END_TPACK
-
-BEGIN_TPACK( linear_scalar_grid_to_bloc )
-	ADD_MN_CASE( linear_scalar, grid_to_bloc, 1, 1 )
-	ADD_MN_CASE( linear_scalar, grid_to_bloc, 0, 1 )
-	ADD_MN_CASE( linear_scalar, grid_to_bloc, DM, 1 )
-	ADD_MN_CASE( linear_scalar, grid_to_bloc, 1, 0 )
-	ADD_MN_CASE( linear_scalar, grid_to_bloc, 1, DN )
-END_TPACK
-
-BEGIN_TPACK( linear_scalar_grid_to_grid )
-	ADD_MN_CASE( linear_scalar, grid_to_grid, 1, 1 )
-	ADD_MN_CASE( linear_scalar, grid_to_grid, 0, 1 )
-	ADD_MN_CASE( linear_scalar, grid_to_grid, DM, 1 )
-	ADD_MN_CASE( linear_scalar, grid_to_grid, 1, 0 )
-	ADD_MN_CASE( linear_scalar, grid_to_grid, 1, DN )
-END_TPACK
-
-
-BEGIN_TPACK( percol_scalar_mat_to_mat )
-	ADD_MN_CASE_3X3( percol_scalar, mat_to_mat, DM, DN )
-END_TPACK
-
-BEGIN_TPACK( percol_scalar_mat_to_bloc )
-	ADD_MN_CASE_3X3( percol_scalar, mat_to_bloc, DM, DN )
-END_TPACK
-
-BEGIN_TPACK( percol_scalar_mat_to_grid )
-	ADD_MN_CASE_3X3( percol_scalar, mat_to_grid, DM, DN )
-END_TPACK
-
-BEGIN_TPACK( percol_scalar_bloc_to_mat )
-	ADD_MN_CASE_3X3( percol_scalar, bloc_to_mat, DM, DN )
-END_TPACK
-
-BEGIN_TPACK( percol_scalar_bloc_to_bloc )
-	ADD_MN_CASE_3X3( percol_scalar, bloc_to_bloc, DM, DN )
-END_TPACK
-
-BEGIN_TPACK( percol_scalar_bloc_to_grid )
-	ADD_MN_CASE_3X3( percol_scalar, bloc_to_grid, DM, DN )
-END_TPACK
-
-BEGIN_TPACK( percol_scalar_grid_to_mat )
-	ADD_MN_CASE_3X3( percol_scalar, grid_to_mat, DM, DN )
-END_TPACK
-
-BEGIN_TPACK( percol_scalar_grid_to_bloc )
-	ADD_MN_CASE_3X3( percol_scalar, grid_to_bloc, DM, DN )
-END_TPACK
-
-BEGIN_TPACK( percol_scalar_grid_to_grid )
-	ADD_MN_CASE_3X3( percol_scalar, grid_to_grid, DM, DN )
-END_TPACK
+TEST_PERCOL_SCALAR( cont, grid )
+TEST_PERCOL_SCALAR( bloc, grid )
+TEST_PERCOL_SCALAR( grid, grid )
 
 
 BEGIN_MAIN_SUITE
-	ADD_TPACK( linear_scalar_mat_to_mat )
-	ADD_TPACK( linear_scalar_mat_to_bloc )
-	ADD_TPACK( linear_scalar_mat_to_grid )
-	ADD_TPACK( linear_scalar_bloc_to_mat )
-	ADD_TPACK( linear_scalar_bloc_to_bloc )
-	ADD_TPACK( linear_scalar_bloc_to_grid )
-	ADD_TPACK( linear_scalar_grid_to_mat )
-	ADD_TPACK( linear_scalar_grid_to_bloc )
-	ADD_TPACK( linear_scalar_grid_to_grid )
+	ADD_LINEAR_SCALAR_PACK( cont, cont )
+	ADD_LINEAR_SCALAR_PACK( cont, bloc )
+	ADD_LINEAR_SCALAR_PACK( cont, grid )
+	ADD_LINEAR_SCALAR_PACK( bloc, cont )
+	ADD_LINEAR_SCALAR_PACK( bloc, bloc )
+	ADD_LINEAR_SCALAR_PACK( bloc, grid )
+	ADD_LINEAR_SCALAR_PACK( grid, cont )
+	ADD_LINEAR_SCALAR_PACK( grid, bloc )
+	ADD_LINEAR_SCALAR_PACK( grid, grid )
 
-	ADD_TPACK( percol_scalar_mat_to_mat )
-	ADD_TPACK( percol_scalar_mat_to_bloc )
-	ADD_TPACK( percol_scalar_mat_to_grid )
-	ADD_TPACK( percol_scalar_bloc_to_mat )
-	ADD_TPACK( percol_scalar_bloc_to_bloc )
-	ADD_TPACK( percol_scalar_bloc_to_grid )
-	ADD_TPACK( percol_scalar_grid_to_mat )
-	ADD_TPACK( percol_scalar_grid_to_bloc )
-	ADD_TPACK( percol_scalar_grid_to_grid )
+	ADD_PERCOL_SCALAR_PACK( cont, cont )
+	ADD_PERCOL_SCALAR_PACK( cont, bloc )
+	ADD_PERCOL_SCALAR_PACK( cont, grid )
+	ADD_PERCOL_SCALAR_PACK( bloc, cont )
+	ADD_PERCOL_SCALAR_PACK( bloc, bloc )
+	ADD_PERCOL_SCALAR_PACK( bloc, grid )
+	ADD_PERCOL_SCALAR_PACK( grid, cont )
+	ADD_PERCOL_SCALAR_PACK( grid, bloc )
+	ADD_PERCOL_SCALAR_PACK( grid, grid )
 END_MAIN_SUITE
 
 
