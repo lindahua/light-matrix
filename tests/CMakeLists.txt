@@ -46,6 +46,7 @@ set(COMMON_HS
     ${INC}/config/platform_config.h
     ${INC}/config/config.h
     ${INC}/common/prim_types.h
+    ${INC}/common/tie.h
     ${INC}/common/metaprog_base.h
     ${INC}/common/type_traits.h
     ${INC}/common/arg_check.h

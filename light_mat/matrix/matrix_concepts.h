@@ -54,10 +54,7 @@ namespace lmat
 
 	/********************************************
 	 *
-	 *  Concepts
-	 *
-	 *  Each concept is associated with a
-	 *  class as a static polymorphism base
+	 *  IMatrixXpr
 	 *
 	 ********************************************/
 
@@ -104,9 +101,12 @@ namespace lmat
 	}
 
 
-	/**
-	 * The interfaces for matrix blocks
-	 */
+	/********************************************
+	 *
+	 *  IDenseMatrix
+	 *
+	 ********************************************/
+
 	template<class Derived, typename T>
 	class IDenseMatrix : public IMatrixXpr<Derived, T>
 	{
@@ -325,6 +325,7 @@ namespace lmat
 		}
 
 	}; // end class IDenseMatrixBlock
+
 
 }
 
