@@ -58,7 +58,7 @@ namespace lmat
 
 		if (n > 0)
 		{
-			media_t mv = detail::vec_reduce<
+			media_t mv = internal::vec_reduce<
 					media_t, ct_size<Xpr>::value, scalar_kernel_t>::eval(fun, n, acc);
 			return fun.get(mv, n);
 		}
@@ -87,8 +87,8 @@ namespace lmat
 
 		if (n > 0)
 		{
-			media_t mv = detail::vec_reduce<
-					media_t, binary_ct_size<Xpr1, Xpr2>::value, scalar_kernel_t>::eval(fun, n, acc1, acc2);
+			media_t mv = internal::vec_reduce<
+					media_t, common_ctsize<Xpr1, Xpr2>::value, scalar_kernel_t>::eval(fun, n, acc1, acc2);
 			return fun.get(mv, n);
 		}
 		else
@@ -108,7 +108,7 @@ namespace lmat
 		typedef typename reduction_result<Tag, T>::intermediate_type media_t;
 		typedef typename reduction_fun<Tag, scalar_kernel_t, T>::type fun_t;
 
-		typedef detail::vec_reduce<media_t, ct_rows<Xpr>::value, scalar_kernel_t> impl_t;
+		typedef internal::vec_reduce<media_t, ct_rows<Xpr>::value, scalar_kernel_t> impl_t;
 
 		fun_t fun(tag);
 		accessor_t acc(a.derived());
@@ -151,7 +151,7 @@ namespace lmat
 		typedef typename reduction_result<Tag, T1, T2>::intermediate_type media_t;
 		typedef typename reduction_fun<Tag, scalar_kernel_t, T1, T2>::type fun_t;
 
-		typedef detail::vec_reduce<media_t, binary_ct_rows<Xpr1, Xpr2>::value, scalar_kernel_t> impl_t;
+		typedef internal::vec_reduce<media_t, common_ctrows<Xpr1, Xpr2>::value, scalar_kernel_t> impl_t;
 
 		fun_t fun(tag);
 		accessor1_t acc1(a.derived());

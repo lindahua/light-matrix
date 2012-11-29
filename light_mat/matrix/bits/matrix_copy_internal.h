@@ -15,7 +15,7 @@
 
 #include <light_mat/matrix/matrix_properties.h>
 
-namespace lmat { namespace detail {
+namespace lmat { namespace internal {
 
 
 	/********************************************
@@ -380,16 +380,16 @@ namespace lmat { namespace detail {
 	template<class SMat, class DMat>
 	struct mat_copier_map
 	{
-		typedef typename binary_value_type<SMat, DMat>::type T;
+		typedef typename common_value_type<SMat, DMat>::type T;
 
-		static const int M = binary_ct_rows<SMat, DMat>::value;
-		static const int N = binary_ct_cols<SMat, DMat>::value;
+		static const int M = common_ctrows<SMat, DMat>::value;
+		static const int N = common_ctcols<SMat, DMat>::value;
 
 		typedef typename
 				if_c<M == 1 && N == 1,
 					scalar_copier<T, SMat, DMat>,
 					typename
-					if_c<ct_is_continuous<SMat>::value && ct_is_continuous<DMat>::value,
+					if_<and_<ct_is_continuous<SMat>, ct_is_continuous<DMat> >,
 						cc_copier<T, SMat, DMat>,
 						typename
 						if_c<N == 1,

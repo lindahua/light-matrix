@@ -15,7 +15,7 @@
 
 #include <light_mat/matrix/matrix_properties.h>
 
-namespace lmat { namespace detail {
+namespace lmat { namespace internal {
 
 	template<typename T, class DMat>
 	struct scalar_filler

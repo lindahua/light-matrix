@@ -21,7 +21,7 @@ namespace lmat
 	LMAT_ENSURE_INLINE
 	inline void copy(const T *ps, IDenseMatrix<RMat, T>& dst)
 	{
-		typedef typename detail::mat_copier_p_map<RMat>::type copier_t;
+		typedef typename internal::mat_copier_p_map<RMat>::type copier_t;
 		copier_t::copy(ps, dst.derived());
 	}
 
@@ -29,7 +29,7 @@ namespace lmat
 	LMAT_ENSURE_INLINE
 	inline void copy(const IDenseMatrix<LMat, T>& src, T* pd)
 	{
-		typedef typename detail::mat_copier_p_map<LMat>::type copier_t;
+		typedef typename internal::mat_copier_p_map<LMat>::type copier_t;
 		copier_t::copy(src.derived(), pd);
 	}
 
@@ -40,7 +40,7 @@ namespace lmat
 	{
 		LMAT_CHECK_SAME_SHAPE(src, dst)
 
-		typedef typename detail::mat_copier_map<LMat, RMat>::type copier_t;
+		typedef typename internal::mat_copier_map<LMat, RMat>::type copier_t;
 		copier_t::copy(src.derived(), dst.derived());
 	}
 
@@ -74,14 +74,14 @@ namespace lmat
 	template<typename T, class SExpr, class DMat>
 	LMAT_ENSURE_INLINE
 	inline matrix_copy_scheme<
-		binary_ct_rows<SExpr, DMat>::value,
-		binary_ct_cols<SExpr, DMat>::value>
+		common_ctrows<SExpr, DMat>::value,
+		common_ctcols<SExpr, DMat>::value>
 	get_default_eval_scheme(
 			const IDenseMatrix<SExpr, T>& sexpr,
 			IDenseMatrix<DMat, T>& dmat)
 	{
-		const int M = binary_ct_rows<SExpr, DMat>::value;
-		const int N = binary_ct_cols<SExpr, DMat>::value;
+		const int M = common_ctrows<SExpr, DMat>::value;
+		const int N = common_ctcols<SExpr, DMat>::value;
 
 		return matrix_copy_scheme<M, N>(dmat.nrows(), dmat.ncolumns());
 	}

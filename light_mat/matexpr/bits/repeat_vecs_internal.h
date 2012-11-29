@@ -15,7 +15,7 @@
 
 #include <light_mat/matrix/matrix_classes.h>
 
-namespace lmat { namespace detail {
+namespace lmat { namespace internal {
 
 	template<typename T, int M, int N, class Arg, class DMat>
 	inline void repcol_evaluate(const matrix_shape<M, N>& shape,

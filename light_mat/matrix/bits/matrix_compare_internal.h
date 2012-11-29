@@ -16,7 +16,7 @@
 #include <light_mat/matrix/matrix_properties.h>
 #include <light_mat/common/vec_algs.h>
 
-namespace lmat { namespace detail {
+namespace lmat { namespace internal {
 
 	/********************************************
 	 *
@@ -192,16 +192,16 @@ namespace lmat { namespace detail {
 	template<class LMat, class RMat>
 	struct mat_comparer_map
 	{
-		typedef typename binary_value_type<LMat, RMat>::type T;
+		typedef typename common_value_type<LMat, RMat>::type T;
 
-		static const int M = binary_ct_rows<LMat, RMat>::value;
-		static const int N = binary_ct_cols<LMat, RMat>::value;
+		static const int M = common_ctrows<LMat, RMat>::value;
+		static const int N = common_ctcols<LMat, RMat>::value;
 
 		typedef typename
 				if_c<M == 1 && N == 1,
 					scalar_comparer<T, LMat, RMat>,
 					typename
-					if_c<ct_is_continuous<LMat>::value && ct_is_continuous<RMat>::value,
+					if_<and_<ct_is_continuous<LMat>, ct_is_continuous<RMat> >,
 						cc_comparer<T, LMat, RMat>,
 						typename
 						if_c<N == 1,
@@ -391,16 +391,16 @@ namespace lmat { namespace detail {
 	template<class LMat, class RMat>
 	struct mat_approx_comparer_map
 	{
-		typedef typename binary_value_type<LMat, RMat>::type T;
+		typedef typename common_value_type<LMat, RMat>::type T;
 
-		static const int M = binary_ct_rows<LMat, RMat>::value;
-		static const int N = binary_ct_cols<LMat, RMat>::value;
+		static const int M = common_ctrows<LMat, RMat>::value;
+		static const int N = common_ctcols<LMat, RMat>::value;
 
 		typedef typename
 				if_c<M == 1 && N == 1,
 					scalar_approx_comparer<T, LMat, RMat>,
 					typename
-					if_c<ct_is_continuous<LMat>::value && ct_is_continuous<RMat>::value,
+					if_<and_<ct_is_continuous<LMat>, ct_is_continuous<RMat> >,
 						cc_approx_comparer<T, LMat, RMat>,
 						typename
 						if_c<N == 1,

@@ -24,7 +24,7 @@ namespace lmat
 		static const bool is_readonly = true;
 
 		typedef T value_type;
-		typedef grid_layout_cm<CTRows, CTCols> layout_type;
+		typedef grid_layout<CTRows, CTCols> layout_type;
 		typedef cpu_domain domain;
 	};
 
@@ -39,7 +39,7 @@ namespace lmat
 
 	public:
 		LMAT_MAT_TRAITS_CDEFS(T)
-		typedef grid_layout_cm<CTRows, CTCols> layout_type;
+		typedef grid_layout<CTRows, CTCols> layout_type;
 
 	public:
 
@@ -80,7 +80,7 @@ namespace lmat
 		static const bool is_readonly = false;
 
 		typedef T value_type;
-		typedef grid_layout_cm<CTRows, CTCols> layout_type;
+		typedef grid_layout<CTRows, CTCols> layout_type;
 		typedef cpu_domain domain;
 	};
 
@@ -95,7 +95,7 @@ namespace lmat
 
 	public:
 		LMAT_MAT_TRAITS_DEFS(T)
-		typedef grid_layout_cm<CTRows, CTCols> layout_type;
+		typedef grid_layout<CTRows, CTCols> layout_type;
 
 	public:
 		LMAT_ENSURE_INLINE

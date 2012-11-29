@@ -15,7 +15,7 @@
 
 #include <light_mat/common/memory.h>
 
-namespace lmat { namespace detail {
+namespace lmat { namespace internal {
 
 	template<typename T>
 	LMAT_ENSURE_INLINE

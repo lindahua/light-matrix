@@ -209,7 +209,7 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	namespace detail
+	namespace internal
 	{
 		template<class Xpr, bool IsDense>
 		struct macc_support_dense_linear;
@@ -251,7 +251,7 @@ namespace lmat
 		typedef typename matrix_traits<SExpr>::value_type T;
 
 		static const bool support_dense_linear =
-				detail::macc_support_dense_linear<SExpr, is_dense_mat<SExpr>::value>::value;
+				internal::macc_support_dense_linear<SExpr, is_dense_mat<SExpr>::value>::value;
 
 		typedef typename
 				if_c<support_dense_linear,
@@ -267,7 +267,7 @@ namespace lmat
 		typedef typename matrix_traits<SExpr>::value_type T;
 
 		static const bool support_dense_percol =
-				detail::macc_support_dense_percol<SExpr, is_dense_mat<SExpr>::value>::value;
+				internal::macc_support_dense_percol<SExpr, is_dense_mat<SExpr>::value>::value;
 
 		typedef typename
 				if_c<is_dense_mat<SExpr>::value,
@@ -301,7 +301,7 @@ namespace lmat
 	struct generic_macc_cost<Xpr, linear_macc, KerCate>
 	{
 		static const bool support_dense_linear =
-				detail::macc_support_dense_linear<Xpr, is_dense_mat<Xpr>::value>::value;
+				internal::macc_support_dense_linear<Xpr, is_dense_mat<Xpr>::value>::value;
 
 		static const int value = support_dense_linear ? 0 : MACC_CACHE_COST;
 	};

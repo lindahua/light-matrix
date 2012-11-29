@@ -15,7 +15,7 @@
 
 #include <light_mat/matrix/matrix_classes.h>
 
-namespace lmat { namespace detail {
+namespace lmat { namespace internal {
 
 	struct dense_col2row_transpose_scheme
 	{
@@ -26,7 +26,7 @@ namespace lmat { namespace detail {
 			const Arg& arg = expr.arg();
 			const index_t n = dmat.ncolumns();
 
-			detail::vec_transpose(n, arg.ptr_data(), arg.row_stride(),
+			internal::vec_transpose(n, arg.ptr_data(), arg.row_stride(),
 					dmat.ptr_data(), dmat.col_stride());
 		}
 	};
@@ -40,7 +40,7 @@ namespace lmat { namespace detail {
 			const Arg& arg = expr.arg();
 			const index_t n = dmat.nrows();
 
-			detail::vec_transpose(n, arg.ptr_data(), arg.col_stride(),
+			internal::vec_transpose(n, arg.ptr_data(), arg.col_stride(),
 					dmat.ptr_data(), dmat.row_stride());
 		}
 	};
@@ -61,7 +61,7 @@ namespace lmat { namespace detail {
 		LMAT_ENSURE_INLINE
 		void evaluate(const transpose_expr<Arg_HP, Arg>& expr, DMat& dmat)
 		{
-			const int L = binary_ctdim<ct_rows<Arg>::value, ct_cols<DMat>::value>::value;
+			const int L = common_ctdim<ct_rows<Arg>::value, ct_cols<DMat>::value>::value;
 			typedef typename matrix_traits<DMat>::value_type T;
 
 			const index_t n = dmat.ncolumns();
@@ -86,7 +86,7 @@ namespace lmat { namespace detail {
 		LMAT_ENSURE_INLINE
 		void evaluate(const transpose_expr<Arg_HP, Arg>& expr, DMat& dmat)
 		{
-			const int L = binary_ctdim<ct_cols<Arg>::value, ct_rows<DMat>::value>::value;
+			const int L = common_ctdim<ct_cols<Arg>::value, ct_rows<DMat>::value>::value;
 			typedef typename matrix_traits<DMat>::value_type T;
 
 			const index_t n = dmat.nrows();

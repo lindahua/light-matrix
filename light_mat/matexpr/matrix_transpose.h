@@ -33,7 +33,7 @@ namespace lmat
 		const index_t m = src.nrows();
 		const index_t n = src.ncolumns();
 
-		detail::transpose(m, n,
+		internal::transpose(m, n,
 				src.ptr_data(), src.row_stride(), src.col_stride(),
 				dst.ptr_data(), dst.row_stride(), dst.col_stride());
 	}
@@ -145,12 +145,12 @@ namespace lmat
 
 	template<typename T, typename Arg_HP, class Arg, class DMat>
 	LMAT_ENSURE_INLINE
-	inline typename detail::transpose_scheme_map<Arg>::type
+	inline typename internal::transpose_scheme_map<Arg>::type
 	get_default_eval_scheme(
 			const transpose_expr<Arg_HP, Arg>& sexpr,
 			IDenseMatrix<DMat, T>& dmat)
 	{
-		typedef typename detail::transpose_scheme_map<Arg>::type scheme_t;
+		typedef typename internal::transpose_scheme_map<Arg>::type scheme_t;
 		return scheme_t();
 	}
 

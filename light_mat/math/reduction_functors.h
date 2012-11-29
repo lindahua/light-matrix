@@ -173,7 +173,7 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	namespace detail
+	namespace internal
 	{
 		template<typename T> struct nrmdot_media;
 	}
@@ -193,7 +193,7 @@ namespace lmat
 	LMAT_DECLARE_REAL_SIMPLE_UNARY_REDUCTION( entropy )
 
 	LMAT_DECLARE_REAL_SIMPLE_BINARY_REDUCTION( dot )
-	LMAT_DECLARE_REAL_MEDIATED_BINARY_REDUCTION( nrmdot, detail::nrmdot_media )
+	LMAT_DECLARE_REAL_MEDIATED_BINARY_REDUCTION( nrmdot, internal::nrmdot_media )
 
 
 	/********************************************
@@ -206,7 +206,7 @@ namespace lmat
 	inline T no_empty_value(const char *msg)
 	{
 		throw invalid_operation(msg);
-	};
+	}
 
 	// sum, maximum, minimum, and mean
 
@@ -290,7 +290,7 @@ namespace lmat
 			a)
 
 
-	namespace detail
+	namespace internal
 	{
 		template<typename T>
 		struct nrmdot_media
@@ -329,7 +329,7 @@ namespace lmat
 
 	LMAT_DEFINE_BINARY_REDUCTOR( nrmdot,
 			T(0),
-			detail::nrmdot_media<T>::from(x, y),
+			internal::nrmdot_media<T>::from(x, y),
 			a + b,
 			a.get())
 

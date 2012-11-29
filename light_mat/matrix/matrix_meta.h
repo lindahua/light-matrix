@@ -82,12 +82,9 @@ namespace lmat
 	template<class LMat, class RMat>
 	struct binary_domain
 	{
-#ifdef LMAT_USE_STATIC_ASSERT
-		static_assert( has_same_domain<LMat, RMat>::value,
-				"LMat and RMat have different domains." );
-#endif
-
-		typedef typename matrix_traits<LMat>::domain type;
+		typedef typename common_type<
+				typename matrix_traits<LMat>::domain,
+				typename matrix_traits<RMat>::domain>::type type;
 	};
 
 
@@ -107,14 +104,11 @@ namespace lmat
 
 
 	template<class LMat, class RMat>
-	struct binary_value_type
+	struct common_value_type
 	{
-#ifdef LMAT_USE_STATIC_ASSERT
-		static_assert( has_same_value_type<LMat, RMat>::value,
-				"LMat and RMat have different value_types." );
-#endif
-
-		typedef typename matrix_traits<LMat>::value_type type;
+		typedef typename common_type<
+				typename matrix_traits<LMat>::value_type,
+				typename matrix_traits<RMat>::value_type>::type type;
 	};
 
 
@@ -155,36 +149,35 @@ namespace lmat
 	};
 
 	template<int N1, int N2>
-	struct binary_ctdim
+	struct common_ctdim
 	{
 		static const int _maybe_value_ = N1 > N2 ? N1 : N2;
 		static const int value = enable_int_if<is_compatible_ctdim<N1, N2>, _maybe_value_>::value;
 	};
 
-
 	template<class Mat1, class Mat2>
-	struct binary_ct_rows
+	struct common_ctrows
 	{
-		static const int value = binary_ctdim<ct_rows<Mat1>::value, ct_rows<Mat2>::value>::value;
+		static const int value = common_ctdim<ct_rows<Mat1>::value, ct_rows<Mat2>::value>::value;
 	};
 
 	template<class Mat1, class Mat2>
-	struct binary_ct_cols
+	struct common_ctcols
 	{
-		static const int value = binary_ctdim<ct_cols<Mat1>::value, ct_cols<Mat2>::value>::value;
+		static const int value = common_ctdim<ct_cols<Mat1>::value, ct_cols<Mat2>::value>::value;
 	};
 
 	template<class Mat1, class Mat2>
-	struct binary_ct_size
+	struct common_ctsize
 	{
-		static const int value = binary_ct_rows<Mat1, Mat2>::value * binary_ct_cols<Mat1, Mat2>::value;
+		static const int value = common_ctrows<Mat1, Mat2>::value * common_ctcols<Mat1, Mat2>::value;
 	};
 
 	template<class Mat1, class Mat2>
-	struct binary_shape_type
+	struct common_shape
 	{
-		static const int ct_nrows = binary_ct_rows<Mat1, Mat2>::value;
-		static const int ct_ncols = binary_ct_cols<Mat1, Mat2>::value;
+		static const int ct_nrows = common_ctrows<Mat1, Mat2>::value;
+		static const int ct_ncols = common_ctcols<Mat1, Mat2>::value;
 		typedef matrix_shape<ct_nrows, ct_ncols> type;
 	};
 
@@ -207,6 +200,12 @@ namespace lmat
 	struct ct_is_col
 	{
 		static const bool value = ct_cols<Mat>::value == 1;
+	};
+
+	template<class Mat>
+	struct ct_is_scalar
+	{
+		static const bool value = ct_is_row<Mat>::value && ct_is_col<Mat>::value;
 	};
 
 	template<class Mat>
@@ -313,7 +312,7 @@ namespace lmat
 	};
 
 
-	namespace detail
+	namespace internal
 	{
 		template<class Mat, bool IsDense>
 		struct _ct_is_continuous_ex
@@ -356,21 +355,21 @@ namespace lmat
 	struct ct_is_continuous_ex
 	{
 		static const bool value =
-				detail::_ct_is_continuous_ex<Mat, is_dense_mat<Mat>::value>::value;
+				internal::_ct_is_continuous_ex<Mat, is_dense_mat<Mat>::value>::value;
 	};
 
 	template<class Mat>
 	struct ct_is_percol_continuous_ex
 	{
 		static const bool value =
-				detail::_ct_is_percol_continuous_ex<Mat, is_dense_mat<Mat>::value>::value;
+				internal::_ct_is_percol_continuous_ex<Mat, is_dense_mat<Mat>::value>::value;
 	};
 
 	template<class Mat>
 	struct ct_supports_linear_index_ex
 	{
 		static const bool value =
-				detail::_ct_supports_linear_index_ex<Mat, is_dense_mat<Mat>::value>::value;
+				internal::_ct_supports_linear_index_ex<Mat, is_dense_mat<Mat>::value>::value;
 	};
 
 

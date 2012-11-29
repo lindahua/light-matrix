@@ -313,7 +313,7 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		void evaluate(const repeat_col_expr<Arg_HP, Arg, N>& sexpr, DMat& dmat)
 		{
-			detail::repcol_evaluate(shape, sexpr.arg(), dmat);
+			internal::repcol_evaluate(shape, sexpr.arg(), dmat);
 		}
 	};
 
@@ -330,30 +330,30 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		void evaluate(const repeat_row_expr<Arg_HP, Arg, M>& sexpr, DMat& dmat)
 		{
-			detail::reprow_evaluate(shape, sexpr.arg(), dmat);
+			internal::reprow_evaluate(shape, sexpr.arg(), dmat);
 		}
 	};
 
 
 	template<typename T, typename Arg_HP, class Arg, int N, class DMat>
 	LMAT_ENSURE_INLINE
-	inline repcol_scheme<binary_ct_rows<Arg, DMat>::value, N>
+	inline repcol_scheme<common_ctrows<Arg, DMat>::value, N>
 	get_default_eval_scheme(
 			const repeat_col_expr<Arg_HP, Arg, N>& sexpr,
 			IDenseMatrix<DMat, T>& dmat)
 	{
-		const int M = binary_ct_rows<Arg, DMat>::value;
+		const int M = common_ctrows<Arg, DMat>::value;
 		return repcol_scheme<M, N>(dmat.nrows(), dmat.ncolumns());
 	}
 
 	template<typename T, typename Arg_HP, class Arg, int M, class DMat>
 	LMAT_ENSURE_INLINE
-	inline reprow_scheme<M, binary_ct_cols<Arg, DMat>::value>
+	inline reprow_scheme<M, common_ctcols<Arg, DMat>::value>
 	get_default_eval_scheme(
 			const repeat_row_expr<Arg_HP, Arg, M>& sexpr,
 			IDenseMatrix<DMat, T>& dmat)
 	{
-		const int N = binary_ct_cols<Arg, DMat>::value;
+		const int N = common_ctcols<Arg, DMat>::value;
 		return reprow_scheme<M, N>(dmat.nrows(), dmat.ncolumns());
 	}
 
@@ -416,7 +416,7 @@ namespace lmat
 		}
 
 	private:
-		detail::repcol_cap<value_type, ct_rows<Arg>::value, is_dense_mat<Arg>::value> m_cap;
+		internal::repcol_cap<value_type, ct_rows<Arg>::value, is_dense_mat<Arg>::value> m_cap;
 
 	};
 
@@ -446,7 +446,7 @@ namespace lmat
 		}
 
 	private:
-		detail::reprow_cap<Arg, ct_supports_linear_index_ex<Arg>::value> m_cap;
+		internal::reprow_cap<Arg, ct_supports_linear_index_ex<Arg>::value> m_cap;
 
 	};
 

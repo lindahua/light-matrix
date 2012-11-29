@@ -44,8 +44,8 @@ namespace lmat
 	struct matrix_traits<binary_ewise_expr<Op, Arg1_HP, Arg1, Arg2_HP, Arg2> >
 	{
 		static const int num_dimensions = 2;
-		static const int ct_num_rows = binary_ct_rows<Arg1, Arg2>::value;
-		static const int ct_num_cols = binary_ct_cols<Arg1, Arg2>::value;
+		static const int ct_num_rows = common_ctrows<Arg1, Arg2>::value;
+		static const int ct_num_cols = common_ctcols<Arg1, Arg2>::value;
 
 		static const bool is_readonly = true;
 

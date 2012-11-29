@@ -28,8 +28,8 @@ namespace lmat
 		static const bool is_percol_cont = ct_is_percol_continuous<Mat>::value;
 		static const bool is_readonly = is_readonly_mat<Mat>::value;
 
-		typedef detail::colview_helper<Mat, Rgn, is_percol_cont, true> chelper_t;
-		typedef detail::colview_helper<Mat, Rgn, is_percol_cont, is_readonly> helper_t;
+		typedef internal::colview_helper<Mat, Rgn, is_percol_cont, true> chelper_t;
+		typedef internal::colview_helper<Mat, Rgn, is_percol_cont, is_readonly> helper_t;
 
 		typedef typename chelper_t::type const_type;
 		typedef typename helper_t::type type;
@@ -62,8 +62,8 @@ namespace lmat
 		static const bool is_perrow_cont = ct_is_continuous<Mat>::value && ct_is_row<Mat>::value;
 		static const bool is_readonly = is_readonly_mat<Mat>::value;
 
-		typedef detail::rowview_helper<Mat, Rgn, is_perrow_cont, true> chelper_t;
-		typedef detail::rowview_helper<Mat, Rgn, is_perrow_cont, is_readonly> helper_t;
+		typedef internal::rowview_helper<Mat, Rgn, is_perrow_cont, true> chelper_t;
+		typedef internal::rowview_helper<Mat, Rgn, is_perrow_cont, is_readonly> helper_t;
 
 		typedef typename chelper_t::type const_type;
 		typedef typename helper_t::type type;
@@ -178,11 +178,11 @@ namespace lmat
 	template<class Mat, class RowRange, class ColRange>
 	struct matview_map
 	{
-		static const int cont_level = detail::matview_cont_level<Mat>::value;
+		static const int cont_level = internal::matview_cont_level<Mat>::value;
 		static const bool is_readonly = is_readonly_mat<Mat>::value;
 
-		typedef detail::matview_helper<Mat, RowRange, ColRange, cont_level, true> chelper_t;
-		typedef detail::matview_helper<Mat, RowRange, ColRange, cont_level, is_readonly> helper_t;
+		typedef internal::matview_helper<Mat, RowRange, ColRange, cont_level, true> chelper_t;
+		typedef internal::matview_helper<Mat, RowRange, ColRange, cont_level, is_readonly> helper_t;
 
 		typedef typename chelper_t::type const_type;
 		typedef typename helper_t::type type;

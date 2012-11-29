@@ -11,7 +11,7 @@
 
 #include <light_mat/matrix/matrix_meta.h>
 
-namespace lmat {  namespace detail {
+namespace lmat {  namespace internal {
 
 	// ContLevel
 	// 0 : non continuous at each column

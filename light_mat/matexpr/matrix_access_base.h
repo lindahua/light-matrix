@@ -151,11 +151,11 @@ namespace lmat
 		{
 			if (_use_linear)
 			{
-				detail::macc_eval_linear_scalar::evaluate(shape.nelems(), sexpr, dmat);
+				internal::macc_eval_linear_scalar::evaluate(shape.nelems(), sexpr, dmat);
 			}
 			else
 			{
-				detail::macc_eval_percol_scalar::evaluate(shape.nrows(), shape.ncolumns(), sexpr, dmat);
+				internal::macc_eval_percol_scalar::evaluate(shape.nrows(), shape.ncolumns(), sexpr, dmat);
 			}
 		}
 
@@ -192,7 +192,7 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		void evaluate(const SExpr& sexpr, DMat& dmat)
 		{
-			detail::macc_eval_linear_scalar::evaluate(shape.nelems(), sexpr, dmat);
+			internal::macc_eval_linear_scalar::evaluate(shape.nelems(), sexpr, dmat);
 		}
 
 		template<class SExpr, class DMat>
@@ -220,7 +220,7 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		void evaluate(const SExpr& sexpr, DMat& dmat)
 		{
-			detail::macc_eval_percol_scalar::evaluate(shape.nrows(), shape.ncolumns(), sexpr, dmat);
+			internal::macc_eval_percol_scalar::evaluate(shape.nrows(), shape.ncolumns(), sexpr, dmat);
 		}
 
 		template<class SExpr, class DMat>
@@ -283,8 +283,8 @@ namespace lmat
 
 		typedef scalar_kernel_t kernel_category;
 
-		static const int M = binary_ct_rows<SExpr, DMat>::value;
-		static const int N = binary_ct_cols<SExpr, DMat>::value;
+		static const int M = common_ctrows<SExpr, DMat>::value;
+		static const int N = common_ctcols<SExpr, DMat>::value;
 
 		typedef macc_scheme<access_category, kernel_category, M, N> type;
 

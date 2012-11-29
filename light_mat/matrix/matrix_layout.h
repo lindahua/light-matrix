@@ -13,14 +13,16 @@
 #ifndef LIGHTMAT_MATRIX_LAYOUT_H_
 #define LIGHTMAT_MATRIX_LAYOUT_H_
 
-#include <light_mat/matrix/matrix_shape.h>
+#include "bits/matrix_layout_internal.h"
 
 namespace lmat
 {
 
+	// forward declaration
+
 	template<int M, int N> class continuous_layout_cm;
 	template<int M, int N> class block_layout_cm;
-	template<int M, int N> class grid_layout_cm;
+	template<int M, int N> class grid_layout;
 
 	/********************************************
 	 *
@@ -55,7 +57,7 @@ namespace lmat
 	};
 
 	template<int M, int N>
-	struct layout_traits<grid_layout_cm<M, N> >
+	struct layout_traits<grid_layout<M, N> >
 	{
 		static const int ct_num_rows = M;
 		static const int ct_num_cols = N;
@@ -144,10 +146,7 @@ namespace lmat
 	};
 
 
-	inline index_t raise_no_linear_offset()
-	{
-		throw invalid_operation("Linear offset is only supported for compile-time vectors");
-	}
+
 
 
 	/********************************************
@@ -155,36 +154,6 @@ namespace lmat
 	 *  specific layout classes
 	 *
 	 ********************************************/
-
-	namespace detail
-	{
-		template<int M, int N>
-		LMAT_ENSURE_INLINE
-		inline index_t cont_cm_sub2offset(const matrix_shape<M, N>& shape, index_t i, index_t j)
-		{
-			return i + shape.nrows() * j;
-		}
-
-		template<int M>
-		LMAT_ENSURE_INLINE
-		inline index_t cont_cm_sub2offset(const matrix_shape<M, 1>& shape, index_t i, index_t j)
-		{
-			return i;
-		}
-
-		template<int N>
-		LMAT_ENSURE_INLINE
-		inline index_t cont_cm_sub2offset(const matrix_shape<1, N>& shape, index_t i, index_t j)
-		{
-			return shape.nrows() * j;
-		}
-
-		LMAT_ENSURE_INLINE
-		inline index_t cont_cm_sub2offset(const matrix_shape<1, 1>& shape, index_t i, index_t j)
-		{
-			return 0;
-		}
-	}
 
 	template<int M, int N>
 	class continuous_layout_cm : public IMatrixLayout<continuous_layout_cm<M, N> >
@@ -242,7 +211,7 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		index_t offset(index_t i, index_t j) const
 		{
-			return detail::cont_cm_sub2offset(m_shape, i, j);
+			return internal::cont_cm_sub2offset(m_shape, i, j);
 		}
 
 		LMAT_ENSURE_INLINE
@@ -266,64 +235,6 @@ namespace lmat
 	private:
 		matrix_shape<M, N> m_shape;
 	};
-
-
-	namespace detail
-	{
-		template<int M, int N>
-		LMAT_ENSURE_INLINE
-		inline index_t block_cm_sub2offset(const matrix_shape<M, N>& shape, index_t i, index_t j, index_t ldim)
-		{
-			return i + ldim * j;
-		}
-
-		template<int M>
-		LMAT_ENSURE_INLINE
-		inline index_t block_cm_sub2offset(const matrix_shape<M, 1>& shape, index_t i, index_t j, index_t ldim)
-		{
-			return i;
-		}
-
-		template<int N>
-		LMAT_ENSURE_INLINE
-		inline index_t block_cm_sub2offset(const matrix_shape<1, N>& shape, index_t i, index_t j, index_t ldim)
-		{
-			return ldim * j;
-		}
-
-		LMAT_ENSURE_INLINE
-		inline index_t block_cm_sub2offset(const matrix_shape<1, 1>& shape, index_t i, index_t j, index_t ldim)
-		{
-			return 0;
-		}
-
-		template<int M, int N>
-		LMAT_ENSURE_INLINE
-		inline index_t block_cm_linoffset(const matrix_shape<M, N>& shape, index_t i, index_t ldim)
-		{
-			return raise_no_linear_offset();
-		}
-
-		template<int M>
-		LMAT_ENSURE_INLINE
-		inline index_t block_cm_linoffset(const matrix_shape<M, 1>& shape, index_t i, index_t ldim)
-		{
-			return i;
-		}
-
-		template<int N>
-		LMAT_ENSURE_INLINE
-		inline index_t block_cm_linoffset(const matrix_shape<1, N>& shape, index_t i, index_t ldim)
-		{
-			return ldim * i;
-		}
-
-		LMAT_ENSURE_INLINE
-		inline index_t block_cm_linoffset(const matrix_shape<1, 1>& shape, index_t i, index_t ldim)
-		{
-			return 0;
-		}
-	}
 
 
 	template<int M, int N>
@@ -379,7 +290,7 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		index_t offset(index_t i, index_t j) const
 		{
-			return detail::block_cm_sub2offset(m_shape, i, j, m_leaddim);
+			return internal::block_cm_sub2offset(m_shape, i, j, m_leaddim);
 		}
 
 		LMAT_ENSURE_INLINE
@@ -397,7 +308,7 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		index_t lin_offset(index_t i) const
 		{
-			return detail::block_cm_linoffset(m_shape, i, m_leaddim);
+			return internal::block_cm_linoffset(m_shape, i, m_leaddim);
 		}
 
 	private:
@@ -405,72 +316,12 @@ namespace lmat
 		index_t m_leaddim;
 	};
 
-
-
-	namespace detail
-	{
-		template<int M, int N>
-		LMAT_ENSURE_INLINE
-		inline index_t grid_cm_sub2offset(const matrix_shape<M, N>& shape, index_t i, index_t j, index_t rs, index_t cs)
-		{
-			return rs * i + cs * j;
-		}
-
-		template<int M>
-		LMAT_ENSURE_INLINE
-		inline index_t grid_cm_sub2offset(const matrix_shape<M, 1>& shape, index_t i, index_t j, index_t rs, index_t cs)
-		{
-			return rs * i;
-		}
-
-		template<int N>
-		LMAT_ENSURE_INLINE
-		inline index_t grid_cm_sub2offset(const matrix_shape<1, N>& shape, index_t i, index_t j, index_t rs, index_t cs)
-		{
-			return cs * j;
-		}
-
-		LMAT_ENSURE_INLINE
-		inline index_t grid_cm_sub2offset(const matrix_shape<1, 1>& shape, index_t i, index_t j, index_t rs, index_t cs)
-		{
-			return 0;
-		}
-
-		template<int M, int N>
-		LMAT_ENSURE_INLINE
-		inline index_t grid_cm_linoffset(const matrix_shape<M, N>& shape, index_t i, index_t rs, index_t cs)
-		{
-			return raise_no_linear_offset();
-		}
-
-		template<int M>
-		LMAT_ENSURE_INLINE
-		inline index_t grid_cm_linoffset(const matrix_shape<M, 1>& shape, index_t i, index_t rs, index_t cs)
-		{
-			return i * rs;
-		}
-
-		template<int N>
-		LMAT_ENSURE_INLINE
-		inline index_t grid_cm_linoffset(const matrix_shape<1, N>& shape, index_t i, index_t rs, index_t cs)
-		{
-			return i * cs;
-		}
-
-		LMAT_ENSURE_INLINE
-		inline index_t grid_cm_linoffset(const matrix_shape<1, 1>& shape, index_t i, index_t rs, index_t cs)
-		{
-			return 0;
-		}
-	}
-
-
 	template<int M, int N>
-	class grid_layout_cm : public IMatrixLayout<grid_layout_cm<M, N> >
+	class grid_layout : public IMatrixLayout<grid_layout<M, N> >
 	{
 	public:
 		LMAT_ENSURE_INLINE
-		grid_layout_cm(index_t m, index_t n, index_t rs, index_t cs)
+		grid_layout(index_t m, index_t n, index_t rs, index_t cs)
 		: m_shape(m, n), m_rowstride(rs), m_colstride(cs) { };
 
 	public:
@@ -519,7 +370,7 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		index_t offset(index_t i, index_t j) const
 		{
-			return detail::grid_cm_sub2offset(m_shape, i, j, m_rowstride, m_colstride);
+			return internal::grid_sub2offset(m_shape, i, j, m_rowstride, m_colstride);
 		}
 
 		LMAT_ENSURE_INLINE
@@ -537,7 +388,7 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		index_t lin_offset(index_t i) const
 		{
-			return detail::grid_cm_linoffset(m_shape, i, m_rowstride, m_colstride);
+			return internal::grid_linoffset(m_shape, i, m_rowstride, m_colstride);
 		}
 
 	private:

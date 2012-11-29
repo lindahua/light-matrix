@@ -16,7 +16,7 @@
 #include <light_mat/matrix/matrix_properties.h>
 #include <light_mat/math/reduction_functors.h>
 
-namespace lmat { namespace detail {
+namespace lmat { namespace internal {
 
 	template<typename RT, int CTLen, typename KerCate> struct vec_reduce;
 

@@ -23,7 +23,7 @@ namespace lmat
 	template<class Accessor>
 	struct percol_macc_state_map;
 
-	namespace detail
+	namespace internal
 	{
 
 		struct macc_eval_linear_scalar

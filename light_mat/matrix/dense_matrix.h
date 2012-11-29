@@ -48,7 +48,7 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	namespace detail
+	namespace internal
 	{
 		template<typename T, int CTSize>
 		class dense_mat_storage
@@ -241,7 +241,7 @@ namespace lmat
 		}
 
 	private:
-		typedef detail::dense_mat_storage<T, CTRows * CTCols> storage_t;
+		typedef internal::dense_mat_storage<T, CTRows * CTCols> storage_t;
 
 		layout_type m_layout;
 		storage_t m_store;

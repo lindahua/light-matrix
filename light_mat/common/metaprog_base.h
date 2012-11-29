@@ -14,6 +14,7 @@
 #define LIGHTMAT_METAPROG_BASE_H_
 
 #include <light_mat/config/config.h>
+#include <light_mat/common/type_traits.h>
 
 namespace lmat
 {
@@ -113,6 +114,20 @@ namespace lmat
 		static const int value = enable_int_if_c<CondT::value, Val>::value;
 	};
 
+
+	// common type
+
+	template<typename T1, typename T2>
+	struct common_type
+	{
+		typedef typename enable_if<is_same<T1, T2>, T1>::type type;
+	};
+
+	template<int N1, int N2>
+	struct common_int
+	{
+		static const int value = enable_int_if_c<N1 == N2, N1>::value;
+	};
 
 
 }

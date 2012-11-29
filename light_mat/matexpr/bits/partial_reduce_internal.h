@@ -18,7 +18,7 @@
 
 #include "matrix_reduce_internal.h"
 
-namespace lmat { namespace detail {
+namespace lmat { namespace internal {
 
 	template<typename KerCate> struct colwise_reduce_internal;
 	template<typename InterT, typename KerCate> struct rowwise_reduce_internal;
@@ -95,7 +95,7 @@ namespace lmat { namespace detail {
 				}
 				else
 				{
-					typedef vec_reduce<RT, binary_ct_rows<Arg1, Arg2>::value, scalar_kernel_t> vimpl_t;
+					typedef vec_reduce<RT, common_ctrows<Arg1, Arg2>::value, scalar_kernel_t> vimpl_t;
 					for (index_t j = 0; j < n; ++j)
 					{
 						dst(0, j) = fun.get(vimpl_t::eval_s(fun, m,
@@ -226,7 +226,7 @@ namespace lmat { namespace detail {
 			typedef typename matrix_traits<Dst>::value_type RT;
 			typedef typename macc_accessor_map<Arg, percol_macc, scalar_kernel_t>::type accessor_t;
 			typedef typename percol_macc_state_map<accessor_t>::type col_state_t;
-			typedef rowwise_reduce_mcol_impl<binary_ct_rows<Arg, Dst>::value, col_state_t, InterT, RT> mcol_impl_t;
+			typedef rowwise_reduce_mcol_impl<common_ctrows<Arg, Dst>::value, col_state_t, InterT, RT> mcol_impl_t;
 
 			const index_t m = a.nrows();
 			const index_t n = a.ncolumns();
