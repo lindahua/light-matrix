@@ -16,6 +16,26 @@
 #include <light_mat/matexpr/dense_accessors.h>
 #include "bits/matrix_reduce_internal.h"
 
+
+#define LMAT_DEFINE_UNARY_FULL_REDUCE_FUNCTION( Tag, FunName ) \
+	template<typename T, class Xpr> \
+	LMAT_ENSURE_INLINE \
+	inline typename reduction_result<Tag, T>::type \
+	FunName(const IMatrixXpr<Xpr, T>& a) { return reduce(Tag(), a); }
+
+#define LMAT_DEFINE_BINARY_FULL_REDUCE_FUNCTION( Tag, FunName ) \
+	template<typename T, class Xpr1, class Xpr2> \
+	LMAT_ENSURE_INLINE \
+	inline typename reduction_result<Tag, T, T>::type \
+	FunName(const IMatrixXpr<Xpr1, T>& a, const IMatrixXpr<Xpr2, T>& b) { return reduce(Tag(), a, b); }
+
+#define LMAT_DEFINE_UNARY_FULL_REDUCE_FUNCTION_( Name ) \
+	LMAT_DEFINE_UNARY_FULL_REDUCE_FUNCTION( Name##_t, Name )
+
+#define LMAT_DEFINE_BINARY_FULL_REDUCE_FUNCTION_( Name ) \
+	LMAT_DEFINE_BINARY_FULL_REDUCE_FUNCTION( Name##_t, Name )
+
+
 namespace lmat
 {
 	/********************************************
@@ -24,22 +44,23 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<typename Op, typename T, class Xpr>
-	inline typename unary_reduc_result<Op, T>::type
-	reduce(Op op, const IMatrixXpr<Xpr, T>& xpr, scalar_kernel_t, linear_macc)
+	template<typename Tag, typename T, class Xpr>
+	inline typename reduction_result<Tag, T>::type
+	_reduce(Tag tag, const IMatrixXpr<Xpr, T>& a, linear_macc, scalar_kernel_t)
 	{
-		typedef typename macc_accessor_map<Xpr, scalar_kernel_t, linear_macc>::type accessor_t;
-		typedef typename unary_reduc_result<Op, T>::type result_t;
-		typedef typename unary_reduc_fun<Op, scalar_kernel_t, T>::type fun_t;
+		typedef typename macc_accessor_map<Xpr, linear_macc, scalar_kernel_t>::type accessor_t;
+		typedef typename reduction_result<Tag, T>::intermediate_type media_t;
+		typedef typename reduction_fun<Tag, scalar_kernel_t, T>::type fun_t;
 
-		fun_t fun(op);
-		accessor_t acc(xpr.derived());
-		const index_t n = xpr.nelems();
+		fun_t fun(tag);
+		accessor_t acc(a.derived());
+		const index_t n = a.nelems();
 
 		if (n > 0)
 		{
-			return detail::vec_reduce<
-					result_t, ct_size<Xpr>::value, scalar_kernel_t>::eval(fun, n, acc);
+			media_t mv = detail::vec_reduce<
+					media_t, ct_size<Xpr>::value, scalar_kernel_t>::eval(fun, n, acc);
+			return fun.get(mv, n);
 		}
 		else
 		{
@@ -48,26 +69,27 @@ namespace lmat
 	}
 
 
-	template<typename Op, typename T1, class Xpr1, typename T2, class Xpr2>
-	inline typename binary_reduc_result<Op, T1, T2>::type
-	reduce(Op op, const IMatrixXpr<Xpr1, T1>& xpr1, const IMatrixXpr<Xpr2, T2>& xpr2, scalar_kernel_t, linear_macc)
+	template<typename Tag, typename T1, class Xpr1, typename T2, class Xpr2>
+	inline typename reduction_result<Tag, T1, T2>::type
+	_reduce(Tag tag, const IMatrixXpr<Xpr1, T1>& a, const IMatrixXpr<Xpr2, T2>& b, linear_macc, scalar_kernel_t)
 	{
-		typedef typename macc_accessor_map<Xpr1, scalar_kernel_t, linear_macc>::type accessor1_t;
-		typedef typename macc_accessor_map<Xpr2, scalar_kernel_t, linear_macc>::type accessor2_t;
+		typedef typename macc_accessor_map<Xpr1, linear_macc, scalar_kernel_t>::type accessor1_t;
+		typedef typename macc_accessor_map<Xpr2, linear_macc, scalar_kernel_t>::type accessor2_t;
 
-		typedef typename binary_reduc_result<Op, T1, T2>::type result_t;
-		typedef typename binary_reduc_fun<Op, scalar_kernel_t, T1, T2>::type fun_t;
+		typedef typename reduction_result<Tag, T1, T2>::intermediate_type media_t;
+		typedef typename reduction_fun<Tag, scalar_kernel_t, T1, T2>::type fun_t;
 
-		fun_t fun(op);
-		accessor1_t acc1(xpr1.derived());
-		accessor1_t acc2(xpr2.derived());
+		fun_t fun(tag);
+		accessor1_t acc1(a.derived());
+		accessor1_t acc2(b.derived());
 
-		const index_t n = xpr1.nelems();
+		const index_t n = a.nelems();
 
 		if (n > 0)
 		{
-			return detail::vec_reduce<
-					result_t, binary_ct_size<Xpr1, Xpr2>::value, scalar_kernel_t>::eval(fun, n, acc1, acc2);
+			media_t mv = detail::vec_reduce<
+					media_t, binary_ct_size<Xpr1, Xpr2>::value, scalar_kernel_t>::eval(fun, n, acc1, acc2);
+			return fun.get(mv, n);
 		}
 		else
 		{
@@ -76,39 +98,39 @@ namespace lmat
 	}
 
 
-	template<typename Op, typename T, class Xpr>
-	inline typename unary_reduc_result<Op, T>::type
-	reduce(Op op, const IMatrixXpr<Xpr, T>& xpr, scalar_kernel_t, percol_macc)
+	template<typename Tag, typename T, class Xpr>
+	inline typename reduction_result<Tag, T>::type
+	_reduce(Tag tag, const IMatrixXpr<Xpr, T>& a, percol_macc, scalar_kernel_t)
 	{
-		typedef typename macc_accessor_map<Xpr, scalar_kernel_t, percol_macc>::type accessor_t;
+		typedef typename macc_accessor_map<Xpr, percol_macc, scalar_kernel_t>::type accessor_t;
 		typedef typename percol_macc_state_map<accessor_t>::type col_state_t;
 
-		typedef typename unary_reduc_result<Op, T>::type result_t;
-		typedef typename unary_reduc_fun<Op, scalar_kernel_t, T>::type fun_t;
+		typedef typename reduction_result<Tag, T>::intermediate_type media_t;
+		typedef typename reduction_fun<Tag, scalar_kernel_t, T>::type fun_t;
 
-		typedef detail::vec_reduce<result_t, ct_rows<Xpr>::value, scalar_kernel_t> impl_t;
+		typedef detail::vec_reduce<media_t, ct_rows<Xpr>::value, scalar_kernel_t> impl_t;
 
-		fun_t fun(op);
-		accessor_t acc(xpr.derived());
+		fun_t fun(tag);
+		accessor_t acc(a.derived());
 
-		const index_t m = xpr.nrows();
-		const index_t n = xpr.ncolumns();
+		const index_t m = a.nrows();
+		const index_t n = a.ncolumns();
 
 		if (n > 0)
 		{
 			col_state_t s0 = acc.col_state(0);
-			result_t r = impl_t::eval_s(fun, m, acc, s0);
+			media_t mv = impl_t::eval_s(fun, m, acc, s0);
 
 			if (n > 1)
 			{
 				for (index_t j = 1; j < n; ++j)
 				{
 					col_state_t s = acc.col_state(j);
-					r = fun.combine(r, impl_t::eval_s(fun, m, acc, s));
+					mv = fun.combine(mv, impl_t::eval_s(fun, m, acc, s));
 				}
 			}
 
-			return r;
+			return fun.get(mv, a.nelems());
 		}
 		else
 		{
@@ -117,32 +139,32 @@ namespace lmat
 	}
 
 
-	template<typename Op, typename T1, class Xpr1, typename T2, class Xpr2>
-	inline typename binary_reduc_result<Op, T1, T2>::type
-	reduce(Op op, const IMatrixXpr<Xpr1, T1>& xpr1, class IMatrixXpr<Xpr2, T2>& xpr2, scalar_kernel_t, percol_macc)
+	template<typename Tag, typename T1, class Xpr1, typename T2, class Xpr2>
+	inline typename reduction_result<Tag, T1, T2>::type
+	_reduce(Tag tag, const IMatrixXpr<Xpr1, T1>& a, const IMatrixXpr<Xpr2, T2>& b, percol_macc, scalar_kernel_t)
 	{
-		typedef typename macc_accessor_map<Xpr1, scalar_kernel_t, percol_macc>::type accessor1_t;
+		typedef typename macc_accessor_map<Xpr1, percol_macc, scalar_kernel_t>::type accessor1_t;
 		typedef typename percol_macc_state_map<accessor1_t>::type col_state1_t;
-		typedef typename macc_accessor_map<Xpr2, scalar_kernel_t, percol_macc>::type accessor2_t;
+		typedef typename macc_accessor_map<Xpr2, percol_macc, scalar_kernel_t>::type accessor2_t;
 		typedef typename percol_macc_state_map<accessor2_t>::type col_state2_t;
 
-		typedef typename binary_reduc_result<Op, T1, T2>::type result_t;
-		typedef typename binary_reduc_fun<Op, scalar_kernel_t, T1, T2>::type fun_t;
+		typedef typename reduction_result<Tag, T1, T2>::intermediate_type media_t;
+		typedef typename reduction_fun<Tag, scalar_kernel_t, T1, T2>::type fun_t;
 
-		typedef detail::vec_reduce<result_t, binary_ct_rows<Xpr1, Xpr2>::value, scalar_kernel_t> impl_t;
+		typedef detail::vec_reduce<media_t, binary_ct_rows<Xpr1, Xpr2>::value, scalar_kernel_t> impl_t;
 
-		fun_t fun(op);
-		accessor1_t acc1(xpr1.derived());
-		accessor1_t acc2(xpr2.derived());
+		fun_t fun(tag);
+		accessor1_t acc1(a.derived());
+		accessor1_t acc2(b.derived());
 
-		const index_t m = xpr1.nrows();
-		const index_t n = xpr2.ncolumns();
+		const index_t m = a.nrows();
+		const index_t n = a.ncolumns();
 
 		if (n > 0)
 		{
 			col_state1_t s0_1 = acc1.col_state(0);
 			col_state1_t s0_2 = acc2.col_state(0);
-			result_t r = impl_t::eval_s(fun, m, acc1, s0_1, acc2, s0_2);
+			media_t mv = impl_t::eval_s(fun, m, acc1, s0_1, acc2, s0_2);
 
 			if (n > 1)
 			{
@@ -151,11 +173,11 @@ namespace lmat
 					col_state1_t s1 = acc1.col_state(j);
 					col_state1_t s2 = acc2.col_state(j);
 
-					r = fun.combine(r, impl_t::eval_s(fun, m, acc1, s1, acc2, s2));
+					mv = fun.combine(mv, impl_t::eval_s(fun, m, acc1, s1, acc2, s2));
 				}
 			}
 
-			return r;
+			return fun.get(mv, a.nelems());
 		}
 		else
 		{
@@ -164,21 +186,80 @@ namespace lmat
 	}
 
 
-	template<typename Op, typename T, class Xpr>
+	template<typename Tag, typename T, class Xpr>
 	LMAT_ENSURE_INLINE
-	inline typename unary_reduc_result<Op, T>::type
-	reduce(Op op, const IMatrixXpr<Xpr, T>& xpr)
+	inline typename reduction_result<Tag, T>::type
+	reduce(Tag tag, const IMatrixXpr<Xpr, T>& a)
 	{
-		typedef dense_matrix<T, ct_rows<Xpr>::value, ct_cols<Xpr>::value> dmat_t;
-		typedef default_macc_scheme<Xpr, dmat_t> scheme_t;
+		const index_t m = a.nrows();
 
-		typedef typename scheme_t::kernel_category ker_t;
-		typedef typename scheme_t::access_category acc_t;
+		int macc_linear_cost = macc_cost<Xpr, linear_macc, scalar_kernel_t>::value;
+		int macc_percol_cost = macc_cost<Xpr, percol_macc, scalar_kernel_t>::value;
 
-		return reduce(op, xpr, ker_t(), acc_t());
+		if (m <= MACC_SHORT_PERCOL_COST)
+			macc_percol_cost += MACC_SHORT_PERCOL_COST;
+
+		if (macc_linear_cost <= macc_percol_cost)
+		{
+			return _reduce(tag, a, linear_macc(), scalar_kernel_t());
+		}
+		else
+		{
+			return _reduce(tag, a, percol_macc(), scalar_kernel_t());
+		}
 	}
 
 
+	template<typename Tag, typename T, class Xpr1, class Xpr2>
+	LMAT_ENSURE_INLINE
+	inline typename reduction_result<Tag, T, T>::type
+	reduce(Tag tag, const IMatrixXpr<Xpr1, T>& a, const IMatrixXpr<Xpr2, T>& b)
+	{
+		const index_t m = a.nrows();
+
+		int macc_linear_cost =
+				macc_cost<Xpr1, linear_macc, scalar_kernel_t>::value +
+				macc_cost<Xpr2, linear_macc, scalar_kernel_t>::value;
+
+		int macc_percol_cost =
+				macc_cost<Xpr1, percol_macc, scalar_kernel_t>::value +
+				macc_cost<Xpr2, percol_macc, scalar_kernel_t>::value;
+
+		if (m <= MACC_SHORT_PERCOL_COST)
+			macc_percol_cost += MACC_SHORT_PERCOL_COST;
+
+		if (macc_linear_cost <= macc_percol_cost)
+		{
+			return _reduce(tag, a, b, linear_macc(), scalar_kernel_t());
+		}
+		else
+		{
+			return _reduce(tag, a, b, percol_macc(), scalar_kernel_t());
+		}
+	}
+
+
+	/********************************************
+	 *
+	 *  specific reduction
+	 *
+	 ********************************************/
+
+	LMAT_DEFINE_UNARY_FULL_REDUCE_FUNCTION_( sum )
+	LMAT_DEFINE_UNARY_FULL_REDUCE_FUNCTION_( maximum )
+	LMAT_DEFINE_UNARY_FULL_REDUCE_FUNCTION_( minimum )
+	LMAT_DEFINE_UNARY_FULL_REDUCE_FUNCTION_( mean )
+
+	LMAT_DEFINE_UNARY_FULL_REDUCE_FUNCTION_( L1norm )
+	LMAT_DEFINE_UNARY_FULL_REDUCE_FUNCTION_( sqL2norm )
+	LMAT_DEFINE_UNARY_FULL_REDUCE_FUNCTION_( L2norm )
+	LMAT_DEFINE_UNARY_FULL_REDUCE_FUNCTION_( Linfnorm )
+
+	LMAT_DEFINE_UNARY_FULL_REDUCE_FUNCTION_( logsum )
+	LMAT_DEFINE_UNARY_FULL_REDUCE_FUNCTION_( entropy )
+
+	LMAT_DEFINE_BINARY_FULL_REDUCE_FUNCTION_( dot )
+	LMAT_DEFINE_BINARY_FULL_REDUCE_FUNCTION_( nrmdot )
 }
 
 #endif /* MATRIX_REDUC_EXPR_H_ */

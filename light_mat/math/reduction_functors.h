@@ -17,113 +17,183 @@
 #include <light_mat/math/functor_base.h>
 #include <light_mat/math/math_base.h>
 
+
+/************************************************
+ *
+ *  Macros to declare reduction tags
+ *
+ ************************************************/
+
+// reduction on generic types
+
+#define LMAT_DECLARE_GENERIC_UNARY_REDUCTION( Name, InterT, ResultT ) \
+	struct Name##_t { }; \
+	template<> struct is_reduction_tag<Name##_t, 1> { static const bool value = false; }; \
+	template<typename T> \
+	struct reduction_result<Name##_t, T> { \
+		typedef InterT intermediate_type; \
+		typedef ResultT type; };
+
+#define LMAT_DECLARE_GENERIC_BINARY_REDUCTION( Name, InterT, ResultT ) \
+	struct Name##_t { }; \
+	template<> struct is_reduction_tag<Name##_t, 2> { static const bool value = false; }; \
+	template<typename T> \
+	struct reduction_result<Name##_t, T, T> { \
+		typedef InterT intermediate_type; \
+		typedef ResultT type; };
+
+#define LMAT_DECLARE_GENERIC_SIMPLE_UNARY_REDUCTION( Name ) \
+	LMAT_DECLARE_GENERIC_UNARY_REDUCTION( Name, T, T )
+
+#define LMAT_DECLARE_GENERIC_SIMPLE_BINARY_REDUCTION( Name ) \
+	LMAT_DECLARE_GENERIC_BINARY_REDUCTION( Name, T, T )
+
+
+// reduction on real numbers
+
+#define LMAT_DECLARE_REAL_SIMPLE_UNARY_REDUCTION( Name ) \
+	struct Name##_t { }; \
+	template<> struct is_reduction_tag<Name##_t, 1> { static const bool value = false; }; \
+	template<> struct reduction_result<Name##_t, float> { \
+		typedef float intermediate_type; \
+		typedef float type; }; \
+	template<> struct reduction_result<Name##_t, double> { \
+		typedef double intermediate_type; \
+		typedef double type; };
+
+#define LMAT_DECLARE_REAL_SIMPLE_BINARY_REDUCTION( Name ) \
+	struct Name##_t { }; \
+	template<> struct is_reduction_tag<Name##_t, 2> { static const bool value = false; }; \
+	template<> struct reduction_result<Name##_t, float, float> { \
+		typedef float intermediate_type; \
+		typedef float type; }; \
+	template<> struct reduction_result<Name##_t, double, double> { \
+		typedef double intermediate_type; \
+		typedef double type; };
+
+#define LMAT_DECLARE_REAL_MEDIATED_UNARY_REDUCTION( Name, InterTempl ) \
+	struct Name##_t { }; \
+	template<> struct is_reduction_tag<Name##_t, 1> { static const bool value = false; }; \
+	template<> struct reduction_result<Name##_t, float> { \
+		typedef InterTempl<float> intermediate_type; \
+		typedef float type; }; \
+	template<> struct reduction_result<Name##_t, double> { \
+		typedef InterTempl<float> intermediate_type; \
+		typedef double type; };
+
+#define LMAT_DECLARE_REAL_MEDIATED_BINARY_REDUCTION( Name, InterTempl ) \
+	struct Name##_t { }; \
+	template<> struct is_reduction_tag<Name##_t, 2> { static const bool value = false; }; \
+	template<> struct reduction_result<Name##_t, float, float> { \
+		typedef InterTempl<float> intermediate_type; \
+		typedef float type; }; \
+	template<> struct reduction_result<Name##_t, double, double> { \
+		typedef InterTempl<double> intermediate_type; \
+		typedef double type; };
+
+
+/************************************************
+ *
+ *  Macros to define reduction functors
+ *
+ ************************************************/
+
+#define LMAT_DEFINE_UNARY_REDUCTOR(Name, EmptyVal, TransformExpr, CombExpr, GetExpr ) \
+	template<typename T> \
+	struct Name##_fun { \
+		typedef typename reduction_result<Name##_t, T>::intermediate_type intermediate_type; \
+		typedef typename reduction_result<Name##_t, T>::type result_type; \
+		LMAT_ENSURE_INLINE \
+		Name##_fun() { } \
+		LMAT_ENSURE_INLINE \
+		Name##_fun( Name##_t ) { } \
+		LMAT_ENSURE_INLINE \
+		T empty_value() const { return EmptyVal; } \
+		LMAT_ENSURE_INLINE \
+		T transform(const T& x) const { return TransformExpr; } \
+		LMAT_ENSURE_INLINE \
+		T combine(const intermediate_type& a, const intermediate_type& b) const { return CombExpr; } \
+		LMAT_ENSURE_INLINE \
+		result_type get(const intermediate_type& a, const index_t& n) const { return GetExpr; } \
+	}; \
+	template<typename T> \
+	struct reduction_fun<Name##_t, scalar_kernel_t, T> { \
+		typedef Name##_fun<T> type; \
+	};
+
+#define LMAT_DEFINE_BINARY_REDUCTOR(Name, EmptyVal, TransformExpr, CombExpr, GetExpr ) \
+	template<typename T> \
+	struct Name##_fun { \
+		typedef typename reduction_result<Name##_t, T, T>::intermediate_type intermediate_type; \
+		typedef typename reduction_result<Name##_t, T, T>::type result_type; \
+		LMAT_ENSURE_INLINE \
+		Name##_fun() { } \
+		LMAT_ENSURE_INLINE \
+		Name##_fun( Name##_t ) { } \
+		LMAT_ENSURE_INLINE \
+		result_type empty_value() const { return EmptyVal; } \
+		LMAT_ENSURE_INLINE \
+		intermediate_type transform(const T& x, const T& y) const { return TransformExpr; } \
+		LMAT_ENSURE_INLINE \
+		intermediate_type combine(const intermediate_type& a, const intermediate_type& b) const { return CombExpr; } \
+		LMAT_ENSURE_INLINE \
+		result_type get(const intermediate_type& a, const index_t& n) const { return GetExpr; } \
+	}; \
+	template<typename T> \
+	struct reduction_fun<Name##_t, scalar_kernel_t, T, T> { \
+		typedef Name##_fun<T> type; \
+	};
+
+
 namespace lmat
 {
-	template<typename Op>
-	struct is_unary_reduc_op
+
+	/********************************************
+	 *
+	 *  Basic devices
+	 *
+	 ********************************************/
+
+	template<typename Tag, int NArgs>
+	struct is_reduction_tag
 	{
 		static const bool value = false;
 	};
 
-	template<typename Op>
-	struct is_binary_reduc_op
+	template<typename Op, typename T1, typename T2=nil_t, typename T3=nil_t>
+	struct reduction_result;
+
+	template<typename Op, typename Ker, typename T1, typename T2=nil_t, typename T3=nil_t>
+	struct reduction_fun;
+
+
+	/********************************************
+	 *
+	 *  reduction tags
+	 *
+	 ********************************************/
+
+	namespace detail
 	{
-		static const bool value = false;
-	};
-
-	template<typename Op, typename T>
-	struct unary_reduc_result;
-
-	template<typename Op, typename T1, typename T2>
-	struct binary_reduc_result;
-
-	template<typename Op, typename Ker, typename T>
-	struct unary_reduc_fun;
-
-	template<typename Op, typename Ker, typename T1, typename T2>
-	struct binary_reduc_fun;
-
-}
-
-// useful macros
-
-#define LMAT_DEFINE_UNARY_NUMERIC_REDUC_OP(Op) \
-	struct Op { }; \
-	template<> struct is_unary_reduc_op<Op> { static const bool value = true; }; \
-	template<typename T> \
-	struct unary_reduc_result<Op, T> { typedef T type; };
-
-#define LMAT_DEFINE_BINARY_NUMERIC_REDUC_OP(Op) \
-	struct Op { }; \
-	template<> struct is_binary_reduc_op<Op> { static const bool value = true; }; \
-	template<typename T> \
-	struct binary_reduc_result<Op, T, T> { typedef T type; };
-
-#define LMAT_DEFINE_UNARY_REAL_REDUC_OP(Op) \
-	struct Op { }; \
-	template<> struct is_unary_reduc_op<Op> { static const bool value = true; }; \
-	struct unary_reduc_result<Op, float> { typedef float type; }; \
-	struct unary_reduc_result<Op, double> { typedef double type; };
-
-#define LMAT_DEFINE_BINARY_REAL_REDUC_OP(Op) \
-	struct Op { }; \
-	template<> struct is_binary_reduc_op<Op> { static const bool value = true; }; \
-	struct binary_reduc_result<Op, float, float> { typedef float type; }; \
-	struct binary_reduc_result<Op, double, double> { typedef double type; };
-
-#define LMAT_DEFINE_UNARY_REDUCTOR(Name, EmptyVal, InitExpr, CombExpr ) \
-	template<typename T> \
-	struct Name##_fun { \
-		LMAT_ENSURE_INLINE \
-		T empty_value() const { return EmptyVal; } \
-		LMAT_ENSURE_INLINE \
-		T transform(const T& x) const { return InitExpr; } \
-		LMAT_ENSURE_INLINE \
-		T combine(const T& x, const T& y) const { return CombExpr; } \
-	}; \
-	template<typename T> \
-	struct unary_reduc_fun<Name##_t, scalar_kernel_t, T> { \
-		typedef Name##_fun<T> type; \
-	};
-
-#define LMAT_DEFINE_BINARY_REDUCTOR(Name, EmptyVal, InitExpr, CombExpr ) \
-	template<typename T> \
-	struct Name##_fun { \
-		LMAT_ENSURE_INLINE \
-		T empty_value() const { return EmptyVal; } \
-		LMAT_ENSURE_INLINE \
-		T transform(const T& x, const T& y) const { return InitExpr; } \
-		LMAT_ENSURE_INLINE \
-		T combine(const T& x, const T& y) const { return CombExpr; } \
-	}; \
-	template<typename T> \
-	struct binary_reduc_fun<Name##_t, scalar_kernel_t, T, T> { \
-		typedef Name##_fun<T> type; \
-	};
+		template<typename T> struct nrmdot_media;
+	}
 
 
-namespace lmat
-{
-	// operator tags
+	LMAT_DECLARE_GENERIC_SIMPLE_UNARY_REDUCTION( sum )
+	LMAT_DECLARE_GENERIC_SIMPLE_UNARY_REDUCTION( maximum )
+	LMAT_DECLARE_GENERIC_SIMPLE_UNARY_REDUCTION( minimum )
 
-	LMAT_DEFINE_UNARY_NUMERIC_REDUC_OP( sum_t )
-	LMAT_DEFINE_UNARY_NUMERIC_REDUC_OP( maximum_t )
-	LMAT_DEFINE_UNARY_NUMERIC_REDUC_OP( minimum_t )
+	LMAT_DECLARE_REAL_SIMPLE_UNARY_REDUCTION( mean )
+	LMAT_DECLARE_REAL_SIMPLE_UNARY_REDUCTION( L1norm )
+	LMAT_DECLARE_REAL_SIMPLE_UNARY_REDUCTION( sqL2norm )
+	LMAT_DECLARE_REAL_SIMPLE_UNARY_REDUCTION( L2norm )
+	LMAT_DECLARE_REAL_SIMPLE_UNARY_REDUCTION( Linfnorm )
 
-	LMAT_DEFINE_UNARY_REAL_REDUC_OP( L1norm_t )
-	LMAT_DEFINE_UNARY_REAL_REDUC_OP( sqL2norm_t )
-	LMAT_DEFINE_UNARY_REAL_REDUC_OP( Linfnorm_t )
+	LMAT_DECLARE_REAL_SIMPLE_UNARY_REDUCTION( logsum )
+	LMAT_DECLARE_REAL_SIMPLE_UNARY_REDUCTION( entropy )
 
-	LMAT_DEFINE_UNARY_REAL_REDUC_OP( logsum_t )
-	LMAT_DEFINE_UNARY_REAL_REDUC_OP( entropy_t )
-
-	LMAT_DEFINE_BINARY_REAL_REDUC_OP( dot_t )
-
-	template<typename T>
-	inline T no_empty_value(const char *msg)
-	{
-		throw invalid_operation(msg);
-	};
+	LMAT_DECLARE_REAL_SIMPLE_BINARY_REDUCTION( dot )
+	LMAT_DECLARE_REAL_MEDIATED_BINARY_REDUCTION( nrmdot, detail::nrmdot_media )
 
 
 	/********************************************
@@ -132,21 +202,64 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	// sum, maximum, and minimum
+	template<typename T>
+	inline T no_empty_value(const char *msg)
+	{
+		throw invalid_operation(msg);
+	};
 
-	LMAT_DEFINE_UNARY_REDUCTOR( sum, T(0), x, x + y )
+	// sum, maximum, minimum, and mean
+
+	LMAT_DEFINE_UNARY_REDUCTOR( sum,
+			T(0),
+			x,
+			a + b,
+			a)
 
 	LMAT_DEFINE_UNARY_REDUCTOR( maximum,
-			no_empty_value<T>("maximum is not allowed for empty array"), x, (math::max)(x, y) )
+			no_empty_value<T>("maximum can not be applied to empty arrays."),
+			x,
+			(math::max)(a, b),
+			a)
 
 	LMAT_DEFINE_UNARY_REDUCTOR( minimum,
-			no_empty_value<T>("minimum is not allowed for empty array"), x, (math::min)(x, y) )
+			no_empty_value<T>("minimum can not be applied to empty arrays."),
+			x,
+			(math::min)(a, b),
+			a)
 
-	// L-norms
+	LMAT_DEFINE_UNARY_REDUCTOR( mean,
+			no_empty_value<T>("mean can not be applied to empty arrays."),
+			x,
+			a + b,
+			a / static_cast<T>(n))
 
-	LMAT_DEFINE_UNARY_REDUCTOR( L1norm, T(0), math::abs(x), x + y )
-	LMAT_DEFINE_UNARY_REDUCTOR( sqL2norm, T(0), math::sqr(x), x + y )
-	LMAT_DEFINE_UNARY_REDUCTOR( Linfnorm, T(0), math::abs(x), (math::max)(x, y) )
+	// norms
+
+	LMAT_DEFINE_UNARY_REDUCTOR( L1norm,
+			T(0),
+			math::abs(x),
+			a + b,
+			a)
+
+	LMAT_DEFINE_UNARY_REDUCTOR( sqL2norm,
+			T(0),
+			math::sqr(x),
+			a + b,
+			a)
+
+	LMAT_DEFINE_UNARY_REDUCTOR( L2norm,
+			T(0),
+			math::sqr(x),
+			a + b,
+			math::sqrt(a))
+
+	LMAT_DEFINE_UNARY_REDUCTOR( Linfnorm,
+			T(0),
+			math::abs(x),
+			(math::max)(a, b),
+			a)
+
 
 	// logsum & entropy
 
@@ -156,12 +269,69 @@ namespace lmat
 		LMAT_ENSURE_INLINE inline double xlogx(double x) { return x > 0 ? x * math::log(x) : 0.0; }
 	}
 
-	LMAT_DEFINE_UNARY_REDUCTOR( logsum, T(0), math::log(x), x + y )
-	LMAT_DEFINE_UNARY_REDUCTOR( entropy, T(0), - math::xlogx(x), x + y )
+	LMAT_DEFINE_UNARY_REDUCTOR( logsum,
+			T(0),
+			math::log(x),
+			a + b,
+			a)
 
-	// dot
+	LMAT_DEFINE_UNARY_REDUCTOR( entropy,
+			T(0),
+			math::xlogx(x),
+			a + b,
+			- a)
 
-	LMAT_DEFINE_BINARY_REDUCTOR( dot, T(0), x * y, x + y )
+	// dot & nrmdot
+
+	LMAT_DEFINE_BINARY_REDUCTOR( dot,
+			T(0),
+			x * y,
+			a + b,
+			a)
+
+
+	namespace detail
+	{
+		template<typename T>
+		struct nrmdot_media
+		{
+			T sum_xx;
+			T sum_yy;
+			T sum_xy;
+
+			LMAT_ENSURE_INLINE
+			T get() const
+			{
+				return sum_xy / (math::sqrt(sum_xx) * math::sqrt(sum_yy));
+			}
+
+			LMAT_ENSURE_INLINE
+			nrmdot_media operator + (const nrmdot_media& b) const
+			{
+				nrmdot_media r;
+				r.sum_xx = sum_xx + b.sum_xx;
+				r.sum_yy = sum_yy + b.sum_yy;
+				r.sum_xy = sum_xy + b.sum_xy;
+				return r;
+			}
+
+			LMAT_ENSURE_INLINE
+			static nrmdot_media from(const T& x, const T& y)
+			{
+				nrmdot_media r;
+				r.sum_xx = x * x;
+				r.sum_yy = y * y;
+				r.sum_xy = x * y;
+				return r;
+			}
+		};
+	}
+
+	LMAT_DEFINE_BINARY_REDUCTOR( nrmdot,
+			T(0),
+			detail::nrmdot_media<T>::from(x, y),
+			a + b,
+			a.get())
 
 }
 

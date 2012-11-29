@@ -1,7 +1,7 @@
 /**
- * @file test_mat_reduce.cpp
+ * @file test_full_reduce.cpp
  *
- * Unit testing for matrix reduction
+ * Unit testing for full matrix reduction
  *
  * @author Dahua Lin
  */
@@ -9,7 +9,7 @@
 #include "test_base.h"
 
 #include <light_mat/matrix/matrix_classes.h>
-#include <light_mat/matrix/matrix_reduce.h>
+#include <light_mat/matexpr/full_reduce.h>
 
 using namespace lmat;
 using namespace lmat::test;
@@ -36,14 +36,15 @@ MN_CASE( mat_reduce, sum )
 
 	// test
 
-	ASSERT_EQ( linear_by_scalars_reduce(sum_fun<double>(), A), r0 );
-	ASSERT_EQ( percol_by_scalars_reduce(sum_fun<double>(), A), r0 );
+	ASSERT_EQ( _reduce(sum_t(), A, linear_macc(), scalar_kernel_t()), r0 );
+	ASSERT_EQ( _reduce(sum_t(), A, percol_macc(), scalar_kernel_t()), r0 );
 	ASSERT_EQ( sum(A), r0 );
 }
 
+
 MN_CASE( mat_reduce, sum_ex )
 {
-	typedef ref_matrix_ex<double, M, N> mat_ex;
+	typedef ref_block<double, M, N> mat_ex;
 
 	const index_t m = M == 0 ? DM : M;
 	const index_t n = N == 0 ? DN : N;
@@ -61,8 +62,8 @@ MN_CASE( mat_reduce, sum_ex )
 
 	// test
 
-	ASSERT_EQ( linear_by_scalars_reduce(sum_fun<double>(), A), r0 );
-	ASSERT_EQ( percol_by_scalars_reduce(sum_fun<double>(), A), r0 );
+	ASSERT_EQ( _reduce(sum_t(), A, linear_macc(), scalar_kernel_t()), r0 );
+	ASSERT_EQ( _reduce(sum_t(), A, percol_macc(), scalar_kernel_t()), r0 );
 	ASSERT_EQ( sum(A), r0 );
 }
 
@@ -86,9 +87,8 @@ MN_CASE( mat_reduce, mean )
 
 	// test
 
-	ASSERT_TRUE( is_approx_scalar(mean(A), r0, 1.0e-12 ) );
+	ASSERT_APPROX( mean(A), r0, 1.0e-12 );
 }
-
 
 MN_CASE( mat_reduce, maximum )
 {
@@ -111,34 +111,6 @@ MN_CASE( mat_reduce, maximum )
 
 	// test
 
-	ASSERT_EQ( linear_by_scalars_reduce(maximum_fun<double>(), A), r0 );
-	ASSERT_EQ( percol_by_scalars_reduce(maximum_fun<double>(), A), r0 );
-	ASSERT_EQ( maximum(A), r0 );
-}
-
-MN_CASE( mat_reduce, maximum_ex )
-{
-	typedef ref_matrix_ex<double, M, N> mat_ex;
-
-	const index_t m = M == 0 ? DM : M;
-	const index_t n = N == 0 ? DN : N;
-
-	dblock<double> src(LDim * n);
-	for (index_t i = 0; i < LDim * n; ++i) src[i] = double((i + 1) * (10 - 2 * i));
-
-	mat_ex A(src.ptr_data(), m, n, LDim);
-
-	// prepare ground-truth
-
-	double r0 = A(0, 0);
-	for (index_t j = 0; j < n; ++j)
-		for (index_t i = 0; i < m; ++i)
-			if (A(i, j) > r0) r0 = A(i, j);
-
-	// test
-
-	ASSERT_EQ( linear_by_scalars_reduce(maximum_fun<double>(), A), r0 );
-	ASSERT_EQ( percol_by_scalars_reduce(maximum_fun<double>(), A), r0 );
 	ASSERT_EQ( maximum(A), r0 );
 }
 
@@ -164,59 +136,7 @@ MN_CASE( mat_reduce, minimum )
 
 	// test
 
-	ASSERT_EQ( linear_by_scalars_reduce(minimum_fun<double>(), A), r0 );
-	ASSERT_EQ( percol_by_scalars_reduce(minimum_fun<double>(), A), r0 );
 	ASSERT_EQ( minimum(A), r0 );
-}
-
-MN_CASE( mat_reduce, minimum_ex )
-{
-	typedef ref_matrix_ex<double, M, N> mat_ex;
-
-	const index_t m = M == 0 ? DM : M;
-	const index_t n = N == 0 ? DN : N;
-
-	dblock<double> src(LDim * n);
-	for (index_t i = 0; i < LDim * n; ++i) src[i] = double((i + 1) * (i - 10));
-
-	mat_ex A(src.ptr_data(), m, n, LDim);
-
-	// prepare ground-truth
-
-	double r0 = A(0, 0);
-	for (index_t j = 0; j < n; ++j)
-		for (index_t i = 0; i < m; ++i)
-			if (A(i, j) < r0) r0 = A(i, j);
-
-	// test
-
-	ASSERT_EQ( linear_by_scalars_reduce(minimum_fun<double>(), A), r0 );
-	ASSERT_EQ( percol_by_scalars_reduce(minimum_fun<double>(), A), r0 );
-	ASSERT_EQ( minimum(A), r0 );
-}
-
-
-MN_CASE( mat_reduce, dot )
-{
-	typedef dense_matrix<double, M, N> mat_t;
-
-	const index_t m = M == 0 ? DM : M;
-	const index_t n = N == 0 ? DN : N;
-
-	mat_t A(m, n);
-	mat_t B(m, n);
-
-	for (index_t i = 0; i < m * n; ++i) A[i] = double(i + 1);
-	for (index_t i = 0; i < m * n; ++i) B[i] = double(i + 2);
-
-	// prepare ground-truth
-
-	double r0 = 0.0;
-	for (index_t i = 0; i < m * n; ++i) r0 += A[i] * B[i];
-
-	// test
-
-	ASSERT_EQ( dot(A, B), r0 );
 }
 
 
@@ -311,6 +231,76 @@ MN_CASE( mat_reduce, Linfnorm )
 }
 
 
+MN_CASE( mat_reduce, logsum )
+{
+	typedef dense_matrix<double, M, N> mat_t;
+
+	const index_t m = M == 0 ? DM : M;
+	const index_t n = N == 0 ? DN : N;
+
+	mat_t A(m, n);
+
+	for (index_t i = 0; i < m * n; ++i) A[i] = double(i + 2);
+
+	// prepare ground-truth
+
+	double r0 = 0.0;
+	for (index_t i = 0; i < m * n; ++i) r0 += std::log(A[i]);
+
+	// test
+
+	ASSERT_EQ( logsum(A), r0 );
+}
+
+
+MN_CASE( mat_reduce, entropy )
+{
+	typedef dense_matrix<double, M, N> mat_t;
+
+	const index_t m = M == 0 ? DM : M;
+	const index_t n = N == 0 ? DN : N;
+
+	mat_t A(m, n);
+
+	for (index_t i = 0; i < m * n; ++i) A[i] = double(i + 2);
+
+	// prepare ground-truth
+
+	double r0 = 0.0;
+	for (index_t i = 0; i < m * n; ++i) r0 -= A[i] * std::log(A[i]);
+
+	// test
+
+	ASSERT_EQ( entropy(A), r0 );
+}
+
+
+
+MN_CASE( mat_reduce, dot )
+{
+	typedef dense_matrix<double, M, N> mat_t;
+
+	const index_t m = M == 0 ? DM : M;
+	const index_t n = N == 0 ? DN : N;
+
+	mat_t A(m, n);
+	mat_t B(m, n);
+
+	for (index_t i = 0; i < m * n; ++i) A[i] = double(i + 1);
+	for (index_t i = 0; i < m * n; ++i) B[i] = double(i + 2);
+
+	// prepare ground-truth
+
+	double r0 = 0.0;
+	for (index_t i = 0; i < m * n; ++i) r0 += A[i] * B[i];
+
+	// test
+
+	ASSERT_EQ( _reduce(dot_t(), A, B, linear_macc(), scalar_kernel_t()), r0 );
+	ASSERT_EQ( _reduce(dot_t(), A, B, percol_macc(), scalar_kernel_t()), r0 );
+	ASSERT_EQ( dot(A, B), r0 );
+}
+
 MN_CASE( mat_reduce, nrmdot )
 {
 	typedef dense_matrix<double, M, N> mat_t;
@@ -362,20 +352,8 @@ BEGIN_TPACK( mat_maximum )
 	ADD_MN_CASE_3X3( mat_reduce, maximum, DM, DN )
 END_TPACK
 
-BEGIN_TPACK( mat_maximum_ex )
-	ADD_MN_CASE_3X3( mat_reduce, maximum_ex, DM, DN )
-END_TPACK
-
 BEGIN_TPACK( mat_minimum )
 	ADD_MN_CASE_3X3( mat_reduce, minimum, DM, DN )
-END_TPACK
-
-BEGIN_TPACK( mat_minimum_ex )
-	ADD_MN_CASE_3X3( mat_reduce, minimum_ex, DM, DN )
-END_TPACK
-
-BEGIN_TPACK( mat_dot )
-	ADD_MN_CASE_3X3( mat_reduce, dot, DM, DN )
 END_TPACK
 
 BEGIN_TPACK( mat_L1norm )
@@ -394,25 +372,41 @@ BEGIN_TPACK( mat_Linfnorm )
 	ADD_MN_CASE_3X3( mat_reduce, Linfnorm, DM, DN )
 END_TPACK
 
+BEGIN_TPACK( mat_logsum )
+	ADD_MN_CASE_3X3( mat_reduce, logsum, DM, DN )
+END_TPACK
+
+BEGIN_TPACK( mat_entropy )
+	ADD_MN_CASE_3X3( mat_reduce, entropy, DM, DN )
+END_TPACK
+
+BEGIN_TPACK( mat_dot )
+	ADD_MN_CASE_3X3( mat_reduce, dot, DM, DN )
+END_TPACK
+
 BEGIN_TPACK( mat_nrmdot )
 	ADD_MN_CASE_3X3( mat_reduce, nrmdot, DM, DN )
 END_TPACK
+
 
 
 BEGIN_MAIN_SUITE
 	ADD_TPACK( mat_sum )
 	ADD_TPACK( mat_sum_ex )
 	ADD_TPACK( mat_mean )
-	ADD_TPACK( mat_maximum )
-	ADD_TPACK( mat_maximum_ex )
-	ADD_TPACK( mat_minimum )
-	ADD_TPACK( mat_minimum_ex )
 
-	ADD_TPACK( mat_dot )
+	ADD_TPACK( mat_maximum )
+	ADD_TPACK( mat_minimum )
+
 	ADD_TPACK( mat_L1norm )
 	ADD_TPACK( mat_sqL2norm )
 	ADD_TPACK( mat_L2norm )
 	ADD_TPACK( mat_Linfnorm )
+
+	ADD_TPACK( mat_logsum )
+	ADD_TPACK( mat_entropy )
+
+	ADD_TPACK( mat_dot )
 	ADD_TPACK( mat_nrmdot )
 END_MAIN_SUITE
 
