@@ -14,10 +14,13 @@
 
 namespace lmat { namespace internal {
 
-	struct macc_eval_linear_scalar
+	template<typename Acc, typename Ker>
+	struct macc_eval_impl;
+
+	template<typename Ker>
+	struct macc_eval_impl<linear_macc, Ker>
 	{
 		template<class SExpr, class DMat>
-		LMAT_ENSURE_INLINE
 		static void evaluate(index_t nelems, const SExpr& sexpr, DMat& dmat)
 		{
 #ifdef LMAT_USE_STATIC_ASSERT
@@ -27,16 +30,55 @@ namespace lmat { namespace internal {
 					macc_accessor_map<SExpr, linear_macc, scalar_kernel_t>::type
 					accessor_t;
 
-			accessor_t accessor(sexpr);
-			LinVecRW<DMat> out(dmat);
+			typedef typename common_value_type<SExpr, DMat>::type T;
 
-			typedef macc_vec_copy<scalar_kernel_t, common_ctsize<SExpr, DMat>::value> vec_impl_t;
-			vec_impl_t::eval(dmat.nelems(), accessor, out);
+			accessor_t accessor(sexpr);
+			T *pd = dmat.ptr_data();
+
+			if (ct_is_continuous<DMat>::value)
+			{
+				ContVecRW<Ker, T> out(pd);
+				typedef macc_vec_copy<Ker, common_ctsize<SExpr, DMat>::value> impl_t;
+				impl_t::eval(dmat.nelems(), accessor, out);
+			}
+			else if (dmat.ncolumns() == 1)
+			{
+				typedef macc_vec_copy<Ker, common_ctrows<SExpr, DMat>::value> impl_t;
+				const index_t rs = dmat.row_stride();
+
+				if (rs == 1)
+				{
+					ContVecRW<Ker, T> out(pd);
+					impl_t::eval(dmat.nrows(), accessor, out);
+				}
+				else
+				{
+					StepVecRW<Ker, T> out(pd, rs);
+					impl_t::eval(dmat.nrows(), accessor, out);
+				}
+			}
+			else // nrows == 1
+			{
+				typedef macc_vec_copy<Ker, common_ctcols<SExpr, DMat>::value> impl_t;
+				const index_t cs = dmat.col_stride();
+
+				if (cs == 1)
+				{
+					ContVecRW<Ker, T> out(pd);
+					impl_t::eval(dmat.ncolumns(), accessor, out);
+				}
+				else
+				{
+					StepVecRW<Ker, T> out(pd, cs);
+					impl_t::eval(dmat.ncolumns(), accessor, out);
+				}
+			}
 		}
 	};
 
 
-	struct macc_eval_percol_scalar
+	template<typename Ker>
+	struct macc_eval_impl<percol_macc, Ker>
 	{
 		template<class SExpr, class DMat>
 		static void evaluate(index_t m, index_t n, const SExpr& sexpr, DMat& dmat)
@@ -62,12 +104,12 @@ namespace lmat { namespace internal {
 
 				if (rs == 1)
 				{
-					ContVecRW<T> out(pd);
+					ContVecRW<Ker, T> out(pd);
 					vec_impl_t::eval(m, acc_wrapper(accessor, s), out);
 				}
 				else
 				{
-					StepVecRW<T> out(pd, rs);
+					StepVecRW<Ker, T> out(pd, rs);
 					vec_impl_t::eval(m, acc_wrapper(accessor, s), out);
 				}
 			}
@@ -98,7 +140,7 @@ namespace lmat { namespace internal {
 					for (index_t j = 0; j < n; ++j, pd += cs)
 					{
 						col_state_t s = accessor.col_state(j);
-						ContVecRW<T> out(pd);
+						ContVecRW<Ker, T> out(pd);
 						vec_impl_t::eval(m, acc_wrapper(accessor, s), out);
 					}
 				}
@@ -107,7 +149,7 @@ namespace lmat { namespace internal {
 					for (index_t j = 0; j < n; ++j, pd += cs)
 					{
 						col_state_t s = accessor.col_state(j);
-						StepVecRW<T> out(pd, rs);
+						StepVecRW<Ker, T> out(pd, rs);
 						vec_impl_t::eval(m, acc_wrapper(accessor, s), out);
 					}
 				}

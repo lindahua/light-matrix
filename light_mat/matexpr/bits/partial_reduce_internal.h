@@ -16,7 +16,7 @@
 #include <light_mat/matexpr/matrix_access_base.h>
 #include <light_mat/matrix/matrix_fill.h>
 
-#include "matrix_reduce_internal.h"
+#include "macc_reduce_core.h"
 
 namespace lmat { namespace internal {
 
@@ -30,9 +30,12 @@ namespace lmat { namespace internal {
 		template<class Fun, class Arg, class Dst>
 		static void eval(const Fun& fun, const Arg& a, Dst& dst)
 		{
+			typedef typename matrix_traits<Arg>::value_type T;
 			typedef typename matrix_traits<Dst>::value_type RT;
 			typedef typename macc_accessor_map<Arg, percol_macc, scalar_kernel_t>::type accessor_t;
 			typedef typename percol_macc_state_map<accessor_t>::type col_state_t;
+
+			typedef percol_to_linear_accessor<accessor_t, scalar_kernel_t, T> acc1_wrapper;
 
 			const index_t m = a.nrows();
 			const index_t n = a.ncolumns();

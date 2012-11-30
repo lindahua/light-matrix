@@ -99,11 +99,13 @@ namespace lmat
 		{
 			if (_use_linear)
 			{
-				internal::macc_eval_linear_scalar::evaluate(shape.nelems(), sexpr, dmat);
+				internal::macc_eval_impl<linear_macc, scalar_kernel_t>::evaluate(
+						shape.nelems(), sexpr, dmat);
 			}
 			else
 			{
-				internal::macc_eval_percol_scalar::evaluate(shape.nrows(), shape.ncolumns(), sexpr, dmat);
+				internal::macc_eval_impl<percol_macc, scalar_kernel_t>::evaluate(
+						shape.nrows(), shape.ncolumns(), sexpr, dmat);
 			}
 		}
 
@@ -140,7 +142,8 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		void evaluate(const SExpr& sexpr, DMat& dmat)
 		{
-			internal::macc_eval_linear_scalar::evaluate(shape.nelems(), sexpr, dmat);
+			internal::macc_eval_impl<linear_macc, scalar_kernel_t>::evaluate(
+					shape.nelems(), sexpr, dmat);
 		}
 
 		template<class SExpr, class DMat>
@@ -168,7 +171,8 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		void evaluate(const SExpr& sexpr, DMat& dmat)
 		{
-			internal::macc_eval_percol_scalar::evaluate(shape.nrows(), shape.ncolumns(), sexpr, dmat);
+			internal::macc_eval_impl<percol_macc, scalar_kernel_t>::evaluate(
+					shape.nrows(), shape.ncolumns(), sexpr, dmat);
 		}
 
 		template<class SExpr, class DMat>

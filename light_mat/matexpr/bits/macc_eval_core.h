@@ -30,27 +30,11 @@ namespace lmat {
 		 *
 		 ****************************************/
 
-		template<class Vec>
-		class LinVecRW
-		{
-		public:
-			typedef typename matrix_traits<Vec>::value_type T;
-
-			LMAT_ENSURE_INLINE
-			LinVecRW(Vec& vec) : m_vec(vec) { }
-
-			LMAT_ENSURE_INLINE
-			T operator[] (index_t i) const { return m_vec[i]; }
-
-			LMAT_ENSURE_INLINE
-			T& operator[] (index_t i) { return m_vec[i]; }
-
-		private:
-			Vec& m_vec;
-		};
+		template<typename Ker, typename T> class ContVecRW;
+		template<typename Ker, typename T> class StepVecRW;
 
 		template<typename T>
-		class ContVecRW
+		class ContVecRW<scalar_kernel_t, T>
 		{
 		public:
 			LMAT_ENSURE_INLINE
@@ -67,7 +51,7 @@ namespace lmat {
 		};
 
 		template<typename T>
-		class StepVecRW
+		class StepVecRW<scalar_kernel_t, T>
 		{
 		public:
 			LMAT_ENSURE_INLINE
@@ -98,6 +82,7 @@ namespace lmat {
 		struct macc_vec_copy<scalar_kernel_t, Len>
 		{
 			template<class Acc, class Vec>
+			LMAT_ENSURE_INLINE
 			static void eval(index_t, const Acc& in, Vec& out)
 			{
 				for (index_t i = 0; i < Len; ++i)
@@ -112,6 +97,7 @@ namespace lmat {
 		struct macc_vec_copy<scalar_kernel_t, 0>
 		{
 			template<class Acc, class Vec>
+			LMAT_ENSURE_INLINE
 			static void eval(index_t len, const Acc& in, Vec& out)
 			{
 				for (index_t i = 0; i < len; ++i)
