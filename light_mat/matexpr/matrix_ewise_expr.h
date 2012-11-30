@@ -77,13 +77,13 @@ namespace lmat
 		typedef unary_expr_base<Arg_HP, Arg> base_t;
 
 		LMAT_ENSURE_INLINE
-		unary_ewise_expr(const Tag& op,
+		unary_ewise_expr(const Tag& t,
 				const arg_forwarder<Arg_HP, Arg>& arg_fwd)
-		: base_t(arg_fwd), m_op(op) { }
+		: base_t(arg_fwd), m_tag(t) { }
 
-		LMAT_ENSURE_INLINE const Tag& op() const
+		LMAT_ENSURE_INLINE const Tag& tag() const
 		{
-			return m_op;
+			return m_tag;
 		}
 
 		LMAT_ENSURE_INLINE index_t nelems() const
@@ -102,7 +102,7 @@ namespace lmat
 		}
 
 	private:
-		Tag m_op;
+		Tag m_tag;
 	};
 
 
@@ -121,17 +121,17 @@ namespace lmat
 		typedef typename common_shape<Arg1, Arg2>::type shape_type;
 
 		LMAT_ENSURE_INLINE
-		binary_ewise_expr(const Tag& op,
+		binary_ewise_expr(const Tag& t,
 				const arg_forwarder<Arg1_HP, Arg1>& arg1,
 				const arg_forwarder<Arg2_HP, Arg2>& arg2)
 		: base_t(arg1, arg2)
 		, m_shape(get_common_nrows(arg1.arg, arg2.arg), get_common_ncolumns(arg1.arg, arg2.arg))
-		, m_op(op)
+		, m_tag(t)
 		{ }
 
-		LMAT_ENSURE_INLINE const Tag& op() const
+		LMAT_ENSURE_INLINE const Tag& tag() const
 		{
-			return m_op;
+			return m_tag;
 		}
 
 		LMAT_ENSURE_INLINE index_t nelems() const
@@ -151,7 +151,7 @@ namespace lmat
 
 	private:
 		shape_type m_shape;
-		Tag m_op;
+		Tag m_tag;
 	};
 
 
@@ -190,7 +190,9 @@ namespace lmat
 	template<typename Tag, class Arg1, class Arg2>
 	struct binary_expr_verifier<ewise_t<Tag>, Arg1, Arg2>
 	{
-		static const bool value = is_mat_xpr<Arg1>::value && is_mat_xpr<Arg2>::value;
+		static const bool value =
+				(is_mat_xpr<Arg1>::value || is_mat_xpr<Arg2>::value) &&
+				has_compatible_ct_size<Arg1, Arg2>::value;
 	};
 
 	// maps
@@ -233,9 +235,7 @@ namespace lmat
 	>::type
 	ewise(const Tag& tag, const IMatrixXpr<Arg, T>& arg)
 	{
-		return unary_expr_map<ewise_t<Tag>,
-				ref_arg_t, Arg
-			>::get( ewise(tag), ref_arg(arg.derived()) );
+		return make_expr( ewise(tag), ref_arg(arg.derived()) );
 	}
 
 	template<typename Tag, typename T1, class Arg1, typename T2, class Arg2>
@@ -248,10 +248,7 @@ namespace lmat
 			const IMatrixXpr<Arg1, T1>& arg1,
 			const IMatrixXpr<Arg2, T2>& arg2 )
 	{
-		return binary_expr_map<ewise_t<Tag>,
-				ref_arg_t, Arg1,
-				ref_arg_t, Arg2
-			>::get(ewise(tag),
+		return make_expr(ewise(tag),
 				ref_arg(arg1.derived()),
 				ref_arg(arg2.derived()));
 	}
@@ -266,10 +263,7 @@ namespace lmat
 			const scalar_expr<T1>& arg1v,
 			const IMatrixXpr<Arg2, T2>& arg2 )
 	{
-		return binary_expr_map<ewise_t<Tag>,
-				copy_arg_t, scalar_expr<T1>,
-				ref_arg_t, Arg2
-			>::get( ewise(tag),
+		return make_expr( ewise(tag),
 				copy_arg(arg1v),
 				ref_arg(arg2.derived()) );
 	}
@@ -285,10 +279,7 @@ namespace lmat
 			const IMatrixXpr<Arg1, T1>& arg1,
 			const scalar_expr<T2>& arg2v )
 	{
-		return binary_expr_map<ewise_t<Tag>,
-				ref_arg_t, Arg1,
-				copy_arg_t, scalar_expr<T2>
-			>::get( ewise(tag),
+		return make_expr( ewise(tag),
 				ref_arg(arg1.derived()),
 				copy_arg(arg2v) );
 	}

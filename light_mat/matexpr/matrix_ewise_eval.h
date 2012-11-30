@@ -151,7 +151,7 @@ namespace lmat
 
 		template<typename Arg_HP>
 		unary_ewise_accessor(const unary_ewise_expr<Tag, Arg_HP, Arg>& expr)
-		: m_fun(expr.op()), m_arg_acc(expr.arg()) { }
+		: m_fun(expr.tag()), m_arg_acc(expr.arg()) { }
 
 		LMAT_ENSURE_INLINE
 		value_type get_scalar(const index_t i) const
@@ -181,7 +181,7 @@ namespace lmat
 
 		template<typename Arg1_HP, typename Arg2_HP>
 		binary_ewise_accessor(const binary_ewise_expr<Tag, Arg1_HP, Arg1, Arg2_HP, Arg2>& expr)
-		: m_fun(expr.op()), m_arg1_acc(expr.first_arg()), m_arg2_acc(expr.second_arg()) { }
+		: m_fun(expr.tag()), m_arg1_acc(expr.first_arg()), m_arg2_acc(expr.second_arg()) { }
 
 		LMAT_ENSURE_INLINE
 		value_type get_scalar(const index_t i) const
@@ -226,7 +226,7 @@ namespace lmat
 
 		template<typename Arg_HP>
 		unary_ewise_accessor(const unary_ewise_expr<Tag, Arg_HP, Arg>& expr)
-		: m_fun(expr.op()), m_arg_acc(expr.arg()) { }
+		: m_fun(expr.tag()), m_arg_acc(expr.arg()) { }
 
 		LMAT_ENSURE_INLINE
 		value_type get_scalar(const index_t i, const col_state_t& s) const
@@ -278,7 +278,7 @@ namespace lmat
 
 		template<typename Arg1_HP, typename Arg2_HP>
 		binary_ewise_accessor(const binary_ewise_expr<Tag, Arg1_HP, Arg1, Arg2_HP, Arg2>& expr)
-		: m_fun(expr.op()), m_arg1_acc(expr.first_arg()), m_arg2_acc(expr.second_arg()) { }
+		: m_fun(expr.tag()), m_arg1_acc(expr.first_arg()), m_arg2_acc(expr.second_arg()) { }
 
 		LMAT_ENSURE_INLINE
 		value_type get_scalar(const index_t i, const col_state_t& s) const
