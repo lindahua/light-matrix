@@ -38,7 +38,7 @@ namespace lmat { namespace internal {
 		{ }
 
 		LMAT_ENSURE_INLINE
-		TermT get_scalar(index_t i) const
+		TermT get_term(index_t i) const
 		{
 			return fun.transform(acc1.get_scalar(i), acc2.get_scalar(i));
 		}
@@ -129,7 +129,7 @@ namespace lmat { namespace internal {
 		{
 			typedef reduc_terms_accessor<RT, Fun, Acc> term_accessor_t;
 			term_accessor_t term_vec(fun, a);
-			vec_reduce_core<RT, CTLen, KerCate>::eval(fun, len, term_vec);
+			return vec_reduce_core<RT, CTLen, KerCate>::eval(fun, len, term_vec);
 		}
 
 		template<class Fun, class Acc1, class Acc2>
@@ -138,7 +138,7 @@ namespace lmat { namespace internal {
 		{
 			typedef reduc_terms_accessor<RT, Fun, Acc1, Acc2> term_accessor_t;
 			term_accessor_t term_vec(fun, a1, a2);
-			vec_reduce_core<RT, CTLen, KerCate>::eval(fun, len, term_vec);
+			return vec_reduce_core<RT, CTLen, KerCate>::eval(fun, len, term_vec);
 		}
 	};
 
