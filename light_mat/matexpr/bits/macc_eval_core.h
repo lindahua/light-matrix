@@ -34,7 +34,7 @@ namespace lmat {
 		template<typename Ker, typename T> class StepVecRW;
 
 		template<typename T>
-		class ContVecRW<scalar_kernel_t, T>
+		class ContVecRW<scalar_ker, T>
 		{
 		public:
 			LMAT_ENSURE_INLINE
@@ -51,7 +51,7 @@ namespace lmat {
 		};
 
 		template<typename T>
-		class StepVecRW<scalar_kernel_t, T>
+		class StepVecRW<scalar_ker, T>
 		{
 		public:
 			LMAT_ENSURE_INLINE
@@ -79,7 +79,7 @@ namespace lmat {
 		struct macc_vec_copy;
 
 		template<int Len>
-		struct macc_vec_copy<scalar_kernel_t, Len>
+		struct macc_vec_copy<scalar_ker, Len>
 		{
 			template<class Acc, class Vec>
 			LMAT_ENSURE_INLINE
@@ -94,7 +94,7 @@ namespace lmat {
 
 
 		template<>
-		struct macc_vec_copy<scalar_kernel_t, 0>
+		struct macc_vec_copy<scalar_ker, 0>
 		{
 			template<class Acc, class Vec>
 			LMAT_ENSURE_INLINE

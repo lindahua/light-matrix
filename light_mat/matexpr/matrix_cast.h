@@ -62,7 +62,7 @@ namespace lmat
 	};
 
 	template<typename S, typename T>
-	struct unary_op_fun<scast_t<T>, scalar_kernel_t, S>
+	struct unary_op_fun<scast_t<T>, scalar_ker, S>
 	{
 		typedef scast_fun<S, T> type;
 	};

@@ -64,19 +64,19 @@ namespace lmat
 	{
 		const index_t m = a.nrows();
 
-		int macc_linear_cost = macc_cost<Xpr, linear_macc, scalar_kernel_t>::value;
-		int macc_percol_cost = macc_cost<Xpr, percol_macc, scalar_kernel_t>::value;
+		int macc_linear_cost = macc_cost<Xpr, linear_macc, scalar_ker>::value;
+		int macc_percol_cost = macc_cost<Xpr, percol_macc, scalar_ker>::value;
 
 		if (m <= MACC_SHORT_PERCOL_COST)
 			macc_percol_cost += MACC_SHORT_PERCOL_COST;
 
 		if (macc_linear_cost <= macc_percol_cost)
 		{
-			return _reduce(tag, a, linear_macc(), scalar_kernel_t());
+			return _reduce(tag, a, linear_macc(), scalar_ker());
 		}
 		else
 		{
-			return _reduce(tag, a, percol_macc(), scalar_kernel_t());
+			return _reduce(tag, a, percol_macc(), scalar_ker());
 		}
 	}
 
@@ -89,23 +89,23 @@ namespace lmat
 		const index_t m = a.nrows();
 
 		int macc_linear_cost =
-				macc_cost<Xpr1, linear_macc, scalar_kernel_t>::value +
-				macc_cost<Xpr2, linear_macc, scalar_kernel_t>::value;
+				macc_cost<Xpr1, linear_macc, scalar_ker>::value +
+				macc_cost<Xpr2, linear_macc, scalar_ker>::value;
 
 		int macc_percol_cost =
-				macc_cost<Xpr1, percol_macc, scalar_kernel_t>::value +
-				macc_cost<Xpr2, percol_macc, scalar_kernel_t>::value;
+				macc_cost<Xpr1, percol_macc, scalar_ker>::value +
+				macc_cost<Xpr2, percol_macc, scalar_ker>::value;
 
 		if (m <= MACC_SHORT_PERCOL_COST)
 			macc_percol_cost += MACC_SHORT_PERCOL_COST;
 
 		if (macc_linear_cost <= macc_percol_cost)
 		{
-			return _reduce(tag, a, b, linear_macc(), scalar_kernel_t());
+			return _reduce(tag, a, b, linear_macc(), scalar_ker());
 		}
 		else
 		{
-			return _reduce(tag, a, b, percol_macc(), scalar_kernel_t());
+			return _reduce(tag, a, b, percol_macc(), scalar_ker());
 		}
 	}
 

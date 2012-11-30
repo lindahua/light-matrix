@@ -138,14 +138,14 @@ namespace lmat
 	 ********************************************/
 
 	template<typename Tag, class Arg>
-	class unary_ewise_accessor<linear_macc, scalar_kernel_t, Tag, Arg>
-	: public unary_ewise_accbase<linear_macc, scalar_kernel_t, Tag, Arg>::base_type
+	class unary_ewise_accessor<linear_macc, scalar_ker, Tag, Arg>
+	: public unary_ewise_accbase<linear_macc, scalar_ker, Tag, Arg>::base_type
 	{
 		typedef typename matrix_traits<Arg>::value_type arg_value_type;
 		typedef typename unary_op_result<Tag, arg_value_type>::type value_type;
 
-		typedef typename unary_op_fun<Tag, scalar_kernel_t, arg_value_type>::type fun_t;
-		typedef typename macc_accessor_map<Arg, linear_macc, scalar_kernel_t>::type arg_accessor_t;
+		typedef typename unary_op_fun<Tag, scalar_ker, arg_value_type>::type fun_t;
+		typedef typename macc_accessor_map<Arg, linear_macc, scalar_ker>::type arg_accessor_t;
 
 	public:
 
@@ -166,16 +166,16 @@ namespace lmat
 
 
 	template<typename Tag, class Arg1, class Arg2>
-	class binary_ewise_accessor<linear_macc, scalar_kernel_t, Tag, Arg1, Arg2>
-	: public binary_ewise_accbase<linear_macc, scalar_kernel_t, Tag, Arg1, Arg2>::base_type
+	class binary_ewise_accessor<linear_macc, scalar_ker, Tag, Arg1, Arg2>
+	: public binary_ewise_accbase<linear_macc, scalar_ker, Tag, Arg1, Arg2>::base_type
 	{
 		typedef typename matrix_traits<Arg1>::value_type arg1_value_type;
 		typedef typename matrix_traits<Arg2>::value_type arg2_value_type;
 		typedef typename binary_op_result<Tag, arg1_value_type, arg2_value_type>::type value_type;
 
-		typedef typename binary_op_fun<Tag, scalar_kernel_t, arg1_value_type, arg2_value_type>::type fun_t;
-		typedef typename macc_accessor_map<Arg1, linear_macc, scalar_kernel_t>::type arg1_accessor_t;
-		typedef typename macc_accessor_map<Arg2, linear_macc, scalar_kernel_t>::type arg2_accessor_t;
+		typedef typename binary_op_fun<Tag, scalar_ker, arg1_value_type, arg2_value_type>::type fun_t;
+		typedef typename macc_accessor_map<Arg1, linear_macc, scalar_ker>::type arg1_accessor_t;
+		typedef typename macc_accessor_map<Arg2, linear_macc, scalar_ker>::type arg2_accessor_t;
 
 	public:
 
@@ -204,21 +204,21 @@ namespace lmat
 
 	template<typename Tag, class Arg>
 	struct percol_macc_state_map<
-		unary_ewise_accessor<percol_macc, scalar_kernel_t, Tag, Arg> >
+		unary_ewise_accessor<percol_macc, scalar_ker, Tag, Arg> >
 	{
-		typedef typename macc_accessor_map<Arg, percol_macc, scalar_kernel_t>::type arg_accessor_t;
+		typedef typename macc_accessor_map<Arg, percol_macc, scalar_ker>::type arg_accessor_t;
 		typedef typename percol_macc_state_map<arg_accessor_t>::type type;
 	};
 
 	template<typename Tag, class Arg>
-	class unary_ewise_accessor<percol_macc, scalar_kernel_t, Tag, Arg>
-	: public unary_ewise_accbase<percol_macc, scalar_kernel_t, Tag, Arg>::base_type
+	class unary_ewise_accessor<percol_macc, scalar_ker, Tag, Arg>
+	: public unary_ewise_accbase<percol_macc, scalar_ker, Tag, Arg>::base_type
 	{
 		typedef typename matrix_traits<Arg>::value_type arg_value_type;
 		typedef typename unary_op_result<Tag, arg_value_type>::type value_type;
 
-		typedef typename unary_op_fun<Tag, scalar_kernel_t, arg_value_type>::type fun_t;
-		typedef typename macc_accessor_map<Arg, percol_macc, scalar_kernel_t>::type arg_accessor_t;
+		typedef typename unary_op_fun<Tag, scalar_ker, arg_value_type>::type fun_t;
+		typedef typename macc_accessor_map<Arg, percol_macc, scalar_ker>::type arg_accessor_t;
 
 		typedef typename percol_macc_state_map<arg_accessor_t>::type col_state_t;
 
@@ -248,10 +248,10 @@ namespace lmat
 
 	template<typename Tag, class Arg1, class Arg2>
 	struct percol_macc_state_map<
-		binary_ewise_accessor<percol_macc, scalar_kernel_t, Tag, Arg1, Arg2> >
+		binary_ewise_accessor<percol_macc, scalar_ker, Tag, Arg1, Arg2> >
 	{
-		typedef typename macc_accessor_map<Arg1, percol_macc, scalar_kernel_t>::type arg1_accessor_t;
-		typedef typename macc_accessor_map<Arg2, percol_macc, scalar_kernel_t>::type arg2_accessor_t;
+		typedef typename macc_accessor_map<Arg1, percol_macc, scalar_ker>::type arg1_accessor_t;
+		typedef typename macc_accessor_map<Arg2, percol_macc, scalar_ker>::type arg2_accessor_t;
 		typedef typename std::pair<
 				typename percol_macc_state_map<arg1_accessor_t>::type,
 				typename percol_macc_state_map<arg2_accessor_t>::type> type;
@@ -259,16 +259,16 @@ namespace lmat
 
 
 	template<typename Tag, class Arg1, class Arg2>
-	class binary_ewise_accessor<percol_macc, scalar_kernel_t, Tag, Arg1, Arg2>
-	: public binary_ewise_accbase<percol_macc, scalar_kernel_t, Tag, Arg1, Arg2>::base_type
+	class binary_ewise_accessor<percol_macc, scalar_ker, Tag, Arg1, Arg2>
+	: public binary_ewise_accbase<percol_macc, scalar_ker, Tag, Arg1, Arg2>::base_type
 	{
 		typedef typename matrix_traits<Arg1>::value_type arg1_value_type;
 		typedef typename matrix_traits<Arg2>::value_type arg2_value_type;
 		typedef typename binary_op_result<Tag, arg1_value_type, arg2_value_type>::type value_type;
 
-		typedef typename binary_op_fun<Tag, scalar_kernel_t, arg1_value_type, arg2_value_type>::type fun_t;
-		typedef typename macc_accessor_map<Arg1, percol_macc, scalar_kernel_t>::type arg1_accessor_t;
-		typedef typename macc_accessor_map<Arg2, percol_macc, scalar_kernel_t>::type arg2_accessor_t;
+		typedef typename binary_op_fun<Tag, scalar_ker, arg1_value_type, arg2_value_type>::type fun_t;
+		typedef typename macc_accessor_map<Arg1, percol_macc, scalar_ker>::type arg1_accessor_t;
+		typedef typename macc_accessor_map<Arg2, percol_macc, scalar_ker>::type arg2_accessor_t;
 
 		typedef typename percol_macc_state_map<arg1_accessor_t>::type arg1_col_state_t;
 		typedef typename percol_macc_state_map<arg2_accessor_t>::type arg2_col_state_t;

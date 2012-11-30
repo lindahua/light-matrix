@@ -75,16 +75,16 @@ void test_acc_eval()
 	END_TPACK
 
 #define TEST_LINEAR_SCALAR( stag, dtag ) \
-	TEST_ACC_EVAL( linear_scalar, linear_macc, scalar_kernel_t, stag, dtag )
+	TEST_ACC_EVAL( linear_scalar, linear_macc, scalar_ker, stag, dtag )
 
 #define TEST_LINEAR_SCALAR_V( stag, dtag ) \
-	TEST_ACC_EVAL_V( linear_scalar, linear_macc, scalar_kernel_t, stag, dtag )
+	TEST_ACC_EVAL_V( linear_scalar, linear_macc, scalar_ker, stag, dtag )
 
 #define ADD_LINEAR_SCALAR_PACK( stag, dtag ) \
 	ADD_TPACK( linear_scalar_##stag##_to_##dtag )
 
 #define TEST_PERCOL_SCALAR( stag, dtag ) \
-	TEST_ACC_EVAL( percol_scalar, percol_macc, scalar_kernel_t, stag, dtag )
+	TEST_ACC_EVAL( percol_scalar, percol_macc, scalar_ker, stag, dtag )
 
 #define ADD_PERCOL_SCALAR_PACK( stag, dtag ) \
 	ADD_TPACK( percol_scalar_##stag##_to_##dtag )

@@ -27,7 +27,7 @@ namespace lmat { namespace internal {
 			static_assert(ct_supports_linear_index<DMat>::value, "DMat must support linear indexing.");
 #endif
 			typedef typename
-					macc_accessor_map<SExpr, linear_macc, scalar_kernel_t>::type
+					macc_accessor_map<SExpr, linear_macc, scalar_ker>::type
 					accessor_t;
 
 			typedef typename common_value_type<SExpr, DMat>::type T;
@@ -84,14 +84,14 @@ namespace lmat { namespace internal {
 		static void evaluate(index_t m, index_t n, const SExpr& sexpr, DMat& dmat)
 		{
 			typedef typename
-					macc_accessor_map<SExpr, percol_macc, scalar_kernel_t>::type
+					macc_accessor_map<SExpr, percol_macc, scalar_ker>::type
 					accessor_t;
 
 			typedef typename percol_macc_state_map<accessor_t>::type col_state_t;
 			typedef typename matrix_traits<DMat>::value_type T;
 
-			typedef percol_to_linear_accessor<accessor_t, scalar_kernel_t, T> acc_wrapper;
-			typedef macc_vec_copy<scalar_kernel_t, common_ctrows<SExpr, DMat>::value> vec_impl_t;
+			typedef percol_to_linear_accessor<accessor_t, scalar_ker, T> acc_wrapper;
+			typedef macc_vec_copy<scalar_ker, common_ctrows<SExpr, DMat>::value> vec_impl_t;
 
 
 			accessor_t accessor(sexpr);

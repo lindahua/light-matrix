@@ -25,14 +25,14 @@ namespace lmat { namespace internal {
 	template<typename InterT, typename KerCate> struct rowwise_reduce_internal;
 
 	template<typename Tag, class Arg, class Dst>
-	static void _colwise_reduce(const Tag& tag, const Arg& a, Dst& dst, scalar_kernel_t)
+	static void _colwise_reduce(const Tag& tag, const Arg& a, Dst& dst, scalar_ker)
 	{
 		typedef typename matrix_traits<Arg>::value_type T;
 
 		typedef typename reduction_result<Tag, T>::intermediate_type media_t;
-		typedef typename reduction_fun<Tag, scalar_kernel_t, T>::type fun_t;
+		typedef typename reduction_fun<Tag, scalar_ker, T>::type fun_t;
 
-		typedef typename macc_accessor_map<Arg, percol_macc, scalar_kernel_t>::type accessor_t;
+		typedef typename macc_accessor_map<Arg, percol_macc, scalar_ker>::type accessor_t;
 		typedef typename percol_macc_state_map<accessor_t>::type col_state_t;
 
 		const index_t m = a.nrows();
@@ -53,7 +53,7 @@ namespace lmat { namespace internal {
 			}
 			else
 			{
-				typedef vec_reduce<Tag, ct_rows<Arg>::value, scalar_kernel_t, T> impl_t;
+				typedef vec_reduce<Tag, ct_rows<Arg>::value, scalar_ker, T> impl_t;
 				for (index_t j = 0; j < n; ++j)
 				{
 					media_t u = impl_t::eval_col(fun, m, acc, j);
@@ -70,16 +70,16 @@ namespace lmat { namespace internal {
 
 
 	template<typename Tag, class Arg1, class Arg2, class Dst>
-	static void _colwise_reduce(const Tag& tag, const Arg1& a, class Arg2& b, Dst& dst, scalar_kernel_t)
+	static void _colwise_reduce(const Tag& tag, const Arg1& a, class Arg2& b, Dst& dst, scalar_ker)
 	{
 		typedef typename matrix_traits<Arg1>::value_type T1;
 		typedef typename matrix_traits<Arg2>::value_type T2;
 
 		typedef typename reduction_result<Tag, T1, T2>::intermediate_type media_t;
-		typedef typename reduction_fun<Tag, scalar_kernel_t, T1, T2>::type fun_t;
+		typedef typename reduction_fun<Tag, scalar_ker, T1, T2>::type fun_t;
 
-		typedef typename macc_accessor_map<Arg1, percol_macc, scalar_kernel_t>::type accessor1_t;
-		typedef typename macc_accessor_map<Arg2, percol_macc, scalar_kernel_t>::type accessor2_t;
+		typedef typename macc_accessor_map<Arg1, percol_macc, scalar_ker>::type accessor1_t;
+		typedef typename macc_accessor_map<Arg2, percol_macc, scalar_ker>::type accessor2_t;
 		typedef typename percol_macc_state_map<accessor1_t>::type col_state1_t;
 		typedef typename percol_macc_state_map<accessor2_t>::type col_state2_t;
 
@@ -102,7 +102,7 @@ namespace lmat { namespace internal {
 			}
 			else
 			{
-				typedef vec_reduce<Tag, common_ctrows<Arg1, Arg2>::value, scalar_kernel_t, T1, T2> impl_t;
+				typedef vec_reduce<Tag, common_ctrows<Arg1, Arg2>::value, scalar_ker, T1, T2> impl_t;
 				for (index_t j = 0; j < n; ++j)
 				{
 					media_t u = impl_t::eval_col(fun, m, acc1, acc2, j);
@@ -122,22 +122,22 @@ namespace lmat { namespace internal {
 	struct _rowwise_reduc_helper;
 
 	template<int M, typename InterT, typename ResultT>
-	struct _rowwise_reduc_helper<M, scalar_kernel_t, InterT, ResultT>
+	struct _rowwise_reduc_helper<M, scalar_ker, InterT, ResultT>
 	{
 		template<class Fun, class Acc>
 		void eval(const Fun& fun, const Acc& acc, index_t m, index_t n, ResultT* dst, index_t dst_rs)
 		{
 			dense_col<InterT, M> temp(m);
 
-			ContVecRW<scalar_kernel_t, InterT> out(temp.ptr_data());
+			ContVecRW<scalar_ker, InterT> out(temp.ptr_data());
 
 			reduc_terms_accessor_pcol<InterT, Fun, Acc> tacc0(acc, 0);
-			macc_vec_copy<scalar_kernel_t, M>::eval(tacc0, out);
+			macc_vec_copy<scalar_ker, M>::eval(tacc0, out);
 
 			for (index_t j = 1; j < n; ++j)
 			{
 				reduc_terms_accessor_pcol<InterT, Fun, Acc> tacc(acc, j);
-				vec_accum_core<InterT, M, scalar_kernel_t>::eval(out, tacc);
+				vec_accum_core<InterT, M, scalar_ker>::eval(out, tacc);
 			}
 
 			if (dst_rs == 1)
@@ -156,18 +156,18 @@ namespace lmat { namespace internal {
 
 
 	template<typename Tag, class Arg, class Dst>
-	static void _rowwise_reduce(const Tag& tag, const Arg& a, Dst& dst, scalar_kernel_t)
+	static void _rowwise_reduce(const Tag& tag, const Arg& a, Dst& dst, scalar_ker)
 	{
 		typedef typename matrix_traits<Arg>::value_type T;
 
 		typedef typename reduction_result<Tag, T>::intermediate_type media_t;
 		typedef typename reduction_result<Tag, T>::type result_t;
-		typedef typename reduction_fun<Tag, scalar_kernel_t, T>::type fun_t;
+		typedef typename reduction_fun<Tag, scalar_ker, T>::type fun_t;
 
-		typedef typename macc_accessor_map<Arg, percol_macc, scalar_kernel_t>::type accessor_t;
+		typedef typename macc_accessor_map<Arg, percol_macc, scalar_ker>::type accessor_t;
 		typedef typename percol_macc_state_map<accessor_t>::type col_state_t;
 
-		typedef percol_to_linear_accessor<accessor_t, scalar_kernel_t, T> acc1_wrapper;
+		typedef percol_to_linear_accessor<accessor_t, scalar_ker, T> acc1_wrapper;
 
 		const index_t M = common_ctrows<Arg, Dst>::value;
 		const index_t m = a.nrows();
@@ -182,18 +182,18 @@ namespace lmat { namespace internal {
 		{
 			if (rs == 1)
 			{
-				ContVecRW<scalar_kernel_t, result_t> out(pd);
-				internal::single_elem_reduc_core<Tag, M, scalar_kernel_t, T>::eval(fun, m, acc, out);
+				ContVecRW<scalar_ker, result_t> out(pd);
+				internal::single_elem_reduc_core<Tag, M, scalar_ker, T>::eval(fun, m, acc, out);
 			}
 			else
 			{
-				StepVecRW<scalar_kernel_t, result_t> out(pd, rs);
-				internal::single_elem_reduc_core<Tag, M, scalar_kernel_t, T>::eval(fun, m, acc, out);
+				StepVecRW<scalar_ker, result_t> out(pd, rs);
+				internal::single_elem_reduc_core<Tag, M, scalar_ker, T>::eval(fun, m, acc, out);
 			}
 		}
 		else
 		{
-			_rowwise_reduc_helper<M, scalar_kernel_t, media_t, result_t>::eval(fun, acc, m, n, pd, rs);
+			_rowwise_reduc_helper<M, scalar_ker, media_t, result_t>::eval(fun, acc, m, n, pd, rs);
 		}
 	}
 

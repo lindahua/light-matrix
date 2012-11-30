@@ -246,7 +246,7 @@ namespace lmat
 	struct generic_macc_accessor_map;
 
 	template<class SExpr>
-	struct generic_macc_accessor_map<SExpr, linear_macc, scalar_kernel_t>
+	struct generic_macc_accessor_map<SExpr, linear_macc, scalar_ker>
 	{
 		typedef typename matrix_traits<SExpr>::value_type T;
 
@@ -262,7 +262,7 @@ namespace lmat
 
 
 	template<class SExpr>
-	struct generic_macc_accessor_map<SExpr, percol_macc, scalar_kernel_t>
+	struct generic_macc_accessor_map<SExpr, percol_macc, scalar_ker>
 	{
 		typedef typename matrix_traits<SExpr>::value_type T;
 

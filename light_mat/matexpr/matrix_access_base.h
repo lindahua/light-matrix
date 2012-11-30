@@ -68,8 +68,8 @@ namespace lmat
 	template<class PerColAcc, typename Ker, typename T> class percol_to_linear_accessor;
 
 	template<class PerColAcc, typename T>
-	class percol_to_linear_accessor<PerColAcc, scalar_kernel_t, T>
-			: public ILinearMatrixScalarAccessor<percol_to_linear_accessor<PerColAcc, scalar_kernel_t, T>, T>
+	class percol_to_linear_accessor<PerColAcc, scalar_ker, T>
+			: public ILinearMatrixScalarAccessor<percol_to_linear_accessor<PerColAcc, scalar_ker, T>, T>
 	{
 	public:
 		typedef typename percol_macc_state_map<PerColAcc>::type col_state_t;
@@ -143,7 +143,7 @@ namespace lmat
 
 
 	template<typename T, class AccCate>
-	struct macc_accessor_map<scalar_expr<T>, AccCate, scalar_kernel_t>
+	struct macc_accessor_map<scalar_expr<T>, AccCate, scalar_ker>
 	{
 		typedef const_scalar_accessor<T> type;
 	};

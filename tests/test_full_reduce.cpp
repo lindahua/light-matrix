@@ -36,8 +36,8 @@ MN_CASE( mat_reduce, sum )
 
 	// test
 
-	ASSERT_EQ( _reduce(sum_t(), A, linear_macc(), scalar_kernel_t()), r0 );
-	ASSERT_EQ( _reduce(sum_t(), A, percol_macc(), scalar_kernel_t()), r0 );
+	ASSERT_EQ( _reduce(sum_t(), A, linear_macc(), scalar_ker()), r0 );
+	ASSERT_EQ( _reduce(sum_t(), A, percol_macc(), scalar_ker()), r0 );
 	ASSERT_EQ( sum(A), r0 );
 }
 
@@ -62,8 +62,8 @@ MN_CASE( mat_reduce, sum_ex )
 
 	// test
 
-	ASSERT_EQ( _reduce(sum_t(), A, linear_macc(), scalar_kernel_t()), r0 );
-	ASSERT_EQ( _reduce(sum_t(), A, percol_macc(), scalar_kernel_t()), r0 );
+	ASSERT_EQ( _reduce(sum_t(), A, linear_macc(), scalar_ker()), r0 );
+	ASSERT_EQ( _reduce(sum_t(), A, percol_macc(), scalar_ker()), r0 );
 	ASSERT_EQ( sum(A), r0 );
 }
 
@@ -296,8 +296,8 @@ MN_CASE( mat_reduce, dot )
 
 	// test
 
-	ASSERT_EQ( _reduce(dot_t(), A, B, linear_macc(), scalar_kernel_t()), r0 );
-	ASSERT_EQ( _reduce(dot_t(), A, B, percol_macc(), scalar_kernel_t()), r0 );
+	ASSERT_EQ( _reduce(dot_t(), A, B, linear_macc(), scalar_ker()), r0 );
+	ASSERT_EQ( _reduce(dot_t(), A, B, percol_macc(), scalar_ker()), r0 );
 	ASSERT_EQ( dot(A, B), r0 );
 }
 

@@ -49,6 +49,10 @@
 	LMAT_DECLARE_GENERIC_BINARY_REDUCTION( Name, T, T )
 
 
+#define LMAT_DECLARE_REDUCTION_WITHPOST( Name ) \
+	template<> struct reduction_with_post<Name##_t> { static const bool value = true; };
+
+
 // reduction on real numbers
 
 #define LMAT_DECLARE_REAL_SIMPLE_UNARY_REDUCTION( Name ) \
@@ -117,7 +121,7 @@
 		result_type get(const intermediate_type& a, const index_t& n) const { return GetExpr; } \
 	}; \
 	template<typename T> \
-	struct reduction_fun<Name##_t, scalar_kernel_t, T> { \
+	struct reduction_fun<Name##_t, scalar_ker, T> { \
 		typedef Name##_fun<T> type; \
 	};
 
@@ -140,7 +144,7 @@
 		result_type get(const intermediate_type& a, const index_t& n) const { return GetExpr; } \
 	}; \
 	template<typename T> \
-	struct reduction_fun<Name##_t, scalar_kernel_t, T, T> { \
+	struct reduction_fun<Name##_t, scalar_ker, T, T> { \
 		typedef Name##_fun<T> type; \
 	};
 
@@ -156,6 +160,12 @@ namespace lmat
 
 	template<typename Tag, int NArgs>
 	struct is_reduction_tag
+	{
+		static const bool value = false;
+	};
+
+	template<typename Tag>
+	struct reduction_with_post
 	{
 		static const bool value = false;
 	};
@@ -194,6 +204,13 @@ namespace lmat
 
 	LMAT_DECLARE_REAL_SIMPLE_BINARY_REDUCTION( dot )
 	LMAT_DECLARE_REAL_MEDIATED_BINARY_REDUCTION( nrmdot, internal::nrmdot_media )
+
+	// specify the ones that require post processing
+
+	LMAT_DECLARE_REDUCTION_WITHPOST( mean )
+	LMAT_DECLARE_REDUCTION_WITHPOST( L2norm )
+	LMAT_DECLARE_REDUCTION_WITHPOST( entropy )
+	LMAT_DECLARE_REDUCTION_WITHPOST( nrmdot )
 
 
 	/********************************************

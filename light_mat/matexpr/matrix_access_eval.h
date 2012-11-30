@@ -38,50 +38,7 @@ namespace lmat
 	struct macc_scheme;
 
 	template<int M, int N>
-	struct macc_scheme<any_macc, any_kernel_t, M, N>
-	{
-		const matrix_shape<M, N> shape;
-		const bool _use_linear;
-		const bool _use_simd;
-
-		LMAT_ENSURE_INLINE
-		macc_scheme(index_t m, index_t n, bool lin, bool simd)
-		: shape(m, n), _use_linear(lin), _use_simd(simd) { }
-
-		LMAT_ENSURE_INLINE bool use_linear() const { return _use_linear; }
-		LMAT_ENSURE_INLINE bool use_simd() const { return _use_simd; }
-	};
-
-	template<int M, int N>
-	struct macc_scheme<linear_macc, any_kernel_t, M, N>
-	{
-		const matrix_shape<M, N> shape;
-		const bool _use_simd;
-
-		LMAT_ENSURE_INLINE
-		macc_scheme(index_t m, index_t n, bool simd)
-		: shape(m, n), _use_simd(simd) { }
-
-		LMAT_ENSURE_INLINE bool use_linear() const { return true; }
-		LMAT_ENSURE_INLINE bool use_simd() const { return _use_simd; }
-	};
-
-	template<int M, int N>
-	struct macc_scheme<percol_macc, any_kernel_t, M, N>
-	{
-		const matrix_shape<M, N> shape;
-		const bool _use_simd;
-
-		LMAT_ENSURE_INLINE
-		macc_scheme(index_t m, index_t n, bool simd)
-		: shape(m, n), _use_simd(simd) { }
-
-		LMAT_ENSURE_INLINE bool use_linear() const { return false; }
-		LMAT_ENSURE_INLINE bool use_simd() const { return _use_simd; }
-	};
-
-	template<int M, int N>
-	struct macc_scheme<any_macc, scalar_kernel_t, M, N>
+	struct macc_scheme<any_macc, scalar_ker, M, N>
 	{
 		const matrix_shape<M, N> shape;
 		const bool _use_linear;
@@ -99,12 +56,12 @@ namespace lmat
 		{
 			if (_use_linear)
 			{
-				internal::macc_eval_impl<linear_macc, scalar_kernel_t>::evaluate(
+				internal::macc_eval_impl<linear_macc, scalar_ker>::evaluate(
 						shape.nelems(), sexpr, dmat);
 			}
 			else
 			{
-				internal::macc_eval_impl<percol_macc, scalar_kernel_t>::evaluate(
+				internal::macc_eval_impl<percol_macc, scalar_ker>::evaluate(
 						shape.nrows(), shape.ncolumns(), sexpr, dmat);
 			}
 		}
@@ -115,8 +72,8 @@ namespace lmat
 		{
 			const index_t m = dmat.nrows();
 
-			int macc_linear_cost = macc_cost<SExpr, linear_macc, scalar_kernel_t>::value;
-			int macc_percol_cost = macc_cost<SExpr, percol_macc, scalar_kernel_t>::value;
+			int macc_linear_cost = macc_cost<SExpr, linear_macc, scalar_ker>::value;
+			int macc_percol_cost = macc_cost<SExpr, percol_macc, scalar_ker>::value;
 
 			if (m <= MACC_SHORT_PERCOL_COST)
 				macc_percol_cost += MACC_SHORT_PERCOL_COST;
@@ -127,7 +84,7 @@ namespace lmat
 	};
 
 	template<int M, int N>
-	struct macc_scheme<linear_macc, scalar_kernel_t, M, N>
+	struct macc_scheme<linear_macc, scalar_ker, M, N>
 	{
 		const matrix_shape<M, N> shape;
 
@@ -142,7 +99,7 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		void evaluate(const SExpr& sexpr, DMat& dmat)
 		{
-			internal::macc_eval_impl<linear_macc, scalar_kernel_t>::evaluate(
+			internal::macc_eval_impl<linear_macc, scalar_ker>::evaluate(
 					shape.nelems(), sexpr, dmat);
 		}
 
@@ -156,7 +113,7 @@ namespace lmat
 
 
 	template<int M, int N>
-	struct macc_scheme<percol_macc, scalar_kernel_t, M, N>
+	struct macc_scheme<percol_macc, scalar_ker, M, N>
 	{
 		const matrix_shape<M, N> shape;
 
@@ -171,7 +128,7 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		void evaluate(const SExpr& sexpr, DMat& dmat)
 		{
-			internal::macc_eval_impl<percol_macc, scalar_kernel_t>::evaluate(
+			internal::macc_eval_impl<percol_macc, scalar_ker>::evaluate(
 					shape.nrows(), shape.ncolumns(), sexpr, dmat);
 		}
 
@@ -184,47 +141,6 @@ namespace lmat
 	};
 
 
-	template<int M, int N>
-	struct macc_scheme<any_macc, simd_kernel_t, M, N>
-	{
-		const matrix_shape<M, N> shape;
-		const bool _use_linear;
-
-		LMAT_ENSURE_INLINE
-		macc_scheme(index_t m, index_t n, bool lin)
-		: shape(m, n), _use_linear(lin) { }
-
-		LMAT_ENSURE_INLINE bool use_linear() const { return _use_linear; }
-		LMAT_ENSURE_INLINE bool use_simd() const { return true; }
-	};
-
-	template<int M, int N>
-	struct macc_scheme<linear_macc, simd_kernel_t, M, N>
-	{
-		const matrix_shape<M, N> shape;
-
-		LMAT_ENSURE_INLINE
-		macc_scheme(index_t m, index_t n)
-		: shape(m, n) { }
-
-		LMAT_ENSURE_INLINE bool use_linear() const { return true; }
-		LMAT_ENSURE_INLINE bool use_simd() const { return true; }
-	};
-
-	template<int M, int N>
-	struct macc_scheme<percol_macc, simd_kernel_t, M, N>
-	{
-		const matrix_shape<M, N> shape;
-
-		LMAT_ENSURE_INLINE
-		macc_scheme(index_t m, index_t n)
-		: shape(m, n) { }
-
-		LMAT_ENSURE_INLINE bool use_linear() const { return false; }
-		LMAT_ENSURE_INLINE bool use_simd() const { return true; }
-	};
-
-
 	template<class SExpr, class DMat>
 	struct default_macc_scheme
 	{
@@ -233,7 +149,7 @@ namespace lmat
 				any_macc,
 				percol_macc>::type access_category;
 
-		typedef scalar_kernel_t kernel_category;
+		typedef scalar_ker kernel_category;
 
 		static const int M = common_ctrows<SExpr, DMat>::value;
 		static const int N = common_ctcols<SExpr, DMat>::value;

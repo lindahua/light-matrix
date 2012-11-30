@@ -376,7 +376,7 @@ namespace lmat
 
 	template<class Arg>
 	struct percol_macc_state_map<
-		repcol_accessor<scalar_kernel_t, Arg> >
+		repcol_accessor<scalar_ker, Arg> >
 	{
 		typedef typename matrix_traits<Arg>::value_type arg_value_type;
 		typedef const arg_value_type* type;
@@ -384,7 +384,7 @@ namespace lmat
 
 	template<class Arg>
 	struct percol_macc_state_map<
-		reprow_accessor<scalar_kernel_t, Arg> >
+		reprow_accessor<scalar_ker, Arg> >
 	{
 		typedef typename matrix_traits<Arg>::value_type arg_value_type;
 		typedef arg_value_type type;
@@ -392,9 +392,9 @@ namespace lmat
 
 
 	template<class Arg>
-	class repcol_accessor<scalar_kernel_t, Arg>
+	class repcol_accessor<scalar_ker, Arg>
 	: public IPerColMatrixScalarAccessor<
-	  	  repcol_accessor<scalar_kernel_t, Arg>, typename matrix_traits<Arg>::value_type>
+	  	  repcol_accessor<scalar_ker, Arg>, typename matrix_traits<Arg>::value_type>
 	{
 	public:
 		typedef typename matrix_traits<Arg>::value_type value_type;
@@ -422,9 +422,9 @@ namespace lmat
 
 
 	template<class Arg>
-	class reprow_accessor<scalar_kernel_t, Arg>
+	class reprow_accessor<scalar_ker, Arg>
 	: public IPerColMatrixScalarAccessor<
-	  	  reprow_accessor<scalar_kernel_t, Arg>, typename matrix_traits<Arg>::value_type>
+	  	  reprow_accessor<scalar_ker, Arg>, typename matrix_traits<Arg>::value_type>
 	{
 	public:
 		typedef typename matrix_traits<Arg>::value_type value_type;

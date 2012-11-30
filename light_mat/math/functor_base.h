@@ -20,9 +20,10 @@ namespace lmat
 {
 	// kernel categories
 
-	struct any_kernel_t { };
-	struct scalar_kernel_t { };
-	struct simd_kernel_t { };
+	struct any_ker { };
+	struct scalar_ker { };
+	struct sse_ker { };
+	struct avx_ker { };
 
 	// operation type testing
 
@@ -167,24 +168,24 @@ namespace lmat
 #define LMAT_DEFINE_NUMERIC_UNARY_FUNCTOR( Fname, Expr ) \
 	LMAT_DEFINE_UNARY_FUNCTOR_GENERIC( Fname, Expr ) \
 	template<typename T> \
-	struct unary_op_fun<Fname##_t, scalar_kernel_t, T> { typedef Fname##_fun<T> type; };
+	struct unary_op_fun<Fname##_t, scalar_ker, T> { typedef Fname##_fun<T> type; };
 
 #define LMAT_DEFINE_NUMERIC_BINARY_FUNCTOR( Fname, Expr ) \
 	LMAT_DEFINE_BINARY_FUNCTOR_GENERIC( Fname, Expr ) \
 	template<typename T> \
-	struct binary_op_fun<Fname##_t, scalar_kernel_t, T, T> { typedef Fname##_fun<T> type; };
+	struct binary_op_fun<Fname##_t, scalar_ker, T, T> { typedef Fname##_fun<T> type; };
 
 // for real-number operations
 
 #define LMAT_DEFINE_REAL_UNARY_FUNCTOR( Fname, Expr ) \
 	LMAT_DEFINE_UNARY_FUNCTOR_GENERIC( Fname, Expr ) \
-	template<> struct unary_op_fun<Fname##_t, scalar_kernel_t, float> { typedef Fname##_fun<float> type; }; \
-	template<> struct unary_op_fun<Fname##_t, scalar_kernel_t, double> { typedef Fname##_fun<double> type; };
+	template<> struct unary_op_fun<Fname##_t, scalar_ker, float> { typedef Fname##_fun<float> type; }; \
+	template<> struct unary_op_fun<Fname##_t, scalar_ker, double> { typedef Fname##_fun<double> type; };
 
 #define LMAT_DEFINE_REAL_BINARY_FUNCTOR( Fname, Expr ) \
 	LMAT_DEFINE_BINARY_FUNCTOR_GENERIC( Fname, Expr ) \
-	template<> struct binary_op_fun<Fname##_t, scalar_kernel_t, float, float> { typedef Fname##_fun<float> type; }; \
-	template<> struct binary_op_fun<Fname##_t, scalar_kernel_t, double, double> { typedef Fname##_fun<double> type; };
+	template<> struct binary_op_fun<Fname##_t, scalar_ker, float, float> { typedef Fname##_fun<float> type; }; \
+	template<> struct binary_op_fun<Fname##_t, scalar_ker, double, double> { typedef Fname##_fun<double> type; };
 
 // for logical operations
 
@@ -195,7 +196,7 @@ namespace lmat
 		LMAT_ENSURE_INLINE Fname##_fun( Fname##_t ) { } \
 		LMAT_ENSURE_INLINE result_type operator() (const bool& x) const { return Expr; } \
 	}; \
-	template<> struct unary_op_fun<Fname##_t, scalar_kernel_t, bool> { typedef Fname##_fun type; };
+	template<> struct unary_op_fun<Fname##_t, scalar_ker, bool> { typedef Fname##_fun type; };
 
 #define LMAT_DEFINE_LOGICAL_BINARY_FUNCTOR( Fname, Expr ) \
 	struct Fname##_fun { \
@@ -204,7 +205,7 @@ namespace lmat
 		LMAT_ENSURE_INLINE Fname##_fun( Fname##_t ) { } \
 		LMAT_ENSURE_INLINE result_type operator() (const bool& x, const bool& y) const { return Expr; } \
 	}; \
-	template<> struct binary_op_fun<Fname##_t, scalar_kernel_t, bool, bool> { typedef Fname##_fun type; };
+	template<> struct binary_op_fun<Fname##_t, scalar_ker, bool, bool> { typedef Fname##_fun type; };
 
 
 #endif 
