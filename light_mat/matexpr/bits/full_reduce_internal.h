@@ -22,14 +22,15 @@ namespace lmat { namespace internal {
 		typedef typename reduction_result<Tag, T>::intermediate_type media_t;
 		typedef typename reduction_fun<Tag, scalar_kernel_t, T>::type fun_t;
 
+		typedef internal::vec_reduce<Tag, ct_size<Xpr>::value, scalar_kernel_t, T> impl_t;
+
 		fun_t fun(tag);
 		accessor_t acc(a.derived());
 		const index_t n = a.nelems();
 
 		if (n > 0)
 		{
-			media_t mv = internal::vec_reduce<
-					media_t, ct_size<Xpr>::value, scalar_kernel_t>::eval(fun, n, acc);
+			media_t mv = impl_t::eval(fun, n, acc);
 			return fun.get(mv, n);
 		}
 		else
@@ -49,6 +50,8 @@ namespace lmat { namespace internal {
 		typedef typename reduction_result<Tag, T1, T2>::intermediate_type media_t;
 		typedef typename reduction_fun<Tag, scalar_kernel_t, T1, T2>::type fun_t;
 
+		typedef internal::vec_reduce<Tag, common_ctsize<Xpr1, Xpr2>::value, scalar_kernel_t, T1, T2> impl_t;
+
 		fun_t fun(tag);
 		accessor1_t acc1(a.derived());
 		accessor1_t acc2(b.derived());
@@ -57,8 +60,7 @@ namespace lmat { namespace internal {
 
 		if (n > 0)
 		{
-			media_t mv = internal::vec_reduce<
-					media_t, common_ctsize<Xpr1, Xpr2>::value, scalar_kernel_t>::eval(fun, n, acc1, acc2);
+			media_t mv = impl_t::eval(fun, n, acc1, acc2);
 			return fun.get(mv, n);
 		}
 		else
@@ -79,7 +81,7 @@ namespace lmat { namespace internal {
 		typedef typename reduction_fun<Tag, scalar_kernel_t, T>::type fun_t;
 
 		typedef percol_to_linear_accessor<accessor_t, scalar_kernel_t, T> acc_wrapper;
-		typedef internal::vec_reduce<media_t, ct_rows<Xpr>::value, scalar_kernel_t> impl_t;
+		typedef internal::vec_reduce<Tag, ct_rows<Xpr>::value, scalar_kernel_t, T> impl_t;
 
 		fun_t fun(tag);
 		accessor_t acc(a.derived());
@@ -89,16 +91,12 @@ namespace lmat { namespace internal {
 
 		if (n > 0)
 		{
-			col_state_t s0 = acc.col_state(0);
-			media_t mv = impl_t::eval(fun, m, acc_wrapper(acc, s0));
+			media_t mv = impl_t::eval_col(fun, m, acc, 0);
 
 			if (n > 1)
 			{
 				for (index_t j = 1; j < n; ++j)
-				{
-					col_state_t s = acc.col_state(j);
-					mv = fun.combine(mv, impl_t::eval(fun, m, acc_wrapper(acc, s)));
-				}
+					mv = fun.combine(mv, impl_t::eval_col(fun, m, acc, j));
 			}
 
 			return fun.get(mv, a.nelems());
@@ -124,7 +122,7 @@ namespace lmat { namespace internal {
 
 		typedef percol_to_linear_accessor<accessor1_t, scalar_kernel_t, T1> acc1_wrapper;
 		typedef percol_to_linear_accessor<accessor2_t, scalar_kernel_t, T2> acc2_wrapper;
-		typedef internal::vec_reduce<media_t, common_ctrows<Xpr1, Xpr2>::value, scalar_kernel_t> impl_t;
+		typedef internal::vec_reduce<Tag, common_ctrows<Xpr1, Xpr2>::value, scalar_kernel_t, T1, T2> impl_t;
 
 		fun_t fun(tag);
 		accessor1_t acc1(a.derived());
@@ -135,20 +133,12 @@ namespace lmat { namespace internal {
 
 		if (n > 0)
 		{
-			col_state1_t s0_1 = acc1.col_state(0);
-			col_state2_t s0_2 = acc2.col_state(0);
-			media_t mv = impl_t::eval(fun, m, acc1_wrapper(acc1, s0_1), acc2_wrapper(acc2, s0_2));
+			media_t mv = impl_t::eval_col(fun, m, acc1, acc2, 0);
 
 			if (n > 1)
 			{
 				for (index_t j = 1; j < n; ++j)
-				{
-					col_state1_t s1 = acc1.col_state(j);
-					col_state1_t s2 = acc2.col_state(j);
-
-					mv = fun.combine(mv, impl_t::eval(fun, m,
-							acc1_wrapper(acc1, s1), acc2_wrapper(acc2, s2) ));
-				}
+					mv = fun.combine(mv, impl_t::eval_col(fun, m, acc1, acc2, j));
 			}
 
 			return fun.get(mv, a.nelems());

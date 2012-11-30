@@ -120,27 +120,61 @@ namespace lmat { namespace internal {
 	};
 
 
-	template<typename RT, int CTLen, typename KerCate>
-	struct vec_reduce
+	template<typename Tag, int CTLen, typename KerCate, typename T1, typename T2=nil_t> struct vec_reduce;
+
+
+	template<typename Tag, int CTLen, typename T>
+	struct vec_reduce<Tag, CTLen, scalar_kernel_t, T, nil_t>
 	{
-		template<class Fun, class Acc>
+		typedef typename reduction_result<Tag, T>::intermediate_type RT;
+		typedef typename reduction_fun<Tag, scalar_kernel_t, T>::type Fun;
+
+		template<class Acc>
 		LMAT_ENSURE_INLINE
 		static RT eval(const Fun& fun, const index_t len, const Acc& a)
 		{
 			typedef reduc_terms_accessor<RT, Fun, Acc> term_accessor_t;
 			term_accessor_t term_vec(fun, a);
-			return vec_reduce_core<RT, CTLen, KerCate>::eval(fun, len, term_vec);
+			return vec_reduce_core<RT, CTLen, scalar_kernel_t>::eval(fun, len, term_vec);
 		}
 
-		template<class Fun, class Acc1, class Acc2>
+		template<class PerColAcc>
+		LMAT_ENSURE_INLINE
+		static RT eval_col(const Fun& fun, const index_t len, const PerColAcc& a, const index_t j)
+		{
+			typedef percol_to_linear_accessor<PerColAcc, scalar_kernel_t, T> Acc;
+			return eval(fun, len, Acc(a, a.col_state(j)));
+		}
+	};
+
+
+	template<typename Tag, int CTLen, typename T1, typename T2>
+	struct vec_reduce<Tag, CTLen, scalar_kernel_t, T1, T2>
+	{
+		typedef typename reduction_result<Tag, T1, T2>::intermediate_type RT;
+		typedef typename reduction_fun<Tag, scalar_kernel_t, T1, T2>::type Fun;
+
+		template<class Acc1, class Acc2>
 		LMAT_ENSURE_INLINE
 		static RT eval(const Fun& fun, const index_t len, const Acc1& a1, const Acc2& a2)
 		{
 			typedef reduc_terms_accessor<RT, Fun, Acc1, Acc2> term_accessor_t;
 			term_accessor_t term_vec(fun, a1, a2);
-			return vec_reduce_core<RT, CTLen, KerCate>::eval(fun, len, term_vec);
+			return vec_reduce_core<RT, CTLen, scalar_kernel_t>::eval(fun, len, term_vec);
+		}
+
+		template<class PerColAcc1, class PerColAcc2>
+		LMAT_ENSURE_INLINE
+		static RT eval_col(const Fun& fun, const index_t len, const PerColAcc1& a1, const PerColAcc2& a2, const index_t j)
+		{
+			typedef percol_to_linear_accessor<PerColAcc1, scalar_kernel_t, T1> Acc1;
+			typedef percol_to_linear_accessor<PerColAcc2, scalar_kernel_t, T2> Acc2;
+			return eval(fun, len,
+					Acc1(a1, a1.col_state(j)),
+					Acc2(a2, a2.col_state(j)) );
 		}
 	};
+
 
 
 } }
