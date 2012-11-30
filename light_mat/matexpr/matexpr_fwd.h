@@ -16,9 +16,9 @@ namespace lmat
 {
 	// forward declaration of matrix expressions
 
-	template<typename Op, typename Arg_HP, class Arg> class unary_ewise_expr;
+	template<typename Tag, typename Arg_HP, class Arg> class unary_ewise_expr;
 
-	template<typename Op,
+	template<typename Tag,
 		typename Arg1_HP, class Arg1,
 		typename Arg2_HP, class Arg2> class binary_ewise_expr;
 
@@ -30,9 +30,12 @@ namespace lmat
 	struct rowwise { };
 	struct colwise { };
 
-	template<typename Op, typename Arg_HP, class Arg> class colwise_reduce_expr;
-	template<typename Op, typename Arg_HP, class Arg> class rowwise_reduce_expr;
+	template<typename Tag, typename AlongDim,
+		typename Arg_HP, class Arg> class unary_partial_reduce_expr;
 
+	template<typename Tag, typename AlongDim,
+		typename Arg1_HP, class Arg1,
+		typename Arg2_HP, class Arg2> class binary_partial_reduce_expr;
 }
 
 #endif /* MATEXPR_FWD_H_ */

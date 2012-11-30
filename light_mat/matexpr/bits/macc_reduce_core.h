@@ -188,6 +188,16 @@ namespace lmat { namespace internal {
 				out[i] = tacc.get_scalar(i);
 			}
 		}
+
+		template<class TAcc, class Out>
+		LMAT_ENSURE_INLINE
+		static void single_reduce(const fun_t& fun, index_t, const TAcc& tacc, Out& out)
+		{
+			for (index_t i = 0; i < Len; ++i)
+			{
+				out[i] = fun.get(tacc.get_scalar(i), 1);
+			}
+		}
 	};
 
 
