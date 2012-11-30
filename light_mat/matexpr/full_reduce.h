@@ -14,7 +14,7 @@
 #define LIGHTMAT_MATRIX_REDUCE_H_
 
 #include <light_mat/matexpr/dense_accessors.h>
-#include "bits/matrix_reduce_internal.h"
+#include "bits/macc_reduce_core.h"
 
 
 #define LMAT_DEFINE_UNARY_FULL_REDUCE_FUNCTION( Tag, FunName ) \

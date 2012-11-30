@@ -61,7 +61,7 @@ namespace lmat { namespace internal {
 		LMAT_ENSURE_INLINE
 		void evaluate(const transpose_expr<Arg_HP, Arg>& expr, DMat& dmat)
 		{
-			const int L = common_ctdim<ct_rows<Arg>::value, ct_cols<DMat>::value>::value;
+			const int L = common_ctdim<ct_rows<Arg>, ct_cols<DMat> >::value;
 			typedef typename matrix_traits<DMat>::value_type T;
 
 			const index_t n = dmat.ncolumns();
@@ -86,7 +86,7 @@ namespace lmat { namespace internal {
 		LMAT_ENSURE_INLINE
 		void evaluate(const transpose_expr<Arg_HP, Arg>& expr, DMat& dmat)
 		{
-			const int L = common_ctdim<ct_cols<Arg>::value, ct_rows<DMat>::value>::value;
+			const int L = common_ctdim<ct_cols<Arg>, ct_rows<DMat> >::value;
 			typedef typename matrix_traits<DMat>::value_type T;
 
 			const index_t n = dmat.nrows();

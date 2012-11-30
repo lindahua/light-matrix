@@ -12,30 +12,24 @@
 #include <light_mat/matexpr/matrix_transpose.h>
 
 
-template<
-	template<typename T1, int M1, int N1> class ClassT1,
-	template<typename T2, int M2, int N2> class ClassT2,
-	int M, int N
->
+template<class Tag1, class Tag2, int M, int N>
 void test_direct_trans()
 {
 	const index_t m = M == 0 ? DM : M;
 	const index_t n = N == 0 ? DN : N;
 
-	const index_t max_dim = m > n ? m : n;
-
-	dblock<double> sblk(LDim * max_dim, zero());
-	dblock<double> dblk(LDim * max_dim, zero());
-
-	for (index_t i = 0; i < sblk.nelems(); ++i) sblk[i] = double(i + 1);
-
 	// M x N ==> N x M
 
-	typedef typename mat_maker<ClassT1, M, N>::cmat_t cmat_t;
-	typedef typename mat_maker<ClassT2, N, M>::mat_t mat_t;
+	typedef typename mat_maker<Tag1, double, M, N>::cmat_t cmat_t;
+	typedef typename mat_maker<Tag2, double, N, M>::mat_t mat_t;
 
-	cmat_t smat = mat_maker<ClassT1, M, N>::get_cmat(sblk.ptr_data(), m, n);
-	mat_t dmat = mat_maker<ClassT2, N, M>::get_mat(dblk.ptr_data(), n, m);
+	mat_maker<Tag1, double, M, N> src(m, n);
+	mat_maker<Tag2, double, N, M> dst(n, m);
+
+	src.fill_lin();
+
+	cmat_t smat = src.get_cmat();
+	mat_t dmat = dst.get_mat();
 
 	direct_transpose(smat, dmat);
 
@@ -49,13 +43,16 @@ void test_direct_trans()
 
 	// N x M ==> M x N
 
-	typedef typename mat_maker<ClassT1, N, M>::cmat_t cmat2_t;
-	typedef typename mat_maker<ClassT2, M, N>::mat_t mat2_t;
+	typedef typename mat_maker<Tag1, double, N, M>::cmat_t cmat2_t;
+	typedef typename mat_maker<Tag2, double, M, N>::mat_t mat2_t;
 
-	dblk = zero();
+	mat_maker<Tag1, double, N, M> src2(n, m);
+	mat_maker<Tag2, double, M, N> dst2(m, n);
 
-	cmat2_t smat2 = mat_maker<ClassT1, N, M>::get_cmat(sblk.ptr_data(), n, m);
-	mat2_t dmat2 = mat_maker<ClassT2, M, N>::get_mat(dblk.ptr_data(), m, n);
+	src2.fill_lin();
+
+	cmat2_t smat2 = src2.get_cmat();
+	mat2_t dmat2 = dst2.get_mat();
 
 	direct_transpose(smat2, dmat2);
 
@@ -77,17 +74,17 @@ void test_direct_trans()
 	ADD_MN_CASE_3X3( direct_trans, name, DM, DN ) \
 	END_TPACK
 
-TEST_DIRECT_TRANS( ref_matrix, ref_matrix, mat_to_mat )
-TEST_DIRECT_TRANS( ref_matrix, ref_block, mat_to_blk )
-TEST_DIRECT_TRANS( ref_matrix, ref_grid, mat_to_grid )
+TEST_DIRECT_TRANS( cont, cont, mat_to_mat )
+TEST_DIRECT_TRANS( cont, bloc, mat_to_blk )
+TEST_DIRECT_TRANS( cont, grid, mat_to_grid )
 
-TEST_DIRECT_TRANS( ref_block, ref_matrix, blk_to_mat )
-TEST_DIRECT_TRANS( ref_block, ref_block, blk_to_blk )
-TEST_DIRECT_TRANS( ref_block, ref_grid, blk_to_grid )
+TEST_DIRECT_TRANS( bloc, cont, blk_to_mat )
+TEST_DIRECT_TRANS( bloc, bloc, blk_to_blk )
+TEST_DIRECT_TRANS( bloc, grid, blk_to_grid )
 
-TEST_DIRECT_TRANS( ref_grid, ref_matrix, grid_to_mat )
-TEST_DIRECT_TRANS( ref_grid, ref_block, grid_to_blk )
-TEST_DIRECT_TRANS( ref_grid, ref_grid, grid_to_grid )
+TEST_DIRECT_TRANS( grid, cont, grid_to_mat )
+TEST_DIRECT_TRANS( grid, bloc, grid_to_blk )
+TEST_DIRECT_TRANS( grid, grid, grid_to_grid )
 
 BEGIN_MAIN_SUITE
 	ADD_TPACK( direct_trans_mat_to_mat )

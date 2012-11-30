@@ -33,31 +33,24 @@ void fill_lin(Mat& A)
 }
 
 
-template<
-	template<typename T1, int M1, int N1> class ClassT1,
-	template<typename T2, int M2, int N2> class ClassT2,
-	int M, int N
->
+template<class Tag1, class Tag2, int M, int N>
 void test_mat_transpose()
 {
 	const index_t m = M == 0 ? DM : M;
 	const index_t n = N == 0 ? DN : N;
 
-	const index_t max_dim = m > n ? m : n;
-
-	dblock<double> sblk(LDim * max_dim, zero());
-	dblock<double> dblk(LDim * max_dim, zero());
-
-	for (index_t i = 0; i < sblk.nelems(); ++i) sblk[i] = double(i + 1);
-
 	// M x N ==> N x M
 
-	typedef typename mat_maker<ClassT1, M, N>::cmat_t cmat_t;
-	typedef typename mat_maker<ClassT2, N, M>::mat_t mat_t;
+	typedef typename mat_maker<Tag1, double, M, N>::cmat_t cmat_t;
+	typedef typename mat_maker<Tag2, double, N, M>::mat_t mat_t;
 
-	cmat_t smat = mat_maker<ClassT1, M, N>::get_cmat(sblk.ptr_data(), m, n);
-	mat_t dmat = mat_maker<ClassT2, N, M>::get_mat(dblk.ptr_data(), n, m);
+	mat_maker<Tag1, double, M, N> src(m, n);
+	mat_maker<Tag2, double, N, M> dst(n, m);
 
+	cmat_t smat = src.get_cmat();
+	mat_t dmat = dst.get_mat();
+
+	smat.fill_lin();
 	dmat = trans(smat);
 
 	dense_matrix<double, N, M> rmat(n, m);
@@ -70,14 +63,16 @@ void test_mat_transpose()
 
 	// N x M ==> M x N
 
-	typedef typename mat_maker<ClassT1, N, M>::cmat_t cmat2_t;
-	typedef typename mat_maker<ClassT2, M, N>::mat_t mat2_t;
+	typedef typename mat_maker<Tag1, double, N, M>::cmat_t cmat2_t;
+	typedef typename mat_maker<Tag2, double, M, N>::mat_t mat2_t;
 
-	dblk = zero();
+	mat_maker<Tag1, double, N, M> src2(n, m);
+	mat_maker<Tag2, double, M, N> dst2(m, n);
 
-	cmat2_t smat2 = mat_maker<ClassT1, N, M>::get_cmat(sblk.ptr_data(), n, m);
-	mat2_t dmat2 = mat_maker<ClassT2, M, N>::get_mat(dblk.ptr_data(), m, n);
+	cmat2_t smat2 = src2.get_cmat();
+	mat2_t dmat2 = dst2.get_mat();
 
+	smat2.fill_lin();
 	dmat2 = trans(smat2);
 
 	dense_matrix<double, M, N> rmat2(m, n);
@@ -90,27 +85,24 @@ void test_mat_transpose()
 }
 
 
-template<
-	template<typename T2, int M2, int N2> class ClassT2,
-	int M, int N
->
+template<class Tag2, int M, int N>
 void test_xpr_transpose()
 {
 	const index_t m = M == 0 ? DM : M;
 	const index_t n = N == 0 ? DN : N;
 
-	const index_t max_dim = m > n ? m : n;
-
-	dblock<double> dblk(LDim * max_dim, zero());
-
 	// M x N ==> N x M
 
-	dense_matrix<double, M, N> smat(m, n);
-	for (index_t i = 0; i < m * n; ++i) smat[i] = double(i+1);
+	typedef typename mat_maker<cont, double, M, N>::cmat_t cmat_t;
+	typedef typename mat_maker<Tag2, double, N, M>::mat_t mat_t;
 
-	typedef typename mat_maker<ClassT2, N, M>::mat_t mat_t;
-	mat_t dmat = mat_maker<ClassT2, N, M>::get_mat(dblk.ptr_data(), n, m);
+	mat_maker<cont, double, M, N> src(m, n);
+	mat_maker<Tag2, double, N, M> dst(n, m);
 
+	cmat_t smat = src.get_cmat();
+	mat_t dmat = dst.get_mat();
+
+	smat.fill_lin();
 	dmat = trans(smat * 2.0 + 1.0);
 
 	dense_matrix<double, N, M> rmat(n, m);
@@ -123,12 +115,16 @@ void test_xpr_transpose()
 
 	// N x M ==> M x N
 
-	dense_matrix<double, N, M> smat2(n, m);
-	for (index_t i = 0; i < n * m; ++i) smat2[i] = double(i+1);
+	typedef typename mat_maker<cont, double, N, M>::cmat_t cmat2_t;
+	typedef typename mat_maker<Tag2, double, M, N>::mat_t mat2_t;
 
-	typedef typename mat_maker<ClassT2, M, N>::mat_t mat2_t;
-	mat2_t dmat2 = mat_maker<ClassT2, M, N>::get_mat(dblk.ptr_data(), m, n);
+	mat_maker<cont, double, N, M> src2(n, m);
+	mat_maker<Tag2, double, M, N> dst2(m, n);
 
+	cmat2_t smat2 = src2.get_cmat();
+	mat2_t dmat2 = dst2.get_mat();
+
+	smat2.fill_lin();
 	dmat2 = trans(smat2 * 2.0 + 1.0);
 
 	dense_matrix<double, M, N> rmat2(m, n);

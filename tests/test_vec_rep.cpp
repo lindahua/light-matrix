@@ -19,37 +19,20 @@ using namespace lmat::test;
 
 // Auxiliary facilities
 
-inline void fill_lin(dblock<double>& a)
-{
-	const index_t n = a.nelems();
-	for (index_t i = 0; i < n; ++i)
-	{
-		a[i] = double(i+1);
-	}
-}
-
-
-template<
-	template<typename T1, int M1, int N1> class ClassT1,
-	template<typename T2, int M2, int N2> class ClassT2,
-	int M, int N>
+template<class Tag1, class Tag2, int M, int N>
 void test_repcols()
 {
 	const index_t m = M == 0 ? DM : M;
 	const index_t n = N == 0 ? DN : N;
 
-	const index_t max_size1 = mat_maker<ClassT1, M, 1>::max_size(m, 1);
-	const index_t max_size2 = mat_maker<ClassT2, M, N>::max_size(m, n);
+	typedef typename mat_maker<Tag1, double, M, 1>::cmat_t scol_t;
+	typedef typename mat_maker<Tag2, double, M, N>::mat_t dmat_t;
 
-	dblock<double> sblk(max_size1, zero());
-	dblock<double> dblk(max_size2, zero());
+	mat_maker<Tag1, double, M, 1> src(m, 1);
+	mat_maker<Tag2, double, M, N> dst(m, n);
 
-	fill_lin(sblk);
-
-	typedef typename mat_maker<ClassT1, M, 1>::cmat_t scol_t;
-	typedef typename mat_maker<ClassT2, M, N>::mat_t dmat_t;
-
-	scol_t scol = mat_maker<ClassT1, M, 1>::get_cmat(sblk.ptr_data(), m, 1);
+	src.fill_lin();
+	scol_t scol = src.get_cmat();
 
 	dense_matrix<double, M, N> rmat(m, n);
 	for (index_t j = 0; j < n; ++j)
@@ -63,7 +46,8 @@ void test_repcols()
 	ASSERT_EQ( rep_col(scol, n).nrows(), m );
 	ASSERT_EQ( rep_col(scol, n).ncolumns(), n );
 
-	dmat_t dmat = mat_maker<ClassT2, M, N>::get_mat(dblk.ptr_data(), m, n);
+	dmat_t dmat = dst.get_mat();
+
 	if (N == 0)
 	{
 		dmat = rep_col(scol, n);
@@ -84,27 +68,20 @@ void test_repcols()
 	ASSERT_MAT_EQ(m, n, dmat, rmat );
 }
 
-template<
-	template<typename T1, int M1, int N1> class ClassT1,
-	template<typename T2, int M2, int N2> class ClassT2,
-	int M, int N>
+template<class Tag1, class Tag2, int M, int N>
 void test_reprows()
 {
 	const index_t m = M == 0 ? DM : M;
 	const index_t n = N == 0 ? DN : N;
 
-	const index_t max_size1 = mat_maker<ClassT1, 1, N>::max_size(1, n);
-	const index_t max_size2 = mat_maker<ClassT2, M, N>::max_size(m, n);
+	typedef typename mat_maker<Tag1, double, 1, N>::cmat_t srow_t;
+	typedef typename mat_maker<Tag2, double, M, N>::mat_t dmat_t;
 
-	dblock<double> sblk(max_size1, zero());
-	dblock<double> dblk(max_size2, zero());
+	mat_maker<Tag1, double, 1, N> src(1, n);
+	mat_maker<Tag2, double, M, N> dst(m, n);
 
-	fill_lin(sblk);
-
-	typedef typename mat_maker<ClassT1, 1, N>::cmat_t srow_t;
-	typedef typename mat_maker<ClassT2, M, N>::mat_t dmat_t;
-
-	srow_t srow = mat_maker<ClassT1, 1, N>::get_cmat(sblk.ptr_data(), 1, n);
+	src.fill_lin();
+	srow_t srow = src.get_cmat();
 
 	dense_matrix<double, M, N> rmat(m, n);
 	for (index_t j = 0; j < n; ++j)
@@ -118,7 +95,7 @@ void test_reprows()
 	ASSERT_EQ( rep_row(srow, m).nrows(), m );
 	ASSERT_EQ( rep_row(srow, m).ncolumns(), n );
 
-	dmat_t dmat = mat_maker<ClassT2, M, N>::get_mat(dblk.ptr_data(), m, n);
+	dmat_t dmat = dst.get_mat();
 	if (M == 0)
 	{
 		dmat = rep_row(srow, m);
@@ -140,20 +117,13 @@ void test_reprows()
 }
 
 
-template<
-	template<typename T2, int M2, int N2> class ClassT2,
-	int M, int N>
+template<class Tag2, int M, int N>
 void test_repcols_ex()
 {
 	const index_t m = M == 0 ? DM : M;
 	const index_t n = N == 0 ? DN : N;
 
-	const index_t max_size2 = mat_maker<ClassT2, M, N>::max_size(m, n);
-
-	dblock<double> dblk(max_size2, zero());
-
-
-	typedef typename mat_maker<ClassT2, M, N>::mat_t dmat_t;
+	typedef typename mat_maker<Tag2, double, M, N>::mat_t dmat_t;
 
 	dense_col<double, M> scol(m);
 	for (index_t i = 0; i < m; ++i) scol[i] = double(i+1);
@@ -170,7 +140,8 @@ void test_repcols_ex()
 	ASSERT_EQ( rep_col(scol, n).nrows(), m );
 	ASSERT_EQ( rep_col(scol, n).ncolumns(), n );
 
-	dmat_t dmat = mat_maker<ClassT2, M, N>::get_mat(dblk.ptr_data(), m, n);
+	mat_maker<Tag2, double, M, N> dst(m, n);
+	dmat_t dmat = dst.get_mat();
 	if (N == 0)
 	{
 		dmat = rep_col(scol * 2.0 + 1.0, n);
@@ -192,19 +163,13 @@ void test_repcols_ex()
 }
 
 
-template<
-	template<typename T2, int M2, int N2> class ClassT2,
-	int M, int N>
+template<class Tag2, int M, int N>
 void test_reprows_ex()
 {
 	const index_t m = M == 0 ? DM : M;
 	const index_t n = N == 0 ? DN : N;
 
-	const index_t max_size2 = mat_maker<ClassT2, M, N>::max_size(m, n);
-
-	dblock<double> dblk(max_size2, zero());
-
-	typedef typename mat_maker<ClassT2, M, N>::mat_t dmat_t;
+	typedef typename mat_maker<Tag2, double, M, N>::mat_t dmat_t;
 
 	dense_row<double, N> srow(n);
 	for (index_t j = 0; j < n; ++j) srow[j] = double(j+1);
@@ -221,7 +186,8 @@ void test_reprows_ex()
 	ASSERT_EQ( rep_row(srow, m).nrows(), m );
 	ASSERT_EQ( rep_row(srow, m).ncolumns(), n );
 
-	dmat_t dmat = mat_maker<ClassT2, M, N>::get_mat(dblk.ptr_data(), m, n);
+	mat_maker<Tag2, double, M, N> dst(m, n);
+	dmat_t dmat = dst.get_mat();
 	if (M == 0)
 	{
 		dmat = rep_row(srow * 2.0 + 1.0, m);
