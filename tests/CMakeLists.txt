@@ -205,7 +205,7 @@ set(MAT_REPEAT_HS
     ${MATEXPR_BASE_HS}
     ${MATRIX_REPEAT_HS})
     
-# add_executable(test_vec_rep ${MAT_REPEAT_HS} test_vec_rep.cpp)
+add_executable(test_vec_rep ${MAT_REPEAT_HS} test_vec_rep.cpp)
 
 set(MAT_TRANS_HS
     ${MATRIX_HS}
@@ -249,7 +249,7 @@ set(LMAT_TEST_NAMES
 	test_mat_ecomp
 	test_mat_elogical
 	test_mat_cast
-	# test_vec_rep
+	test_vec_rep
 	test_direct_trans
 	# test_mat_transpose
 	# test_full_reduce
