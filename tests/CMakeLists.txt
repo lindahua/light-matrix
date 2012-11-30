@@ -94,6 +94,7 @@ set(MATEXPR_BASE_HS
     ${INC}/math/functor_base.h
     ${INC}/matexpr/matexpr_fwd.h
     ${INC}/matexpr/matrix_access_base.h
+    ${INC}/matexpr/matrix_access_eval.h
     ${INC}/matexpr/dense_accessors.h)   
     
 set(MATRIX_EWISE_HS    

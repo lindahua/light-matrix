@@ -13,7 +13,7 @@
 #ifndef LIGHTMAT_DENSE_ACCESSORS_H_
 #define LIGHTMAT_DENSE_ACCESSORS_H_
 
-#include <light_mat/matexpr/matrix_access_base.h>
+#include <light_mat/matexpr/matrix_access_eval.h>
 #include <light_mat/matrix/dense_matrix.h>
 
 namespace lmat
