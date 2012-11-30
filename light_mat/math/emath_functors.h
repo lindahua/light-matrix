@@ -153,7 +153,7 @@ namespace lmat
 	LMAT_DEFINE_REAL_UNARY_FUNCTOR( asinh, math::asinh(x) )
 	LMAT_DEFINE_REAL_UNARY_FUNCTOR( acosh, math::acosh(x) )
 	LMAT_DEFINE_REAL_UNARY_FUNCTOR( atanh, math::atanh(x) )
-#endif LMAT_HAS_C99_MATH
+#endif
 
 	// error & gamma
 

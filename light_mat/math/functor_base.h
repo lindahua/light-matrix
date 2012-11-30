@@ -158,7 +158,7 @@ namespace lmat
 		typedef typename binary_op_result<Fname##_t, T, T>::type result_type; \
 		LMAT_ENSURE_INLINE Fname##_fun() { } \
 		LMAT_ENSURE_INLINE Fname##_fun( Fname##_t ) { } \
-		LMAT_ENSURE_INLINE T operator() (const T& x, const T& y) const { return Expr; } \
+		LMAT_ENSURE_INLINE result_type operator() (const T& x, const T& y) const { return Expr; } \
 	};
 
 
@@ -195,7 +195,7 @@ namespace lmat
 		LMAT_ENSURE_INLINE Fname##_fun( Fname##_t ) { } \
 		LMAT_ENSURE_INLINE result_type operator() (const bool& x) const { return Expr; } \
 	}; \
-	struct binary_op_fun<Op, scalar_kernel_t, bool> { typedef Fname##_fun type; };
+	template<> struct unary_op_fun<Fname##_t, scalar_kernel_t, bool> { typedef Fname##_fun type; };
 
 #define LMAT_DEFINE_LOGICAL_BINARY_FUNCTOR( Fname, Expr ) \
 	struct Fname##_fun { \
@@ -204,7 +204,7 @@ namespace lmat
 		LMAT_ENSURE_INLINE Fname##_fun( Fname##_t ) { } \
 		LMAT_ENSURE_INLINE result_type operator() (const bool& x, const bool& y) const { return Expr; } \
 	}; \
-	struct binary_op_fun<Op, scalar_kernel_t, bool> { typedef Fname##_fun type; };
+	template<> struct binary_op_fun<Fname##_t, scalar_kernel_t, bool, bool> { typedef Fname##_fun type; };
 
 
 #endif 

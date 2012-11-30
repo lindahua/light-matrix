@@ -28,38 +28,31 @@ void fill_ran(dense_matrix<double, M, N>& X, double a, double b)
 }
 
 
-template<
-	template <typename T1, int M1, int N1> class ClassT1,
-	template <typename T2, int M2, int N2> class ClassT2,
-	int M, int N
->
+template<class Tag1, class Tag2, int M, int N>
 void test_scheme_choice()
 {
 	const index_t m = M == 0 ? DM : M;
 	const index_t n = N == 0 ? DN : N;
 
-	typedef typename mat_maker<ClassT1, M, N>::cmat_t cmat1_t;
-	typedef typename mat_maker<ClassT2, M, N>::cmat_t cmat2_t;
+	typedef typename mat_maker<Tag1, double, M, N>::cmat_t cmat1_t;
+	typedef typename mat_maker<Tag2, double, M, N>::cmat_t cmat2_t;
 
-	const index_t max_size1 = mat_maker<ClassT1, M, N>::max_size(m, n);
-	const index_t max_size2 = mat_maker<ClassT2, M, N>::max_size(m, n);
+	mat_maker<Tag1, double, M, N> a_src(m, n);
+	mat_maker<Tag2, double, M, N> b_src(m, n);
 
-	dblock<double> sblk1(max_size1);
-	dblock<double> sblk2(max_size2);
-
-	dmat_t r(m, n);
-
-	cmat1_t sa = mat_maker<ClassT1, M, N>::get_cmat(sblk1.ptr_data(), m, n);
-	cmat2_t sb = mat_maker<ClassT2, M, N>::get_cmat(sblk2.ptr_data(), m, n);
+	cmat1_t a = a_src.get_cmat();
+	cmat2_t b = b_src.get_cmat();
 
 	bool supp_lin1 = ct_is_continuous<cmat1_t>::value || ct_is_vector<cmat1_t>::value;
 	bool supp_lin2 = ct_is_continuous<cmat2_t>::value || ct_is_vector<cmat2_t>::value;
 
-	bool expect_lin_u = get_default_eval_scheme(-sa, r).use_linear();
+	dmat_t r(m, n);
+
+	bool expect_lin_u = get_default_eval_scheme(-a, r).use_linear();
 
 	ASSERT_EQ( expect_lin_u, supp_lin1 );
 
-	bool expect_lin_b = get_default_eval_scheme(sa + sb, r).use_linear();
+	bool expect_lin_b = get_default_eval_scheme(a + b, r).use_linear();
 
 	ASSERT_EQ( expect_lin_b, supp_lin1 && supp_lin2 );
 }
@@ -67,47 +60,47 @@ void test_scheme_choice()
 
 MN_CASE( sch_choice, mat_mat )
 {
-	test_scheme_choice<ref_matrix, ref_matrix, M, N>();
+	test_scheme_choice<cont, cont, M, N>();
 }
 
 MN_CASE( sch_choice, mat_blk )
 {
-	test_scheme_choice<ref_matrix, ref_block, M, N>();
+	test_scheme_choice<cont, bloc, M, N>();
 }
 
 MN_CASE( sch_choice, mat_grid )
 {
-	test_scheme_choice<ref_matrix, ref_grid, M, N>();
+	test_scheme_choice<cont, grid, M, N>();
 }
 
 MN_CASE( sch_choice, blk_mat )
 {
-	test_scheme_choice<ref_block, ref_matrix, M, N>();
+	test_scheme_choice<bloc, cont, M, N>();
 }
 
 MN_CASE( sch_choice, blk_blk )
 {
-	test_scheme_choice<ref_block, ref_block, M, N>();
+	test_scheme_choice<bloc, bloc, M, N>();
 }
 
 MN_CASE( sch_choice, blk_grid )
 {
-	test_scheme_choice<ref_block, ref_grid, M, N>();
+	test_scheme_choice<bloc, grid, M, N>();
 }
 
 MN_CASE( sch_choice, grid_mat )
 {
-	test_scheme_choice<ref_grid, ref_matrix, M, N>();
+	test_scheme_choice<grid, cont, M, N>();
 }
 
 MN_CASE( sch_choice, grid_blk )
 {
-	test_scheme_choice<ref_grid, ref_block, M, N>();
+	test_scheme_choice<grid, bloc, M, N>();
 }
 
 MN_CASE( sch_choice, grid_grid )
 {
-	test_scheme_choice<ref_grid, ref_grid, M, N>();
+	test_scheme_choice<grid, grid, M, N>();
 }
 
 

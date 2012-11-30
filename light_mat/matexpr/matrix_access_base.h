@@ -115,6 +115,13 @@ namespace lmat
 	};
 
 
+	template<typename T, class AccCate>
+	struct macc_accessor_map<scalar_expr<T>, AccCate, scalar_kernel_t>
+	{
+		typedef const_scalar_accessor<T> type;
+	};
+
+
 	/********************************************
 	 *
 	 *  macc schemes
@@ -343,7 +350,6 @@ namespace lmat
 			return type::get_default(sexpr, dmat);
 		}
 	};
-
 
 }
 

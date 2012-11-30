@@ -167,7 +167,7 @@ namespace lmat
 			const IMatrixXpr<Mat1, T1>& A,
 			const scalar_expr<T2>& B)
 	{
-		return B.nrows();
+		return A.nrows();
 	}
 
 	template<class Mat1, typename T1, class Mat2, typename T2, class Mat3, typename T3>
@@ -208,7 +208,7 @@ namespace lmat
 			const IMatrixXpr<Mat1, T1>& A,
 			const scalar_expr<T2>& B)
 	{
-		return B.ncolumns();
+		return A.ncolumns();
 	}
 
 	template<class Mat1, typename T1, class Mat2, typename T2, class Mat3, typename T3>
