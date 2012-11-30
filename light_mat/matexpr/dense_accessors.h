@@ -322,6 +322,12 @@ namespace lmat
 				generic_macc_cost<Xpr, AccCate, KerCate>::value;
 	};
 
+	template<typename T, typename AccCate, typename KerCate>
+	struct macc_cost<scalar_expr<T>, AccCate, KerCate>
+	{
+		static const int value = 0;
+	};
+
 
 }
 

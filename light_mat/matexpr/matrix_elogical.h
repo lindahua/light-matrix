@@ -17,37 +17,12 @@
 #include <light_mat/math/logical_functors.h>
 
 
-#define LMAT_DEFINE_UNARY_LOGICAL_MATFUNCTION( Fname, Op ) \
-		template<class Arg> \
-		LMAT_ENSURE_INLINE \
-		inline typename unary_expr_map<ewise_t<Op>, ref_arg_t, Arg>::type \
-		Fname (const IMatrixXpr<Arg, bool>& arg) \
-		{ return ewise( Op(), arg ); }
-
-#define LMAT_DEFINE_BINARY_LOGICAL_MATFUNCTION( Fname, Op ) \
-		template<class Arg1, class Arg2> \
-		LMAT_ENSURE_INLINE \
-		inline typename binary_expr_map<ewise_t<Op>, ref_arg_t, Arg1, ref_arg_t, Arg2>::type \
-		Fname (const IMatrixXpr<Arg1, bool>& arg1, const IMatrixXpr<Arg2, bool>& arg2) \
-		{ return ewise( Op(), arg1, arg2 ); } \
-		template<class Arg2> \
-		LMAT_ENSURE_INLINE \
-		inline typename unary_expr_map<ewise_fix1st_t<Op, bool>, ref_arg_t, Arg2>::type \
-		Fname (const bool& arg1v, const IMatrixXpr<Arg2, bool>& arg2) \
-		{ return ewise_fix1st( Op(), arg1v, arg2 ); } \
-		template<class Arg1> \
-		LMAT_ENSURE_INLINE \
-		inline typename unary_expr_map<ewise_fix2nd_t<Op, bool>, ref_arg_t, Arg1>::type \
-		Fname (const IMatrixXpr<Arg1, bool>& arg1, const bool& arg2v) \
-		{ return ewise_fix2nd( Op(), arg1, arg2v ); }
-
-
 namespace lmat
 {
-	LMAT_DEFINE_UNARY_LOGICAL_MATFUNCTION ( operator ~, not_t )
-	LMAT_DEFINE_BINARY_LOGICAL_MATFUNCTION( operator &, and_t )
-	LMAT_DEFINE_BINARY_LOGICAL_MATFUNCTION( operator |, or_t )
-	LMAT_DEFINE_BINARY_LOGICAL_MATFUNCTION( operator ^, xor_t )
+	LMAT_DEFINE_UNARY_MATFUNCTION_S ( operator ~, not_t, bool )
+	LMAT_DEFINE_BINARY_MATFUNCTION_S( operator &, and_t, bool )
+	LMAT_DEFINE_BINARY_MATFUNCTION_S( operator |, or_t,  bool )
+	LMAT_DEFINE_BINARY_MATFUNCTION_S( operator ^, xor_t, bool )
 }
 
 #endif 

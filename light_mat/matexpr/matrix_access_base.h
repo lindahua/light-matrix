@@ -67,6 +67,38 @@ namespace lmat
 
 	/********************************************
 	 *
+	 *  Accessors for scalar expression
+	 *
+	 ********************************************/
+
+	// linear scalar accessing
+
+	template<class Mat, typename T>
+	class const_scalar_accessor
+		: public ILinearMatrixScalarAccessor<const_scalar_accessor<Mat, T>, T>
+		, public IPerColMatrixScalarAccessor<const_scalar_accessor<Mat, T>, T>
+	{
+	public:
+		LMAT_ENSURE_INLINE
+		const_scalar_accessor(const scalar_expr<T>& xpr)
+		: m_val(xpr.value)
+		{ }
+
+		LMAT_ENSURE_INLINE
+		T get_scalar(const index_t i) const
+		{
+			return m_val;
+		}
+
+	private:
+		const T m_val;
+	};
+
+
+
+
+	/********************************************
+	 *
 	 *  macc schemes
 	 *
 	 ********************************************/
