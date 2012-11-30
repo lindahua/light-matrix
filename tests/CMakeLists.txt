@@ -213,7 +213,7 @@ set(MAT_TRANS_HS
     ${MATRIX_TRANS_HS})
     
 add_executable(test_direct_trans ${MAT_TRANS_HS} test_direct_trans.cpp)
-# add_executable(test_mat_transpose ${MAT_TRANS_HS} test_mat_transpose.cpp)
+add_executable(test_mat_transpose ${MAT_TRANS_HS} test_mat_transpose.cpp)
 
 set(MAT_REDUC_HS
     ${MATRIX_HS}
@@ -251,7 +251,7 @@ set(LMAT_TEST_NAMES
 	test_mat_cast
 	test_vec_rep
 	test_direct_trans
-	# test_mat_transpose
+	test_mat_transpose
 	# test_full_reduce
 	# test_partial_reduce
 	# test_cpd_ewise

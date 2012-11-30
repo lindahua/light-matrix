@@ -50,7 +50,7 @@ void test_mat_transpose()
 	cmat_t smat = src.get_cmat();
 	mat_t dmat = dst.get_mat();
 
-	smat.fill_lin();
+	src.fill_lin();
 	dmat = trans(smat);
 
 	dense_matrix<double, N, M> rmat(n, m);
@@ -72,7 +72,7 @@ void test_mat_transpose()
 	cmat2_t smat2 = src2.get_cmat();
 	mat2_t dmat2 = dst2.get_mat();
 
-	smat2.fill_lin();
+	src2.fill_lin();
 	dmat2 = trans(smat2);
 
 	dense_matrix<double, M, N> rmat2(m, n);
@@ -102,7 +102,7 @@ void test_xpr_transpose()
 	cmat_t smat = src.get_cmat();
 	mat_t dmat = dst.get_mat();
 
-	smat.fill_lin();
+	src.fill_lin();
 	dmat = trans(smat * 2.0 + 1.0);
 
 	dense_matrix<double, N, M> rmat(n, m);
@@ -124,7 +124,7 @@ void test_xpr_transpose()
 	cmat2_t smat2 = src2.get_cmat();
 	mat2_t dmat2 = dst2.get_mat();
 
-	smat2.fill_lin();
+	src2.fill_lin();
 	dmat2 = trans(smat2 * 2.0 + 1.0);
 
 	dense_matrix<double, M, N> rmat2(m, n);
@@ -152,21 +152,21 @@ void test_xpr_transpose()
 	ADD_MN_CASE_3X3( mat_trans, name, DM, DN ) \
 	END_TPACK
 
-TEST_MAT_TRANS( ref_matrix, ref_matrix, mat_to_mat )
-TEST_MAT_TRANS( ref_matrix, ref_block, mat_to_blk )
-TEST_MAT_TRANS( ref_matrix, ref_grid, mat_to_grid )
+TEST_MAT_TRANS( cont, cont, mat_to_mat )
+TEST_MAT_TRANS( cont, bloc, mat_to_blk )
+TEST_MAT_TRANS( cont, grid, mat_to_grid )
 
-TEST_MAT_TRANS( ref_block, ref_matrix, blk_to_mat )
-TEST_MAT_TRANS( ref_block, ref_block, blk_to_blk )
-TEST_MAT_TRANS( ref_block, ref_grid, blk_to_grid )
+TEST_MAT_TRANS( bloc, cont, blk_to_mat )
+TEST_MAT_TRANS( bloc, bloc, blk_to_blk )
+TEST_MAT_TRANS( bloc, grid, blk_to_grid )
 
-TEST_MAT_TRANS( ref_grid, ref_matrix, grid_to_mat )
-TEST_MAT_TRANS( ref_grid, ref_block, grid_to_blk )
-TEST_MAT_TRANS( ref_grid, ref_grid, grid_to_grid )
+TEST_MAT_TRANS( grid, cont, grid_to_mat )
+TEST_MAT_TRANS( grid, bloc, grid_to_blk )
+TEST_MAT_TRANS( grid, grid, grid_to_grid )
 
-TEST_XPR_TRANS( ref_matrix, xpr_to_mat )
-TEST_XPR_TRANS( ref_block, xpr_to_blk )
-TEST_XPR_TRANS( ref_grid, xpr_to_grid )
+TEST_XPR_TRANS( cont, xpr_to_mat )
+TEST_XPR_TRANS( bloc, xpr_to_blk )
+TEST_XPR_TRANS( grid, xpr_to_grid )
 
 BEGIN_MAIN_SUITE
 	ADD_TPACK( mat_trans_mat_to_mat )
