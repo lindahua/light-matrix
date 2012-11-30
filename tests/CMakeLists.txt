@@ -62,6 +62,7 @@ set(MATRIX_BASE_HS
     ${INC}/matrix/matrix_layout.h
     ${INC}/matrix/matrix_fwd.h 
     ${INC}/matrix/matrix_meta.h
+    ${INC}/matrix/scalar_expr.h
     ${INC}/matrix/matrix_shape.h
     ${INC}/matrix/matrix_concepts.h
     ${INC}/matrix/matrix_properties.h
@@ -95,7 +96,7 @@ set(MATEXPR_BASE_HS
     ${INC}/matexpr/matrix_access_base.h
     ${INC}/matexpr/dense_accessors.h)   
     
-set(MATRIX_EWISE_HS
+set(MATRIX_EWISE_HS    
     ${INC}/math/arith_functors.h
     ${INC}/math/emath_functors.h
     ${INC}/math/comp_functors.h

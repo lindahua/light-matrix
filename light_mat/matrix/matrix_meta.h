@@ -142,54 +142,6 @@ namespace lmat
 		typedef matrix_shape<ct_rows<Mat>::value, ct_cols<Mat>::value> type;
 	};
 
-	template<int N1, int N2>
-	struct is_compatible_ctdim
-	{
-		static const bool value = N1 >= 0 && N2 >= 0 && (N1 == 0 || N2 == 0 || N1 == N2);
-	};
-
-	template<int N1, int N2>
-	struct common_ctdim
-	{
-		static const int _maybe_value_ = N1 > N2 ? N1 : N2;
-		static const int value = enable_int_if<is_compatible_ctdim<N1, N2>, _maybe_value_>::value;
-	};
-
-	template<class Mat1, class Mat2>
-	struct common_ctrows
-	{
-		static const int value = common_ctdim<ct_rows<Mat1>::value, ct_rows<Mat2>::value>::value;
-	};
-
-	template<class Mat1, class Mat2>
-	struct common_ctcols
-	{
-		static const int value = common_ctdim<ct_cols<Mat1>::value, ct_cols<Mat2>::value>::value;
-	};
-
-	template<class Mat1, class Mat2>
-	struct common_ctsize
-	{
-		static const int value = common_ctrows<Mat1, Mat2>::value * common_ctcols<Mat1, Mat2>::value;
-	};
-
-	template<class Mat1, class Mat2>
-	struct common_shape
-	{
-		static const int ct_nrows = common_ctrows<Mat1, Mat2>::value;
-		static const int ct_ncols = common_ctcols<Mat1, Mat2>::value;
-		typedef matrix_shape<ct_nrows, ct_ncols> type;
-	};
-
-
-	template<class LMat, class RMat>
-	struct has_compatible_ct_size
-	{
-		static const bool value =
-				is_compatible_ctdim<ct_rows<LMat>::value, ct_rows<RMat>::value>::value &&
-				is_compatible_ctdim<ct_cols<LMat>::value, ct_cols<RMat>::value>::value;
-	};
-
 	template<class Mat>
 	struct ct_is_row
 	{
@@ -244,6 +196,154 @@ namespace lmat
 	{
 		static const bool value = has_static_nrows<Mat>::value && has_static_ncols<Mat>::value;
 	};
+
+
+	/********************************************
+	 *
+	 *  Common dimensions
+	 *
+	 ********************************************/
+
+	// compatible ct_dim
+
+	namespace intern
+	{
+		template<int N1, int N2>
+		struct _is_compatible_dim_c
+		{
+			static const bool value = N1 >= 0 && N2 >= 0 && (N1 == 0 || N2 == 0 || N1 == N2);
+		};
+	}
+
+	template<int N1, int N2, int N3=0>
+	struct is_compatible_ctdim_c;
+
+	template<int N1, int N2, int N3>
+	struct is_compatible_ctdim_c
+	{
+		static const bool value =
+				intern::_is_compatible_dim_c<N1, N2>::value &&
+				intern::_is_compatible_dim_c<N1, N3>::value &&
+				intern::_is_compatible_dim_c<N2, N3>::value;
+	};
+
+	template<int N1, int N2>
+	struct is_compatible_ctdim_c<N1, N2, 0>
+	{
+		static const bool value = intern::_is_compatible_dim_c<N1, N2>::value;
+	};
+
+	template<typename F1, typename F2, typename F3=nil_t>
+	struct is_compatible_ctdim
+	{
+		static const bool value =
+				is_compatible_ctdim_c<F1::value, F2::value, F3::value>::value;
+	};
+
+	template<typename F1, typename F2>
+	struct is_compatible_ctdim<F1, F2, nil_t>
+	{
+		static const bool value =
+				is_compatible_ctdim_c<F1::value, F2::value>::value;
+	};
+
+
+	// common_ctdim
+
+	template<int N1, int N2, int N3=0>
+	struct common_ctdim_c;
+
+	template<int N1, int N2, int N3>
+	struct common_ctdim_c
+	{
+		static const int _maybe_value_ = max_int_c<max_int_c<N1, N2>::value, N3>::value;
+		static const int value = enable_int_if<is_compatible_ctdim_c<N1, N2, N3>, _maybe_value_>::value;
+	};
+
+	template<int N1, int N2>
+	struct common_ctdim_c<N1, N2, 0>
+	{
+		static const int _maybe_value_ = max_int_c<N1, N2>::value;
+		static const int value = enable_int_if<is_compatible_ctdim_c<N1, N2>, _maybe_value_>::value;
+	};
+
+
+	template<typename F1, typename F2, typename F3=nil_t>
+	struct common_ctdim
+	{
+		static const int value = common_ctdim_c<F1::value, F2::value, F3::value>::value;
+	};
+
+	template<typename F1, typename F2>
+	struct common_ctdim<F1, F2, nil_t>
+	{
+		static const int value = common_ctdim_c<F1::value, F2::value>::value;
+	};
+
+
+	// common rows
+
+	template<class Mat1, class Mat2, class Mat3=nil_t>
+	struct common_ctrows
+	{
+		static const int value = common_ctdim< ct_rows<Mat1>, ct_rows<Mat2> >::value;
+	};
+
+	template<class Mat1, class Mat2>
+	struct common_ctrows<Mat1, Mat2, nil_t>
+	{
+		static const int value = common_ctdim< ct_rows<Mat1>, ct_rows<Mat2> >::value;
+	};
+
+	// common cols
+
+	template<class Mat1, class Mat2, class Mat3=nil_t>
+	struct common_ctcols
+	{
+		static const int value = common_ctdim< ct_cols<Mat1>, ct_cols<Mat2> >::value;
+	};
+
+	template<class Mat1, class Mat2>
+	struct common_ctcols<Mat1, Mat2, nil_t>
+	{
+		static const int value = common_ctdim< ct_cols<Mat1>, ct_cols<Mat2> >::value;
+	};
+
+
+	// common size
+
+	template<class Mat1, class Mat2, class Mat3=nil_t>
+	struct common_ctsize
+	{
+		static const int value = common_ctrows<Mat1, Mat2, Mat3>::value * common_ctcols<Mat1, Mat2, Mat3>::value;
+	};
+
+	template<class Mat1, class Mat2, class Mat3=nil_t>
+	struct common_shape
+	{
+		static const int ct_nrows = common_ctrows<Mat1, Mat2, Mat3>::value;
+		static const int ct_ncols = common_ctcols<Mat1, Mat2, Mat3>::value;
+		typedef matrix_shape<ct_nrows, ct_ncols> type;
+	};
+
+	// has compatible size
+
+	template<class Mat1, class Mat2, class Mat3=nil_t>
+	struct has_compatible_ct_size
+	{
+		static const bool value =
+				is_compatible_ctdim<ct_rows<Mat1>, ct_rows<Mat2>, ct_rows<Mat3> >::value &&
+				is_compatible_ctdim<ct_cols<Mat1>, ct_cols<Mat2>, ct_rows<Mat3> >::value;
+	};
+
+	template<class Mat1, class Mat2>
+	struct has_compatible_ct_size<Mat1, Mat2, nil_t>
+	{
+		static const bool value =
+				is_compatible_ctdim<ct_rows<Mat1>, ct_rows<Mat2> >::value &&
+				is_compatible_ctdim<ct_cols<Mat1>, ct_cols<Mat2> >::value;
+	};
+
 
 	template<class LMat, class RMat>
 	struct ct_has_same_nrows

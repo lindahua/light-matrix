@@ -71,12 +71,20 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	// linear scalar accessing
+	template<typename T> class const_scalar_accessor;
 
-	template<class Mat, typename T>
+	// scalar accessing
+
+	template<class T>
+	struct percol_macc_state_map<const_scalar_accessor<T> >
+	{
+		typedef nil_t type;
+	};
+
+	template<typename T>
 	class const_scalar_accessor
-		: public ILinearMatrixScalarAccessor<const_scalar_accessor<Mat, T>, T>
-		, public IPerColMatrixScalarAccessor<const_scalar_accessor<Mat, T>, T>
+		: public ILinearMatrixScalarAccessor<const_scalar_accessor<T>, T>
+		, public IPerColMatrixScalarAccessor<const_scalar_accessor<T>, T>
 	{
 	public:
 		LMAT_ENSURE_INLINE
@@ -90,11 +98,21 @@ namespace lmat
 			return m_val;
 		}
 
+		LMAT_ENSURE_INLINE
+		T get_scalar(const index_t i, nil_t) const
+		{
+			return m_val;
+		}
+
+		LMAT_ENSURE_INLINE
+		nil_t col_state(const index_t j) const
+		{
+			return nil_t();
+		}
+
 	private:
 		const T m_val;
 	};
-
-
 
 
 	/********************************************

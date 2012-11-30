@@ -83,7 +83,9 @@ namespace lmat
 		const int M = common_ctrows<SExpr, DMat>::value;
 		const int N = common_ctcols<SExpr, DMat>::value;
 
-		return matrix_copy_scheme<M, N>(dmat.nrows(), dmat.ncolumns());
+		return matrix_copy_scheme<M, N>(
+				get_common_nrows(sexpr, dmat),
+				get_common_ncolumns(sexpr, dmat));
 	}
 
 	template<typename T, class SExpr, class DMat>

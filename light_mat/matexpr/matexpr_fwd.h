@@ -33,31 +33,6 @@ namespace lmat
 	template<typename Op, typename Arg_HP, class Arg> class colwise_reduce_expr;
 	template<typename Op, typename Arg_HP, class Arg> class rowwise_reduce_expr;
 
-	// scalar expression
-
-	template<typename T>
-	struct scalar_expr
-	{
-		const T value;
-
-		LMAT_ENSURE_INLINE
-		scalar_expr(const T& v)
-		: value(v) { }
-	};
-
-	template<typename T>
-	LMAT_ENSURE_INLINE
-	inline scalar_expr<T> make_scalar(const T& v)
-	{
-		return v;
-	}
-
-	template<typename T>
-	struct matrix_traits<scalar_expr<T> >
-	{
-		typedef T value_type;
-	};
-
 }
 
 #endif /* MATEXPR_FWD_H_ */

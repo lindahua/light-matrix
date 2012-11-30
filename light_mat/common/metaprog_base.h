@@ -130,6 +130,20 @@ namespace lmat
 	};
 
 
+	// calculation
+
+	template<int N1, int N2>
+	struct max_int_c
+	{
+		static const int value = N1 > N2 ? N1 : N2;
+	};
+
+	template<int N1, int N2>
+	struct min_int_c
+	{
+		static const int value = N1 < N2 ? N1 : N2;
+	};
+
 }
 
 #endif
