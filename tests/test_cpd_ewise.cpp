@@ -8,7 +8,7 @@
 
 #include "test_base.h"
 
-#include <light_mat/matrix/matrix_eval.h>
+#include <light_mat/matexpr/matexpr_eval.h>
 #include <light_mat/math/math_constants.h>
 #include <cstdlib>
 
@@ -75,9 +75,6 @@ MN_CASE( cpd_expr, ewise_normpdf )
 
 	dense_matrix<double, M, N> Y = c * exp( - sqr(X - mu) / (2.0 * sigma2) );
 
-	const_matrix<double, M, N> mu_mat(m, n, mu);
-	dense_matrix<double, M, N> Y2 = c * exp( - sqr(X - mu_mat) * (1 / (2.0 * sigma2)) );
-
 	dense_matrix<double, M, N> R(m, n);
 
 	for (index_t j = 0; j < n; ++j)
@@ -89,7 +86,6 @@ MN_CASE( cpd_expr, ewise_normpdf )
 	}
 
 	ASSERT_TRUE( is_approx(Y, R, tol) );
-	ASSERT_TRUE( is_approx(Y2, R, tol) );
 }
 
 
@@ -134,9 +130,9 @@ MN_CASE( cpd_expr, pwise_sqdist )
 	const double tol = 1.0e-12;
 
 	dense_matrix<double, M, N> Y =
-			  hrep(sqr(vx), n)
-			+ vrep(sqr(vy), m)
-			- 2.0 * hrep(vx, n) * vrep(vy, m);
+			  rep_col(sqr(vx), n)
+			+ rep_row(sqr(vy), m)
+			- 2.0 * rep_col(vx, n) * rep_row(vy, m);
 
 	dense_matrix<double, M, N> R(m, n);
 
@@ -165,9 +161,9 @@ MN_CASE( cpd_expr, pwise_sqdist2 )
 
 
 	dense_matrix<double, M, N> Y =
-			  hrep(sqr(vx), n)
-			+ hrep(sqr(vy), m).trans()
-			- 2.0 * hrep(vx, n) * vrep(vy.trans(), m);
+			  rep_col(sqr(vx), n)
+			+ trans(rep_col(sqr(vy), m))
+			- 2.0 * rep_col(vx, n) * rep_row(trans(vy), m);
 
 	dense_matrix<double, M, N> R(m, n);
 
