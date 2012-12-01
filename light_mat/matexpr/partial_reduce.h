@@ -70,8 +70,8 @@ namespace lmat
 
 		static const bool is_readonly = true;
 
-		typedef typename matrix_traits<Arg1>::type arg1_value_type;
-		typedef typename matrix_traits<Arg2>::type arg2_value_type;
+		typedef typename matrix_traits<Arg1>::value_type arg1_value_type;
+		typedef typename matrix_traits<Arg2>::value_type arg2_value_type;
 		typedef typename reduction_result<Tag, arg1_value_type, arg2_value_type>::type value_type;
 
 		typedef typename binary_domain<Arg1, Arg2>::type domain;
@@ -87,8 +87,8 @@ namespace lmat
 
 		static const bool is_readonly = true;
 
-		typedef typename matrix_traits<Arg1>::type arg1_value_type;
-		typedef typename matrix_traits<Arg2>::type arg2_value_type;
+		typedef typename matrix_traits<Arg1>::value_type arg1_value_type;
+		typedef typename matrix_traits<Arg2>::value_type arg2_value_type;
 		typedef typename reduction_result<Tag, arg1_value_type, arg2_value_type>::type value_type;
 
 		typedef typename binary_domain<Arg1, Arg2>::type domain;
@@ -176,8 +176,8 @@ namespace lmat
 		unary_partial_reduce_expr(const Tag& t,
 				const arg_forwarder<Arg_HP, Arg>& arg_fwd)
 		: base_t(arg_fwd), m_tag(t)
-		, m_shape( internal::partial_reduc_nrows(AlongDim(), arg_fwd.arg()),
-				   internal::partial_reduc_ncolumns(AlongDim(), arg_fwd.arg()) )
+		, m_shape( internal::partial_reduc_nrows(AlongDim(), arg_fwd.arg),
+				   internal::partial_reduc_ncolumns(AlongDim(), arg_fwd.arg) )
 		{ }
 
 		LMAT_ENSURE_INLINE const Tag& tag() const
@@ -222,8 +222,8 @@ namespace lmat
 				const arg_forwarder<Arg1_HP, Arg1>& arg1_fwd,
 				const arg_forwarder<Arg2_HP, Arg2>& arg2_fwd)
 		: base_t(arg1_fwd, arg2_fwd), m_tag(t)
-		, m_shape( internal::partial_reduc_nrows(AlongDim(), arg1_fwd.arg(), arg2_fwd.arg()),
-				   internal::partial_reduc_ncolumns(AlongDim(), arg1_fwd.arg(), arg2_fwd.arg()) )
+		, m_shape( internal::partial_reduc_nrows(AlongDim(), arg1_fwd.arg, arg2_fwd.arg),
+				   internal::partial_reduc_ncolumns(AlongDim(), arg1_fwd.arg, arg2_fwd.arg) )
 		{ }
 
 		LMAT_ENSURE_INLINE const Tag& tag() const
@@ -300,7 +300,7 @@ namespace lmat
 		typedef unary_partial_reduce_expr<Tag, AlongDim, Arg_HP, Arg> type;
 
 		LMAT_ENSURE_INLINE
-		static type get(const ewise_t<Tag>& spec,
+		static type get(const par_reduc_t<Tag, AlongDim>& spec,
 				const arg_forwarder<Arg_HP, Arg>& arg_fwd)
 		{
 			return type(spec.tag, arg_fwd);
@@ -313,7 +313,7 @@ namespace lmat
 		typedef binary_partial_reduce_expr<Tag, AlongDim, Arg1_HP, Arg1, Arg2_HP, Arg2> type;
 
 		LMAT_ENSURE_INLINE
-		static type get(const ewise_t<Tag>& spec,
+		static type get(const par_reduc_t<Tag, AlongDim>& spec,
 				const arg_forwarder<Arg1_HP, Arg1>& arg1_fwd,
 				const arg_forwarder<Arg2_HP, Arg2>& arg2_fwd)
 		{
@@ -434,7 +434,7 @@ namespace lmat
 		template<typename Arg_HP, class Arg, class DMat>
 		LMAT_ENSURE_INLINE
 		void evaluate(
-				const unary_partial_reduce_expr<Tag, colwise, Arg_HP, Arg>& sexpr,
+				const unary_partial_reduce_expr<Tag, AlongDim, Arg_HP, Arg>& sexpr,
 				DMat& dmat)
 		{
 			internal::_partial_reduce(sexpr.tag(), AlongDim(),
@@ -444,7 +444,7 @@ namespace lmat
 		template<typename Arg1_HP, class Arg1, typename Arg2_HP, class Arg2, class DMat>
 		LMAT_ENSURE_INLINE
 		void evaluate(
-				const binary_partial_reduce_expr<Tag, colwise, Arg1_HP, Arg1, Arg2_HP, Arg2>& sexpr,
+				const binary_partial_reduce_expr<Tag, AlongDim, Arg1_HP, Arg1, Arg2_HP, Arg2>& sexpr,
 				DMat& dmat)
 		{
 			internal::_partial_reduce(sexpr.tag(), AlongDim(),

@@ -35,7 +35,7 @@ namespace lmat { namespace internal {
 		typedef vec_reduce_core_setting<Tag, scalar_ker, T> setting_t;
 		typedef typename setting_t::media_t media_t;
 
-		typedef typename macc_accessor_map<Xpr, linear_macc, scalar_ker>::type accessor_t;
+		typedef typename macc_accessor_map<Xpr, percol_macc, scalar_ker>::type accessor_t;
 		typedef typename reduction_fun<Tag, scalar_ker, T>::type fun_t;
 		typedef internal::vec_reduce_percol_scalar_term_accessor<
 				fun_t, media_t, accessor_t> term_accessor_t;
@@ -54,7 +54,7 @@ namespace lmat { namespace internal {
 			{
 				for (index_t j = 0; j < n; ++j)
 				{
-					media_t u = fun.transform(acc.get_scalar(0, acc.col_state(0)));
+					media_t u = fun.transform(acc.get_scalar(0, acc.col_state(j)));
 					dst(0, j) = fun.get(u, 1);
 				}
 			}
@@ -82,8 +82,8 @@ namespace lmat { namespace internal {
 		typedef vec_reduce_core_setting<Tag, scalar_ker, T1, T2> setting_t;
 		typedef typename setting_t::media_t media_t;
 
-		typedef typename macc_accessor_map<Xpr1, linear_macc, scalar_ker>::type accessor1_t;
-		typedef typename macc_accessor_map<Xpr2, linear_macc, scalar_ker>::type accessor2_t;
+		typedef typename macc_accessor_map<Xpr1, percol_macc, scalar_ker>::type accessor1_t;
+		typedef typename macc_accessor_map<Xpr2, percol_macc, scalar_ker>::type accessor2_t;
 		typedef typename reduction_fun<Tag, scalar_ker, T1, T2>::type fun_t;
 		typedef internal::vec_reduce_percol_scalar_term_accessor<
 				fun_t, media_t, accessor1_t, accessor2_t> term_accessor_t;
@@ -104,8 +104,8 @@ namespace lmat { namespace internal {
 				for (index_t j = 0; j < n; ++j)
 				{
 					media_t u = fun.transform(
-							acc1.get_scalar(0, acc1.col_state(0)),
-							acc2.get_scalar(0, acc2.col_state(0)));
+							acc1.get_scalar(0, acc1.col_state(j)),
+							acc2.get_scalar(0, acc2.col_state(j)));
 					dst(0, j) = fun.get(u, 1);
 				}
 			}
@@ -160,15 +160,15 @@ namespace lmat { namespace internal {
 
 	template<class Fun, class In, typename ResultT>
 	LMAT_ENSURE_INLINE
-	inline void _rowwise_post_reduce(const Fun& fun, index_t len, const In& in, ResultT* dst, index_t dst_rs)
+	inline void _rowwise_post_reduce(const Fun& fun, index_t m, index_t n, const In& in, ResultT* dst, index_t dst_rs)
 	{
 		if (dst_rs == 1)
 		{
-			for (index_t i = 0; i < len; ++i) dst[i] = fun.get(in[i]);
+			for (index_t i = 0; i < m; ++i) dst[i] = fun.get(in[i], n);
 		}
 		else
 		{
-			for (index_t i = 0; i < len; ++i) dst[i * dst_rs] = fun.get(in[i]);
+			for (index_t i = 0; i < m; ++i) dst[i * dst_rs] = fun.get(in[i], n);
 		}
 	}
 
@@ -177,7 +177,7 @@ namespace lmat { namespace internal {
 	struct _rowwise_reduc_helper<Impl, M, scalar_ker, InterT, ResultT>
 	{
 		template<class Fun, class Acc>
-		void eval(const Fun& fun, const Acc& acc, index_t m, index_t n, ResultT* dst, index_t dst_rs)
+		static void eval(const Fun& fun, const Acc& acc, index_t m, index_t n, ResultT* dst, index_t dst_rs)
 		{
 			typedef internal::vec_reduce_percol_scalar_term_accessor<Fun, InterT, Acc> term_accessor_t;
 			term_accessor_t tacc0(fun, 0, acc);
@@ -199,12 +199,12 @@ namespace lmat { namespace internal {
 					Impl::parallel_accum(fun, m, tacc, out);
 				}
 
-				_rowwise_post_reduce(fun, m, temp, dst, dst_rs);
+				_rowwise_post_reduce(fun, m, n, temp, dst, dst_rs);
 			}
 		}
 
 		template<class Fun, class Acc1, class Acc2>
-		void eval(const Fun& fun, const Acc1& acc1, const Acc2& acc2, index_t m, index_t n, ResultT* dst, index_t dst_rs)
+		static void eval(const Fun& fun, const Acc1& acc1, const Acc2& acc2, index_t m, index_t n, ResultT* dst, index_t dst_rs)
 		{
 			typedef internal::vec_reduce_percol_scalar_term_accessor<Fun, InterT, Acc1, Acc2> term_accessor_t;
 			term_accessor_t tacc0(fun, 0, acc1, acc2);
@@ -226,7 +226,7 @@ namespace lmat { namespace internal {
 					Impl::parallel_accum(fun, m, tacc, out);
 				}
 
-				_rowwise_post_reduce(fun, m, temp, dst, dst_rs);
+				_rowwise_post_reduce(fun, m, n, temp, dst, dst_rs);
 			}
 		}
 	};
@@ -235,7 +235,7 @@ namespace lmat { namespace internal {
 	struct _rowwise_reduc_helper<Impl, M, scalar_ker, RT, RT>
 	{
 		template<class Fun, class Acc>
-		void eval(const Fun& fun, const Acc& acc, index_t m, index_t n, RT* dst, index_t dst_rs)
+		static void eval(const Fun& fun, const Acc& acc, index_t m, index_t n, RT* dst, index_t dst_rs)
 		{
 			typedef internal::vec_reduce_percol_scalar_term_accessor<Fun, RT, Acc> term_accessor_t;
 			term_accessor_t tacc0(fun, 0, acc);
@@ -259,7 +259,7 @@ namespace lmat { namespace internal {
 
 					if (Impl::setting_t::with_post)
 					{
-						_rowwise_post_reduce(fun, m, out, dst, 1);
+						_rowwise_post_reduce(fun, m, n, out, dst, 1);
 					}
 				}
 			}
@@ -284,7 +284,7 @@ namespace lmat { namespace internal {
 
 					if (Impl::setting_t::with_post)
 					{
-						_rowwise_post_reduce(fun, m, out, dst, dst_rs);
+						_rowwise_post_reduce(fun, m, n, out, dst, dst_rs);
 					}
 				}
 			}
@@ -292,7 +292,7 @@ namespace lmat { namespace internal {
 
 
 		template<class Fun, class Acc1, class Acc2>
-		void eval(const Fun& fun, const Acc1& acc1, const Acc2& acc2, index_t m, index_t n, RT* dst, index_t dst_rs)
+		static void eval(const Fun& fun, const Acc1& acc1, const Acc2& acc2, index_t m, index_t n, RT* dst, index_t dst_rs)
 		{
 			typedef internal::vec_reduce_percol_scalar_term_accessor<Fun, RT, Acc1, Acc2> term_accessor_t;
 			term_accessor_t tacc0(fun, 0, acc1, acc2);
@@ -316,7 +316,7 @@ namespace lmat { namespace internal {
 
 					if (Impl::setting_t::with_post)
 					{
-						_rowwise_post_reduce(fun, m, out, dst, 1);
+						_rowwise_post_reduce(fun, m, n, out, dst, 1);
 					}
 				}
 			}
@@ -341,7 +341,7 @@ namespace lmat { namespace internal {
 
 					if (Impl::setting_t::with_post)
 					{
-						_rowwise_post_reduce(fun, m, out, dst, dst_rs);
+						_rowwise_post_reduce(fun, m, n, out, dst, dst_rs);
 					}
 				}
 			}
@@ -358,12 +358,12 @@ namespace lmat { namespace internal {
 		typedef typename setting_t::media_t media_t;
 		typedef typename setting_t::result_t result_t;
 
-		typedef typename macc_accessor_map<Xpr, linear_macc, scalar_ker>::type accessor_t;
+		typedef typename macc_accessor_map<Xpr, percol_macc, scalar_ker>::type accessor_t;
 		typedef typename reduction_fun<Tag, scalar_ker, T>::type fun_t;
 
 		const index_t m = a.nrows();
 		const index_t n = a.ncolumns();
-		accessor_t acc(a);
+		accessor_t acc(a.derived());
 
 		typedef vec_reduce_core<setting_t, ct_rows<Xpr>::value> impl_t;
 		typedef _rowwise_reduc_helper<impl_t, ct_rows<Xpr>::value, scalar_ker, media_t, result_t> helper_t;
@@ -379,14 +379,14 @@ namespace lmat { namespace internal {
 		typedef typename setting_t::media_t media_t;
 		typedef typename setting_t::result_t result_t;
 
-		typedef typename macc_accessor_map<Xpr1, linear_macc, scalar_ker>::type accessor1_t;
-		typedef typename macc_accessor_map<Xpr2, linear_macc, scalar_ker>::type accessor2_t;
+		typedef typename macc_accessor_map<Xpr1, percol_macc, scalar_ker>::type accessor1_t;
+		typedef typename macc_accessor_map<Xpr2, percol_macc, scalar_ker>::type accessor2_t;
 		typedef typename reduction_fun<Tag, scalar_ker, T1, T2>::type fun_t;
 
 		const index_t m = get_common_nrows(a, b);
 		const index_t n = get_common_ncolumns(a, b);
-		accessor1_t acc1(a);
-		accessor2_t acc2(b);
+		accessor1_t acc1(a.derived());
+		accessor2_t acc2(b.derived());
 
 		typedef vec_reduce_core<setting_t, common_ctrows<Xpr1, Xpr2>::value> impl_t;
 		typedef _rowwise_reduc_helper<impl_t, common_ctrows<Xpr1, Xpr2>::value, scalar_ker, media_t, result_t> helper_t;

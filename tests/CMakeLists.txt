@@ -222,7 +222,7 @@ set(MAT_REDUC_HS
     ${MATRIX_REDUC_HS})
     
 add_executable(test_full_reduce ${MAT_REDUC_HS} test_full_reduce.cpp) 
-# add_executable(test_partial_reduce ${MAT_REDUC_HS} test_partial_reduce.cpp) 
+add_executable(test_partial_reduce ${MAT_REDUC_HS} test_partial_reduce.cpp) 
 
 # add_executable(test_cpd_ewise ${MATRIX_EVAL_HS} test_cpd_ewise.cpp)
 
@@ -254,7 +254,7 @@ set(LMAT_TEST_NAMES
 	test_direct_trans
 	test_mat_transpose
 	test_full_reduce
-	# test_partial_reduce
+	test_partial_reduce
 	# test_cpd_ewise
 )
 	
