@@ -523,7 +523,124 @@ MN_CASE( rowwise_reduce, Linfnorm )
 }
 
 
-/*
+MN_CASE( colwise_reduce, logsum )
+{
+	typedef dense_matrix<double, M, N> mat_t;
+	typedef dense_row<double, N> row_t;
+
+	const index_t m = M == 0 ? DM : M;
+	const index_t n = N == 0 ? DN : N;
+
+	mat_t A(m, n);
+	for (index_t i = 0; i < m * n; ++i) A[i] = double(i + 2);
+
+	// prepare ground-truth
+
+	row_t r0(n);
+	for (index_t j = 0; j < n; ++j)
+	{
+		double s = 0.0;
+		for (index_t i = 0; i < m; ++i) s += std::log(A(i, j));
+		r0[j] = s;
+	}
+
+	// test
+
+	row_t r = logsum(A, colwise());
+	ASSERT_EQ( r.nrows(), 1 );
+	ASSERT_EQ( r.ncolumns(), n );
+	ASSERT_VEC_EQ( n, r, r0 );
+}
+
+MN_CASE( rowwise_reduce, logsum )
+{
+	typedef dense_matrix<double, M, N> mat_t;
+	typedef dense_col<double, M> col_t;
+
+	const index_t m = M == 0 ? DM : M;
+	const index_t n = N == 0 ? DN : N;
+
+	mat_t A(m, n);
+	for (index_t i = 0; i < m * n; ++i) A[i] = double(i + 1);
+
+	// prepare ground-truth
+
+	col_t r0(m);
+	for (index_t i = 0; i < m; ++i)
+	{
+		double s = 0.0;
+		for (index_t j = 0; j < n; ++j) s += std::log(A(i, j));
+		r0[i] = s;
+	}
+
+	// test
+
+	col_t r = logsum(A, rowwise());
+	ASSERT_EQ( r.nrows(), m );
+	ASSERT_EQ( r.ncolumns(), 1 );
+	ASSERT_VEC_EQ( m, r, r0 );
+}
+
+
+MN_CASE( colwise_reduce, entropy )
+{
+	typedef dense_matrix<double, M, N> mat_t;
+	typedef dense_row<double, N> row_t;
+
+	const index_t m = M == 0 ? DM : M;
+	const index_t n = N == 0 ? DN : N;
+
+	mat_t A(m, n);
+	for (index_t i = 0; i < m * n; ++i) A[i] = double(i + 2);
+
+	// prepare ground-truth
+
+	row_t r0(n);
+	for (index_t j = 0; j < n; ++j)
+	{
+		double s = 0.0;
+		for (index_t i = 0; i < m; ++i) s -= A(i, j) * std::log(A(i, j));
+		r0[j] = s;
+	}
+
+	// test
+
+	row_t r = entropy(A, colwise());
+	ASSERT_EQ( r.nrows(), 1 );
+	ASSERT_EQ( r.ncolumns(), n );
+	ASSERT_VEC_EQ( n, r, r0 );
+}
+
+MN_CASE( rowwise_reduce, entropy )
+{
+	typedef dense_matrix<double, M, N> mat_t;
+	typedef dense_col<double, M> col_t;
+
+	const index_t m = M == 0 ? DM : M;
+	const index_t n = N == 0 ? DN : N;
+
+	mat_t A(m, n);
+	for (index_t i = 0; i < m * n; ++i) A[i] = double(i + 1);
+
+	// prepare ground-truth
+
+	col_t r0(m);
+	for (index_t i = 0; i < m; ++i)
+	{
+		double s = 0.0;
+		for (index_t j = 0; j < n; ++j) s -= A(i, j) * std::log(A(i, j));
+		r0[i] = s;
+	}
+
+	// test
+
+	col_t r = entropy(A, rowwise());
+	ASSERT_EQ( r.nrows(), m );
+	ASSERT_EQ( r.ncolumns(), 1 );
+	ASSERT_VEC_EQ( m, r, r0 );
+}
+
+
 
 MN_CASE( colwise_reduce, dot )
 {
@@ -558,6 +675,7 @@ MN_CASE( colwise_reduce, dot )
 	ASSERT_EQ( r.ncolumns(), n );
 	ASSERT_VEC_EQ( n, r, r0 );
 }
+
 
 MN_CASE( rowwise_reduce, dot )
 {
@@ -677,7 +795,7 @@ MN_CASE( rowwise_reduce, nrmdot )
 	ASSERT_EQ( r.ncolumns(), 1 );
 	ASSERT_VEC_APPROX( m, r, r0, 1.0e-12 );
 }
-*/
+
 
 BEGIN_TPACK( colwise_sum )
 	ADD_MN_CASE_3X3( colwise_reduce, sum, DM, DN )
@@ -745,7 +863,23 @@ BEGIN_TPACK( rowwise_Linfnorm )
 	ADD_MN_CASE_3X3( rowwise_reduce, Linfnorm, DM, DN )
 END_TPACK
 
-/*
+
+BEGIN_TPACK( colwise_logsum )
+	ADD_MN_CASE_3X3( colwise_reduce, logsum, DM, DN )
+END_TPACK
+
+BEGIN_TPACK( rowwise_logsum )
+	ADD_MN_CASE_3X3( rowwise_reduce, logsum, DM, DN )
+END_TPACK
+
+BEGIN_TPACK( colwise_entropy )
+	ADD_MN_CASE_3X3( colwise_reduce, entropy, DM, DN )
+END_TPACK
+
+BEGIN_TPACK( rowwise_entropy )
+	ADD_MN_CASE_3X3( rowwise_reduce, entropy, DM, DN )
+END_TPACK
+
 
 BEGIN_TPACK( colwise_dot )
 	ADD_MN_CASE_3X3( colwise_reduce, dot, DM, DN )
@@ -762,7 +896,7 @@ END_TPACK
 BEGIN_TPACK( rowwise_nrmdot )
 	ADD_MN_CASE_3X3( rowwise_reduce, nrmdot, DM, DN )
 END_TPACK
-*/
+
 
 BEGIN_MAIN_SUITE
 
@@ -790,13 +924,19 @@ BEGIN_MAIN_SUITE
 
 	ADD_TPACK( colwise_Linfnorm )
 	ADD_TPACK( rowwise_Linfnorm )
-/*
+
+	ADD_TPACK( colwise_logsum )
+	ADD_TPACK( rowwise_logsum )
+
+	ADD_TPACK( colwise_entropy )
+	ADD_TPACK( rowwise_entropy )
+
 	ADD_TPACK( colwise_dot )
 	ADD_TPACK( rowwise_dot )
 
 	ADD_TPACK( colwise_nrmdot )
 	ADD_TPACK( rowwise_nrmdot )
-*/
+
 END_MAIN_SUITE
 
 

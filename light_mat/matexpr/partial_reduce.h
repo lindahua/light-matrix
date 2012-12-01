@@ -447,8 +447,11 @@ namespace lmat
 				const binary_partial_reduce_expr<Tag, AlongDim, Arg1_HP, Arg1, Arg2_HP, Arg2>& sexpr,
 				DMat& dmat)
 		{
+			const Arg1& a1 = sexpr.first_arg();
+			const Arg2& a2 = sexpr.second_arg();
+
 			internal::_partial_reduce(sexpr.tag(), AlongDim(),
-					sexpr.first_arg(), sexpr.second_arg(), dmat, scalar_ker());
+					a1, a2, dmat, scalar_ker());
 		}
 	};
 

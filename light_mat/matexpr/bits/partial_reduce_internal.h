@@ -29,7 +29,7 @@ namespace lmat { namespace internal {
 	 ********************************************/
 
 	template<typename Tag, class Xpr, typename T, class Dst>
-	static void _partial_reduce(const Tag& tag, colwise,
+	inline void _partial_reduce(const Tag& tag, colwise,
 			const IMatrixXpr<Xpr, T>& a, Dst& dst, scalar_ker)
 	{
 		typedef vec_reduce_core_setting<Tag, scalar_ker, T> setting_t;
@@ -76,8 +76,8 @@ namespace lmat { namespace internal {
 
 
 	template<typename Tag, class Xpr1, typename T1, class Xpr2, typename T2, class Dst>
-	static void _partial_reduce(const Tag& tag, colwise,
-			const IMatrixXpr<Xpr1, T1>& a, class IMatrixXpr<Xpr2, T2>& b, Dst& dst, scalar_ker)
+	inline void _partial_reduce(const Tag& tag, colwise,
+			const IMatrixXpr<Xpr1, T1>& a, const IMatrixXpr<Xpr2, T2>& b, Dst& dst, scalar_ker)
 	{
 		typedef vec_reduce_core_setting<Tag, scalar_ker, T1, T2> setting_t;
 		typedef typename setting_t::media_t media_t;
