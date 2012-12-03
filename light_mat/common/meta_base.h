@@ -26,6 +26,14 @@ namespace lmat {  namespace meta {
 	 *
 	 ********************************************/
 
+	// type function
+
+	template<typename T>
+	struct id_
+	{
+		typedef T type;
+	};
+
 	// logical operations
 
 	template<typename CondT>
@@ -409,6 +417,52 @@ namespace lmat {  namespace meta {
 	struct minimum_<int_list_<H, nil_t> >
 	{
 		static const int value = H;
+	};
+
+
+	// generic folding
+
+	template<
+		template<typename X, typename Y> class Combine,
+		class List,
+		template<typename X> class Extract = id_>
+	struct fold_
+	{
+		typedef typename Extract<typename List::head>::type left_type;
+		typedef typename fold_<Combine, typename List::tail, Extract>::type right_type;
+
+		typedef typename Combine<left_type, right_type>::type type;
+	};
+
+	template<
+		template<typename X, typename Y> class Combine,
+		class Head,
+		template<typename X> class Extract>
+	struct fold_<Combine, type_list_<Head, nil_t>, Extract>
+	{
+		typedef typename Extract<Head>::type type;
+	};
+
+
+	template<
+		template<int X, int Y> class Combine,
+		class List,
+		template<typename X> class Extract>
+	struct fold_to_int_
+	{
+		static const int left = Extract<typename List::head>::value;
+		static const int right = fold_to_int_<Combine, typename List::tail, Extract>::value;
+
+		static const int value = Combine<left, right>::value;
+	};
+
+	template<
+		template<int X, int Y> class Combine,
+		class Head,
+		template<typename X> class Extract>
+	struct fold_to_int_<Combine, type_list_<Head, nil_t>, Extract>
+	{
+		static const int value = Extract<Head>::value;
 	};
 
 

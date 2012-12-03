@@ -65,7 +65,7 @@ SIMPLE_CASE( typelist, N1 )
 	ASSERT_CT_VALUE ( meta::length_<list_t>, 1 );
 
 	LMAT_GETTYPE( T0, list_t, 0 );
-	ASSERT_CT_TYPE ( T0, int );
+	ASSERT_SAME_TYPE ( T0, int );
 }
 
 SIMPLE_CASE( typelist, N2 )
@@ -75,10 +75,10 @@ SIMPLE_CASE( typelist, N2 )
 	ASSERT_CT_VALUE ( meta::length_<list_t>, 2 );
 
 	LMAT_GETTYPE( T0, list_t, 0 );
-	ASSERT_CT_TYPE ( T0, int );
+	ASSERT_SAME_TYPE ( T0, int );
 
 	LMAT_GETTYPE( T1, list_t, 1 );
-	ASSERT_CT_TYPE ( T1, char );
+	ASSERT_SAME_TYPE ( T1, char );
 }
 
 SIMPLE_CASE( typelist, N3 )
@@ -88,13 +88,13 @@ SIMPLE_CASE( typelist, N3 )
 	ASSERT_CT_VALUE ( meta::length_<list_t>, 3 );
 
 	LMAT_GETTYPE( T0, list_t, 0 )
-	ASSERT_CT_TYPE ( T0, int );
+	ASSERT_SAME_TYPE ( T0, int );
 
 	LMAT_GETTYPE( T1, list_t, 1 )
-	ASSERT_CT_TYPE ( T1, char );
+	ASSERT_SAME_TYPE ( T1, char );
 
 	LMAT_GETTYPE( T2, list_t, 2 );
-	ASSERT_CT_TYPE ( T2, float );
+	ASSERT_SAME_TYPE ( T2, float );
 }
 
 SIMPLE_CASE( typelist, N4 )
@@ -104,16 +104,16 @@ SIMPLE_CASE( typelist, N4 )
 	ASSERT_CT_VALUE ( meta::length_<list_t>, 4 );
 
 	LMAT_GETTYPE( T0, list_t, 0 );
-	ASSERT_CT_TYPE ( T0, int );
+	ASSERT_SAME_TYPE ( T0, int );
 
 	LMAT_GETTYPE( T1, list_t, 1 );
-	ASSERT_CT_TYPE ( T1, char );
+	ASSERT_SAME_TYPE ( T1, char );
 
 	LMAT_GETTYPE( T2, list_t, 2 );
-	ASSERT_CT_TYPE ( T2, float );
+	ASSERT_SAME_TYPE ( T2, float );
 
 	LMAT_GETTYPE( T3, list_t, 3 );
-	ASSERT_CT_TYPE ( T3, double );
+	ASSERT_SAME_TYPE ( T3, double );
 }
 
 
@@ -234,7 +234,7 @@ SIMPLE_CASE( type_transform, N1 )
 	ASSERT_CT_VALUE( meta::length_<rlist_t>, 1 );
 
 	LMAT_GETTYPE( T0, rlist_t, 0 )
-	ASSERT_CT_TYPE( T0, type<int> );
+	ASSERT_SAME_TYPE( T0, type<int> );
 }
 
 SIMPLE_CASE( type_transform, N2 )
@@ -245,10 +245,10 @@ SIMPLE_CASE( type_transform, N2 )
 	ASSERT_CT_VALUE( meta::length_<rlist_t>, 2 );
 
 	LMAT_GETTYPE( T0, rlist_t, 0 )
-	ASSERT_CT_TYPE( T0, type<int> );
+	ASSERT_SAME_TYPE( T0, type<int> );
 
 	LMAT_GETTYPE( T1, rlist_t, 1 )
-	ASSERT_CT_TYPE( T1, type<char> );
+	ASSERT_SAME_TYPE( T1, type<char> );
 }
 
 SIMPLE_CASE( type_transform, N3 )
@@ -259,13 +259,13 @@ SIMPLE_CASE( type_transform, N3 )
 	ASSERT_CT_VALUE( meta::length_<rlist_t>, 3 );
 
 	LMAT_GETTYPE( T0, rlist_t, 0 )
-	ASSERT_CT_TYPE( T0, type<int> );
+	ASSERT_SAME_TYPE( T0, type<int> );
 
 	LMAT_GETTYPE( T1, rlist_t, 1 )
-	ASSERT_CT_TYPE( T1, type<char> );
+	ASSERT_SAME_TYPE( T1, type<char> );
 
 	LMAT_GETTYPE( T2, rlist_t, 2 )
-	ASSERT_CT_TYPE( T2, type<float> );
+	ASSERT_SAME_TYPE( T2, type<float> );
 }
 
 
@@ -277,16 +277,16 @@ SIMPLE_CASE( type_transform, N4 )
 	ASSERT_CT_VALUE( meta::length_<rlist_t>, 4 );
 
 	LMAT_GETTYPE( T0, rlist_t, 0 )
-	ASSERT_CT_TYPE( T0, type<int> );
+	ASSERT_SAME_TYPE( T0, type<int> );
 
 	LMAT_GETTYPE( T1, rlist_t, 1 )
-	ASSERT_CT_TYPE( T1, type<char> );
+	ASSERT_SAME_TYPE( T1, type<char> );
 
 	LMAT_GETTYPE( T2, rlist_t, 2 )
-	ASSERT_CT_TYPE( T2, type<float> );
+	ASSERT_SAME_TYPE( T2, type<float> );
 
 	LMAT_GETTYPE( T3, rlist_t, 3 )
-	ASSERT_CT_TYPE( T3, type<double> );
+	ASSERT_SAME_TYPE( T3, type<double> );
 }
 
 
@@ -487,6 +487,62 @@ SIMPLE_CASE( reduction, minimum )
 
 
 
+template<typename T1, typename T2>
+struct my_promote
+{
+	typedef typename meta::if_c<(sizeof(T1) > sizeof(T2)), T1, T2>::type type;
+};
+
+
+SIMPLE_CASE( fold, to_type )
+{
+	typedef LMAT_TYPELIST_1( short ) L1;
+	typedef LMAT_TYPELIST_2( short, char ) L2;
+	typedef LMAT_TYPELIST_3( short, char, float ) L3;
+	typedef LMAT_TYPELIST_4( short, char, float, double ) L4;
+
+	typedef typename meta::fold_<my_promote, L1>::type T1;
+	ASSERT_SAME_TYPE( T1, short );
+
+	typedef typename meta::fold_<my_promote, L2>::type T2;
+	ASSERT_SAME_TYPE( T2, short );
+
+	typedef typename meta::fold_<my_promote, L3>::type T3;
+	ASSERT_SAME_TYPE( T3, float );
+
+	typedef typename meta::fold_<my_promote, L4>::type T4;
+	ASSERT_SAME_TYPE( T4, double );
+}
+
+
+template<int a, int b>
+struct my_add
+{
+	static const int value = a + b;
+};
+
+SIMPLE_CASE( fold, to_int )
+{
+	typedef LMAT_TYPELIST_1( short ) L1;
+	typedef LMAT_TYPELIST_2( short, char ) L2;
+	typedef LMAT_TYPELIST_3( short, char, float ) L3;
+	typedef LMAT_TYPELIST_4( short, char, float, double ) L4;
+
+	const int V1 = meta::fold_to_int_<my_add, L1, my_size>::value;
+	ASSERT_EQ( V1, 2 );
+
+	const int V2 = meta::fold_to_int_<my_add, L2, my_size>::value;
+	ASSERT_EQ( V2, 3 );
+
+	const int V3 = meta::fold_to_int_<my_add, L3, my_size>::value;
+	ASSERT_EQ( V3, 7 );
+
+	const int V4 = meta::fold_to_int_<my_add, L4, my_size>::value;
+	ASSERT_EQ( V4, 15 );
+}
+
+
+
 BEGIN_TPACK( meta_calc )
 	ADD_SIMPLE_CASE( meta_calc, logical )
 	ADD_SIMPLE_CASE( meta_calc, arith )
@@ -536,6 +592,12 @@ BEGIN_TPACK( reduction )
 	ADD_SIMPLE_CASE( reduction, minimum )
 END_TPACK
 
+BEGIN_TPACK( fold )
+	ADD_SIMPLE_CASE( fold, to_type )
+	ADD_SIMPLE_CASE( fold, to_int )
+END_TPACK
+
+
 BEGIN_MAIN_SUITE
 	ADD_TPACK( meta_calc )
 	ADD_TPACK( typelists )
@@ -545,6 +607,7 @@ BEGIN_MAIN_SUITE
 	ADD_TPACK( type_transforms )
 	ADD_TPACK( type2ints )
 	ADD_TPACK( reduction )
+	ADD_TPACK( fold )
 END_MAIN_SUITE
 
 

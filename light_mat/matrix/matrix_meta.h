@@ -15,8 +15,7 @@
 
 #include <light_mat/matrix/matrix_fwd.h>
 
-namespace lmat
-{
+namespace lmat { namespace meta {
 
 	/********************************************
 	 *
@@ -44,12 +43,6 @@ namespace lmat
 	};
 
 	template<class Mat>
-	struct is_mat_view
-	{
-		static const bool value = has_matrix_interface<Mat, IMatrixView>::value;
-	};
-
-	template<class Mat>
 	struct is_dense_mat
 	{
 		static const bool value = has_matrix_interface<Mat, IDenseMatrix>::value;
@@ -63,7 +56,7 @@ namespace lmat
 	 ********************************************/
 
 	template<class LMat, class RMat>
-	struct has_same_domain
+	struct in_same_domain
 	{
 		static const bool value = is_same<
 				typename matrix_traits<LMat>::domain,
@@ -72,21 +65,29 @@ namespace lmat
 
 
 	template<class Mat>
-	struct has_cpu_domain
+	struct in_cpu_domain
 	{
 		static const bool value = is_same<
 				typename matrix_traits<Mat>::domain,
 				cpu_domain>::value;
 	};
 
+
+	template<typename >
+	namespace internal
+	{
+
+	}
+
+/*
 	template<class LMat, class RMat>
-	struct binary_domain
+	struct common_domain
 	{
 		typedef typename common_type<
 				typename matrix_traits<LMat>::domain,
 				typename matrix_traits<RMat>::domain>::type type;
 	};
-
+*/
 
 	/********************************************
 	 *
@@ -102,7 +103,7 @@ namespace lmat
 			typename matrix_traits<RMat>::value_type>::value;
 	};
 
-
+/*
 	template<class LMat, class RMat>
 	struct common_value_type
 	{
@@ -110,7 +111,7 @@ namespace lmat
 				typename matrix_traits<LMat>::value_type,
 				typename matrix_traits<RMat>::value_type>::type type;
 	};
-
+*/
 
 	/********************************************
 	 *
@@ -492,6 +493,6 @@ namespace lmat
 				has_compatible_ct_size<DMat, SExpr>::value;
 	};
 
-}
+} }
 
 #endif /* MATRIX_META_H_ */

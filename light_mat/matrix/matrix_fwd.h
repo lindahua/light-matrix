@@ -50,7 +50,6 @@ namespace lmat
 	template<class Derived> struct matrix_traits;
 
 	template<class Derived, typename T> class IMatrixXpr;
-	template<class Derived, typename T> class IMatrixView;
 	template<class Derived, typename T> class IDenseMatrix;
 
 	// forward declaration of some important types
