@@ -466,6 +466,23 @@ namespace lmat {  namespace meta {
 	};
 
 
+	// a meta-function to return common type
+
+	template<typename T1, typename T2> struct common_fun_;
+
+	template<typename T>
+	struct common_fun_<T, T>
+	{
+		typedef T type;
+	};
+
+	template<class TList>
+	struct common_
+	{
+		typedef typename fold_<common_fun_, TList>::type type;
+	};
+
+
 } } // lmat::meta
 
 
