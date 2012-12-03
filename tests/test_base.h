@@ -83,6 +83,13 @@ namespace lmat { namespace test {
 } }
 
 
+#define ASSERT_CT_VALUE( T, V ) \
+	if (!((T::value) == (V))) throw ::ltest::assertion_failure(__FILE__, __LINE__, #T "::value == " #V)
+
+#define ASSERT_CT_TYPE( T, R ) \
+	if (!std::is_same<T, R>::value) throw ::ltest::assertion_failure(__FILE__, __LINE__, #T " is " #R)
+
+
 #define BEGIN_MAIN_SUITE \
 	ltest::test_suite lmat_main_suite( "Main" ); \
 	void lmat_add_test_packs() {

@@ -53,6 +53,12 @@ namespace lmat
 {
 	struct nil_t { };
 
+	struct true_t { static const bool value = true; };
+	struct false_t { static const bool value = false; };
+
+	template<typename T> struct type{ };
+	template<int I> struct fix_int { static const int value = I; };
+
 	// primitive types
 
 	using LMAT_TR1::int8_t;
