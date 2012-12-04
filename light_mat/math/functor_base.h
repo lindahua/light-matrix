@@ -27,46 +27,22 @@ namespace lmat
 
 	// operation type testing
 
-	template<typename Op>
-	struct is_unary_op
-	{
-		static const bool value = false;
-	};
-
-	template<typename Op>
-	struct is_binary_op
-	{
-		static const bool value = false;
-	};
-
-	template<typename Op>
-	struct is_ternary_op
+	template<typename Tag>
+	struct is_op_tag
 	{
 		static const bool value = false;
 	};
 
 	// maps
 
-	template<typename Op, typename T>
-	struct unary_op_result;
+	template<typename Tag, class TList>
+	struct op_result;
 
-	template<typename Op, typename T1, typename T2>
-	struct binary_op_result;
-
-	template<typename Op, typename T1, typename T2, typename T3>
-	struct ternary_op_result;
-
-
-	template<typename Op, typename Ker, typename T>
-	struct unary_op_fun;
-
-	template<typename Op, typename Ker, typename T1, typename T2>
-	struct binary_op_fun;
-
-	template<typename Op, typename Ker, typename T1, typename T2, typename T3>
-	struct ternary_op_fun;
+	template<typename Tag, typename Ker, class TList>
+	struct op_fun;
 
 }
+
 
 /************************************************
  *
@@ -78,65 +54,65 @@ namespace lmat
 
 #define LMAT_DECLARE_NUMERIC_UNARY_OP(Tag) \
 	struct Tag { }; \
-	template<> struct is_unary_op<Tag> { static const bool value = true; }; \
+	template<> struct is_op_tag<Tag> { static const bool value = true; }; \
 	template<typename T> \
-	struct unary_op_result<Tag, T> { typedef T type; };
+	struct op_result<Tag, LMAT_TYPELIST_1(T) > { typedef T type; };
 
 #define LMAT_DECLARE_NUMERIC_BINARY_OP(Tag) \
 	struct Tag { }; \
-	template<> struct is_binary_op<Tag> { static const bool value = true; }; \
+	template<> struct is_op_tag<Tag> { static const bool value = true; }; \
 	template<typename T> \
-	struct binary_op_result<Tag, T, T> { typedef T type; };
+	struct op_result<Tag, LMAT_TYPELIST_2(T, T) > { typedef T type; };
 
 #define LMAT_DECLARE_REAL_UNARY_OP(Op) \
 	struct Op { }; \
-	template<> struct is_unary_op<Op> { static const bool value = true; }; \
-	template<> struct unary_op_result<Op, float> { typedef float type; }; \
-	template<> struct unary_op_result<Op, double> { typedef double type; };
+	template<> struct is_op_tag<Op> { static const bool value = true; }; \
+	template<> struct op_result<Op, LMAT_TYPELIST_1(float) > { typedef float type; }; \
+	template<> struct op_result<Op, LMAT_TYPELIST_1(double) > { typedef double type; };
 
 #define LMAT_DECLARE_REAL_BINARY_OP(Op) \
 	struct Op { }; \
-	template<> struct is_binary_op<Op> { static const bool value = true; }; \
-	template<> struct binary_op_result<Op, float, float> { typedef float type; }; \
-	template<> struct binary_op_result<Op, double, double> { typedef double type; };
+	template<> struct is_op_tag<Op> { static const bool value = true; }; \
+	template<> struct op_result<Op, LMAT_TYPELIST_2(float, float) > { typedef float type; }; \
+	template<> struct op_result<Op, LMAT_TYPELIST_2(double, double) > { typedef double type; };
 
 // operation on real numbers
 
 #define LMAT_DECLARE_NUMERIC_UNARY_OP_S(Tag, SType) \
 	struct Tag { }; \
-	template<> struct is_unary_op<Tag> { static const bool value = true; }; \
+	template<> struct is_op_tag<Tag> { static const bool value = true; }; \
 	template<typename T> \
-	struct unary_op_result<Tag, T> { typedef SType type; };
+	struct op_result<Tag, LMAT_TYPELIST_1(T) > { typedef SType type; };
 
 #define LMAT_DECLARE_NUMERIC_BINARY_OP_S(Tag, SType) \
 	struct Tag { }; \
-	template<> struct is_binary_op<Tag> { static const bool value = true; }; \
+	template<> struct is_op_tag<Tag> { static const bool value = true; }; \
 	template<typename T> \
-	struct binary_op_result<Tag, T, T> { typedef SType type; };
+	struct op_result<Tag, LMAT_TYPELIST_2(T, T) > { typedef SType type; };
 
 #define LMAT_DECLARE_REAL_UNARY_OP_S(Tag, SType) \
 	struct Tag { }; \
-	template<> struct is_unary_op<Tag> { static const bool value = true; }; \
-	template<> struct unary_op_result<Tag, float> { typedef SType type; }; \
-	template<> struct unary_op_result<Tag, double> { typedef bool type; };
+	template<> struct is_op_tag<Tag> { static const bool value = true; }; \
+	template<> struct op_result<Tag, LMAT_TYPELIST_1(float) > { typedef SType type; }; \
+	template<> struct op_result<Tag, LMAT_TYPELIST_2(double) > { typedef bool type; };
 
 #define LMAT_DECLARE_REAL_BINARY_OP_S(Tag, SType) \
 	struct Tag { }; \
-	template<> struct is_binary_op<Tag> { static const bool value = true; }; \
-	template<> struct binary_op_result<Tag, float, float> { typedef SType type; }; \
-	template<> struct binary_op_result<Tag, double, double> { typedef SType type; };
+	template<> struct is_op_tag<Tag> { static const bool value = true; }; \
+	template<> struct op_result<Tag, LMAT_TYPELIST_2(float, float) > { typedef SType type; }; \
+	template<> struct op_result<Tag, LMAT_TYPELIST_2(double, double) > { typedef SType type; };
 
 // logical operations
 
 #define LMAT_DECLARE_LOGICAL_UNARY_OP(Tag) \
 	struct Tag { }; \
-	template<> struct is_unary_op<Tag> { static const bool value = true; }; \
-	template<> struct unary_op_result<Tag, bool> { typedef bool type; };
+	template<> struct is_op_tag<Tag> { static const bool value = true; }; \
+	template<> struct op_result<Tag, LMAT_TYPELIST_1(bool) > { typedef bool type; };
 
 #define LMAT_DECLARE_LOGICAL_BINARY_OP(Tag) \
 	struct Tag { }; \
-	template<> struct is_binary_op<Tag> { static const bool value = true; }; \
-	template<> struct binary_op_result<Tag, bool, bool> { typedef bool type; };
+	template<> struct is_op_tag<Tag> { static const bool value = true; }; \
+	template<> struct op_result<Tag, LMAT_TYPELIST_2(bool, bool) > { typedef bool type; };
 
 
 
@@ -148,7 +124,7 @@ namespace lmat
 
 #define LMAT_DEFINE_UNARY_FUNCTOR_GENERIC( Fname, Expr ) \
 	template<typename T> struct Fname##_fun { \
-		typedef typename unary_op_result<Fname##_t, T>::type result_type; \
+		typedef typename op_result<Fname##_t, LMAT_TYPELIST_1(T) >::type result_type; \
 		LMAT_ENSURE_INLINE Fname##_fun() { } \
 		LMAT_ENSURE_INLINE Fname##_fun( Fname##_t ) { } \
 		LMAT_ENSURE_INLINE result_type operator() (const T& x) const { return Expr; } \
@@ -156,7 +132,7 @@ namespace lmat
 
 #define LMAT_DEFINE_BINARY_FUNCTOR_GENERIC( Fname, Expr ) \
 	template<typename T> struct Fname##_fun { \
-		typedef typename binary_op_result<Fname##_t, T, T>::type result_type; \
+		typedef typename op_result<Fname##_t, LMAT_TYPELIST_2(T, T) >::type result_type; \
 		LMAT_ENSURE_INLINE Fname##_fun() { } \
 		LMAT_ENSURE_INLINE Fname##_fun( Fname##_t ) { } \
 		LMAT_ENSURE_INLINE result_type operator() (const T& x, const T& y) const { return Expr; } \
@@ -168,24 +144,24 @@ namespace lmat
 #define LMAT_DEFINE_NUMERIC_UNARY_FUNCTOR( Fname, Expr ) \
 	LMAT_DEFINE_UNARY_FUNCTOR_GENERIC( Fname, Expr ) \
 	template<typename T> \
-	struct unary_op_fun<Fname##_t, scalar_ker, T> { typedef Fname##_fun<T> type; };
+	struct op_fun<Fname##_t, scalar_ker, LMAT_TYPELIST_1(T) > { typedef Fname##_fun<T> type; };
 
 #define LMAT_DEFINE_NUMERIC_BINARY_FUNCTOR( Fname, Expr ) \
 	LMAT_DEFINE_BINARY_FUNCTOR_GENERIC( Fname, Expr ) \
 	template<typename T> \
-	struct binary_op_fun<Fname##_t, scalar_ker, T, T> { typedef Fname##_fun<T> type; };
+	struct op_fun<Fname##_t, scalar_ker, LMAT_TYPELIST_2(T, T) > { typedef Fname##_fun<T> type; };
 
 // for real-number operations
 
 #define LMAT_DEFINE_REAL_UNARY_FUNCTOR( Fname, Expr ) \
 	LMAT_DEFINE_UNARY_FUNCTOR_GENERIC( Fname, Expr ) \
-	template<> struct unary_op_fun<Fname##_t, scalar_ker, float> { typedef Fname##_fun<float> type; }; \
-	template<> struct unary_op_fun<Fname##_t, scalar_ker, double> { typedef Fname##_fun<double> type; };
+	template<> struct op_fun<Fname##_t, scalar_ker, LMAT_TYPELIST_1(float) > { typedef Fname##_fun<float> type; }; \
+	template<> struct op_fun<Fname##_t, scalar_ker, LMAT_TYPELIST_1(double) > { typedef Fname##_fun<double> type; };
 
 #define LMAT_DEFINE_REAL_BINARY_FUNCTOR( Fname, Expr ) \
 	LMAT_DEFINE_BINARY_FUNCTOR_GENERIC( Fname, Expr ) \
-	template<> struct binary_op_fun<Fname##_t, scalar_ker, float, float> { typedef Fname##_fun<float> type; }; \
-	template<> struct binary_op_fun<Fname##_t, scalar_ker, double, double> { typedef Fname##_fun<double> type; };
+	template<> struct op_fun<Fname##_t, scalar_ker, LMAT_TYPELIST_2(float, float) > { typedef Fname##_fun<float> type; }; \
+	template<> struct op_fun<Fname##_t, scalar_ker, LMAT_TYPELIST_2(double, double) > { typedef Fname##_fun<double> type; };
 
 // for logical operations
 
@@ -196,7 +172,7 @@ namespace lmat
 		LMAT_ENSURE_INLINE Fname##_fun( Fname##_t ) { } \
 		LMAT_ENSURE_INLINE result_type operator() (const bool& x) const { return Expr; } \
 	}; \
-	template<> struct unary_op_fun<Fname##_t, scalar_ker, bool> { typedef Fname##_fun type; };
+	template<> struct op_fun<Fname##_t, scalar_ker, LMAT_TYPELIST_1(bool) > { typedef Fname##_fun type; };
 
 #define LMAT_DEFINE_LOGICAL_BINARY_FUNCTOR( Fname, Expr ) \
 	struct Fname##_fun { \
@@ -205,7 +181,7 @@ namespace lmat
 		LMAT_ENSURE_INLINE Fname##_fun( Fname##_t ) { } \
 		LMAT_ENSURE_INLINE result_type operator() (const bool& x, const bool& y) const { return Expr; } \
 	}; \
-	template<> struct binary_op_fun<Fname##_t, scalar_ker, bool, bool> { typedef Fname##_fun type; };
+	template<> struct op_fun<Fname##_t, scalar_ker, LMAT_TYPELIST_2(bool, bool) > { typedef Fname##_fun type; };
 
 
 #endif 

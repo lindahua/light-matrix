@@ -376,10 +376,11 @@ namespace lmat { namespace internal {
 	template<class SMat, class DMat>
 	struct mat_copier_map
 	{
-		typedef typename meta::common_value_type<SMat, DMat>::type T;
+		typedef LMAT_TYPELIST_2(SMat, DMat) Lst;
+		typedef typename meta::common_value_type<Lst>::type T;
 
-		static const int M = meta::common_nrows< LMAT_TYPELIST_2(SMat, DMat) >::value;
-		static const int N = meta::common_ncols< LMAT_TYPELIST_2(SMat, DMat) >::value;
+		static const int M = meta::common_nrows<Lst>::value;
+		static const int N = meta::common_ncols<Lst>::value;
 
 		static const bool is_scalar = M == 1 && N == 1;
 		static const bool is_continuous =

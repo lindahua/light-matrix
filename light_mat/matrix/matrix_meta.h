@@ -78,11 +78,10 @@ namespace lmat { namespace meta {
 				cpu_domain>::value;
 	};
 
-	template<class LMat, class RMat>
+	template<class MatList>
 	struct common_domain
 	{
-		typedef LMAT_TYPELIST_2(LMat, RMat) Lst;
-		typedef typename common_<Lst, domain_of>::type type;
+		typedef typename common_<MatList, domain_of>::type type;
 	};
 
 	/********************************************
@@ -105,11 +104,10 @@ namespace lmat { namespace meta {
 			typename matrix_traits<RMat>::value_type>::value;
 	};
 
-	template<class LMat, class RMat>
+	template<class MatList>
 	struct common_value_type
 	{
-		typedef LMAT_TYPELIST_2(LMat, RMat) Lst;
-		typedef typename common_<Lst, value_type_of>::type type;
+		typedef typename common_<MatList, value_type_of>::type type;
 	};
 
 	/********************************************

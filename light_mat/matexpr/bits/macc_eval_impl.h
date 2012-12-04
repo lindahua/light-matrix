@@ -30,9 +30,8 @@ namespace lmat { namespace internal {
 					macc_accessor_map<SExpr, linear_macc, scalar_ker>::type
 					accessor_t;
 
-			typedef typename meta::common_value_type<SExpr, DMat>::type T;
-
 			typedef LMAT_TYPELIST_2( SExpr, DMat ) Lst;
+			typedef typename matrix_traits<DMat>::value_type T;
 
 			accessor_t accessor(sexpr);
 			T *pd = dmat.ptr_data();
