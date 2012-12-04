@@ -40,7 +40,7 @@ namespace lmat
 			: public ILinearMatrixScalarAccessor<dense_linear_scalar_accessor<Mat, T>, T>
 	{
 #ifdef LMAT_USE_STATIC_ASSERT
-		static_assert(ct_supports_linear_index<Mat>::value,
+		static_assert(meta::supports_linear_index<Mat>::value,
 				"Mat should support linear indexing");
 #endif
 
@@ -74,7 +74,7 @@ namespace lmat
 			: public IPerColMatrixScalarAccessor<dense_percol_scalar_accessor<Mat, T>, T>
 	{
 #ifdef LMAT_USE_STATIC_ASSERT
-		static_assert(ct_is_percol_continuous<Mat>::value,
+		static_assert(meta::is_percol_continuous<Mat>::value,
 				"Mat should be a compile-time percol-continuous matrix");
 #endif
 
@@ -163,7 +163,7 @@ namespace lmat
 		}
 
 	private:
-		dense_matrix<T, ct_rows<Mat>::value, ct_cols<Mat>::value> m_cache;
+		dense_matrix<T, meta::nrows<Mat>::value, meta::ncols<Mat>::value> m_cache;
 		const T *m_data;
 	};
 
@@ -199,7 +199,7 @@ namespace lmat
 		}
 
 	private:
-		dense_matrix<T, ct_rows<Mat>::value, ct_cols<Mat>::value> m_cache;
+		dense_matrix<T, meta::nrows<Mat>::value, meta::ncols<Mat>::value> m_cache;
 	};
 
 
@@ -217,7 +217,7 @@ namespace lmat
 		template<class Xpr>
 		struct macc_support_dense_linear<Xpr, true>
 		{
-			static const bool value = ct_supports_linear_index<Xpr>::value;
+			static const bool value = meta::supports_linear_index<Xpr>::value;
 		};
 
 		template<class Xpr>
@@ -232,7 +232,7 @@ namespace lmat
 		template<class Xpr>
 		struct macc_support_dense_percol<Xpr, true>
 		{
-			static const bool value = ct_is_percol_continuous<Xpr>::value;
+			static const bool value = meta::is_percol_continuous<Xpr>::value;
 		};
 
 		template<class Xpr>
@@ -251,10 +251,10 @@ namespace lmat
 		typedef typename matrix_traits<SExpr>::value_type T;
 
 		static const bool support_dense_linear =
-				internal::macc_support_dense_linear<SExpr, is_dense_mat<SExpr>::value>::value;
+				internal::macc_support_dense_linear<SExpr, meta::is_dense_mat<SExpr>::value>::value;
 
 		typedef typename
-				if_c<support_dense_linear,
+				meta::if_c<support_dense_linear,
 					dense_linear_scalar_accessor<SExpr, T>,
 					cached_linear_scalar_accessor<SExpr, T>
 				>::type type;
@@ -267,12 +267,12 @@ namespace lmat
 		typedef typename matrix_traits<SExpr>::value_type T;
 
 		static const bool support_dense_percol =
-				internal::macc_support_dense_percol<SExpr, is_dense_mat<SExpr>::value>::value;
+				internal::macc_support_dense_percol<SExpr, meta::is_dense_mat<SExpr>::value>::value;
 
 		typedef typename
-				if_c<is_dense_mat<SExpr>::value,
+				meta::if_c<meta::is_dense_mat<SExpr>::value,
 					typename
-					if_c<support_dense_percol,
+					meta::if_c<support_dense_percol,
 						dense_percol_scalar_accessor<SExpr, T>,
 						grid_percol_scalar_accessor<SExpr, T>
 					>::type,
@@ -301,7 +301,7 @@ namespace lmat
 	struct generic_macc_cost<Xpr, linear_macc, KerCate>
 	{
 		static const bool support_dense_linear =
-				internal::macc_support_dense_linear<Xpr, is_dense_mat<Xpr>::value>::value;
+				internal::macc_support_dense_linear<Xpr, meta::is_dense_mat<Xpr>::value>::value;
 
 		static const int value = support_dense_linear ? 0 : MACC_CACHE_COST;
 	};
@@ -309,7 +309,7 @@ namespace lmat
 	template<class Xpr, typename KerCate>
 	struct generic_macc_cost<Xpr, percol_macc, KerCate>
 	{
-		static const bool is_dense = is_dense_mat<Xpr>::value;
+		static const bool is_dense = meta::is_dense_mat<Xpr>::value;
 
 		static const int value = is_dense ? 0 : MACC_CACHE_COST;
 	};

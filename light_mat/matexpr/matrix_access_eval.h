@@ -145,14 +145,14 @@ namespace lmat
 	struct default_macc_scheme
 	{
 		typedef typename
-				if_<ct_supports_linear_index<DMat>,
+				meta::if_<meta::supports_linear_index<DMat>,
 				any_macc,
 				percol_macc>::type access_category;
 
 		typedef scalar_ker kernel_category;
 
-		static const int M = common_ctrows<SExpr, DMat>::value;
-		static const int N = common_ctcols<SExpr, DMat>::value;
+		static const int M = meta::common_nrows< LMAT_TYPELIST_2(SExpr, DMat) >::value;
+		static const int N = meta::common_ncols< LMAT_TYPELIST_2(SExpr, DMat) >::value;
 
 		typedef macc_scheme<access_category, kernel_category, M, N> type;
 

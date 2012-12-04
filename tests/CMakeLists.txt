@@ -191,7 +191,7 @@ set(BASIC_MAT_EVAL_HS
     ${MATRIX_HS}
     ${MATEXPR_BASE_HS})
     
-# add_executable(test_dense_acc ${BASIC_MAT_EVAL_HS} test_dense_acc.cpp)
+add_executable(test_dense_acc ${BASIC_MAT_EVAL_HS} test_dense_acc.cpp)
 
 set(EWISE_MAT_EVAL_HS
     ${MATRIX_HS}
@@ -249,7 +249,7 @@ set(LMAT_TEST_NAMES
 	test_dense_eval
 	test_mat_vecviews
 	test_mat_matviews
-	# test_dense_acc
+	test_dense_acc
 	# test_mat_arith
 	# test_mat_emath
 	# test_mat_ecomp
