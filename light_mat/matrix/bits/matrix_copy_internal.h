@@ -196,26 +196,22 @@ namespace lmat { namespace internal {
 	struct mat_copier_p_map
 	{
 		typedef typename matrix_traits<Mat>::value_type T;
-		static const int M = ct_rows<Mat>::value;
-		static const int N = ct_cols<Mat>::value;
+		static const int M = meta::nrows<Mat>::value;
+		static const int N = meta::ncols<Mat>::value;
 
-		typedef typename
-				if_c<M == 1 && N == 1,
-					scalar_copier_p<T, Mat>,
-					typename
-					if_c<ct_is_continuous<Mat>::value,
-						cc_copier_p<T, Mat>,
-						typename
-						if_c<N == 1,
-							column_copier_p<T, Mat>,
-							typename
-							if_c<M == 1,
-								row_copier_p<T, Mat>,
-								genmat_copier_p<T, Mat>
-							>::type
-						>::type
-					>::type
-				>::type type;
+		static const bool is_scalar = M == 1 && N == 1;
+		static const bool is_continuous = meta::is_continuous<Mat>::value;
+		static const bool is_column = N == 1;
+		static const bool is_row = M == 1;
+
+		typedef
+			typename meta::if_c<is_scalar, 		scalar_copier_p<T, Mat>,
+			typename meta::if_c<is_continuous, 	cc_copier_p<T, Mat>,
+			typename meta::if_c<is_column,		column_copier_p<T, Mat>,
+			typename meta::if_c<is_row, 		row_copier_p<T, Mat>,
+												genmat_copier_p<T, Mat>
+			>::type >::type >::type >::type
+			type;
 	};
 
 
@@ -380,28 +376,26 @@ namespace lmat { namespace internal {
 	template<class SMat, class DMat>
 	struct mat_copier_map
 	{
-		typedef typename common_value_type<SMat, DMat>::type T;
+		typedef typename meta::common_value_type<SMat, DMat>::type T;
 
-		static const int M = common_ctrows<SMat, DMat>::value;
-		static const int N = common_ctcols<SMat, DMat>::value;
+		static const int M = meta::common_nrows< LMAT_TYPELIST_2(SMat, DMat) >::value;
+		static const int N = meta::common_ncols< LMAT_TYPELIST_2(SMat, DMat) >::value;
 
-		typedef typename
-				if_c<M == 1 && N == 1,
-					scalar_copier<T, SMat, DMat>,
-					typename
-					if_<and_<ct_is_continuous<SMat>, ct_is_continuous<DMat> >,
-						cc_copier<T, SMat, DMat>,
-						typename
-						if_c<N == 1,
-							column_copier<T, SMat, DMat>,
-							typename
-							if_c<M == 1,
-								row_copier<T, SMat, DMat>,
-								genmat_copier<T, SMat, DMat>
-							>::type
-						>::type
-					>::type
-				>::type type;
+		static const bool is_scalar = M == 1 && N == 1;
+		static const bool is_continuous =
+				meta::is_continuous<SMat>::value &&
+				meta::is_continuous<DMat>::value;
+		static const bool is_column = N == 1;
+		static const bool is_row = M == 1;
+
+		typedef
+			typename meta::if_c<is_scalar, 		scalar_copier<T, SMat, DMat>,
+			typename meta::if_c<is_continuous, 	cc_copier<T, SMat, DMat>,
+			typename meta::if_c<is_column,		column_copier<T, SMat, DMat>,
+			typename meta::if_c<is_row,			row_copier<T, SMat, DMat>,
+												genmat_copier<T, SMat, DMat>
+			>::type >::type >::type >::type
+			type;
 	};
 
 

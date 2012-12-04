@@ -25,7 +25,7 @@ namespace lmat
 	{
 		typedef typename internal::mat_comparer_map<LMat, RMat>::type comparer_t;
 
-		return has_same_size(a, b) && comparer_t::all_equal(a.derived(), b.derived());
+		return have_same_shape(a, b) && comparer_t::all_equal(a.derived(), b.derived());
 	}
 
 	template<typename T, class LMat, class RMat>
@@ -34,7 +34,7 @@ namespace lmat
 	{
 		typedef typename internal::mat_approx_comparer_map<LMat, RMat>::type comparer_t;
 
-		return has_same_size(a, b) && comparer_t::all_approx(a.derived(), b.derived(), tol);
+		return have_same_shape(a, b) && comparer_t::all_approx(a.derived(), b.derived(), tol);
 	}
 
 }

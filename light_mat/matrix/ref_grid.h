@@ -33,7 +33,7 @@ namespace lmat
 	class cref_grid : public dense_mat_base<cref_grid<T, CTRows, CTCols>, T>
 	{
 #ifdef LMAT_USE_STATIC_ASSERT
-		static_assert(is_supported_matrix_value_type<T>::value,
+		static_assert( meta::is_supported_matrix_value_type<T>::value,
 				"T must be a supported matrix value type");
 #endif
 
@@ -89,7 +89,7 @@ namespace lmat
 	class ref_grid : public dense_mat_base<ref_grid<T, CTRows, CTCols>, T>
 	{
 #ifdef LMAT_USE_STATIC_ASSERT
-		static_assert(is_supported_matrix_value_type<T>::value,
+		static_assert( meta::is_supported_matrix_value_type<T>::value,
 				"T must be a supported matrix value type");
 #endif
 

@@ -25,8 +25,8 @@ namespace lmat
 	template<class Mat, class Rgn>
 	struct colview_map
 	{
-		static const bool is_percol_cont = ct_is_percol_continuous<Mat>::value;
-		static const bool is_readonly = is_readonly_mat<Mat>::value;
+		static const bool is_percol_cont = meta::is_percol_continuous<Mat>::value;
+		static const bool is_readonly = meta::is_readonly<Mat>::value;
 
 		typedef internal::colview_helper<Mat, Rgn, is_percol_cont, true> chelper_t;
 		typedef internal::colview_helper<Mat, Rgn, is_percol_cont, is_readonly> helper_t;
@@ -35,7 +35,7 @@ namespace lmat
 		typedef typename helper_t::type type;
 
 		typedef typename
-				if_<is_readonly_mat<Mat>,
+				meta::if_<meta::is_readonly<Mat>,
 					const_type,
 					dense_mutable_view<type>
 				>::type _type;
@@ -59,8 +59,8 @@ namespace lmat
 	template<class Mat, class Rgn>
 	struct rowview_map
 	{
-		static const bool is_perrow_cont = ct_is_continuous<Mat>::value && ct_is_row<Mat>::value;
-		static const bool is_readonly = is_readonly_mat<Mat>::value;
+		static const bool is_perrow_cont = meta::is_continuous<Mat>::value && meta::is_row<Mat>::value;
+		static const bool is_readonly = meta::is_readonly<Mat>::value;
 
 		typedef internal::rowview_helper<Mat, Rgn, is_perrow_cont, true> chelper_t;
 		typedef internal::rowview_helper<Mat, Rgn, is_perrow_cont, is_readonly> helper_t;
@@ -69,7 +69,7 @@ namespace lmat
 		typedef typename helper_t::type type;
 
 		typedef typename
-				if_<is_readonly_mat<Mat>,
+				meta::if_<meta::is_readonly<Mat>,
 					const_type,
 					dense_mutable_view<type>
 				>::type _type;
@@ -96,10 +96,10 @@ namespace lmat
 	struct vecview_map
 	{
 		typedef typename
-				if_<ct_is_col<Mat>,
+				meta::if_<meta::is_col<Mat>,
 					colview_map<Mat, Rgn>,
 					typename
-					if_<ct_is_row<Mat>,
+					meta::if_<meta::is_row<Mat>,
 						rowview_map<Mat, Rgn>,
 						NO_VECVIEWS_FOR_NON_COMPILE_TIME_VECTORS
 					>::type
@@ -130,20 +130,20 @@ namespace lmat
 	{
 		typedef typename matrix_traits<Mat>::value_type value_type;
 
-		static const int M = ct_rows<Mat>::value;
-		static const int N = ct_cols<Mat>::value;
+		static const int M = meta::nrows<Mat>::value;
+		static const int N = meta::ncols<Mat>::value;
 		static const int L = M < N ? M : N;
 
 		typedef cref_grid<value_type, L, 1> const_type;
 
 		typedef typename
-				if_<is_readonly_mat<Mat>,
+				meta::if_<meta::is_readonly<Mat>,
 					cref_grid<value_type, L, 1>,
 					 ref_grid<value_type, L, 1>
 				>::type type;
 
 		typedef typename
-				if_<is_readonly_mat<Mat>,
+				meta::if_<meta::is_readonly<Mat>,
 					const_type,
 					dense_mutable_view<type>
 				>::type _type;
@@ -179,7 +179,7 @@ namespace lmat
 	struct matview_map
 	{
 		static const int cont_level = internal::matview_cont_level<Mat>::value;
-		static const bool is_readonly = is_readonly_mat<Mat>::value;
+		static const bool is_readonly = meta::is_readonly<Mat>::value;
 
 		typedef internal::matview_helper<Mat, RowRange, ColRange, cont_level, true> chelper_t;
 		typedef internal::matview_helper<Mat, RowRange, ColRange, cont_level, is_readonly> helper_t;
@@ -188,7 +188,7 @@ namespace lmat
 		typedef typename helper_t::type type;
 
 		typedef typename
-				if_<is_readonly_mat<Mat>,
+				meta::if_<meta::is_readonly<Mat>,
 					const_type,
 					dense_mutable_view<type>
 				>::type _type;

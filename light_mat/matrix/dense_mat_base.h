@@ -24,7 +24,7 @@ namespace lmat
 	{
 	public:
 		LMAT_MAT_TRAITS_DEFS_FOR_BASE(Derived, T)
-		typedef typename matrix_shape_type<Derived>::type shape_type;
+		typedef typename meta::shape<Derived>::type shape_type;
 		typedef typename matrix_traits<Derived>::layout_type layout_type;
 
 #ifdef LMAT_USE_STATIC_ASSERT

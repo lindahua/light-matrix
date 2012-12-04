@@ -22,7 +22,7 @@ namespace lmat
 	class dense_mutable_view : public Mat
 	{
 #ifdef LMAT_USE_STATIC_ASSERT
-		static_assert(is_dense_mat<Mat>::value, "Mat should be a dense matrix class");
+		static_assert(meta::is_dense_mat<Mat>::value, "Mat should be a dense matrix class");
 #endif
 
 	public:

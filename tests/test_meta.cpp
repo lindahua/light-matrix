@@ -542,6 +542,27 @@ SIMPLE_CASE( fold, to_int )
 }
 
 
+SIMPLE_CASE( fold, ints )
+{
+	typedef LMAT_INTLIST_1( 4 ) L1;
+	typedef LMAT_INTLIST_2( 4, 3 ) L2;
+	typedef LMAT_INTLIST_3( 4, 3, 2 ) L3;
+	typedef LMAT_INTLIST_4( 4, 3, 2, 1 ) L4;
+
+	const int V1 = meta::fold_ints_<my_add, L1>::value;
+	ASSERT_EQ( V1, 4 );
+
+	const int V2 = meta::fold_ints_<my_add, L2>::value;
+	ASSERT_EQ( V2, 7 );
+
+	const int V3 = meta::fold_ints_<my_add, L3>::value;
+	ASSERT_EQ( V3, 9 );
+
+	const int V4 = meta::fold_ints_<my_add, L4>::value;
+	ASSERT_EQ( V4, 10 );
+}
+
+
 
 BEGIN_TPACK( meta_calc )
 	ADD_SIMPLE_CASE( meta_calc, logical )
@@ -595,6 +616,7 @@ END_TPACK
 BEGIN_TPACK( fold )
 	ADD_SIMPLE_CASE( fold, to_type )
 	ADD_SIMPLE_CASE( fold, to_int )
+	ADD_SIMPLE_CASE( fold, ints )
 END_TPACK
 
 

@@ -29,11 +29,11 @@ template class lmat::ref_matrix<double, 3, 4>;
 
 #ifdef LMAT_USE_STATIC_ASSERT
 
-static_assert(lmat::is_mat_xpr<lmat::cref_matrix<double> >::value, "Interface verification failed.");
-static_assert(lmat::is_dense_mat<lmat::cref_matrix<double> >::value, "Interface verification failed.");
+static_assert(lmat::meta::is_mat_xpr<lmat::cref_matrix<double> >::value, "Interface verification failed.");
+static_assert(lmat::meta::is_dense_mat<lmat::cref_matrix<double> >::value, "Interface verification failed.");
 
-static_assert(lmat::is_mat_xpr<lmat::ref_matrix<double> >::value, "Interface verification failed.");
-static_assert(lmat::is_dense_mat<lmat::ref_matrix<double> >::value, "Interface verification failed.");
+static_assert(lmat::meta::is_mat_xpr<lmat::ref_matrix<double> >::value, "Interface verification failed.");
+static_assert(lmat::meta::is_dense_mat<lmat::ref_matrix<double> >::value, "Interface verification failed.");
 
 #endif
 

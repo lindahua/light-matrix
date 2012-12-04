@@ -129,7 +129,7 @@ namespace lmat
 	class dense_matrix : public dense_mat_base<dense_matrix<T, CTRows, CTCols>, T>
 	{
 #ifdef LMAT_USE_STATIC_ASSERT
-		static_assert(is_supported_matrix_value_type<T>::value,
+		static_assert(meta::is_supported_matrix_value_type<T>::value,
 				"T must be a supported matrix value type.");
 
 		static_assert(CTRows >= 0 && CTCols >= 0,
@@ -351,20 +351,11 @@ namespace lmat
 
 	template<typename T, class Expr>
 	LMAT_ENSURE_INLINE
-	inline dense_matrix<T, ct_rows<Expr>::value, ct_cols<Expr>::value>
+	inline dense_matrix<T, meta::nrows<Expr>::value, meta::ncols<Expr>::value>
 	eval(const IMatrixXpr<Expr, T>& expr)
 	{
-		return dense_matrix<T, ct_rows<Expr>::value, ct_cols<Expr>::value>(
+		return dense_matrix<T, meta::nrows<Expr>::value, meta::ncols<Expr>::value>(
 				expr.derived());
-	}
-
-	template<typename T, class Expr, class Context>
-	LMAT_ENSURE_INLINE
-	inline dense_matrix<T, ct_rows<Expr>::value, ct_cols<Expr>::value>
-	eval(const IMatrixXpr<Expr, T>& expr, const Context& ctx)
-	{
-		dense_matrix<T, ct_rows<Expr>::value, ct_cols<Expr>::value> r(expr.nrows(), expr.ncolumns());
-		evaluate(expr.derived(), r, ctx);
 	}
 
 	template<typename T, class Expr>

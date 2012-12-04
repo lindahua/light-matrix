@@ -189,31 +189,29 @@ namespace lmat { namespace internal {
 	};
 
 
-	template<class LMat, class RMat>
+	template<class SMat, class DMat>
 	struct mat_comparer_map
 	{
-		typedef typename common_value_type<LMat, RMat>::type T;
+		typedef typename meta::common_value_type<SMat, DMat>::type T;
 
-		static const int M = common_ctrows<LMat, RMat>::value;
-		static const int N = common_ctcols<LMat, RMat>::value;
+		static const int M = meta::common_nrows< LMAT_TYPELIST_2(SMat, DMat) >::value;
+		static const int N = meta::common_ncols< LMAT_TYPELIST_2(SMat, DMat) >::value;
 
-		typedef typename
-				if_c<M == 1 && N == 1,
-					scalar_comparer<T, LMat, RMat>,
-					typename
-					if_<and_<ct_is_continuous<LMat>, ct_is_continuous<RMat> >,
-						cc_comparer<T, LMat, RMat>,
-						typename
-						if_c<N == 1,
-							column_comparer<T, LMat, RMat>,
-							typename
-							if_c<M == 1,
-								row_comparer<T, LMat, RMat>,
-								genmat_comparer<T, LMat, RMat>
-							>::type
-						>::type
-					>::type
-				>::type type;
+		static const bool is_scalar = M == 1 && N == 1;
+		static const bool is_continuous =
+				meta::is_continuous<SMat>::value &&
+				meta::is_continuous<DMat>::value;
+		static const bool is_column = N == 1;
+		static const bool is_row = M == 1;
+
+		typedef
+			typename meta::if_c<is_scalar, 		scalar_comparer<T, SMat, DMat>,
+			typename meta::if_c<is_continuous, 	cc_comparer<T, SMat, DMat>,
+			typename meta::if_c<is_column,		column_comparer<T, SMat, DMat>,
+			typename meta::if_c<is_row,			row_comparer<T, SMat, DMat>,
+												genmat_comparer<T, SMat, DMat>
+			>::type >::type >::type >::type
+			type;
 	};
 
 
@@ -388,31 +386,29 @@ namespace lmat { namespace internal {
 	};
 
 
-	template<class LMat, class RMat>
+	template<class SMat, class DMat>
 	struct mat_approx_comparer_map
 	{
-		typedef typename common_value_type<LMat, RMat>::type T;
+		typedef typename meta::common_value_type<SMat, DMat>::type T;
 
-		static const int M = common_ctrows<LMat, RMat>::value;
-		static const int N = common_ctcols<LMat, RMat>::value;
+		static const int M = meta::common_nrows< LMAT_TYPELIST_2(SMat, DMat) >::value;
+		static const int N = meta::common_ncols< LMAT_TYPELIST_2(SMat, DMat) >::value;
 
-		typedef typename
-				if_c<M == 1 && N == 1,
-					scalar_approx_comparer<T, LMat, RMat>,
-					typename
-					if_<and_<ct_is_continuous<LMat>, ct_is_continuous<RMat> >,
-						cc_approx_comparer<T, LMat, RMat>,
-						typename
-						if_c<N == 1,
-							column_approx_comparer<T, LMat, RMat>,
-							typename
-							if_c<M == 1,
-								row_approx_comparer<T, LMat, RMat>,
-								genmat_approx_comparer<T, LMat, RMat>
-							>::type
-						>::type
-					>::type
-				>::type type;
+		static const bool is_scalar = M == 1 && N == 1;
+		static const bool is_continuous =
+				meta::is_continuous<SMat>::value &&
+				meta::is_continuous<DMat>::value;
+		static const bool is_column = N == 1;
+		static const bool is_row = M == 1;
+
+		typedef
+			typename meta::if_c<is_scalar, 		scalar_approx_comparer<T, SMat, DMat>,
+			typename meta::if_c<is_continuous, 	cc_approx_comparer<T, SMat, DMat>,
+			typename meta::if_c<is_column,		column_approx_comparer<T, SMat, DMat>,
+			typename meta::if_c<is_row,			row_approx_comparer<T, SMat, DMat>,
+												genmat_approx_comparer<T, SMat, DMat>
+			>::type >::type >::type >::type
+			type;
 	};
 
 } }

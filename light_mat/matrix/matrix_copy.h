@@ -38,8 +38,6 @@ namespace lmat
 	LMAT_ENSURE_INLINE
 	inline void copy(const IDenseMatrix<LMat, T>& src, IDenseMatrix<RMat, T>& dst)
 	{
-		LMAT_CHECK_SAME_SHAPE(src, dst)
-
 		typedef typename internal::mat_copier_map<LMat, RMat>::type copier_t;
 		copier_t::copy(src.derived(), dst.derived());
 	}
@@ -74,23 +72,23 @@ namespace lmat
 	template<typename T, class SExpr, class DMat>
 	LMAT_ENSURE_INLINE
 	inline matrix_copy_scheme<
-		common_ctrows<SExpr, DMat>::value,
-		common_ctcols<SExpr, DMat>::value>
+		meta::common_nrows< LMAT_TYPELIST_2(SExpr, DMat) >::value,
+		meta::common_ncols< LMAT_TYPELIST_2(SExpr, DMat) >::value>
 	get_default_eval_scheme(
 			const IDenseMatrix<SExpr, T>& sexpr,
 			IDenseMatrix<DMat, T>& dmat)
 	{
-		const int M = common_ctrows<SExpr, DMat>::value;
-		const int N = common_ctcols<SExpr, DMat>::value;
+		const int M = meta::common_nrows< LMAT_TYPELIST_2(SExpr, DMat) >::value;
+		const int N = meta::common_ncols< LMAT_TYPELIST_2(SExpr, DMat) >::value;
 
 		return matrix_copy_scheme<M, N>(
-				get_common_nrows(sexpr, dmat),
-				get_common_ncolumns(sexpr, dmat));
+				common_nrows(sexpr, dmat),
+				common_ncols(sexpr, dmat));
 	}
 
 	template<typename T, class SExpr, class DMat>
 	LMAT_ENSURE_INLINE
-	inline typename enable_if<matrix_eval_verifier<SExpr, DMat>, void>::type
+	inline typename meta::enable_if< meta::is_mat_assignable<SExpr, DMat>, void>::type
 	default_evaluate(const IMatrixXpr<SExpr, T>& sexpr, IDenseMatrix<DMat, T>& dmat)
 	{
 		const SExpr& s = sexpr.derived();

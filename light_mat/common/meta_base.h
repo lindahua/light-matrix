@@ -466,6 +466,21 @@ namespace lmat {  namespace meta {
 	};
 
 
+	template<template<int X, int Y> class Combine, class IntList>
+	struct fold_ints_
+	{
+		static const int value = Combine<
+					IntList::head,
+					fold_ints_<Combine, typename IntList::tail>::value
+				>::value;
+	};
+
+	template<template<int X, int Y> class Combine, int H>
+	struct fold_ints_<Combine, int_list_<H, nil_t> >
+	{
+		static const int value = H;
+	};
+
 	// a meta-function to return common type
 
 	template<typename T1, typename T2> struct common_fun_;
@@ -476,10 +491,10 @@ namespace lmat {  namespace meta {
 		typedef T type;
 	};
 
-	template<class TList>
+	template<class TList, template<typename X> class Extract=id_>
 	struct common_
 	{
-		typedef typename fold_<common_fun_, TList>::type type;
+		typedef typename fold_<common_fun_, TList, Extract>::type type;
 	};
 
 
@@ -492,16 +507,29 @@ namespace lmat {  namespace meta {
  *
  ********************************************/
 
-#define LMAT_CONDTYPE_2( CondT1, T1, TOther ) typename meta::enable_if< CondT1, T1, TOther >::type
+#define LMAT_CONDTYPE_2( CondT1, T1, TOther ) typename meta::if_< CondT1, T1, TOther >::type
 
 #define LMAT_CONDTYPE_3( CondT1, T1, CondT2, T2, TOther ) \
-	typename meta::enable_if< CondT1, T1, \
-	typename meta::enable_if< CondT2, T2, TOther >::type >::type
+	typename meta::if_< CondT1, T1, \
+	typename meta::if_< CondT2, T2, TOther >::type >::type
 
 #define LMAT_CONDTYPE_4( CondT1, T1, CondT2, T2, CondT3, T3, TOther ) \
-	typename meta::enable_if< CondT1, T1, \
-	typename meta::enable_if< CondT2, T2, \
-	typename meta::enable_if< CondT3, T3, TOther >::type >::type >::type
+	typename meta::if_< CondT1, T1, \
+	typename meta::if_< CondT2, T2, \
+	typename meta::if_< CondT3, T3, TOther >::type >::type >::type
+
+#define LMAT_CONDTYPE_5( CondT1, T1, CondT2, T2, CondT3, T3, Cond4, T4, TOther ) \
+	typename meta::if_< CondT1, T1, \
+	typename meta::if_< CondT2, T2, \
+	typename meta::if_< CondT3, T3, \
+	typename meta::if_< CondT4, T4, TOther >::type >::type >::type >::type
+
+#define LMAT_CONDTYPE_6( CondT1, T1, CondT2, T2, CondT3, T3, Cond4, T4, Cond5, T5, TOther ) \
+	typename meta::if_< CondT1, T1, \
+	typename meta::if_< CondT2, T2, \
+	typename meta::if_< CondT3, T3, \
+	typename meta::if_< CondT4, T4, \
+	typename meta::if_< CondT5, T5, TOther >::type >::type >::type >::type >::type
 
 
 /********************************************

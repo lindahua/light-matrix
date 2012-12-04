@@ -53,6 +53,18 @@
 namespace lmat
 {
 
+	template<class Mat>
+	struct mat_access
+	{
+		typedef typename matrix_traits<Mat>::value_type value_type;
+		typedef typename meta::if_<meta::is_readonly<Mat>,
+				const value_type, value_type>::type access_type;
+
+		typedef access_type* pointer;
+		typedef access_type& reference;
+	};
+
+
 	/********************************************
 	 *
 	 *  IMatrixXpr

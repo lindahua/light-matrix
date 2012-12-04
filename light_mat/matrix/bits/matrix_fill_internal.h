@@ -173,22 +173,18 @@ namespace lmat { namespace internal {
 	struct mat_filler_map
 	{
 		typedef typename matrix_traits<DMat>::value_type T;
-		static const int M = ct_rows<DMat>::value;
-		static const int N = ct_cols<DMat>::value;
+		static const int M = meta::nrows<DMat>::value;
+		static const int N = meta::ncols<DMat>::value;
 
-		typedef typename
-				if_c<N == 1,
-					typename
-					if_c<M == 1,
-						scalar_filler<T, DMat>,
-						column_filler<T, DMat>
-					>::type,
-					typename
-					if_c<M == 1,
-						row_filler<T, DMat>,
-						mat_filler<T, DMat>
-					>::type
-				>::type type;
+		typedef
+			typename meta::if_c<N == 1,
+				typename meta::if_c<M == 1,
+					scalar_filler<T, DMat>,
+					column_filler<T, DMat> >::type,
+				typename meta::if_c<M == 1,
+					row_filler<T, DMat>,
+					mat_filler<T, DMat> >::type
+			>::type type;
 	};
 
 

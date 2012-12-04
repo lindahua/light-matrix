@@ -21,8 +21,8 @@ template class lmat::dense_matrix<double, 3, 0>;
 template class lmat::dense_matrix<double, 3, 4>;
 
 #ifdef LMAT_USE_STATIC_ASSERT
-static_assert(lmat::is_mat_xpr<lmat::dense_matrix<double> >::value, "Interface verification failed.");
-static_assert(lmat::is_dense_mat<lmat::dense_matrix<double> >::value, "Interface verification failed.");
+static_assert(lmat::meta::is_mat_xpr<lmat::dense_matrix<double> >::value, "Interface verification failed.");
+static_assert(lmat::meta::is_dense_mat<lmat::dense_matrix<double> >::value, "Interface verification failed.");
 #endif
 
 
