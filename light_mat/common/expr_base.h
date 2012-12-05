@@ -39,7 +39,7 @@ namespace lmat
 
 	// qualified argument
 
-	template<class Arg> class CRefArg
+	template<class Arg> struct CRefArg
 	{
 		typedef Arg argument;
 		typedef const argument& reference;
@@ -48,7 +48,7 @@ namespace lmat
 		typedef arg_holder<policy, Arg> holder;
 	};
 
-	template<class Arg> class RefArg
+	template<class Arg> struct RefArg
 	{
 		typedef Arg argument;
 		typedef argument& reference;
@@ -57,7 +57,7 @@ namespace lmat
 		typedef arg_holder<policy, Arg> holder;
 	};
 
-	template<class Arg> class CpyArg
+	template<class Arg> struct CpyArg
 	{
 		typedef Arg argument;
 		typedef const argument& reference;
@@ -422,8 +422,8 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<typename Spec, class ArgList> class expr_verifier;
-	template<typename Spec, class QLst> class expr_map;
+	template<typename Spec, class ArgList> struct expr_verifier;
+	template<typename Spec, class QLst> struct expr_map;
 
 	template<typename Spec, class QLst>
 	LMAT_ENSURE_INLINE

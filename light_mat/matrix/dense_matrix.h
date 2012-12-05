@@ -172,7 +172,7 @@ namespace lmat
 		: m_layout(r.nrows(), r.ncolumns())
 		, m_store(m_layout.nelems())
 		{
-			evaluate(r, *this);
+			evaluate(r.derived(), *this);
 		}
 
 		LMAT_ENSURE_INLINE void swap(dense_matrix& s)
@@ -237,7 +237,7 @@ namespace lmat
 		LMAT_ENSURE_INLINE void assign(const IMatrixXpr<Expr, T>& r)
 		{
 			require_size(r.nrows(), r.ncolumns());
-			evaluate(r, *this);
+			evaluate(r.derived(), *this);
 		}
 
 	private:

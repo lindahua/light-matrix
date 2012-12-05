@@ -64,7 +64,8 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		static macc_scheme get_default(const SExpr& expr, const DMat& dmat)
 		{
-			const index_t m = dmat.nrows();
+			const index_t m = common_nrows(expr, dmat);
+			const index_t n = common_ncols(expr, dmat);
 
 			int macc_linear_cost = macc_cost<SExpr, linear_macc, scalar_ker>::value;
 			int macc_percol_cost = macc_cost<SExpr, percol_macc, scalar_ker>::value;
@@ -72,8 +73,7 @@ namespace lmat
 			if (m <= MACC_SHORT_PERCOL_COST)
 				macc_percol_cost += MACC_SHORT_PERCOL_COST;
 
-			return macc_scheme(m, dmat.ncolumns(),
-					macc_linear_cost <= macc_percol_cost);
+			return macc_scheme(m, n, macc_linear_cost <= macc_percol_cost);
 		}
 	};
 
@@ -101,7 +101,9 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		static macc_scheme get_default(const SExpr& expr, const DMat& dmat)
 		{
-			return macc_scheme(dmat.nrows(), dmat.ncolumns());
+			const index_t m = common_nrows(expr, dmat);
+			const index_t n = common_ncols(expr, dmat);
+			return macc_scheme(m, n);
 		}
 	};
 
@@ -130,7 +132,9 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		static macc_scheme get_default(const SExpr& expr, const DMat& dmat)
 		{
-			return macc_scheme(dmat.nrows(), dmat.ncolumns());
+			const index_t m = common_nrows(expr, dmat);
+			const index_t n = common_ncols(expr, dmat);
+			return macc_scheme(m, n);
 		}
 	};
 
@@ -163,6 +167,16 @@ namespace lmat
 			return type::get_default(sexpr, dmat);
 		}
 	};
+
+
+	template<typename T, class SExpr, class DMat>
+	typename default_macc_scheme<SExpr, DMat>::type
+	get_default_macc_scheme(
+			const IMatrixXpr<SExpr, T>& sexpr, IDenseMatrix<DMat, T>& dst)
+	{
+		return default_macc_scheme<SExpr, DMat>::get(sexpr.derived(), dst.derived());
+	}
+
 
 
 	template<typename T, class SExpr, class DMat, typename Acc, typename Ker>

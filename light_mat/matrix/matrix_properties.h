@@ -155,11 +155,27 @@ namespace lmat
 
 	// common shape
 
+	// common nrows
+
 	template<class Mat1, typename T1, class Mat2, typename T2>
 	LMAT_ENSURE_INLINE
 	inline index_t common_nrows(const IMatrixXpr<Mat1, T1>& A, const IMatrixXpr<Mat2, T2>& B)
 	{
 		LMAT_CHECK_DIMS( have_same_nrows(A, B) )
+		return A.nrows();
+	}
+
+	template<typename T1, class Mat2, typename T2>
+	LMAT_ENSURE_INLINE
+	inline index_t common_nrows(const scalar_expr<T1>& A, const IMatrixXpr<Mat2, T2>& B)
+	{
+		return B.nrows();
+	}
+
+	template<class Mat1, typename T1, typename T2>
+	LMAT_ENSURE_INLINE
+	inline index_t common_nrows(const IMatrixXpr<Mat1, T1>& A, const scalar_expr<T2>& B)
+	{
 		return A.nrows();
 	}
 
@@ -174,24 +190,94 @@ namespace lmat
 		return A.nrows();
 	}
 
-	template<class Mat1, typename T1, class Mat2, typename T2, class Mat3, typename T3, class Mat4, typename T4>
+	template<typename T1, class Mat2, typename T2, class Mat3, typename T3>
+	LMAT_ENSURE_INLINE
+	inline index_t common_nrows(
+			const scalar_expr<T1>& A,
+			const IMatrixXpr<Mat2, T2>& B,
+			const IMatrixXpr<Mat3, T3>& C)
+	{
+		LMAT_CHECK_DIMS( have_same_nrows(B, C) )
+		return B.nrows();
+	}
+
+	template<class Mat1, typename T1, typename T2, class Mat3, typename T3>
+	LMAT_ENSURE_INLINE
+	inline index_t common_nrows(
+			const IMatrixXpr<Mat1, T1>& A,
+			const scalar_expr<T2>& B,
+			const IMatrixXpr<Mat3, T3>& C)
+	{
+		LMAT_CHECK_DIMS( have_same_nrows(A, C) )
+		return A.nrows();
+	}
+
+	template<class Mat1, typename T1, class Mat2, typename T2, typename T3>
 	LMAT_ENSURE_INLINE
 	inline index_t common_nrows(
 			const IMatrixXpr<Mat1, T1>& A,
 			const IMatrixXpr<Mat2, T2>& B,
-			const IMatrixXpr<Mat3, T3>& C,
-			const IMatrixXpr<Mat4, T4>& D)
+			const scalar_expr<T3>& C)
 	{
-		LMAT_CHECK_DIMS( have_same_nrows(A, B, C, D) )
+		LMAT_CHECK_DIMS( have_same_nrows(A, B) )
 		return A.nrows();
 	}
 
+
+	template<typename T1, typename T2, class Mat3, typename T3>
+	LMAT_ENSURE_INLINE
+	inline index_t common_nrows(
+			const scalar_expr<T1>& A,
+			const scalar_expr<T2>& B,
+			const IMatrixXpr<Mat3, T3>& C)
+	{
+		return C.nrows();
+	}
+
+	template<typename T1, class Mat2, typename T2, typename T3>
+	LMAT_ENSURE_INLINE
+	inline index_t common_nrows(
+			const scalar_expr<T1>& A,
+			const IMatrixXpr<Mat2, T2>& B,
+			const scalar_expr<T3>& C)
+	{
+		LMAT_CHECK_DIMS( have_same_nrows(A, B) )
+		return B.nrows();
+	}
+
+	template<class Mat1, typename T1, typename T2, typename T3>
+	LMAT_ENSURE_INLINE
+	inline index_t common_nrows(
+			const IMatrixXpr<Mat1, T1>& A,
+			const scalar_expr<T2>& B,
+			const scalar_expr<T3>& C)
+	{
+		LMAT_CHECK_DIMS( have_same_nrows(A, C) )
+		return A.nrows();
+	}
+
+
+	// common ncols
 
 	template<class Mat1, typename T1, class Mat2, typename T2>
 	LMAT_ENSURE_INLINE
 	inline index_t common_ncols(const IMatrixXpr<Mat1, T1>& A, const IMatrixXpr<Mat2, T2>& B)
 	{
 		LMAT_CHECK_DIMS( have_same_ncols(A, B) )
+		return A.ncolumns();
+	}
+
+	template<typename T1, class Mat2, typename T2>
+	LMAT_ENSURE_INLINE
+	inline index_t common_ncols(const scalar_expr<T1>& A, const IMatrixXpr<Mat2, T2>& B)
+	{
+		return B.ncolumns();
+	}
+
+	template<class Mat1, typename T1, typename T2>
+	LMAT_ENSURE_INLINE
+	inline index_t common_ncols(const IMatrixXpr<Mat1, T1>& A, const scalar_expr<T2>& B)
+	{
 		return A.ncolumns();
 	}
 
@@ -206,18 +292,71 @@ namespace lmat
 		return A.ncolumns();
 	}
 
-	template<class Mat1, typename T1, class Mat2, typename T2, class Mat3, typename T3, class Mat4, typename T4>
+	template<typename T1, class Mat2, typename T2, class Mat3, typename T3>
+	LMAT_ENSURE_INLINE
+	inline index_t common_ncols(
+			const scalar_expr<T1>& A,
+			const IMatrixXpr<Mat2, T2>& B,
+			const IMatrixXpr<Mat3, T3>& C)
+	{
+		LMAT_CHECK_DIMS( have_same_ncols(B, C) )
+		return B.ncolumns();
+	}
+
+	template<class Mat1, typename T1, typename T2, class Mat3, typename T3>
+	LMAT_ENSURE_INLINE
+	inline index_t common_ncols(
+			const IMatrixXpr<Mat1, T1>& A,
+			const scalar_expr<T2>& B,
+			const IMatrixXpr<Mat3, T3>& C)
+	{
+		LMAT_CHECK_DIMS( have_same_ncols(A, C) )
+		return A.ncolumns();
+	}
+
+	template<class Mat1, typename T1, class Mat2, typename T2, typename T3>
 	LMAT_ENSURE_INLINE
 	inline index_t common_ncols(
 			const IMatrixXpr<Mat1, T1>& A,
 			const IMatrixXpr<Mat2, T2>& B,
-			const IMatrixXpr<Mat3, T3>& C,
-			const IMatrixXpr<Mat4, T4>& D)
+			const scalar_expr<T3>& C)
 	{
-		LMAT_CHECK_DIMS( have_same_ncols(A, B, C, D) )
+		LMAT_CHECK_DIMS( have_same_ncols(A, B) )
 		return A.ncolumns();
 	}
 
+
+	template<typename T1, typename T2, class Mat3, typename T3>
+	LMAT_ENSURE_INLINE
+	inline index_t common_ncols(
+			const scalar_expr<T1>& A,
+			const scalar_expr<T2>& B,
+			const IMatrixXpr<Mat3, T3>& C)
+	{
+		return C.ncolumns();
+	}
+
+	template<typename T1, class Mat2, typename T2, typename T3>
+	LMAT_ENSURE_INLINE
+	inline index_t common_ncols(
+			const scalar_expr<T1>& A,
+			const IMatrixXpr<Mat2, T2>& B,
+			const scalar_expr<T3>& C)
+	{
+		LMAT_CHECK_DIMS( have_same_ncols(A, B) )
+		return B.ncolumns();
+	}
+
+	template<class Mat1, typename T1, typename T2, typename T3>
+	LMAT_ENSURE_INLINE
+	inline index_t common_ncols(
+			const IMatrixXpr<Mat1, T1>& A,
+			const scalar_expr<T2>& B,
+			const scalar_expr<T3>& C)
+	{
+		LMAT_CHECK_DIMS( have_same_ncols(A, C) )
+		return A.ncolumns();
+	}
 
 }
 

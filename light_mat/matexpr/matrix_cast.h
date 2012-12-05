@@ -18,7 +18,7 @@
 #define LMAT_DEFINE_CASTING_MATFUNCTION( fname, ttype ) \
 	template<class SExpr, typename S> \
 	LMAT_ENSURE_INLINE \
-	inline typename unary_expr_map<ewise_t<scast_t<ttype> >, ref_arg_t, SExpr >::type \
+	inline typename expr_map<ewise_t<scast_t<ttype> >, LMAT_TYPELIST_1( CRefArg<SExpr> ) >::type \
 	fname(const IMatrixXpr<SExpr, S>& sexpr) \
 	{ return cast(sexpr, type<ttype>()); }
 
@@ -31,13 +31,13 @@ namespace lmat
 	struct scast_t { };
 
 	template<typename T>
-	struct is_unary_op<scast_t<T> >
+	struct is_op_tag<scast_t<T> >
 	{
 		static const bool value = true;
 	};
 
 	template<typename S, typename T>
-	struct unary_op_result<scast_t<T>, S>
+	struct op_result<scast_t<T>, LMAT_TYPELIST_1(S) >
 	{
 		typedef T type;
 	};
@@ -62,7 +62,7 @@ namespace lmat
 	};
 
 	template<typename S, typename T>
-	struct unary_op_fun<scast_t<T>, scalar_ker, S>
+	struct op_fun<scast_t<T>, scalar_ker, LMAT_TYPELIST_1(S) >
 	{
 		typedef scast_fun<S, T> type;
 	};
@@ -72,9 +72,9 @@ namespace lmat
 
 	template<class SExpr, typename S, typename T>
 	LMAT_ENSURE_INLINE
-	inline typename unary_expr_map<
+	inline typename expr_map<
 		ewise_t<scast_t<T> >,
-		ref_arg_t, SExpr >::type
+		LMAT_TYPELIST_1( CRefArg<SExpr> ) >::type
 	cast(const IMatrixXpr<SExpr, S>& sexpr, type<T> )
 	{
 		return ewise(scast_t<T>(), sexpr.derived());

@@ -159,8 +159,7 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		void assign(const IMatrixXpr<Expr, T>& r)
 		{
-			LMAT_CHECK_SAME_SHAPE(*this, r);
-			default_evaluate(r, *this);
+			evaluate(r.derived(), *this);
 		}
 
 	private:

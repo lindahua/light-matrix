@@ -23,7 +23,7 @@ namespace lmat
 
 	template<class QArg1>
 	LMAT_ENSURE_INLINE
-	index_t common_nrows(
+	index_t common_nrows_tfwd(
 			const tied_forwarder< LMAT_TYPELIST_1(QArg1) >& tfwd )
 	{
 		return tfwd.arg1_fwd.arg.nrows();
@@ -32,7 +32,7 @@ namespace lmat
 
 	template<class QArg1, class QArg2>
 	LMAT_ENSURE_INLINE
-	index_t common_nrows(
+	index_t common_nrows_tfwd(
 			const tied_forwarder< LMAT_TYPELIST_2(QArg1, QArg2) >& tfwd )
 	{
 		return common_nrows( tfwd.arg1_fwd.arg, tfwd.arg2_fwd.arg );
@@ -40,7 +40,7 @@ namespace lmat
 
 	template<class QArg1, class QArg2, class QArg3>
 	LMAT_ENSURE_INLINE
-	index_t common_nrows(
+	index_t common_nrows_tfwd(
 			const tied_forwarder< LMAT_TYPELIST_3(QArg1, QArg2, QArg3) >& tfwd )
 	{
 		return common_nrows( tfwd.arg1_fwd.arg, tfwd.arg2_fwd.arg, tfwd.arg3_fwd.arg );
@@ -48,7 +48,7 @@ namespace lmat
 
 	template<class QArg1, class QArg2, class QArg3, class QArg4>
 	LMAT_ENSURE_INLINE
-	index_t common_nrows(
+	index_t common_nrows_tfwd(
 			const tied_forwarder< LMAT_TYPELIST_4(QArg1, QArg2, QArg3, QArg4) >& tfwd )
 	{
 		return common_nrows( tfwd.arg1_fwd.arg, tfwd.arg2_fwd.arg, tfwd.arg3_fwd.arg, tfwd.arg4_fwd.arg );
@@ -57,7 +57,7 @@ namespace lmat
 
 	template<class QArg1>
 	LMAT_ENSURE_INLINE
-	index_t common_ncols(
+	index_t common_ncols_tfwd(
 			const tied_forwarder< LMAT_TYPELIST_1(QArg1) >& tfwd )
 	{
 		return tfwd.arg1_fwd.arg.ncolumns();
@@ -66,7 +66,7 @@ namespace lmat
 
 	template<class QArg1, class QArg2>
 	LMAT_ENSURE_INLINE
-	index_t common_ncols(
+	index_t common_ncols_tfwd(
 			const tied_forwarder< LMAT_TYPELIST_2(QArg1, QArg2) >& tfwd )
 	{
 		return common_ncols( tfwd.arg1_fwd.arg, tfwd.arg2_fwd.arg );
@@ -74,7 +74,7 @@ namespace lmat
 
 	template<class QArg1, class QArg2, class QArg3>
 	LMAT_ENSURE_INLINE
-	index_t common_ncols(
+	index_t common_ncols_tfwd(
 			const tied_forwarder< LMAT_TYPELIST_3(QArg1, QArg2, QArg3) >& tfwd )
 	{
 		return common_ncols( tfwd.arg1_fwd.arg, tfwd.arg2_fwd.arg, tfwd.arg3_fwd.arg );
@@ -82,7 +82,7 @@ namespace lmat
 
 	template<class QArg1, class QArg2, class QArg3, class QArg4>
 	LMAT_ENSURE_INLINE
-	index_t common_ncols(
+	index_t common_ncols_tfwd(
 			const tied_forwarder< LMAT_TYPELIST_4(QArg1, QArg2, QArg3, QArg4) >& tfwd )
 	{
 		return common_ncols( tfwd.arg1_fwd.arg, tfwd.arg2_fwd.arg, tfwd.arg3_fwd.arg, tfwd.arg4_fwd.arg );

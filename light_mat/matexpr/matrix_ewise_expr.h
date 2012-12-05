@@ -29,15 +29,16 @@ namespace lmat
 	template<typename Tag, class QLst>
 	struct matrix_traits<ewise_expr<Tag, QLst> >
 	{
+		typedef typename meta::argtype_list_<QLst>::type arg_list;
+
 		static const int num_dimensions = 2;
-		static const int ct_num_rows = meta::common_nrows<QLst>::value;
-		static const int ct_num_cols = meta::common_ncols<QLst>::value;
+		static const int ct_num_rows = meta::common_nrows<arg_list>::value;
+		static const int ct_num_cols = meta::common_ncols<arg_list>::value;
 
 		static const bool is_readonly = true;
 
-		typedef typename meta::argtype_list_<QLst>::type arg_list;
-
-		typedef typename meta::common_value_type<arg_list>::type value_type;
+		typedef typename meta::transform_<meta::value_type_of, arg_list>::type arg_value_types;
+		typedef typename op_result<Tag, arg_value_types>::type value_type;
 		typedef typename meta::common_domain<arg_list>::type domain;
 	};
 
@@ -60,14 +61,14 @@ namespace lmat
 		typedef typename meta::argtype_list_<QLst>::type arg_list;
 
 		typedef matrix_shape<
-				meta::common_nrows<arg_list>,
-				meta::common_ncols<arg_list> > shape_type;
+				meta::common_nrows<arg_list>::value,
+				meta::common_ncols<arg_list>::value > shape_type;
 
 	public:
 		LMAT_ENSURE_INLINE
 		ewise_expr(const Tag& t, const tied_forwarder<QLst>& arg_fwd)
 		: m_tag(t)
-		, m_shape( common_nrows(arg_fwd), common_ncols(arg_fwd) )
+		, m_shape( common_nrows_tfwd(arg_fwd), common_ncols_tfwd(arg_fwd) )
 		, m_args(arg_fwd) { }
 
 		LMAT_ENSURE_INLINE const Tag& tag() const
@@ -158,7 +159,7 @@ namespace lmat
 	ewise(const Tag& tag, const IMatrixXpr<Arg, T>& arg)
 	{
 		typedef LMAT_TYPELIST_1(CRefArg<Arg>) QLst;
-		return make_expr( ewise(tag), tied_forwarder<QLst>(arg) );
+		return make_expr( ewise(tag), tied_forwarder<QLst>(arg.derived()) );
 	}
 
 	template<typename Tag, typename T1, class Arg1, typename T2, class Arg2>
@@ -169,7 +170,7 @@ namespace lmat
 			const IMatrixXpr<Arg2, T2>& arg2 )
 	{
 		typedef LMAT_TYPELIST_2(CRefArg<Arg1>, CRefArg<Arg2>) QLst;
-		return make_expr( ewise(tag), tied_forwarder<QLst>(arg1, arg2) );
+		return make_expr( ewise(tag), tied_forwarder<QLst>(arg1.derived(), arg2.derived()) );
 	}
 
 	template<typename Tag, typename T1, typename T2, class Arg2>
@@ -181,7 +182,7 @@ namespace lmat
 			const IMatrixXpr<Arg2, T2>& arg2 )
 	{
 		typedef LMAT_TYPELIST_2( CpyArg<scalar_expr<T1> >, CRefArg<Arg2> ) QLst;
-		return make_expr( ewise(tag), tied_forwarder<QLst>(arg1v, arg2) );
+		return make_expr( ewise(tag), tied_forwarder<QLst>(arg1v, arg2.derived()) );
 	}
 
 
@@ -194,7 +195,7 @@ namespace lmat
 			const scalar_expr<T2>& arg2v )
 	{
 		typedef LMAT_TYPELIST_2( CRefArg<Arg1>, CpyArg<scalar_expr<T2> > ) QLst;
-		return make_expr( ewise(tag), tied_forwarder<QLst>(arg1, arg2v) );
+		return make_expr( ewise(tag), tied_forwarder<QLst>(arg1.derived(), arg2v) );
 	}
 
 }
@@ -237,7 +238,7 @@ namespace lmat
 #define LMAT_DEFINE_UNARY_MATFUNCTION_S( Fname, Tag, SType ) \
 		template<class Arg> \
 		LMAT_ENSURE_INLINE \
-		inline typename unary_expr_map<ewise_t<Tag>, LMAT_TYPELIST_1(CRefArg<Arg>) >::type \
+		inline typename expr_map<ewise_t<Tag>, LMAT_TYPELIST_1(CRefArg<Arg>) >::type \
 		Fname (const IMatrixXpr<Arg, SType>& arg) \
 		{ return ewise( Tag(), arg ); }
 
@@ -249,12 +250,12 @@ namespace lmat
 		{ return ewise( Tag(), arg1, arg2 ); } \
 		template<class Arg2> \
 		LMAT_ENSURE_INLINE \
-		inline typename expr_map<ewise_t<Tag>, LMAT_TYPELIST_2(CpyArg<scalar_expr<T> >, CRefArg<Arg2> ) >::type \
+		inline typename expr_map<ewise_t<Tag>, LMAT_TYPELIST_2(CpyArg<scalar_expr<SType> >, CRefArg<Arg2> ) >::type \
 		Fname (const SType& arg1v, const IMatrixXpr<Arg2, SType>& arg2) \
 		{ return ewise( Tag(), make_scalar(arg1v), arg2 ); } \
 		template<class Arg1> \
 		LMAT_ENSURE_INLINE \
-		inline typename expr_map<ewise_t<Tag>, LMAT_TYPELIST_2(CRefArg<Arg1>, CpyArg<scalar_expr<T> > ) >::type \
+		inline typename expr_map<ewise_t<Tag>, LMAT_TYPELIST_2(CRefArg<Arg1>, CpyArg<scalar_expr<SType> > ) >::type \
 		Fname (const IMatrixXpr<Arg1, SType>& arg1, const SType& arg2v) \
 		{ return ewise( Tag(), arg1, make_scalar(arg2v) ); }
 

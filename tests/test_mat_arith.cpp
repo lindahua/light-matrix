@@ -43,16 +43,16 @@ void test_scheme_choice()
 	cmat1_t a = a_src.get_cmat();
 	cmat2_t b = b_src.get_cmat();
 
-	bool supp_lin1 = ct_is_continuous<cmat1_t>::value || ct_is_vector<cmat1_t>::value;
-	bool supp_lin2 = ct_is_continuous<cmat2_t>::value || ct_is_vector<cmat2_t>::value;
+	bool supp_lin1 = meta::is_continuous<cmat1_t>::value || meta::is_vector<cmat1_t>::value;
+	bool supp_lin2 = meta::is_continuous<cmat2_t>::value || meta::is_vector<cmat2_t>::value;
 
 	dmat_t r(m, n);
 
-	bool expect_lin_u = get_default_eval_scheme(-a, r).use_linear();
+	bool expect_lin_u = get_default_macc_scheme(-a, r).use_linear();
 
 	ASSERT_EQ( expect_lin_u, supp_lin1 );
 
-	bool expect_lin_b = get_default_eval_scheme(a + b, r).use_linear();
+	bool expect_lin_b = get_default_macc_scheme(a + b, r).use_linear();
 
 	ASSERT_EQ( expect_lin_b, supp_lin1 && supp_lin2 );
 }
@@ -140,17 +140,6 @@ MN_CASE( mat_arith, add )
 	mat_t CB = c + B;
 	ASSERT_TRUE( is_equal(CB, CB_r) );
 
-	add_t op;
-
-	mat_t AB1 = make_expr( ewise(op), ref_arg(A), copy_arg(B) );
-	ASSERT_TRUE( is_equal(AB1, AB_r) );
-
-	mat_t AB2 = make_expr( ewise(op), copy_arg(A), ref_arg(B) );
-	ASSERT_TRUE( is_equal(AB2, AB_r) );
-
-	mat_t AB3 = make_expr( ewise(op), copy_arg(A), copy_arg(B) );
-	ASSERT_TRUE( is_equal(AB3, AB_r) );
-
 }
 
 
@@ -225,16 +214,6 @@ MN_CASE( mat_arith, sub )
 	mat_t CB = c - B;
 	ASSERT_TRUE( is_equal(CB, CB_r) );
 
-	subtract_t op;
-
-	mat_t AB1 = make_expr(ewise(op), ref_arg(A), copy_arg(B) );
-	ASSERT_TRUE( is_equal(AB1, AB_r) );
-
-	mat_t AB2 = make_expr(ewise(op), copy_arg(A), ref_arg(B) );
-	ASSERT_TRUE( is_equal(AB2, AB_r) );
-
-	mat_t AB3 = make_expr(ewise(op), copy_arg(A), copy_arg(B) );
-	ASSERT_TRUE( is_equal(AB3, AB_r) );
 }
 
 MN_CASE( mat_arith, sub_ip )
@@ -306,17 +285,6 @@ MN_CASE( mat_arith, mul )
 
 	mat_t CB = c * B;
 	ASSERT_TRUE( is_equal(CB, CB_r) );
-
-	multiply_t op;
-
-	mat_t AB1 = make_expr( ewise(op), ref_arg(A), copy_arg(B) );
-	ASSERT_TRUE( is_equal(AB1, AB_r) );
-
-	mat_t AB2 = make_expr( ewise(op), copy_arg(A), ref_arg(B) );
-	ASSERT_TRUE( is_equal(AB2, AB_r) );
-
-	mat_t AB3 = make_expr( ewise(op), copy_arg(A), copy_arg(B) );
-	ASSERT_TRUE( is_equal(AB3, AB_r) );
 }
 
 MN_CASE( mat_arith, mul_ip )
@@ -388,17 +356,6 @@ MN_CASE( mat_arith, div )
 
 	mat_t CB = c / B;
 	ASSERT_TRUE( is_equal(CB, CB_r) );
-
-	divide_t op;
-
-	mat_t AB1 = make_expr( ewise(op), ref_arg(A), copy_arg(B) );
-	ASSERT_TRUE( is_equal(AB1, AB_r) );
-
-	mat_t AB2 = make_expr( ewise(op), copy_arg(A), ref_arg(B) );
-	ASSERT_TRUE( is_equal(AB2, AB_r) );
-
-	mat_t AB3 = make_expr( ewise(op), copy_arg(A), copy_arg(B) );
-	ASSERT_TRUE( is_equal(AB3, AB_r) );
 }
 
 
@@ -455,10 +412,6 @@ MN_CASE( mat_arith, neg )
 
 	mat_t R = -A;
 	ASSERT_TRUE( is_equal(R, R_r) );
-
-	negate_t op;
-	mat_t R1 = make_expr(ewise(op), copy_arg(A));
-	ASSERT_TRUE( is_equal(R1, R_r) );
 }
 
 

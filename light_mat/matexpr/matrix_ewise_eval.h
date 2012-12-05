@@ -34,33 +34,20 @@ namespace lmat
 
 	// default evaluate scheme
 
-	template<typename Tag, class QArg, class DMat, typename DT>
+	template<typename Tag, class QLst, class Dst>
 	LMAT_ENSURE_INLINE
-	inline typename default_macc_scheme< ewise_expr<Tag, LMAT_TYPELIST_1(QArg) >, DMat>::type
-	get_default_eval_scheme(
-			const ewise_expr<Tag, LMAT_TYPELIST_1(QArg) >& sexpr,
-			IDenseMatrix<DMat, DT>& dmat)
+	inline void evaluate(const ewise_expr<Tag, QLst>& expr,
+			IDenseMatrix<Dst, typename matrix_traits<ewise_expr<Tag, QLst> >::value_type >& dst)
 	{
-		typedef ewise_expr<Tag, LMAT_TYPELIST_1(QArg) > expr_t;
-		return default_macc_scheme<expr_t, DMat>::get(sexpr, dmat.derived());
-	}
-
-	template<typename Tag, class QArg1, class QArg2, class DMat, typename DT>
-	LMAT_ENSURE_INLINE
-	inline typename default_macc_scheme< ewise_expr<Tag, LMAT_TYPELIST_2(QArg1, QArg2) >, DMat>::type
-	get_default_eval_scheme(
-			const ewise_expr<Tag, LMAT_TYPELIST_2(QArg1, QArg2) >& sexpr,
-			IDenseMatrix<DMat, DT>& dmat)
-	{
-		typedef ewise_expr<Tag, LMAT_TYPELIST_2(QArg1, QArg2) > expr_t;
-		return default_macc_scheme<expr_t, DMat>::get(sexpr, dmat.derived());
+		typedef typename default_macc_policy<ewise_expr<Tag, QLst>, Dst>::type policy_t;
+		evaluate(expr, dst.derived(), policy_t());
 	}
 
 
 	// accessors
 
 	template<typename Tag, class QArgList, typename Acc, typename Ker>
-	struct macc_accessor_map<ewise_expr<Tag, QArgList>, Acc, Ker>
+	struct macc_accessor_map<ewise_expr<Tag, QArgList>, macc_policy<Acc, Ker> >
 	{
 		typedef typename meta::transform_<meta::argument_of, QArgList>::type arg_list;
 		typedef ewise_accessor<Acc, Ker, Tag, arg_list> type;
@@ -124,13 +111,14 @@ namespace lmat
 		typedef typename op_result<Tag, arg_value_types>::type value_type;
 		typedef typename op_fun<Tag, scalar_ker, arg_value_types>::type fun_t;
 
-		typedef typename macc_accessor_map<Arg, linear_macc, scalar_ker>::type arg_accessor_t;
+		typedef macc_policy<linear_macc, scalar_ker> policy_t;
+		typedef typename macc_accessor_map<Arg, policy_t>::type arg_accessor_t;
 
 	public:
-
 		template<class QArg>
+		LMAT_ENSURE_INLINE
 		ewise_accessor(const ewise_expr<Tag, LMAT_TYPELIST_1(QArg) >& expr)
-		: m_fun(expr.tag()), m_arg_acc(expr.arg1()) { }
+		: m_fun(expr.tag()), m_arg_acc(expr.args().arg1()) { }
 
 		LMAT_ENSURE_INLINE
 		value_type get_scalar(const index_t i) const
@@ -150,17 +138,18 @@ namespace lmat
 	{
 		typedef typename matrix_traits<Arg1>::value_type arg1_value_type;
 		typedef typename matrix_traits<Arg2>::value_type arg2_value_type;
-		typedef LMAT_TYPELIST_2(arg_value_type, arg2_value_type) arg_value_types;
+		typedef LMAT_TYPELIST_2(arg1_value_type, arg2_value_type) arg_value_types;
 
 		typedef typename op_result<Tag, arg_value_types>::type value_type;
 		typedef typename op_fun<Tag, scalar_ker, arg_value_types>::type fun_t;
 
-		typedef typename macc_accessor_map<Arg1, linear_macc, scalar_ker>::type arg1_accessor_t;
-		typedef typename macc_accessor_map<Arg2, linear_macc, scalar_ker>::type arg2_accessor_t;
+		typedef macc_policy<linear_macc, scalar_ker> policy_t;
+		typedef typename macc_accessor_map<Arg1, policy_t>::type arg1_accessor_t;
+		typedef typename macc_accessor_map<Arg2, policy_t>::type arg2_accessor_t;
 
 	public:
-
 		template<class QArg1, class QArg2>
+		LMAT_ENSURE_INLINE
 		ewise_accessor(const ewise_expr<Tag, LMAT_TYPELIST_2(QArg1, QArg2) >& expr)
 		: m_fun(expr.tag())
 		, m_arg1_acc(expr.args().arg1())
@@ -189,29 +178,33 @@ namespace lmat
 
 	template<typename Tag, class Arg>
 	struct percol_macc_state_map<
-		unary_ewise_accessor<percol_macc, scalar_ker, Tag, Arg> >
+		ewise_accessor<percol_macc, scalar_ker, Tag, LMAT_TYPELIST_1(Arg) > >
 	{
-		typedef typename macc_accessor_map<Arg, percol_macc, scalar_ker>::type arg_accessor_t;
+		typedef typename macc_accessor_map<Arg, macc_policy<percol_macc, scalar_ker> >::type arg_accessor_t;
 		typedef typename percol_macc_state_map<arg_accessor_t>::type type;
 	};
 
 	template<typename Tag, class Arg>
-	class unary_ewise_accessor<percol_macc, scalar_ker, Tag, Arg>
-	: public unary_ewise_accbase<percol_macc, scalar_ker, Tag, Arg>::base_type
+	class ewise_accessor<percol_macc, scalar_ker, Tag, LMAT_TYPELIST_1(Arg) >
+	: public ewise_accbase<percol_macc, scalar_ker, Tag, LMAT_TYPELIST_1(Arg) >::base_type
 	{
 		typedef typename matrix_traits<Arg>::value_type arg_value_type;
-		typedef typename unary_op_result<Tag, arg_value_type>::type value_type;
+		typedef LMAT_TYPELIST_1(arg_value_type) arg_value_types;
 
-		typedef typename unary_op_fun<Tag, scalar_ker, arg_value_type>::type fun_t;
-		typedef typename macc_accessor_map<Arg, percol_macc, scalar_ker>::type arg_accessor_t;
+		typedef typename op_result<Tag, arg_value_types>::type value_type;
+		typedef typename op_fun<Tag, scalar_ker, arg_value_types>::type fun_t;
+
+		typedef macc_policy<percol_macc, scalar_ker> policy_t;
+		typedef typename macc_accessor_map<Arg, policy_t>::type arg_accessor_t;
 
 		typedef typename percol_macc_state_map<arg_accessor_t>::type col_state_t;
 
 	public:
 
-		template<typename Arg_HP>
-		unary_ewise_accessor(const unary_ewise_expr<Tag, Arg_HP, Arg>& expr)
-		: m_fun(expr.tag()), m_arg_acc(expr.arg()) { }
+		template<class QArg>
+		LMAT_ENSURE_INLINE
+		ewise_accessor(const ewise_expr<Tag, LMAT_TYPELIST_1(QArg)>& expr)
+		: m_fun(expr.tag()), m_arg_acc(expr.args().arg1()) { }
 
 		LMAT_ENSURE_INLINE
 		value_type get_scalar(const index_t i, const col_state_t& s) const
@@ -233,10 +226,11 @@ namespace lmat
 
 	template<typename Tag, class Arg1, class Arg2>
 	struct percol_macc_state_map<
-		binary_ewise_accessor<percol_macc, scalar_ker, Tag, Arg1, Arg2> >
+		ewise_accessor<percol_macc, scalar_ker, Tag, LMAT_TYPELIST_2(Arg1, Arg2) > >
 	{
-		typedef typename macc_accessor_map<Arg1, percol_macc, scalar_ker>::type arg1_accessor_t;
-		typedef typename macc_accessor_map<Arg2, percol_macc, scalar_ker>::type arg2_accessor_t;
+		typedef macc_policy<percol_macc, scalar_ker> policy_t;
+		typedef typename macc_accessor_map<Arg1, policy_t>::type arg1_accessor_t;
+		typedef typename macc_accessor_map<Arg2, policy_t>::type arg2_accessor_t;
 		typedef typename std::pair<
 				typename percol_macc_state_map<arg1_accessor_t>::type,
 				typename percol_macc_state_map<arg2_accessor_t>::type> type;
@@ -244,16 +238,19 @@ namespace lmat
 
 
 	template<typename Tag, class Arg1, class Arg2>
-	class binary_ewise_accessor<percol_macc, scalar_ker, Tag, Arg1, Arg2>
-	: public binary_ewise_accbase<percol_macc, scalar_ker, Tag, Arg1, Arg2>::base_type
+	class ewise_accessor<percol_macc, scalar_ker, Tag, LMAT_TYPELIST_2(Arg1, Arg2) >
+	: public ewise_accbase<percol_macc, scalar_ker, Tag, LMAT_TYPELIST_2(Arg1, Arg2) >::base_type
 	{
 		typedef typename matrix_traits<Arg1>::value_type arg1_value_type;
 		typedef typename matrix_traits<Arg2>::value_type arg2_value_type;
-		typedef typename binary_op_result<Tag, arg1_value_type, arg2_value_type>::type value_type;
+		typedef typename LMAT_TYPELIST_2( arg1_value_type, arg2_value_type ) arg_value_types;
 
-		typedef typename binary_op_fun<Tag, scalar_ker, arg1_value_type, arg2_value_type>::type fun_t;
-		typedef typename macc_accessor_map<Arg1, percol_macc, scalar_ker>::type arg1_accessor_t;
-		typedef typename macc_accessor_map<Arg2, percol_macc, scalar_ker>::type arg2_accessor_t;
+		typedef typename op_result<Tag, arg_value_types >::type value_type;
+		typedef typename op_fun<Tag, scalar_ker, arg_value_types >::type fun_t;
+
+		typedef macc_policy<percol_macc, scalar_ker> policy_t;
+		typedef typename macc_accessor_map<Arg1, policy_t>::type arg1_accessor_t;
+		typedef typename macc_accessor_map<Arg2, policy_t>::type arg2_accessor_t;
 
 		typedef typename percol_macc_state_map<arg1_accessor_t>::type arg1_col_state_t;
 		typedef typename percol_macc_state_map<arg2_accessor_t>::type arg2_col_state_t;
@@ -261,9 +258,9 @@ namespace lmat
 
 	public:
 
-		template<typename Arg1_HP, typename Arg2_HP>
-		binary_ewise_accessor(const binary_ewise_expr<Tag, Arg1_HP, Arg1, Arg2_HP, Arg2>& expr)
-		: m_fun(expr.tag()), m_arg1_acc(expr.first_arg()), m_arg2_acc(expr.second_arg()) { }
+		template<class QArg1, class QArg2>
+		ewise_accessor(const ewise_expr<Tag, LMAT_TYPELIST_2(QArg1, QArg2) >& expr)
+		: m_fun(expr.tag()), m_arg1_acc(expr.args().arg1()), m_arg2_acc(expr.args().arg2()) { }
 
 		LMAT_ENSURE_INLINE
 		value_type get_scalar(const index_t i, const col_state_t& s) const

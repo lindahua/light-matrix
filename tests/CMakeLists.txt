@@ -93,9 +93,12 @@ set(MATEXPR_BASE_HS
     ${INC}/math/math_base.h
     ${INC}/math/functor_base.h
     ${INC}/matexpr/matexpr_fwd.h
+    ${INC}/matexpr/matexpr_tools.h
     ${INC}/matexpr/matrix_access_base.h
     ${INC}/matexpr/matrix_access_eval.h
-    ${INC}/matexpr/dense_accessors.h)   
+    ${INC}/matexpr/dense_accessors.h
+    ${INC}/matexpr/bits/macc_eval_core.h
+    ${INC}/matexpr/bits/macc_eval_impl.h)   
     
 set(MATRIX_EWISE_HS    
     ${INC}/math/arith_functors.h
@@ -198,11 +201,11 @@ set(EWISE_MAT_EVAL_HS
     ${MATEXPR_BASE_HS}
     ${MATRIX_EWISE_HS})
 
-# add_executable(test_mat_arith ${EWISE_MAT_EVAL_HS} test_mat_arith.cpp)
-# add_executable(test_mat_emath ${EWISE_MAT_EVAL_HS} test_mat_emath.cpp)
-# add_executable(test_mat_ecomp ${EWISE_MAT_EVAL_HS} test_mat_ecomp.cpp)
-# add_executable(test_mat_elogical ${EWISE_MAT_EVAL_HS} test_mat_elogical.cpp)
-# add_executable(test_mat_cast ${EWISE_MAT_EVAL_HS} test_mat_cast.cpp) 
+add_executable(test_mat_arith ${EWISE_MAT_EVAL_HS} test_mat_arith.cpp)
+add_executable(test_mat_emath ${EWISE_MAT_EVAL_HS} test_mat_emath.cpp)
+add_executable(test_mat_ecomp ${EWISE_MAT_EVAL_HS} test_mat_ecomp.cpp)
+add_executable(test_mat_elogical ${EWISE_MAT_EVAL_HS} test_mat_elogical.cpp)
+add_executable(test_mat_cast ${EWISE_MAT_EVAL_HS} test_mat_cast.cpp) 
 
 set(MAT_REPEAT_HS
     ${MATRIX_HS}
@@ -250,11 +253,11 @@ set(LMAT_TEST_NAMES
 	test_mat_vecviews
 	test_mat_matviews
 	test_dense_acc
-	# test_mat_arith
-	# test_mat_emath
-	# test_mat_ecomp
-	# test_mat_elogical
-	# test_mat_cast
+	test_mat_arith
+	test_mat_emath
+	test_mat_ecomp
+	test_mat_elogical
+	test_mat_cast
 	# test_vec_rep
 	# test_direct_trans
 	# test_mat_transpose
