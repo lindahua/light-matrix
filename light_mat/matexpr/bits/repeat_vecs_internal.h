@@ -82,7 +82,7 @@ namespace lmat { namespace internal {
 		if (n == 1)
 		{
 			col_t col(dmat.column(0));
-			default_evaluate(arg, col);
+			evaluate(arg, col);
 		}
 		else
 		{
@@ -161,7 +161,7 @@ namespace lmat { namespace internal {
 		if (m == 1)
 		{
 			row_t row(dmat.row(0));
-			default_evaluate(arg, row);
+			evaluate(arg, row);
 		}
 		else
 		{
@@ -246,7 +246,7 @@ namespace lmat { namespace internal {
 	struct reprow_cap<Arg, false>
 	{
 		typedef typename matrix_traits<Arg>::value_type T;
-		dense_row<T, ct_cols<Arg>::value> cache;
+		dense_row<T, meta::ncols<Arg>::value> cache;
 
 		LMAT_ENSURE_INLINE
 		reprow_cap(const Arg& arg_)

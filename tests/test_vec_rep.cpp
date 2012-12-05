@@ -61,7 +61,7 @@ void test_repcols()
 
 	// access-based evaluation
 
-	typedef macc_scheme<percol_macc, scalar_ker, M, N> scheme_t;
+	typedef macc_scheme< macc_policy<percol_macc, scalar_ker>, M, N> scheme_t;
 	fill(dmat, 0.0);
 	scheme_t sch = scheme_t::get_default(rep_col(scol, n), dmat);
 	sch.evaluate(rep_col(scol, n), dmat);
@@ -109,7 +109,7 @@ void test_reprows()
 
 	// access-based evaluation
 
-	typedef macc_scheme<percol_macc, scalar_ker, M, N> scheme_t;
+	typedef macc_scheme< macc_policy<percol_macc, scalar_ker>, M, N> scheme_t;
 	fill(dmat, 0.0);
 	scheme_t sch = scheme_t::get_default(rep_row(srow, m), dmat);
 	sch.evaluate(rep_row(srow, m), dmat);
@@ -155,7 +155,7 @@ void test_repcols_ex()
 
 	// access-based evaluation
 
-	typedef macc_scheme<percol_macc, scalar_ker, M, N> scheme_t;
+	typedef macc_scheme< macc_policy<percol_macc, scalar_ker>, M, N> scheme_t;
 	fill(dmat, 0.0);
 	scheme_t sch = scheme_t::get_default(rep_col(scol * 2.0 + 1.0, n), dmat);
 	sch.evaluate(rep_col(scol * 2.0 + 1.0, n), dmat);
@@ -201,7 +201,7 @@ void test_reprows_ex()
 
 	// access-based evaluation
 
-	typedef macc_scheme<percol_macc, scalar_ker, M, N> scheme_t;
+	typedef macc_scheme< macc_policy<percol_macc, scalar_ker>, M, N> scheme_t;
 	fill(dmat, 0.0);
 	scheme_t sch = scheme_t::get_default(rep_row(srow * 2.0 + 1.0, m), dmat);
 	sch.evaluate(rep_row(srow * 2.0 + 1.0, m), dmat);

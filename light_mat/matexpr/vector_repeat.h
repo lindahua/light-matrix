@@ -26,54 +26,56 @@ namespace lmat
 
 	// expression traits
 
-	template<typename Arg_HP, class Arg, int N>
-	struct matrix_traits<repeat_col_expr<Arg_HP, Arg, N> >
+	template<class QArg, int N>
+	struct matrix_traits<repeat_col_expr<QArg, N> >
 	{
+		typedef typename QArg::argument arg_t;
+
 		static const int num_dimensions = 2;
-		static const int ct_num_rows = ct_rows<Arg>::value;
-		static const int ct_num_cols = ct_cols<Arg>::value * N;
+		static const int ct_num_rows = meta::nrows<arg_t>::value;
+		static const int ct_num_cols = meta::ncols<arg_t>::value * N;
 
 		static const bool is_readonly = true;
 
-		typedef typename matrix_traits<Arg>::value_type value_type;
-		typedef typename matrix_traits<Arg>::domain domain;
+		typedef typename matrix_traits<arg_t>::value_type value_type;
+		typedef typename matrix_traits<arg_t>::domain domain;
 	};
 
-	template<typename Arg_HP, class Arg, int M>
-	struct matrix_traits<repeat_row_expr<Arg_HP, Arg, M> >
+	template<class QArg, int M>
+	struct matrix_traits<repeat_row_expr<QArg, M> >
 	{
+		typedef typename QArg::argument arg_t;
+
 		static const int num_dimensions = 2;
-		static const int ct_num_rows = ct_rows<Arg>::value * M;
-		static const int ct_num_cols = ct_cols<Arg>::value;
+		static const int ct_num_rows = meta::nrows<arg_t>::value * M;
+		static const int ct_num_cols = meta::ncols<arg_t>::value;
 
 		static const bool is_readonly = true;
 
-		typedef typename matrix_traits<Arg>::value_type value_type;
-		typedef typename matrix_traits<Arg>::domain domain;
+		typedef typename matrix_traits<arg_t>::value_type value_type;
+		typedef typename matrix_traits<arg_t>::domain domain;
 	};
 
 	// expression
 
-	template<typename Arg_HP, class Arg, int N>
+	template<class QArg, int N>
 	class repeat_col_expr
-	: public unary_expr_base<Arg_HP, Arg>
-	, public IMatrixXpr<
-		repeat_col_expr<Arg_HP, Arg, N>,
-		typename matrix_traits<Arg>::value_type>
+	: public IMatrixXpr<
+		repeat_col_expr<QArg, N>,
+		typename matrix_traits<typename QArg::argument>::value_type>
 	{
-		typedef unary_expr_base<Arg_HP, Arg> base_t;
-
-#ifdef LMAT_USE_STATIC_ASSERT
-		static_assert(is_mat_xpr<Arg>::value, "Arg must be a matrix expression class.");
-#endif
-
 	public:
 		LMAT_ENSURE_INLINE
-		repeat_col_expr(const arg_forwarder<Arg_HP, Arg>& arg_fwd, const index_t n)
-		: base_t(arg_fwd), m_ncols(n)
+		repeat_col_expr(const typename QArg::forwarder& arg_fwd, const index_t n)
+		: arg_holder(arg_fwd), m_ncols(n)
 		{
 			check_arg( is_column(this->arg()),
 					"repeat_col: the input argument should be a column." );
+		}
+
+		LMAT_ENSURE_INLINE const typename QArg::argument& arg() const
+		{
+			return arg_holder.get();
 		}
 
 		LMAT_ENSURE_INLINE index_t nelems() const
@@ -83,7 +85,7 @@ namespace lmat
 
 		LMAT_ENSURE_INLINE index_t nrows() const
 		{
-			return this->arg().nrows();
+			return arg().nrows();
 		}
 
 		LMAT_ENSURE_INLINE index_t ncolumns() const
@@ -92,30 +94,29 @@ namespace lmat
 		}
 
 	private:
+		typename QArg::holder arg_holder;
 		dimension<N> m_ncols;
 	};
 
 
-	template<typename Arg_HP, class Arg, int M>
+	template<class QArg, int M>
 	class repeat_row_expr
-	: public unary_expr_base<Arg_HP, Arg>
-	, public IMatrixXpr<
-		repeat_row_expr<Arg_HP, Arg, M>,
-		typename matrix_traits<Arg>::value_type>
+	: public IMatrixXpr<
+		repeat_row_expr<QArg, M>,
+		typename matrix_traits<typename QArg::argument>::value_type>
 	{
-		typedef unary_expr_base<Arg_HP, Arg> base_t;
-
-#ifdef LMAT_USE_STATIC_ASSERT
-		static_assert(is_mat_xpr<Arg>::value, "Arg must be a matrix expression class.");
-#endif
-
 	public:
 
 		LMAT_ENSURE_INLINE
-		repeat_row_expr(const arg_forwarder<Arg_HP, Arg>& arg_fwd, const index_t m)
-		: base_t(arg_fwd), m_nrows(m)
+		repeat_row_expr(const typename QArg::forwarder& arg_fwd, const index_t m)
+		: arg_holder(arg_fwd), m_nrows(m)
 		{
 			check_arg( is_row(this->arg()), "repeat_row: the input argument should be a row." );
+		}
+
+		LMAT_ENSURE_INLINE const typename QArg::argument& arg() const
+		{
+			return arg_holder.get();
 		}
 
 		LMAT_ENSURE_INLINE index_t nelems() const
@@ -130,10 +131,11 @@ namespace lmat
 
 		LMAT_ENSURE_INLINE index_t ncolumns() const
 		{
-			return this->arg().ncolumns();
+			return arg().ncolumns();
 		}
 
 	private:
+		typename QArg::holder arg_holder;
 		dimension<M> m_nrows;
 	};
 
@@ -216,43 +218,45 @@ namespace lmat
 	 ********************************************/
 
 	template<class Arg, int N>
-	struct unary_expr_verifier<repcol_t<N>, Arg>
+	struct expr_verifier<repcol_t<N>, LMAT_TYPELIST_1(Arg) >
 	{
-		static const bool value = is_mat_xpr<Arg>::value;
+		static const bool value = meta::is_mat_xpr<Arg>::value;
 	};
 
 	template<class Arg, int M>
-	struct unary_expr_verifier<reprow_t<M>, Arg>
+	struct expr_verifier<reprow_t<M>, LMAT_TYPELIST_1(Arg) >
 	{
-		static const bool value = is_mat_xpr<Arg>::value;
+		static const bool value = meta::is_mat_xpr<Arg>::value;
 	};
 
 
-	template<typename Arg_HP, class Arg, int N>
-	struct unary_expr_map<repcol_t<N>, Arg_HP, Arg>
+	template<class QArg, int N>
+	struct expr_map<repcol_t<N>, LMAT_TYPELIST_1(QArg) >
 	{
-		typedef repeat_col_expr<Arg_HP, Arg, N> type;
+		typedef repeat_col_expr<QArg, N> type;
 
 		LMAT_ENSURE_INLINE
 		static type get(const repcol_t<N>& spec,
-				const arg_forwarder<Arg_HP, Arg>& arg_fwd)
+				const tied_forwarder< LMAT_TYPELIST_1(QArg) >& tfwd)
 		{
-			return type(arg_fwd, spec.get_ncols());
+			return type(tfwd.arg1_fwd, spec.get_ncols());
 		}
 	};
 
-	template<typename Arg_HP, class Arg, int M>
-	struct unary_expr_map<reprow_t<M>, Arg_HP, Arg>
+
+	template<class QArg, int M>
+	struct expr_map<reprow_t<M>, LMAT_TYPELIST_1(QArg) >
 	{
-		typedef repeat_row_expr<Arg_HP, Arg, M> type;
+		typedef repeat_row_expr<QArg, M> type;
 
 		LMAT_ENSURE_INLINE
 		static type get(const reprow_t<M>& spec,
-				const arg_forwarder<Arg_HP, Arg>& arg_fwd)
+				const tied_forwarder< LMAT_TYPELIST_1(QArg) > & tfwd)
 		{
-			return type(arg_fwd, spec.get_nrows());
+			return type(tfwd.arg1_fwd, spec.get_nrows());
 		}
 	};
+
 
 
 	/********************************************
@@ -263,34 +267,39 @@ namespace lmat
 
 	template<typename T, class Arg>
 	LMAT_ENSURE_INLINE
-	inline typename unary_expr_map<repcol_t<0>, ref_arg_t, Arg>::type
+	inline typename expr_map<repcol_t<0>, LMAT_TYPELIST_1(CRefArg<Arg>) >::type
 	rep_col(const IMatrixXpr<Arg, T>& arg, const index_t n)
 	{
-		return make_expr(repcol_t<0>(n), ref_arg(arg.derived()));
+		typedef tied_forwarder< LMAT_TYPELIST_1(CRefArg<Arg>) > tfwd_t;
+		return make_expr(repcol_t<0>(n), tfwd_t(arg.derived()));
 	}
 
 	template<typename T, class Arg, int N>
 	LMAT_ENSURE_INLINE
-	inline typename unary_expr_map<repcol_t<N>, ref_arg_t, Arg>::type
+	inline typename expr_map<repcol_t<N>, LMAT_TYPELIST_1(CRefArg<Arg>) >::type
 	rep_col(const IMatrixXpr<Arg, T>& arg, fix_int<N>)
 	{
-		return make_expr(repcol_t<N>(), ref_arg(arg.derived()));
+		typedef tied_forwarder< LMAT_TYPELIST_1(CRefArg<Arg>) > tfwd_t;
+		return make_expr(repcol_t<N>(), tfwd_t(arg.derived()));
 	}
+
 
 	template<typename T, class Arg>
 	LMAT_ENSURE_INLINE
-	inline typename unary_expr_map<reprow_t<0>, ref_arg_t, Arg>::type
-	rep_row(const IMatrixXpr<Arg, T>& arg, const index_t m)
+	inline typename expr_map<reprow_t<0>, LMAT_TYPELIST_1(CRefArg<Arg>) >::type
+	rep_row(const IMatrixXpr<Arg, T>& arg, const index_t n)
 	{
-		return make_expr(reprow_t<0>(m), ref_arg(arg.derived()));
+		typedef tied_forwarder< LMAT_TYPELIST_1(CRefArg<Arg>) > tfwd_t;
+		return make_expr(reprow_t<0>(n), tfwd_t(arg.derived()));
 	}
 
-	template<typename T, class Arg, int M>
+	template<typename T, class Arg, int N>
 	LMAT_ENSURE_INLINE
-	inline typename unary_expr_map<reprow_t<M>, ref_arg_t, Arg>::type
-	rep_row(const IMatrixXpr<Arg, T>& arg, fix_int<M>)
+	inline typename expr_map<reprow_t<N>, LMAT_TYPELIST_1(CRefArg<Arg>) >::type
+	rep_row(const IMatrixXpr<Arg, T>& arg, fix_int<N>)
 	{
-		return make_expr(reprow_t<M>(), ref_arg(arg.derived()));
+		typedef tied_forwarder< LMAT_TYPELIST_1(CRefArg<Arg>) > tfwd_t;
+		return make_expr(reprow_t<N>(), tfwd_t(arg.derived()));
 	}
 
 
@@ -300,61 +309,28 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<int M, int N>
-	struct repcol_scheme
-	{
-		const matrix_shape<M, N> shape;
-
-		LMAT_ENSURE_INLINE
-		repcol_scheme(index_t m, index_t n)
-		: shape(m, n) { }
-
-		template<typename Arg_HP, class Arg, class DMat>
-		LMAT_ENSURE_INLINE
-		void evaluate(const repeat_col_expr<Arg_HP, Arg, N>& sexpr, DMat& dmat)
-		{
-			internal::repcol_evaluate(shape, sexpr.arg(), dmat);
-		}
-	};
-
-	template<int M, int N>
-	struct reprow_scheme
-	{
-		const matrix_shape<M, N> shape;
-
-		LMAT_ENSURE_INLINE
-		reprow_scheme(index_t m, index_t n)
-		: shape(m, n) { }
-
-		template<typename Arg_HP, class Arg, class DMat>
-		LMAT_ENSURE_INLINE
-		void evaluate(const repeat_row_expr<Arg_HP, Arg, M>& sexpr, DMat& dmat)
-		{
-			internal::reprow_evaluate(shape, sexpr.arg(), dmat);
-		}
-	};
-
-
-	template<typename T, typename Arg_HP, class Arg, int N, class DMat>
+	template<class QArg, int N, class DMat>
 	LMAT_ENSURE_INLINE
-	inline repcol_scheme<common_ctrows<Arg, DMat>::value, N>
-	get_default_eval_scheme(
-			const repeat_col_expr<Arg_HP, Arg, N>& sexpr,
-			IDenseMatrix<DMat, T>& dmat)
+	void evaluate(const repeat_col_expr<QArg, N>& sexpr,
+			IDenseMatrix<DMat, typename matrix_traits<typename QArg::argument>::value_type>& dmat)
 	{
-		const int M = common_ctrows<Arg, DMat>::value;
-		return repcol_scheme<M, N>(dmat.nrows(), dmat.ncolumns());
+		matrix_shape< meta::nrows<typename QArg::argument>::value, N> shape(
+				common_nrows(sexpr, dmat),
+				common_ncols(sexpr, dmat));
+
+		internal::repcol_evaluate(shape, sexpr.arg(), dmat.derived());
 	}
 
-	template<typename T, typename Arg_HP, class Arg, int M, class DMat>
+	template<class QArg, int M, class DMat>
 	LMAT_ENSURE_INLINE
-	inline reprow_scheme<M, common_ctcols<Arg, DMat>::value>
-	get_default_eval_scheme(
-			const repeat_row_expr<Arg_HP, Arg, M>& sexpr,
-			IDenseMatrix<DMat, T>& dmat)
+	void evaluate(const repeat_row_expr<QArg, M>& sexpr,
+			IDenseMatrix<DMat, typename matrix_traits<typename QArg::argument>::value_type>& dmat)
 	{
-		const int N = common_ctcols<Arg, DMat>::value;
-		return reprow_scheme<M, N>(dmat.nrows(), dmat.ncolumns());
+		matrix_shape<M, meta::ncols<typename QArg::argument>::value> shape(
+				common_nrows(sexpr, dmat),
+				common_ncols(sexpr, dmat));
+
+		internal::reprow_evaluate(shape, sexpr.arg(), dmat.derived());
 	}
 
 
@@ -399,8 +375,8 @@ namespace lmat
 	public:
 		typedef typename matrix_traits<Arg>::value_type value_type;
 
-		template<typename Arg_HP, int N>
-		repcol_accessor(const repeat_col_expr<Arg_HP, Arg, N>& expr)
+		template<class QArg, int N>
+		repcol_accessor(const repeat_col_expr<QArg, N>& expr)
 		: m_cap(expr.arg()) { }
 
 		LMAT_ENSURE_INLINE
@@ -416,7 +392,7 @@ namespace lmat
 		}
 
 	private:
-		internal::repcol_cap<value_type, ct_rows<Arg>::value, is_dense_mat<Arg>::value> m_cap;
+		internal::repcol_cap<value_type, meta::nrows<Arg>::value, meta::is_dense_mat<Arg>::value> m_cap;
 
 	};
 
@@ -429,8 +405,8 @@ namespace lmat
 	public:
 		typedef typename matrix_traits<Arg>::value_type value_type;
 
-		template<typename Arg_HP, int N>
-		reprow_accessor(const repeat_row_expr<Arg_HP, Arg, N>& expr)
+		template<class QArg, int N>
+		reprow_accessor(const repeat_row_expr<QArg, N>& expr)
 		: m_cap(expr.arg()) { }
 
 		LMAT_ENSURE_INLINE
@@ -446,7 +422,7 @@ namespace lmat
 		}
 
 	private:
-		internal::reprow_cap<Arg, ct_supports_linear_index_ex<Arg>::value> m_cap;
+		internal::reprow_cap<Arg, meta::supports_linear_index_ex<Arg>::value> m_cap;
 
 	};
 
@@ -458,39 +434,39 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<typename Arg_HP, class Arg, int N, typename Ker>
-	struct macc_accessor_map<repeat_col_expr<Arg_HP, Arg, N>, percol_macc, Ker>
+	template<class QArg, int N, typename Ker>
+	struct macc_accessor_map<repeat_col_expr<QArg, N>, macc_policy<percol_macc, Ker> >
 	{
-		typedef repcol_accessor<Ker, Arg> type;
+		typedef repcol_accessor<Ker, typename QArg::argument> type;
 	};
 
-	template<typename Arg_HP, class Arg, int M, typename Ker>
-	struct macc_accessor_map<repeat_row_expr<Arg_HP, Arg, M>, percol_macc, Ker>
+	template<class QArg, int M, typename Ker>
+	struct macc_accessor_map<repeat_row_expr<QArg, M>, macc_policy<percol_macc, Ker> >
 	{
-		typedef reprow_accessor<Ker, Arg> type;
+		typedef reprow_accessor<Ker, typename QArg::argument> type;
 	};
 
 
-	template<typename Arg_HP, class Arg, int N, typename Ker>
-	struct macc_cost<repeat_col_expr<Arg_HP, Arg, N>, linear_macc, Ker>
-	{
-		static const int value = MACC_CACHE_COST;
-	};
-
-	template<typename Arg_HP, class Arg, int M, typename Ker>
-	struct macc_cost<repeat_row_expr<Arg_HP, Arg, M>, linear_macc, Ker>
+	template<class QArg, int N, typename Ker>
+	struct macc_cost<repeat_col_expr<QArg, N>, linear_macc, Ker>
 	{
 		static const int value = MACC_CACHE_COST;
 	};
 
-	template<typename Arg_HP, class Arg, int N, typename Ker>
-	struct macc_cost<repeat_col_expr<Arg_HP, Arg, N>, percol_macc, Ker>
+	template<class QArg, int M, typename Ker>
+	struct macc_cost<repeat_row_expr<QArg, M>, linear_macc, Ker>
+	{
+		static const int value = MACC_CACHE_COST;
+	};
+
+	template<class QArg, int N, typename Ker>
+	struct macc_cost<repeat_col_expr<QArg, N>, percol_macc, Ker>
 	{
 		static const int value = 0;
 	};
 
-	template<typename Arg_HP, class Arg, int M, typename Ker>
-	struct macc_cost<repeat_row_expr<Arg_HP, Arg, M>, percol_macc, Ker>
+	template<class QArg, int M, typename Ker>
+	struct macc_cost<repeat_row_expr<QArg, M>, percol_macc, Ker>
 	{
 		static const int value = 0;
 	};
