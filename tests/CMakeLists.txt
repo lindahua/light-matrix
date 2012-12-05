@@ -119,11 +119,8 @@ set(MATRIX_REPEAT_HS
     
 set(MATRIX_REDUC_HS
     ${INC}/math/reductors.h
-    ${INC}/matexpr/bits/macc_reduce_core.h
     ${INC}/matexpr/bits/full_reduce_internal.h
-    ${INC}/matexpr/bits/partial_reduce_internal.h
-    ${INC}/matexpr/full_reduce.h
-    ${INC}/matexpr/partial_reduce.h)    
+    ${INC}/matexpr/full_reduce.h)    
     
 set(MATRIX_TRANS_HS
     ${INC}/matexpr/bits/direct_transpose_impl.h
@@ -228,9 +225,8 @@ set(MAT_REDUC_HS
     ${MATRIX_REDUC_HS})
     
 add_executable(test_full_reduce ${MAT_REDUC_HS} test_full_reduce.cpp) 
-# add_executable(test_partial_reduce ${MAT_REDUC_HS} test_partial_reduce.cpp) 
 
-# add_executable(test_cpd_ewise ${MATRIX_EVAL_HS} test_cpd_ewise.cpp)
+add_executable(test_cpd_ewise ${MATRIX_EVAL_HS} test_cpd_ewise.cpp)
 
 # Link to test_main
 
@@ -262,8 +258,7 @@ set(LMAT_TEST_NAMES
 	test_direct_trans
 	test_mat_transpose
 	test_full_reduce
-	# test_partial_reduce
-	# test_cpd_ewise
+	test_cpd_ewise
 )
 	
 foreach(tname ${LMAT_TEST_NAMES})

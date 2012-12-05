@@ -27,6 +27,5 @@
 #include <light_mat/matexpr/matrix_transpose.h>
 
 #include <light_mat/matexpr/full_reduce.h>
-#include <light_mat/matexpr/partial_reduce.h>
 
 #endif
