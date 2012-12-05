@@ -281,10 +281,10 @@ namespace lmat
 	};
 
 
-	template<class SExpr, typename AccCate, typename KerCate>
-	struct macc_accessor_map
+	template<class SExpr, typename Acc, typename Ker>
+	struct macc_accessor_map<SExpr, macc_policy<Acc, Ker> >
 	{
-		typedef typename generic_macc_accessor_map<SExpr, AccCate, KerCate>::type type;
+		typedef typename generic_macc_accessor_map<SExpr, Acc, Ker>::type type;
 	};
 
 

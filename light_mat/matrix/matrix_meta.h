@@ -338,6 +338,27 @@ namespace lmat { namespace meta {
 	};
 
 	template<class Mat>
+	struct continuous_level
+	{
+		typedef LMAT_CONDTYPE_3(
+				is_continuous<Mat>, 		cont_level::whole,
+				is_percol_continuous<Mat>, 	cont_level::percol,
+											cont_level::none) type;
+	};
+
+	template<class LMat, class RMat>
+	struct binary_continuous_level
+	{
+		static const bool is_cont = is_continuous<LMat>::value && is_continuous<RMat>::value;
+		static const bool is_pc_cont =
+				is_percol_continuous<LMat>::value && is_percol_continuous<RMat>::value;
+
+		typedef typename if_c<is_cont, cont_level::whole,
+				typename if_c<is_pc_cont, cont_level::percol, cont_level::none
+				>::type >::type type;
+	};
+
+	template<class Mat>
 	struct supports_linear_index
 	{
 		static const bool value = is_continuous<Mat>::value || is_vector<Mat>::value;

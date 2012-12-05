@@ -16,7 +16,7 @@ namespace lmat {
 	struct linear_macc;
 	struct percol_macc;
 
-	template<class SExpr, class AccCate, class KerCate>
+	template<class SExpr, class Policy>
 	struct macc_accessor_map;
 
 	template<class Accessor>

@@ -20,7 +20,6 @@ namespace lmat
 {
 	// kernel categories
 
-	struct any_ker { };
 	struct scalar_ker { };
 	struct sse_ker { };
 	struct avx_ker { };

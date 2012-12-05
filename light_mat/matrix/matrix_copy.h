@@ -17,29 +17,60 @@
 
 namespace lmat
 {
+	using internal::matrix_copy_scheme;
+
 	template<typename T, class RMat>
 	LMAT_ENSURE_INLINE
 	inline void copy(const T *ps, IDenseMatrix<RMat, T>& dst)
 	{
-		typedef typename internal::mat_copier_p_map<RMat>::type copier_t;
-		copier_t::copy(ps, dst.derived());
+		matrix_copy_scheme<
+			meta::nrows<RMat>::value,
+			meta::ncols<RMat>::value,
+			typename meta::continuous_level<RMat>::type>
+		copy_sch(dst.nrows(), dst.ncolumns());
+
+		internal::copy(ps, dst.derived(), copy_sch);
 	}
 
 	template<typename T, class LMat>
 	LMAT_ENSURE_INLINE
 	inline void copy(const IDenseMatrix<LMat, T>& src, T* pd)
 	{
-		typedef typename internal::mat_copier_p_map<LMat>::type copier_t;
-		copier_t::copy(src.derived(), pd);
+		matrix_copy_scheme<
+			meta::nrows<LMat>::value,
+			meta::ncols<LMat>::value,
+			typename meta::continuous_level<LMat>::type>
+		copy_sch(src.nrows(), src.ncolumns());
+
+		internal::copy(src.derived(), pd, copy_sch);
 	}
 
+
+	template<class SMat, class DMat>
+	struct default_copy_scheme
+	{
+		typedef typename meta::binary_continuous_level<SMat, DMat>::type cont_level;
+
+		typedef matrix_copy_scheme<
+			meta::common_nrows< LMAT_TYPELIST_2(SMat, DMat) >::value,
+			meta::common_ncols< LMAT_TYPELIST_2(SMat, DMat) >::value,
+			cont_level> type;
+
+		LMAT_ENSURE_INLINE
+		static type get(const SMat& smat, const DMat& dmat)
+		{
+			return type(common_nrows(smat, dmat), common_ncols(smat, dmat));
+		}
+	};
 
 	template<typename T, class LMat, class RMat>
 	LMAT_ENSURE_INLINE
 	inline void copy(const IDenseMatrix<LMat, T>& src, IDenseMatrix<RMat, T>& dst)
 	{
-		typedef typename internal::mat_copier_map<LMat, RMat>::type copier_t;
-		copier_t::copy(src.derived(), dst.derived());
+		const LMat& s = src.derived();
+		RMat& d = dst.derived();
+
+		internal::copy(s, d, default_copy_scheme<LMat, RMat>::get(s, d));
 	}
 
 
@@ -51,50 +82,12 @@ namespace lmat
 		return dmat.derived();
 	}
 
-
-	template<int M, int N>
-	struct matrix_copy_scheme
-	{
-		matrix_shape<M, N> m_shape;
-
-		matrix_copy_scheme(const index_t m, const index_t n)
-		: m_shape(m, n) { }
-
-		template<class SExpr, class DMat>
-		LMAT_ENSURE_INLINE
-		void evaluate(const SExpr& sexpr, DMat& dmat)
-		{
-			copy(sexpr, dmat);
-		}
-	};
-
-
-	template<typename T, class SExpr, class DMat>
-	LMAT_ENSURE_INLINE
-	inline matrix_copy_scheme<
-		meta::common_nrows< LMAT_TYPELIST_2(SExpr, DMat) >::value,
-		meta::common_ncols< LMAT_TYPELIST_2(SExpr, DMat) >::value>
-	get_default_eval_scheme(
-			const IDenseMatrix<SExpr, T>& sexpr,
-			IDenseMatrix<DMat, T>& dmat)
-	{
-		const int M = meta::common_nrows< LMAT_TYPELIST_2(SExpr, DMat) >::value;
-		const int N = meta::common_ncols< LMAT_TYPELIST_2(SExpr, DMat) >::value;
-
-		return matrix_copy_scheme<M, N>(
-				common_nrows(sexpr, dmat),
-				common_ncols(sexpr, dmat));
-	}
-
 	template<typename T, class SExpr, class DMat>
 	LMAT_ENSURE_INLINE
 	inline typename meta::enable_if< meta::is_mat_assignable<SExpr, DMat>, void>::type
-	default_evaluate(const IMatrixXpr<SExpr, T>& sexpr, IDenseMatrix<DMat, T>& dmat)
+	evaluate(const IMatrixXpr<SExpr, T>& sexpr, IDenseMatrix<DMat, T>& dmat)
 	{
-		const SExpr& s = sexpr.derived();
-		DMat& t = dmat.derived();
-
-		get_default_eval_scheme(s, t).evaluate(s, t);
+		copy(sexpr.derived(), dmat.derived());
 	}
 
 }

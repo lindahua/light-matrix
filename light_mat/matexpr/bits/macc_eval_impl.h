@@ -26,9 +26,8 @@ namespace lmat { namespace internal {
 #ifdef LMAT_USE_STATIC_ASSERT
 			static_assert(meta::supports_linear_index<DMat>::value, "DMat must support linear indexing.");
 #endif
-			typedef typename
-					macc_accessor_map<SExpr, linear_macc, scalar_ker>::type
-					accessor_t;
+			typedef macc_policy<linear_macc, scalar_ker> policy_t;
+			typedef typename macc_accessor_map<SExpr, policy_t>::type accessor_t;
 
 			typedef LMAT_TYPELIST_2( SExpr, DMat ) Lst;
 			typedef typename matrix_traits<DMat>::value_type T;
@@ -84,9 +83,8 @@ namespace lmat { namespace internal {
 		template<class SExpr, class DMat>
 		static void evaluate(index_t m, index_t n, const SExpr& sexpr, DMat& dmat)
 		{
-			typedef typename
-					macc_accessor_map<SExpr, percol_macc, scalar_ker>::type
-					accessor_t;
+			typedef macc_policy<percol_macc, scalar_ker> policy_t;
+			typedef typename macc_accessor_map<SExpr, policy_t>::type accessor_t;
 
 			typedef typename percol_macc_state_map<accessor_t>::type col_state_t;
 			typedef typename matrix_traits<DMat>::value_type T;

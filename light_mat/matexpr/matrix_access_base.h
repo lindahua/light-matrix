@@ -17,6 +17,23 @@
 
 namespace lmat
 {
+	/********************************************
+	 *
+	 *  Accessor Policies
+	 *
+	 ********************************************/
+
+	struct custom_macc { };
+	struct linear_macc { };
+	struct percol_macc { };
+
+	template<typename Acc, typename Ker>
+	struct macc_policy
+	{
+		typedef Acc access_kind;
+		typedef Ker kernel_kind;
+	};
+
 
 	/********************************************
 	 *
@@ -24,8 +41,10 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<class SExpr, class AccCate, class KerCate>
+	template<class SExpr, class Policy>
 	struct macc_accessor_map;
+
+	// matrix access categories
 
 	template<class Derived, typename T>
 	class ILinearMatrixScalarAccessor
@@ -142,8 +161,8 @@ namespace lmat
 	};
 
 
-	template<typename T, class AccCate>
-	struct macc_accessor_map<scalar_expr<T>, AccCate, scalar_ker>
+	template<typename T, class Acc>
+	struct macc_accessor_map<scalar_expr<T>, macc_policy<Acc, scalar_ker> >
 	{
 		typedef const_scalar_accessor<T> type;
 	};

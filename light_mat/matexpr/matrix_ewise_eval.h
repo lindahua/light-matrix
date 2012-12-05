@@ -22,11 +22,8 @@ namespace lmat
 
 	// forward declaration
 
-	template<typename Acc, typename Ker, typename Tag, class Arg>
-	class unary_ewise_accessor;
-
-	template<typename Acc, typename Ker, typename Tag, class Arg1, class Arg2>
-	class binary_ewise_accessor;
+	template<typename Acc, typename Ker, typename Tag, class ArgList>
+	class ewise_accessor;
 
 
 	/********************************************
@@ -37,41 +34,36 @@ namespace lmat
 
 	// default evaluate scheme
 
-	template<typename Tag, typename Arg_HP, class Arg, class DMat, typename DT>
+	template<typename Tag, class QArg, class DMat, typename DT>
 	LMAT_ENSURE_INLINE
-	inline typename default_macc_scheme<unary_ewise_expr<Tag, Arg_HP, Arg>, DMat>::type
+	inline typename default_macc_scheme< ewise_expr<Tag, LMAT_TYPELIST_1(QArg) >, DMat>::type
 	get_default_eval_scheme(
-			const unary_ewise_expr<Tag, Arg_HP, Arg>& sexpr,
+			const ewise_expr<Tag, LMAT_TYPELIST_1(QArg) >& sexpr,
 			IDenseMatrix<DMat, DT>& dmat)
 	{
-		typedef unary_ewise_expr<Tag, Arg_HP, Arg> expr_t;
+		typedef ewise_expr<Tag, LMAT_TYPELIST_1(QArg) > expr_t;
 		return default_macc_scheme<expr_t, DMat>::get(sexpr, dmat.derived());
 	}
 
-	template<typename Tag, typename Arg1_HP, class Arg1, typename Arg2_HP, class Arg2, class DMat, typename DT>
+	template<typename Tag, class QArg1, class QArg2, class DMat, typename DT>
 	LMAT_ENSURE_INLINE
-	inline typename default_macc_scheme<binary_ewise_expr<Tag, Arg1_HP, Arg1, Arg2_HP, Arg2>, DMat>::type
+	inline typename default_macc_scheme< ewise_expr<Tag, LMAT_TYPELIST_2(QArg1, QArg2) >, DMat>::type
 	get_default_eval_scheme(
-			const binary_ewise_expr<Tag, Arg1_HP, Arg1, Arg2_HP, Arg2>& sexpr,
+			const ewise_expr<Tag, LMAT_TYPELIST_2(QArg1, QArg2) >& sexpr,
 			IDenseMatrix<DMat, DT>& dmat)
 	{
-		typedef binary_ewise_expr<Tag, Arg1_HP, Arg1, Arg2_HP, Arg2> expr_t;
+		typedef ewise_expr<Tag, LMAT_TYPELIST_2(QArg1, QArg2) > expr_t;
 		return default_macc_scheme<expr_t, DMat>::get(sexpr, dmat.derived());
 	}
 
 
 	// accessors
 
-	template<typename Tag, typename Arg_HP, class Arg, typename Acc, typename Ker>
-	struct macc_accessor_map<unary_ewise_expr<Tag, Arg_HP, Arg>, Acc, Ker>
+	template<typename Tag, class QArgList, typename Acc, typename Ker>
+	struct macc_accessor_map<ewise_expr<Tag, QArgList>, Acc, Ker>
 	{
-		typedef unary_ewise_accessor<Acc, Ker, Tag, Arg> type;
-	};
-
-	template<typename Tag, typename Arg1_HP, class Arg1, typename Arg2_HP, class Arg2, typename Acc, typename Ker>
-	struct macc_accessor_map<binary_ewise_expr<Tag, Arg1_HP, Arg1, Arg2_HP, Arg2>, Acc, Ker>
-	{
-		typedef binary_ewise_accessor<Acc, Ker, Tag, Arg1, Arg2> type;
+		typedef typename meta::transform_<meta::argument_of, QArgList>::type arg_list;
+		typedef ewise_accessor<Acc, Ker, Tag, arg_list> type;
 	};
 
 
@@ -81,20 +73,18 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<typename Tag, typename Arg_HP, class Arg,
-		typename AccCate, typename KerCate>
-	struct macc_cost<unary_ewise_expr<Tag, Arg_HP, Arg>, AccCate, KerCate>
+	template<typename Tag, class QArg1, typename Acc, typename Ker>
+	struct macc_cost< ewise_expr<Tag, LMAT_TYPELIST_1(QArg1) >, Acc, Ker>
 	{
-		static const int value = macc_cost<Arg, AccCate, KerCate>::value;
+		static const int value = macc_cost<typename QArg1::argument, Acc, Ker>::value;
 	};
 
-	template<typename Tag, typename Arg1_HP, class Arg1, typename Arg2_HP, class Arg2,
-		typename AccCate, typename KerCate>
-	struct macc_cost<binary_ewise_expr<Tag, Arg1_HP, Arg1, Arg2_HP, Arg2>, AccCate, KerCate>
+	template<typename Tag, class QArg1, class QArg2, typename Acc, typename Ker>
+	struct macc_cost< ewise_expr<Tag, LMAT_TYPELIST_2(QArg1, QArg2) >, Acc, Ker>
 	{
 		static const int value =
-				macc_cost<Arg1, AccCate, KerCate>::value +
-				macc_cost<Arg2, AccCate, KerCate>::value;
+				macc_cost<typename QArg1::argument, Acc, Ker>::value +
+				macc_cost<typename QArg2::argument, Acc, Ker>::value;
 	};
 
 
@@ -104,32 +94,19 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<typename Acc, typename Ker, typename Tag, class Arg>
-	struct unary_ewise_accbase
+	template<typename Acc, typename Ker, typename Tag, class ArgList>
+	struct ewise_accbase
 	{
-		typedef typename matrix_traits<Arg>::value_type arg_value_type;
-		typedef typename unary_op_result<Tag, arg_value_type>::type value_type;
+		typedef typename meta::transform_<meta::value_type_of, ArgList>::type value_type_list;
+		typedef typename op_result<Tag, value_type_list>::type value_type;
 
 		typedef typename
-				if_<is_same<Acc, linear_macc>,
-					ILinearMatrixScalarAccessor<unary_ewise_accessor<Acc, Ker, Tag, Arg>, value_type>,
-					IPerColMatrixScalarAccessor<unary_ewise_accessor<Acc, Ker, Tag, Arg>, value_type>
+				meta::if_<is_same<Acc, linear_macc>,
+					ILinearMatrixScalarAccessor<ewise_accessor<Acc, Ker, Tag, ArgList>, value_type>,
+					IPerColMatrixScalarAccessor<ewise_accessor<Acc, Ker, Tag, ArgList>, value_type>
 				>::type base_type;
 	};
 
-	template<typename Acc, typename Ker, typename Tag, class Arg1, class Arg2>
-	struct binary_ewise_accbase
-	{
-		typedef typename matrix_traits<Arg1>::value_type arg1_value_type;
-		typedef typename matrix_traits<Arg2>::value_type arg2_value_type;
-		typedef typename binary_op_result<Tag, arg1_value_type, arg2_value_type>::type value_type;
-
-		typedef typename
-				if_<is_same<Acc, linear_macc>,
-					ILinearMatrixScalarAccessor<binary_ewise_accessor<Acc, Ker, Tag, Arg1, Arg2>, value_type>,
-					IPerColMatrixScalarAccessor<binary_ewise_accessor<Acc, Ker, Tag, Arg1, Arg2>, value_type>
-				>::type base_type;
-	};
 
 	/********************************************
 	 *
@@ -138,20 +115,22 @@ namespace lmat
 	 ********************************************/
 
 	template<typename Tag, class Arg>
-	class unary_ewise_accessor<linear_macc, scalar_ker, Tag, Arg>
-	: public unary_ewise_accbase<linear_macc, scalar_ker, Tag, Arg>::base_type
+	class ewise_accessor<linear_macc, scalar_ker, Tag, LMAT_TYPELIST_1(Arg) >
+	: public ewise_accbase<linear_macc, scalar_ker, Tag, LMAT_TYPELIST_1(Arg) >::base_type
 	{
 		typedef typename matrix_traits<Arg>::value_type arg_value_type;
-		typedef typename unary_op_result<Tag, arg_value_type>::type value_type;
+		typedef LMAT_TYPELIST_1(arg_value_type) arg_value_types;
 
-		typedef typename unary_op_fun<Tag, scalar_ker, arg_value_type>::type fun_t;
+		typedef typename op_result<Tag, arg_value_types>::type value_type;
+		typedef typename op_fun<Tag, scalar_ker, arg_value_types>::type fun_t;
+
 		typedef typename macc_accessor_map<Arg, linear_macc, scalar_ker>::type arg_accessor_t;
 
 	public:
 
-		template<typename Arg_HP>
-		unary_ewise_accessor(const unary_ewise_expr<Tag, Arg_HP, Arg>& expr)
-		: m_fun(expr.tag()), m_arg_acc(expr.arg()) { }
+		template<class QArg>
+		ewise_accessor(const ewise_expr<Tag, LMAT_TYPELIST_1(QArg) >& expr)
+		: m_fun(expr.tag()), m_arg_acc(expr.arg1()) { }
 
 		LMAT_ENSURE_INLINE
 		value_type get_scalar(const index_t i) const
@@ -166,22 +145,26 @@ namespace lmat
 
 
 	template<typename Tag, class Arg1, class Arg2>
-	class binary_ewise_accessor<linear_macc, scalar_ker, Tag, Arg1, Arg2>
-	: public binary_ewise_accbase<linear_macc, scalar_ker, Tag, Arg1, Arg2>::base_type
+	class ewise_accessor<linear_macc, scalar_ker, Tag, LMAT_TYPELIST_2(Arg1, Arg2) >
+	: public ewise_accbase<linear_macc, scalar_ker, Tag, LMAT_TYPELIST_2(Arg1, Arg2) >::base_type
 	{
 		typedef typename matrix_traits<Arg1>::value_type arg1_value_type;
 		typedef typename matrix_traits<Arg2>::value_type arg2_value_type;
-		typedef typename binary_op_result<Tag, arg1_value_type, arg2_value_type>::type value_type;
+		typedef LMAT_TYPELIST_2(arg_value_type, arg2_value_type) arg_value_types;
 
-		typedef typename binary_op_fun<Tag, scalar_ker, arg1_value_type, arg2_value_type>::type fun_t;
+		typedef typename op_result<Tag, arg_value_types>::type value_type;
+		typedef typename op_fun<Tag, scalar_ker, arg_value_types>::type fun_t;
+
 		typedef typename macc_accessor_map<Arg1, linear_macc, scalar_ker>::type arg1_accessor_t;
 		typedef typename macc_accessor_map<Arg2, linear_macc, scalar_ker>::type arg2_accessor_t;
 
 	public:
 
-		template<typename Arg1_HP, typename Arg2_HP>
-		binary_ewise_accessor(const binary_ewise_expr<Tag, Arg1_HP, Arg1, Arg2_HP, Arg2>& expr)
-		: m_fun(expr.tag()), m_arg1_acc(expr.first_arg()), m_arg2_acc(expr.second_arg()) { }
+		template<class QArg1, class QArg2>
+		ewise_accessor(const ewise_expr<Tag, LMAT_TYPELIST_2(QArg1, QArg2) >& expr)
+		: m_fun(expr.tag())
+		, m_arg1_acc(expr.args().arg1())
+		, m_arg2_acc(expr.args().arg2()) { }
 
 		LMAT_ENSURE_INLINE
 		value_type get_scalar(const index_t i) const
@@ -194,6 +177,8 @@ namespace lmat
 		arg1_accessor_t m_arg1_acc;
 		arg2_accessor_t m_arg2_acc;
 	};
+
+
 
 
 	/********************************************

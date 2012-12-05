@@ -26,19 +26,13 @@ namespace lmat
 	const int MACC_SHORT_PERCOL_COST = 100;
 	const int MACC_SHORTCOL_UBOUND = 4;
 
-	// matrix access categories
-
-	struct any_macc { };
-	struct linear_macc { };
-	struct percol_macc { };
-
 	// matrix access setting
 
-	template<typename AccCate, typename KerCate, int M, int N>
+	template<class Policy, int M, int N>
 	struct macc_scheme;
 
 	template<int M, int N>
-	struct macc_scheme<any_macc, scalar_ker, M, N>
+	struct macc_scheme<macc_policy<custom_macc, scalar_ker>, M, N>
 	{
 		const matrix_shape<M, N> shape;
 		const bool _use_linear;
@@ -84,7 +78,7 @@ namespace lmat
 	};
 
 	template<int M, int N>
-	struct macc_scheme<linear_macc, scalar_ker, M, N>
+	struct macc_scheme<macc_policy<linear_macc, scalar_ker>, M, N>
 	{
 		const matrix_shape<M, N> shape;
 
@@ -113,7 +107,7 @@ namespace lmat
 
 
 	template<int M, int N>
-	struct macc_scheme<percol_macc, scalar_ker, M, N>
+	struct macc_scheme<macc_policy<percol_macc, scalar_ker>, M, N>
 	{
 		const matrix_shape<M, N> shape;
 
@@ -142,25 +136,52 @@ namespace lmat
 
 
 	template<class SExpr, class DMat>
-	struct default_macc_scheme
+	struct default_macc_policy
 	{
 		typedef typename
 				meta::if_<meta::supports_linear_index<DMat>,
-				any_macc,
-				percol_macc>::type access_category;
+				custom_macc,
+				percol_macc>::type access_kind;
 
-		typedef scalar_ker kernel_category;
+		typedef scalar_ker kernel_kind;
 
+		typedef macc_policy<access_kind, kernel_kind> type;
+	};
+
+
+
+	template<class SExpr, class DMat>
+	struct default_macc_scheme
+	{
 		static const int M = meta::common_nrows< LMAT_TYPELIST_2(SExpr, DMat) >::value;
 		static const int N = meta::common_ncols< LMAT_TYPELIST_2(SExpr, DMat) >::value;
-
-		typedef macc_scheme<access_category, kernel_category, M, N> type;
+		typedef typename default_macc_policy<SExpr, DMat>::type policy_type;
+		typedef macc_scheme<policy_type, M, N> type;
 
 		static type get(const SExpr& sexpr, const DMat& dmat)
 		{
 			return type::get_default(sexpr, dmat);
 		}
 	};
+
+
+	template<typename T, class SExpr, class DMat, typename Acc, typename Ker>
+	void evaluate(
+			const IMatrixXpr<SExpr, T>& sexpr,
+			IDenseMatrix<DMat, T>& dmat,
+			macc_policy<Acc, Ker> )
+	{
+		typedef macc_scheme<
+				macc_policy<Acc, Ker>,
+				meta::common_nrows< LMAT_TYPELIST_2(SExpr, DMat) >::value,
+				meta::common_ncols< LMAT_TYPELIST_2(SExpr, DMat) >::value> scheme_t;
+
+		const SExpr& s = sexpr.derived();
+		DMat& d = dmat.derived();
+
+		return scheme_t::get_default(s, d).evaluate(s, d);
+	}
+
 }
 
 #endif /* MATRIX_ACCESS_EVAL_H_ */

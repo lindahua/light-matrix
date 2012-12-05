@@ -16,7 +16,7 @@ namespace lmat
 {
 	// forward declaration of matrix expressions
 
-	template<typename Tag, class QArgList> class ewise_expr;
+	template<typename Tag, class QLst> class ewise_expr;
 
 	template<class QArg> class transpose_expr;
 
@@ -26,7 +26,7 @@ namespace lmat
 	struct rowwise { };
 	struct colwise { };
 
-	template<typename Tag, typename AlongDim, class QArgList> class partial_reduce_expr;
+	template<typename Tag, typename AlongDim, class QLst> class partial_reduce_expr;
 }
 
 #endif /* MATEXPR_FWD_H_ */

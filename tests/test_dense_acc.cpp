@@ -29,7 +29,7 @@ inline void fill_lin(dblock<double>& a)
 
 template<
 	typename Tag1, typename Tag2,
-	typename AccCate, typename KerCate, int M, int N>
+	typename Acc, typename Ker, int M, int N>
 void test_acc_eval()
 {
 	typedef typename mat_maker<Tag1, double, M, N>::cmat_t smat_t;
@@ -46,7 +46,8 @@ void test_acc_eval()
 	smat_t smat = src.get_cmat();
 	dmat_t dmat = dst.get_mat();
 
-	typedef macc_scheme<AccCate, KerCate, M, N> scheme_t;
+	typedef macc_policy<Acc, Ker> policy_t;
+	typedef macc_scheme<policy_t, M, N> scheme_t;
 
 	fill(dmat, 0.0);
 	scheme_t sch = scheme_t::get_default(smat, dmat);

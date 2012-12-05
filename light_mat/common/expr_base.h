@@ -198,21 +198,79 @@ namespace lmat
 
 	/********************************************
 	 *
+	 *  Tied forwarder
+	 *
+	 ********************************************/
+
+	template<class QLst> struct tied_forwarder;
+
+	template<class QArg1>
+	struct tied_forwarder< LMAT_TYPELIST_1(QArg1) >
+	{
+		tied_forwarder(typename QArg1::reference a1)
+		: arg1_fwd(a1) { }
+
+		typename QArg1::forwarder arg1_fwd;
+	};
+
+	template<class QArg1, class QArg2>
+	struct tied_forwarder< LMAT_TYPELIST_2(QArg1, QArg2) >
+	{
+		tied_forwarder(typename QArg1::reference a1, typename QArg2::reference a2)
+		: arg1_fwd(a1), arg2_fwd(a2) { }
+
+		typename QArg1::forwarder arg1_fwd;
+		typename QArg2::forwarder arg2_fwd;
+	};
+
+	template<class QArg1, class QArg2, class QArg3>
+	struct tied_forwarder< LMAT_TYPELIST_3(QArg1, QArg2, QArg3) >
+	{
+		tied_forwarder(
+				typename QArg1::reference a1,
+				typename QArg2::reference a2,
+				typename QArg3::reference a3)
+		: arg1_fwd(a1), arg2_fwd(a2), arg3_fwd(a3) { }
+
+		typename QArg1::forwarder arg1_fwd;
+		typename QArg2::forwarder arg2_fwd;
+		typename QArg3::forwarder arg3_fwd;
+	};
+
+	template<class QArg1, class QArg2, class QArg3, class QArg4>
+	struct tied_forwarder< LMAT_TYPELIST_4(QArg1, QArg2, QArg3, QArg4) >
+	{
+		tied_forwarder(
+				typename QArg1::reference a1,
+				typename QArg2::reference a2,
+				typename QArg3::reference a3,
+				typename QArg4::reference a4 )
+		: arg1_fwd(a1), arg2_fwd(a2), arg3_fwd(a3), arg4_fwd(a4) { }
+
+		typename QArg1::forwarder arg1_fwd;
+		typename QArg2::forwarder arg2_fwd;
+		typename QArg3::forwarder arg3_fwd;
+		typename QArg4::forwarder arg4_fwd;
+	};
+
+
+	/********************************************
+	 *
 	 *  Argument list classes
 	 *
 	 ********************************************/
 
-	// argument lists
-
-	template<class QArgList> class qarg_list;
+	template<class QLst> class qarg_list;
 
 	template<class QArg1>
 	class qarg_list< LMAT_TYPELIST_1(QArg1) >
 	{
 	public:
+		typedef tied_forwarder< LMAT_TYPELIST_1(QArg1) > tied_forwarder_t;
+
 		LMAT_ENSURE_INLINE
-		qarg_list(typename QArg1::forwarder arg1_fwd)
-		: m_arg1_holder(arg1_fwd) { }
+		qarg_list(tied_forwarder_t fwd)
+		: m_arg1_holder(fwd.arg1_fwd) { }
 
 		LMAT_ENSURE_INLINE
 		typename QArg1::reference arg1() const
@@ -229,12 +287,12 @@ namespace lmat
 	class qarg_list< LMAT_TYPELIST_2(QArg1, QArg2) >
 	{
 	public:
+		typedef tied_forwarder< LMAT_TYPELIST_2(QArg1, QArg2) > tied_forwarder_t;
+
 		LMAT_ENSURE_INLINE
-		qarg_list(
-				typename QArg1::forwarder arg1_fwd,
-				typename QArg2::forwarder arg2_fwd)
-		: m_arg1_holder(arg1_fwd)
-		, m_arg2_holder(arg2_fwd) { }
+		qarg_list( tied_forwarder_t fwd )
+		: m_arg1_holder(fwd.arg1_fwd)
+		, m_arg2_holder(fwd.arg2_fwd) { }
 
 		LMAT_ENSURE_INLINE
 		typename QArg1::reference arg1() const
@@ -258,14 +316,13 @@ namespace lmat
 	class qarg_list< LMAT_TYPELIST_3(QArg1, QArg2, QArg3) >
 	{
 	public:
+		typedef tied_forwarder< LMAT_TYPELIST_3(QArg1, QArg2, QArg3) > tied_forwarder_t;
+
 		LMAT_ENSURE_INLINE
-		qarg_list(
-				typename QArg1::forwarder arg1_fwd,
-				typename QArg2::forwarder arg2_fwd,
-				typename QArg3::forwarder arg3_fwd)
-		: m_arg1_holder(arg1_fwd)
-		, m_arg2_holder(arg2_fwd)
-		, m_arg3_holder(arg3_fwd) { }
+		qarg_list( tied_forwarder_t fwd )
+		: m_arg1_holder(fwd.arg1_fwd)
+		, m_arg2_holder(fwd.arg2_fwd)
+		, m_arg3_holder(fwd.arg3_fwd) { }
 
 		LMAT_ENSURE_INLINE
 		typename QArg1::reference arg1() const
@@ -292,6 +349,51 @@ namespace lmat
 	};
 
 
+	template<class QArg1, class QArg2, class QArg3, class QArg4>
+	class qarg_list< LMAT_TYPELIST_4(QArg1, QArg2, QArg3, QArg4) >
+	{
+	public:
+		typedef tied_forwarder< LMAT_TYPELIST_4(QArg1, QArg2, QArg3, QArg4) > tied_forwarder_t;
+
+		LMAT_ENSURE_INLINE
+		qarg_list( tied_forwarder_t fwd )
+		: m_arg1_holder(fwd.arg1_fwd)
+		, m_arg2_holder(fwd.arg2_fwd)
+		, m_arg3_holder(fwd.arg3_fwd)
+		, m_arg4_holder(fwd.arg4_fwd) { }
+
+		LMAT_ENSURE_INLINE
+		typename QArg1::reference arg1() const
+		{
+			return m_arg1_holder.get();
+		}
+
+		LMAT_ENSURE_INLINE
+		typename QArg2::reference arg2() const
+		{
+			return m_arg2_holder.get();
+		}
+
+		LMAT_ENSURE_INLINE
+		typename QArg3::reference arg3() const
+		{
+			return m_arg3_holder.get();
+		}
+
+		LMAT_ENSURE_INLINE
+		typename QArg4::reference arg4() const
+		{
+			return m_arg4_holder.get();
+		}
+
+	private:
+		typename QArg1::holder m_arg1_holder;
+		typename QArg2::holder m_arg2_holder;
+		typename QArg3::holder m_arg3_holder;
+		typename QArg4::holder m_arg4_holder;
+	};
+
+
 	namespace meta
 	{
 		template<class Q>
@@ -300,18 +402,14 @@ namespace lmat
 			typedef typename Q::argument type;
 		};
 
-		template<class Expr> struct num_args_;
-
 		template<class QLst>
-		struct num_args_<qarg_list<QLst> >
+		struct num_args_
 		{
 			static const int value = length_<QLst>::value;
 		};
 
-		template<class Expr> struct get_argtype_list_;
-
 		template<class QLst>
-		struct get_argtype_list_<qarg_list<QLst> >
+		struct argtype_list_
 		{
 			typedef typename transform_<argument_of, QLst>::type type;
 		};
@@ -327,68 +425,15 @@ namespace lmat
 	template<typename Spec, class ArgList> class expr_verifier;
 	template<typename Spec, class QLst> class expr_map;
 
-	template<typename Spec, typename Arg1_HP, class Arg1>
+	template<typename Spec, class QLst>
 	LMAT_ENSURE_INLINE
 	typename meta::enable_if<
-		expr_verifier<Spec, LMAT_TYPELIST_1(Arg1)>,
-		typename expr_map<Spec,
-			LMAT_TYPELIST_1( LMAT_QARG(Arg1_HP, Arg1) )>::type
+		expr_verifier<Spec, typename meta::argtype_list_<QLst>::type >,
+		typename expr_map<Spec, QLst>::type
 	>::type
-	make_expr(arg_forwarder<Arg1_HP, Arg1> arg1_fwd)
+	make_expr(const Spec& spec, const tied_forwarder<QLst>& tfwd)
 	{
-		return expr_map<Spec,
-				LMAT_TYPELIST_1( LMAT_QARG(Arg1_HP, Arg1) )
-			>::get(arg1_fwd);
-	}
-
-
-	template<typename Spec,
-		typename Arg1_HP, class Arg1,
-		typename Arg2_HP, class Arg2>
-	LMAT_ENSURE_INLINE
-	typename meta::enable_if<
-		expr_verifier<Spec, LMAT_TYPELIST_2(Arg1, Arg2)>,
-		typename expr_map<Spec,
-			LMAT_TYPELIST_2(
-					LMAT_QARG(Arg1_HP, Arg1),
-					LMAT_QARG(Arg2_HP, Arg2)) >::type
-	>::type
-	make_expr(
-			arg_forwarder<Arg1_HP, Arg1> arg1_fwd,
-			arg_forwarder<Arg2_HP, Arg2> arg2_fwd)
-	{
-		return expr_map<Spec,
-				LMAT_TYPELIST_2(
-						LMAT_QARG(Arg1_HP, Arg1),
-						LMAT_QARG(Arg2_HP, Arg2) )
-			>::get(arg1_fwd, arg2_fwd);
-	}
-
-
-	template<typename Spec,
-		typename Arg1_HP, class Arg1,
-		typename Arg2_HP, class Arg2,
-		typename Arg3_HP, class Arg3>
-	LMAT_ENSURE_INLINE
-	typename meta::enable_if<
-		expr_verifier<Spec, LMAT_TYPELIST_3(Arg1, Arg2, Arg3)>,
-		typename expr_map<Spec,
-			LMAT_TYPELIST_3(
-					LMAT_QARG(Arg1_HP, Arg1),
-					LMAT_QARG(Arg2_HP, Arg2),
-					LMAT_QARG(Arg3_HP, Arg3)) >::type
-	>::type
-	make_expr(
-			arg_forwarder<Arg1_HP, Arg1> arg1_fwd,
-			arg_forwarder<Arg2_HP, Arg2> arg2_fwd,
-			arg_forwarder<Arg3_HP, Arg3> arg3_fwd)
-	{
-		return expr_map<Spec,
-				LMAT_TYPELIST_3(
-						LMAT_QARG(Arg1_HP, Arg1),
-						LMAT_QARG(Arg2_HP, Arg2),
-						LMAT_QARG(Arg3_HP, Arg3))
-			>::get(arg1_fwd, arg2_fwd, arg3_fwd);
+		return expr_map<Spec, QLst>::get(spec, tfwd);
 	}
 
 }

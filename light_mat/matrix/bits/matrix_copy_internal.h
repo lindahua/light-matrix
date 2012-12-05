@@ -17,389 +17,405 @@
 
 namespace lmat { namespace internal {
 
-
-	/********************************************
-	 *
-	 *  Copy between matrix and pointer
-	 *
-	 ********************************************/
-
-	template<typename T, class Mat>
-	struct scalar_copier_p
+	template<int M, int N, typename ContLevel>
+	struct matrix_copy_scheme
 	{
-		LMAT_ENSURE_INLINE
-		static void copy(const Mat& mat, T *dst)
-		{
-			*dst = *mat.ptr_data();
-		}
+		const matrix_shape<M, N> shape;
 
 		LMAT_ENSURE_INLINE
-		static void copy(const T *src, Mat& mat)
-		{
-			*mat.ptr_data() = *src;
-		}
+		matrix_copy_scheme(index_t m, index_t n)
+		: shape(m, n) { }
+
+		LMAT_ENSURE_INLINE
+		index_t nrows() const { return shape.nrows(); }
+
+		LMAT_ENSURE_INLINE
+		index_t ncolumns() const { return shape.ncolumns(); }
+
+		LMAT_ENSURE_INLINE
+		index_t nelems() const { return shape.nelems(); }
 	};
-
-	template<typename T, class Mat>
-	struct cc_copier_p
-	{
-		LMAT_ENSURE_INLINE
-		static void copy(const Mat& mat, T *dst)
-		{
-			copy_vec(mat.nelems(), mat.ptr_data(), dst);
-		}
-
-		LMAT_ENSURE_INLINE
-		static void copy(const T *src, Mat& mat)
-		{
-			copy_vec(mat.nelems(), src, mat.ptr_data());
-		}
-	};
-
-
-	template<typename T, class Mat>
-	struct column_copier_p
-	{
-		LMAT_ENSURE_INLINE
-		static void copy(const Mat& mat, T *dst)
-		{
-			if (mat.row_stride() == 1)
-			{
-				copy_vec(mat.nrows(), mat.ptr_data(), dst);
-			}
-			else
-			{
-				copy_vec(mat.nrows(), mat.ptr_data(), mat.row_stride(), dst);
-			}
-		}
-
-		LMAT_ENSURE_INLINE
-		static void copy(const T *src, Mat& mat)
-		{
-			if (mat.row_stride() == 1)
-			{
-				copy_vec(mat.nrows(), src, mat.ptr_data());
-			}
-			else
-			{
-				copy_vec(mat.nrows(), src, mat.ptr_data(), mat.row_stride());
-			}
-		}
-	};
-
-
-	template<typename T, class Mat>
-	struct row_copier_p
-	{
-		LMAT_ENSURE_INLINE
-		static void copy(const Mat& mat, T *dst)
-		{
-			if (mat.col_stride() == 1)
-			{
-				copy_vec(mat.ncolumns(), mat.ptr_data(), dst);
-			}
-			else
-			{
-				copy_vec(mat.ncolumns(), mat.ptr_data(), mat.col_stride(), dst);
-			}
-		}
-
-		LMAT_ENSURE_INLINE
-		static void copy(const T *src, Mat& mat)
-		{
-			if (mat.col_stride() == 1)
-			{
-				copy_vec(mat.ncolumns(), src, mat.ptr_data());
-			}
-			else
-			{
-				copy_vec(mat.ncolumns(), src, mat.ptr_data(), mat.col_stride());
-			}
-		}
-	};
-
-
-	template<typename T, class Mat>
-	struct genmat_copier_p
-	{
-		static void copy(const Mat& mat, T *dst)
-		{
-			const index_t m = mat.nrows();
-			const index_t n = mat.ncolumns();
-
-			if (n == 1)
-			{
-				column_copier_p<T, Mat>::copy(mat, dst);
-			}
-			else if (m == 1)
-			{
-				row_copier_p<T, Mat>::copy(mat, dst);
-			}
-			else
-			{
-				const index_t rs = mat.row_stride();
-
-				if (rs == 1)
-				{
-					for (index_t j = 0; j < n; ++j, dst += m)
-					{
-						copy_vec(m, mat.ptr_col(j), dst);
-					}
-				}
-				else
-				{
-					for (index_t j = 0; j < n; ++j, dst += m)
-					{
-						copy_vec(m, mat.ptr_col(j), rs, dst);
-					}
-				}
-			}
-		}
-
-		static void copy(const T *src, Mat& mat)
-		{
-			const index_t m = mat.nrows();
-			const index_t n = mat.ncolumns();
-
-			if (n == 1)
-			{
-				column_copier_p<T, Mat>::copy(src, mat);
-			}
-			else if (m == 1)
-			{
-				row_copier_p<T, Mat>::copy(src, mat);
-			}
-			else
-			{
-				const index_t rs = mat.row_stride();
-
-				if (rs == 1)
-				{
-					for (index_t j = 0; j < n; ++j, src += m)
-					{
-						copy_vec(m, src, mat.ptr_col(j));
-					}
-				}
-				else
-				{
-					for (index_t j = 0; j < n; ++j, src += m)
-					{
-						copy_vec(m, src, mat.ptr_col(j), rs);
-					}
-				}
-			}
-		}
-	};
-
-
-	template<class Mat>
-	struct mat_copier_p_map
-	{
-		typedef typename matrix_traits<Mat>::value_type T;
-		static const int M = meta::nrows<Mat>::value;
-		static const int N = meta::ncols<Mat>::value;
-
-		static const bool is_scalar = M == 1 && N == 1;
-		static const bool is_continuous = meta::is_continuous<Mat>::value;
-		static const bool is_column = N == 1;
-		static const bool is_row = M == 1;
-
-		typedef
-			typename meta::if_c<is_scalar, 		scalar_copier_p<T, Mat>,
-			typename meta::if_c<is_continuous, 	cc_copier_p<T, Mat>,
-			typename meta::if_c<is_column,		column_copier_p<T, Mat>,
-			typename meta::if_c<is_row, 		row_copier_p<T, Mat>,
-												genmat_copier_p<T, Mat>
-			>::type >::type >::type >::type
-			type;
-	};
-
 
 
 	/********************************************
 	 *
-	 *  Copy between two matrices
+	 *  Core routines
 	 *
 	 ********************************************/
 
-	template<typename T, class SMat, class DMat>
-	struct scalar_copier
+	template<typename T>
+	LMAT_ENSURE_INLINE
+	void _copy_singlevec(index_t len, const T* ps, index_t s_step, T *pd)
 	{
-		LMAT_ENSURE_INLINE
-		static void copy(const SMat& s, DMat& t)
+		if (s_step == 1) copy_vec(len, ps, pd);
+		else copy_vec(len, ps, s_step, pd);
+	}
+
+	template<typename T>
+	LMAT_ENSURE_INLINE
+	void _copy_singlevec(index_t len, const T* ps, T *pd, index_t d_step)
+	{
+		if (d_step == 1) copy_vec(len, ps, pd);
+		else copy_vec(len, ps, pd, d_step);
+	}
+
+	template<typename T>
+	LMAT_ENSURE_INLINE
+	void _copy_singlevec(index_t len, const T* ps, index_t s_step, T *pd, index_t d_step)
+	{
+		if (s_step == 1)
 		{
-			*t.ptr_data() = *s.ptr_data();
+			if (d_step == 1) copy_vec(len, ps, pd);
+			else copy_vec(len, ps, pd, d_step);
 		}
-	};
-
-
-	template<typename T, class SMat, class DMat>
-	struct cc_copier
-	{
-		LMAT_ENSURE_INLINE
-		static void copy(const SMat& s, DMat& t)
+		else
 		{
-			copy_vec(s.nelems(), s.ptr_data(), t.ptr_data());
+			if (d_step == 1) copy_vec(len, ps, s_step, pd);
+			else copy_vec(len, ps, s_step, pd, d_step);
 		}
-	};
+	}
 
-	template<typename T, class SMat, class DMat>
-	struct column_copier
+	template<typename T>
+	LMAT_ENSURE_INLINE
+	void _copy_multicol(index_t m, index_t n,
+			const T *ps, index_t src_cs, T *pd, index_t dst_cs)
 	{
-		LMAT_ENSURE_INLINE
-		static void copy(const SMat& s, DMat& t)
+		for (index_t j = 0; j < n; ++j)
 		{
-			const index_t step_s = s.row_stride();
-			const index_t step_t = t.row_stride();
+			const T* scol = ps + j * src_cs;
+			T *dcol = pd + j * dst_cs;
+			copy_vec(m, scol, dcol);
+		}
+	}
 
-			if (step_s == 1)
+	template<typename T>
+	LMAT_ENSURE_INLINE
+	void _copy_multicol(index_t m, index_t n,
+			const T *ps, index_t src_rs, index_t src_cs, T *pd, index_t dst_cs)
+	{
+		for (index_t j = 0; j < n; ++j)
+		{
+			const T* scol = ps + j * src_cs;
+			T *dcol = pd + j * dst_cs;
+			copy_vec(m, scol, src_rs, dcol);
+		}
+	}
+
+	template<typename T>
+	LMAT_ENSURE_INLINE
+	void _copy_multicol(index_t m, index_t n,
+			const T *ps, index_t src_cs, T *pd, index_t dst_rs, index_t dst_cs)
+	{
+		for (index_t j = 0; j < n; ++j)
+		{
+			const T* scol = ps + j * src_cs;
+			T *dcol = pd + j * dst_cs;
+			copy_vec(m, scol, dcol, dst_rs);
+		}
+	}
+
+
+	template<typename T>
+	LMAT_ENSURE_INLINE
+	void _copy_multicol(index_t m, index_t n,
+			const T *ps, index_t src_rs, index_t src_cs, T *pd, index_t dst_rs, index_t dst_cs)
+	{
+		for (index_t j = 0; j < n; ++j)
+		{
+			const T* scol = ps + j * src_cs;
+			T *dcol = pd + j * dst_cs;
+			copy_vec(m, scol, src_rs, dcol, dst_rs);
+		}
+	}
+
+
+	/********************************************
+	 *
+	 *  Copy from pointer to matrix
+	 *
+	 ********************************************/
+
+	template<typename T, class DMat, int M, int N>
+	LMAT_ENSURE_INLINE
+	void copy(const T *ps, IDenseMatrix<DMat, T>& dmat, const matrix_copy_scheme<M, N, cont_level::whole>& sch)
+	{
+		copy_vec(sch.nelems(), ps, dmat.ptr_data());
+	}
+
+	template<typename T, class DMat, int M, int N>
+	inline void copy(const T *ps, IDenseMatrix<DMat, T>& dmat,
+			const matrix_copy_scheme<M, N, cont_level::percol>& sch)
+	{
+		const index_t m = sch.nrows();
+		const index_t n = sch.ncolumns();
+
+		T *pd = dmat.ptr_data();
+
+		if (n == 1)
+		{
+			if (m == 1)
+				*pd = *ps;
+			else
+				copy_vec(m, ps, pd);
+		}
+		else
+		{
+			const index_t cs = dmat.col_stride();
+			if (m == 1)
+				_copy_singlevec(n, ps, pd, cs);
+			else
+				_copy_multicol(m, n, ps, m, pd, cs);
+		}
+	}
+
+	template<typename T, class DMat, int M, int N>
+	inline void copy(const T *ps, IDenseMatrix<DMat, T>& dmat,
+			const matrix_copy_scheme<1, N, cont_level::percol>& sch)
+	{
+		const index_t n = sch.ncolumns();
+
+		T *pd = dmat.ptr_data();
+
+		if (n == 1)
+		{
+			*pd = *ps;
+		}
+		else
+		{
+			_copy_singlevec(n, ps, pd, dmat.col_stride());
+		}
+	}
+
+	template<typename T, class DMat, int M, int N>
+	inline void copy(const T *ps, IDenseMatrix<DMat, T>& dmat,
+			const matrix_copy_scheme<M, N, cont_level::none>& sch)
+	{
+		const index_t m = sch.nrows();
+		const index_t n = sch.ncolumns();
+
+		T *pd = dmat.ptr_data();
+
+		if (n == 1)
+		{
+			if (m == 1)
+				*pd = *ps;
+			else
 			{
-				if (step_t == 1)
-				{
-					copy_vec(s.nrows(), s.ptr_data(), t.ptr_data());
-				}
-				else
-				{
-					copy_vec(s.nrows(), s.ptr_data(), t.ptr_data(), step_t);
-				}
+				_copy_singlevec(m, ps, pd, dmat.row_stride());
+			}
+		}
+		else
+		{
+			const index_t cs = dmat.col_stride();
+			if (m == 1)
+			{
+				_copy_singlevec(n, ps, pd, cs);
 			}
 			else
 			{
-				if (step_t == 1)
-				{
-					copy_vec(s.nrows(), s.ptr_data(), step_s, t.ptr_data());
-				}
+				const index_t rs = dmat.row_stride();
+
+				if (rs == 1)
+					_copy_multicol(m, n, ps, m, pd, cs);
 				else
-				{
-					copy_vec(s.nrows(), s.ptr_data(), step_s, t.ptr_data(), step_t);
-				}
+					_copy_multicol(m, n, ps, m, pd, rs, cs);
 			}
-
-
 		}
-	};
+	}
 
 
-	template<typename T, class SMat, class DMat>
-	struct row_copier
+	/********************************************
+	 *
+	 *  Copy from matrix to pointer
+	 *
+	 ********************************************/
+
+	template<typename T, class SMat, int M, int N>
+	LMAT_ENSURE_INLINE
+	void copy(const IDenseMatrix<SMat, T>& smat, T *pd, const matrix_copy_scheme<M, N, cont_level::whole>& sch)
 	{
-		LMAT_ENSURE_INLINE
-		static void copy(const SMat& s, DMat& t)
-		{
-			const index_t step_s = s.col_stride();
-			const index_t step_t = t.col_stride();
+		copy_vec(sch.nelems(), smat.ptr_data(), pd);
+	}
 
-			if (step_s == 1)
+	template<typename T, class SMat, int M, int N>
+	inline void copy(const IDenseMatrix<SMat, T>& smat, T *pd,
+			const matrix_copy_scheme<M, N, cont_level::percol>& sch)
+	{
+		const index_t m = sch.nrows();
+		const index_t n = sch.ncolumns();
+
+		const T *ps = smat.ptr_data();
+
+		if (n == 1)
+		{
+			if (m == 1)
+				*pd = *ps;
+			else
+				copy_vec(m, ps, pd);
+		}
+		else
+		{
+			const index_t cs = smat.col_stride();
+
+			if (m == 1)
+				_copy_singlevec(n, ps, cs, pd);
+			else
+				_copy_multicol(m, n, ps, cs, pd, m);
+		}
+	}
+
+	template<typename T, class SMat, int M, int N>
+	inline void copy(const IDenseMatrix<SMat, T>& smat, T *pd,
+			const matrix_copy_scheme<1, N, cont_level::percol>& sch)
+	{
+		const index_t n = sch.ncolumns();
+
+		const T *ps = smat.ptr_data();
+
+		if (n == 1)
+		{
+			*pd = *ps;
+		}
+		else
+		{
+			const index_t cs = smat.col_stride();
+			if (cs == 1)
+				copy_vec(n, ps, pd);
+			else
+				copy_vec(n, ps, cs, pd);
+		}
+	}
+
+	template<typename T, class SMat, int M, int N>
+	inline void copy(const IDenseMatrix<SMat, T>& smat, T *pd,
+			const matrix_copy_scheme<M, N, cont_level::none>& sch)
+	{
+		const index_t m = sch.nrows();
+		const index_t n = sch.ncolumns();
+
+		const T *ps = smat.ptr_data();
+
+		if (n == 1)
+		{
+			if (m == 1)
 			{
-				if (step_t == 1)
-				{
-					copy_vec(s.ncolumns(), s.ptr_data(), t.ptr_data());
-				}
-				else
-				{
-					copy_vec(s.ncolumns(), s.ptr_data(), t.ptr_data(), step_t);
-				}
+				*pd = *ps;
 			}
 			else
 			{
-				if (step_t == 1)
-				{
-					copy_vec(s.ncolumns(), s.ptr_data(), step_s, t.ptr_data());
-				}
+				const index_t rs = smat.row_stride();
+				if (rs == 1)
+					copy_vec(m, ps, rs, pd);
 				else
-				{
-					copy_vec(s.ncolumns(), s.ptr_data(), step_s, t.ptr_data(), step_t);
-				}
+					copy_vec(m, ps, rs, pd);
 			}
 		}
-	};
-
-	template<typename T, class SMat, class DMat>
-	struct genmat_copier
-	{
-		static void copy(const SMat& s, DMat& t)
+		else
 		{
-			const index_t m = s.nrows();
-			const index_t n = s.ncolumns();
-
-			if (n == 1)
+			const index_t cs = smat.col_stride();
+			if (m == 1)
 			{
-				column_copier<T, SMat, DMat>::copy(s, t);
-			}
-			else if (m == 1)
-			{
-				row_copier<T, SMat, DMat>::copy(s, t);
+				if (cs == 1)
+					copy_vec(n, ps, pd);
+				else
+					copy_vec(n, ps, cs, pd);
 			}
 			else
 			{
-				const index_t step_s = s.row_stride();
-				const index_t step_t = t.row_stride();
-
-				if (step_s == 1)
-				{
-					if (step_t == 1)
-					{
-						if (s.col_stride() == m && t.col_stride() == m)
-						{
-							copy_vec(s.nelems(), s.ptr_data(), t.ptr_data());
-						}
-						else
-						{
-							for (index_t j = 0; j < n; ++j)
-								copy_vec(m, s.ptr_col(j), t.ptr_col(j));
-						}
-					}
-					else
-					{
-						for (index_t j = 0; j < n; ++j)
-							copy_vec(m, s.ptr_col(j), t.ptr_col(j), step_t);
-					}
-				}
+				const index_t rs = smat.row_stride();
+				if (rs == 1)
+					_copy_multicol(m, n, ps, cs, pd, m);
 				else
-				{
-					if (step_t == 1)
-					{
-						for (index_t j = 0; j < n; ++j)
-							copy_vec(m, s.ptr_col(j), step_s, t.ptr_col(j));
-					}
-					else
-					{
-						for (index_t j = 0; j < n; ++j)
-							copy_vec(m, s.ptr_col(j), step_s, t.ptr_col(j), step_t);
-					}
-				}
+					_copy_multicol(m, n, ps, rs, cs, pd, m);
 			}
 		}
-	};
+	}
 
 
-	template<class SMat, class DMat>
-	struct mat_copier_map
+	/********************************************
+	 *
+	 *  Copy from matrix to matrix
+	 *
+	 ********************************************/
+
+	template<typename T, class SMat, class DMat, int M, int N>
+	LMAT_ENSURE_INLINE
+	void copy(const IDenseMatrix<SMat, T>& smat, IDenseMatrix<DMat, T>& dmat,
+			const matrix_copy_scheme<M, N, cont_level::whole>& sch)
 	{
-		typedef LMAT_TYPELIST_2(SMat, DMat) Lst;
-		typedef typename meta::common_value_type<Lst>::type T;
+		copy_vec(sch.nelems(), smat.ptr_data(), dmat.ptr_data());
+	}
 
-		static const int M = meta::common_nrows<Lst>::value;
-		static const int N = meta::common_ncols<Lst>::value;
+	template<typename T, class SMat, class DMat, int M, int N>
+	inline void copy(const IDenseMatrix<SMat, T>& smat, IDenseMatrix<DMat, T>& dmat,
+			const matrix_copy_scheme<M, N, cont_level::percol>& sch)
+	{
+		const index_t m = sch.nrows();
+		const index_t n = sch.ncolumns();
 
-		static const bool is_scalar = M == 1 && N == 1;
-		static const bool is_continuous =
-				meta::is_continuous<SMat>::value &&
-				meta::is_continuous<DMat>::value;
-		static const bool is_column = N == 1;
-		static const bool is_row = M == 1;
+		const T *ps = smat.ptr_data();
+		T *pd = dmat.ptr_data();
 
-		typedef
-			typename meta::if_c<is_scalar, 		scalar_copier<T, SMat, DMat>,
-			typename meta::if_c<is_continuous, 	cc_copier<T, SMat, DMat>,
-			typename meta::if_c<is_column,		column_copier<T, SMat, DMat>,
-			typename meta::if_c<is_row,			row_copier<T, SMat, DMat>,
-												genmat_copier<T, SMat, DMat>
-			>::type >::type >::type >::type
-			type;
-	};
+		if (n == 1)
+		{
+			if (m == 1)
+				*pd = *ps;
+			else
+				copy_vec(m, ps, pd);
+		}
+		else
+		{
+			if (m == 1)
+				_copy_singlevec(n, ps, smat.col_stride(), pd, dmat.col_stride());
+			else
+				_copy_multicol(m, n, ps, smat.col_stride(), pd, dmat.col_stride());
+		}
+	}
 
 
+	template<typename T, class SMat, class DMat, int M, int N>
+	inline void copy(const IDenseMatrix<SMat, T>& smat, IDenseMatrix<DMat, T>& dmat,
+			const matrix_copy_scheme<1, N, cont_level::percol>& sch)
+	{
+		const index_t n = sch.ncolumns();
+
+		const T *ps = smat.ptr_data();
+		T *pd = dmat.ptr_data();
+
+		if (n == 1)
+			*pd = *ps;
+		else
+			_copy_singlevec(n, ps, smat.col_stride(), pd, dmat.col_stride());
+	}
+
+
+	template<typename T, class SMat, class DMat, int M, int N>
+	inline void copy(const IDenseMatrix<SMat, T>& smat, IDenseMatrix<DMat, T>& dmat,
+			const matrix_copy_scheme<M, N, cont_level::none>& sch)
+	{
+		const index_t m = sch.nrows();
+		const index_t n = sch.ncolumns();
+
+		const T *ps = smat.ptr_data();
+		T *pd = dmat.ptr_data();
+
+		if (n == 1)
+		{
+			if (m == 1)
+				*pd = *ps;
+			else
+				copy_vec(m, ps, smat.row_stride(), pd, dmat.row_stride());
+		}
+		else
+		{
+			if (m == 1)
+				copy_vec(n, ps, smat.col_stride(), pd, dmat.col_stride());
+			else
+				_copy_multicol(m, n,
+						ps, smat.row_stride(), smat.col_stride(),
+						pd, dmat.row_stride(), dmat.col_stride());
+		}
+	}
 
 
 } }

@@ -84,6 +84,15 @@ namespace lmat
 
 	template<class Mat> class dense_mutable_view;
 
+	// continuous levels
+
+	namespace cont_level
+	{
+		struct whole { };
+		struct percol { };
+		struct none { };
+	}
+
 	// subviews
 
 	template<class Mat, typename Range> struct vecview_map;
@@ -91,12 +100,6 @@ namespace lmat
 	template<class Mat, typename ColRange> struct rowview_map;
 	template<class Mat> struct diagview_map;
 	template<class Mat, typename RowRange, typename ColRange> struct matview_map;
-
-	// evaluation
-
-	template<class SExpr, class DMat> struct matrix_assign_expr;
-
-	struct undefined_eval_scheme { };
 
 }
 

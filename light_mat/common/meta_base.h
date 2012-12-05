@@ -538,10 +538,10 @@ namespace lmat {  namespace meta {
  *
  ********************************************/
 
-#define LMAT_TYPELIST_1( T1 ) meta::type_list_<T1>
-#define LMAT_TYPELIST_2( T1, T2 ) meta::type_list_<T1, meta::type_list_<T2> >
-#define LMAT_TYPELIST_3( T1, T2, T3 ) meta::type_list_<T1, meta::type_list_<T2, meta::type_list_<T3> > >
-#define LMAT_TYPELIST_4( T1, T2, T3, T4 ) meta::type_list_<T1, meta::type_list_<T2, meta::type_list_<T3, meta::type_list_<T4> > > >
+#define LMAT_TYPELIST_1( T1 ) meta::type_list_< T1 >
+#define LMAT_TYPELIST_2( T1, T2 ) meta::type_list_<T1, meta::type_list_< T2 > >
+#define LMAT_TYPELIST_3( T1, T2, T3 ) meta::type_list_<T1, meta::type_list_<T2, meta::type_list_< T3 > > >
+#define LMAT_TYPELIST_4( T1, T2, T3, T4 ) meta::type_list_<T1, meta::type_list_<T2, meta::type_list_<T3, meta::type_list_< T4 > > > >
 
 #define LMAT_INTLIST_1( V1 ) meta::int_list_<V1>
 #define LMAT_INTLIST_2( V1, V2 ) meta::int_list_<V1, meta::int_list_<V2> >
