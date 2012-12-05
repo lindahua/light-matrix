@@ -19,11 +19,11 @@ namespace lmat { namespace internal {
 
 	struct dense_col2row_transpose_scheme
 	{
-		template<typename Arg_HP, class Arg, class DMat>
+		template<class QArg, class DMat>
 		LMAT_ENSURE_INLINE
-		void evaluate(const transpose_expr<Arg_HP, Arg>& expr, DMat& dmat)
+		void _eval(const transpose_expr<QArg>& expr, DMat& dmat)
 		{
-			const Arg& arg = expr.arg();
+			const typename QArg::argument& arg = expr.arg();
 			const index_t n = dmat.ncolumns();
 
 			internal::vec_transpose(n, arg.ptr_data(), arg.row_stride(),
@@ -33,11 +33,11 @@ namespace lmat { namespace internal {
 
 	struct dense_row2col_transpose_scheme
 	{
-		template<typename Arg_HP, class Arg, class DMat>
+		template<class QArg, class DMat>
 		LMAT_ENSURE_INLINE
-		void evaluate(const transpose_expr<Arg_HP, Arg>& expr, DMat& dmat)
+		void _eval(const transpose_expr<QArg>& expr, DMat& dmat)
 		{
-			const Arg& arg = expr.arg();
+			const typename QArg::argument& arg = expr.arg();
 			const index_t n = dmat.nrows();
 
 			internal::vec_transpose(n, arg.ptr_data(), arg.col_stride(),
@@ -47,9 +47,9 @@ namespace lmat { namespace internal {
 
 	struct dense_mat_transpose_scheme
 	{
-		template<typename Arg_HP, class Arg, class DMat>
+		template<class QArg, class DMat>
 		LMAT_ENSURE_INLINE
-		void evaluate(const transpose_expr<Arg_HP, Arg>& expr, DMat& dmat)
+		void _eval(const transpose_expr<QArg>& expr, DMat& dmat)
 		{
 			direct_transpose(expr.arg(), dmat);
 		}
@@ -57,11 +57,13 @@ namespace lmat { namespace internal {
 
 	struct xpr_col2row_transpose_scheme
 	{
-		template<typename Arg_HP, class Arg, class DMat>
+		template<class QArg, class DMat>
 		LMAT_ENSURE_INLINE
-		void evaluate(const transpose_expr<Arg_HP, Arg>& expr, DMat& dmat)
+		void _eval(const transpose_expr<QArg>& expr, DMat& dmat)
 		{
-			const int L = common_ctdim<ct_rows<Arg>, ct_cols<DMat> >::value;
+			typedef typename QArg::argument arg_t;
+			const int L = meta::common_dim<
+					LMAT_INTLIST_2( meta::nrows<arg_t>::value, meta::ncols<DMat>::value ) >::value;
 			typedef typename matrix_traits<DMat>::value_type T;
 
 			const index_t n = dmat.ncolumns();
@@ -70,23 +72,25 @@ namespace lmat { namespace internal {
 			if (step == 1)
 			{
 				ref_col<T, L> dcol(dmat.ptr_data(), n);
-				default_evaluate(expr.arg(), dcol);
+				evaluate(expr.arg(), dcol);
 			}
 			else
 			{
 				step_col<T, L> dcol(dmat.ptr_data(), n, step);
-				default_evaluate(expr.arg(), dcol);
+				evaluate(expr.arg(), dcol);
 			}
 		}
 	};
 
 	struct xpr_row2col_transpose_scheme
 	{
-		template<typename Arg_HP, class Arg, class DMat>
+		template<class QArg, class DMat>
 		LMAT_ENSURE_INLINE
-		void evaluate(const transpose_expr<Arg_HP, Arg>& expr, DMat& dmat)
+		void _eval(const transpose_expr<QArg>& expr, DMat& dmat)
 		{
-			const int L = common_ctdim<ct_cols<Arg>, ct_rows<DMat> >::value;
+			typedef typename QArg::argument arg_t;
+			const int L = meta::common_dim<
+					LMAT_INTLIST_2( meta::ncols<arg_t>::value, meta::nrows<DMat>::value ) >::value;
 			typedef typename matrix_traits<DMat>::value_type T;
 
 			const index_t n = dmat.nrows();
@@ -95,21 +99,21 @@ namespace lmat { namespace internal {
 			if (step == 1)
 			{
 				ref_row<T, L> drow(dmat.ptr_data(), n);
-				default_evaluate(expr.arg(), drow);
+				evaluate(expr.arg(), drow);
 			}
 			else
 			{
 				step_row<T, L> drow(dmat.ptr_data(), n, step);
-				default_evaluate(expr.arg(), drow);
+				evaluate(expr.arg(), drow);
 			}
 		}
 	};
 
 	struct xpr_transpose_scheme
 	{
-		template<typename Arg_HP, class Arg, class DMat>
+		template<class QArg, class DMat>
 		LMAT_ENSURE_INLINE
-		void evaluate(const transpose_expr<Arg_HP, Arg>& expr, DMat& dmat)
+		void _eval(const transpose_expr<QArg>& expr, DMat& dmat)
 		{
 			direct_transpose(eval(expr.arg()), dmat);
 		}
@@ -120,23 +124,23 @@ namespace lmat { namespace internal {
 	struct transpose_scheme_map
 	{
 		typedef typename
-				if_<is_dense_mat<Arg>,
+				meta::if_<meta::is_dense_mat<Arg>,
 					// is dense matrix
 					typename
-					if_<ct_is_col<Arg>,
+					meta::if_<meta::is_col<Arg>,
 						dense_col2row_transpose_scheme,
 						typename
-						if_<ct_is_row<Arg>,
+						meta::if_<meta::is_row<Arg>,
 							dense_row2col_transpose_scheme,
 							dense_mat_transpose_scheme
 						>::type
 					>::type,
 					// is general expression
 					typename
-					if_<ct_is_col<Arg>,
+					meta::if_<meta::is_col<Arg>,
 						xpr_col2row_transpose_scheme,
 						typename
-						if_<ct_is_row<Arg>,
+						meta::if_<meta::is_row<Arg>,
 							xpr_row2col_transpose_scheme,
 							xpr_transpose_scheme
 						>::type

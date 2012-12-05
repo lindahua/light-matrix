@@ -45,52 +45,58 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<typename Arg_HP, class Arg> class transpose_expr;
+	template<class QArg> class transpose_expr;
 
-	template<typename Arg_HP, class Arg>
-	struct matrix_traits<transpose_expr<Arg_HP, Arg> >
+	template<class QArg>
+	struct matrix_traits<transpose_expr<QArg> >
 	{
+		typedef typename QArg::argument arg_t;
+
 		static const int num_dimensions = 2;
-		static const int ct_num_rows = ct_cols<Arg>::value;
-		static const int ct_num_cols = ct_rows<Arg>::value;
+		static const int ct_num_rows = meta::ncols<arg_t>::value;
+		static const int ct_num_cols = meta::nrows<arg_t>::value;
 
 		static const bool is_readonly = true;
 
-		typedef typename matrix_traits<Arg>::value_type value_type;
-		typedef typename matrix_traits<Arg>::domain domain;
+		typedef typename matrix_traits<arg_t>::value_type value_type;
+		typedef typename matrix_traits<arg_t>::domain domain;
 	};
 
 
-	template<typename Arg_HP, class Arg>
+	template<class QArg>
 	class transpose_expr :
-			public unary_expr_base<Arg_HP, Arg>,
-			public IMatrixXpr<transpose_expr<Arg_HP, Arg>, typename matrix_traits<Arg>::value_type>
+		public IMatrixXpr<transpose_expr<QArg>,
+			typename matrix_traits<typename QArg::argument>::value_type>
 	{
-#ifdef LMAT_USE_STATIC_ASSERT
-		static_assert(is_mat_xpr<Arg>::value, "Arg must be a matrix expression class.");
-#endif
-
 	public:
-		typedef unary_expr_base<Arg_HP, Arg> base_t;
 
 		LMAT_ENSURE_INLINE
-		transpose_expr(const arg_forwarder<Arg_HP, Arg>& arg_fwd)
-		: base_t(arg_fwd) { }
+		transpose_expr(const typename QArg::forwarder& arg_fwd)
+		: arg_holder(arg_fwd) { }
+
+		LMAT_ENSURE_INLINE
+		const typename QArg::argument& arg() const
+		{
+			return arg_holder.get();
+		}
 
 		LMAT_ENSURE_INLINE index_t nelems() const
 		{
-			return this->arg().nelems();
+			return arg().nelems();
 		}
 
 		LMAT_ENSURE_INLINE index_t nrows() const
 		{
-			return this->arg().ncolumns();
+			return arg().ncolumns();
 		}
 
 		LMAT_ENSURE_INLINE index_t ncolumns() const
 		{
-			return this->arg().nrows();
+			return arg().nrows();
 		}
+
+	private:
+		typename QArg::holder arg_holder;
 
 	};
 
@@ -108,32 +114,35 @@ namespace lmat
 	// verifier
 
 	template<class Arg>
-	struct unary_expr_verifier<transpose_t, Arg>
+	struct expr_verifier<transpose_t, LMAT_TYPELIST_1(Arg) >
 	{
-		static const bool value = is_mat_xpr<Arg>::value;
+		static const bool value = meta::is_mat_xpr<Arg>::value;
 	};
 
 	// maps
 
-	template<typename Arg_HP, class Arg>
-	struct unary_expr_map<transpose_t, Arg_HP, Arg>
+	template<class QArg>
+	struct expr_map<transpose_t, LMAT_TYPELIST_1(QArg) >
 	{
-		typedef transpose_expr<Arg_HP, Arg> type;
+		typedef transpose_expr<QArg> type;
 
 		LMAT_ENSURE_INLINE
-		static type get(transpose_t, const arg_forwarder<Arg_HP, Arg>& arg_fwd)
+		static type get(transpose_t,
+				const tied_forwarder< LMAT_TYPELIST_1(QArg) >& tfwd)
 		{
-			return type(arg_fwd);
+			return type(tfwd.arg1_fwd);
 		}
 	};
 
 	template<class Arg, typename T>
 	LMAT_ENSURE_INLINE
-	inline typename unary_expr_map<transpose_t, ref_arg_t, Arg>::type
+	inline typename expr_map<transpose_t, LMAT_TYPELIST_1( CRefArg<Arg> ) >::type
 	trans(const IMatrixXpr<Arg, T>& arg)
 	{
-		return unary_expr_map<transpose_t, ref_arg_t, Arg>::get(
-				transpose_t(), ref_arg(arg.derived()));
+		typedef tied_forwarder< LMAT_TYPELIST_1( CRefArg<Arg> ) > tfwd_t;
+
+		return make_expr(
+				transpose_t(), tfwd_t(arg.derived()) );
 	}
 
 
@@ -143,15 +152,14 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<typename T, typename Arg_HP, class Arg, class DMat>
+	template<class QArg, class DMat>
 	LMAT_ENSURE_INLINE
-	inline typename internal::transpose_scheme_map<Arg>::type
-	get_default_eval_scheme(
-			const transpose_expr<Arg_HP, Arg>& sexpr,
-			IDenseMatrix<DMat, T>& dmat)
+	void evaluate(
+			const transpose_expr<QArg>& sexpr,
+			IDenseMatrix<DMat, typename matrix_traits< typename QArg::argument >::value_type >& dmat)
 	{
-		typedef typename internal::transpose_scheme_map<Arg>::type scheme_t;
-		return scheme_t();
+		typedef typename internal::transpose_scheme_map<typename QArg::argument>::type scheme_t;
+		scheme_t()._eval( sexpr.derived(), dmat.derived() );
 	}
 
 }
