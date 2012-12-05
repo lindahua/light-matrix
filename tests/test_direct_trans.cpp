@@ -20,11 +20,11 @@ void test_direct_trans()
 
 	// M x N ==> N x M
 
-	typedef typename mat_maker<Tag1, double, M, N>::cmat_t cmat_t;
-	typedef typename mat_maker<Tag2, double, N, M>::mat_t mat_t;
+	typedef typename mat_host<Tag1, double, M, N>::cmat_t cmat_t;
+	typedef typename mat_host<Tag2, double, N, M>::mat_t mat_t;
 
-	mat_maker<Tag1, double, M, N> src(m, n);
-	mat_maker<Tag2, double, N, M> dst(n, m);
+	mat_host<Tag1, double, M, N> src(m, n);
+	mat_host<Tag2, double, N, M> dst(n, m);
 
 	src.fill_lin();
 
@@ -43,11 +43,11 @@ void test_direct_trans()
 
 	// N x M ==> M x N
 
-	typedef typename mat_maker<Tag1, double, N, M>::cmat_t cmat2_t;
-	typedef typename mat_maker<Tag2, double, M, N>::mat_t mat2_t;
+	typedef typename mat_host<Tag1, double, N, M>::cmat_t cmat2_t;
+	typedef typename mat_host<Tag2, double, M, N>::mat_t mat2_t;
 
-	mat_maker<Tag1, double, N, M> src2(n, m);
-	mat_maker<Tag2, double, M, N> dst2(m, n);
+	mat_host<Tag1, double, N, M> src2(n, m);
+	mat_host<Tag2, double, M, N> dst2(m, n);
 
 	src2.fill_lin();
 

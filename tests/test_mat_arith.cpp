@@ -34,11 +34,11 @@ void test_scheme_choice()
 	const index_t m = M == 0 ? DM : M;
 	const index_t n = N == 0 ? DN : N;
 
-	typedef typename mat_maker<Tag1, double, M, N>::cmat_t cmat1_t;
-	typedef typename mat_maker<Tag2, double, M, N>::cmat_t cmat2_t;
+	typedef typename mat_host<Tag1, double, M, N>::cmat_t cmat1_t;
+	typedef typename mat_host<Tag2, double, M, N>::cmat_t cmat2_t;
 
-	mat_maker<Tag1, double, M, N> a_src(m, n);
-	mat_maker<Tag2, double, M, N> b_src(m, n);
+	mat_host<Tag1, double, M, N> a_src(m, n);
+	mat_host<Tag2, double, M, N> b_src(m, n);
 
 	cmat1_t a = a_src.get_cmat();
 	cmat2_t b = b_src.get_cmat();

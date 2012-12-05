@@ -25,11 +25,11 @@ void test_repcols()
 	const index_t m = M == 0 ? DM : M;
 	const index_t n = N == 0 ? DN : N;
 
-	typedef typename mat_maker<Tag1, double, M, 1>::cmat_t scol_t;
-	typedef typename mat_maker<Tag2, double, M, N>::mat_t dmat_t;
+	typedef typename mat_host<Tag1, double, M, 1>::cmat_t scol_t;
+	typedef typename mat_host<Tag2, double, M, N>::mat_t dmat_t;
 
-	mat_maker<Tag1, double, M, 1> src(m, 1);
-	mat_maker<Tag2, double, M, N> dst(m, n);
+	mat_host<Tag1, double, M, 1> src(m, 1);
+	mat_host<Tag2, double, M, N> dst(m, n);
 
 	src.fill_lin();
 	scol_t scol = src.get_cmat();
@@ -74,11 +74,11 @@ void test_reprows()
 	const index_t m = M == 0 ? DM : M;
 	const index_t n = N == 0 ? DN : N;
 
-	typedef typename mat_maker<Tag1, double, 1, N>::cmat_t srow_t;
-	typedef typename mat_maker<Tag2, double, M, N>::mat_t dmat_t;
+	typedef typename mat_host<Tag1, double, 1, N>::cmat_t srow_t;
+	typedef typename mat_host<Tag2, double, M, N>::mat_t dmat_t;
 
-	mat_maker<Tag1, double, 1, N> src(1, n);
-	mat_maker<Tag2, double, M, N> dst(m, n);
+	mat_host<Tag1, double, 1, N> src(1, n);
+	mat_host<Tag2, double, M, N> dst(m, n);
 
 	src.fill_lin();
 	srow_t srow = src.get_cmat();
@@ -123,7 +123,7 @@ void test_repcols_ex()
 	const index_t m = M == 0 ? DM : M;
 	const index_t n = N == 0 ? DN : N;
 
-	typedef typename mat_maker<Tag2, double, M, N>::mat_t dmat_t;
+	typedef typename mat_host<Tag2, double, M, N>::mat_t dmat_t;
 
 	dense_col<double, M> scol(m);
 	for (index_t i = 0; i < m; ++i) scol[i] = double(i+1);
@@ -140,7 +140,7 @@ void test_repcols_ex()
 	ASSERT_EQ( rep_col(scol, n).nrows(), m );
 	ASSERT_EQ( rep_col(scol, n).ncolumns(), n );
 
-	mat_maker<Tag2, double, M, N> dst(m, n);
+	mat_host<Tag2, double, M, N> dst(m, n);
 	dmat_t dmat = dst.get_mat();
 	if (N == 0)
 	{
@@ -169,7 +169,7 @@ void test_reprows_ex()
 	const index_t m = M == 0 ? DM : M;
 	const index_t n = N == 0 ? DN : N;
 
-	typedef typename mat_maker<Tag2, double, M, N>::mat_t dmat_t;
+	typedef typename mat_host<Tag2, double, M, N>::mat_t dmat_t;
 
 	dense_row<double, N> srow(n);
 	for (index_t j = 0; j < n; ++j) srow[j] = double(j+1);
@@ -186,7 +186,7 @@ void test_reprows_ex()
 	ASSERT_EQ( rep_row(srow, m).nrows(), m );
 	ASSERT_EQ( rep_row(srow, m).ncolumns(), n );
 
-	mat_maker<Tag2, double, M, N> dst(m, n);
+	mat_host<Tag2, double, M, N> dst(m, n);
 	dmat_t dmat = dst.get_mat();
 	if (M == 0)
 	{

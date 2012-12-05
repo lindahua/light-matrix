@@ -71,10 +71,10 @@ void do_fill_rand(T *p, const index_t n, T lb, T ub)
 
 
 template<typename VT>
-class mat_maker_base
+class mat_host_base
 {
 public:
-	mat_maker_base(index_t m, index_t n, index_t max_siz)
+	mat_host_base(index_t m, index_t n, index_t max_siz)
 	: m_nrows(m), m_ncols(n), m_blk(max_siz, zero()) { }
 
 	const VT *pdata() const { return m_blk.ptr_data(); }
@@ -119,17 +119,17 @@ struct bloc {};
 struct grid {};
 
 template<typename Tag, typename VT, int M, int N>
-class mat_maker;
+class mat_host;
 
 template<typename VT, int M, int N>
-class mat_maker<cont, VT, M, N> : public mat_maker_base<VT>
+class mat_host<cont, VT, M, N> : public mat_host_base<VT>
 {
 public:
 	typedef cref_matrix<double, M, N> cmat_t;
 	typedef ref_matrix<double, M, N> mat_t;
 
-	mat_maker(index_t m, index_t n)
-	: mat_maker_base<VT>(m, n, m * n)
+	mat_host(index_t m, index_t n)
+	: mat_host_base<VT>(m, n, m * n)
 	{ }
 
 	cmat_t get_cmat() const
@@ -147,14 +147,14 @@ private:
 };
 
 template<typename VT, int M, int N>
-class mat_maker<bloc, VT, M, N> : public mat_maker_base<VT>
+class mat_host<bloc, VT, M, N> : public mat_host_base<VT>
 {
 public:
 	typedef cref_block<double, M, N> cmat_t;
 	typedef ref_block<double, M, N> mat_t;
 
-	mat_maker(index_t m, index_t n)
-	: mat_maker_base<VT>(m, n, LDim * n)
+	mat_host(index_t m, index_t n)
+	: mat_host_base<VT>(m, n, LDim * n)
 	{ }
 
 	cmat_t get_cmat() const
@@ -173,14 +173,14 @@ private:
 
 
 template<typename VT, int M, int N>
-class mat_maker<grid, VT, M, N> : public mat_maker_base<VT>
+class mat_host<grid, VT, M, N> : public mat_host_base<VT>
 {
 public:
 	typedef cref_grid<double, M, N> cmat_t;
 	typedef ref_grid<double, M, N> mat_t;
 
-	mat_maker(index_t m, index_t n)
-	: mat_maker_base<VT>(m, n, LDim * n)
+	mat_host(index_t m, index_t n)
+	: mat_host_base<VT>(m, n, LDim * n)
 	{ }
 
 	cmat_t get_cmat() const

@@ -32,14 +32,14 @@ template<
 	typename Acc, typename Ker, int M, int N>
 void test_acc_eval()
 {
-	typedef typename mat_maker<Tag1, double, M, N>::cmat_t smat_t;
-	typedef typename mat_maker<Tag2, double, M, N>::mat_t dmat_t;
+	typedef typename mat_host<Tag1, double, M, N>::cmat_t smat_t;
+	typedef typename mat_host<Tag2, double, M, N>::mat_t dmat_t;
 
 	const index_t m = M == 0 ? DM : M;
 	const index_t n = N == 0 ? DN : N;
 
-	mat_maker<Tag1, double, M, N> src(m, n);
-	mat_maker<Tag2, double, M, N> dst(m, n);
+	mat_host<Tag1, double, M, N> src(m, n);
+	mat_host<Tag2, double, M, N> dst(m, n);
 
 	src.fill_lin();
 
