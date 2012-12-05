@@ -72,6 +72,27 @@ namespace lmat
 	template<class Arg> struct QArg_< ref_arg_t, Arg> { typedef  RefArg<Arg> type; };
 	template<class Arg> struct QArg_< cpy_arg_t, Arg> { typedef  CpyArg<Arg> type; };
 
+	namespace meta
+	{
+		template<class Arg>
+		struct to_cref_arg
+		{
+			typedef CRefArg<Arg> type;
+		};
+
+		template<class Arg>
+		struct to_ref_arg
+		{
+			typedef RefArg<Arg> type;
+		};
+
+		template<class Arg>
+		struct to_cpy_arg
+		{
+			typedef CpyArg<Arg> type;
+		};
+	}
+
 
 	// Forwarders
 

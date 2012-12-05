@@ -118,7 +118,7 @@ set(MATRIX_REPEAT_HS
     ${INC}/matexpr/vector_repeat.h)   
     
 set(MATRIX_REDUC_HS
-    ${INC}/math/reduction_functors.h
+    ${INC}/math/reductors.h
     ${INC}/matexpr/bits/macc_reduce_core.h
     ${INC}/matexpr/bits/full_reduce_internal.h
     ${INC}/matexpr/bits/partial_reduce_internal.h
@@ -227,7 +227,7 @@ set(MAT_REDUC_HS
     ${MATEXPR_BASE_HS}
     ${MATRIX_REDUC_HS})
     
-# add_executable(test_full_reduce ${MAT_REDUC_HS} test_full_reduce.cpp) 
+add_executable(test_full_reduce ${MAT_REDUC_HS} test_full_reduce.cpp) 
 # add_executable(test_partial_reduce ${MAT_REDUC_HS} test_partial_reduce.cpp) 
 
 # add_executable(test_cpd_ewise ${MATRIX_EVAL_HS} test_cpd_ewise.cpp)
@@ -261,7 +261,7 @@ set(LMAT_TEST_NAMES
 	test_vec_rep
 	test_direct_trans
 	test_mat_transpose
-	# test_full_reduce
+	test_full_reduce
 	# test_partial_reduce
 	# test_cpd_ewise
 )

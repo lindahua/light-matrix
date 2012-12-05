@@ -21,6 +21,8 @@ namespace lmat
 {
 	// arithmetic operations
 
+	LMAT_DECLARE_NUMERIC_UNARY_OP( id_t )
+
 	LMAT_DECLARE_NUMERIC_BINARY_OP( add_t )
 	LMAT_DECLARE_NUMERIC_BINARY_OP( subtract_t )
 	LMAT_DECLARE_NUMERIC_BINARY_OP( multiply_t )
@@ -33,6 +35,8 @@ namespace lmat
 	LMAT_DECLARE_NUMERIC_BINARY_OP( min_t )
 
 	// define functors
+
+	LMAT_DEFINE_NUMERIC_UNARY_FUNCTOR( id, x )
 
 	LMAT_DEFINE_NUMERIC_BINARY_FUNCTOR( add, x + y )
 	LMAT_DEFINE_NUMERIC_BINARY_FUNCTOR( subtract, x - y )

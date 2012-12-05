@@ -53,6 +53,7 @@ namespace lmat
 	LMAT_DECLARE_REAL_UNARY_OP( log2_t )
 	LMAT_DECLARE_REAL_UNARY_OP( log10_t )
 
+	LMAT_DECLARE_REAL_UNARY_OP( xlogx_t )
 	LMAT_DECLARE_REAL_UNARY_OP( expm1_t )
 	LMAT_DECLARE_REAL_UNARY_OP( log1p_t )
 
@@ -124,6 +125,7 @@ namespace lmat
 	LMAT_DEFINE_REAL_UNARY_FUNCTOR( exp, math::exp(x) )
 	LMAT_DEFINE_REAL_UNARY_FUNCTOR( log, math::log(x) )
 	LMAT_DEFINE_REAL_UNARY_FUNCTOR( log10, math::log10(x) )
+	LMAT_DEFINE_REAL_UNARY_FUNCTOR( xlogx, (x > 0 ? x * math::log(x) : 0) )
 
 #ifdef LMAT_HAS_C99_MATH
 	LMAT_DEFINE_REAL_UNARY_FUNCTOR( exp2, math::exp2(x) )

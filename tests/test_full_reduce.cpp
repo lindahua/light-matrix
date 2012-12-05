@@ -36,8 +36,8 @@ MN_CASE( mat_reduce, sum )
 
 	// test
 
-	ASSERT_EQ( _reduce(sum_t(), A, linear_macc(), scalar_ker()), r0 );
-	ASSERT_EQ( _reduce(sum_t(), A, percol_macc(), scalar_ker()), r0 );
+	ASSERT_EQ( reduce(sum_t(), A, macc_policy<linear_macc, scalar_ker>()), r0 );
+	ASSERT_EQ( reduce(sum_t(), A, macc_policy<percol_macc, scalar_ker>()), r0 );
 	ASSERT_EQ( sum(A), r0 );
 }
 
@@ -62,8 +62,8 @@ MN_CASE( mat_reduce, sum_ex )
 
 	// test
 
-	ASSERT_EQ( _reduce(sum_t(), A, linear_macc(), scalar_ker()), r0 );
-	ASSERT_EQ( _reduce(sum_t(), A, percol_macc(), scalar_ker()), r0 );
+	ASSERT_EQ( _reduce(sum_t(), A, macc_policy<linear_macc, scalar_ker>()), r0 );
+	ASSERT_EQ( _reduce(sum_t(), A, macc_policy<percol_macc, scalar_ker>()), r0 );
 	ASSERT_EQ( sum(A), r0 );
 }
 
@@ -274,8 +274,6 @@ MN_CASE( mat_reduce, entropy )
 	ASSERT_EQ( entropy(A), r0 );
 }
 
-
-
 MN_CASE( mat_reduce, dot )
 {
 	typedef dense_matrix<double, M, N> mat_t;
@@ -296,43 +294,9 @@ MN_CASE( mat_reduce, dot )
 
 	// test
 
-	ASSERT_EQ( _reduce(dot_t(), A, B, linear_macc(), scalar_ker()), r0 );
-	ASSERT_EQ( _reduce(dot_t(), A, B, percol_macc(), scalar_ker()), r0 );
+	ASSERT_EQ( reduce(dot_t(), A, B, macc_policy<linear_macc, scalar_ker>()), r0 );
+	ASSERT_EQ( reduce(dot_t(), A, B, macc_policy<percol_macc, scalar_ker>()), r0 );
 	ASSERT_EQ( dot(A, B), r0 );
-}
-
-MN_CASE( mat_reduce, nrmdot )
-{
-	typedef dense_matrix<double, M, N> mat_t;
-
-	const index_t m = M == 0 ? DM : M;
-	const index_t n = N == 0 ? DN : N;
-
-	mat_t A(m, n);
-	mat_t B(m, n);
-
-	for (index_t i = 0; i < m * n; ++i) A[i] = double(i + 1);
-	for (index_t i = 0; i < m * n; ++i) B[i] = double(i + 2);
-
-	// prepare ground-truth
-
-	double raa = 0.0;
-	double rab = 0.0;
-	double rbb = 0.0;
-
-	for (index_t i = 0; i < m * n; ++i)
-	{
-		rab += A[i] * B[i];
-		raa += A[i] * A[i];
-		rbb += B[i] * B[i];
-	}
-
-	double r0 = rab / (std::sqrt(raa) * std::sqrt(rbb));
-	ASSERT_TRUE( r0 <= 1.0 && r0 >= -1.0 );
-
-	// test
-
-	ASSERT_EQ( nrmdot(A, B), r0 );
 }
 
 
@@ -384,11 +348,6 @@ BEGIN_TPACK( mat_dot )
 	ADD_MN_CASE_3X3( mat_reduce, dot, DM, DN )
 END_TPACK
 
-BEGIN_TPACK( mat_nrmdot )
-	ADD_MN_CASE_3X3( mat_reduce, nrmdot, DM, DN )
-END_TPACK
-
-
 
 BEGIN_MAIN_SUITE
 	ADD_TPACK( mat_sum )
@@ -407,7 +366,6 @@ BEGIN_MAIN_SUITE
 	ADD_TPACK( mat_entropy )
 
 	ADD_TPACK( mat_dot )
-	ADD_TPACK( mat_nrmdot )
 END_MAIN_SUITE
 
 
