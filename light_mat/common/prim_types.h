@@ -16,13 +16,8 @@
 #include <light_mat/config/config.h>
 
 #include <cstddef>
-
-#ifdef LMAT_USE_C11_STDLIB
 #include <cstdint>
-#else
-#include <tr1/cstdint>
-#endif
-
+#include <type_traits>
 
 // Useful macros
 
@@ -38,38 +33,34 @@
 
 #endif
 
-#ifdef LMAT_HAS_NULLPTR
-#define LMAT_NULL nullptr
-#else
-#define LMAT_NULL NULL
-#endif
 
 #define LMAT_CRTP_REF \
 		LMAT_ENSURE_INLINE const Derived& derived() const { return *(static_cast<const Derived*>(this)); } \
 		LMAT_ENSURE_INLINE Derived& derived() { return *(static_cast<Derived*>(this)); }
 
-
 namespace lmat
 {
 	struct nil_t { };
 
-	struct true_t { static const bool value = true; };
-	struct false_t { static const bool value = false; };
+	template<int I>
+	struct fix_int : std::integral_constant<int, I> { };
+
+	using std::true_type;
+	using std::false_type;
 
 	template<typename T> struct type{ };
-	template<int I> struct fix_int { static const int value = I; };
 
 	// primitive types
 
-	using LMAT_TR1::int8_t;
-	using LMAT_TR1::int16_t;
-	using LMAT_TR1::int32_t;
-	using LMAT_TR1::int64_t;
+	using std::int8_t;
+	using std::int16_t;
+	using std::int32_t;
+	using std::int64_t;
 
-	using LMAT_TR1::uint8_t;
-	using LMAT_TR1::uint16_t;
-	using LMAT_TR1::uint32_t;
-	using LMAT_TR1::uint64_t;
+	using std::uint8_t;
+	using std::uint16_t;
+	using std::uint32_t;
+	using std::uint64_t;
 
 	using std::ptrdiff_t;
 	using std::size_t;

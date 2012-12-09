@@ -50,7 +50,7 @@ SIMPLE_CASE( zerovec, zero_u )
 	for (index_t i = 0; i < n; ++i) xr[i] = double(-1);
 	for (index_t i = 0; i < m; ++i) xr[i * sx] = double(0);
 
-	zero_vec(m, x, sx);
+	zero_vec(m, step_ptr(x, sx));
 
 	ASSERT_VEC_EQ(n, x, xr);
 
@@ -68,7 +68,7 @@ SIMPLE_CASE( fillvec, fill_c )
 	for (index_t i = 0; i < n; ++i) x[i] = double(-1);
 	for (index_t i = 0; i < n; ++i) xr[i] = double(12);
 
-	fill_vec(double(12), n, x);
+	fill_vec(n, x, double(12));
 
 	ASSERT_VEC_EQ(n, x, xr);
 
@@ -90,7 +90,7 @@ SIMPLE_CASE( fillvec, fill_u )
 	for (index_t i = 0; i < n; ++i) xr[i] = double(-1);
 	for (index_t i = 0; i < m; ++i) xr[i * sx] = double(12);
 
-	fill_vec(double(12), m, x, sx);
+	fill_vec(m, step_ptr(x, sx), double(12));
 
 	ASSERT_VEC_EQ(n, x, xr);
 
@@ -134,7 +134,7 @@ SIMPLE_CASE( copyvec, copy_cu )
 	fill_lin(m, x);
 	for (index_t i = 0; i < m; ++i) yr[i * sy] = x[i];
 
-	copy_vec(m, x, y, sy);
+	copy_vec(m, x, step_ptr(y, sy));
 
 	ASSERT_VEC_EQ(n, y, yr);
 
@@ -159,7 +159,7 @@ SIMPLE_CASE( copyvec, copy_uc )
 	fill_lin(n, x);
 	for (index_t i = 0; i < m; ++i) yr[i] = x[i * sx];
 
-	copy_vec(m, x, sx, y);
+	copy_vec(m, step_ptr(x, sx), y);
 
 	ASSERT_VEC_EQ(m, y, yr);
 
@@ -187,7 +187,7 @@ SIMPLE_CASE( copyvec, copy_uu )
 	fill_lin(nx, x);
 	for (index_t i = 0; i < m; ++i) yr[i * sy] = x[i * sx];
 
-	copy_vec(m, x, sx, y, sy);
+	copy_vec(m, step_ptr(x, sx), step_ptr(y, sy));
 
 	ASSERT_VEC_EQ(ny, y, yr);
 

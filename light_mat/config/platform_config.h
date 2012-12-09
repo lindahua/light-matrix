@@ -51,21 +51,15 @@
 		#endif
 
 	#else
-		#if ((__GNUC__ < 4) || (__GNUC__ == 4 && __GNUC_MINOR__ < 2))
-			#error GCC of version lower than 4.2.0 is not supported
+		#if ((__GNUC__ < 4) || (__GNUC__ == 4 && __GNUC_MINOR__ < 3))
+			#error GCC of version lower than 4.3.0 is not supported
 		#endif
 		#define LIGHTMAT_COMPILER LIGHTMAT_GCC
 
 		#define LMAT_HAS_C99_MATH
 
-		#if (defined(__GXX_EXPERIMENTAL_CXX0X__))
-			#define LMAT_USE_C11_STDLIB
-			#define LMAT_USE_STATIC_ASSERT
-			#define LMAT_HAS_DECLTYPE
-
-			#if (__GNUC__ == 4 && __GNUC_MINOR >= 6)
-				#define LMAT_HAS_NULLPTR
-			#endif
+		#if (!(defined(__GXX_EXPERIMENTAL_CXX0X__)))
+			#error Light-Matrix requires support of C++11 standard.
 		#endif
 	#endif
 
@@ -74,14 +68,6 @@
 #else
 	#error Light-Matrix can only be used with Microsoft Visual C++, GCC (G++), or clang (clang++).
 #endif
-
-
-#ifdef LMAT_USE_C11_STDLIB
-	#define LMAT_TR1 std
-#else
-	#define LMAT_TR1 std::tr1
-#endif
-
 
 #endif
 

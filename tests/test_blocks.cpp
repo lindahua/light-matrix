@@ -146,6 +146,43 @@ SIMPLE_CASE( dblock, copy_and_assign )
 }
 
 
+SIMPLE_CASE( dblock, move )
+{
+	ASSERT_NO_PENDING
+
+	{
+		const index_t n1 = 5;
+		arr_t a1(n1);
+
+		ASSERT_PENDING(1);
+
+		ASSERT_EQ( a1.nelems(), n1 );
+		int *p1 = a1.ptr_data();
+
+		arr_t a2 = std::move(a1);
+
+		ASSERT_PENDING(1);
+
+		ASSERT_EQ( a1.nelems(), 0 );
+		ASSERT_EQ( a1.ptr_data(), 0 );
+
+		ASSERT_EQ( a2.nelems(), n1 );
+		ASSERT_EQ( a2.ptr_data(), p1 );
+
+		arr_t a3;
+		a3 = std::move(a2);
+
+		ASSERT_PENDING(1);
+
+		ASSERT_EQ( a2.nelems(), 0 );
+		ASSERT_EQ( a2.ptr_data(), 0 );
+
+		ASSERT_EQ( a3.nelems(), n1 );
+		ASSERT_EQ( a3.ptr_data(), p1 );
+	}
+}
+
+
 SIMPLE_CASE( dblock, swap )
 {
 	ASSERT_NO_PENDING
@@ -285,6 +322,7 @@ SIMPLE_CASE( sblock, swap )
 BEGIN_TPACK( dblock )
 	ADD_SIMPLE_CASE( dblock, construct )
 	ADD_SIMPLE_CASE( dblock, copy_and_assign )
+	ADD_SIMPLE_CASE( dblock, move )
 	ADD_SIMPLE_CASE( dblock, swap )
 END_TPACK
 

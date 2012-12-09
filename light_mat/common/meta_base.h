@@ -13,9 +13,7 @@
 #ifndef LIGHTMAT_META_BASE_H_
 #define LIGHTMAT_META_BASE_H_
 
-#include <light_mat/config/config.h>
 #include <light_mat/common/prim_types.h>
-#include <light_mat/common/type_traits.h>
 
 namespace lmat {  namespace meta {
 
@@ -205,357 +203,53 @@ namespace lmat {  namespace meta {
 
 	/********************************************
 	 *
-	 *  type list
+	 *  compile-time list
 	 *
 	 ********************************************/
 
-	template<typename Head, typename Tail=nil_t>
-	struct type_list_
-	{
-		typedef Head head;
-		typedef Tail tail;
-	};
+	template<typename... T>
+	struct type_list { };
 
-	// length (can be applied to both type list and integer list)
+	template<class List> struct len_;
 
-	template<class TList>
-	struct length_
+	template<typename T0, typename... T>
+	struct len_<type_list<T0, T...> >
 	{
-		static const int value = 1 + length_<typename TList::tail>::value;
+		static const int value = 1 + len_<type_list<T...> >::value;
 	};
 
 	template<>
-	struct length_<nil_t>
+	struct len_<type_list<> >
 	{
 		static const int value = 0;
 	};
 
-	// element retrieval
+	template<class List, int I> struct get_;
 
-	template<class TList, int N>
-	struct get_
+	template<typename T0, typename... T>
+	struct get_<type_list<T0, T...>, 0>
 	{
-		typedef typename get_<typename TList::tail, N-1>::type type;
+		typedef T0 type;
 	};
 
-	template<class TList>
-	struct get_<TList, 0>
+	template<typename T0, typename... T, int I>
+	struct get_<type_list<T0, T...>, I>
 	{
-		typedef typename TList::head type;
-	};
-
-	// list transformation
-
-	template<template<typename X> class TFun, class TList>
-	struct transform_
-	{
-		typedef type_list_<
-				typename TFun<typename TList::head>::type,
-				typename transform_<TFun, typename TList::tail>::type > type;
-	};
-
-	template<template<typename X> class TFun>
-	struct transform_<TFun, nil_t>
-	{
-		typedef nil_t type;
+		typedef typename get_<type_list<T...>, I-1>::type type;
 	};
 
 
-	/********************************************
-	 *
-	 *  value list
-	 *
-	 ********************************************/
+	template<template<typename U> class Fun, class List> struct map_;
 
-	template<int V, typename Tail=nil_t>
-	struct int_list_
+	template<template<typename U> class Fun, typename... T>
+	struct map_<Fun, type_list<T...> >
 	{
-		typedef int value_type;
-		static const int head = V;
-		typedef Tail tail;
-	};
-
-	template<bool V, typename Tail=nil_t>
-	struct bool_list_
-	{
-		typedef bool value_type;
-		static const int head = V;
-		typedef Tail tail;
-	};
-
-	template<class VList, int N>
-	struct get_val_
-	{
-		static const typename VList::value_type value =
-				get_val_<typename VList::tail, N-1>::value;
-	};
-
-	template<class VList>
-	struct get_val_<VList, 0>
-	{
-		static const typename VList::value_type value = VList::head;
-	};
-
-	template<template<typename X> class TFun, class TList>
-	struct types_to_bools_
-	{
-		typedef bool_list_<
-				TFun<typename TList::head>::value,
-				typename types_to_bools_<TFun, typename TList::tail>::type> type;
-	};
-
-	template<template<typename X> class TFun>
-	struct types_to_bools_<TFun, nil_t>
-	{
-		typedef nil_t type;
-	};
-
-	template<template<typename X> class TFun, class TList>
-	struct types_to_ints_
-	{
-		typedef int_list_<
-				TFun<typename TList::head>::value,
-				typename types_to_ints_<TFun, typename TList::tail>::type> type;
-	};
-
-	template<template<typename X> class TFun>
-	struct types_to_ints_<TFun, nil_t>
-	{
-		typedef nil_t type;
-	};
-
-	template<template<typename X> class TFun, class VList>
-	struct ints_to_bools_
-	{
-		typedef bool_list_<
-				TFun<typename VList::head>::value,
-				typename ints_to_bools_<TFun, typename VList::tail>::type> type;
-	};
-
-	template<template<typename X> class TFun>
-	struct ints_to_bools_<TFun, nil_t>
-	{
-		typedef nil_t type;
-	};
-
-
-	/********************************************
-	 *
-	 *  reduction
-	 *
-	 ********************************************/
-
-	template<class VList>
-	struct all_
-	{
-		static const bool value = VList::head && all_<typename VList::tail>::value;
-	};
-
-	template<>
-	struct all_<nil_t>
-	{
-		static const bool value = true;
-	};
-
-	template<class VList>
-	struct any_
-	{
-		static const bool value = VList::head || any_<typename VList::tail>::value;
-	};
-
-	template<>
-	struct any_<nil_t>
-	{
-		static const bool value = false;
-	};
-
-	template<class VList>
-	struct sum_
-	{
-		static const int value = VList::head + sum_<typename VList::tail>::value;
-	};
-
-	template<>
-	struct sum_<nil_t>
-	{
-		static const int value = 0;
-	};
-
-	template<class VList>
-	struct prod_
-	{
-		static const int value = VList::head * prod_<typename VList::tail>::value;
-	};
-
-	template<>
-	struct prod_<nil_t>
-	{
-		static const int value = 1;
-	};
-
-	template<class VList>
-	struct maximum_
-	{
-		static const int tail_v = maximum_<typename VList::tail>::value;
-		static const int value = VList::head > tail_v ? VList::head : tail_v;
-	};
-
-	template<int H>
-	struct maximum_<int_list_<H, nil_t> >
-	{
-		static const int value = H;
-	};
-
-	template<class VList>
-	struct minimum_
-	{
-		static const int tail_v = minimum_<typename VList::tail>::value;
-		static const int value = VList::head < tail_v ? VList::head : tail_v;
-	};
-
-	template<int H>
-	struct minimum_<int_list_<H, nil_t> >
-	{
-		static const int value = H;
-	};
-
-
-	// generic folding
-
-	template<
-		template<typename X, typename Y> class Combine,
-		class List,
-		template<typename X> class Extract = id_>
-	struct fold_
-	{
-		typedef typename Extract<typename List::head>::type left_type;
-		typedef typename fold_<Combine, typename List::tail, Extract>::type right_type;
-
-		typedef typename Combine<left_type, right_type>::type type;
-	};
-
-	template<
-		template<typename X, typename Y> class Combine,
-		class Head,
-		template<typename X> class Extract>
-	struct fold_<Combine, type_list_<Head, nil_t>, Extract>
-	{
-		typedef typename Extract<Head>::type type;
-	};
-
-
-	template<
-		template<int X, int Y> class Combine,
-		class List,
-		template<typename X> class Extract>
-	struct fold_to_int_
-	{
-		static const int left = Extract<typename List::head>::value;
-		static const int right = fold_to_int_<Combine, typename List::tail, Extract>::value;
-
-		static const int value = Combine<left, right>::value;
-	};
-
-	template<
-		template<int X, int Y> class Combine,
-		class Head,
-		template<typename X> class Extract>
-	struct fold_to_int_<Combine, type_list_<Head, nil_t>, Extract>
-	{
-		static const int value = Extract<Head>::value;
-	};
-
-
-	template<template<int X, int Y> class Combine, class IntList>
-	struct fold_ints_
-	{
-		static const int value = Combine<
-					IntList::head,
-					fold_ints_<Combine, typename IntList::tail>::value
-				>::value;
-	};
-
-	template<template<int X, int Y> class Combine, int H>
-	struct fold_ints_<Combine, int_list_<H, nil_t> >
-	{
-		static const int value = H;
-	};
-
-	// a meta-function to return common type
-
-	template<typename T1, typename T2> struct common_fun_;
-
-	template<typename T>
-	struct common_fun_<T, T>
-	{
-		typedef T type;
-	};
-
-	template<class TList, template<typename X> class Extract=id_>
-	struct common_
-	{
-		typedef typename fold_<common_fun_, TList, Extract>::type type;
+		typedef type_list<typename Fun<T>::type ...> type;
 	};
 
 
 } } // lmat::meta
 
-
-/********************************************
- *
- *  Conditional macro constructs
- *
- ********************************************/
-
-#define LMAT_CONDTYPE_2( CondT1, T1, TOther ) typename meta::if_< CondT1, T1, TOther >::type
-
-#define LMAT_CONDTYPE_3( CondT1, T1, CondT2, T2, TOther ) \
-	typename meta::if_< CondT1, T1, \
-	typename meta::if_< CondT2, T2, TOther >::type >::type
-
-#define LMAT_CONDTYPE_4( CondT1, T1, CondT2, T2, CondT3, T3, TOther ) \
-	typename meta::if_< CondT1, T1, \
-	typename meta::if_< CondT2, T2, \
-	typename meta::if_< CondT3, T3, TOther >::type >::type >::type
-
-#define LMAT_CONDTYPE_5( CondT1, T1, CondT2, T2, CondT3, T3, Cond4, T4, TOther ) \
-	typename meta::if_< CondT1, T1, \
-	typename meta::if_< CondT2, T2, \
-	typename meta::if_< CondT3, T3, \
-	typename meta::if_< CondT4, T4, TOther >::type >::type >::type >::type
-
-#define LMAT_CONDTYPE_6( CondT1, T1, CondT2, T2, CondT3, T3, Cond4, T4, Cond5, T5, TOther ) \
-	typename meta::if_< CondT1, T1, \
-	typename meta::if_< CondT2, T2, \
-	typename meta::if_< CondT3, T3, \
-	typename meta::if_< CondT4, T4, \
-	typename meta::if_< CondT5, T5, TOther >::type >::type >::type >::type >::type
-
-
-/********************************************
- *
- *  List constructs
- *
- ********************************************/
-
-#define LMAT_TYPELIST_1( T1 ) meta::type_list_< T1 >
-#define LMAT_TYPELIST_2( T1, T2 ) meta::type_list_<T1, meta::type_list_< T2 > >
-#define LMAT_TYPELIST_3( T1, T2, T3 ) meta::type_list_<T1, meta::type_list_<T2, meta::type_list_< T3 > > >
-#define LMAT_TYPELIST_4( T1, T2, T3, T4 ) meta::type_list_<T1, meta::type_list_<T2, meta::type_list_<T3, meta::type_list_< T4 > > > >
-
-#define LMAT_INTLIST_1( V1 ) meta::int_list_<V1>
-#define LMAT_INTLIST_2( V1, V2 ) meta::int_list_<V1, meta::int_list_<V2> >
-#define LMAT_INTLIST_3( V1, V2, V3 ) meta::int_list_<V1, meta::int_list_<V2, meta::int_list_<V3> > >
-#define LMAT_INTLIST_4( V1, V2, V3, V4 ) meta::int_list_<V1, meta::int_list_<V2, meta::int_list_<V3, meta::int_list_<V4> > > >
-
-#define LMAT_BOOLLIST_1( V1 ) meta::bool_list_<V1>
-#define LMAT_BOOLLIST_2( V1, V2 ) meta::bool_list_<V1, meta::bool_list_<V2> >
-#define LMAT_BOOLLIST_3( V1, V2, V3 ) meta::bool_list_<V1, meta::bool_list_<V2, meta::bool_list_<V3> > >
-#define LMAT_BOOLLIST_4( V1, V2, V3, V4 ) meta::bool_list_<V1, meta::bool_list_<V2, meta::bool_list_<V3, meta::bool_list_<V4> > > >
-
-// get types
-
-#define LMAT_GETTYPE( Name, Lst, I ) typedef typename meta::get_<Lst, I>::type Name;
 
 #endif
 

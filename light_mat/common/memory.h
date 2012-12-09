@@ -15,17 +15,136 @@
 
 #include <light_mat/common/basic_defs.h>
 #include <cstring>
-#include <new>
-#include <limits>
-
-#if LIGHTMAT_PLATFORM == LIGHTMAT_POSIX
-#include <stdlib.h>
-#elif LIGHTMAT_PLATFORM == LIGHTMAT_WIN32
-#include <malloc.h>
-#endif
 
 namespace lmat
 {
+	/********************************************
+	 *
+	 *  Iterator to access interval memory
+	 *
+	 ********************************************/
+
+	template<typename T> // T can be a const type
+	class step_ptr_t
+	{
+	public:
+		LMAT_ENSURE_INLINE
+		step_ptr_t(T *p, const index_t& step)
+		: _p(p), _step(step)
+		{ }
+
+		LMAT_ENSURE_INLINE
+		index_t step() const
+		{
+			return _step;
+		}
+
+		LMAT_ENSURE_INLINE
+		T& operator[] (index_t i) const
+		{
+			return _p[i * _step];
+		}
+
+		LMAT_ENSURE_INLINE
+		T& operator * () const
+		{
+			return *_p;
+		}
+
+		LMAT_ENSURE_INLINE
+		T* operator -> () const
+		{
+			return _p;
+		}
+
+		LMAT_ENSURE_INLINE
+		step_ptr_t& operator++ ()
+		{
+			_p += _step;
+			return *this;
+		}
+
+		LMAT_ENSURE_INLINE
+		step_ptr_t operator-- ()
+		{
+			_p -= _step;
+			return *this;
+		}
+
+		LMAT_ENSURE_INLINE
+		step_ptr_t operator++ (int)
+		{
+			step_ptr_t old(*this);
+			_p += _step;
+			return old;
+		}
+
+		LMAT_ENSURE_INLINE
+		step_ptr_t& operator-- (int)
+		{
+			step_ptr_t old(*this);
+			_p -= _step;
+			return old;
+		}
+
+		LMAT_ENSURE_INLINE
+		step_ptr_t& operator += (index_t n)
+		{
+			_p += _step * n;
+			return *this;
+		}
+
+		LMAT_ENSURE_INLINE
+		step_ptr_t& operator -= (index_t n)
+		{
+			_p -= _step * n;
+			return *this;
+		}
+
+		LMAT_ENSURE_INLINE
+		step_ptr_t operator + (index_t n) const
+		{
+			return step_ptr_t(_p + _step * n, _step);
+		}
+
+		LMAT_ENSURE_INLINE
+		step_ptr_t operator - (index_t n) const
+		{
+			return step_ptr_t(_p - _step * n, _step);
+		}
+
+		LMAT_ENSURE_INLINE
+		index_t operator - (const step_ptr_t& r) const
+		{
+			return (r._p - _p) / _step;
+		}
+
+		LMAT_ENSURE_INLINE
+		bool operator == (const step_ptr_t& r) const
+		{
+			return _p == r._p;
+		}
+
+		LMAT_ENSURE_INLINE
+		bool operator != (const step_ptr_t& r) const
+		{
+			return _p != r._p;
+		}
+
+	private:
+		T * _p;
+		const index_t _step;
+	};
+
+
+	template<typename T>
+	LMAT_ENSURE_INLINE
+	inline step_ptr_t<T> step_ptr(T* p, index_t step)
+	{
+		return step_ptr_t<T>(p, step);
+	}
+
+
 	/********************************************
 	 *
 	 *  Basic memory operations
@@ -42,30 +161,16 @@ namespace lmat
 
 	template<typename T>
 	LMAT_ENSURE_INLINE
-	inline void copy_vec(const index_t n, const T *a, T *b)
+	inline void copy_vec(index_t n, const T *a, T *b)
 	{
 		std::memcpy(b, a, nbytes<T>(n));
 	}
 
-	template<typename T>
+	template<typename SrcIter, typename DstIter>
 	LMAT_ENSURE_INLINE
-	inline void copy_vec(const index_t n, const T* a, T* b, const index_t bstep)
+	inline void copy_vec(index_t n, SrcIter a, DstIter b)
 	{
-		for (index_t i = 0; i < n; ++i) b[i * bstep] = a[i];
-	}
-
-	template<typename T>
-	LMAT_ENSURE_INLINE
-	inline void copy_vec(const index_t n, const T* a, const index_t astep, T* b)
-	{
-		for (index_t i = 0; i < n; ++i) b[i] = a[i * astep];
-	}
-
-	template<typename T>
-	LMAT_ENSURE_INLINE
-	inline void copy_vec(const index_t n, const T* a, const index_t astep, T* b, const index_t bstep)
-	{
-		for (index_t i = 0; i < n; ++i) b[i * bstep] = a[i * astep];
+		for (index_t i = 0; i < n; ++i) b[i] = a[i];
 	}
 
 	// zero & fill
@@ -76,30 +181,23 @@ namespace lmat
 
 	template<typename T>
 	LMAT_ENSURE_INLINE
-	inline void zero_vec(const index_t n, T *dst)
+	inline void zero_vec(index_t n, T *dst)
 	{
 		std::memset(dst, 0, nbytes<T>(n));
 	}
 
-	template<typename T>
+	template<typename DstIter>
 	LMAT_ENSURE_INLINE
-	inline void zero_vec(const index_t n, T *dst, const index_t step)
+	inline void zero_vec(index_t n, DstIter dst)
 	{
-		for (index_t i = 0; i < n; ++i) set_zero_value(dst[i * step]);
+		for (index_t i = 0; i < n; ++i) set_zero_value(dst[i]);
 	}
 
-	template<typename T>
+	template<typename DstIter, typename T>
 	LMAT_ENSURE_INLINE
-	inline void fill_vec(const T& v, const index_t n, T *dst)
+	inline void fill_vec(const index_t n, DstIter dst, const T& v)
 	{
 		for (index_t i = 0; i < n; ++i) dst[i] = v;
-	}
-
-	template<typename T>
-	LMAT_ENSURE_INLINE
-	inline void fill_vec(const T& v, const index_t n, T *dst, const index_t step)
-	{
-		for (index_t i = 0; i < n; ++i) dst[i * step] = v;
 	}
 
 
@@ -179,7 +277,7 @@ namespace lmat
 	LMAT_ENSURE_INLINE
 	inline void apply(const fill_t<T>& op, index_t n, T *p)
 	{
-		fill_vec(op.value(), n, p);
+		fill_vec(n, p, op.value());
 	}
 
 	template<typename T>
@@ -188,130 +286,6 @@ namespace lmat
 	{
 		copy_vec(n, op.source(), p);
 	}
-
-
-	/********************************************
-	 *
-	 *  Aligned memory allocation
-	 *
-	 ********************************************/
-
-#if LIGHTMAT_PLATFORM == LIGHTMAT_POSIX
-
-	LMAT_ENSURE_INLINE
-	inline void* aligned_allocate(size_t nbytes, unsigned int alignment)
-	{
-		char* p = 0;
-		if (::posix_memalign((void**)(&p), alignment, nbytes) != 0)
-		{
-			throw std::bad_alloc();
-		}
-		return p;
-	}
-
-	LMAT_ENSURE_INLINE
-	inline void aligned_release(void *p)
-	{
-		::free(p);
-	}
-
-#elif LIGHTMAT_PLATFORM == LIGHTMAT_WIN32
-
-	LMAT_ENSURE_INLINE
-	inline void* aligned_allocate(size_t nbytes, unsigned int alignment)
-	{
-		void* p = ::_aligned_malloc(nbytes, alignment));
-		if (!p)
-		{
-			throw std::bad_alloc();
-		}
-		return p;
-	}
-
-	LMAT_ENSURE_INLINE
-	inline void aligned_release(void *p)
-	{
-		::_aligned_free(p);
-	}
-
-#endif
-
-
-    template<typename T, unsigned int Align=LMAT_DEFAULT_ALIGNMENT>
-    class aligned_allocator
-    {
-    public:
-    	typedef T value_type;
-    	typedef T* pointer;
-    	typedef T& reference;
-    	typedef const T* const_pointer;
-    	typedef const T& const_reference;
-    	typedef size_t size_type;
-    	typedef ptrdiff_t difference_type;
-
-    	template<typename TOther>
-    	struct rebind
-    	{
-    		typedef aligned_allocator<TOther> other;
-    	};
-
-    public:
-    	LMAT_ENSURE_INLINE
-    	aligned_allocator() { }
-
-    	template<typename U>
-    	LMAT_ENSURE_INLINE
-    	aligned_allocator(const aligned_allocator<U>& r) { }
-
-    	LMAT_ENSURE_INLINE
-    	unsigned int alignment() const
-    	{
-    		return Align;
-    	}
-
-    	LMAT_ENSURE_INLINE
-    	pointer address( reference x ) const
-    	{
-    		return &x;
-    	}
-
-    	LMAT_ENSURE_INLINE
-    	const_pointer address( const_reference x ) const
-    	{
-    		return &x;
-    	}
-
-    	LMAT_ENSURE_INLINE
-    	size_type max_size() const
-    	{
-    		return std::numeric_limits<size_type>::max() / sizeof(value_type);
-    	}
-
-    	LMAT_ENSURE_INLINE
-    	pointer allocate(size_type n, const void* hint=0)
-    	{
-    		return (pointer)aligned_allocate(n * sizeof(value_type), Align);
-    	}
-
-    	LMAT_ENSURE_INLINE
-    	void deallocate(pointer p, size_type)
-    	{
-    		aligned_release(p);
-    	}
-
-    	LMAT_ENSURE_INLINE
-    	void construct (pointer p, const_reference val)
-    	{
-    		new (p) value_type(val);
-    	}
-
-    	LMAT_ENSURE_INLINE
-    	void destroy (pointer p)
-    	{
-    		p->~value_type();
-    	}
-
-    }; // end class aligned_allocator
 
 
 }

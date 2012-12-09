@@ -14,7 +14,7 @@
 #define LIGHTMAT_BLOCK_H_
 
 #include <light_mat/common/memory.h>
-
+#include <light_mat/common/memalloc.h>
 #include <algorithm>
 
 namespace lmat
@@ -46,7 +46,7 @@ namespace lmat
 		explicit dblock(const allocator_type& allocator = allocator_type())
 		: m_allocator(allocator)
 		, m_len(0)
-		, m_ptr(LMAT_NULL)
+		, m_ptr(nullptr)
 		{
 		}
 
@@ -79,10 +79,19 @@ namespace lmat
 		}
 
 		LMAT_ENSURE_INLINE
+		dblock(dblock&& s)
+		: m_allocator(allocator_type())
+		, m_len(0)
+		, m_ptr(nullptr)
+		{
+			swap(s);
+		}
+
+		LMAT_ENSURE_INLINE
 		~dblock()
 		{
 			dealloc(m_ptr);
-			m_ptr = LMAT_NULL;  // make sure that it alarms when access after destructed
+			m_ptr = nullptr;  // make sure that it alarms when access after destructed
 		}
 
 		LMAT_ENSURE_INLINE
@@ -113,6 +122,20 @@ namespace lmat
 			return *this;
 		}
 
+
+		LMAT_ENSURE_INLINE
+		dblock& operator = (dblock&& r)
+		{
+			if (this != &r)
+			{
+				dealloc(m_ptr);
+				m_ptr = nullptr;
+				m_len = 0;
+
+				swap(r);
+			}
+			return *this;
+		}
 
 		template<class Setter>
 		LMAT_ENSURE_INLINE
@@ -176,7 +199,7 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		pointer alloc(index_t n)
 		{
-			return n > 0 ? m_allocator.allocate(size_type(n)) : LMAT_NULL;
+			return n > 0 ? m_allocator.allocate(size_type(n)) : nullptr;
 		}
 
 		LMAT_ENSURE_INLINE
@@ -188,7 +211,7 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		void reset_size(index_t n)
 		{
-			pointer p = n > 0 ? m_allocator.allocate(size_type(n)) : LMAT_NULL;
+			pointer p = n > 0 ? m_allocator.allocate(size_type(n)) : nullptr;
 			dealloc(m_ptr);
 			m_ptr = p;
 			m_len = n;
