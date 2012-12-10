@@ -118,6 +118,33 @@ MN_CASE( dense_mat, copy_constructs )
 }
 
 
+MN_CASE( dense_mat, move_constructs )
+{
+	const index_t m = M == 0 ? 3 : M;
+	const index_t n = N == 0 ? 4 : N;
+
+	dense_matrix<double, M, N> a(m, n);
+	for (index_t i = 0; i < m * n; ++i) a[i] = double(i + 2);
+
+	double *p = a.ptr_data();
+
+	dense_matrix<double, M, N> b = std::move(a);
+
+	verify_layout(b, m, n);
+
+	if (M == 0 || N == 0)
+	{
+		ASSERT_EQ( a.ptr_data(), nullptr );
+		ASSERT_EQ( b.ptr_data(), p );
+	}
+	else
+	{
+		ASSERT_EQ( a.ptr_data(), p );
+		ASSERT_MAT_EQ( m, n, a, b );
+	}
+}
+
+
 MN_CASE( dense_mat, access )
 {
 	const index_t m = M == 0 ? 3 : M;
@@ -250,6 +277,49 @@ MN_CASE( dense_mat, assign )
 }
 
 
+
+MN_CASE( dense_mat, move_assign )
+{
+	const index_t m = M == 0 ? 3 : M;
+	const index_t n = N == 0 ? 4 : N;
+
+	dense_matrix<double, M, N> a(m, n);
+	for (index_t i = 0; i < m * n; ++i) a[i] = double(i + 2);
+
+	double *p = a.ptr_data();
+
+	dense_matrix<double, M, N> b;
+	b = std::move(a);
+
+	verify_layout(b, m, n);
+
+	if (M == 0 || N == 0)
+	{
+		ASSERT_EQ( a.ptr_data(), nullptr );
+		ASSERT_EQ( b.ptr_data(), p );
+	}
+	else
+	{
+		ASSERT_EQ( a.ptr_data(), p );
+		ASSERT_MAT_EQ( m, n, a, b );
+	}
+
+	dense_matrix<double, M, N> c(m, n);
+	c = std::move(b);
+
+	if (M == 0 || N == 0)
+	{
+		ASSERT_EQ( b.ptr_data(), nullptr );
+		ASSERT_EQ( c.ptr_data(), p );
+	}
+	else
+	{
+		ASSERT_MAT_EQ( m, n, b, c );
+	}
+
+}
+
+
 MN_CASE( dense_mat, import )
 {
 	const index_t m = M == 0 ? 3 : M;
@@ -329,6 +399,10 @@ BEGIN_TPACK( dense_mat_copycon )
 	ADD_MN_CASE_3X3( dense_mat, copy_constructs, 3, 4 )
 END_TPACK
 
+BEGIN_TPACK( dense_mat_movecon )
+	ADD_MN_CASE_3X3( dense_mat, move_constructs, 3, 4 )
+END_TPACK
+
 BEGIN_TPACK( dense_mat_access )
 	ADD_MN_CASE_3X3( dense_mat, access, 3, 4 )
 END_TPACK
@@ -339,6 +413,10 @@ END_TPACK
 
 BEGIN_TPACK( dense_mat_assign )
 	ADD_MN_CASE_3X3( dense_mat, assign, 3, 4 )
+END_TPACK
+
+BEGIN_TPACK( dense_mat_move_assign )
+	ADD_MN_CASE_3X3( dense_mat, move_assign, 3, 4 )
 END_TPACK
 
 BEGIN_TPACK( dense_mat_import )
@@ -354,9 +432,11 @@ BEGIN_MAIN_SUITE
 	ADD_TPACK( dense_mat_constructs )
 	ADD_TPACK( dense_mat_generates )
 	ADD_TPACK( dense_mat_copycon )
+	ADD_TPACK( dense_mat_movecon )
 	ADD_TPACK( dense_mat_access )
 	ADD_TPACK( dense_mat_resize )
 	ADD_TPACK( dense_mat_assign )
+	ADD_TPACK( dense_mat_move_assign )
 	ADD_TPACK( dense_mat_import )
 	ADD_TPACK( dense_mat_swap )
 END_MAIN_SUITE

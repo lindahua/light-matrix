@@ -97,6 +97,34 @@ namespace lmat
 			dense_mat_storage(index_t siz) : m_block(siz) { }
 
 			LMAT_ENSURE_INLINE
+			dense_mat_storage(const dense_mat_storage& r)
+			: m_block(r.m_block) { }
+
+			LMAT_ENSURE_INLINE
+			dense_mat_storage(dense_mat_storage&& r)
+			: m_block(std::move(r.m_block)) { }
+
+			LMAT_ENSURE_INLINE
+			dense_mat_storage& operator = (const dense_mat_storage& r)
+			{
+				if (this != &r)
+				{
+					m_block = r.m_block;
+				}
+				return *this;
+			}
+
+			LMAT_ENSURE_INLINE
+			dense_mat_storage& operator = (dense_mat_storage&& r)
+			{
+				if (this != &r)
+				{
+					m_block = std::move(r.m_block);
+				}
+				return *this;
+			}
+
+			LMAT_ENSURE_INLINE
 			const T* pdata() const { return m_block.ptr_data(); }
 
 			LMAT_ENSURE_INLINE
@@ -165,6 +193,12 @@ namespace lmat
 		{
 		}
 
+		LMAT_ENSURE_INLINE dense_matrix(dense_matrix&& s)
+		: m_layout(std::move(s.m_layout))
+		, m_store(std::move(s.m_store))
+		{
+		}
+
 		template<class Expr>
 		LMAT_ENSURE_INLINE dense_matrix(const IMatrixXpr<Expr, T>& r)
 		: m_layout(r.nrows(), r.ncolumns())
@@ -188,6 +222,16 @@ namespace lmat
 			if (this != &r)
 			{
 				assign(r);
+			}
+			return *this;
+		}
+
+		LMAT_ENSURE_INLINE dense_matrix& operator = (dense_matrix&& r)
+		{
+			if (this != &r)
+			{
+				m_layout = std::move(r.m_layout);
+				m_store = std::move(r.m_store);
 			}
 			return *this;
 		}
