@@ -50,7 +50,7 @@ MN_CASE( mat_eval, ref_mat )
 
 	ASSERT_EQ( r.nrows(), m );
 	ASSERT_EQ( r.ncolumns(), n );
-	// ASSERT_NE( r.ptr_data(), a.ptr_data() );
+	ASSERT_NE( r.ptr_data(), a.ptr_data() );
 
 	ASSERT_MAT_EQ(m, n, a, r);
 }
