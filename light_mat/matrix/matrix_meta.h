@@ -14,6 +14,7 @@
 #define LIGHTMAT_MATRIX_META_H_
 
 #include <light_mat/matrix/matrix_fwd.h>
+#include <type_traits>
 
 namespace lmat { namespace meta {
 
@@ -26,14 +27,14 @@ namespace lmat { namespace meta {
 	template<class T>
 	struct is_supported_matrix_value_type
 	{
-		static const bool value = lmat::is_pod<T>::value;
+		static const bool value = std::is_pod<T>::value;
 	};
 
 	template<class Derived, template<class D, typename T> class Interface>
 	struct has_matrix_interface
 	{
 		typedef Interface<Derived, typename matrix_traits<Derived>::value_type> expect_base;
-		static const bool value = is_base_of<expect_base, Derived>::value;
+		static const bool value = std::is_base_of<expect_base, Derived>::value;
 	};
 
 	template<class Mat>
@@ -43,9 +44,9 @@ namespace lmat { namespace meta {
 	};
 
 	template<class Mat>
-	struct is_dense_mat
+	struct is_regular_mat
 	{
-		static const bool value = has_matrix_interface<Mat, IDenseMatrix>::value;
+		static const bool value = has_matrix_interface<Mat, IRegularMatrix>::value;
 	};
 
 
@@ -64,7 +65,7 @@ namespace lmat { namespace meta {
 	template<class LMat, class RMat>
 	struct in_same_domain
 	{
-		static const bool value = is_same<
+		static const bool value = std::is_same<
 				typename matrix_traits<LMat>::domain,
 				typename matrix_traits<RMat>::domain>::value;
 	};
@@ -73,15 +74,15 @@ namespace lmat { namespace meta {
 	template<class Mat>
 	struct in_cpu_domain
 	{
-		static const bool value = is_same<
+		static const bool value = std::is_same<
 				typename matrix_traits<Mat>::domain,
 				cpu_domain>::value;
 	};
 
-	template<class MatList>
+	template<typename... Mat>
 	struct common_domain
 	{
-		typedef typename common_<MatList, domain_of>::type type;
+		typedef typename common_type<typename domain_of<Mat>::type...>::type type;
 	};
 
 	/********************************************
@@ -99,15 +100,15 @@ namespace lmat { namespace meta {
 	template<class LMat, class RMat>
 	struct have_same_value_type
 	{
-		static const bool value = is_same<
+		static const bool value = std::is_same<
 			typename matrix_traits<LMat>::value_type,
 			typename matrix_traits<RMat>::value_type>::value;
 	};
 
-	template<class MatList>
+	template<typename... Mat>
 	struct common_value_type
 	{
-		typedef typename common_<MatList, value_type_of>::type type;
+		typedef typename common_type<typename value_type_of<Mat>::type...>::type type;
 	};
 
 	/********************************************
@@ -219,24 +220,28 @@ namespace lmat { namespace meta {
 					are_compatible_dims_c<M, N>::value ? (M == 0 ? N : M) : -1;
 		};
 
-		template<class DimList>
-		struct common_dim_reduce
+		template<template<class X> class Fun, class... Mats>
+		struct common_dim_reduce;
+
+		template<template<class X> class Fun, class Mat>
+		struct common_dim_reduce<Fun, Mat>
 		{
-			static const int value = fold_ints_<common_dim_c, DimList>::value;
+			static const int value = Fun<Mat>::value;
+		};
+
+		template<template<class X> class Fun, class M0, class... Mats>
+		struct common_dim_reduce<Fun, M0, Mats...>
+		{
+			static const int value = common_dim_c<
+					Fun<M0>::value,
+					common_dim_reduce<Fun, Mats...>::value>::value;
 		};
 	}
 
-
-	template<class DimList>
-	struct are_compatble_dims
-	{
-		static const bool value = internal::common_dim_reduce<DimList>::value >= 0;
-	};
-
-	template<class DimList>
+	template<int M, int N>
 	struct common_dim
 	{
-		static const int _maybe_value = internal::common_dim_reduce<DimList>::value;
+		static const int _maybe_value = internal::common_dim_c<M, N>::value;
 		static const int value = enable_int_if_c<(_maybe_value >= 0), _maybe_value>::value;
 	};
 
@@ -246,61 +251,57 @@ namespace lmat { namespace meta {
 
 	// common rows
 
-	template<class ArgList>
+	template<typename... Mats>
 	struct common_nrows
 	{
-		static const int value = common_dim<
-				typename types_to_ints_<nrows, ArgList>::type>::value;
+		static const int _maybe_value = internal::common_dim_reduce<nrows, Mats...>::value;
+		static const int value = enable_int_if_c<(_maybe_value >= 0), _maybe_value>::value;
 	};
 
-	template<class ArgList>
+	template<typename... Mats>
 	struct common_ncols
 	{
-		static const int value = common_dim<
-				typename types_to_ints_<ncols, ArgList>::type>::value;
+		static const int _maybe_value = internal::common_dim_reduce<ncols, Mats...>::value;
+		static const int value = enable_int_if_c<(_maybe_value >= 0), _maybe_value>::value;
 	};
 
-	template<class ArgList>
+	template<typename... Mats>
 	struct common_nelems
 	{
-		static const int value = common_nrows<ArgList>::value * common_ncols<ArgList>::value;
+		static const int value = common_nrows<Mats...>::value * common_ncols<Mats...>::value;
 	};
 
-	template<class ArgList>
+	template<typename... Mats>
 	struct common_shape
 	{
-		typedef matrix_shape<common_nrows<ArgList>::value, common_ncols<ArgList>::value> type;
+		typedef matrix_shape<common_nrows<Mats...>::value, common_ncols<Mats...>::value> type;
 	};
 
 
 
 	// has compatible size
 
-	template<class ArgList>
+	template<typename... Mats>
 	struct have_compatible_nrows
 	{
-		static const bool value =
-				internal::common_dim_reduce<
-					typename types_to_ints_<nrows, ArgList>::type
-				>::value >= 0;
+		static const int _maybe_value = internal::common_dim_reduce<nrows, Mats...>::value;
+		static const bool value = _maybe_value >= 0;
 	};
 
 
-	template<class ArgList>
+	template<typename... Mats>
 	struct have_compatible_ncols
 	{
-		static const bool value =
-				internal::common_dim_reduce<
-					typename types_to_ints_<ncols, ArgList>::type
-				>::value >= 0;
+		static const int _maybe_value = internal::common_dim_reduce<ncols, Mats...>::value;
+		static const bool value = _maybe_value >= 0;
 	};
 
-	template<class ArgList>
+	template<typename... Mats>
 	struct have_compatible_shapes
 	{
 		static const bool value =
-				have_compatible_nrows<ArgList>::value &&
-				have_compatible_ncols<ArgList>::value;
+				have_compatible_nrows<Mats...>::value &&
+				have_compatible_ncols<Mats...>::value;
 	};
 
 
@@ -340,10 +341,10 @@ namespace lmat { namespace meta {
 	template<class Mat>
 	struct continuous_level
 	{
-		typedef LMAT_CONDTYPE_3(
-				is_continuous<Mat>, 		cont_level::whole,
-				is_percol_continuous<Mat>, 	cont_level::percol,
-											cont_level::none) type;
+		typedef typename if_<is_continuous<Mat>, 		cont_level::whole,
+				typename if_<is_percol_continuous<Mat>, cont_level::percol,
+														cont_level::none
+				>::type >::type type;
 	};
 
 	template<class LMat, class RMat>
@@ -408,21 +409,21 @@ namespace lmat { namespace meta {
 	struct is_continuous_ex
 	{
 		static const bool value =
-				internal::_is_continuous_ex_<Mat, is_dense_mat<Mat>::value>::value;
+				internal::_is_continuous_ex_<Mat, is_regular_mat<Mat>::value>::value;
 	};
 
 	template<class Mat>
 	struct is_percol_continuous_ex
 	{
 		static const bool value =
-				internal::_is_percol_continuous_ex_<Mat, is_dense_mat<Mat>::value>::value;
+				internal::_is_percol_continuous_ex_<Mat, is_regular_mat<Mat>::value>::value;
 	};
 
 	template<class Mat>
 	struct supports_linear_index_ex
 	{
 		static const bool value =
-				internal::_supports_linear_index_ex_<Mat, is_dense_mat<Mat>::value>::value;
+				internal::_supports_linear_index_ex_<Mat, is_regular_mat<Mat>::value>::value;
 	};
 
 
@@ -436,15 +437,13 @@ namespace lmat { namespace meta {
 	template<class SExpr, class DMat>
 	struct is_mat_assignable
 	{
-		typedef LMAT_TYPELIST_2(SExpr, DMat) Lst;
-
 		static const bool value =
-				is_dense_mat<DMat>::value &&
+				is_regular_mat<DMat>::value &&
 				!is_readonly<DMat>::value &&
 				is_mat_xpr<SExpr>::value &&
 				in_same_domain<SExpr, DMat>::value &&
 				have_same_value_type<SExpr, DMat>::value &&
-				have_compatible_shapes<Lst>::value;
+				have_compatible_shapes<SExpr, DMat>::value;
 	};
 
 } }

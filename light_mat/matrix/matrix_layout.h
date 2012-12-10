@@ -13,7 +13,7 @@
 #ifndef LIGHTMAT_MATRIX_LAYOUT_H_
 #define LIGHTMAT_MATRIX_LAYOUT_H_
 
-#include "bits/matrix_layout_internal.h"
+#include "internal/matrix_layout_internal.h"
 
 namespace lmat
 {

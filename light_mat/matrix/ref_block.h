@@ -13,7 +13,7 @@
 #ifndef LIGHTMAT_REF_MATRIX_EX_H_
 #define LIGHTMAT_REF_MATRIX_EX_H_
 
-#include <light_mat/matrix/dense_mat_base.h>
+#include <light_mat/matrix/regular_mat_base.h>
 
 namespace lmat
 {
@@ -34,15 +34,13 @@ namespace lmat
 
 
 	template<typename T, int CTRows, int CTCols>
-	class cref_block : public dense_mat_base<cref_block<T, CTRows, CTCols>, T>
+	class cref_block : public regular_mat_base<cref_block<T, CTRows, CTCols>, T>
 	{
-#ifdef LMAT_USE_STATIC_ASSERT
 		static_assert( meta::is_supported_matrix_value_type<T>::value,
 				"T must be a supported matrix value type");
-#endif
 
 	public:
-		LMAT_MAT_TRAITS_CDEFS(T)
+		LMAT_DEFINE_REGMAT_CTYPES(T)
 		typedef block_layout_cm<CTRows, CTCols> layout_type;
 
 	public:
@@ -90,15 +88,13 @@ namespace lmat
 
 
 	template<typename T, int CTRows, int CTCols>
-	class ref_block : public dense_mat_base<ref_block<T, CTRows, CTCols>, T>
+	class ref_block : public regular_mat_base<ref_block<T, CTRows, CTCols>, T>
 	{
-#ifdef LMAT_USE_STATIC_ASSERT
 		static_assert( meta::is_supported_matrix_value_type<T>::value,
 				"T must be a supported matrix value type");
-#endif
 
 	public:
-		LMAT_MAT_TRAITS_DEFS(T)
+		LMAT_DEFINE_REGMAT_TYPES(T)
 		typedef block_layout_cm<CTRows, CTCols> layout_type;
 
 	public:

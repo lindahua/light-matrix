@@ -37,6 +37,39 @@ namespace lmat { namespace internal {
 	};
 
 
+	template<typename T, typename DMat>
+	matrix_copy_scheme<
+		meta::nrows< DMat >::value,
+		meta::ncols< DMat >::value,
+		typename meta::continuous_level< DMat>::type >
+	LMAT_ENSURE_INLINE
+	inline get_copy_scheme(const IRegularMatrix<DMat, T>& dmat)
+	{
+		typedef matrix_copy_scheme<
+			meta::nrows< DMat >::value,
+			meta::ncols< DMat >::value,
+			typename meta::continuous_level<DMat>::type > scheme_t;
+
+		return scheme_t(dmat.nrows(), dmat.ncolumns());
+	}
+
+	template<typename T, typename SMat, typename DMat>
+	matrix_copy_scheme<
+		meta::common_nrows< SMat, DMat >::value,
+		meta::common_ncols< SMat, DMat >::value,
+		typename meta::binary_continuous_level< SMat, DMat>::type >
+	LMAT_ENSURE_INLINE
+	inline get_copy_scheme(const IRegularMatrix<SMat, T>& smat, const IRegularMatrix<DMat, T>& dmat)
+	{
+		typedef matrix_copy_scheme<
+			meta::common_nrows< SMat, DMat >::value,
+			meta::common_ncols< SMat, DMat >::value,
+			typename meta::binary_continuous_level< SMat, DMat>::type > scheme_t;
+
+		return scheme_t(common_nrows(smat, dmat), common_ncols(smat, dmat));
+	}
+
+
 	/********************************************
 	 *
 	 *  Core routines
@@ -48,7 +81,7 @@ namespace lmat { namespace internal {
 	void _copy_singlevec(index_t len, const T* ps, index_t s_step, T *pd)
 	{
 		if (s_step == 1) copy_vec(len, ps, pd);
-		else copy_vec(len, ps, s_step, pd);
+		else copy_vec(len, step_ptr(ps, s_step), pd);
 	}
 
 	template<typename T>
@@ -56,7 +89,7 @@ namespace lmat { namespace internal {
 	void _copy_singlevec(index_t len, const T* ps, T *pd, index_t d_step)
 	{
 		if (d_step == 1) copy_vec(len, ps, pd);
-		else copy_vec(len, ps, pd, d_step);
+		else copy_vec(len, ps, step_ptr(pd, d_step));
 	}
 
 	template<typename T>
@@ -66,12 +99,12 @@ namespace lmat { namespace internal {
 		if (s_step == 1)
 		{
 			if (d_step == 1) copy_vec(len, ps, pd);
-			else copy_vec(len, ps, pd, d_step);
+			else copy_vec(len, ps, step_ptr(pd, d_step));
 		}
 		else
 		{
-			if (d_step == 1) copy_vec(len, ps, s_step, pd);
-			else copy_vec(len, ps, s_step, pd, d_step);
+			if (d_step == 1) copy_vec(len, step_ptr(ps, s_step), pd);
+			else copy_vec(len, step_ptr(ps, s_step), step_ptr(pd, d_step));
 		}
 	}
 
@@ -97,7 +130,7 @@ namespace lmat { namespace internal {
 		{
 			const T* scol = ps + j * src_cs;
 			T *dcol = pd + j * dst_cs;
-			copy_vec(m, scol, src_rs, dcol);
+			copy_vec(m, step_ptr(scol, src_rs), dcol);
 		}
 	}
 
@@ -110,7 +143,7 @@ namespace lmat { namespace internal {
 		{
 			const T* scol = ps + j * src_cs;
 			T *dcol = pd + j * dst_cs;
-			copy_vec(m, scol, dcol, dst_rs);
+			copy_vec(m, scol, step_ptr(dcol, dst_rs));
 		}
 	}
 
@@ -124,7 +157,7 @@ namespace lmat { namespace internal {
 		{
 			const T* scol = ps + j * src_cs;
 			T *dcol = pd + j * dst_cs;
-			copy_vec(m, scol, src_rs, dcol, dst_rs);
+			copy_vec(m, step_ptr(scol, src_rs), step_ptr(dcol, dst_rs));
 		}
 	}
 
@@ -137,13 +170,13 @@ namespace lmat { namespace internal {
 
 	template<typename T, class DMat, int M, int N>
 	LMAT_ENSURE_INLINE
-	void copy(const T *ps, IDenseMatrix<DMat, T>& dmat, const matrix_copy_scheme<M, N, cont_level::whole>& sch)
+	void copy(const T *ps, IRegularMatrix<DMat, T>& dmat, const matrix_copy_scheme<M, N, cont_level::whole>& sch)
 	{
 		copy_vec(sch.nelems(), ps, dmat.ptr_data());
 	}
 
 	template<typename T, class DMat, int M, int N>
-	inline void copy(const T *ps, IDenseMatrix<DMat, T>& dmat,
+	inline void copy(const T *ps, IRegularMatrix<DMat, T>& dmat,
 			const matrix_copy_scheme<M, N, cont_level::percol>& sch)
 	{
 		const index_t m = sch.nrows();
@@ -169,7 +202,7 @@ namespace lmat { namespace internal {
 	}
 
 	template<typename T, class DMat, int M, int N>
-	inline void copy(const T *ps, IDenseMatrix<DMat, T>& dmat,
+	inline void copy(const T *ps, IRegularMatrix<DMat, T>& dmat,
 			const matrix_copy_scheme<1, N, cont_level::percol>& sch)
 	{
 		const index_t n = sch.ncolumns();
@@ -187,7 +220,7 @@ namespace lmat { namespace internal {
 	}
 
 	template<typename T, class DMat, int M, int N>
-	inline void copy(const T *ps, IDenseMatrix<DMat, T>& dmat,
+	inline void copy(const T *ps, IRegularMatrix<DMat, T>& dmat,
 			const matrix_copy_scheme<M, N, cont_level::none>& sch)
 	{
 		const index_t m = sch.nrows();
@@ -232,13 +265,13 @@ namespace lmat { namespace internal {
 
 	template<typename T, class SMat, int M, int N>
 	LMAT_ENSURE_INLINE
-	void copy(const IDenseMatrix<SMat, T>& smat, T *pd, const matrix_copy_scheme<M, N, cont_level::whole>& sch)
+	void copy(const IRegularMatrix<SMat, T>& smat, T *pd, const matrix_copy_scheme<M, N, cont_level::whole>& sch)
 	{
 		copy_vec(sch.nelems(), smat.ptr_data(), pd);
 	}
 
 	template<typename T, class SMat, int M, int N>
-	inline void copy(const IDenseMatrix<SMat, T>& smat, T *pd,
+	inline void copy(const IRegularMatrix<SMat, T>& smat, T *pd,
 			const matrix_copy_scheme<M, N, cont_level::percol>& sch)
 	{
 		const index_t m = sch.nrows();
@@ -265,7 +298,7 @@ namespace lmat { namespace internal {
 	}
 
 	template<typename T, class SMat, int M, int N>
-	inline void copy(const IDenseMatrix<SMat, T>& smat, T *pd,
+	inline void copy(const IRegularMatrix<SMat, T>& smat, T *pd,
 			const matrix_copy_scheme<1, N, cont_level::percol>& sch)
 	{
 		const index_t n = sch.ncolumns();
@@ -282,12 +315,12 @@ namespace lmat { namespace internal {
 			if (cs == 1)
 				copy_vec(n, ps, pd);
 			else
-				copy_vec(n, ps, cs, pd);
+				copy_vec(n, step_ptr(ps, cs), pd);
 		}
 	}
 
 	template<typename T, class SMat, int M, int N>
-	inline void copy(const IDenseMatrix<SMat, T>& smat, T *pd,
+	inline void copy(const IRegularMatrix<SMat, T>& smat, T *pd,
 			const matrix_copy_scheme<M, N, cont_level::none>& sch)
 	{
 		const index_t m = sch.nrows();
@@ -304,10 +337,7 @@ namespace lmat { namespace internal {
 			else
 			{
 				const index_t rs = smat.row_stride();
-				if (rs == 1)
-					copy_vec(m, ps, rs, pd);
-				else
-					copy_vec(m, ps, rs, pd);
+				_copy_singlevec(m, ps, rs, pd);
 			}
 		}
 		else
@@ -315,10 +345,7 @@ namespace lmat { namespace internal {
 			const index_t cs = smat.col_stride();
 			if (m == 1)
 			{
-				if (cs == 1)
-					copy_vec(n, ps, pd);
-				else
-					copy_vec(n, ps, cs, pd);
+				_copy_singlevec(n, ps, cs, pd);
 			}
 			else
 			{
@@ -340,14 +367,14 @@ namespace lmat { namespace internal {
 
 	template<typename T, class SMat, class DMat, int M, int N>
 	LMAT_ENSURE_INLINE
-	void copy(const IDenseMatrix<SMat, T>& smat, IDenseMatrix<DMat, T>& dmat,
+	void copy(const IRegularMatrix<SMat, T>& smat, IRegularMatrix<DMat, T>& dmat,
 			const matrix_copy_scheme<M, N, cont_level::whole>& sch)
 	{
 		copy_vec(sch.nelems(), smat.ptr_data(), dmat.ptr_data());
 	}
 
 	template<typename T, class SMat, class DMat, int M, int N>
-	inline void copy(const IDenseMatrix<SMat, T>& smat, IDenseMatrix<DMat, T>& dmat,
+	inline void copy(const IRegularMatrix<SMat, T>& smat, IRegularMatrix<DMat, T>& dmat,
 			const matrix_copy_scheme<M, N, cont_level::percol>& sch)
 	{
 		const index_t m = sch.nrows();
@@ -374,7 +401,7 @@ namespace lmat { namespace internal {
 
 
 	template<typename T, class SMat, class DMat, int M, int N>
-	inline void copy(const IDenseMatrix<SMat, T>& smat, IDenseMatrix<DMat, T>& dmat,
+	inline void copy(const IRegularMatrix<SMat, T>& smat, IRegularMatrix<DMat, T>& dmat,
 			const matrix_copy_scheme<1, N, cont_level::percol>& sch)
 	{
 		const index_t n = sch.ncolumns();
@@ -390,7 +417,7 @@ namespace lmat { namespace internal {
 
 
 	template<typename T, class SMat, class DMat, int M, int N>
-	inline void copy(const IDenseMatrix<SMat, T>& smat, IDenseMatrix<DMat, T>& dmat,
+	inline void copy(const IRegularMatrix<SMat, T>& smat, IRegularMatrix<DMat, T>& dmat,
 			const matrix_copy_scheme<M, N, cont_level::none>& sch)
 	{
 		const index_t m = sch.nrows();
@@ -404,12 +431,12 @@ namespace lmat { namespace internal {
 			if (m == 1)
 				*pd = *ps;
 			else
-				copy_vec(m, ps, smat.row_stride(), pd, dmat.row_stride());
+				_copy_singlevec(m, ps, smat.row_stride(), pd, dmat.row_stride());
 		}
 		else
 		{
 			if (m == 1)
-				copy_vec(n, ps, smat.col_stride(), pd, dmat.col_stride());
+				_copy_singlevec(n, ps, smat.col_stride(), pd, dmat.col_stride());
 			else
 				_copy_multicol(m, n,
 						ps, smat.row_stride(), smat.col_stride(),

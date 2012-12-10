@@ -28,15 +28,13 @@ template class lmat::ref_block<double, 0, 4>;
 template class lmat::ref_block<double, 3, 0>;
 template class lmat::ref_block<double, 3, 4>;
 
-#ifdef LMAT_USE_STATIC_ASSERT
 
 static_assert(lmat::meta::is_mat_xpr<lmat::cref_block<double> >::value, "Interface verification failed.");
-static_assert(lmat::meta::is_dense_mat<lmat::cref_block<double> >::value, "Interface verification failed.");
+static_assert(lmat::meta::is_regular_mat<lmat::cref_block<double> >::value, "Interface verification failed.");
 
 static_assert(lmat::meta::is_mat_xpr<lmat::ref_block<double> >::value, "Interface verification failed.");
-static_assert(lmat::meta::is_dense_mat<lmat::ref_block<double> >::value, "Interface verification failed.");
+static_assert(lmat::meta::is_regular_mat<lmat::ref_block<double> >::value, "Interface verification failed.");
 
-#endif
 
 
 template<int M, int N>

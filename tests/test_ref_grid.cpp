@@ -26,15 +26,12 @@ template class lmat::ref_grid<double, 0, 4>;
 template class lmat::ref_grid<double, 3, 0>;
 template class lmat::ref_grid<double, 3, 4>;
 
-#ifdef LMAT_USE_STATIC_ASSERT
 
 static_assert(lmat::meta::is_mat_xpr<lmat::cref_grid<double> >::value, "Interface verification failed.");
-static_assert(lmat::meta::is_dense_mat<lmat::cref_grid<double> >::value, "Interface verification failed.");
+static_assert(lmat::meta::is_regular_mat<lmat::cref_grid<double> >::value, "Interface verification failed.");
 
 static_assert(lmat::meta::is_mat_xpr<lmat::ref_grid<double> >::value, "Interface verification failed.");
-static_assert(lmat::meta::is_dense_mat<lmat::ref_grid<double> >::value, "Interface verification failed.");
-
-#endif
+static_assert(lmat::meta::is_regular_mat<lmat::ref_grid<double> >::value, "Interface verification failed.");
 
 
 template<int M, int N>

@@ -13,9 +13,9 @@
 #ifndef LIGHTMAT_MATRIX_SUBVIEWS_H_
 #define LIGHTMAT_MATRIX_SUBVIEWS_H_
 
-#include "bits/matrix_colviews_internal.h"
-#include "bits/matrix_rowviews_internal.h"
-#include "bits/matrix_matviews_internal.h"
+#include "internal/matrix_colviews_internal.h"
+#include "internal/matrix_rowviews_internal.h"
+#include "internal/matrix_matviews_internal.h"
 
 namespace lmat
 {

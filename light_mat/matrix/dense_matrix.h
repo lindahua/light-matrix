@@ -13,7 +13,7 @@
 #ifndef LIGHTMAT_DENSE_MATRIX_H_
 #define LIGHTMAT_DENSE_MATRIX_H_
 
-#include <light_mat/matrix/dense_mat_base.h>
+#include <light_mat/matrix/regular_mat_base.h>
 #include <light_mat/common/block.h>
 
 #include <algorithm> // for std::swap
@@ -126,18 +126,16 @@ namespace lmat
 	 ********************************************/
 
 	template<typename T, int CTRows, int CTCols>
-	class dense_matrix : public dense_mat_base<dense_matrix<T, CTRows, CTCols>, T>
+	class dense_matrix : public regular_mat_base<dense_matrix<T, CTRows, CTCols>, T>
 	{
-#ifdef LMAT_USE_STATIC_ASSERT
 		static_assert(meta::is_supported_matrix_value_type<T>::value,
 				"T must be a supported matrix value type.");
 
 		static_assert(CTRows >= 0 && CTCols >= 0,
 				"CTRows and CTCols must be non-negative numbers.");
-#endif
 
 	public:
-		LMAT_MAT_TRAITS_DEFS(T)
+		LMAT_DEFINE_REGMAT_TYPES(T)
 		typedef continuous_layout_cm<CTRows, CTCols> layout_type;
 
 	public:
@@ -217,7 +215,7 @@ namespace lmat
 			return m_store.pdata();
 		}
 
-		LMAT_ENSURE_INLINE void require_size(index_type m, index_type n)
+		LMAT_ENSURE_INLINE void require_size(index_t m, index_t n)
 		{
 			if (!(m == this->nrows() && n == this->ncolumns()))
 			{

@@ -21,12 +21,10 @@ namespace lmat
 	template<class Mat>
 	class dense_mutable_view : public Mat
 	{
-#ifdef LMAT_USE_STATIC_ASSERT
-		static_assert(meta::is_dense_mat<Mat>::value, "Mat should be a dense matrix class");
-#endif
+		static_assert(meta::is_regular_mat<Mat>::value, "Mat should be a dense matrix class");
 
 	public:
-		LMAT_MAT_TRAITS_DEFS(typename matrix_traits<Mat>::value_type)
+		LMAT_DEFINE_REGMAT_CTYPES(typename matrix_traits<Mat>::value_type)
 
 	public:
 		LMAT_ENSURE_INLINE

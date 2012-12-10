@@ -16,28 +16,6 @@
 #include <light_mat/matrix/matrix_meta.h>
 #include <light_mat/matrix/scalar_expr.h>
 
-#define LMAT_MAT_TRAITS_DEFS_FOR_BASE(D, T) \
-	typedef T value_type; \
-	typedef const value_type* const_pointer; \
-	typedef const value_type& const_reference; \
-	typedef typename mat_access<D>::pointer pointer; \
-	typedef typename mat_access<D>::reference reference; \
-	typedef index_t index_type;
-
-#define LMAT_MAT_TRAITS_CDEFS(T) \
-	typedef T value_type; \
-	typedef const value_type* const_pointer; \
-	typedef const value_type& const_reference; \
-	typedef index_t index_type;
-
-#define LMAT_MAT_TRAITS_DEFS(T) \
-	typedef T value_type; \
-	typedef const value_type* const_pointer; \
-	typedef const value_type& const_reference; \
-	typedef value_type* pointer; \
-	typedef value_type& reference; \
-	typedef index_t index_type;
-
 
 #ifdef LMAT_ENABLE_INDEX_CHECKING
 #define LMAT_CHECK_IDX(i, n) check_arg(i >= 0 && i < (n), "Index out of range.");
@@ -49,19 +27,17 @@
 #endif
 
 
-
 namespace lmat
 {
 
 	template<class Mat>
-	struct mat_access
+	struct matrix_access_types
 	{
 		typedef typename matrix_traits<Mat>::value_type value_type;
 		typedef typename meta::if_<meta::is_readonly<Mat>,
-				const value_type, value_type>::type access_type;
-
-		typedef access_type* pointer;
-		typedef access_type& reference;
+				const value_type*, value_type*>::type pointer;
+		typedef typename meta::if_<meta::is_readonly<Mat>,
+				const value_type&, value_type&>::type reference;
 	};
 
 
@@ -75,43 +51,25 @@ namespace lmat
 	class IMatrixXpr
 	{
 	public:
-		LMAT_MAT_TRAITS_DEFS_FOR_BASE(Derived, T)
+		typedef T value_type;
 		LMAT_CRTP_REF
 
-		LMAT_ENSURE_INLINE index_type nelems() const
+		LMAT_ENSURE_INLINE index_t nelems() const
 		{
 			return derived().nelems();
 		}
 
-		LMAT_ENSURE_INLINE index_type nrows() const
+		LMAT_ENSURE_INLINE index_t nrows() const
 		{
 			return derived().nrows();
 		}
 
-		LMAT_ENSURE_INLINE index_type ncolumns() const
+		LMAT_ENSURE_INLINE index_t ncolumns() const
 		{
 			return derived().ncolumns();
 		}
 
 	}; // end class IMatrixBase
-
-
-	template<class Mat, typename T>
-	LMAT_ENSURE_INLINE
-	inline bool is_subscripts_in_range(const IMatrixXpr<Mat, T>& X, index_t i, index_t j)
-	{
-		return i >= 0 && i < X.nrows() && j >= 0 && j < X.ncolumns();
-	}
-
-	template<class Mat, typename T>
-	LMAT_ENSURE_INLINE
-	inline void check_subscripts_in_range(const IMatrixXpr<Mat, T>& X, index_t i, index_t j)
-	{
-#ifndef BCSLIB_NO_DEBUG
-		check_range(is_subscripts_in_range(X, i, j),
-				"Attempted to access element with subscripts out of valid range.");
-#endif
-	}
 
 
 	/********************************************
@@ -121,34 +79,39 @@ namespace lmat
 	 ********************************************/
 
 	template<class Derived, typename T>
-	class IDenseMatrix : public IMatrixXpr<Derived, T>
+	class IRegularMatrix : public IMatrixXpr<Derived, T>
 	{
 	public:
-		LMAT_MAT_TRAITS_DEFS_FOR_BASE(Derived, T)
 		LMAT_CRTP_REF
 
+		typedef typename matrix_access_types<Derived>::value_type value_type;
+		typedef const value_type* const_pointer;
+		typedef const value_type& const_reference;
+		typedef typename matrix_access_types<Derived>::pointer pointer;
+		typedef typename matrix_access_types<Derived>::reference reference;
+
 	public:
-		LMAT_ENSURE_INLINE index_type nelems() const
+		LMAT_ENSURE_INLINE index_t nelems() const
 		{
 			return derived().nelems();
 		}
 
-		LMAT_ENSURE_INLINE index_type nrows() const
+		LMAT_ENSURE_INLINE index_t nrows() const
 		{
 			return derived().nrows();
 		}
 
-		LMAT_ENSURE_INLINE index_type ncolumns() const
+		LMAT_ENSURE_INLINE index_t ncolumns() const
 		{
 			return derived().ncolumns();
 		}
 
-		LMAT_ENSURE_INLINE index_type row_stride() const
+		LMAT_ENSURE_INLINE index_t row_stride() const
 		{
 			return derived().row_stride();
 		}
 
-		LMAT_ENSURE_INLINE index_type col_stride() const
+		LMAT_ENSURE_INLINE index_t col_stride() const
 		{
 			return derived().col_stride();
 		}
@@ -163,47 +126,47 @@ namespace lmat
 			return derived().ptr_data();
 		}
 
-		LMAT_ENSURE_INLINE const_pointer ptr_col(const index_type j) const
+		LMAT_ENSURE_INLINE const_pointer ptr_col(const index_t j) const
 		{
 			LMAT_CHECK_IDX(j, ncolumns())
 			return derived().ptr_col(j);
 		}
 
-		LMAT_ENSURE_INLINE pointer ptr_col(const index_type j)
+		LMAT_ENSURE_INLINE pointer ptr_col(const index_t j)
 		{
 			LMAT_CHECK_IDX(j, ncolumns())
 			return derived().ptr_col(j);
 		}
 
-		LMAT_ENSURE_INLINE const_pointer ptr_row(const index_type i) const
+		LMAT_ENSURE_INLINE const_pointer ptr_row(const index_t i) const
 		{
 			LMAT_CHECK_IDX(i, nrows())
 			return derived().ptr_row(i);
 		}
 
-		LMAT_ENSURE_INLINE pointer ptr_row(const index_type i)
+		LMAT_ENSURE_INLINE pointer ptr_row(const index_t i)
 		{
 			LMAT_CHECK_IDX(i, nrows())
 			return derived().ptr_row(i);
 		}
 
-		LMAT_ENSURE_INLINE const_reference elem(const index_type i, const index_type j) const
+		LMAT_ENSURE_INLINE const_reference elem(const index_t i, const index_t j) const
 		{
 			return derived().elem(i, j);
 		}
 
-		LMAT_ENSURE_INLINE reference elem(const index_type i, const index_type j)
+		LMAT_ENSURE_INLINE reference elem(const index_t i, const index_t j)
 		{
 			return derived().elem(i, j);
 		}
 
-		LMAT_ENSURE_INLINE const_reference operator() (const index_type i, const index_type j) const
+		LMAT_ENSURE_INLINE const_reference operator() (const index_t i, const index_t j) const
 		{
 			LMAT_CHECK_SUBS(*this, i, j)
 			return elem(i, j);
 		}
 
-		LMAT_ENSURE_INLINE reference operator() (const index_type i, const index_type j)
+		LMAT_ENSURE_INLINE reference operator() (const index_t i, const index_t j)
 		{
 			LMAT_CHECK_SUBS(*this, i, j)
 			return elem(i, j);
@@ -234,7 +197,7 @@ namespace lmat
 
 		LMAT_ENSURE_INLINE
 		typename colview_map<Derived, whole>::const_type
-		column(const index_type j) const
+		column(const index_t j) const
 		{
 			LMAT_CHECK_IDX(j, this->ncolumns())
 			return colview_map<Derived, whole>::get(derived(), j, whole());
@@ -242,7 +205,7 @@ namespace lmat
 
 		LMAT_ENSURE_INLINE
 		typename colview_map<Derived, whole>::type
-		column(const index_type j)
+		column(const index_t j)
 		{
 			LMAT_CHECK_IDX(j, this->ncolumns())
 			return colview_map<Derived, whole>::get(derived(), j, whole());
@@ -270,7 +233,7 @@ namespace lmat
 
 		LMAT_ENSURE_INLINE
 		typename rowview_map<Derived, whole>::const_type
-		row(const index_type i) const
+		row(const index_t i) const
 		{
 			LMAT_CHECK_IDX(i, this->nrows())
 			return rowview_map<Derived, whole>::get(derived(), i, whole());
@@ -278,7 +241,7 @@ namespace lmat
 
 		LMAT_ENSURE_INLINE
 		typename rowview_map<Derived, whole>::type
-		row(const index_type i)
+		row(const index_t i)
 		{
 			LMAT_CHECK_IDX(i, this->nrows())
 			return rowview_map<Derived, whole>::get(derived(), i, whole());

@@ -17,7 +17,6 @@
 
 #include <light_mat/matrix/matrix_fill.h>
 #include <light_mat/matrix/matrix_copy.h>
-#include <light_mat/matrix/matrix_compare.h>
 #include <light_mat/matrix/matrix_print.h>
 
 #include <light_mat/matrix/matrix_subviews.h>

@@ -203,6 +203,29 @@ namespace lmat {  namespace meta {
 
 	/********************************************
 	 *
+	 *  common type
+	 *
+	 ********************************************/
+
+	template<typename... T> struct common_type;
+
+	template<typename T>
+	struct common_type<T>
+	{
+		typedef T type;
+	};
+
+	template<typename T0, typename... T>
+	struct common_type<T0, T ...>
+	{
+		typedef typename
+				enable_if<std::is_same<T0, typename common_type<T...>::type>,
+				T0>::type type;
+	};
+
+
+	/********************************************
+	 *
 	 *  compile-time list
 	 *
 	 ********************************************/

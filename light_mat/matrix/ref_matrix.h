@@ -13,7 +13,7 @@
 #ifndef LIGHTMAT_REF_MATRIX_H_
 #define LIGHTMAT_REF_MATRIX_H_
 
-#include <light_mat/matrix/dense_mat_base.h>
+#include <light_mat/matrix/regular_mat_base.h>
 
 namespace lmat
 {
@@ -40,20 +40,18 @@ namespace lmat
 
 
 	template<typename T, int CTRows, int CTCols>
-	class cref_matrix : public dense_mat_base<cref_matrix<T, CTRows, CTCols>, T>
+	class cref_matrix : public regular_mat_base<cref_matrix<T, CTRows, CTCols>, T>
 	{
-#ifdef LMAT_USE_STATIC_ASSERT
 		static_assert( meta::is_supported_matrix_value_type<T>::value,
 				"T must be a supported matrix value type");
-#endif
 
 	public:
-		LMAT_MAT_TRAITS_CDEFS(T)
+		LMAT_DEFINE_REGMAT_CTYPES(T)
 		typedef continuous_layout_cm<CTRows, CTCols> layout_type;
 
 	public:
 		LMAT_ENSURE_INLINE
-		cref_matrix(const T* pdata, index_type m, index_type n)
+		cref_matrix(const T* pdata, index_t m, index_t n)
 		: m_data(pdata), m_layout(m, n)
 		{
 		}
@@ -102,20 +100,18 @@ namespace lmat
 
 
 	template<typename T, int CTRows, int CTCols>
-	class ref_matrix : public dense_mat_base<ref_matrix<T, CTRows, CTCols>, T>
+	class ref_matrix : public regular_mat_base<ref_matrix<T, CTRows, CTCols>, T>
 	{
-#ifdef LMAT_USE_STATIC_ASSERT
 		static_assert( meta::is_supported_matrix_value_type<T>::value,
 				"T must be a supported matrix value type");
-#endif
 
 	public:
-		LMAT_MAT_TRAITS_DEFS(T)
+		LMAT_DEFINE_REGMAT_TYPES(T)
 		typedef continuous_layout_cm<CTRows, CTCols> layout_type;
 
 	public:
 		LMAT_ENSURE_INLINE
-		ref_matrix(T* pdata, index_type m, index_type n)
+		ref_matrix(T* pdata, index_t m, index_t n)
 		: m_data(pdata), m_layout(m, n)
 		{
 		}
@@ -181,10 +177,10 @@ namespace lmat
 		typedef cref_matrix<T, CTRows, 1> base_mat_t;
 
 	public:
-		typedef index_t index_type;
+		typedef index_t index_t;
 
 		LMAT_ENSURE_INLINE
-		cref_col(const T* pdata, index_type m)
+		cref_col(const T* pdata, index_t m)
 		: base_mat_t(pdata, m, 1) { }
 
 		LMAT_ENSURE_INLINE
@@ -199,10 +195,10 @@ namespace lmat
 		typedef ref_matrix<T, CTRows, 1> base_mat_t;
 
 	public:
-		typedef index_t index_type;
+		typedef index_t index_t;
 
 		LMAT_ENSURE_INLINE
-		ref_col(T* pdata, index_type m)
+		ref_col(T* pdata, index_t m)
 		: base_mat_t(pdata, m, 1) { }
 
 		LMAT_ENSURE_INLINE
@@ -225,10 +221,10 @@ namespace lmat
 		typedef cref_matrix<T, 1, CTCols> base_mat_t;
 
 	public:
-		typedef index_t index_type;
+		typedef index_t index_t;
 
 		LMAT_ENSURE_INLINE
-		cref_row(const T* pdata, index_type n)
+		cref_row(const T* pdata, index_t n)
 		: base_mat_t(pdata, 1, n) { }
 
 		LMAT_ENSURE_INLINE
@@ -242,10 +238,10 @@ namespace lmat
 		typedef ref_matrix<T, 1, CTCols> base_mat_t;
 
 	public:
-		typedef index_t index_type;
+		typedef index_t index_t;
 
 		LMAT_ENSURE_INLINE
-		ref_row(T* pdata, index_type n)
+		ref_row(T* pdata, index_t n)
 		: base_mat_t(pdata, 1, n) { }
 
 		LMAT_ENSURE_INLINE

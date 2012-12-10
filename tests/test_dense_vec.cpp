@@ -21,25 +21,21 @@ template class lmat::dense_col<double, 4>;
 template class lmat::dense_row<double, 0>;
 template class lmat::dense_row<double, 4>;
 
-#ifdef LMAT_USE_STATIC_ASSERT
-
-static_assert(lmat::is_base_of<
+static_assert(std::is_base_of<
 		lmat::dense_matrix<double, 0, 1>,
 		lmat::dense_col<double, 0> >::value, "Base verification failed.");
 
-static_assert(lmat::is_base_of<
+static_assert(std::is_base_of<
 		lmat::dense_matrix<double, 4, 1>,
 		lmat::dense_col<double, 4> >::value, "Base verification failed.");
 
-static_assert(lmat::is_base_of<
+static_assert(std::is_base_of<
 		lmat::dense_matrix<double, 1, 0>,
 		lmat::dense_row<double, 0> >::value, "Base verification failed.");
 
-static_assert(lmat::is_base_of<
+static_assert(std::is_base_of<
 		lmat::dense_matrix<double, 1, 4>,
 		lmat::dense_row<double, 4> >::value, "Base verification failed.");
-
-#endif
 
 
 template<int M, int N>

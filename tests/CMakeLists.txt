@@ -63,15 +63,13 @@ set(MATRIX_BASE_HS
     ${INC}/matrix/matrix_shape.h
     ${INC}/matrix/matrix_concepts.h
     ${INC}/matrix/matrix_properties.h
-    ${INC}/matrix/bits/matrix_fill_internal.h
-    ${INC}/matrix/bits/matrix_copy_internal.h
-    ${INC}/matrix/bits/matrix_compare_internal.h
-    ${INC}/matrix/bits/matrix_colviews_internal.h
-    ${INC}/matrix/bits/matrix_rowviews_internal.h
-    ${INC}/matrix/bits/matrix_matviews_internal.h
+    ${INC}/matrix/internal/matrix_fill_internal.h
+    ${INC}/matrix/internal/matrix_copy_internal.h
+    ${INC}/matrix/internal/matrix_colviews_internal.h
+    ${INC}/matrix/internal/matrix_rowviews_internal.h
+    ${INC}/matrix/internal/matrix_matviews_internal.h
     ${INC}/matrix/matrix_fill.h
     ${INC}/matrix/matrix_copy.h
-    ${INC}/matrix/matrix_compare.h
     ${INC}/matrix/matrix_print.h
     ${INC}/matrix/matrix_subviews.h
     ${INC}/matrix/matrix_base.h)
@@ -104,8 +102,8 @@ set(DENSE_MAT_HS
     ${MATRIX_BASE_HS}
     ${INC}/matrix/dense_matrix.h)
 
-# add_executable(test_dense_mat ${DENSE_MAT_HS} test_dense_mat.cpp)
-# add_executable(test_dense_vec ${DENSE_MAT_HS} test_dense_vec.cpp) 
+add_executable(test_dense_mat ${DENSE_MAT_HS} test_dense_mat.cpp)
+add_executable(test_dense_vec ${DENSE_MAT_HS} test_dense_vec.cpp) 
 
 set(REF_MAT_HS
     ${COMMON_HS}
@@ -116,16 +114,15 @@ set(REF_MAT_HS
     ${INC}/matrix/ref_grid.h
     ${INC}/matrix/step_vecs.h)
     
-# add_executable(test_ref_mat ${REF_MAT_HS} test_ref_mat.cpp)
-# add_executable(test_ref_vec ${REF_MAT_HS} test_ref_vec.cpp)
-# add_executable(test_ref_block ${REF_MAT_HS} test_ref_block.cpp)
-# add_executable(test_ref_grid ${REF_MAT_HS} test_ref_grid.cpp)
-# add_executable(test_step_vec ${REF_MAT_HS} test_step_vec.cpp)
+add_executable(test_ref_mat ${REF_MAT_HS} test_ref_mat.cpp)
+add_executable(test_ref_vec ${REF_MAT_HS} test_ref_vec.cpp)
+add_executable(test_ref_block ${REF_MAT_HS} test_ref_block.cpp)
+add_executable(test_ref_grid ${REF_MAT_HS} test_ref_grid.cpp)
+add_executable(test_step_vec ${REF_MAT_HS} test_step_vec.cpp)
 
-# add_executable(test_mat_props ${REF_MAT_HS} test_mat_props.cpp)
-# add_executable(test_mat_fill ${REF_MAT_HS} test_mat_fill.cpp)
-# add_executable(test_mat_copy ${REF_MAT_HS} test_mat_copy.cpp)
-# add_executable(test_mat_compare ${REF_MAT_HS} test_mat_compare.cpp)
+add_executable(test_mat_props ${REF_MAT_HS} test_mat_props.cpp)
+add_executable(test_mat_fill ${REF_MAT_HS} test_mat_fill.cpp)
+add_executable(test_mat_copy ${REF_MAT_HS} test_mat_copy.cpp)
 
 # add_executable(test_dense_eval ${MATRIX_HS} test_dense_eval.cpp)
 # add_executable(test_mat_vecviews ${MATRIX_HS} test_mat_vecviews.cpp)
@@ -137,17 +134,16 @@ set(LMAT_TEST_NAMES
     test_meta
     test_memory
 	test_blocks
-	# test_dense_mat
-	# test_dense_vec
-	# test_ref_mat
-	# test_ref_vec
-	# test_ref_block
-	# test_ref_grid
-	# test_step_vec
-	# test_mat_props
-	# test_mat_fill
-	# test_mat_copy
-	# test_mat_compare
+	test_dense_mat
+	test_dense_vec
+	test_ref_mat
+	test_ref_vec
+	test_ref_block
+	test_ref_grid
+	test_step_vec
+	test_mat_props
+	test_mat_fill
+	test_mat_copy
 	# test_dense_eval
 	# test_mat_vecviews
 	# test_mat_matviews

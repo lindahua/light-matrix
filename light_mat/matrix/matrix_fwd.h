@@ -16,8 +16,6 @@
 #include <light_mat/common/basic_defs.h>
 #include <light_mat/common/range.h>
 #include <light_mat/common/memory.h>
-#include <light_mat/common/expr_base.h>
-#include <light_mat/math/functor_base.h>
 
 #include <light_mat/matrix/matrix_shape.h>
 
@@ -50,7 +48,7 @@ namespace lmat
 	template<class Derived> struct matrix_traits;
 
 	template<class Derived, typename T> class IMatrixXpr;
-	template<class Derived, typename T> class IDenseMatrix;
+	template<class Derived, typename T> class IRegularMatrix;
 
 	// forward declaration of some important types
 

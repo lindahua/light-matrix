@@ -62,8 +62,7 @@ struct unary_compatible_nrows
 {
 	typedef dense_matrix<double, M, 1> A1;
 
-	static const bool value = meta::have_compatible_nrows<
-			LMAT_TYPELIST_1(A1) >::value;
+	static const bool value = meta::have_compatible_nrows<A1>::value;
 };
 
 template<int M, int N>
@@ -72,8 +71,7 @@ struct binary_compatible_nrows
 	typedef dense_matrix<double, M, 1> A1;
 	typedef dense_matrix<double, N, 1> A2;
 
-	static const bool value = meta::have_compatible_nrows<
-			LMAT_TYPELIST_2(A1, A2) >::value;
+	static const bool value = meta::have_compatible_nrows<A1, A2>::value;
 };
 
 template<int M, int N, int K>
@@ -83,8 +81,7 @@ struct ternary_compatible_nrows
 	typedef dense_matrix<double, N, 1> A2;
 	typedef dense_matrix<double, K, 1> A3;
 
-	static const bool value = meta::have_compatible_nrows<
-			LMAT_TYPELIST_3(A1, A2, A3) >::value;
+	static const bool value = meta::have_compatible_nrows<A1, A2, A3>::value;
 };
 
 
@@ -93,8 +90,7 @@ struct unary_common_nrows
 {
 	typedef dense_matrix<double, M, 1> A1;
 
-	static const int value = meta::common_nrows<
-			LMAT_TYPELIST_1(A1) >::value;
+	static const int value = meta::common_nrows<A1>::value;
 };
 
 template<int M, int N>
@@ -103,8 +99,7 @@ struct binary_common_nrows
 	typedef dense_matrix<double, M, 1> A1;
 	typedef dense_matrix<double, N, 1> A2;
 
-	static const int value = meta::common_nrows<
-			LMAT_TYPELIST_2(A1, A2) >::value;
+	static const int value = meta::common_nrows<A1, A2>::value;
 };
 
 template<int M, int N, int K>
@@ -114,8 +109,7 @@ struct ternary_common_nrows
 	typedef dense_matrix<double, N, 1> A2;
 	typedef dense_matrix<double, K, 1> A3;
 
-	static const int value = meta::common_nrows<
-			LMAT_TYPELIST_3(A1, A2, A3) >::value;
+	static const int value = meta::common_nrows<A1, A2, A3>::value;
 };
 
 
@@ -230,8 +224,7 @@ struct unary_compatible_ncols
 {
 	typedef dense_matrix<double, 1, M> A1;
 
-	static const bool value = meta::have_compatible_ncols<
-			LMAT_TYPELIST_1(A1) >::value;
+	static const bool value = meta::have_compatible_ncols<A1>::value;
 };
 
 template<int M, int N>
@@ -240,8 +233,7 @@ struct binary_compatible_ncols
 	typedef dense_matrix<double, 1, M> A1;
 	typedef dense_matrix<double, 1, N> A2;
 
-	static const bool value = meta::have_compatible_ncols<
-			LMAT_TYPELIST_2(A1, A2) >::value;
+	static const bool value = meta::have_compatible_ncols<A1, A2>::value;
 };
 
 template<int M, int N, int K>
@@ -251,8 +243,7 @@ struct ternary_compatible_ncols
 	typedef dense_matrix<double, 1, N> A2;
 	typedef dense_matrix<double, 1, K> A3;
 
-	static const bool value = meta::have_compatible_ncols<
-			LMAT_TYPELIST_3(A1, A2, A3) >::value;
+	static const bool value = meta::have_compatible_ncols<A1, A2, A3>::value;
 };
 
 
@@ -261,8 +252,7 @@ struct unary_common_ncols
 {
 	typedef dense_matrix<double, 1, M> A1;
 
-	static const int value = meta::common_ncols<
-			LMAT_TYPELIST_1(A1) >::value;
+	static const int value = meta::common_ncols<A1>::value;
 };
 
 template<int M, int N>
@@ -271,8 +261,7 @@ struct binary_common_ncols
 	typedef dense_matrix<double, 1, M> A1;
 	typedef dense_matrix<double, 1, N> A2;
 
-	static const int value = meta::common_ncols<
-			LMAT_TYPELIST_2(A1, A2) >::value;
+	static const int value = meta::common_ncols<A1, A2>::value;
 };
 
 template<int M, int N, int K>
@@ -282,8 +271,7 @@ struct ternary_common_ncols
 	typedef dense_matrix<double, 1, N> A2;
 	typedef dense_matrix<double, 1, K> A3;
 
-	static const int value = meta::common_ncols<
-			LMAT_TYPELIST_3(A1, A2, A3) >::value;
+	static const int value = meta::common_ncols<A1, A2, A3>::value;
 };
 
 
