@@ -14,7 +14,6 @@
 #define LIGHTMAT_MATRIX_CONCEPTS_H_
 
 #include <light_mat/matrix/matrix_meta.h>
-#include <light_mat/matrix/scalar_expr.h>
 
 
 #ifdef LMAT_ENABLE_INDEX_CHECKING
