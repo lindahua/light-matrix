@@ -48,6 +48,7 @@ set(COMMON_HS
     ${INC}/common/prim_types.h
     ${INC}/common/meta_base.h
     ${INC}/common/arg_check.h
+    ${INC}/common/args_alg.h
     ${INC}/common/range.h
     ${INC}/common/basic_defs.h    
     ${INC}/common/memory.h
@@ -59,7 +60,6 @@ set(MATRIX_BASE_HS
     ${INC}/matrix/matrix_layout.h
     ${INC}/matrix/matrix_fwd.h 
     ${INC}/matrix/matrix_meta.h
-    ${INC}/matrix/scalar_expr.h
     ${INC}/matrix/matrix_shape.h
     ${INC}/matrix/matrix_concepts.h
     ${INC}/matrix/matrix_properties.h

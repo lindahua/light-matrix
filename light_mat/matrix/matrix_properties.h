@@ -66,135 +66,59 @@ namespace lmat
 		return X.nrows() == X.ncolumns();
 	}
 
-	template<class Mat1, typename T1, class Mat2, typename T2>
+	template<typename... Mats>
 	LMAT_ENSURE_INLINE
-	inline bool have_same_nrows(const IMatrixXpr<Mat1, T1>& A, const IMatrixXpr<Mat2, T2>& B)
+	inline bool have_same_nrows(const Mats&... mats)
 	{
-		return all_equal(A.nrows(), B.nrows());
-	}
-
-	template<class Mat1, typename T1, class Mat2, typename T2, class Mat3, typename T3>
-	LMAT_ENSURE_INLINE
-	inline bool have_same_nrows(
-			const IMatrixXpr<Mat1, T1>& A,
-			const IMatrixXpr<Mat2, T2>& B,
-			const IMatrixXpr<Mat3, T3>& C)
-	{
-		return all_equal(A.nrows(), B.nrows(), C.nrows());
-	}
-
-	template<class Mat1, typename T1, class Mat2, typename T2, class Mat3, typename T3, class Mat4, typename T4>
-	LMAT_ENSURE_INLINE
-	inline bool have_same_nrows(
-			const IMatrixXpr<Mat1, T1>& A,
-			const IMatrixXpr<Mat2, T2>& B,
-			const IMatrixXpr<Mat3, T3>& C,
-			const IMatrixXpr<Mat4, T4>& D)
-	{
-		return all_equal(A.nrows(), B.nrows(), C.nrows(), D.nrows());
+		return args_equal(mats.nrows()...);
 	}
 
 
-	template<class Mat1, typename T1, class Mat2, typename T2>
+	template<typename... Mats>
 	LMAT_ENSURE_INLINE
-	inline bool have_same_ncols(const IMatrixXpr<Mat1, T1>& A, const IMatrixXpr<Mat2, T2>& B)
+	inline bool have_same_ncols(const Mats&... mats)
 	{
-		return all_equal(A.ncolumns(), B.ncolumns());
-	}
-
-	template<class Mat1, typename T1, class Mat2, typename T2, class Mat3, typename T3>
-	LMAT_ENSURE_INLINE
-	inline bool have_same_ncols(
-			const IMatrixXpr<Mat1, T1>& A,
-			const IMatrixXpr<Mat2, T2>& B,
-			const IMatrixXpr<Mat3, T3>& C)
-	{
-		return all_equal(A.ncolumns(), B.ncolumns(), C.ncolumns());
-	}
-
-	template<class Mat1, typename T1, class Mat2, typename T2, class Mat3, typename T3, class Mat4, typename T4>
-	LMAT_ENSURE_INLINE
-	inline bool have_same_ncols(
-			const IMatrixXpr<Mat1, T1>& A,
-			const IMatrixXpr<Mat2, T2>& B,
-			const IMatrixXpr<Mat3, T3>& C,
-			const IMatrixXpr<Mat4, T4>& D)
-	{
-		return all_equal(A.ncolumns(), B.ncolumns(), C.ncolumns(), D.ncolumns());
+		return args_equal(mats.ncolumns()...);
 	}
 
 
-	template<class Mat1, typename T1, class Mat2, typename T2>
+	template<typename... Mats>
 	LMAT_ENSURE_INLINE
-	inline bool have_same_shape(const IMatrixXpr<Mat1, T1>& A, const IMatrixXpr<Mat2, T2>& B)
+	inline bool have_same_shape(const Mats&... mats)
 	{
-		return have_same_nrows(A, B) && have_same_ncols(A, B);
+		return have_same_nrows(mats...) && have_same_ncols(mats...);
 	}
-
-	template<class Mat1, typename T1, class Mat2, typename T2, class Mat3, typename T3>
-	LMAT_ENSURE_INLINE
-	inline bool have_same_shape(
-			const IMatrixXpr<Mat1, T1>& A,
-			const IMatrixXpr<Mat2, T2>& B,
-			const IMatrixXpr<Mat3, T3>& C)
-	{
-		return have_same_nrows(A, B, C) && have_same_ncols(A, B, C);
-	}
-
-	template<class Mat1, typename T1, class Mat2, typename T2, class Mat3, typename T3, class Mat4, typename T4>
-	LMAT_ENSURE_INLINE
-	inline bool have_same_shape(
-			const IMatrixXpr<Mat1, T1>& A,
-			const IMatrixXpr<Mat2, T2>& B,
-			const IMatrixXpr<Mat3, T3>& C,
-			const IMatrixXpr<Mat4, T4>& D)
-	{
-		return have_same_nrows(A, B, C, D) && have_same_ncols(A, B, C, D);
-	}
-
 
 	// common shape
 
-	// common nrows
-
-	template<class Mat1, typename T1, class Mat2, typename T2>
+	template<typename Mat0, typename... Mats>
 	LMAT_ENSURE_INLINE
-	inline index_t common_nrows(const IMatrixXpr<Mat1, T1>& A, const IMatrixXpr<Mat2, T2>& B)
+	inline index_t common_nrows(const Mat0& mat0, const Mats&... mats)
 	{
-		LMAT_CHECK_DIMS( have_same_nrows(A, B) )
-		return A.nrows();
+		LMAT_CHECK_DIMS( have_same_nrows(mat0, mats...) );
+		return mat0.nrows();
 	}
 
-	template<class Mat1, typename T1, class Mat2, typename T2, class Mat3, typename T3>
+	template<typename Mat0, typename... Mats>
 	LMAT_ENSURE_INLINE
-	inline index_t common_nrows(
-			const IMatrixXpr<Mat1, T1>& A,
-			const IMatrixXpr<Mat2, T2>& B,
-			const IMatrixXpr<Mat3, T3>& C)
+	inline index_t common_ncols(const Mat0& mat0, const Mats&... mats)
 	{
-		LMAT_CHECK_DIMS( have_same_nrows(A, B, C) )
-		return A.nrows();
+		LMAT_CHECK_DIMS( have_same_ncols(mat0, mats...) );
+		return mat0.ncolumns();
 	}
 
-	// common ncols
-
-	template<class Mat1, typename T1, class Mat2, typename T2>
+	template<typename Mat0, typename... Mats>
 	LMAT_ENSURE_INLINE
-	inline index_t common_ncols(const IMatrixXpr<Mat1, T1>& A, const IMatrixXpr<Mat2, T2>& B)
+	inline matrix_shape<
+		meta::common_nrows<Mat0, Mats...>::value,
+		meta::common_ncols<Mat0, Mats...>::value>
+	common_shape(const Mat0& mat0, const Mats&... mats)
 	{
-		LMAT_CHECK_DIMS( have_same_ncols(A, B) )
-		return A.ncolumns();
-	}
+		typedef matrix_shape<
+			meta::common_nrows<Mat0, Mats...>::value,
+			meta::common_ncols<Mat0, Mats...>::value> shape_t;
 
-	template<class Mat1, typename T1, class Mat2, typename T2, class Mat3, typename T3>
-	LMAT_ENSURE_INLINE
-	inline index_t common_ncols(
-			const IMatrixXpr<Mat1, T1>& A,
-			const IMatrixXpr<Mat2, T2>& B,
-			const IMatrixXpr<Mat3, T3>& C)
-	{
-		LMAT_CHECK_DIMS( have_same_ncols(A, B, C) )
-		return A.ncolumns();
+		return shape_t(common_nrows(mat0, mats...), common_ncols(mat0, mats...));
 	}
 
 }

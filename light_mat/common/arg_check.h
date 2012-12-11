@@ -32,29 +32,6 @@
 namespace lmat
 {
 
-	template<typename T>
-	LMAT_ENSURE_INLINE
-	inline bool all_equal( const T& a, const T& b)
-	{
-		return a == b;
-	}
-
-	template<typename T>
-	LMAT_ENSURE_INLINE
-	inline bool all_equal( const T& a, const T& b, const T& c)
-	{
-		return a == b && b == c;
-	}
-
-	template<typename T>
-	LMAT_ENSURE_INLINE
-	inline bool all_equal( const T& a, const T& b, const T& c, const T& d)
-	{
-		return a == b && b == c && c == d;
-	}
-
-
-
 	class invalid_operation : public std::exception
 	{
 	public:
