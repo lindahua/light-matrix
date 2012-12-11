@@ -177,8 +177,6 @@ namespace lmat
 		typedef cref_matrix<T, CTRows, 1> base_mat_t;
 
 	public:
-		typedef index_t index_t;
-
 		LMAT_ENSURE_INLINE
 		cref_col(const T* pdata, index_t m)
 		: base_mat_t(pdata, m, 1) { }
@@ -195,8 +193,6 @@ namespace lmat
 		typedef ref_matrix<T, CTRows, 1> base_mat_t;
 
 	public:
-		typedef index_t index_t;
-
 		LMAT_ENSURE_INLINE
 		ref_col(T* pdata, index_t m)
 		: base_mat_t(pdata, m, 1) { }
@@ -221,8 +217,6 @@ namespace lmat
 		typedef cref_matrix<T, 1, CTCols> base_mat_t;
 
 	public:
-		typedef index_t index_t;
-
 		LMAT_ENSURE_INLINE
 		cref_row(const T* pdata, index_t n)
 		: base_mat_t(pdata, 1, n) { }
@@ -238,8 +232,6 @@ namespace lmat
 		typedef ref_matrix<T, 1, CTCols> base_mat_t;
 
 	public:
-		typedef index_t index_t;
-
 		LMAT_ENSURE_INLINE
 		ref_row(T* pdata, index_t n)
 		: base_mat_t(pdata, 1, n) { }
