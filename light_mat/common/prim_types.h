@@ -48,7 +48,7 @@ namespace lmat
 	using std::true_type;
 	using std::false_type;
 
-	template<typename T> struct type{ };
+	template<typename T> struct type_{ };
 
 	// primitive types
 

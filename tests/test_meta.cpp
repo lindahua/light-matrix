@@ -123,7 +123,7 @@ SIMPLE_CASE( typelist, N4 )
 template<typename T>
 struct my_map
 {
-	typedef type<T> type;
+	typedef type_<T> type;
 };
 
 
@@ -133,7 +133,7 @@ SIMPLE_CASE( typemap, N1 )
 	typedef meta::map_<my_map, list_t>::type result_t;
 
 	typedef typename meta::get_<result_t, 0>::type T0;
-	ASSERT_SAME_TYPE ( T0, type<int> );
+	ASSERT_SAME_TYPE ( T0, type_<int> );
 }
 
 SIMPLE_CASE( typemap, N2 )
@@ -142,10 +142,10 @@ SIMPLE_CASE( typemap, N2 )
 	typedef meta::map_<my_map, list_t>::type result_t;
 
 	typedef typename meta::get_<result_t, 0>::type T0;
-	ASSERT_SAME_TYPE ( T0, type<int> );
+	ASSERT_SAME_TYPE ( T0, type_<int> );
 
 	typedef typename meta::get_<result_t, 1>::type T1;
-	ASSERT_SAME_TYPE ( T1, type<char> );
+	ASSERT_SAME_TYPE ( T1, type_<char> );
 }
 
 SIMPLE_CASE( typemap, N3 )
@@ -154,13 +154,13 @@ SIMPLE_CASE( typemap, N3 )
 	typedef meta::map_<my_map, list_t>::type result_t;
 
 	typedef typename meta::get_<result_t, 0>::type T0;
-	ASSERT_SAME_TYPE ( T0, type<int> );
+	ASSERT_SAME_TYPE ( T0, type_<int> );
 
 	typedef typename meta::get_<result_t, 1>::type T1;
-	ASSERT_SAME_TYPE ( T1, type<char> );
+	ASSERT_SAME_TYPE ( T1, type_<char> );
 
 	typedef typename meta::get_<result_t, 2>::type T2;
-	ASSERT_SAME_TYPE ( T2, type<float> );
+	ASSERT_SAME_TYPE ( T2, type_<float> );
 }
 
 
@@ -170,16 +170,16 @@ SIMPLE_CASE( typemap, N4 )
 	typedef meta::map_<my_map, list_t>::type result_t;
 
 	typedef typename meta::get_<result_t, 0>::type T0;
-	ASSERT_SAME_TYPE ( T0, type<int> );
+	ASSERT_SAME_TYPE ( T0, type_<int> );
 
 	typedef typename meta::get_<result_t, 1>::type T1;
-	ASSERT_SAME_TYPE ( T1, type<char> );
+	ASSERT_SAME_TYPE ( T1, type_<char> );
 
 	typedef typename meta::get_<result_t, 2>::type T2;
-	ASSERT_SAME_TYPE ( T2, type<float> );
+	ASSERT_SAME_TYPE ( T2, type_<float> );
 
 	typedef typename meta::get_<result_t, 3>::type T3;
-	ASSERT_SAME_TYPE ( T3, type<double> );
+	ASSERT_SAME_TYPE ( T3, type_<double> );
 }
 
 
