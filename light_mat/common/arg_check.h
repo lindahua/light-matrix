@@ -34,21 +34,21 @@ namespace lmat
 
 	template<typename T>
 	LMAT_ENSURE_INLINE
-	bool all_equal( const T& a, const T& b)
+	inline bool all_equal( const T& a, const T& b)
 	{
 		return a == b;
 	}
 
 	template<typename T>
 	LMAT_ENSURE_INLINE
-	bool all_equal( const T& a, const T& b, const T& c)
+	inline bool all_equal( const T& a, const T& b, const T& c)
 	{
 		return a == b && b == c;
 	}
 
 	template<typename T>
 	LMAT_ENSURE_INLINE
-	bool all_equal( const T& a, const T& b, const T& c, const T& d)
+	inline bool all_equal( const T& a, const T& b, const T& c, const T& d)
 	{
 		return a == b && b == c && c == d;
 	}
@@ -96,6 +96,7 @@ namespace lmat
 	class out_of_range : public std::exception
 	{
 	public:
+		LMAT_ENSURE_INLINE
 		out_of_range(const char *msg)
 		: m_msg(msg)
 		{
