@@ -61,7 +61,7 @@ namespace lmat { namespace internal {
 
 	template<typename T>
 	LMAT_ENSURE_INLINE
-	void _fill_singlevec(index_t len, const T& v, T *pd, index_t d_step)
+	inline void _fill_singlevec(index_t len, const T& v, T *pd, index_t d_step)
 	{
 		if (d_step == 1) fill_vec(len, pd, v);
 		else fill_vec(len, step_ptr(pd, d_step), v);
@@ -70,7 +70,7 @@ namespace lmat { namespace internal {
 
 	template<typename T>
 	LMAT_ENSURE_INLINE
-	void _fill_multicol(index_t m, index_t n, const T& v,
+	inline void _fill_multicol(index_t m, index_t n, const T& v,
 			T *pd, index_t dst_cs)
 	{
 		for (index_t j = 0; j < n; ++j)
@@ -82,7 +82,7 @@ namespace lmat { namespace internal {
 
 	template<typename T>
 	LMAT_ENSURE_INLINE
-	void _fill_multicol(index_t m, index_t n, const T& v,
+	inline void _fill_multicol(index_t m, index_t n, const T& v,
 			T *pd, index_t dst_rs, index_t dst_cs)
 	{
 		if (dst_rs == 1)
@@ -101,7 +101,7 @@ namespace lmat { namespace internal {
 
 	template<typename T>
 	LMAT_ENSURE_INLINE
-	void _zero_singlevec(index_t len, T *pd, index_t d_step)
+	inline void _zero_singlevec(index_t len, T *pd, index_t d_step)
 	{
 		if (d_step == 1) zero_vec(len, pd);
 		else zero_vec(len, step_ptr(pd, d_step));
@@ -110,7 +110,7 @@ namespace lmat { namespace internal {
 
 	template<typename T>
 	LMAT_ENSURE_INLINE
-	void _zero_multicol(index_t m, index_t n, T *pd, index_t dst_cs)
+	inline void _zero_multicol(index_t m, index_t n, T *pd, index_t dst_cs)
 	{
 		for (index_t j = 0; j < n; ++j)
 		{
@@ -121,7 +121,7 @@ namespace lmat { namespace internal {
 
 	template<typename T>
 	LMAT_ENSURE_INLINE
-	void _zero_multicol(index_t m, index_t n, T *pd, index_t dst_rs, index_t dst_cs)
+	inline void _zero_multicol(index_t m, index_t n, T *pd, index_t dst_rs, index_t dst_cs)
 	{
 		if (dst_rs == 1)
 		{
@@ -145,7 +145,7 @@ namespace lmat { namespace internal {
 
 	template<typename T, class DMat, int M, int N>
 	LMAT_ENSURE_INLINE
-	void fill(const T& v, IRegularMatrix<DMat, T>& dmat, const matrix_fill_scheme<M, N, cont_level::whole>& sch)
+	inline void fill(const T& v, IRegularMatrix<DMat, T>& dmat, const matrix_fill_scheme<M, N, cont_level::whole>& sch)
 	{
 		fill_vec(sch.nelems(), dmat.ptr_data(), v);
 	}
@@ -237,7 +237,7 @@ namespace lmat { namespace internal {
 
 	template<typename T, class DMat, int M, int N>
 	LMAT_ENSURE_INLINE
-	void zero(IRegularMatrix<DMat, T>& dmat, const matrix_fill_scheme<M, N, cont_level::whole>& sch)
+	inline void zero(IRegularMatrix<DMat, T>& dmat, const matrix_fill_scheme<M, N, cont_level::whole>& sch)
 	{
 		zero_vec(sch.nelems(), dmat.ptr_data());
 	}
