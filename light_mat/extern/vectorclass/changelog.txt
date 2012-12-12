@@ -1,0 +1,26 @@
+change log for vectorclass.zip
+------------------------------
+
+2012-08-01 version 1.02 beta
+  * added file vector3d.h for 3-dimensional vectors
+  * added file complexvec.h for complex numbers and complex vectors
+  * added file quaternion.h for quaternions
+  * added function change_sign for floating point vectors
+  * added operators +, -, *, / between floating point vectors and scalars to remove overloading ambiguity
+
+
+2012-07-08 version 1.01 beta
+  * added file decimal.h with Number <-> string conversion functions: 
+    bin2bcd, bin2ascii, bin2hex_ascii, ascii2bin
+  * added andnot function for boolean vectors
+  * added functions shift_bytes_up and shift_bytes_down
+  * added operators for unsigned integer vector classes: >>=, &, &&, |, ||, ^, ~
+  * inteldispatchpatch.cpp removed. Use asmlib instead (www.agner.org/optimize/#asmlib)
+  * prefix ++ and -- operators now return a reference, postfix operators return a value
+  * various improvements in permute and blend functions
+  * minor improvement in abs function
+  * added version number to VECTORCLASS_H
+
+
+2012-05-30 version 1.00 beta
+  * first public release
