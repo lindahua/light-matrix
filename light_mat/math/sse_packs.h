@@ -183,25 +183,24 @@ namespace lmat { namespace math {
 	    {
 	    	float s;
 
-#if LMAT_SIMD >= 5 // SSE 4.1 available
-	    	switch (0)
+	    	switch (i)
 	    	{
 	    	case 0:
 	    		s = _mm_cvtss_f32(v);
 	    		break;
 	    	case 1:
-	    		_MM_EXTRACT_FLOAT(s, v, 1);
+	    		s = _mm_cvtss_f32(
+	    				_mm_castsi128_ps(_mm_srli_si128(_mm_castps_si128(v), 4)));
 	    		break;
 	    	case 2:
-	    		_MM_EXTRACT_FLOAT(s, v, 2);
+	    		s = _mm_cvtss_f32(
+	    				_mm_castsi128_ps(_mm_srli_si128(_mm_castps_si128(v), 8)));
 	    		break;
 	    	default:
-	    		_MM_EXTRACT_FLOAT(s, v, 3);
+	    		s = _mm_cvtss_f32(
+	    				_mm_castsi128_ps(_mm_srli_si128(_mm_castps_si128(v), 12)));
 	    		break;
 	    	}
-#else
-	    	s = e[i];
-#endif
 
 	    	return s;
 	    }
