@@ -24,6 +24,16 @@ namespace lmat { namespace math {
 	LMAT_DEFINE_SIMD_TRAITS( sse_t, double, 	2, 16 )
 
 
+	/********************************************
+	 *
+	 *  pack classes
+	 *
+	 ********************************************/
+
+	typedef simd_pack<float,  sse_t> sse_f32pk;
+	typedef simd_pack<double, sse_t> sse_f64pk;
+
+
 	template<>
 	struct simd_pack<float, sse_t>
 	{

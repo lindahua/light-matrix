@@ -54,6 +54,8 @@ namespace lmat { namespace math {
 
 	template<typename T, typename Kind> struct simd_traits;
 
+	template<typename T, typename Kind> struct simd_bpack;
+
 	template<typename T, typename Kind> struct simd_pack;
 
 } }
@@ -67,6 +69,7 @@ namespace lmat { namespace math {
 #define LMAT_DEFINE_SIMD_TRAITS( Kind, ScalarT, Wid, Bytes ) \
 	template<> struct simd_traits<ScalarT, Kind> { \
 		typedef ScalarT scalar_type; \
+		static const unsigned int scalar_bytes = sizeof(scalar_type); \
 		static const unsigned int pack_width = Wid; \
 		static const unsigned int pack_bytes = Bytes; \
 		static const unsigned int pack_nbits = Bytes * 8; \
@@ -76,6 +79,7 @@ namespace lmat { namespace math {
 #define LMAT_DEFINE_FOR_SIMD_PACK( Kind, ScalarT, Wid ) \
 		typedef Kind simd_kind; \
 		typedef ScalarT scalar_type; \
+		static const unsigned int scalar_bytes = sizeof(scalar_type); \
 		static const unsigned int pack_width = Wid;
 
 
