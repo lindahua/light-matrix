@@ -43,7 +43,7 @@ namespace lmat { namespace math {
 		static double rcp_two_rpi() { return 0.1591549430918953357688837634; }	// 1 / (2 * Pi)
 
 		LMAT_ENSURE_INLINE
-		static double exp1() { return 2.718281828459045235360287471; }	// E
+		static double e() { return 2.718281828459045235360287471; }	// E
 	};
 
 
@@ -71,7 +71,7 @@ namespace lmat { namespace math {
 		static float rcp_two_rpi() { return 0.159154943092f; }	// 1 / (2 * Pi)
 
 		LMAT_ENSURE_INLINE
-		static float exp1() { return 2.718281828459f; }	// E
+		static float e() { return 2.718281828459f; }	// E
 	};
 
 } }

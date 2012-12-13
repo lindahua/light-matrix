@@ -14,16 +14,13 @@
 #define LIGHTMAT_MATH_BASE_H_
 
 #include <light_mat/common/basic_defs.h>
-#include <cstdlib>
+
+#if ((LIGHTMAT_PLATFORM == LIGHTMAT_POSIX) || defined(__INTEL_COMPILER))
+#define LMAT_PLATFORM_HAS_CXX11_MATH
+#define LMAT_HAS_CXX11_MATH
+#endif
+
 #include <cmath>
-
-#define LMAT_IMPORT_STDMATH_UFUN( funname, fun ) \
-	LMAT_ENSURE_INLINE inline float funname(float x) { return ::fun##f(x); } \
-	LMAT_ENSURE_INLINE inline double funname(double x) { return ::fun(x); }
-
-#define LMAT_IMPORT_STDMATH_BFUN( funname, fun ) \
-	LMAT_ENSURE_INLINE inline float funname(float x, float y) { return ::fun##f(x, y); } \
-	LMAT_ENSURE_INLINE inline double funname(double x, double y) { return ::fun(x, y); }
 
 namespace lmat { namespace math {
 
@@ -95,11 +92,11 @@ namespace lmat { namespace math {
 	template<typename T>
 	LMAT_ENSURE_INLINE T (min)(const T& x, const T& y) { return x < y ? x : y; }
 
-#ifdef LMAT_HAS_C99_MATH
-	LMAT_ENSURE_INLINE inline float  (max)(float  x, float  y) { return ::fmaxf(x, y); }
-	LMAT_ENSURE_INLINE inline double (max)(double x, double y) { return ::fmax(x, y); }
-	LMAT_ENSURE_INLINE inline float  (min)(float  x, float  y) { return ::fminf(x, y); }
-	LMAT_ENSURE_INLINE inline double (min)(double x, double y) { return ::fmin(x, y); }
+#ifdef LMAT_HAS_CXX11_MATH
+	LMAT_ENSURE_INLINE inline float  (max)(float  x, float  y) { return std::fmax(x, y); }
+	LMAT_ENSURE_INLINE inline double (max)(double x, double y) { return std::fmax(x, y); }
+	LMAT_ENSURE_INLINE inline float  (min)(float  x, float  y) { return std::fmin(x, y); }
+	LMAT_ENSURE_INLINE inline double (min)(double x, double y) { return std::fmin(x, y); }
 #endif
 
 
@@ -109,57 +106,51 @@ namespace lmat { namespace math {
 	 *
 	 ********************************************/
 
-#ifdef LMAT_HAS_C99_MATH
+#ifdef LMAT_HAS_CXX11_MATH
 
 	// fma
 
-	LMAT_ENSURE_INLINE inline float fma(float x, float y, float z) { return ::fmaf(x, y, z); }
-	LMAT_ENSURE_INLINE inline double fma(double x, double y, double z) { return ::fma(x, y, z); }
+	using std::fma;
 
 	// rounding
 
-	LMAT_IMPORT_STDMATH_UFUN( round, round )
-	LMAT_IMPORT_STDMATH_UFUN( trunc, trunc )
+	using std::round;
+	using std::trunc;
 
-	LMAT_ENSURE_INLINE inline long lround( float x ) { return ::lrintf(x); }
-	LMAT_ENSURE_INLINE inline long lround( double x ) { return ::lrint(x); }
+	using std::lrint;
+	using std::lround;
 
 	// power
 
-	LMAT_IMPORT_STDMATH_UFUN( cbrt, cbrt )
-	LMAT_IMPORT_STDMATH_BFUN( hypot, hypot )
+	using std::cbrt;
+	using std::hypot;
 
 	// exp & log
 
-	LMAT_IMPORT_STDMATH_UFUN( exp2, exp2 )
-	LMAT_IMPORT_STDMATH_UFUN( log2, log2 )
-	LMAT_IMPORT_STDMATH_UFUN( expm1, expm1 )
-	LMAT_IMPORT_STDMATH_UFUN( log1p, log1p )
+	using std::exp2;
+	using std::log2;
+	using std::expm1;
+	using std::log1p;
 
 	// hyperbolic
 
-	LMAT_IMPORT_STDMATH_UFUN( asinh, asinh )
-	LMAT_IMPORT_STDMATH_UFUN( acosh, acosh )
-	LMAT_IMPORT_STDMATH_UFUN( atanh, atanh )
+	using std::asinh;
+	using std::acosh;
+	using std::atanh;
 
 	// error & gamma
 
-	LMAT_IMPORT_STDMATH_UFUN( erf, erf )
-	LMAT_IMPORT_STDMATH_UFUN( erfc, erfc )
+	using std::erf;
+	using std::erfc;
 
-	LMAT_IMPORT_STDMATH_UFUN( lgamma, lgamma )
-	LMAT_IMPORT_STDMATH_UFUN( tgamma, tgamma )
+	using std::lgamma;
+	using std::tgamma;
 
 	// classification
 
-	LMAT_ENSURE_INLINE inline bool is_inf(float x) { return (bool)isinf(x); }
-	LMAT_ENSURE_INLINE inline bool is_inf(double x) { return (bool)isinf(x); }
-
-	// LMAT_ENSURE_INLINE bool is_finite(float x) { return (bool)isfinite(x); }
-	// LMAT_ENSURE_INLINE bool is_finite(double x) { return (bool)isfinite(x); }
-
-	LMAT_ENSURE_INLINE inline bool is_nan(float x) { return (bool)isnan(x); }
-	LMAT_ENSURE_INLINE inline bool is_nan(double x) { return (bool)isnan(x); }
+	using std::isinf;
+	using std::isfinite;
+	using std::isnan;
 
 #endif
 

@@ -28,35 +28,19 @@
 
 	#define LIGHTMAT_PLATFORM LIGHTMAT_WIN32
 
-	#define LMAT_USE_C11_STDLIB
-	#define LMAT_USE_STATIC_ASSERT
-	#define LMAT_HAS_NULLPTR
-	#define LMAT_HAS_DECLTYPE
-
 #elif (defined(__GNUC__))
 
 	#if (defined(__clang__))
-		#if ((__clang_major__ < 2) || (__clang_major__ == 2 && __clang_minor__ < 9))
-			#error CLANG of version lower than 2.9.0 is not supported
+		#if ((__clang_major__ < 3))
+			#error CLANG of version lower than 3.0 is not supported
 		#endif
 		#define LIGHTMAT_COMPILER LIGHTMAT_CLANG
 
-		#define LMAT_USE_C11_STDLIB
-		#define LMAT_USE_STATIC_ASSERT
-		#define LMAT_HAS_C99_MATH
-		#define LMAT_HAS_DECLTYPE
-
-		#if (__clang_major__ >= 3)
-			#define LMAT_HAS_NULLPTR
-		#endif
-
 	#else
-		#if ((__GNUC__ < 4) || (__GNUC__ == 4 && __GNUC_MINOR__ < 3))
-			#error GCC of version lower than 4.3.0 is not supported
+		#if ((__GNUC__ < 4) || (__GNUC__ == 4 && __GNUC_MINOR__ < 5))
+			#error GCC of version lower than 4.5.0 is not supported
 		#endif
 		#define LIGHTMAT_COMPILER LIGHTMAT_GCC
-
-		#define LMAT_HAS_C99_MATH
 
 		#if (!(defined(__GXX_EXPERIMENTAL_CXX0X__)))
 			#error Light-Matrix requires support of C++11 standard.
