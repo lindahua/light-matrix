@@ -20,6 +20,7 @@
 #define LMAT_HAS_CXX11_MATH
 #endif
 
+#include <cstdlib>
 #include <cmath>
 
 namespace lmat { namespace math {
