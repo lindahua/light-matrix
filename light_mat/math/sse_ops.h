@@ -319,13 +319,13 @@ namespace lmat { namespace math {
 	LMAT_ENSURE_INLINE
 	inline sse_f32bpk operator < (const sse_f32pk& a, const sse_f32pk& b)
 	{
-		return _mm_cmpgt_ps(a, b);
+		return _mm_cmplt_ps(a, b);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline sse_f64bpk operator < (const sse_f64pk& a, const sse_f64pk& b)
 	{
-		return _mm_cmpgt_pd(a, b);
+		return _mm_cmplt_pd(a, b);
 	}
 
 
