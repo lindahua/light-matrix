@@ -33,7 +33,21 @@ namespace lmat { namespace math {
 
 
 	template<typename T, typename Kind>
-	inline void test_equal(const simd_pack<T, Kind>& pk, const T *ref)
+	inline bool test_equal(const simd_pack<T, Kind>& pk, const T& v)
+	{
+		const unsigned int width = pk.width();
+
+		for (unsigned int i = 0; i < width; ++i)
+		{
+			if (!(pk.e[i] == v)) return false;
+		}
+
+		return true;
+	}
+
+
+	template<typename T, typename Kind>
+	inline bool test_equal(const simd_pack<T, Kind>& pk, const T *ref)
 	{
 		const unsigned int width = pk.width();
 

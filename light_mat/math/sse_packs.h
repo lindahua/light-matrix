@@ -219,7 +219,7 @@ namespace lmat { namespace math {
 		union
 		{
 			__m128d v;
-			LMAT_ALIGN_SSE float e[2];
+			LMAT_ALIGN_SSE double e[2];
 		};
 
 		LMAT_ENSURE_INLINE

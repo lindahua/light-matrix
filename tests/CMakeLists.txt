@@ -53,8 +53,19 @@ set(COMMON_HS
     ${INC}/common/basic_defs.h    
     ${INC}/common/memory.h
     ${INC}/common/memalloc.h
-    ${INC}/common/block.h)
+    ${INC}/common/block.h
+    ${INC}/math/math_base.h
+    ${INC}/math/math_constants.h)
     
+set(SIMD_BASE_HS
+    ${INC}/math/simd_arch.h
+    ${INC}/math/simd_base.h
+    ${INC}/math/simd_debug.h)
+    
+set(SSE_HS
+    ${INC}/math/sse_packs.h
+    ${INC}/math/sse_bpacks.h)
+  
 set(MATRIX_BASE_HS
     ${INC}/matrix/matrix_shape.h
     ${INC}/matrix/matrix_layout.h
@@ -96,6 +107,13 @@ add_library(test_main STATIC test_main.cpp)
 add_executable(test_meta ${COMMON_HS} test_meta.cpp)
 add_executable(test_memory ${COMMON_HS} test_memory.cpp)
 add_executable(test_blocks ${COMMON_HS} test_blocks.cpp)
+
+set(SSE_TEST_HS
+    ${COMMON_HS}
+    ${SIMD_BASE_HS}
+    ${SSE_HS})
+
+add_executable(test_sse_packs ${SSE_TEST_HS} test_sse_packs.cpp)
 
 set(DENSE_MAT_HS
     ${COMMON_HS}
@@ -143,6 +161,7 @@ set(LMAT_TEST_NAMES
     test_meta
     test_memory
 	test_blocks
+	test_sse_packs
 	test_dense_mat
 	test_dense_vec
 	test_ref_mat
