@@ -33,6 +33,24 @@ namespace lmat { namespace math {
 
 
 	template<typename T, typename Kind>
+	inline void print_pack(const char *fmt, const simd_bpack<T, Kind>& pk)
+	{
+		const unsigned int width = pk.width();
+
+		std::printf("(");
+
+		for (unsigned int i = 0; i < width - 1; ++i)
+		{
+			std::printf(fmt, pk.e[i]);
+			std::printf(", ");
+		}
+		std::printf(fmt, pk.e[width-1]);
+
+		std::printf(")");
+	}
+
+
+	template<typename T, typename Kind>
 	inline bool test_equal(const simd_pack<T, Kind>& pk, const T& v)
 	{
 		const unsigned int width = pk.width();

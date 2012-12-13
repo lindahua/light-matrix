@@ -536,6 +536,226 @@ T_CASE( sse_comp, le )
 }
 
 
+
+template<typename T> struct sse_not_tbody;
+
+template<>
+struct sse_not_tbody<float>
+{
+	static void run()
+	{
+		typedef simd_bpack<float, sse_t> bpack_t;
+		typedef typename bpack_t::bint_type bint;
+
+		bpack_t a(true, false, false, true);
+		bint r1[4] = {0, -1, -1, 0};
+
+		ASSERT_SIMD_EQ(~a, r1);
+	}
+};
+
+template<>
+struct sse_not_tbody<double>
+{
+	static void run()
+	{
+		typedef simd_bpack<double, sse_t> bpack_t;
+		typedef typename bpack_t::bint_type bint;
+
+		bpack_t a(true, false);
+		bint r1[4] = {0, -1};
+
+		ASSERT_SIMD_EQ(~a, r1);
+	}
+};
+
+T_CASE( sse_logical, not )
+{
+	sse_not_tbody<T>::run();
+}
+
+
+template<typename T> struct sse_and_tbody;
+
+template<>
+struct sse_and_tbody<float>
+{
+	static void run()
+	{
+		typedef simd_bpack<float, sse_t> bpack_t;
+		typedef typename bpack_t::bint_type bint;
+
+		bpack_t a(false, false, true, true);
+		bpack_t b(false, true, false, true);
+		bint r1[4] = {0, 0, 0, -1};
+
+		ASSERT_SIMD_EQ(a & b, r1);
+	}
+};
+
+template<>
+struct sse_and_tbody<double>
+{
+	static void run()
+	{
+		typedef simd_bpack<double, sse_t> bpack_t;
+		typedef typename bpack_t::bint_type bint;
+
+		bpack_t a1(false, false);
+		bpack_t b1(false, true);
+		bint r1[4] = {0, 0};
+
+		bpack_t a2(true, true);
+		bpack_t b2(false, true);
+		bint r2[4] = {0, -1};
+
+		ASSERT_SIMD_EQ(a1 & b1, r1);
+		ASSERT_SIMD_EQ(a2 & b2, r2);
+	}
+};
+
+T_CASE( sse_logical, and )
+{
+	sse_and_tbody<T>::run();
+}
+
+
+template<typename T> struct sse_or_tbody;
+
+template<>
+struct sse_or_tbody<float>
+{
+	static void run()
+	{
+		typedef simd_bpack<float, sse_t> bpack_t;
+		typedef typename bpack_t::bint_type bint;
+
+		bpack_t a(false, false, true, true);
+		bpack_t b(false, true, false, true);
+		bint r1[4] = {0, -1, -1, -1};
+
+		ASSERT_SIMD_EQ(a | b, r1);
+	}
+};
+
+template<>
+struct sse_or_tbody<double>
+{
+	static void run()
+	{
+		typedef simd_bpack<double, sse_t> bpack_t;
+		typedef typename bpack_t::bint_type bint;
+
+		bpack_t a1(false, false);
+		bpack_t b1(false, true);
+		bint r1[4] = {0, -1};
+
+		bpack_t a2(true, true);
+		bpack_t b2(false, true);
+		bint r2[4] = {-1, -1};
+
+		ASSERT_SIMD_EQ(a1 | b1, r1);
+		ASSERT_SIMD_EQ(a2 | b2, r2);
+	}
+};
+
+T_CASE( sse_logical, or )
+{
+	sse_or_tbody<T>::run();
+}
+
+
+template<typename T> struct sse_eq_tbody;
+
+template<>
+struct sse_eq_tbody<float>
+{
+	static void run()
+	{
+		typedef simd_bpack<float, sse_t> bpack_t;
+		typedef typename bpack_t::bint_type bint;
+
+		bpack_t a(false, false, true, true);
+		bpack_t b(false, true, false, true);
+		bint r1[4] = {-1, 0, 0, -1};
+
+		ASSERT_SIMD_EQ(a == b, r1);
+	}
+};
+
+template<>
+struct sse_eq_tbody<double>
+{
+	static void run()
+	{
+		typedef simd_bpack<double, sse_t> bpack_t;
+		typedef typename bpack_t::bint_type bint;
+
+		bpack_t a1(false, false);
+		bpack_t b1(false, true);
+		bint r1[4] = {-1, 0};
+
+		bpack_t a2(true, true);
+		bpack_t b2(false, true);
+		bint r2[4] = {0, -1};
+
+		ASSERT_SIMD_EQ(a1 == b1, r1);
+		ASSERT_SIMD_EQ(a2 == b2, r2);
+	}
+};
+
+T_CASE( sse_logical, eq )
+{
+	sse_eq_tbody<T>::run();
+}
+
+
+template<typename T> struct sse_ne_tbody;
+
+template<>
+struct sse_ne_tbody<float>
+{
+	static void run()
+	{
+		typedef simd_bpack<float, sse_t> bpack_t;
+		typedef typename bpack_t::bint_type bint;
+
+		bpack_t a(false, false, true, true);
+		bpack_t b(false, true, false, true);
+		bint r1[4] = {0, -1, -1, 0};
+
+		ASSERT_SIMD_EQ(a != b, r1);
+	}
+};
+
+template<>
+struct sse_ne_tbody<double>
+{
+	static void run()
+	{
+		typedef simd_bpack<double, sse_t> bpack_t;
+		typedef typename bpack_t::bint_type bint;
+
+		bpack_t a1(false, false);
+		bpack_t b1(false, true);
+		bint r1[4] = {0, -1};
+
+		bpack_t a2(true, true);
+		bpack_t b2(false, true);
+		bint r2[4] = {-1, 0};
+
+		ASSERT_SIMD_EQ(a1 != b1, r1);
+		ASSERT_SIMD_EQ(a2 != b2, r2);
+	}
+};
+
+T_CASE( sse_logical, ne )
+{
+	sse_ne_tbody<T>::run();
+}
+
+
+
 DEF_TPACK( sse_arith, add )
 DEF_TPACK( sse_arith, sub )
 DEF_TPACK( sse_arith, mul )
@@ -556,6 +776,12 @@ DEF_TPACK( sse_comp, gt )
 DEF_TPACK( sse_comp, ge )
 DEF_TPACK( sse_comp, lt )
 DEF_TPACK( sse_comp, le )
+
+DEF_TPACK( sse_logical, not )
+DEF_TPACK( sse_logical, and )
+DEF_TPACK( sse_logical, or )
+DEF_TPACK( sse_logical, eq )
+DEF_TPACK( sse_logical, ne )
 
 BEGIN_MAIN_SUITE
 	ADD_TPACK( sse_arith_add )
@@ -578,6 +804,12 @@ BEGIN_MAIN_SUITE
 	ADD_TPACK( sse_comp_ge )
 	ADD_TPACK( sse_comp_lt )
 	ADD_TPACK( sse_comp_le )
+
+	ADD_TPACK( sse_logical_not )
+	ADD_TPACK( sse_logical_and )
+	ADD_TPACK( sse_logical_or )
+	ADD_TPACK( sse_logical_eq )
+	ADD_TPACK( sse_logical_ne )
 END_MAIN_SUITE
 
 
