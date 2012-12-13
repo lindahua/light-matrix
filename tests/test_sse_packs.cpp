@@ -8,6 +8,7 @@
 
 #include "simd_test_base.h"
 #include <light_mat/math/sse_packs.h>
+#include <light_mat/math/math_base.h>
 
 using namespace lmat;
 using namespace lmat::test;
@@ -74,6 +75,32 @@ T_CASE( sse_pack, constructs )
 
 	pack_t pk2 = elemwise_construct<T>::get(r2);
 	ASSERT_SIMD_EQ( pk2, r2 );
+
+	pack_t pv1 = pack_t::ones();
+	ASSERT_SIMD_EQ( pv1, T(1) );
+
+#ifdef LMAT_HAS_CXX11_MATH
+	pack_t pv_inf = pack_t::inf();
+	for (unsigned i = 0; i < width; ++i)
+	{
+		bool is_inf_i = math::isinf(pv_inf.e[i]) && pv_inf.e[i] > T(0);
+		ASSERT_TRUE( is_inf_i );
+	}
+
+	pack_t pv_neginf = pack_t::neg_inf();
+	for (unsigned i = 0; i < width; ++i)
+	{
+		bool is_neginf_i = math::isinf(pv_neginf.e[i]) && pv_neginf.e[i] < T(0);
+		ASSERT_TRUE( is_neginf_i );
+	}
+
+	pack_t pv_nan = pack_t::nan();
+	for (unsigned i = 0; i < width; ++i)
+	{
+		bool is_nan_i = math::isnan(pv_nan.e[i]);
+		ASSERT_TRUE( is_nan_i );
+	}
+#endif
 }
 
 

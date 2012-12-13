@@ -75,6 +75,31 @@ namespace lmat { namespace math {
 	    	return _mm_setzero_ps();
 	    }
 
+	    LMAT_ENSURE_INLINE
+	    static simd_pack ones()
+	    {
+	    	return _mm_set1_ps(1.0f);
+	    }
+
+	    LMAT_ENSURE_INLINE
+	    static simd_pack inf()
+	    {
+	    	return _mm_castsi128_ps(_mm_set1_epi32((int)0x7f800000));
+	    }
+
+	    LMAT_ENSURE_INLINE
+	    static simd_pack neg_inf()
+	    {
+	    	return _mm_castsi128_ps(_mm_set1_epi32((int)0xff800000));
+	    }
+
+	    LMAT_ENSURE_INLINE
+	    static simd_pack nan()
+	    {
+	    	return _mm_set1_ps(std::numeric_limits<float>::quiet_NaN());
+	    }
+
+
 	    // converter
 
 	    LMAT_ENSURE_INLINE
@@ -247,6 +272,30 @@ namespace lmat { namespace math {
 	    static simd_pack zeros()
 	    {
 	    	return _mm_setzero_pd();
+	    }
+
+	    LMAT_ENSURE_INLINE
+	    static simd_pack ones()
+	    {
+	    	return _mm_set1_pd(1.0);
+	    }
+
+	    LMAT_ENSURE_INLINE
+	    static simd_pack inf()
+	    {
+	    	return _mm_castsi128_pd(_mm_setr_epi32(0, (int)0x7ff00000, 0, (int)0x7ff00000));
+	    }
+
+	    LMAT_ENSURE_INLINE
+	    static simd_pack neg_inf()
+	    {
+	    	return _mm_castsi128_pd(_mm_setr_epi32(0, (int)0xfff00000, 0, (int)0xfff00000));
+	    }
+
+	    LMAT_ENSURE_INLINE
+	    static simd_pack nan()
+	    {
+	    	return _mm_set1_pd(std::numeric_limits<double>::quiet_NaN());
 	    }
 
 	    // converter
