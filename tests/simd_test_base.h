@@ -36,6 +36,21 @@ namespace lmat { namespace test {
 		}
 	};
 
+	template<typename T, typename Kind>
+	inline bool test_simd_ulp(
+			const lmat::math::simd_pack<T, Kind>& a, const T *b, unsigned int dtol)
+	{
+		const unsigned int width = a.width();
+
+		for (unsigned i = 0; i < width; ++i)
+		{
+			if (ltest::ulp_distance(a.e[i], b[i]) > dtol)
+				return false;
+		}
+
+		return true;
+	}
+
 } }
 
 
@@ -54,9 +69,11 @@ namespace lmat { namespace test {
 	tpack->add( new TCASE_CLASS( pname, tname )<ty, id>() );
 
 
-
 #define ASSERT_SIMD_EQ( a, b ) \
 	if (!::lmat::math::test_equal(a, b)) throw ::ltest::assertion_failure(__FILE__, __LINE__, #a " == " #b)
+
+#define ASSERT_SIMD_ULP( a, b, dtol ) \
+	if (!::lmat::test::test_simd_ulp(a, b, dtol)) throw ::ltest::assertion_failure(__FILE__, __LINE__, "ULP(" #a ", " #b ") <= " #dtol  )
 
 
 #endif /* SIMD_TEST_BASE_H_ */

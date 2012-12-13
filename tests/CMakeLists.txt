@@ -60,11 +60,13 @@ set(COMMON_HS
 set(SIMD_BASE_HS
     ${INC}/math/simd_arch.h
     ${INC}/math/simd_base.h
-    ${INC}/math/simd_debug.h)
+    ${INC}/math/simd_debug.h
+    ${INC}/math/internal/numrepr_format.h)
     
 set(SSE_HS
     ${INC}/math/sse_packs.h
-    ${INC}/math/sse_bpacks.h)
+    ${INC}/math/sse_bpacks.h
+    ${INC}/math/sse_ops.h)
   
 set(MATRIX_BASE_HS
     ${INC}/matrix/matrix_shape.h
@@ -115,6 +117,7 @@ set(SSE_TEST_HS
 
 add_executable(test_sse_packs ${SSE_TEST_HS} test_sse_packs.cpp)
 add_executable(test_sse_bpacks ${SSE_TEST_HS} test_sse_bpacks.cpp)
+add_executable(test_sse_ops ${SSE_TEST_HS} test_sse_ops.cpp)
 
 set(DENSE_MAT_HS
     ${COMMON_HS}
@@ -164,6 +167,7 @@ set(LMAT_TEST_NAMES
 	test_blocks
 	test_sse_packs
 	test_sse_bpacks
+	test_sse_ops
 	test_dense_mat
 	test_dense_vec
 	test_ref_mat
