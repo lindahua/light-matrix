@@ -59,6 +59,32 @@ namespace lmat { namespace math {
 		return true;
 	}
 
+	template<typename T, typename Kind>
+	inline bool test_equal(const simd_bpack<T, Kind>& pk, const typename simd_bpack<T, Kind>::bint_type& v)
+	{
+		const unsigned int width = pk.width();
+
+		for (unsigned int i = 0; i < width; ++i)
+		{
+			if (!(pk.e[i] == v)) return false;
+		}
+
+		return true;
+	}
+
+	template<typename T, typename Kind>
+	inline bool test_equal(const simd_bpack<T, Kind>& pk, const typename simd_bpack<T, Kind>::bint_type* ref)
+	{
+		const unsigned int width = pk.width();
+
+		for (unsigned int i = 0; i < width; ++i)
+		{
+			if (!(pk.e[i] == ref[i])) return false;
+		}
+
+		return true;
+	}
+
 } }
 
 #endif /* SIMD_DEBUG_H_ */

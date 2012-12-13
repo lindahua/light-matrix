@@ -114,6 +114,7 @@ set(SSE_TEST_HS
     ${SSE_HS})
 
 add_executable(test_sse_packs ${SSE_TEST_HS} test_sse_packs.cpp)
+add_executable(test_sse_bpacks ${SSE_TEST_HS} test_sse_bpacks.cpp)
 
 set(DENSE_MAT_HS
     ${COMMON_HS}
@@ -162,6 +163,7 @@ set(LMAT_TEST_NAMES
     test_memory
 	test_blocks
 	test_sse_packs
+	test_sse_bpacks
 	test_dense_mat
 	test_dense_vec
 	test_ref_mat

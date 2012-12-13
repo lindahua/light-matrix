@@ -20,7 +20,20 @@ namespace lmat { namespace math {
 	template<>
 	struct simd_bpack<float, sse_t>
 	{
-		__m128 v;
+		typedef int32_t bint_type;
+		static const unsigned int pack_width = 4;
+
+		union
+		{
+			__m128 v;
+			LMAT_ALIGN_SSE int32_t e[4];
+		};
+
+		LMAT_ENSURE_INLINE
+		unsigned int width() const
+		{
+			return pack_width;
+		}
 
 		// constructors
 
@@ -64,9 +77,10 @@ namespace lmat { namespace math {
 	    void set(bool b)
 		{
 	    	if (b)
-	    		v = _mm_setzero_ps();
-	    	else
 	    		v = _mm_castsi128_ps(_mm_set1_epi32(-1));
+	    	else
+	    		v = _mm_setzero_ps();
+
 		}
 
 		LMAT_ENSURE_INLINE void set(bool b0, bool b1, bool b2, bool b3)
@@ -91,7 +105,20 @@ namespace lmat { namespace math {
 	template<>
 	struct simd_bpack<double, sse_t>
 	{
-		__m128d v;
+		typedef int64_t bint_type;
+		static const unsigned int pack_width = 2;
+
+		union
+		{
+			__m128d v;
+			LMAT_ALIGN_SSE int64_t e[2];
+		};
+
+		LMAT_ENSURE_INLINE
+		unsigned int width() const
+		{
+			return pack_width;
+		}
 
 		// constructors
 
@@ -135,9 +162,9 @@ namespace lmat { namespace math {
 	    void set(bool b)
 		{
 	    	if (b)
-	    		v = _mm_setzero_pd();
-	    	else
 	    		v = _mm_castsi128_pd(_mm_set1_epi32(-1));
+	    	else
+	    		v = _mm_setzero_pd();
 		}
 
 		LMAT_ENSURE_INLINE void set(bool b0, bool b1)
