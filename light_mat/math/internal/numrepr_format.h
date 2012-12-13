@@ -46,8 +46,8 @@ namespace lmat { namespace math { namespace internal {
 		static const unsigned int n_mantissa_bits = 52;
 
 		static const sint_type sign_bit      = (sint_type)0x8000000000000000LL;
-		static const sint_type exponent_bits = (sint_type)0x7fff000000000000LL;
-		static const sint_type mantissa_bits = (sint_type)0x0000ffffffffffffLL;
+		static const sint_type exponent_bits = (sint_type)0x7ff0000000000000LL;
+		static const sint_type mantissa_bits = (sint_type)0x000fffffffffffffLL;
 	};
 
 

@@ -440,7 +440,7 @@ namespace lmat { namespace math {
 
 	/********************************************
 	 *
-	 *  special number test
+	 *  FP classification
 	 *
 	 ********************************************/
 
@@ -454,6 +454,16 @@ namespace lmat { namespace math {
 		return _mm_castsi128_ps(_mm_cmpeq_epi32(u, msk));
 	}
 
+	LMAT_ENSURE_INLINE
+	inline sse_f64bpk is_neg(const sse_f64pk& a)
+	{
+		typedef internal::num_fmt<double> fmt;
+
+		__m128i msk = _mm_set1_epi64x(fmt::sign_bit);
+		__m128i u = _mm_and_si128(_mm_castpd_si128(a.v), msk);
+		return _mm_castsi128_pd(_mm_cmpeq_epi64(u, msk));
+	}
+
 
 	LMAT_ENSURE_INLINE
 	inline sse_f32bpk is_finite(const sse_f32pk& a)
@@ -463,8 +473,22 @@ namespace lmat { namespace math {
 		__m128i e_msk = _mm_set1_epi32(fmt::exponent_bits);
 		__m128i e = _mm_and_si128(_mm_castps_si128(a.v), e_msk);
 		__m128i not_finite = _mm_castsi128_ps(_mm_cmpeq_epi32(e, e_msk));
-		return _mm_cmpeq_epi32(not_finite, _mm_setzero_si128());
+		return _mm_castsi128_ps(
+				_mm_cmpeq_epi32(not_finite, _mm_setzero_si128()));
 	}
+
+	LMAT_ENSURE_INLINE
+	inline sse_f64bpk is_finite(const sse_f64pk& a)
+	{
+		typedef internal::num_fmt<double> fmt;
+
+		__m128i e_msk = _mm_set1_epi64x(fmt::exponent_bits);
+		__m128i e = _mm_and_si128(_mm_castpd_si128(a.v), e_msk);
+		__m128i not_finite = _mm_castsi128_pd(_mm_cmpeq_epi64(e, e_msk));
+		return _mm_castsi128_pd(
+				_mm_cmpeq_epi64(not_finite, _mm_setzero_si128()));
+	}
+
 
 	LMAT_ENSURE_INLINE
 	inline sse_f32bpk is_inf(const sse_f32pk& a)
@@ -475,6 +499,17 @@ namespace lmat { namespace math {
 		__m128i val = _mm_set1_epi32(fmt::exponent_bits);
 		return _mm_castsi128_ps(_mm_cmpeq_epi32(aa, val));
 	}
+
+	LMAT_ENSURE_INLINE
+	inline sse_f64bpk is_inf(const sse_f64pk& a)
+	{
+		typedef internal::num_fmt<double> fmt;
+
+		__m128i aa = _mm_castpd_si128(abs(a).v);
+		__m128i val = _mm_set1_epi64x(fmt::exponent_bits);
+		return _mm_castsi128_pd(_mm_cmpeq_epi64(aa, val));
+	}
+
 
 	LMAT_ENSURE_INLINE
 	inline sse_f32bpk is_nan(const sse_f32pk& a)
@@ -488,10 +523,28 @@ namespace lmat { namespace math {
 		__m128i e = _mm_and_si128(ai, e_msk);
 		__m128i s = _mm_and_si128(ai, s_msk);
 
-		return _mm_andnot_si128(
+		return _mm_castsi128_ps(_mm_andnot_si128(
 				_mm_cmpeq_epi32(s, _mm_setzero_si128()),
-				_mm_cmpeq_epi32(e, e_msk));
+				_mm_cmpeq_epi32(e, e_msk)));
 	}
+
+	LMAT_ENSURE_INLINE
+	inline sse_f64bpk is_nan(const sse_f64pk& a)
+	{
+		typedef internal::num_fmt<double> fmt;
+
+		__m128i ai = _mm_castpd_si128(a.v);
+		__m128i e_msk = _mm_set1_epi64x(fmt::exponent_bits);
+		__m128i s_msk = _mm_set1_epi64x(fmt::mantissa_bits);
+
+		__m128i e = _mm_and_si128(ai, e_msk);
+		__m128i s = _mm_and_si128(ai, s_msk);
+
+		return _mm_castsi128_pd(_mm_andnot_si128(
+				_mm_cmpeq_epi64(s, _mm_setzero_si128()),
+				_mm_cmpeq_epi64(e, e_msk)));
+	}
+
 
 
 

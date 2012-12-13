@@ -756,6 +756,132 @@ T_CASE( sse_logical, ne )
 
 
 
+template<typename T> struct sse_fpclassify_tbody;
+
+template<>
+struct sse_fpclassify_tbody<float>
+{
+	static void run()
+	{
+		typedef std::numeric_limits<float> lim_t;
+
+		typedef simd_pack<float, sse_t> pack_t;
+		typedef simd_bpack<float, sse_t> bpack_t;
+		typedef typename bpack_t::bint_type bint;
+
+		float v_zero = 0.f;
+		float v_neg_zero = -0.f;
+		float v_one = 1.f;
+		float v_neg_one = -1.f;
+		float v_inf = lim_t::infinity();
+		float v_neg_inf = -lim_t::infinity();
+		float v_nan = lim_t::quiet_NaN();
+		float v_neg_nan = -lim_t::quiet_NaN();
+
+		pack_t a1(v_zero, v_neg_zero, v_one, v_neg_one);
+		pack_t a2(v_inf, v_neg_inf, v_nan, v_neg_nan);
+
+		bint is_neg_r1[4] = { 0, -1, 0, -1 };
+		bint is_neg_r2[4] = { 0, -1, 0, -1 };
+
+		bint is_finite_r1[4] = { -1, -1, -1, -1 };
+		bint is_finite_r2[4] = { 0, 0, 0, 0 };
+
+		bint is_inf_r1[4] = { 0, 0, 0, 0 };
+		bint is_inf_r2[4] = { -1, -1, 0, 0 };
+
+		bint is_nan_r1[4] = { 0, 0, 0, 0 };
+		bint is_nan_r2[4] = { 0, 0, -1, -1 };
+
+		ASSERT_SIMD_EQ( math::is_neg(a1), is_neg_r1  );
+		ASSERT_SIMD_EQ( math::is_neg(a2), is_neg_r2  );
+
+		ASSERT_SIMD_EQ( math::is_finite(a1), is_finite_r1  );
+		ASSERT_SIMD_EQ( math::is_finite(a2), is_finite_r2  );
+
+		ASSERT_SIMD_EQ( math::is_inf(a1), is_inf_r1  );
+		ASSERT_SIMD_EQ( math::is_inf(a2), is_inf_r2  );
+
+		ASSERT_SIMD_EQ( math::is_nan(a1), is_nan_r1  );
+		ASSERT_SIMD_EQ( math::is_nan(a2), is_nan_r2  );
+	}
+};
+
+
+template<>
+struct sse_fpclassify_tbody<double>
+{
+	static void run()
+	{
+		typedef std::numeric_limits<double> lim_t;
+
+		typedef simd_pack<double, sse_t> pack_t;
+		typedef simd_bpack<double, sse_t> bpack_t;
+		typedef typename bpack_t::bint_type bint;
+
+		double v_zero = 0.0;
+		double v_neg_zero = -0.0;
+		double v_one = 1.0;
+		double v_neg_one = -1.0;
+		double v_inf = lim_t::infinity();
+		double v_neg_inf = -lim_t::infinity();
+		double v_nan = lim_t::quiet_NaN();
+		double v_neg_nan = -lim_t::quiet_NaN();
+
+		pack_t a1(v_zero, v_neg_zero);
+		pack_t a2(v_one, v_neg_one);
+		pack_t a3(v_inf, v_neg_inf);
+		pack_t a4(v_nan, v_neg_nan);
+
+		bint is_neg_r1[2] = { 0, -1 };
+		bint is_neg_r2[2] = { 0, -1 };
+		bint is_neg_r3[2] = { 0, -1 };
+		bint is_neg_r4[2] = { 0, -1 };
+
+		bint is_finite_r1[2] = { -1, -1 };
+		bint is_finite_r2[2] = { -1, -1 };
+		bint is_finite_r3[2] = { 0, 0 };
+		bint is_finite_r4[2] = { 0, 0 };
+
+		bint is_inf_r1[2] = { 0, 0 };
+		bint is_inf_r2[2] = { 0, 0 };
+		bint is_inf_r3[2] = { -1, -1 };
+		bint is_inf_r4[2] = { 0, 0 };
+
+		bint is_nan_r1[2] = { 0, 0 };
+		bint is_nan_r2[2] = { 0, 0 };
+		bint is_nan_r3[2] = { 0, 0 };
+		bint is_nan_r4[2] = { -1, -1 };
+
+		ASSERT_SIMD_EQ( math::is_neg(a1), is_neg_r1  );
+		ASSERT_SIMD_EQ( math::is_neg(a2), is_neg_r2  );
+		ASSERT_SIMD_EQ( math::is_neg(a3), is_neg_r3  );
+		ASSERT_SIMD_EQ( math::is_neg(a4), is_neg_r4  );
+
+		ASSERT_SIMD_EQ( math::is_finite(a1), is_finite_r1  );
+		ASSERT_SIMD_EQ( math::is_finite(a2), is_finite_r2  );
+
+		ASSERT_SIMD_EQ( math::is_finite(a3), is_finite_r3  );
+		ASSERT_SIMD_EQ( math::is_finite(a4), is_finite_r4  );
+
+		ASSERT_SIMD_EQ( math::is_inf(a1), is_inf_r1  );
+		ASSERT_SIMD_EQ( math::is_inf(a2), is_inf_r2  );
+		ASSERT_SIMD_EQ( math::is_inf(a3), is_inf_r3 );
+		ASSERT_SIMD_EQ( math::is_inf(a4), is_inf_r4  );
+
+		ASSERT_SIMD_EQ( math::is_nan(a1), is_nan_r1  );
+		ASSERT_SIMD_EQ( math::is_nan(a2), is_nan_r2  );
+		ASSERT_SIMD_EQ( math::is_nan(a3), is_nan_r3  );
+		ASSERT_SIMD_EQ( math::is_nan(a4), is_nan_r4  );
+	}
+};
+
+T_CASE( sse_fpclassify, all )
+{
+	sse_fpclassify_tbody<T>::run();
+}
+
+
 DEF_TPACK( sse_arith, add )
 DEF_TPACK( sse_arith, sub )
 DEF_TPACK( sse_arith, mul )
@@ -782,6 +908,8 @@ DEF_TPACK( sse_logical, and )
 DEF_TPACK( sse_logical, or )
 DEF_TPACK( sse_logical, eq )
 DEF_TPACK( sse_logical, ne )
+
+DEF_TPACK( sse_fpclassify, all )
 
 BEGIN_MAIN_SUITE
 	ADD_TPACK( sse_arith_add )
@@ -810,7 +938,7 @@ BEGIN_MAIN_SUITE
 	ADD_TPACK( sse_logical_or )
 	ADD_TPACK( sse_logical_eq )
 	ADD_TPACK( sse_logical_ne )
+
+	ADD_TPACK( sse_fpclassify_all )
 END_MAIN_SUITE
-
-
 
