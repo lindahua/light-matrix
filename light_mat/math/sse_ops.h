@@ -190,6 +190,30 @@ namespace lmat { namespace math {
 	 ********************************************/
 
 	LMAT_ENSURE_INLINE
+	inline sse_f32pk sqr(const sse_f32pk& a)
+	{
+		return _mm_mul_ps(a.v, a.v);
+	}
+
+	LMAT_ENSURE_INLINE
+	inline sse_f64pk sqr(const sse_f64pk& a)
+	{
+		return _mm_mul_pd(a.v, a.v);
+	}
+
+	LMAT_ENSURE_INLINE
+	inline sse_f32pk cube(const sse_f32pk& a)
+	{
+		return _mm_mul_ps(_mm_mul_ps(a.v, a.v), a.v);
+	}
+
+	LMAT_ENSURE_INLINE
+	inline sse_f64pk cube(const sse_f64pk& a)
+	{
+		return _mm_mul_pd(_mm_mul_pd(a.v, a.v), a.v);
+	}
+
+	LMAT_ENSURE_INLINE
 	inline sse_f32pk sqrt(const sse_f32pk& a)
 	{
 		return _mm_sqrt_ps(a.v);
@@ -235,30 +259,6 @@ namespace lmat { namespace math {
 	inline sse_f64pk rsqrt(const sse_f64pk& a)
 	{
 		return _mm_div_pd(_mm_set1_pd(1.0), _mm_sqrt_pd(a.v));
-	}
-
-	LMAT_ENSURE_INLINE
-	inline sse_f32pk sqr(const sse_f32pk& a)
-	{
-		return _mm_mul_ps(a.v, a.v);
-	}
-
-	LMAT_ENSURE_INLINE
-	inline sse_f64pk sqr(const sse_f64pk& a)
-	{
-		return _mm_mul_pd(a.v, a.v);
-	}
-
-	LMAT_ENSURE_INLINE
-	inline sse_f32pk cube(const sse_f32pk& a)
-	{
-		return _mm_mul_ps(_mm_mul_ps(a.v, a.v), a.v);
-	}
-
-	LMAT_ENSURE_INLINE
-	inline sse_f64pk cube(const sse_f64pk& a)
-	{
-		return _mm_mul_pd(_mm_mul_pd(a.v, a.v), a.v);
 	}
 
 

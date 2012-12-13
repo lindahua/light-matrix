@@ -196,6 +196,151 @@ T_CASE( sse_arith, abs )
 }
 
 
+T_CASE( sse_arith, max )
+{
+	typedef simd_pack<T, sse_t> pack_t;
+	const unsigned int width = pack_t::pack_width;
+
+	T a_src[width];
+	T b_src[width];
+
+	T r1[width];
+
+	for (unsigned i = 0; i < width; ++i)
+	{
+		a_src[i] = T(i + 2);
+		b_src[i] = T(3 * i + 1);
+
+		r1[i] = math::max(a_src[i], b_src[i]);
+	}
+
+	pack_t a; a.load_u(a_src);
+	pack_t b; b.load_u(b_src);
+
+	pack_t r = math::max(a, b);
+	ASSERT_SIMD_EQ(r, r1);
+}
+
+
+T_CASE( sse_arith, min )
+{
+	typedef simd_pack<T, sse_t> pack_t;
+	const unsigned int width = pack_t::pack_width;
+
+	T a_src[width];
+	T b_src[width];
+
+	T r1[width];
+
+	for (unsigned i = 0; i < width; ++i)
+	{
+		a_src[i] = T(i + 2);
+		b_src[i] = T(3 * i + 1);
+
+		r1[i] = math::min(a_src[i], b_src[i]);
+	}
+
+	pack_t a; a.load_u(a_src);
+	pack_t b; b.load_u(b_src);
+
+	pack_t r = math::min(a, b);
+	ASSERT_SIMD_EQ(r, r1);
+}
+
+
+T_CASE( sse_arith, sqr )
+{
+	typedef simd_pack<T, sse_t> pack_t;
+	const unsigned int width = pack_t::pack_width;
+
+	T a_src[width];
+
+	T r1[width];
+
+	for (unsigned i = 0; i < width; ++i)
+	{
+		a_src[i] = T(i + 2);
+		if (i % 2 == 0) a_src[i] = - a_src[i];
+
+		r1[i] = math::sqr(a_src[i]);
+	}
+
+	pack_t a; a.load_u(a_src);
+
+	pack_t r = math::sqr(a);
+	ASSERT_SIMD_EQ(r, r1);
+}
+
+
+T_CASE( sse_arith, cube )
+{
+	typedef simd_pack<T, sse_t> pack_t;
+	const unsigned int width = pack_t::pack_width;
+
+	T a_src[width];
+
+	T r1[width];
+
+	for (unsigned i = 0; i < width; ++i)
+	{
+		a_src[i] = T(i + 2);
+		if (i % 2 == 0) a_src[i] = - a_src[i];
+
+		r1[i] = math::cube(a_src[i]);
+	}
+
+	pack_t a; a.load_u(a_src);
+
+	pack_t r = math::cube(a);
+	ASSERT_SIMD_EQ(r, r1);
+}
+
+T_CASE( sse_arith, sqrt )
+{
+	typedef simd_pack<T, sse_t> pack_t;
+	const unsigned int width = pack_t::pack_width;
+
+	T a_src[width];
+
+	T r1[width];
+
+	for (unsigned i = 0; i < width; ++i)
+	{
+		a_src[i] = T(i + 2);
+		r1[i] = math::sqrt(a_src[i]);
+	}
+
+	pack_t a; a.load_u(a_src);
+
+	pack_t r = math::sqrt(a);
+	ASSERT_SIMD_ULP(r, r1, 1);
+}
+
+
+T_CASE( sse_arith, rcp )
+{
+	typedef simd_pack<T, sse_t> pack_t;
+	const unsigned int width = pack_t::pack_width;
+
+	T a_src[width];
+
+	T r1[width];
+
+	for (unsigned i = 0; i < width; ++i)
+	{
+		a_src[i] = T(i + 2);
+		if (i % 2 == 0) a_src[i] = - a_src[i];
+
+		r1[i] = math::rcp(a_src[i]);
+	}
+
+	pack_t a; a.load_u(a_src);
+
+	pack_t r = math::rcp(a);
+	ASSERT_SIMD_ULP(r, r1, 1);
+}
+
+
 
 DEF_TPACK( sse_arith, add )
 DEF_TPACK( sse_arith, sub )
@@ -203,6 +348,12 @@ DEF_TPACK( sse_arith, mul )
 DEF_TPACK( sse_arith, div )
 DEF_TPACK( sse_arith, neg )
 DEF_TPACK( sse_arith, abs )
+DEF_TPACK( sse_arith, max )
+DEF_TPACK( sse_arith, min )
+DEF_TPACK( sse_arith, sqr )
+DEF_TPACK( sse_arith, cube )
+DEF_TPACK( sse_arith, sqrt )
+DEF_TPACK( sse_arith, rcp )
 
 BEGIN_MAIN_SUITE
 	ADD_TPACK( sse_arith_add )
@@ -211,6 +362,12 @@ BEGIN_MAIN_SUITE
 	ADD_TPACK( sse_arith_div )
 	ADD_TPACK( sse_arith_neg )
 	ADD_TPACK( sse_arith_abs )
+	ADD_TPACK( sse_arith_max )
+	ADD_TPACK( sse_arith_min )
+	ADD_TPACK( sse_arith_sqr )
+	ADD_TPACK( sse_arith_cube )
+	ADD_TPACK( sse_arith_sqrt )
+	ADD_TPACK( sse_arith_rcp )
 END_MAIN_SUITE
 
 
