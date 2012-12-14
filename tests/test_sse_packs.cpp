@@ -238,7 +238,7 @@ T_CASE( sse_pack, extracts )
 	pack_t pk;
 	pk.load_a(src);
 
-	for (int i = 0; i < (int)width; ++i)
+	for (unsigned int i = 0; i < width; ++i)
 	{
 		T v = pk.extract(i);
 		ASSERT_EQ(v, src[i]);

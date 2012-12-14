@@ -141,7 +141,7 @@ namespace lmat { namespace math {
 			v = _mm_load_ps(p);
 		}
 
-	    LMAT_ENSURE_INLINE void load_part(int n, float const * p)
+	    LMAT_ENSURE_INLINE void load_part(unsigned int n, float const * p)
 	    {
 	    	v = internal::sse_loadpart_f32(n, p);
 	    }
@@ -158,7 +158,7 @@ namespace lmat { namespace math {
 	    	_mm_store_ps(p, v);
 	    }
 
-	    LMAT_ENSURE_INLINE void store_part(int n, float *p) const
+	    LMAT_ENSURE_INLINE void store_part(unsigned int n, float *p) const
 	    {
 	    	internal::sse_storepart_f32(n, p, v);
 	    }
@@ -171,7 +171,7 @@ namespace lmat { namespace math {
 	    	return _mm_cvtss_f32(v);
 	    }
 
-	    LMAT_ENSURE_INLINE float extract(int i) const
+	    LMAT_ENSURE_INLINE float extract(unsigned int i) const
 	    {
 	    	return internal::sse_extract_f32(v, i);
 	    }
@@ -283,7 +283,7 @@ namespace lmat { namespace math {
 			v = _mm_load_pd(p);
 		}
 
-	    LMAT_ENSURE_INLINE void load_part(int n, double const * p)
+	    LMAT_ENSURE_INLINE void load_part(unsigned int n, double const * p)
 	    {
 	    	v = internal::sse_loadpart_f64(n, p);
 	    }
@@ -300,7 +300,7 @@ namespace lmat { namespace math {
 	    	_mm_store_pd(p, v);
 	    }
 
-	    LMAT_ENSURE_INLINE void store_part(int n, double *p) const
+	    LMAT_ENSURE_INLINE void store_part(unsigned int n, double *p) const
 	    {
 	    	internal::sse_storepart_f64(n, p, v);
 	    }
@@ -313,7 +313,7 @@ namespace lmat { namespace math {
 	    	return _mm_cvtsd_f64(v);
 	    }
 
-	    LMAT_ENSURE_INLINE double extract(int i) const
+	    LMAT_ENSURE_INLINE double extract(unsigned int i) const
 	    {
 	    	return internal::sse_extract_f64(v, i);
 	    }

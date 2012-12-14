@@ -16,7 +16,7 @@ namespace lmat { namespace math { namespace internal {
 	// partial load
 
 	LMAT_ENSURE_INLINE
-	inline __m128 sse_loadpart_f32(int n, const float *p)
+	inline __m128 sse_loadpart_f32(unsigned int n, const float *p)
 	{
 		__m128 v;
 
@@ -45,7 +45,7 @@ namespace lmat { namespace math { namespace internal {
 	}
 
 	LMAT_ENSURE_INLINE
-	inline __m128d sse_loadpart_f64(int n, const double *p)
+	inline __m128d sse_loadpart_f64(unsigned int n, const double *p)
 	{
 		__m128d v;
 
@@ -69,7 +69,7 @@ namespace lmat { namespace math { namespace internal {
 	// partial store
 
 	LMAT_ENSURE_INLINE
-	inline void sse_storepart_f32(int n, float *p, const __m128& v)
+	inline void sse_storepart_f32(unsigned int n, float *p, const __m128& v)
 	{
         switch (n)
         {
@@ -91,7 +91,7 @@ namespace lmat { namespace math { namespace internal {
 
 
 	LMAT_ENSURE_INLINE
-	inline void sse_storepart_f64(int n, double *p, const __m128d& v)
+	inline void sse_storepart_f64(unsigned int n, double *p, const __m128d& v)
 	{
         switch (n)
         {
@@ -108,7 +108,7 @@ namespace lmat { namespace math { namespace internal {
 	// extract scalar
 
 	LMAT_ENSURE_INLINE
-	inline float sse_extract_f32(const __m128& v, int i)
+	inline float sse_extract_f32(const __m128& v, unsigned int i)
 	{
     	float s;
 
@@ -136,7 +136,7 @@ namespace lmat { namespace math { namespace internal {
 
 
 	LMAT_ENSURE_INLINE
-	inline double sse_extract_f64(const __m128d& v, int i)
+	inline double sse_extract_f64(const __m128d& v, unsigned int i)
 	{
     	double s;
 
