@@ -6,10 +6,11 @@
  * @author Dahua Lin
  */
 
-#ifndef SSE_PACKS_H_
-#define SSE_PACKS_H_
+#ifndef LIGHTMAT_SSE_PACKS_H_
+#define LIGHTMAT_SSE_PACKS_H_
 
 #include <light_mat/math/simd_base.h>
+#include "internal/sse_helpers.h"
 
 namespace lmat { namespace math {
 
@@ -20,8 +21,8 @@ namespace lmat { namespace math {
 	 *
 	 ********************************************/
 
-	LMAT_DEFINE_SIMD_TRAITS( sse_t, float,  	4, 16 )
-	LMAT_DEFINE_SIMD_TRAITS( sse_t, double, 	2, 16 )
+	LMAT_DEFINE_SIMD_TRAITS( sse_t, float,  4, 16 )
+	LMAT_DEFINE_SIMD_TRAITS( sse_t, double, 2, 16 )
 
 
 	/********************************************
@@ -142,26 +143,7 @@ namespace lmat { namespace math {
 
 	    LMAT_ENSURE_INLINE void load_part(int n, float const * p)
 	    {
-	        switch (n)
-	        {
-	        case 1:
-	        	v = _mm_load_ss(p);
-	        	break;
-	        case 2:
-	        	v = _mm_castpd_ps(_mm_load_sd((double*)p));
-	        	break;
-	        case 3:
-	        	v = _mm_movelh_ps(
-	        		_mm_castpd_ps(_mm_load_sd((double*)p)),
-	        		_mm_load_ss(p + 2));
-	        	break;
-	        case 4:
-	        	v = _mm_loadu_ps(p);
-	        	break;
-	        default:
-	        	v = _mm_setzero_ps();
-	        	break;
-	        }
+	    	v = internal::sse_loadpart_f32(n, p);
 	    }
 
 	    // store
@@ -178,22 +160,7 @@ namespace lmat { namespace math {
 
 	    LMAT_ENSURE_INLINE void store_part(int n, float *p) const
 	    {
-	        switch (n)
-	        {
-	        case 1:
-	            _mm_store_ss(p, v);
-	            break;
-	        case 2:
-	            _mm_store_sd((double*)p, _mm_castps_pd(v));
-	            break;
-	        case 3:
-	            _mm_store_sd((double*)p, _mm_castps_pd(v));
-	            _mm_store_ss(p + 2, _mm_movehl_ps(v, v));
-	            break;
-	        case 4:
-	            _mm_storeu_ps(p, v);
-	            break;
-	        }
+	    	internal::sse_storepart_f32(n, p, v);
 	    }
 
 
@@ -206,28 +173,7 @@ namespace lmat { namespace math {
 
 	    LMAT_ENSURE_INLINE float extract(int i) const
 	    {
-	    	float s;
-
-	    	switch (i)
-	    	{
-	    	case 0:
-	    		s = _mm_cvtss_f32(v);
-	    		break;
-	    	case 1:
-	    		s = _mm_cvtss_f32(
-	    				_mm_castsi128_ps(_mm_srli_si128(_mm_castps_si128(v), 4)));
-	    		break;
-	    	case 2:
-	    		s = _mm_cvtss_f32(
-	    				_mm_castsi128_ps(_mm_srli_si128(_mm_castps_si128(v), 8)));
-	    		break;
-	    	default:
-	    		s = _mm_cvtss_f32(
-	    				_mm_castsi128_ps(_mm_srli_si128(_mm_castps_si128(v), 12)));
-	    		break;
-	    	}
-
-	    	return s;
+	    	return internal::sse_extract_f32(v, i);
 	    }
 
 
@@ -339,18 +285,7 @@ namespace lmat { namespace math {
 
 	    LMAT_ENSURE_INLINE void load_part(int n, double const * p)
 	    {
-	        switch (n)
-	        {
-	        case 1:
-	        	v = _mm_load_sd(p);
-	        	break;
-	        case 2:
-	        	v = _mm_loadu_pd(p);
-	        	break;
-	        default:
-	        	v = _mm_setzero_pd();
-	        	break;
-	        }
+	    	v = internal::sse_loadpart_f64(n, p);
 	    }
 
 	    // store
@@ -367,15 +302,7 @@ namespace lmat { namespace math {
 
 	    LMAT_ENSURE_INLINE void store_part(int n, double *p) const
 	    {
-	        switch (n)
-	        {
-	        case 1:
-	            _mm_store_sd(p, v);
-	            break;
-	        case 2:
-	            _mm_storeu_pd(p, v);
-	            break;
-	        }
+	    	internal::sse_storepart_f64(n, p, v);
 	    }
 
 
@@ -388,15 +315,7 @@ namespace lmat { namespace math {
 
 	    LMAT_ENSURE_INLINE double extract(int i) const
 	    {
-	    	double s;
-
-	    	if (i == 0)
-	    		s = _mm_cvtsd_f64(v);
-	    	else
-	    		s = _mm_cvtsd_f64(
-	    				_mm_castsi128_pd(_mm_srli_si128(_mm_castpd_si128(v), 8)));
-
-	    	return s;
+	    	return internal::sse_extract_f64(v, i);
 	    }
 
 

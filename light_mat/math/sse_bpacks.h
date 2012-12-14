@@ -6,8 +6,8 @@
  * @author Dahua Lin
  */
 
-#ifndef SSE_BPACKS_H_
-#define SSE_BPACKS_H_
+#ifndef LIGHTMAT_SSE_BPACKS_H_
+#define LIGHTMAT_SSE_BPACKS_H_
 
 #include <light_mat/math/simd_base.h>
 
