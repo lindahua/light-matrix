@@ -1,48 +1,49 @@
 /**
- * @file test_sse_bpacks.cpp
+ * @file test_avx_bpacks.cpp
  *
- * @brief Unit testing of SSE boolean packs
- *
- * @author Dahua Lin
+ * Unit testing of AVX boolean packs
+ * 
+ * @author Dahua Lin 
  */
 
+
 #include "simd_test_base.h"
-#include <light_mat/math/sse_bpacks.h>
+#include <light_mat/math/avx_bpacks.h>
 
 using namespace lmat;
 using namespace lmat::test;
 
 using lmat::math::simd_bpack;
-using lmat::math::sse_t;
+using lmat::math::avx_t;
 
-static_assert(simd_bpack<float,  sse_t>::pack_width == 4, "Unexpected pack width");
-static_assert(simd_bpack<double, sse_t>::pack_width == 2, "Unexpected pack width");
+static_assert(simd_bpack<float,  avx_t>::pack_width == 8, "Unexpected pack width");
+static_assert(simd_bpack<double, avx_t>::pack_width == 4, "Unexpected pack width");
 
 template<typename T> struct elemwise_construct;
 
 template<> struct elemwise_construct<float>
 {
-	static simd_bpack<float, sse_t> get(const bool* s)
+	static simd_bpack<float, avx_t> get(const bool* s)
 	{
-		return simd_bpack<float, sse_t>(s[0], s[1], s[2], s[3]);
+		return simd_bpack<float, avx_t>(s[0], s[1], s[2], s[3], s[4], s[5], s[6], s[7]);
 	}
 
-	static void set(simd_bpack<float, sse_t>& pk, const bool *s)
+	static void set(simd_bpack<float, avx_t>& pk, const bool *s)
 	{
-		pk.set(s[0], s[1], s[2], s[3]);
+		pk.set(s[0], s[1], s[2], s[3], s[4], s[5], s[6], s[7]);
 	}
 };
 
 template<> struct elemwise_construct<double>
 {
-	static simd_bpack<double, sse_t> get(const bool* s)
+	static simd_bpack<double, avx_t> get(const bool* s)
 	{
-		return simd_bpack<double, sse_t>(s[0], s[1]);
+		return simd_bpack<double, avx_t>(s[0], s[1], s[2], s[3]);
 	}
 
-	static void set(simd_bpack<double, sse_t>& pk, const bool *s)
+	static void set(simd_bpack<double, avx_t>& pk, const bool *s)
 	{
-		pk.set(s[0], s[1]);
+		pk.set(s[0], s[1], s[2], s[3]);
 	}
 };
 
@@ -54,9 +55,9 @@ template<> struct elemwise_construct<double>
 	END_TPACK
 
 
-T_CASE( sse_bpack, constructs )
+T_CASE( avx_bpack, constructs )
 {
-	typedef simd_bpack<T, sse_t> bpack_t;
+	typedef simd_bpack<T, avx_t> bpack_t;
 	typedef typename bpack_t::bint_type bint;
 	const unsigned int width = bpack_t::pack_width;
 
@@ -82,9 +83,9 @@ T_CASE( sse_bpack, constructs )
 	ASSERT_SIMD_EQ( pk4, r );
 }
 
-T_CASE( sse_bpack, set )
+T_CASE( avx_bpack, set )
 {
-	typedef simd_bpack<T, sse_t> bpack_t;
+	typedef simd_bpack<T, avx_t> bpack_t;
 	typedef typename bpack_t::bint_type bint;
 	const unsigned int width = bpack_t::pack_width;
 
@@ -107,9 +108,9 @@ T_CASE( sse_bpack, set )
 }
 
 
-T_CASE( sse_bpack, to_scalar )
+T_CASE( avx_bpack, to_scalar )
 {
-	typedef simd_bpack<T, sse_t> bpack_t;
+	typedef simd_bpack<T, avx_t> bpack_t;
 	typedef typename bpack_t::bint_type bint;
 	const unsigned int width = bpack_t::pack_width;
 
@@ -128,9 +129,9 @@ T_CASE( sse_bpack, to_scalar )
 }
 
 
-T_CASE( sse_bpack, extracts )
+T_CASE( avx_bpack, extracts )
 {
-	typedef simd_bpack<T, sse_t> bpack_t;
+	typedef simd_bpack<T, avx_t> bpack_t;
 	typedef typename bpack_t::bint_type bint;
 	const unsigned int width = bpack_t::pack_width;
 
@@ -146,6 +147,7 @@ T_CASE( sse_bpack, extracts )
 	}
 
 	for (unsigned i = 0; i < width; ++i) s[i] = (i % 3 == 0);
+
 	elemwise_construct<T>::set(pk, s);
 
 	for (unsigned int i = 0; i < width; ++i)
@@ -155,17 +157,18 @@ T_CASE( sse_bpack, extracts )
 }
 
 
-DEF_TPACK( sse_bpack, constructs )
-DEF_TPACK( sse_bpack, set )
-DEF_TPACK( sse_bpack, to_scalar )
-DEF_TPACK( sse_bpack, extracts )
+DEF_TPACK( avx_bpack, constructs )
+DEF_TPACK( avx_bpack, set )
+DEF_TPACK( avx_bpack, to_scalar )
+DEF_TPACK( avx_bpack, extracts )
 
 
 BEGIN_MAIN_SUITE
-	ADD_TPACK( sse_bpack_constructs )
-	ADD_TPACK( sse_bpack_set )
-	ADD_TPACK( sse_bpack_to_scalar )
-	ADD_TPACK( sse_bpack_extracts )
+	ADD_TPACK( avx_bpack_constructs )
+	ADD_TPACK( avx_bpack_set )
+	ADD_TPACK( avx_bpack_to_scalar )
+	ADD_TPACK( avx_bpack_extracts )
 END_MAIN_SUITE
+
 
 

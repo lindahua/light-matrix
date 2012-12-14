@@ -135,7 +135,7 @@ set(AVX_TEST_HS
     ${AVX_HS})
 
 add_executable(test_avx_packs ${AVX_TEST_HS} test_avx_packs.cpp)
-
+add_executable(test_avx_bpacks ${AVX_TEST_HS} test_avx_bpacks.cpp)
 
 set(DENSE_MAT_HS
     ${COMMON_HS}
@@ -189,6 +189,7 @@ set(LMAT_TEST_NAMES
 	test_sse_round
 	test_sse_reduce
 	test_avx_packs
+	test_avx_bpacks
 	test_dense_mat
 	test_dense_vec
 	test_ref_mat

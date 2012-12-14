@@ -150,6 +150,45 @@ namespace lmat { namespace math { namespace internal {
 	}
 
 
+	LMAT_ENSURE_INLINE
+	inline int32_t sse_extract_i32(const __m128i& v, unsigned int i)
+	{
+		int32_t s;
+
+    	switch (i)
+    	{
+    	case 0:
+    		s = _mm_cvtsi128_si32(v);
+    		break;
+    	case 1:
+    		s = _mm_extract_epi32(v, 1);
+    		break;
+    	case 2:
+    		s = _mm_extract_epi32(v, 2);
+    		break;
+    	default:
+    		s = _mm_extract_epi32(v, 3);
+    		break;
+    	}
+
+    	return s;
+	}
+
+
+	LMAT_ENSURE_INLINE
+	inline int64_t sse_extract_i64(const __m128i& v, unsigned int i)
+	{
+		int64_t s;
+
+    	if (i == 0)
+    		s = _mm_cvtsi128_si64(v);
+    	else
+    		s = _mm_extract_epi64(v, 1);
+
+    	return s;
+	}
+
+
 } } }
 
 

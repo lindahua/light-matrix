@@ -10,6 +10,7 @@
 #define LIGHTMAT_SSE_BPACKS_H_
 
 #include <light_mat/math/simd_base.h>
+#include "internal/sse_helpers.h"
 
 namespace lmat { namespace math {
 
@@ -97,7 +98,7 @@ namespace lmat { namespace math {
 
 	    LMAT_ENSURE_INLINE bool extract(unsigned int i) const
 	    {
-	    	return (bool)_mm_extract_epi32(_mm_castps_si128(v), i);
+	    	return (bool)internal::sse_extract_i32(_mm_castps_si128(v), i);
 	    }
 	};
 
@@ -181,7 +182,7 @@ namespace lmat { namespace math {
 
 	    LMAT_ENSURE_INLINE bool extract(unsigned int i) const
 	    {
-	    	return (bool)_mm_extract_epi64(_mm_castpd_si128(v), i);
+	    	return (bool)internal::sse_extract_i64(_mm_castpd_si128(v), i);
 	    }
 	};
 
