@@ -450,6 +450,61 @@ namespace lmat { namespace math {
 
 	/********************************************
 	 *
+	 *  rounding
+	 *
+	 ********************************************/
+
+	LMAT_ENSURE_INLINE
+	inline avx_f32pk round(const avx_f32pk& a)
+	{
+		return _mm256_round_ps(a.v, 0);
+	}
+
+	LMAT_ENSURE_INLINE
+	inline avx_f64pk round(const avx_f64pk& a)
+	{
+		return _mm256_round_pd(a.v, 0);
+	}
+
+	LMAT_ENSURE_INLINE
+	inline avx_f32pk floor(const avx_f32pk& a)
+	{
+		return _mm256_round_ps(a.v, 1);
+	}
+
+	LMAT_ENSURE_INLINE
+	inline avx_f64pk floor(const avx_f64pk& a)
+	{
+		return _mm256_round_pd(a.v, 1);
+	}
+
+	LMAT_ENSURE_INLINE
+	inline avx_f32pk ceil(const avx_f32pk& a)
+	{
+		return _mm256_round_ps(a.v, 2);
+	}
+
+	LMAT_ENSURE_INLINE
+	inline avx_f64pk ceil(const avx_f64pk& a)
+	{
+		return _mm256_round_pd(a.v, 2);
+	}
+
+	LMAT_ENSURE_INLINE
+	inline avx_f32pk trunc(const avx_f32pk& a)
+	{
+		return _mm256_round_ps(a.v, 3);
+	}
+
+	LMAT_ENSURE_INLINE
+	inline avx_f64pk trunc(const avx_f64pk& a)
+	{
+		return _mm256_round_pd(a.v, 3);
+	}
+
+
+	/********************************************
+	 *
 	 *  FP classification
 	 *
 	 ********************************************/
