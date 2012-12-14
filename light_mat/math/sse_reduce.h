@@ -15,88 +15,57 @@
 
 namespace lmat { namespace math {
 
-
 	// sum
-
-	LMAT_ENSURE_INLINE
-	inline __m128 vsum(const sse_f32pk& a)
-	{
-		__m128 t = _mm_add_ps(a.v, _mm_movehl_ps(a.v, a.v));
-		return _mm_add_ss(t, _mm_shuffle_ps(t, t, 1));
-	}
-
-	LMAT_ENSURE_INLINE
-	inline __m128d vsum(const sse_f64pk& a)
-	{
-		return _mm_add_pd(a.v, _mm_unpackhi_pd(a.v, a.v));
-	}
 
 	LMAT_ENSURE_INLINE
 	inline float sum(const sse_f32pk& a)
 	{
-		return _mm_cvtss_f32(vsum(a));
+		__m128 t1 = _mm_add_ps(a.v, _mm_movehl_ps(a.v, a.v));
+		__m128 t2 = _mm_add_ss(t1, _mm_shuffle_ps(t1, t1, 1));
+		return _mm_cvtss_f32(t2);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline double sum(const sse_f64pk& a)
 	{
-		return _mm_cvtsd_f64(vsum(a));
+		__m128d t1 = _mm_add_pd(a.v, _mm_unpackhi_pd(a.v, a.v));
+		return _mm_cvtsd_f64(t1);
 	}
 
 
 	// max
 
 	LMAT_ENSURE_INLINE
-	inline __m128 vmaximum(const sse_f32pk& a)
-	{
-		__m128 t = _mm_max_ps(a.v, _mm_movehl_ps(a.v, a.v));
-		return _mm_max_ss(t, _mm_shuffle_ps(t, t, 1));
-	}
-
-	LMAT_ENSURE_INLINE
-	inline __m128d vmaximum(const sse_f64pk& a)
-	{
-		return _mm_max_pd(a.v, _mm_unpackhi_pd(a.v, a.v));
-	}
-
-	LMAT_ENSURE_INLINE
 	inline float maximum(const sse_f32pk& a)
 	{
-		return _mm_cvtss_f32(vmaximum(a));
+		__m128 t1 = _mm_max_ps(a.v, _mm_movehl_ps(a.v, a.v));
+		__m128 t2 = _mm_max_ss(t1, _mm_shuffle_ps(t1, t1, 1));
+		return _mm_cvtss_f32(t2);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline double maximum(const sse_f64pk& a)
 	{
-		return _mm_cvtsd_f64(vmaximum(a));
+		__m128d t1 = _mm_max_pd(a.v, _mm_unpackhi_pd(a.v, a.v));
+		return _mm_cvtsd_f64(t1);
 	}
 
 
 	// min
 
 	LMAT_ENSURE_INLINE
-	inline __m128 vminimum(const sse_f32pk& a)
-	{
-		__m128 t = _mm_min_ps(a.v, _mm_movehl_ps(a.v, a.v));
-		return _mm_min_ss(t, _mm_shuffle_ps(t, t, 1));
-	}
-
-	LMAT_ENSURE_INLINE
-	inline __m128d vminimum(const sse_f64pk& a)
-	{
-		return _mm_min_pd(a.v, _mm_unpackhi_pd(a.v, a.v));
-	}
-
-	LMAT_ENSURE_INLINE
 	inline float minimum(const sse_f32pk& a)
 	{
-		return _mm_cvtss_f32(vminimum(a));
+		__m128 t1 = _mm_min_ps(a.v, _mm_movehl_ps(a.v, a.v));
+		__m128 t2 = _mm_min_ss(t1, _mm_shuffle_ps(t1, t1, 1));
+		return _mm_cvtss_f32(t2);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline double minimum(const sse_f64pk& a)
 	{
-		return _mm_cvtsd_f64(vminimum(a));
+		__m128d t1 = _mm_min_pd(a.v, _mm_unpackhi_pd(a.v, a.v));
+		return _mm_cvtsd_f64(t1);
 	}
 
 
