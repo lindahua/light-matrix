@@ -563,7 +563,7 @@ struct sse_not_tbody<double>
 		typedef typename bpack_t::bint_type bint;
 
 		bpack_t a(true, false);
-		bint r1[4] = {0, -1};
+		bint r1[2] = {0, -1};
 
 		ASSERT_SIMD_EQ(~a, r1);
 	}
@@ -603,11 +603,11 @@ struct sse_and_tbody<double>
 
 		bpack_t a1(false, false);
 		bpack_t b1(false, true);
-		bint r1[4] = {0, 0};
+		bint r1[2] = {0, 0};
 
 		bpack_t a2(true, true);
 		bpack_t b2(false, true);
-		bint r2[4] = {0, -1};
+		bint r2[2] = {0, -1};
 
 		ASSERT_SIMD_EQ(a1 & b1, r1);
 		ASSERT_SIMD_EQ(a2 & b2, r2);
@@ -648,11 +648,11 @@ struct sse_or_tbody<double>
 
 		bpack_t a1(false, false);
 		bpack_t b1(false, true);
-		bint r1[4] = {0, -1};
+		bint r1[2] = {0, -1};
 
 		bpack_t a2(true, true);
 		bpack_t b2(false, true);
-		bint r2[4] = {-1, -1};
+		bint r2[2] = {-1, -1};
 
 		ASSERT_SIMD_EQ(a1 | b1, r1);
 		ASSERT_SIMD_EQ(a2 | b2, r2);

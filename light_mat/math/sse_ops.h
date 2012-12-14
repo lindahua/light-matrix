@@ -272,74 +272,74 @@ namespace lmat { namespace math {
 	LMAT_ENSURE_INLINE
 	inline sse_f32bpk operator == (const sse_f32pk& a, const sse_f32pk& b)
 	{
-		return _mm_cmpeq_ps(a, b);
+		return _mm_cmpeq_ps(a.v, b.v);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline sse_f64bpk operator == (const sse_f64pk& a, const sse_f64pk& b)
 	{
-		return _mm_cmpeq_pd(a, b);
+		return _mm_cmpeq_pd(a.v, b.v);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline sse_f32bpk operator != (const sse_f32pk& a, const sse_f32pk& b)
 	{
-		return _mm_cmpneq_ps(a, b);
+		return _mm_cmpneq_ps(a.v, b.v);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline sse_f64bpk operator != (const sse_f64pk& a, const sse_f64pk& b)
 	{
-		return _mm_cmpneq_pd(a, b);
+		return _mm_cmpneq_pd(a.v, b.v);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline sse_f32bpk operator > (const sse_f32pk& a, const sse_f32pk& b)
 	{
-		return _mm_cmpgt_ps(a, b);
+		return _mm_cmpgt_ps(a.v, b.v);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline sse_f64bpk operator > (const sse_f64pk& a, const sse_f64pk& b)
 	{
-		return _mm_cmpgt_pd(a, b);
+		return _mm_cmpgt_pd(a.v, b.v);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline sse_f32bpk operator >= (const sse_f32pk& a, const sse_f32pk& b)
 	{
-		return _mm_cmpge_ps(a, b);
+		return _mm_cmpge_ps(a.v, b.v);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline sse_f64bpk operator >= (const sse_f64pk& a, const sse_f64pk& b)
 	{
-		return _mm_cmpge_pd(a, b);
+		return _mm_cmpge_pd(a.v, b.v);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline sse_f32bpk operator < (const sse_f32pk& a, const sse_f32pk& b)
 	{
-		return _mm_cmplt_ps(a, b);
+		return _mm_cmplt_ps(a.v, b.v);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline sse_f64bpk operator < (const sse_f64pk& a, const sse_f64pk& b)
 	{
-		return _mm_cmplt_pd(a, b);
+		return _mm_cmplt_pd(a.v, b.v);
 	}
 
 
 	LMAT_ENSURE_INLINE
 	inline sse_f32bpk operator <= (const sse_f32pk& a, const sse_f32pk& b)
 	{
-		return _mm_cmple_ps(a, b);
+		return _mm_cmple_ps(a.v, b.v);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline sse_f64bpk operator <= (const sse_f64pk& a, const sse_f64pk& b)
 	{
-		return _mm_cmple_pd(a, b);
+		return _mm_cmple_pd(a.v, b.v);
 	}
 
 
@@ -404,13 +404,13 @@ namespace lmat { namespace math {
 	LMAT_ENSURE_INLINE
 	inline sse_f32bpk operator != (const sse_f32bpk& a, const sse_f32bpk& b)
 	{
-		return ~(a == b);
+		return _mm_xor_ps(a.v, b.v);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline sse_f64bpk operator != (const sse_f64bpk& a, const sse_f64bpk& b)
 	{
-		return ~(a == b);
+		return _mm_xor_pd(a.v, b.v);
 	}
 
 
