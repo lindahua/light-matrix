@@ -64,6 +64,7 @@ set(SIMD_BASE_HS
     ${INC}/math/internal/numrepr_format.h)
     
 set(SSE_HS
+    ${INC}/math/internal/sse2_round_impl.h
     ${INC}/math/sse_packs.h
     ${INC}/math/sse_bpacks.h
     ${INC}/math/sse_ops.h)
@@ -118,6 +119,7 @@ set(SSE_TEST_HS
 add_executable(test_sse_packs ${SSE_TEST_HS} test_sse_packs.cpp)
 add_executable(test_sse_bpacks ${SSE_TEST_HS} test_sse_bpacks.cpp)
 add_executable(test_sse_ops ${SSE_TEST_HS} test_sse_ops.cpp)
+add_executable(test_sse_round ${SSE_TEST_HS} test_sse_round.cpp)
 
 set(DENSE_MAT_HS
     ${COMMON_HS}
@@ -168,6 +170,7 @@ set(LMAT_TEST_NAMES
 	test_sse_packs
 	test_sse_bpacks
 	test_sse_ops
+	test_sse_round
 	test_dense_mat
 	test_dense_vec
 	test_ref_mat

@@ -12,6 +12,7 @@
 #include <light_mat/math/sse_packs.h>
 #include <light_mat/math/sse_bpacks.h>
 #include "internal/numrepr_format.h"
+#include "internal/sse2_round_impl.h"
 
 namespace lmat { namespace math {
 
@@ -436,6 +437,94 @@ namespace lmat { namespace math {
 		a = a | b;
 		return a;
 	}
+
+
+	/********************************************
+	 *
+	 *  rounding
+	 *
+	 ********************************************/
+
+	LMAT_ENSURE_INLINE
+	inline sse_f32pk round(const sse_f32pk& a)
+	{
+#ifdef LMAT_HAS_SSE4_1
+		return _mm_round_ps(a.v, 0);
+#else
+		return internal::round_sse2(a);
+#endif
+	}
+
+	LMAT_ENSURE_INLINE
+	inline sse_f64pk round(const sse_f64pk& a)
+	{
+#ifdef LMAT_HAS_SSE4_1
+		return _mm_round_pd(a.v, 0);
+#else
+		return internal::round_sse2(a);
+#endif
+	}
+
+	LMAT_ENSURE_INLINE
+	inline sse_f32pk floor(const sse_f32pk& a)
+	{
+#ifdef LMAT_HAS_SSE4_1
+		return _mm_round_ps(a.v, 1);
+#else
+		return internal::floor_sse2(a);
+#endif
+	}
+
+	LMAT_ENSURE_INLINE
+	inline sse_f64pk floor(const sse_f64pk& a)
+	{
+#ifdef LMAT_HAS_SSE4_1
+		return _mm_round_pd(a.v, 1);
+#else
+		return internal::floor_sse2(a);
+#endif
+	}
+
+	LMAT_ENSURE_INLINE
+	inline sse_f32pk ceil(const sse_f32pk& a)
+	{
+#ifdef LMAT_HAS_SSE4_1
+		return _mm_round_ps(a.v, 2);
+#else
+		return internal::ceil_sse2(a);
+#endif
+	}
+
+	LMAT_ENSURE_INLINE
+	inline sse_f64pk ceil(const sse_f64pk& a)
+	{
+#ifdef LMAT_HAS_SSE4_1
+		return _mm_round_pd(a.v, 2);
+#else
+		return internal::ceil_sse2(a);
+#endif
+	}
+
+	LMAT_ENSURE_INLINE
+	inline sse_f32pk trunc(const sse_f32pk& a)
+	{
+#ifdef LMAT_HAS_SSE4_1
+		return _mm_round_ps(a.v, 3);
+#else
+		return internal::trunc_sse2(a);
+#endif
+	}
+
+	LMAT_ENSURE_INLINE
+	inline sse_f64pk trunc(const sse_f64pk& a)
+	{
+#ifdef LMAT_HAS_SSE4_1
+		return _mm_round_pd(a.v, 3);
+#else
+		return internal::trunc_sse2(a);
+#endif
+	}
+
 
 
 	/********************************************

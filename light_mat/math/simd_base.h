@@ -15,25 +15,25 @@
 
 // system headers for SIMD intrinsics
 
-#if LMAT_SIMD > 7   	// AVX 2
+#if (defined(LMAT_HAS_AVX2))
 #ifdef __GNUC__
 #include <x86intrin.h>
 #else
 #include <immintrin.h>
 #endif // __GNUC__
-#elif LMAT_SIMD == 7
+#elif (defined(LMAT_HAS_AVX))
 #include <immintrin.h> 	// AVX
-#elif LMAT_SIMD == 6
+#elif (defined(LMAT_HAS_SSE4_2))
 #include <nmmintrin.h> 	// SSE4.2
-#elif LMAT_SIMD == 5
+#elif (defined(LMAT_HAS_SSE4_1))
 #include <smmintrin.h> 	// SSE4.1
-#elif LMAT_SIMD == 4
+#elif (defined(LMAT_HAS_SSSE3))
 #include <tmmintrin.h>	// SSSE3
-#elif LMAT_SIMD == 3
+#elif (defined(LMAT_HAS_SSE3))
 #include <pmmintrin.h> 	// SSE3
-#elif LMAT_SIMD == 2
+#elif (defined(LMAT_HAS_SSE2))
 #include <emmintrin.h> 	// SSE2
-#elif LMAT_SIMD == 1
+#elif (defined(LMAT_HAS_SSE))
 #include <xmmintrin.h>	// SSE
 #endif
 
@@ -44,7 +44,7 @@ namespace lmat { namespace math {
 	struct sse_t { };
 	struct avx_t { };
 
-#if (LMAT_SIMD < 7)
+#if (LMAT_SIMD < LMAT_SIMD_AVX)
 	typedef sse_t default_simd_kind;
 #else
 	typedef avx_t default_simd_kind;
