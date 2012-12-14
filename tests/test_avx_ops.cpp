@@ -747,6 +747,98 @@ T_CASE( avx_logical, ne )
 
 
 
+template<typename T> struct avx_fpclassify_tbody;
+
+template<>
+struct avx_fpclassify_tbody<float>
+{
+	static void run()
+	{
+		typedef std::numeric_limits<float> lim_t;
+
+		typedef simd_pack<float, avx_t> pack_t;
+		typedef simd_bpack<float, avx_t> bpack_t;
+		typedef typename bpack_t::bint_type bint;
+
+		float v_zero = 0.f;
+		float v_neg_zero = -0.f;
+		float v_one = 1.f;
+		float v_neg_one = -1.f;
+		float v_inf = lim_t::infinity();
+		float v_neg_inf = -lim_t::infinity();
+		float v_nan = lim_t::quiet_NaN();
+		float v_neg_nan = -lim_t::quiet_NaN();
+
+		pack_t a1(
+				v_zero, v_neg_zero, v_one, v_neg_one,
+				v_inf, v_neg_inf, v_nan, v_neg_nan);
+
+		bint is_neg_r1   [8] = { 0, -1, 0, -1, 0, -1, 0, -1 };
+		bint is_finite_r1[8] = { -1, -1, -1, -1, 0, 0, 0, 0 };
+		bint is_inf_r1   [8] = { 0, 0, 0, 0, -1, -1, 0, 0 };
+		bint is_nan_r1   [8] = { 0, 0, 0, 0, 0, 0, -1, -1 };
+
+		ASSERT_SIMD_EQ( math::is_neg(a1), is_neg_r1  );
+		ASSERT_SIMD_EQ( math::is_finite(a1), is_finite_r1  );
+		ASSERT_SIMD_EQ( math::is_inf(a1), is_inf_r1  );
+		ASSERT_SIMD_EQ( math::is_nan(a1), is_nan_r1  );
+	}
+};
+
+
+template<>
+struct avx_fpclassify_tbody<double>
+{
+	static void run()
+	{
+		typedef std::numeric_limits<double> lim_t;
+
+		typedef simd_pack<double, avx_t> pack_t;
+		typedef simd_bpack<double, avx_t> bpack_t;
+		typedef typename bpack_t::bint_type bint;
+
+		double v_zero = 0.f;
+		double v_neg_zero = -0.f;
+		double v_one = 1.f;
+		double v_neg_one = -1.f;
+		double v_inf = lim_t::infinity();
+		double v_neg_inf = -lim_t::infinity();
+		double v_nan = lim_t::quiet_NaN();
+		double v_neg_nan = -lim_t::quiet_NaN();
+
+		pack_t a1(v_zero, v_neg_zero, v_one, v_neg_one);
+		pack_t a2(v_inf, v_neg_inf, v_nan, v_neg_nan);
+
+		bint is_neg_r1[4] = { 0, -1, 0, -1 };
+		bint is_neg_r2[4] = { 0, -1, 0, -1 };
+
+		bint is_finite_r1[4] = { -1, -1, -1, -1 };
+		bint is_finite_r2[4] = { 0, 0, 0, 0 };
+
+		bint is_inf_r1[4] = { 0, 0, 0, 0 };
+		bint is_inf_r2[4] = { -1, -1, 0, 0 };
+
+		bint is_nan_r1[4] = { 0, 0, 0, 0 };
+		bint is_nan_r2[4] = { 0, 0, -1, -1 };
+
+		ASSERT_SIMD_EQ( math::is_neg(a1), is_neg_r1  );
+		ASSERT_SIMD_EQ( math::is_neg(a2), is_neg_r2  );
+
+		ASSERT_SIMD_EQ( math::is_finite(a1), is_finite_r1  );
+		ASSERT_SIMD_EQ( math::is_finite(a2), is_finite_r2  );
+
+		ASSERT_SIMD_EQ( math::is_inf(a1), is_inf_r1  );
+		ASSERT_SIMD_EQ( math::is_inf(a2), is_inf_r2  );
+
+		ASSERT_SIMD_EQ( math::is_nan(a1), is_nan_r1  );
+		ASSERT_SIMD_EQ( math::is_nan(a2), is_nan_r2  );
+	}
+};
+
+T_CASE( avx_fpclassify, all )
+{
+	avx_fpclassify_tbody<T>::run();
+}
 
 
 DEF_TPACK( avx_arith, add )
@@ -775,6 +867,8 @@ DEF_TPACK( avx_logical, and )
 DEF_TPACK( avx_logical, or )
 DEF_TPACK( avx_logical, eq )
 DEF_TPACK( avx_logical, ne )
+
+DEF_TPACK( avx_fpclassify, all )
 
 
 BEGIN_MAIN_SUITE
@@ -805,6 +899,6 @@ BEGIN_MAIN_SUITE
 	ADD_TPACK( avx_logical_eq )
 	ADD_TPACK( avx_logical_ne )
 
-	// ADD_TPACK( avx_fpclassify_all )
+	ADD_TPACK( avx_fpclassify_all )
 END_MAIN_SUITE
 

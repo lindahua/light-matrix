@@ -11,7 +11,6 @@
 
 #include <light_mat/math/sse_packs.h>
 #include <light_mat/math/sse_bpacks.h>
-#include "internal/numrepr_format.h"
 #include "internal/sse2_round_impl.h"
 
 namespace lmat { namespace math {
@@ -73,29 +72,29 @@ namespace lmat { namespace math {
 	LMAT_ENSURE_INLINE
 	inline sse_f32pk operator - (const sse_f32pk& a)
 	{
-		typedef internal::num_fmt<float> fmt;
-		return _mm_xor_ps(_mm_castsi128_ps(_mm_set1_epi32(fmt::sign_bit)), a.v);
+		return _mm_xor_ps(
+				_mm_castsi128_ps(internal::sse_signmask_ps()), a.v);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline sse_f64pk operator - (const sse_f64pk& a)
 	{
-		typedef internal::num_fmt<double> fmt;
-		return _mm_xor_pd(_mm_castsi128_pd(_mm_set1_epi64x(fmt::sign_bit)), a.v);
+		return _mm_xor_pd(
+				_mm_castsi128_pd(internal::sse_signmask_pd()), a.v);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline sse_f32pk abs(const sse_f32pk& a)
 	{
-		typedef internal::num_fmt<float> fmt;
-		return _mm_andnot_ps(_mm_castsi128_ps(_mm_set1_epi32(fmt::sign_bit)), a.v);
+		return _mm_andnot_ps(
+				_mm_castsi128_ps(internal::sse_signmask_ps()), a.v);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline sse_f64pk abs(const sse_f64pk& a)
 	{
-		typedef internal::num_fmt<double> fmt;
-		return _mm_andnot_pd(_mm_castsi128_pd(_mm_set1_epi64x(fmt::sign_bit)), a.v);
+		return _mm_andnot_pd(
+				_mm_castsi128_pd(internal::sse_signmask_pd()), a.v);
 	}
 
 	LMAT_ENSURE_INLINE
@@ -540,102 +539,52 @@ namespace lmat { namespace math {
 	LMAT_ENSURE_INLINE
 	inline sse_f32bpk is_neg(const sse_f32pk& a)
 	{
-		typedef internal::num_fmt<float> fmt;
-
-		__m128i msk = _mm_set1_epi32(fmt::sign_bit);
-		__m128i u = _mm_and_si128(_mm_castps_si128(a.v), msk);
-		return _mm_castsi128_ps(_mm_cmpeq_epi32(u, msk));
+		return internal::sse_is_neg_ps(a.v);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline sse_f64bpk is_neg(const sse_f64pk& a)
 	{
-		typedef internal::num_fmt<double> fmt;
-
-		__m128i msk = _mm_set1_epi64x(fmt::sign_bit);
-		__m128i u = _mm_and_si128(_mm_castpd_si128(a.v), msk);
-		return _mm_castsi128_pd(_mm_cmpeq_epi64(u, msk));
+		return internal::sse_is_neg_pd(a.v);
 	}
 
 
 	LMAT_ENSURE_INLINE
 	inline sse_f32bpk is_finite(const sse_f32pk& a)
 	{
-		typedef internal::num_fmt<float> fmt;
-
-		__m128i e_msk = _mm_set1_epi32(fmt::exponent_bits);
-		__m128i e = _mm_and_si128(_mm_castps_si128(a.v), e_msk);
-		__m128i not_finite = _mm_cmpeq_epi32(e, e_msk);
-		return _mm_castsi128_ps(
-				_mm_cmpeq_epi32(not_finite, _mm_setzero_si128()));
+		return internal::sse_is_finite_ps(a.v);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline sse_f64bpk is_finite(const sse_f64pk& a)
 	{
-		typedef internal::num_fmt<double> fmt;
-
-		__m128i e_msk = _mm_set1_epi64x(fmt::exponent_bits);
-		__m128i e = _mm_and_si128(_mm_castpd_si128(a.v), e_msk);
-		__m128i not_finite = _mm_cmpeq_epi64(e, e_msk);
-		return _mm_castsi128_pd(
-				_mm_cmpeq_epi64(not_finite, _mm_setzero_si128()));
+		return internal::sse_is_finite_pd(a.v);
 	}
 
 
 	LMAT_ENSURE_INLINE
 	inline sse_f32bpk is_inf(const sse_f32pk& a)
 	{
-		typedef internal::num_fmt<float> fmt;
-
-		__m128i aa = _mm_castps_si128(abs(a).v);
-		__m128i val = _mm_set1_epi32(fmt::exponent_bits);
-		return _mm_castsi128_ps(_mm_cmpeq_epi32(aa, val));
+		return internal::sse_is_inf_ps(a.v);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline sse_f64bpk is_inf(const sse_f64pk& a)
 	{
-		typedef internal::num_fmt<double> fmt;
-
-		__m128i aa = _mm_castpd_si128(abs(a).v);
-		__m128i val = _mm_set1_epi64x(fmt::exponent_bits);
-		return _mm_castsi128_pd(_mm_cmpeq_epi64(aa, val));
+		return internal::sse_is_inf_pd(a.v);
 	}
 
 
 	LMAT_ENSURE_INLINE
 	inline sse_f32bpk is_nan(const sse_f32pk& a)
 	{
-		typedef internal::num_fmt<float> fmt;
-
-		__m128i ai = _mm_castps_si128(a.v);
-		__m128i e_msk = _mm_set1_epi32(fmt::exponent_bits);
-		__m128i s_msk = _mm_set1_epi32(fmt::mantissa_bits);
-
-		__m128i e = _mm_and_si128(ai, e_msk);
-		__m128i s = _mm_and_si128(ai, s_msk);
-
-		return _mm_castsi128_ps(_mm_andnot_si128(
-				_mm_cmpeq_epi32(s, _mm_setzero_si128()),
-				_mm_cmpeq_epi32(e, e_msk)));
+		return internal::sse_is_nan_ps(a.v);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline sse_f64bpk is_nan(const sse_f64pk& a)
 	{
-		typedef internal::num_fmt<double> fmt;
-
-		__m128i ai = _mm_castpd_si128(a.v);
-		__m128i e_msk = _mm_set1_epi64x(fmt::exponent_bits);
-		__m128i s_msk = _mm_set1_epi64x(fmt::mantissa_bits);
-
-		__m128i e = _mm_and_si128(ai, e_msk);
-		__m128i s = _mm_and_si128(ai, s_msk);
-
-		return _mm_castsi128_pd(_mm_andnot_si128(
-				_mm_cmpeq_epi64(s, _mm_setzero_si128()),
-				_mm_cmpeq_epi64(e, e_msk)));
+		return internal::sse_is_nan_pd(a.v);
 	}
 
 

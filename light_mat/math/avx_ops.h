@@ -448,6 +448,80 @@ namespace lmat { namespace math {
 	}
 
 
+	/********************************************
+	 *
+	 *  FP classification
+	 *
+	 ********************************************/
+
+	LMAT_ENSURE_INLINE
+	inline avx_f32bpk is_neg(const avx_f32pk& a)
+	{
+		return internal::combine_m128(
+				internal::sse_is_neg_ps(a.get_low()),
+				internal::sse_is_neg_ps(a.get_high()));
+	}
+
+	LMAT_ENSURE_INLINE
+	inline avx_f64bpk is_neg(const avx_f64pk& a)
+	{
+		return internal::combine_m128d(
+				internal::sse_is_neg_pd(a.get_low()),
+				internal::sse_is_neg_pd(a.get_high()));
+	}
+
+
+	LMAT_ENSURE_INLINE
+	inline avx_f32bpk is_finite(const avx_f32pk& a)
+	{
+		return internal::combine_m128(
+				internal::sse_is_finite_ps(a.get_low()),
+				internal::sse_is_finite_ps(a.get_high()));
+	}
+
+	LMAT_ENSURE_INLINE
+	inline avx_f64bpk is_finite(const avx_f64pk& a)
+	{
+		return internal::combine_m128d(
+				internal::sse_is_finite_pd(a.get_low()),
+				internal::sse_is_finite_pd(a.get_high()));
+	}
+
+
+	LMAT_ENSURE_INLINE
+	inline avx_f32bpk is_inf(const avx_f32pk& a)
+	{
+		return internal::combine_m128(
+				internal::sse_is_inf_ps(a.get_low()),
+				internal::sse_is_inf_ps(a.get_high()));
+	}
+
+	LMAT_ENSURE_INLINE
+	inline avx_f64bpk is_inf(const avx_f64pk& a)
+	{
+		return internal::combine_m128d(
+				internal::sse_is_inf_pd(a.get_low()),
+				internal::sse_is_inf_pd(a.get_high()));
+	}
+
+
+	LMAT_ENSURE_INLINE
+	inline avx_f32bpk is_nan(const avx_f32pk& a)
+	{
+		return internal::combine_m128(
+				internal::sse_is_nan_ps(a.get_low()),
+				internal::sse_is_nan_ps(a.get_high()));
+	}
+
+	LMAT_ENSURE_INLINE
+	inline avx_f64bpk is_nan(const avx_f64pk& a)
+	{
+		return internal::combine_m128d(
+				internal::sse_is_nan_pd(a.get_low()),
+				internal::sse_is_nan_pd(a.get_high()));
+	}
+
+
 } }
 
 #endif 
