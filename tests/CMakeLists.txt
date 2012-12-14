@@ -13,10 +13,10 @@ include_directories($ENV{LIGHT_TEST_HOME})
 set(CMAKE_BUILD_TYPE "Release")
 
 if (MSVC)
-	set(LANG_FLAGS "/arch:SSE2 /EHsc")
+	set(LANG_FLAGS "/arch:AVX /EHsc")
 	set(WARNING_FLAGS "/W4")
 else (MSVC)
-	set(LANG_FLAGS "-std=c++0x -pedantic -march=native ")
+	set(LANG_FLAGS "-std=c++0x -pedantic -mavx")
 	set(WARNING_FLAGS "-Wall -Wextra -Wconversion -Wformat -Wno-unused-parameter ")
 endif (MSVC)
 
@@ -64,11 +64,17 @@ set(SIMD_BASE_HS
     ${INC}/math/internal/numrepr_format.h)
     
 set(SSE_HS
+    ${INC}/math/internal/sse_helpers.h
+    ${INC}/math/internal/sse_testz_impl.h
     ${INC}/math/internal/sse2_round_impl.h
     ${INC}/math/sse_packs.h
     ${INC}/math/sse_bpacks.h
     ${INC}/math/sse_ops.h
     ${INC}/math/sse_reduce.h)
+    
+set(AVX_HS
+    ${INC}/math/internal/avx_helpers.h
+    ${INC}/math/avx_packs.h)
   
 set(MATRIX_BASE_HS
     ${INC}/matrix/matrix_shape.h
@@ -123,6 +129,14 @@ add_executable(test_sse_ops ${SSE_TEST_HS} test_sse_ops.cpp)
 add_executable(test_sse_round ${SSE_TEST_HS} test_sse_round.cpp)
 add_executable(test_sse_reduce ${SSE_TEST_HS} test_sse_reduce.cpp)
 
+set(AVX_TEST_HS
+    ${COMMON_HS}
+    ${SIMD_BASE_HS}
+    ${AVX_HS})
+
+add_executable(test_avx_packs ${AVX_TEST_HS} test_avx_packs.cpp)
+
+
 set(DENSE_MAT_HS
     ${COMMON_HS}
     ${MATRIX_BASE_HS}
@@ -174,6 +188,7 @@ set(LMAT_TEST_NAMES
 	test_sse_ops
 	test_sse_round
 	test_sse_reduce
+	test_avx_packs
 	test_dense_mat
 	test_dense_vec
 	test_ref_mat
