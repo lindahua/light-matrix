@@ -131,7 +131,7 @@ SIMPLE_CASE( sse_reduce, booltest_f64 )
 		ASSERT_EQ( math::any_true (pk), any_t );
 		ASSERT_EQ( math::any_false(pk), any_f );
 
-		__m128i vi = _mm_castps_si128(pk.v);
+		__m128i vi = _mm_castpd_si128(pk.v);
 		ASSERT_EQ( math::internal::testz_sse2(vi), all_f);
 		ASSERT_EQ( math::internal::testc_sse2(vi), all_t);
 	}

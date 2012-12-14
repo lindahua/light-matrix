@@ -149,8 +149,7 @@ namespace lmat { namespace math {
 
 	    LMAT_ENSURE_INLINE void load_part(unsigned int n, float const * p)
 	    {
-	    	__m256 m = _mm256_castsi256_ps(internal::avx_part_mask_32(n));
-	    	v = _mm256_maskload_ps(p, m);
+	    	v = _mm256_maskload_ps(p, internal::avx_part_mask_32(n));
 	    }
 
 	    // store
@@ -167,8 +166,7 @@ namespace lmat { namespace math {
 
 	    LMAT_ENSURE_INLINE void store_part(unsigned int n, float *p) const
 	    {
-	    	__m256 m = _mm256_castsi256_ps(internal::avx_part_mask_32(n));
-	    	_mm256_maskstore_ps(p, m, v);
+	    	_mm256_maskstore_ps(p, internal::avx_part_mask_32(n), v);
 	    }
 
 
@@ -308,8 +306,7 @@ namespace lmat { namespace math {
 
 	    LMAT_ENSURE_INLINE void load_part(unsigned int n, double const * p)
 	    {
-	    	__m256 m = _mm256_castsi256_pd(internal::avx_part_mask_64(n));
-	    	v = _mm256_maskload_pd(p, m);
+	    	v = _mm256_maskload_pd(p, internal::avx_part_mask_64(n));
 	    }
 
 	    // store
@@ -326,8 +323,7 @@ namespace lmat { namespace math {
 
 	    LMAT_ENSURE_INLINE void store_part(unsigned int n, double *p) const
 	    {
-	    	__m256 m = _mm256_castsi256_pd(internal::avx_part_mask_64(n));
-	    	_mm256_maskstore_pd(p, m, v);
+	    	_mm256_maskstore_pd(p, internal::avx_part_mask_64(n), v);
 	    }
 
 

@@ -352,13 +352,15 @@ namespace lmat { namespace math {
 	LMAT_ENSURE_INLINE
 	inline sse_f32bpk operator ~ (const sse_f32bpk& a)
 	{
-		return _mm_cmpeq_epi32(_mm_castps_si128(a.v), _mm_setzero_si128());
+		return _mm_castsi128_ps(
+				_mm_cmpeq_epi32(_mm_castps_si128(a.v), _mm_setzero_si128()));
 	}
 
 	LMAT_ENSURE_INLINE
 	inline sse_f64bpk operator ~ (const sse_f64bpk& a)
 	{
-		return _mm_cmpeq_epi64(_mm_castpd_si128(a.v), _mm_setzero_si128());
+		return _mm_castsi128_pd(
+				_mm_cmpeq_epi64(_mm_castpd_si128(a.v), _mm_setzero_si128()));
 	}
 
 	LMAT_ENSURE_INLINE
@@ -388,13 +390,15 @@ namespace lmat { namespace math {
 	LMAT_ENSURE_INLINE
 	inline sse_f32bpk operator == (const sse_f32bpk& a, const sse_f32bpk& b)
 	{
-		return _mm_cmpeq_epi32(_mm_castps_si128(a.v), _mm_castps_si128(b.v));
+		return _mm_castsi128_ps(
+				_mm_cmpeq_epi32(_mm_castps_si128(a.v), _mm_castps_si128(b.v)));
 	}
 
 	LMAT_ENSURE_INLINE
 	inline sse_f64bpk operator == (const sse_f64bpk& a, const sse_f64bpk& b)
 	{
-		return _mm_cmpeq_epi64(_mm_castpd_si128(a.v), _mm_castpd_si128(b.v));
+		return _mm_castsi128_pd(
+				_mm_cmpeq_epi64(_mm_castpd_si128(a.v), _mm_castpd_si128(b.v)));
 	}
 
 	LMAT_ENSURE_INLINE
@@ -411,14 +415,14 @@ namespace lmat { namespace math {
 
 
 	LMAT_ENSURE_INLINE
-	sse_f32bpk& operator &= (sse_f32bpk& a, const sse_f32bpk& b)
+	inline sse_f32bpk& operator &= (sse_f32bpk& a, const sse_f32bpk& b)
 	{
 		a = a & b;
 		return a;
 	}
 
 	LMAT_ENSURE_INLINE
-	sse_f64bpk& operator &= (sse_f64bpk& a, const sse_f64bpk& b)
+	inline sse_f64bpk& operator &= (sse_f64bpk& a, const sse_f64bpk& b)
 	{
 		a = a & b;
 		return a;
@@ -561,7 +565,7 @@ namespace lmat { namespace math {
 
 		__m128i e_msk = _mm_set1_epi32(fmt::exponent_bits);
 		__m128i e = _mm_and_si128(_mm_castps_si128(a.v), e_msk);
-		__m128i not_finite = _mm_castsi128_ps(_mm_cmpeq_epi32(e, e_msk));
+		__m128i not_finite = _mm_cmpeq_epi32(e, e_msk);
 		return _mm_castsi128_ps(
 				_mm_cmpeq_epi32(not_finite, _mm_setzero_si128()));
 	}
@@ -573,7 +577,7 @@ namespace lmat { namespace math {
 
 		__m128i e_msk = _mm_set1_epi64x(fmt::exponent_bits);
 		__m128i e = _mm_and_si128(_mm_castpd_si128(a.v), e_msk);
-		__m128i not_finite = _mm_castsi128_pd(_mm_cmpeq_epi64(e, e_msk));
+		__m128i not_finite = _mm_cmpeq_epi64(e, e_msk);
 		return _mm_castsi128_pd(
 				_mm_cmpeq_epi64(not_finite, _mm_setzero_si128()));
 	}
