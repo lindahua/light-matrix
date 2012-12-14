@@ -76,7 +76,8 @@ set(AVX_HS
     ${INC}/math/internal/avx_helpers.h
     ${INC}/math/avx_packs.h
     ${INC}/math/avx_bpacks.h
-    ${INC}/math/avx_ops.h)
+    ${INC}/math/avx_ops.h
+    ${INC}/math/avx_reduce.h)
   
 set(MATRIX_BASE_HS
     ${INC}/matrix/matrix_shape.h
@@ -140,6 +141,7 @@ add_executable(test_avx_packs ${AVX_TEST_HS} test_avx_packs.cpp)
 add_executable(test_avx_bpacks ${AVX_TEST_HS} test_avx_bpacks.cpp)
 add_executable(test_avx_ops ${AVX_TEST_HS} test_avx_ops.cpp)
 add_executable(test_avx_round ${AVX_TEST_HS} test_avx_round.cpp)
+add_executable(test_avx_reduce ${AVX_TEST_HS} test_avx_reduce.cpp)
 
 set(DENSE_MAT_HS
     ${COMMON_HS}
@@ -196,6 +198,7 @@ set(LMAT_TEST_NAMES
 	test_avx_bpacks
 	test_avx_ops
 	test_avx_round
+	test_avx_reduce
 	test_dense_mat
 	test_dense_vec
 	test_ref_mat

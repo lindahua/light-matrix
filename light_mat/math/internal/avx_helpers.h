@@ -13,7 +13,6 @@
 
 namespace lmat { namespace math { namespace internal {
 
-
 	LMAT_ENSURE_INLINE
 	inline __m256 combine_m128(const __m128& lo, const __m128& hi)
 	{
