@@ -92,10 +92,10 @@ namespace lmat { namespace math {
 
 	    LMAT_ENSURE_INLINE bool to_scalar() const
 	    {
-	    	return (bool)_mm_extract_epi32(_mm_castps_si128(v), 0);
+	    	return (bool)_mm_cvtsi128_si32(_mm_castps_si128(v));
 	    }
 
-	    LMAT_ENSURE_INLINE bool extract(int i) const
+	    LMAT_ENSURE_INLINE bool extract(unsigned int i) const
 	    {
 	    	return (bool)_mm_extract_epi32(_mm_castps_si128(v), i);
 	    }
@@ -176,10 +176,10 @@ namespace lmat { namespace math {
 
 	    LMAT_ENSURE_INLINE bool to_scalar() const
 	    {
-	    	return (bool)_mm_extract_epi64(_mm_castpd_si128(v), 0);
+	    	return (bool)_mm_cvtsi128_si64(_mm_castpd_si128(v));
 	    }
 
-	    LMAT_ENSURE_INLINE bool extract(int i) const
+	    LMAT_ENSURE_INLINE bool extract(unsigned int i) const
 	    {
 	    	return (bool)_mm_extract_epi64(_mm_castpd_si128(v), i);
 	    }

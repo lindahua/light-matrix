@@ -140,7 +140,7 @@ T_CASE( sse_bpack, extracts )
 	bpack_t pk;
 	elemwise_construct<T>::set(pk, s);
 
-	for (int i = 0; i < (int)width; ++i)
+	for (unsigned int i = 0; i < width; ++i)
 	{
 		ASSERT_EQ( pk.extract(i), s[i] );
 	}

@@ -110,7 +110,7 @@ namespace lmat { namespace math { namespace internal {
 	LMAT_ENSURE_INLINE
 	inline float sse_extract_f32(const __m128& v, unsigned int i)
 	{
-    	float s;
+		float s;
 
     	switch (i)
     	{

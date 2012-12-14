@@ -192,7 +192,6 @@ namespace lmat { namespace math {
 	    	return e[i];
 	    }
 
-
 	}; // AVX f32 pack
 
 
