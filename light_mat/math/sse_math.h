@@ -16,10 +16,6 @@
 #include <light_mat/math/sse_packs.h>
 #include "internal/sse_math_emulate.h"
 
-#if defined(LMAT_USE_INTEL_SVML) || defined(LMAT_USE_AMD_LIBM)
-#define LMAT_USE_MATH_FUNCTIONS
-#endif
-
 #if defined(LMAT_USE_INTEL_SVML) && defined(LMAT_USE_AMD_LIBM)
 #error SVML and LIBM cannot be used simultaneously.
 #endif

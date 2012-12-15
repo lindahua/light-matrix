@@ -119,9 +119,11 @@ set(SSE_HS
     
 set(AVX_HS
     ${INC}/math/internal/avx_helpers.h
+    ${INC}/math/internal/avx_math_emulate.h
     ${INC}/math/avx_packs.h
     ${INC}/math/avx_bpacks.h
     ${INC}/math/avx_ops.h
+    ${INC}/math/avx_math.h
     ${INC}/math/avx_reduce.h)
   
 set(MATRIX_BASE_HS
@@ -177,23 +179,6 @@ add_executable(test_sse_ops ${SSE_TEST_HS} test_sse_ops.cpp)
 add_executable(test_sse_round ${SSE_TEST_HS} test_sse_round.cpp)
 add_executable(test_sse_reduce ${SSE_TEST_HS} test_sse_reduce.cpp)
 
-if (SVML_PATH)
-
-add_executable(test_sse_math_svml ${SSE_TEST_HS} test_sse_math.cpp)
-
-set_target_properties(test_sse_math_svml
-	PROPERTIES
-	COMPILE_FLAGS "-DLMAT_USE_INTEL_SVML"
-)
-
-if (MSVC)
-target_link_libraries(test_sse_math_svml test_main ${SVML} ${LIBIRC})
-else (MSVC)
-target_link_libraries(test_sse_math_svml test_main ${SVML})
-endif (MSVC)
-
-endif (SVML_PATH)
-
 set(AVX_TEST_HS
     ${COMMON_HS}
     ${SIMD_BASE_HS}
@@ -204,6 +189,33 @@ add_executable(test_avx_bpacks ${AVX_TEST_HS} test_avx_bpacks.cpp)
 add_executable(test_avx_ops ${AVX_TEST_HS} test_avx_ops.cpp)
 add_executable(test_avx_round ${AVX_TEST_HS} test_avx_round.cpp)
 add_executable(test_avx_reduce ${AVX_TEST_HS} test_avx_reduce.cpp)
+
+
+if (SVML_PATH)
+
+add_executable(test_sse_math_svml ${SSE_TEST_HS} test_sse_math.cpp)
+add_executable(test_avx_math_svml ${AVX_TEST_HS} test_avx_math.cpp)
+
+set_target_properties(test_sse_math_svml
+	PROPERTIES
+	COMPILE_FLAGS "-DLMAT_USE_INTEL_SVML"
+)
+
+set_target_properties(test_avx_math_svml
+	PROPERTIES
+	COMPILE_FLAGS "-DLMAT_USE_INTEL_SVML"
+)
+
+if (MSVC)
+target_link_libraries(test_sse_math_svml test_main ${SVML} ${LIBIRC})
+target_link_libraries(test_avx_math_svml test_main ${SVML} ${LIBIRC})
+else (MSVC)
+target_link_libraries(test_sse_math_svml test_main ${SVML})
+target_link_libraries(test_avx_math_svml test_main ${SVML})
+endif (MSVC)
+
+endif (SVML_PATH)
+
 
 set(DENSE_MAT_HS
     ${COMMON_HS}
@@ -289,6 +301,7 @@ endforeach(tname)
 
 if (SVML_PATH)
 add_test(NAME test_sse_math_svml COMMAND test_sse_math_svml)
+add_test(NAME test_avx_math_svml COMMAND test_avx_math_svml)
 endif (SVML_PATH)
 
 
