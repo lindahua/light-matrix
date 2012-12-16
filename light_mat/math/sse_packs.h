@@ -70,6 +70,11 @@ namespace lmat { namespace math {
 			v = _mm_setr_ps(e0, e1, e2, e3);
 		}
 
+		LMAT_ENSURE_INLINE explicit simd_pack(const float *p)
+		{
+			load_u(p);
+		}
+
 	    LMAT_ENSURE_INLINE
 	    static simd_pack zeros()
 	    {
@@ -146,6 +151,7 @@ namespace lmat { namespace math {
 	    	v = internal::sse_loadpart_f32(n, p);
 	    }
 
+
 	    // store
 
 	    LMAT_ENSURE_INLINE void store_u(float *p) const
@@ -213,6 +219,12 @@ namespace lmat { namespace math {
 		{
 			v = _mm_setr_pd(e0, e1);
 		}
+
+		LMAT_ENSURE_INLINE explicit simd_pack(const double *p)
+		{
+			load_u(p);
+		}
+
 
 	    LMAT_ENSURE_INLINE
 	    static simd_pack zeros()

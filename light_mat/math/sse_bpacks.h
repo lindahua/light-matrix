@@ -52,6 +52,11 @@ namespace lmat { namespace math {
 			set(b0, b1, b2, b3);
 		}
 
+		LMAT_ENSURE_INLINE explicit simd_bpack(const bool *p)
+		{
+			load(p);
+		}
+
 		LMAT_ENSURE_INLINE
 		static simd_bpack all_false()
 		{
@@ -71,6 +76,24 @@ namespace lmat { namespace math {
 	    {
 	    	return v;
 	    }
+
+	    // load and store
+
+	    LMAT_ENSURE_INLINE
+	    void load(const bool *p)
+	    {
+	    	set(p[0], p[1], p[2], p[3]);
+	    }
+
+	    LMAT_ENSURE_INLINE
+	    void store(bool *p) const
+	    {
+	    	p[0] = (bool)e[0];
+	    	p[1] = (bool)e[1];
+	    	p[2] = (bool)e[2];
+	    	p[3] = (bool)e[3];
+	    }
+
 
 	    // set values
 
@@ -137,6 +160,12 @@ namespace lmat { namespace math {
 			set(b0, b1);
 		}
 
+		LMAT_ENSURE_INLINE explicit simd_bpack( const bool* p )
+		{
+			load(p);
+		}
+
+
 		LMAT_ENSURE_INLINE
 		static simd_bpack all_false()
 		{
@@ -155,6 +184,22 @@ namespace lmat { namespace math {
 	    operator __m128d() const
 	    {
 	    	return v;
+	    }
+
+
+	    // load and store
+
+	    LMAT_ENSURE_INLINE
+	    void load(const bool *p)
+	    {
+	    	set(p[0], p[1]);
+	    }
+
+	    LMAT_ENSURE_INLINE
+	    void store(bool *p) const
+	    {
+	    	p[0] = (bool)e[0];
+	    	p[1] = (bool)e[1];
 	    }
 
 	    // set values

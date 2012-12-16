@@ -76,6 +76,9 @@ T_CASE( sse_pack, constructs )
 	pack_t pk2 = elemwise_construct<T>::get(r2);
 	ASSERT_SIMD_EQ( pk2, r2 );
 
+	pack_t pk3(r2);
+	ASSERT_SIMD_EQ( pk3, r2 );
+
 	pack_t pv1 = pack_t::ones();
 	ASSERT_SIMD_EQ( pv1, T(1) );
 

@@ -83,6 +83,32 @@ T_CASE( avx_bpack, constructs )
 	ASSERT_SIMD_EQ( pk4, r );
 }
 
+
+T_CASE( avx_bpack, load_and_store )
+{
+	typedef simd_bpack<T, avx_t> bpack_t;
+	typedef typename bpack_t::bint_type bint;
+	const unsigned int width = bpack_t::pack_width;
+
+	bool s[width];
+	bint si[width];
+	bool r[width];
+
+	for (unsigned i = 0; i < width; ++i)
+	{
+		s[i] = (i % 2 == 0);
+		si[i] = -bint(s[i]);
+		r[i] = false;
+	}
+
+	bpack_t pk(s);
+	ASSERT_SIMD_EQ( pk, si );
+
+	pk.store(r);
+	ASSERT_VEC_EQ( width, s, r);
+}
+
+
 T_CASE( avx_bpack, set )
 {
 	typedef simd_bpack<T, avx_t> bpack_t;
@@ -158,6 +184,7 @@ T_CASE( avx_bpack, extracts )
 
 
 DEF_TPACK( avx_bpack, constructs )
+DEF_TPACK( avx_bpack, load_and_store )
 DEF_TPACK( avx_bpack, set )
 DEF_TPACK( avx_bpack, to_scalar )
 DEF_TPACK( avx_bpack, extracts )
@@ -165,6 +192,7 @@ DEF_TPACK( avx_bpack, extracts )
 
 BEGIN_MAIN_SUITE
 	ADD_TPACK( avx_bpack_constructs )
+	ADD_TPACK( avx_bpack_load_and_store )
 	ADD_TPACK( avx_bpack_set )
 	ADD_TPACK( avx_bpack_to_scalar )
 	ADD_TPACK( avx_bpack_extracts )

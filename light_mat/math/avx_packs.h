@@ -75,6 +75,11 @@ namespace lmat { namespace math {
 			v = _mm256_setr_ps(e0, e1, e2, e3, e4, e5, e6, e7);
 		}
 
+		LMAT_ENSURE_INLINE explicit simd_pack(const float *p)
+		{
+			load_u(p);
+		}
+
 	    LMAT_ENSURE_INLINE
 	    static simd_pack zeros()
 	    {
@@ -147,7 +152,7 @@ namespace lmat { namespace math {
 			v = _mm256_load_ps(p);
 		}
 
-	    LMAT_ENSURE_INLINE void load_part(unsigned int n, float const * p)
+	    LMAT_ENSURE_INLINE void load_part(unsigned int n, const float *p)
 	    {
 	    	v = _mm256_maskload_ps(p, internal::avx_part_mask_32(n));
 	    }
@@ -230,6 +235,12 @@ namespace lmat { namespace math {
 			v = _mm256_setr_pd(e0, e1, e2, e3);
 		}
 
+		LMAT_ENSURE_INLINE
+		explicit simd_pack(const double *p)
+		{
+			load_u(p);
+		}
+
 	    LMAT_ENSURE_INLINE
 	    static simd_pack zeros()
 	    {
@@ -303,7 +314,7 @@ namespace lmat { namespace math {
 			v = _mm256_load_pd(p);
 		}
 
-	    LMAT_ENSURE_INLINE void load_part(unsigned int n, double const * p)
+	    LMAT_ENSURE_INLINE void load_part(unsigned int n, const double *p)
 	    {
 	    	v = _mm256_maskload_pd(p, internal::avx_part_mask_64(n));
 	    }
@@ -324,7 +335,6 @@ namespace lmat { namespace math {
 	    {
 	    	_mm256_maskstore_pd(p, internal::avx_part_mask_64(n), v);
 	    }
-
 
 	    // extract
 
