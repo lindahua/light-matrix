@@ -10,7 +10,7 @@
 #define LIGHTMAT_EWISE_EVAL_H_
 
 #include <light_mat/mateval/mateval_fwd.h>
-#include <light_mat/matrix/matrix_concepts.h>
+#include "internal/ewise_eval_internal.h"
 
 namespace lmat
 {
@@ -148,7 +148,7 @@ namespace lmat
 
 	template<typename U, int M, int N>
 	LMAT_ENSURE_INLINE
-	inline percol_ewise_scheme<U, M * N> percol_ewise(U, const matrix_shape<M, N>& s)
+	inline percol_ewise_scheme<U, M, N> percol_ewise(U, const matrix_shape<M, N>& s)
 	{
 		return percol_ewise_scheme<U, M, N>(s);
 	}

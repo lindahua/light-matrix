@@ -154,11 +154,22 @@ set(MATRIX_CLASS_HS
     ${INC}/matrix/step_vecs.h
     ${INC}/matrix/dense_mutable_view.h
     ${INC}/matrix/matrix_classes.h)
+    
+    
+set(MATRIX_EVAL_HS
+    ${INC}/mateval/internal/ewise_eval_internal.h
+    ${INC}/mateval/mateval_fwd.h
+    ${INC}/mateval/vec_accessors.h
+    ${INC}/mateval/multicol_accessors.h
+    ${INC}/mateval/ewise_eval.h)
               
 set(MATRIX_HS
     ${COMMON_HS}
     ${MATRIX_BASE_HS}
     ${MATRIX_CLASS_HS})    
+    
+    
+    
     
 # Executables
 
@@ -244,11 +255,17 @@ add_executable(test_step_vec ${REF_MAT_HS} test_step_vec.cpp)
 add_executable(test_mat_props ${REF_MAT_HS} test_mat_props.cpp)
 add_executable(test_mat_fill ${REF_MAT_HS} test_mat_fill.cpp)
 add_executable(test_mat_copy ${REF_MAT_HS} test_mat_copy.cpp)
-
 add_executable(test_dense_eval ${MATRIX_HS} test_dense_eval.cpp)
 
 add_executable(test_mat_vecviews ${MATRIX_HS} test_mat_vecviews.cpp)
 add_executable(test_mat_matviews ${MATRIX_HS} test_mat_matviews.cpp)
+
+
+set(EWISE_EVAL_HS
+    ${MATRIX_HS}
+    ${MATRIX_EVAL_HS})
+    
+add_executable(test_linear_ewise ${EWISE_EVAL_HS} test_linear_ewise.cpp)    
 
 
 # suppress bogus free-nonheap-object complaint under GCC
@@ -286,6 +303,7 @@ set(LMAT_TEST_NAMES
 	test_dense_eval
 	test_mat_vecviews
 	test_mat_matviews
+	test_linear_ewise
 )
 	
 foreach(tname ${LMAT_TEST_NAMES})

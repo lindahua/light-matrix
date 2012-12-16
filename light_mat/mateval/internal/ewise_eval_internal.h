@@ -11,6 +11,7 @@
 
 #include <light_mat/matrix/matrix_properties.h>
 #include <light_mat/mateval/vec_accessors.h>
+#include <light_mat/mateval/multicol_accessors.h>
 
 namespace lmat { namespace internal {
 
@@ -86,6 +87,8 @@ namespace lmat { namespace internal {
 		{
 			linear_ewise_eval_a(col_dim, u, kernel, mcol_accessors.col(j)...);
 		}
+
+		pass(mcol_accessors.finalize()...);
 	}
 
 	template<int M, int N, typename U, class Kernel, typename... Wraps>

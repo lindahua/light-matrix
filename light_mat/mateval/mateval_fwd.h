@@ -84,7 +84,7 @@ namespace lmat
 	LMAT_ENSURE_INLINE
 	in_wrap<Arg, atags::normal> in_(const Arg& arg)
 	{
-		return in_wrap<Arg, atags::normal>(arg, atags::normal);
+		return in_wrap<Arg, atags::normal>(arg);
 	}
 
 	template<class Arg, typename ATag>
@@ -96,9 +96,9 @@ namespace lmat
 
 	template<class Arg>
 	LMAT_ENSURE_INLINE
-	out_wrap<Arg, atags::normal> out_(const Arg& arg)
+	out_wrap<Arg, atags::normal> out_(Arg& arg)
 	{
-		return out_wrap<Arg, atags::normal>(arg, atags::normal);
+		return out_wrap<Arg, atags::normal>(arg);
 	}
 
 
