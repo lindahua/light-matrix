@@ -20,7 +20,6 @@
 using namespace lmat;
 using namespace lmat::test;
 
-
 // core functions
 
 template<typename U, int M, int N>
@@ -94,17 +93,18 @@ void test_linear_ewise_row()
 }
 
 
+// Specific test cases
+
+
 MN_CASE( linear_ewise, scalar_cont_cont  )
 {
 	test_linear_ewise_cont_cont<atags::scalar, M, N>();
 }
 
-
 N_CASE( linear_ewise, scalar_cont_stepcol  )
 {
 	test_linear_ewise_col<atags::scalar, cont, grid, N>();
 }
-
 
 N_CASE( linear_ewise, scalar_stepcol_cont  )
 {
@@ -116,24 +116,38 @@ N_CASE( linear_ewise, scalar_stepcol_stepcol  )
 	test_linear_ewise_col<atags::scalar, grid, grid, N>();
 }
 
-
 N_CASE( linear_ewise, scalar_cont_steprow  )
 {
 	test_linear_ewise_row<atags::scalar, cont, bloc, N>();
 }
-
 
 N_CASE( linear_ewise, scalar_steprow_cont  )
 {
 	test_linear_ewise_row<atags::scalar, bloc, cont, N>();
 }
 
-
 N_CASE( linear_ewise, scalar_steprow_steprow  )
 {
 	test_linear_ewise_row<atags::scalar, bloc, bloc, N>();
 }
 
+
+MN_CASE( linear_ewise, sse_cont_cont  )
+{
+	test_linear_ewise_cont_cont<atags::simd<double, lmat::math::sse_t>, M, N>();
+}
+
+#ifdef LMAT_HAS_AVX
+
+MN_CASE( linear_ewise, avx_cont_cont  )
+{
+	test_linear_ewise_cont_cont<atags::simd<double, lmat::math::avx_t>, M, N>();
+}
+
+#endif
+
+
+// Test packs
 
 BEGIN_TPACK( linear_ewise_scalar_cont_cont )
 	ADD_MN_CASE_3X3( linear_ewise, scalar_cont_cont, DM, DN )
@@ -164,6 +178,15 @@ BEGIN_TPACK( linear_ewise_scalar_steprow_steprow )
 END_TPACK
 
 
+BEGIN_TPACK( linear_ewise_sse_cont_cont )
+	ADD_MN_CASE_3X3( linear_ewise, sse_cont_cont, DM, DN )
+END_TPACK
+
+BEGIN_TPACK( linear_ewise_avx_cont_cont )
+	ADD_MN_CASE_3X3( linear_ewise, avx_cont_cont, DM, DN )
+END_TPACK
+
+
 BEGIN_MAIN_SUITE
 	ADD_TPACK( linear_ewise_scalar_cont_cont )
 	ADD_TPACK( linear_ewise_scalar_cont_stepcol )
@@ -172,6 +195,9 @@ BEGIN_MAIN_SUITE
 	ADD_TPACK( linear_ewise_scalar_cont_steprow )
 	ADD_TPACK( linear_ewise_scalar_steprow_cont )
 	ADD_TPACK( linear_ewise_scalar_steprow_steprow )
+
+	ADD_TPACK( linear_ewise_sse_cont_cont )
+	ADD_TPACK( linear_ewise_avx_cont_cont )
 END_MAIN_SUITE
 
 

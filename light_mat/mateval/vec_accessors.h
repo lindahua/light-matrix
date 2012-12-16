@@ -242,7 +242,7 @@ namespace lmat
 		typedef math::simd_pack<T, Kind> pack_type;
 
 		LMAT_ENSURE_INLINE
-		explicit contvec_writer(const T* p) : m_pdata(p) { }
+		explicit contvec_writer(T* p) : m_pdata(p) { }
 
 		LMAT_ENSURE_INLINE
 		T& scalar(index_t) const
@@ -266,14 +266,14 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		nil_t done_pack(index_t i) const
 		{
-			m_ptemp.store(m_pdata + i);
+			m_ptemp.store_u(m_pdata + i);
 			return nil_t();
 		}
 
 	private:
 		mutable T m_stemp;
 		mutable pack_type m_ptemp;
-		const T* m_pdata;
+		T* m_pdata;
 	};
 
 	// stepvec_writer

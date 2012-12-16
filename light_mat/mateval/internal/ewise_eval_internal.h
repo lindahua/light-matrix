@@ -44,7 +44,6 @@ namespace lmat { namespace internal {
 
 		const index_t len = dim.value();
 		const index_t maj_len = int_div<W>::major(len);
-		const index_t rem_len = int_div<W>::rem(len);
 
 		for (index_t i = 0; i < maj_len; i += W)
 		{
@@ -52,7 +51,7 @@ namespace lmat { namespace internal {
 			pass(accessors.done_pack(i)...);
 		}
 
-		for (index_t i = maj_len; i < rem_len; ++i)
+		for (index_t i = maj_len; i < len; ++i)
 		{
 			kernel(accessors.scalar(i)...);
 			pass(accessors.done_scalar(i)...);
