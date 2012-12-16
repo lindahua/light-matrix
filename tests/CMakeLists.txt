@@ -115,7 +115,8 @@ set(SSE_HS
     ${INC}/math/sse_bpacks.h
     ${INC}/math/sse_ops.h
     ${INC}/math/sse_math.h
-    ${INC}/math/sse_reduce.h)
+    ${INC}/math/sse_reduce.h
+    ${INC}/math/sse.h)
     
 set(AVX_HS
     ${INC}/math/internal/avx_helpers.h
@@ -124,7 +125,8 @@ set(AVX_HS
     ${INC}/math/avx_bpacks.h
     ${INC}/math/avx_ops.h
     ${INC}/math/avx_math.h
-    ${INC}/math/avx_reduce.h)
+    ${INC}/math/avx_reduce.h
+    ${INC}/math/avx.h)
   
 set(MATRIX_BASE_HS
     ${INC}/matrix/matrix_shape.h
