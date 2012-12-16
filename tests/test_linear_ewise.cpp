@@ -94,84 +94,84 @@ void test_linear_ewise_row()
 }
 
 
-MN_CASE( linear_ewise, cont_cont  )
+MN_CASE( linear_ewise, scalar_cont_cont  )
 {
 	test_linear_ewise_cont_cont<atags::scalar, M, N>();
 }
 
 
-N_CASE( linear_ewise, cont_stepcol  )
+N_CASE( linear_ewise, scalar_cont_stepcol  )
 {
 	test_linear_ewise_col<atags::scalar, cont, grid, N>();
 }
 
 
-N_CASE( linear_ewise, stepcol_cont  )
+N_CASE( linear_ewise, scalar_stepcol_cont  )
 {
 	test_linear_ewise_col<atags::scalar, grid, cont, N>();
 }
 
-N_CASE( linear_ewise, stepcol_stepcol  )
+N_CASE( linear_ewise, scalar_stepcol_stepcol  )
 {
 	test_linear_ewise_col<atags::scalar, grid, grid, N>();
 }
 
 
-N_CASE( linear_ewise, cont_steprow  )
+N_CASE( linear_ewise, scalar_cont_steprow  )
 {
 	test_linear_ewise_row<atags::scalar, cont, bloc, N>();
 }
 
 
-N_CASE( linear_ewise, steprow_cont  )
+N_CASE( linear_ewise, scalar_steprow_cont  )
 {
 	test_linear_ewise_row<atags::scalar, bloc, cont, N>();
 }
 
 
-N_CASE( linear_ewise, steprow_steprow  )
+N_CASE( linear_ewise, scalar_steprow_steprow  )
 {
 	test_linear_ewise_row<atags::scalar, bloc, bloc, N>();
 }
 
 
-BEGIN_TPACK( linear_ewise_cont_cont )
-	ADD_MN_CASE_3X3( linear_ewise, cont_cont, DM, DN )
+BEGIN_TPACK( linear_ewise_scalar_cont_cont )
+	ADD_MN_CASE_3X3( linear_ewise, scalar_cont_cont, DM, DN )
 END_TPACK
 
-BEGIN_TPACK( linear_ewise_cont_stepcol )
-	ADD_N_CASE_3( linear_ewise, cont_stepcol, DM )
+BEGIN_TPACK( linear_ewise_scalar_cont_stepcol )
+	ADD_N_CASE_3( linear_ewise, scalar_cont_stepcol, DM )
 END_TPACK
 
-BEGIN_TPACK( linear_ewise_stepcol_cont )
-	ADD_N_CASE_3( linear_ewise, stepcol_cont, DM )
+BEGIN_TPACK( linear_ewise_scalar_stepcol_cont )
+	ADD_N_CASE_3( linear_ewise, scalar_stepcol_cont, DM )
 END_TPACK
 
-BEGIN_TPACK( linear_ewise_stepcol_stepcol )
-	ADD_N_CASE_3( linear_ewise, stepcol_stepcol, DM )
+BEGIN_TPACK( linear_ewise_scalar_stepcol_stepcol )
+	ADD_N_CASE_3( linear_ewise, scalar_stepcol_stepcol, DM )
 END_TPACK
 
-BEGIN_TPACK( linear_ewise_cont_steprow )
-	ADD_N_CASE_3( linear_ewise, cont_steprow, DN )
+BEGIN_TPACK( linear_ewise_scalar_cont_steprow )
+	ADD_N_CASE_3( linear_ewise, scalar_cont_steprow, DN )
 END_TPACK
 
-BEGIN_TPACK( linear_ewise_steprow_cont )
-	ADD_N_CASE_3( linear_ewise, steprow_cont, DN )
+BEGIN_TPACK( linear_ewise_scalar_steprow_cont )
+	ADD_N_CASE_3( linear_ewise, scalar_steprow_cont, DN )
 END_TPACK
 
-BEGIN_TPACK( linear_ewise_steprow_steprow )
-	ADD_N_CASE_3( linear_ewise, steprow_steprow, DN )
+BEGIN_TPACK( linear_ewise_scalar_steprow_steprow )
+	ADD_N_CASE_3( linear_ewise, scalar_steprow_steprow, DN )
 END_TPACK
 
 
 BEGIN_MAIN_SUITE
-	ADD_TPACK( linear_ewise_cont_cont )
-	ADD_TPACK( linear_ewise_cont_stepcol )
-	ADD_TPACK( linear_ewise_stepcol_cont )
-	ADD_TPACK( linear_ewise_stepcol_stepcol )
-	ADD_TPACK( linear_ewise_cont_steprow )
-	ADD_TPACK( linear_ewise_steprow_cont )
-	ADD_TPACK( linear_ewise_steprow_steprow )
+	ADD_TPACK( linear_ewise_scalar_cont_cont )
+	ADD_TPACK( linear_ewise_scalar_cont_stepcol )
+	ADD_TPACK( linear_ewise_scalar_stepcol_cont )
+	ADD_TPACK( linear_ewise_scalar_stepcol_stepcol )
+	ADD_TPACK( linear_ewise_scalar_cont_steprow )
+	ADD_TPACK( linear_ewise_scalar_steprow_cont )
+	ADD_TPACK( linear_ewise_scalar_steprow_steprow )
 END_MAIN_SUITE
 
 

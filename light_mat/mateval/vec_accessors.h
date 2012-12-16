@@ -11,7 +11,7 @@
 
 #include <light_mat/mateval/mateval_fwd.h>
 #include <light_mat/matrix/matrix_concepts.h>
-
+#include <light_mat/math/simd_packs.h>
 
 namespace lmat
 {
@@ -34,6 +34,19 @@ namespace lmat
 		nil_t finalize() const { return nil_t(); }
 	};
 
+	class simd_vec_accessor_base
+	{
+	public:
+		LMAT_ENSURE_INLINE
+		nil_t done_scalar(index_t ) const { return nil_t(); }
+
+		LMAT_ENSURE_INLINE
+		nil_t done_pack(index_t ) const { return nil_t(); }
+
+		LMAT_ENSURE_INLINE
+		nil_t finalize() const { return nil_t(); }
+	};
+
 
 	/********************************************
 	 *
@@ -50,6 +63,7 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		explicit contvec_reader(const T* p) : m_pdata(p) { }
 
+		LMAT_ENSURE_INLINE
 		T scalar(index_t i) const
 		{
 			return m_pdata[i];
@@ -58,6 +72,33 @@ namespace lmat
 	private:
 		const T* m_pdata;
 	};
+
+
+	template<typename T, typename Kind>
+	class contvec_reader<T, atags::simd<T, Kind> > : public simd_vec_accessor_base
+	{
+	public:
+		typedef math::simd_pack<T, Kind> pack_type;
+
+		LMAT_ENSURE_INLINE
+		explicit contvec_reader(const T* p) : m_pdata(p) { }
+
+		LMAT_ENSURE_INLINE
+		T scalar(index_t i) const
+		{
+			return m_pdata[i];
+		}
+
+		LMAT_ENSURE_INLINE
+		pack_type pack(index_t i) const
+		{
+			return pack_type(m_pdata + i);
+		}
+
+	private:
+		const T* m_pdata;
+	};
+
 
 
 	// stepvec_reader
@@ -79,7 +120,6 @@ namespace lmat
 		const T* m_pdata;
 		index_t m_step;
 	};
-
 
 
 	/********************************************
@@ -129,17 +169,8 @@ namespace lmat
 			}
 		};
 
-		template<class Mat, typename U>
-		struct invalid_reader_map
-		{
-			typedef nil_t type;
 
-			LMAT_ENSURE_INLINE
-			static type get(const Mat& mat)
-			{
-				throw invalid_operation("The input matrix is not eligible for vector-reading.");
-			}
-		};
+		struct invalid_reader_map { };
 
 		template<class Mat, typename U>
 		struct vec_reader_map
@@ -148,7 +179,7 @@ namespace lmat
 			typename meta::if_<meta::is_continuous<Mat>,	contvec_reader_map<Mat, U>,
 			typename meta::if_<meta::is_col<Mat>, 			stepcol_reader_map<Mat, U>,
 			typename meta::if_<meta::is_row<Mat>, 			steprow_reader_map<Mat, U>,
-															invalid_reader_map<Mat, U>
+															invalid_reader_map
 			>::type >::type >::type internal_map;
 
 			typedef typename internal_map::type type;
@@ -187,15 +218,63 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		explicit contvec_writer(T* p) : m_pdata(p) { }
 
-		T& scalar(index_t i) const
+		T& scalar(index_t ) const
 		{
-			return m_pdata[i];
+			return m_temp;
+		}
+
+		nil_t done_scalar(index_t i) const
+		{
+			m_pdata[i] = m_temp;
+			return nil_t();
 		}
 
 	private:
+		mutable T m_temp;
 		T* m_pdata;
 	};
 
+
+	template<typename T, typename Kind>
+	class contvec_writer<T, atags::simd<T, Kind> > : public simd_vec_accessor_base
+	{
+	public:
+		typedef math::simd_pack<T, Kind> pack_type;
+
+		LMAT_ENSURE_INLINE
+		explicit contvec_writer(const T* p) : m_pdata(p) { }
+
+		LMAT_ENSURE_INLINE
+		T& scalar(index_t) const
+		{
+			return m_stemp;
+		}
+
+		LMAT_ENSURE_INLINE
+		pack_type& pack(index_t) const
+		{
+			return m_ptemp;
+		}
+
+		LMAT_ENSURE_INLINE
+		nil_t done_scalar(index_t i) const
+		{
+			m_pdata[i] = m_stemp;
+			return nil_t();
+		}
+
+		LMAT_ENSURE_INLINE
+		nil_t done_pack(index_t i) const
+		{
+			m_ptemp.store(m_pdata + i);
+			return nil_t();
+		}
+
+	private:
+		mutable T m_stemp;
+		mutable pack_type m_ptemp;
+		const T* m_pdata;
+	};
 
 	// stepvec_writer
 
@@ -207,12 +286,19 @@ namespace lmat
 		explicit stepvec_writer(T* p, index_t step)
 		: m_pdata(p), m_step(step) { }
 
-		T& scalar(index_t i) const
+		T& scalar(index_t ) const
 		{
-			return m_pdata[i * m_step];
+			return m_temp;
+		}
+
+		nil_t done_scalar(index_t i) const
+		{
+			m_pdata[i * m_step] = m_temp;
+			return nil_t();
 		}
 
 	private:
+		mutable T m_temp;
 		T* m_pdata;
 		index_t m_step;
 	};
@@ -266,17 +352,7 @@ namespace lmat
 			}
 		};
 
-		template<class Mat, typename U>
-		struct invalid_writer_map
-		{
-			typedef nil_t type;
-
-			LMAT_ENSURE_INLINE
-			static type get(Mat& mat)
-			{
-				throw invalid_operation("The input matrix is not eligible for vector-writing.");
-			}
-		};
+		struct invalid_writer_map { };
 
 		template<class Mat, typename U>
 		struct vec_writer_map
@@ -285,7 +361,7 @@ namespace lmat
 			typename meta::if_<meta::is_continuous<Mat>,	contvec_writer_map<Mat, U>,
 			typename meta::if_<meta::is_col<Mat>, 			stepcol_writer_map<Mat, U>,
 			typename meta::if_<meta::is_row<Mat>, 			steprow_writer_map<Mat, U>,
-															invalid_writer_map<Mat, U>
+															invalid_writer_map
 			>::type >::type >::type internal_map;
 
 			typedef typename internal_map::type type;
