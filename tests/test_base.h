@@ -270,6 +270,11 @@ namespace lmat { namespace test {
 #define ADD_N_CASE( pname, tname, n ) \
 		tpack->add( new TCASE_CLASS( pname, tname )<n>()  );
 
+#define ADD_N_CASE_3( pname, tname, n ) \
+		ADD_N_CASE( pname, tname, 0 ) \
+		ADD_N_CASE( pname, tname, 1 ) \
+		ADD_N_CASE( pname, tname, n )
+
 
 // TN cases
 
