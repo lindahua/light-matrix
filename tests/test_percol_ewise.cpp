@@ -55,6 +55,14 @@ void test_percol_ewise()
 		END_TPACK
 
 
+#define DEFINE_PERCOL_EWISE_SIMD_TEST( SKindName, STag, DTag ) \
+		MN_CASE( percol_ewise, SKindName##_##STag##_##DTag  ) { \
+			test_percol_ewise<STag, DTag, atags::simd<double, lmat::math::SKindName##_t>, M, N>(); } \
+		BEGIN_TPACK( percol_ewise_##SKindName##_##STag##_##DTag ) \
+			ADD_MN_CASE_3X3( percol_ewise, scalar_##STag##_##DTag, DM, DN ) \
+		END_TPACK
+
+
 DEFINE_PERCOL_EWISE_SCALAR_TEST( cont, cont )
 DEFINE_PERCOL_EWISE_SCALAR_TEST( cont, bloc )
 DEFINE_PERCOL_EWISE_SCALAR_TEST( cont, grid )
@@ -67,6 +75,22 @@ DEFINE_PERCOL_EWISE_SCALAR_TEST( grid, cont )
 DEFINE_PERCOL_EWISE_SCALAR_TEST( grid, bloc )
 DEFINE_PERCOL_EWISE_SCALAR_TEST( grid, grid )
 
+DEFINE_PERCOL_EWISE_SIMD_TEST( sse, cont, cont )
+DEFINE_PERCOL_EWISE_SIMD_TEST( sse, cont, bloc )
+DEFINE_PERCOL_EWISE_SIMD_TEST( sse, bloc, cont )
+DEFINE_PERCOL_EWISE_SIMD_TEST( sse, bloc, bloc )
+
+
+#ifdef LMAT_HAS_AVX
+
+DEFINE_PERCOL_EWISE_SIMD_TEST( avx, cont, cont )
+DEFINE_PERCOL_EWISE_SIMD_TEST( avx, cont, bloc )
+DEFINE_PERCOL_EWISE_SIMD_TEST( avx, bloc, cont )
+DEFINE_PERCOL_EWISE_SIMD_TEST( avx, bloc, bloc )
+
+#endif
+
+
 BEGIN_MAIN_SUITE
 	ADD_TPACK( percol_ewise_scalar_cont_cont )
 	ADD_TPACK( percol_ewise_scalar_cont_bloc )
@@ -77,6 +101,18 @@ BEGIN_MAIN_SUITE
 	ADD_TPACK( percol_ewise_scalar_grid_cont )
 	ADD_TPACK( percol_ewise_scalar_grid_bloc )
 	ADD_TPACK( percol_ewise_scalar_grid_grid )
+
+	ADD_TPACK( percol_ewise_sse_cont_cont )
+	ADD_TPACK( percol_ewise_sse_cont_bloc )
+	ADD_TPACK( percol_ewise_sse_bloc_cont )
+	ADD_TPACK( percol_ewise_sse_bloc_bloc )
+
+#ifdef LMAT_HAS_AVX
+	ADD_TPACK( percol_ewise_avx_cont_cont )
+	ADD_TPACK( percol_ewise_avx_cont_bloc )
+	ADD_TPACK( percol_ewise_avx_bloc_cont )
+	ADD_TPACK( percol_ewise_avx_bloc_bloc )
+#endif
 END_MAIN_SUITE
 
 

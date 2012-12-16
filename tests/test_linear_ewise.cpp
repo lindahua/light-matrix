@@ -182,9 +182,13 @@ BEGIN_TPACK( linear_ewise_sse_cont_cont )
 	ADD_MN_CASE_3X3( linear_ewise, sse_cont_cont, DM, DN )
 END_TPACK
 
+#ifdef LMAT_HAS_AVX
+
 BEGIN_TPACK( linear_ewise_avx_cont_cont )
 	ADD_MN_CASE_3X3( linear_ewise, avx_cont_cont, DM, DN )
 END_TPACK
+
+#endif
 
 
 BEGIN_MAIN_SUITE
@@ -197,7 +201,9 @@ BEGIN_MAIN_SUITE
 	ADD_TPACK( linear_ewise_scalar_steprow_steprow )
 
 	ADD_TPACK( linear_ewise_sse_cont_cont )
+#ifdef LMAT_HAS_AVX
 	ADD_TPACK( linear_ewise_avx_cont_cont )
+#endif
 END_MAIN_SUITE
 
 
