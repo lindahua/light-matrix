@@ -1,11 +1,10 @@
 /**
- * @file test_linear_ewise.cpp
+ * @file test_percol_ewise.cpp
  *
- * @brief Test Linear element-wise accesses
+ * @brief Unit testing of percol ewise evaluation
  *
  * @author Dahua Lin
  */
-
 
 #include "test_base.h"
 
@@ -21,7 +20,9 @@ using namespace lmat;
 using namespace lmat::test;
 
 
-MN_CASE( linear_ewise, cont_cont  )
+// test cases
+
+MN_CASE( percol_ewise, cont_cont  )
 {
 	const index_t m = M == 0 ? 3 : M;
 	const index_t n = N == 0 ? 4 : N;
@@ -38,19 +39,17 @@ MN_CASE( linear_ewise, cont_cont  )
 
 	matrix_shape<M, N> shape(m, n);
 
-	linear_ewise(atags::scalar(), shape).apply(
+	percol_ewise(atags::scalar(), shape).apply(
 			copy_kernel(), in_(smat), out_(dmat));
 
 	ASSERT_MAT_EQ(m, n, smat, dmat);
 }
 
 
-BEGIN_TPACK( linear_ewise_cont_cont )
-	ADD_MN_CASE_3X3( linear_ewise, cont_cont, DM, DN )
+BEGIN_TPACK( percol_ewise_cont_cont )
+	ADD_MN_CASE_3X3( percol_ewise, cont_cont, DM, DN )
 END_TPACK
 
 BEGIN_MAIN_SUITE
-	ADD_TPACK( linear_ewise_cont_cont )
+	ADD_TPACK( percol_ewise_cont_cont )
 END_MAIN_SUITE
-
-

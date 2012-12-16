@@ -266,7 +266,7 @@ set(EWISE_EVAL_HS
     ${MATRIX_EVAL_HS})
     
 add_executable(test_linear_ewise ${EWISE_EVAL_HS} test_linear_ewise.cpp)    
-
+add_executable(test_percol_ewise ${EWISE_EVAL_HS} test_percol_ewise.cpp)
 
 # suppress bogus free-nonheap-object complaint under GCC
 
@@ -304,6 +304,7 @@ set(LMAT_TEST_NAMES
 	test_mat_vecviews
 	test_mat_matviews
 	test_linear_ewise
+	test_percol_ewise
 )
 	
 foreach(tname ${LMAT_TEST_NAMES})
