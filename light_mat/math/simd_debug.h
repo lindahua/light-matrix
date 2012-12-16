@@ -23,10 +23,10 @@ namespace lmat { namespace math {
 
 		for (unsigned int i = 0; i < width - 1; ++i)
 		{
-			std::printf(fmt, pk.e[i]);
+			std::printf(fmt, pk[i]);
 			std::printf(", ");
 		}
-		std::printf(fmt, pk.e[width-1]);
+		std::printf(fmt, pk[width-1]);
 
 		std::printf(")");
 	}
@@ -41,10 +41,10 @@ namespace lmat { namespace math {
 
 		for (unsigned int i = 0; i < width - 1; ++i)
 		{
-			std::printf(fmt, pk.e[i]);
+			std::printf(fmt, pk[i]);
 			std::printf(", ");
 		}
-		std::printf(fmt, pk.e[width-1]);
+		std::printf(fmt, pk[width-1]);
 
 		std::printf(")");
 	}
@@ -57,7 +57,7 @@ namespace lmat { namespace math {
 
 		for (unsigned int i = 0; i < width; ++i)
 		{
-			if (!(pk.e[i] == v)) return false;
+			if (!(pk[i] == v)) return false;
 		}
 
 		return true;
@@ -71,7 +71,7 @@ namespace lmat { namespace math {
 
 		for (unsigned int i = 0; i < width; ++i)
 		{
-			if (!(pk.e[i] == ref[i])) return false;
+			if (!(pk[i] == ref[i])) return false;
 		}
 
 		return true;
@@ -84,7 +84,7 @@ namespace lmat { namespace math {
 
 		for (unsigned int i = 0; i < width; ++i)
 		{
-			if (!(pk.e[i] == v)) return false;
+			if (!(pk[i] == v)) return false;
 		}
 
 		return true;
@@ -97,7 +97,7 @@ namespace lmat { namespace math {
 
 		for (unsigned int i = 0; i < width; ++i)
 		{
-			if (!(pk.e[i] == ref[i])) return false;
+			if (!(pk[i] == ref[i])) return false;
 		}
 
 		return true;

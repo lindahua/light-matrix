@@ -22,8 +22,8 @@
 	LMAT_ENSURE_INLINE \
 	inline sse_f32pk Name##_emulate(const sse_f32pk& a) { \
 		LMAT_ALIGN_SSE float r_[4]; \
-		for (int i = 0; i < 4; ++i) { \
-			r_[i] = lmat::math::Name(a.e[i]); \
+		for (unsigned int i = 0; i < 4; ++i) { \
+			r_[i] = lmat::math::Name(a[i]); \
 		} \
 		sse_f32pk r; \
 		r.load_a(r_); \
@@ -31,8 +31,8 @@
 	LMAT_ENSURE_INLINE \
 	inline sse_f64pk Name##_emulate(const sse_f64pk& a) { \
 		LMAT_ALIGN_SSE double r_[2]; \
-		r_[0] = lmat::math::Name(a.e[0]); \
-		r_[1] = lmat::math::Name(a.e[1]); \
+		r_[0] = lmat::math::Name(a[0]); \
+		r_[1] = lmat::math::Name(a[1]); \
 		sse_f64pk r; \
 		r.load_a(r_); \
 		return r; }
@@ -41,8 +41,8 @@
 	LMAT_ENSURE_INLINE \
 	inline sse_f32pk Name##_emulate(const sse_f32pk& a, const sse_f32pk& b) { \
 		LMAT_ALIGN_SSE float r_[4]; \
-		for (int i = 0; i < 4; ++i) { \
-			r_[i] = lmat::math::Name(a.e[i], b.e[i]); \
+		for (unsigned int i = 0; i < 4; ++i) { \
+			r_[i] = lmat::math::Name(a[i], b[i]); \
 		} \
 		sse_f32pk r; \
 		r.load_a(r_); \
@@ -50,8 +50,8 @@
 	LMAT_ENSURE_INLINE \
 	inline sse_f64pk Name##_emulate(const sse_f64pk& a, const sse_f64pk& b) { \
 		LMAT_ALIGN_SSE double r_[2]; \
-		r_[0] = lmat::math::Name(a.e[0], b.e[0]); \
-		r_[1] = lmat::math::Name(a.e[1], b.e[1]); \
+		r_[0] = lmat::math::Name(a[0], b[0]); \
+		r_[1] = lmat::math::Name(a[1], b[1]); \
 		sse_f64pk r; \
 		r.load_a(r_); \
 		return r; }

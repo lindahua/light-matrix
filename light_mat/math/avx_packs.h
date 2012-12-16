@@ -40,22 +40,23 @@ namespace lmat { namespace math {
 
 
 	template<>
-	struct simd_pack<float, avx_t>
+	class simd_pack<float, avx_t>
 	{
-		LMAT_DEFINE_FOR_SIMD_PACK( avx_t, float, 8 )
-
+	private:
 		union
 		{
 			__m256 v;
 			LMAT_ALIGN_AVX float e[8];
 		};
 
+	public:
+		LMAT_DEFINE_FOR_SIMD_PACK( avx_t, float, 8 )
+
 		LMAT_ENSURE_INLINE
 		unsigned int width() const
 		{
 			return pack_width;
 		}
-
 
 		// constructors
 
@@ -197,26 +198,32 @@ namespace lmat { namespace math {
 	    	return e[i];
 	    }
 
+	    LMAT_ENSURE_INLINE float operator[] (unsigned int i) const
+	    {
+	    	return e[i];
+	    }
+
 	}; // AVX f32 pack
 
 
 	template<>
-	struct simd_pack<double, avx_t>
+	class simd_pack<double, avx_t>
 	{
-		LMAT_DEFINE_FOR_SIMD_PACK( avx_t, double, 4 )
-
+	private:
 		union
 		{
 			__m256d v;
 			LMAT_ALIGN_AVX double e[4];
 		};
 
+	public:
+		LMAT_DEFINE_FOR_SIMD_PACK( avx_t, double, 4 )
+
 		LMAT_ENSURE_INLINE
 		unsigned int width() const
 		{
 			return pack_width;
 		}
-
 
 		// constructors
 
@@ -358,6 +365,10 @@ namespace lmat { namespace math {
 	    	return e[i];
 	    }
 
+	    LMAT_ENSURE_INLINE double operator[] (unsigned int i) const
+	    {
+	    	return e[i];
+	    }
 
 	}; // AVX f64 pack
 

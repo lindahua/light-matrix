@@ -163,18 +163,18 @@ extern "C"
 #define LMAT_ACTIVATE_SSE_EXTERN_1( Name ) \
 	LMAT_ENSURE_INLINE \
 	inline sse_f32pk Name( const sse_f32pk& a ) { \
-		return LMAT_SSE_F(Name)(a.v); } \
+		return LMAT_SSE_F(Name)(a); } \
 	LMAT_ENSURE_INLINE \
 	inline sse_f64pk Name( const sse_f64pk& a ) { \
-		return LMAT_SSE_D(Name)(a.v); }
+		return LMAT_SSE_D(Name)(a); }
 
 #define LMAT_ACTIVATE_SSE_EXTERN_2( Name ) \
 	LMAT_ENSURE_INLINE \
 	inline sse_f32pk Name( const sse_f32pk& a, const sse_f32pk& b ) { \
-		return LMAT_SSE_F(Name)(a.v, b.v); } \
+		return LMAT_SSE_F(Name)(a, b); } \
 	LMAT_ENSURE_INLINE \
 	inline sse_f64pk Name( const sse_f64pk& a, const sse_f64pk& b ) { \
-		return LMAT_SSE_D(Name)(a.v, b.v); }
+		return LMAT_SSE_D(Name)(a, b); }
 
 
 namespace lmat { namespace math {

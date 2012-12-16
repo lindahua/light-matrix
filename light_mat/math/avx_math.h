@@ -101,18 +101,18 @@ extern "C"
 #define LMAT_ACTIVATE_AVX_EXTERN_1( Name ) \
 	LMAT_ENSURE_INLINE \
 	inline avx_f32pk Name( const avx_f32pk& a ) { \
-		return LMAT_AVX_F(Name)(a.v); } \
+		return LMAT_AVX_F(Name)(a); } \
 	LMAT_ENSURE_INLINE \
 	inline avx_f64pk Name( const avx_f64pk& a ) { \
-		return LMAT_AVX_D(Name)(a.v); }
+		return LMAT_AVX_D(Name)(a); }
 
 #define LMAT_ACTIVATE_AVX_EXTERN_2( Name ) \
 	LMAT_ENSURE_INLINE \
 	inline avx_f32pk Name( const avx_f32pk& a, const avx_f32pk& b ) { \
-		return LMAT_AVX_F(Name)(a.v, b.v); } \
+		return LMAT_AVX_F(Name)(a, b); } \
 	LMAT_ENSURE_INLINE \
 	inline avx_f64pk Name( const avx_f64pk& a, const avx_f64pk& b ) { \
-		return LMAT_AVX_D(Name)(a.v, b.v); }
+		return LMAT_AVX_D(Name)(a, b); }
 
 
 namespace lmat { namespace math {

@@ -86,21 +86,21 @@ T_CASE( sse_pack, constructs )
 	pack_t pv_inf = pack_t::inf();
 	for (unsigned i = 0; i < width; ++i)
 	{
-		bool is_inf_i = math::isinf(pv_inf.e[i]) && pv_inf.e[i] > T(0);
+		bool is_inf_i = math::isinf(pv_inf[i]) && pv_inf[i] > T(0);
 		ASSERT_TRUE( is_inf_i );
 	}
 
 	pack_t pv_neginf = pack_t::neg_inf();
 	for (unsigned i = 0; i < width; ++i)
 	{
-		bool is_neginf_i = math::isinf(pv_neginf.e[i]) && pv_neginf.e[i] < T(0);
+		bool is_neginf_i = math::isinf(pv_neginf[i]) && pv_neginf[i] < T(0);
 		ASSERT_TRUE( is_neginf_i );
 	}
 
 	pack_t pv_nan = pack_t::nan();
 	for (unsigned i = 0; i < width; ++i)
 	{
-		bool is_nan_i = math::isnan(pv_nan.e[i]);
+		bool is_nan_i = math::isnan(pv_nan[i]);
 		ASSERT_TRUE( is_nan_i );
 	}
 #endif

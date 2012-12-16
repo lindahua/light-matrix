@@ -55,9 +55,9 @@ namespace lmat { namespace math {
 
 	template<typename T, typename Kind> struct simd_traits;
 
-	template<typename T, typename Kind> struct simd_bpack;
+	template<typename T, typename Kind> class simd_bpack;
 
-	template<typename T, typename Kind> struct simd_pack;
+	template<typename T, typename Kind> class simd_pack;
 
 } }
 

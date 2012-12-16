@@ -23,16 +23,18 @@ namespace lmat { namespace math {
 
 
 	template<>
-	struct simd_bpack<float, avx_t>
+	class simd_bpack<float, avx_t>
 	{
-		typedef int32_t bint_type;
-		static const unsigned int pack_width = 8;
-
+	private:
 		union
 		{
 			__m256 v;
 			LMAT_ALIGN_SSE int32_t e[8];
 		};
+
+	public:
+		typedef int32_t bint_type;
+		static const unsigned int pack_width = 8;
 
 		LMAT_ENSURE_INLINE
 		unsigned int width() const
@@ -153,21 +155,29 @@ namespace lmat { namespace math {
 	    	return (bool)(bi);
 	    }
 
+	    LMAT_ENSURE_INLINE bint_type operator[] (unsigned int i) const
+	    {
+	    	return e[i];
+	    }
+
 	};
 
 
 
 	template<>
-	struct simd_bpack<double, avx_t>
+	class simd_bpack<double, avx_t>
 	{
-		typedef int32_t bint_type;
-		static const unsigned int pack_width = 4;
-
+	private:
 		union
 		{
 			__m256d v;
 			LMAT_ALIGN_SSE int64_t e[4];
 		};
+
+
+	public:
+		typedef int64_t bint_type;
+		static const unsigned int pack_width = 4;
 
 		LMAT_ENSURE_INLINE
 		unsigned int width() const
@@ -280,6 +290,11 @@ namespace lmat { namespace math {
 	    		bi = internal::sse_extract_i64(_mm_castpd_si128(get_high()), i & 1);
 
 	    	return (bool)(bi);
+	    }
+
+	    LMAT_ENSURE_INLINE bint_type operator[] (unsigned int i) const
+	    {
+	    	return e[i];
 	    }
 
 	};

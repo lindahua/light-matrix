@@ -44,7 +44,7 @@ namespace lmat { namespace test {
 
 		for (unsigned i = 0; i < width; ++i)
 		{
-			if (ltest::ulp_distance(a.e[i], b[i]) > dtol)
+			if (ltest::ulp_distance(a[i], b[i]) > dtol)
 				return false;
 		}
 

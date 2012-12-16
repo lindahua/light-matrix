@@ -36,22 +36,24 @@ namespace lmat { namespace math {
 
 
 	template<>
-	struct simd_pack<float, sse_t>
+	class simd_pack<float, sse_t>
 	{
-		LMAT_DEFINE_FOR_SIMD_PACK( sse_t, float, 4 )
-
+	private:
 		union
 		{
 			__m128 v;
 			LMAT_ALIGN_SSE float e[4];
 		};
 
+
+	public:
+		LMAT_DEFINE_FOR_SIMD_PACK( sse_t, float, 4 )
+
 		LMAT_ENSURE_INLINE
 		unsigned int width() const
 		{
 			return pack_width;
 		}
-
 
 		// constructors
 
@@ -182,21 +184,28 @@ namespace lmat { namespace math {
 	    	return internal::sse_extract_f32(v, i);
 	    }
 
+	    LMAT_ENSURE_INLINE float operator[] (unsigned int i) const
+	    {
+	    	return e[i];
+	    }
+
 
 	}; // SSE f32 pack
 
 
 
 	template<>
-	struct simd_pack<double, sse_t>
+	class simd_pack<double, sse_t>
 	{
-		LMAT_DEFINE_FOR_SIMD_PACK( sse_t, double, 2 )
-
+	private:
 		union
 		{
 			__m128d v;
 			LMAT_ALIGN_SSE double e[2];
 		};
+
+	public:
+		LMAT_DEFINE_FOR_SIMD_PACK( sse_t, double, 2 )
 
 		LMAT_ENSURE_INLINE
 		unsigned int width() const
@@ -330,6 +339,10 @@ namespace lmat { namespace math {
 	    	return internal::sse_extract_f64(v, i);
 	    }
 
+	    LMAT_ENSURE_INLINE double operator[] (unsigned int i) const
+	    {
+	    	return e[i];
+	    }
 
 	}; // SSE f64 pack
 

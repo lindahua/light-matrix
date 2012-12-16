@@ -29,132 +29,132 @@ namespace lmat { namespace math {
 	LMAT_ENSURE_INLINE
 	inline avx_f32pk operator + (const avx_f32pk& a, const avx_f32pk& b)
 	{
-		return _mm256_add_ps(a.v, b.v);
+		return _mm256_add_ps(a, b);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline avx_f64pk operator + (const avx_f64pk& a, const avx_f64pk& b)
 	{
-		return _mm256_add_pd(a.v, b.v);
+		return _mm256_add_pd(a, b);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline avx_f32pk operator - (const avx_f32pk& a, const avx_f32pk& b)
 	{
-		return _mm256_sub_ps(a.v, b.v);
+		return _mm256_sub_ps(a, b);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline avx_f64pk operator - (const avx_f64pk& a, const avx_f64pk& b)
 	{
-		return _mm256_sub_pd(a.v, b.v);
+		return _mm256_sub_pd(a, b);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline avx_f32pk operator * (const avx_f32pk& a, const avx_f32pk& b)
 	{
-		return _mm256_mul_ps(a.v, b.v);
+		return _mm256_mul_ps(a, b);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline avx_f64pk operator * (const avx_f64pk& a, const avx_f64pk& b)
 	{
-		return _mm256_mul_pd(a.v, b.v);
+		return _mm256_mul_pd(a, b);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline avx_f32pk operator / (const avx_f32pk& a, const avx_f32pk& b)
 	{
-		return _mm256_div_ps(a.v, b.v);
+		return _mm256_div_ps(a, b);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline avx_f64pk operator / (const avx_f64pk& a, const avx_f64pk& b)
 	{
-		return _mm256_div_pd(a.v, b.v);
+		return _mm256_div_pd(a, b);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline avx_f32pk operator - (const avx_f32pk& a)
 	{
 		typedef internal::num_fmt<float> fmt;
-		return _mm256_xor_ps(_mm256_castsi256_ps(_mm256_set1_epi32(fmt::sign_bit)), a.v);
+		return _mm256_xor_ps(_mm256_castsi256_ps(_mm256_set1_epi32(fmt::sign_bit)), a);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline avx_f64pk operator - (const avx_f64pk& a)
 	{
 		typedef internal::num_fmt<double> fmt;
-		return _mm256_xor_pd(_mm256_castsi256_pd(_mm256_set1_epi64x(fmt::sign_bit)), a.v);
+		return _mm256_xor_pd(_mm256_castsi256_pd(_mm256_set1_epi64x(fmt::sign_bit)), a);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline avx_f32pk abs(const avx_f32pk& a)
 	{
 		typedef internal::num_fmt<float> fmt;
-		return _mm256_andnot_ps(_mm256_castsi256_ps(_mm256_set1_epi32(fmt::sign_bit)), a.v);
+		return _mm256_andnot_ps(_mm256_castsi256_ps(_mm256_set1_epi32(fmt::sign_bit)), a);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline avx_f64pk abs(const avx_f64pk& a)
 	{
 		typedef internal::num_fmt<double> fmt;
-		return _mm256_andnot_pd(_mm256_castsi256_pd(_mm256_set1_epi64x(fmt::sign_bit)), a.v);
+		return _mm256_andnot_pd(_mm256_castsi256_pd(_mm256_set1_epi64x(fmt::sign_bit)), a);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline avx_f32pk& operator += (avx_f32pk& a, const avx_f32pk& b)
 	{
-		a.v = _mm256_add_ps(a.v, b.v);
+		a = _mm256_add_ps(a, b);
 		return a;
 	}
 
 	LMAT_ENSURE_INLINE
 	inline avx_f64pk& operator += (avx_f64pk& a, const avx_f64pk& b)
 	{
-		a.v = _mm256_add_pd(a.v, b.v);
+		a = _mm256_add_pd(a, b);
 		return a;
 	}
 
 	LMAT_ENSURE_INLINE
 	inline avx_f32pk& operator -= (avx_f32pk& a, const avx_f32pk& b)
 	{
-		a.v = _mm256_sub_ps(a.v, b.v);
+		a = _mm256_sub_ps(a, b);
 		return a;
 	}
 
 	LMAT_ENSURE_INLINE
 	inline avx_f64pk& operator -= (avx_f64pk& a, const avx_f64pk& b)
 	{
-		a.v = _mm256_sub_pd(a.v, b.v);
+		a = _mm256_sub_pd(a, b);
 		return a;
 	}
 
 	LMAT_ENSURE_INLINE
 	inline avx_f32pk& operator *= (avx_f32pk& a, const avx_f32pk& b)
 	{
-		a.v = _mm256_mul_ps(a.v, b.v);
+		a = _mm256_mul_ps(a, b);
 		return a;
 	}
 
 	LMAT_ENSURE_INLINE
 	inline avx_f64pk& operator *= (avx_f64pk& a, const avx_f64pk& b)
 	{
-		a.v = _mm256_mul_pd(a.v, b.v);
+		a = _mm256_mul_pd(a, b);
 		return a;
 	}
 
 	LMAT_ENSURE_INLINE
 	inline avx_f32pk& operator /= (avx_f32pk& a, const avx_f32pk& b)
 	{
-		a.v = _mm256_div_ps(a.v, b.v);
+		a = _mm256_div_ps(a, b);
 		return a;
 	}
 
 	LMAT_ENSURE_INLINE
 	inline avx_f64pk& operator /= (avx_f64pk& a, const avx_f64pk& b)
 	{
-		a.v = _mm256_div_pd(a.v, b.v);
+		a = _mm256_div_pd(a, b);
 		return a;
 	}
 
@@ -168,24 +168,24 @@ namespace lmat { namespace math {
 	LMAT_ENSURE_INLINE
 	inline avx_f32pk (min)(const avx_f32pk& a, const avx_f32pk& b)
 	{
-		return _mm256_min_ps(a.v, b.v);
+		return _mm256_min_ps(a, b);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline avx_f64pk (min)(const avx_f64pk& a, const avx_f64pk& b)
 	{
-		return _mm256_min_pd(a.v, b.v);
+		return _mm256_min_pd(a, b);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline avx_f32pk (max)(const avx_f32pk& a, const avx_f32pk& b)
 	{
-		return _mm256_max_ps(a.v, b.v);
+		return _mm256_max_ps(a, b);
 	}
 	LMAT_ENSURE_INLINE
 	inline avx_f64pk (max)(const avx_f64pk& a, const avx_f64pk& b)
 	{
-		return _mm256_max_pd(a.v, b.v);
+		return _mm256_max_pd(a, b);
 	}
 
 	/********************************************
@@ -197,73 +197,73 @@ namespace lmat { namespace math {
 	LMAT_ENSURE_INLINE
 	inline avx_f32pk sqr(const avx_f32pk& a)
 	{
-		return _mm256_mul_ps(a.v, a.v);
+		return _mm256_mul_ps(a, a);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline avx_f64pk sqr(const avx_f64pk& a)
 	{
-		return _mm256_mul_pd(a.v, a.v);
+		return _mm256_mul_pd(a, a);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline avx_f32pk cube(const avx_f32pk& a)
 	{
-		return _mm256_mul_ps(_mm256_mul_ps(a.v, a.v), a.v);
+		return _mm256_mul_ps(_mm256_mul_ps(a, a), a);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline avx_f64pk cube(const avx_f64pk& a)
 	{
-		return _mm256_mul_pd(_mm256_mul_pd(a.v, a.v), a.v);
+		return _mm256_mul_pd(_mm256_mul_pd(a, a), a);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline avx_f32pk sqrt(const avx_f32pk& a)
 	{
-		return _mm256_sqrt_ps(a.v);
+		return _mm256_sqrt_ps(a);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline avx_f64pk sqrt(const avx_f64pk& a)
 	{
-		return _mm256_sqrt_pd(a.v);
+		return _mm256_sqrt_pd(a);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline avx_f32pk rcp(const avx_f32pk& a)
 	{
-		return _mm256_div_ps(_mm256_set1_ps(1.0f), a.v);
+		return _mm256_div_ps(_mm256_set1_ps(1.0f), a);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline avx_f32pk approx_rcp(const avx_f32pk& a)
 	{
-		return _mm256_rcp_ps(a.v);
+		return _mm256_rcp_ps(a);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline avx_f64pk rcp(const avx_f64pk& a)
 	{
-		return _mm256_div_pd(_mm256_set1_pd(1.0), a.v);
+		return _mm256_div_pd(_mm256_set1_pd(1.0), a);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline avx_f32pk rsqrt(const avx_f32pk& a)
 	{
-		return _mm256_div_ps(_mm256_set1_ps(1.0f), _mm256_sqrt_ps(a.v));
+		return _mm256_div_ps(_mm256_set1_ps(1.0f), _mm256_sqrt_ps(a));
 	}
 
 	LMAT_ENSURE_INLINE
 	inline avx_f32pk approx_rsqrt(const avx_f32pk& a)
 	{
-		return _mm256_rsqrt_ps(a.v);
+		return _mm256_rsqrt_ps(a);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline avx_f64pk rsqrt(const avx_f64pk& a)
 	{
-		return _mm256_div_pd(_mm256_set1_pd(1.0), _mm256_sqrt_pd(a.v));
+		return _mm256_div_pd(_mm256_set1_pd(1.0), _mm256_sqrt_pd(a));
 	}
 
 
@@ -282,74 +282,74 @@ namespace lmat { namespace math {
 	LMAT_ENSURE_INLINE
 	inline avx_f32bpk operator == (const avx_f32pk& a, const avx_f32pk& b)
 	{
-		return _mm256_cmp_ps(a.v, b.v, _CMP_EQ_OQ);
+		return _mm256_cmp_ps(a, b, _CMP_EQ_OQ);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline avx_f64bpk operator == (const avx_f64pk& a, const avx_f64pk& b)
 	{
-		return _mm256_cmp_pd(a.v, b.v, _CMP_EQ_OQ);
+		return _mm256_cmp_pd(a, b, _CMP_EQ_OQ);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline avx_f32bpk operator != (const avx_f32pk& a, const avx_f32pk& b)
 	{
-		return _mm256_cmp_ps(a.v, b.v, _CMP_NEQ_OQ);
+		return _mm256_cmp_ps(a, b, _CMP_NEQ_OQ);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline avx_f64bpk operator != (const avx_f64pk& a, const avx_f64pk& b)
 	{
-		return _mm256_cmp_pd(a.v, b.v, _CMP_NEQ_OQ);
+		return _mm256_cmp_pd(a, b, _CMP_NEQ_OQ);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline avx_f32bpk operator > (const avx_f32pk& a, const avx_f32pk& b)
 	{
-		return _mm256_cmp_ps(a.v, b.v, _CMP_GT_OQ);
+		return _mm256_cmp_ps(a, b, _CMP_GT_OQ);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline avx_f64bpk operator > (const avx_f64pk& a, const avx_f64pk& b)
 	{
-		return _mm256_cmp_pd(a.v, b.v, _CMP_GT_OQ);
+		return _mm256_cmp_pd(a, b, _CMP_GT_OQ);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline avx_f32bpk operator >= (const avx_f32pk& a, const avx_f32pk& b)
 	{
-		return _mm256_cmp_ps(a.v, b.v, _CMP_GE_OQ);
+		return _mm256_cmp_ps(a, b, _CMP_GE_OQ);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline avx_f64bpk operator >= (const avx_f64pk& a, const avx_f64pk& b)
 	{
-		return _mm256_cmp_pd(a.v, b.v, _CMP_GE_OQ);
+		return _mm256_cmp_pd(a, b, _CMP_GE_OQ);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline avx_f32bpk operator < (const avx_f32pk& a, const avx_f32pk& b)
 	{
-		return _mm256_cmp_ps(a.v, b.v, _CMP_LT_OQ);
+		return _mm256_cmp_ps(a, b, _CMP_LT_OQ);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline avx_f64bpk operator < (const avx_f64pk& a, const avx_f64pk& b)
 	{
-		return _mm256_cmp_pd(a.v, b.v, _CMP_LT_OQ);
+		return _mm256_cmp_pd(a, b, _CMP_LT_OQ);
 	}
 
 
 	LMAT_ENSURE_INLINE
 	inline avx_f32bpk operator <= (const avx_f32pk& a, const avx_f32pk& b)
 	{
-		return _mm256_cmp_ps(a.v, b.v, _CMP_LE_OQ);
+		return _mm256_cmp_ps(a, b, _CMP_LE_OQ);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline avx_f64bpk operator <= (const avx_f64pk& a, const avx_f64pk& b)
 	{
-		return _mm256_cmp_pd(a.v, b.v, _CMP_LE_OQ);
+		return _mm256_cmp_pd(a, b, _CMP_LE_OQ);
 	}
 
 
@@ -362,49 +362,49 @@ namespace lmat { namespace math {
 	LMAT_ENSURE_INLINE
 	inline avx_f32bpk operator ~ (const avx_f32bpk& a)
 	{
-		return _mm256_xor_ps(a.v, _mm256_castsi256_ps(_mm256_set1_epi32(-1)));
+		return _mm256_xor_ps(a, _mm256_castsi256_ps(_mm256_set1_epi32(-1)));
 	}
 
 	LMAT_ENSURE_INLINE
 	inline avx_f64bpk operator ~ (const avx_f64bpk& a)
 	{
-		return _mm256_xor_pd(a.v, _mm256_castsi256_pd(_mm256_set1_epi32(-1)));
+		return _mm256_xor_pd(a, _mm256_castsi256_pd(_mm256_set1_epi32(-1)));
 	}
 
 	LMAT_ENSURE_INLINE
 	inline avx_f32bpk operator & (const avx_f32bpk& a, const avx_f32bpk& b)
 	{
-		return _mm256_and_ps(a.v, b.v);
+		return _mm256_and_ps(a, b);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline avx_f64bpk operator & (const avx_f64bpk& a, const avx_f64bpk& b)
 	{
-		return _mm256_and_pd(a.v, b.v);
+		return _mm256_and_pd(a, b);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline avx_f32bpk operator | (const avx_f32bpk& a, const avx_f32bpk& b)
 	{
-		return _mm256_or_ps(a.v, b.v);
+		return _mm256_or_ps(a, b);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline avx_f64bpk operator | (const avx_f64bpk& a, const avx_f64bpk& b)
 	{
-		return _mm256_or_pd(a.v, b.v);
+		return _mm256_or_pd(a, b);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline avx_f32bpk operator != (const avx_f32bpk& a, const avx_f32bpk& b)
 	{
-		return _mm256_xor_ps(a.v, b.v);
+		return _mm256_xor_ps(a, b);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline avx_f64bpk operator != (const avx_f64bpk& a, const avx_f64bpk& b)
 	{
-		return _mm256_xor_pd(a.v, b.v);
+		return _mm256_xor_pd(a, b);
 	}
 
 	LMAT_ENSURE_INLINE
@@ -457,49 +457,49 @@ namespace lmat { namespace math {
 	LMAT_ENSURE_INLINE
 	inline avx_f32pk round(const avx_f32pk& a)
 	{
-		return _mm256_round_ps(a.v, 0);
+		return _mm256_round_ps(a, 0);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline avx_f64pk round(const avx_f64pk& a)
 	{
-		return _mm256_round_pd(a.v, 0);
+		return _mm256_round_pd(a, 0);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline avx_f32pk floor(const avx_f32pk& a)
 	{
-		return _mm256_round_ps(a.v, 1);
+		return _mm256_round_ps(a, 1);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline avx_f64pk floor(const avx_f64pk& a)
 	{
-		return _mm256_round_pd(a.v, 1);
+		return _mm256_round_pd(a, 1);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline avx_f32pk ceil(const avx_f32pk& a)
 	{
-		return _mm256_round_ps(a.v, 2);
+		return _mm256_round_ps(a, 2);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline avx_f64pk ceil(const avx_f64pk& a)
 	{
-		return _mm256_round_pd(a.v, 2);
+		return _mm256_round_pd(a, 2);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline avx_f32pk trunc(const avx_f32pk& a)
 	{
-		return _mm256_round_ps(a.v, 3);
+		return _mm256_round_ps(a, 3);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline avx_f64pk trunc(const avx_f64pk& a)
 	{
-		return _mm256_round_pd(a.v, 3);
+		return _mm256_round_pd(a, 3);
 	}
 
 

@@ -18,8 +18,8 @@
 	LMAT_ENSURE_INLINE \
 	inline avx_f32pk Name##_emulate(const avx_f32pk& a) { \
 		LMAT_ALIGN_AVX float r_[8]; \
-		for (int i = 0; i < 8; ++i) { \
-			r_[i] = lmat::math::Name(a.e[i]); \
+		for (unsigned int i = 0; i < 8; ++i) { \
+			r_[i] = lmat::math::Name(a[i]); \
 		} \
 		avx_f32pk r; \
 		r.load_a(r_); \
@@ -27,8 +27,8 @@
 	LMAT_ENSURE_INLINE \
 	inline avx_f64pk Name##_emulate(const avx_f64pk& a) { \
 		LMAT_ALIGN_AVX double r_[4]; \
-		for (int i = 0; i < 4; ++i) { \
-			r_[i] = lmat::math::Name(a.e[i]); \
+		for (unsigned int i = 0; i < 4; ++i) { \
+			r_[i] = lmat::math::Name(a[i]); \
 		} \
 		avx_f64pk r; \
 		r.load_a(r_); \
@@ -38,8 +38,8 @@
 	LMAT_ENSURE_INLINE \
 	inline avx_f32pk Name##_emulate(const avx_f32pk& a, const avx_f32pk& b) { \
 		LMAT_ALIGN_AVX float r_[8]; \
-		for (int i = 0; i < 8; ++i) { \
-			r_[i] = lmat::math::Name(a.e[i], b.e[i]); \
+		for (unsigned int i = 0; i < 8; ++i) { \
+			r_[i] = lmat::math::Name(a[i], b[i]); \
 		} \
 		avx_f32pk r; \
 		r.load_a(r_); \
@@ -47,8 +47,8 @@
 	LMAT_ENSURE_INLINE \
 	inline avx_f64pk Name##_emulate(const avx_f64pk& a, const avx_f64pk& b) { \
 		LMAT_ALIGN_AVX double r_[4]; \
-		for (int i = 0; i < 4; ++i) { \
-			r_[i] = lmat::math::Name(a.e[i], b.e[i]); \
+		for (unsigned int i = 0; i < 4; ++i) { \
+			r_[i] = lmat::math::Name(a[i], b[i]); \
 		} \
 		avx_f64pk r; \
 		r.load_a(r_); \
