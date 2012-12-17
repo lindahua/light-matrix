@@ -16,11 +16,27 @@
 #include <light_mat/matrix/matrix_classes.h>
 #include <light_mat/mateval/ewise_eval.h>
 
+#include <light_mat/math/sse_ops.h>
+#ifdef LMAT_HAS_AVX
+#include <light_mat/math/avx_ops.h>
+#endif
+
+
 using namespace lmat;
 using namespace lmat::test;
 
 
 // test cases
+
+struct my_update_kernel
+{
+	template<typename T>
+	LMAT_ENSURE_INLINE
+	void operator() (const T& s, T& d) const
+	{
+		d += s;
+	}
+};
 
 template<typename STag, typename DTag, typename U, int M, int N>
 void test_percol_ewise()
@@ -44,6 +60,17 @@ void test_percol_ewise()
 			copy_kernel(), in_(smat), out_(dmat));
 
 	ASSERT_MAT_EQ(m, n, smat, dmat);
+
+	dense_matrix<double, M, N> rmat(m, n);
+	for (index_t j = 0; j < n; ++j)
+	{
+		for (index_t i = 0; i < m; ++i) rmat(i, j) = smat(i, j) + dmat(i, j);
+	}
+
+	percol_ewise(U(), shape).apply(
+			my_update_kernel(), in_(smat), in_out_(dmat));
+
+	ASSERT_MAT_EQ(m, n, dmat, rmat);
 }
 
 

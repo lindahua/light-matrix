@@ -330,12 +330,6 @@ namespace lmat
 					multi_contcol_writer<T, U>,
 					multi_stepcol_writer<T, U>
 			>::type type;
-
-			LMAT_ENSURE_INLINE
-			static type get(Mat& mat)
-			{
-				return type(mat);
-			}
 		};
 	}
 
@@ -344,7 +338,92 @@ namespace lmat
 	inline typename internal::multicol_writer_map<Mat, U>::type
 	make_multicol_accessor(U, const out_wrap<Mat, atags::normal>& wrap)
 	{
-		return internal::multicol_writer_map<Mat, U>::get(wrap.arg());
+		typedef typename internal::multicol_writer_map<Mat, U>::type type;
+		return type(wrap.arg());
+	}
+
+
+	/********************************************
+	 *
+	 *  updater classes
+	 *
+	 ********************************************/
+
+	template<typename T, typename U>
+	class multi_contcol_updater : public multicol_accessor_base
+	{
+	public:
+		template<class Mat>
+		LMAT_ENSURE_INLINE
+		explicit multi_contcol_updater(Mat& mat)
+		: m_pbase(mat.ptr_data()), m_colstride(mat.col_stride())
+		{ }
+
+		LMAT_ENSURE_INLINE
+		contvec_updater<T, U> col(index_t j) const
+		{
+			return contvec_updater<T, U>(m_pbase + m_colstride * j);
+		}
+
+	private:
+		T *m_pbase;
+		index_t m_colstride;
+	};
+
+
+	template<typename T, typename U>
+	class multi_stepcol_updater : public multicol_accessor_base
+	{
+	public:
+		template<class Mat>
+		LMAT_ENSURE_INLINE
+		explicit multi_stepcol_updater(Mat& mat)
+		: m_pbase(mat.ptr_data())
+		, m_rowstride(mat.row_stride())
+		, m_colstride(mat.col_stride())
+		{ }
+
+		LMAT_ENSURE_INLINE
+		stepvec_updater<T, U> col(index_t j) const
+		{
+			return stepvec_updater<T, U>(m_pbase + m_colstride * j, m_rowstride);
+		}
+
+	private:
+		T *m_pbase;
+		index_t m_rowstride;
+		index_t m_colstride;
+	};
+
+
+	/********************************************
+	 *
+	 *  updater maps
+	 *
+	 ********************************************/
+
+	namespace internal
+	{
+		template<class Mat, typename U>
+		struct multicol_updater_map
+		{
+			typedef typename matrix_traits<Mat>::value_type T;
+
+			typedef typename meta::if_<
+					meta::is_percol_continuous<Mat>,
+					multi_contcol_updater<T, U>,
+					multi_stepcol_updater<T, U>
+			>::type type;
+		};
+	}
+
+	template<class Mat, typename U>
+	LMAT_ENSURE_INLINE
+	inline typename internal::multicol_updater_map<Mat, U>::type
+	make_multicol_accessor(U, const in_out_wrap<Mat, atags::normal>& wrap)
+	{
+		typedef typename internal::multicol_updater_map<Mat, U>::type type;
+		return type(wrap.arg());
 	}
 
 

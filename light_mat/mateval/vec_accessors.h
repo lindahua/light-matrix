@@ -25,6 +25,9 @@ namespace lmat
 	template<typename T, typename U> class contvec_writer;
 	template<typename T, typename U> class stepvec_writer;
 
+	template<typename T, typename U> class contvec_updater;
+	template<typename T, typename U> class stepvec_updater;
+
 	class scalar_vec_accessor_base
 	{
 	public:
@@ -458,6 +461,192 @@ namespace lmat
 	{
 		return internal::vec_writer_map<Mat, U>::get(wrap.arg());
 	}
+
+
+	/********************************************
+	 *
+	 *  updater classes
+	 *
+	 ********************************************/
+
+	// contvec_updater
+
+	template<typename T>
+	class contvec_updater<T, atags::scalar> : public scalar_vec_accessor_base
+	{
+	public:
+		LMAT_ENSURE_INLINE
+		explicit contvec_updater(T* p) : m_pdata(p) { }
+
+		LMAT_ENSURE_INLINE
+		T& scalar(index_t i) const
+		{
+			return m_temp = m_pdata[i];
+		}
+
+		LMAT_ENSURE_INLINE
+		nil_t done_scalar(index_t i) const
+		{
+			m_pdata[i] = m_temp;
+			return nil_t();
+		}
+
+	private:
+		mutable T m_temp;
+		T* m_pdata;
+	};
+
+
+	template<typename T, typename Kind>
+	class contvec_updater<T, atags::simd<T, Kind> > : public simd_vec_accessor_base
+	{
+	public:
+		typedef math::simd_pack<T, Kind> pack_type;
+
+		LMAT_ENSURE_INLINE
+		explicit contvec_updater(T* p) : m_pdata(p) { }
+
+		LMAT_ENSURE_INLINE
+		T& scalar(index_t i) const
+		{
+			return m_stemp = m_pdata[i];
+		}
+
+		LMAT_ENSURE_INLINE
+		pack_type& pack(index_t i) const
+		{
+			m_ptemp.load_u(m_pdata + i);
+			return m_ptemp;
+		}
+
+		LMAT_ENSURE_INLINE
+		nil_t done_scalar(index_t i) const
+		{
+			m_pdata[i] = m_stemp;
+			return nil_t();
+		}
+
+		LMAT_ENSURE_INLINE
+		nil_t done_pack(index_t i) const
+		{
+			m_ptemp.store_u(m_pdata + i);
+			return nil_t();
+		}
+
+	private:
+		mutable pack_type m_ptemp;
+		mutable T m_stemp;
+		T* m_pdata;
+	};
+
+	// stepvec_updater
+
+	template<typename T>
+	class stepvec_updater<T, atags::scalar> : public scalar_vec_accessor_base
+	{
+	public:
+		LMAT_ENSURE_INLINE
+		explicit stepvec_updater(T* p, index_t step)
+		: m_pdata(p), m_step(step) { }
+
+		LMAT_ENSURE_INLINE
+		T& scalar(index_t i) const
+		{
+			return m_temp = m_pdata[i * m_step];
+		}
+
+		LMAT_ENSURE_INLINE
+		nil_t done_scalar(index_t i) const
+		{
+			m_pdata[i * m_step] = m_temp;
+			return nil_t();
+		}
+
+	private:
+		mutable T m_temp;
+		T* m_pdata;
+		index_t m_step;
+	};
+
+
+	/********************************************
+	 *
+	 *  updater maps
+	 *
+	 ********************************************/
+
+	namespace internal
+	{
+		template<class Mat, typename U>
+		struct contvec_updater_map
+		{
+			typedef typename matrix_traits<Mat>::value_type T;
+			typedef contvec_updater<T, U> type;
+
+			LMAT_ENSURE_INLINE
+			static type get(Mat& mat)
+			{
+				return type(mat.ptr_data());
+			}
+		};
+
+		template<class Mat, typename U>
+		struct stepcol_updater_map
+		{
+			typedef typename matrix_traits<Mat>::value_type T;
+			typedef stepvec_updater<T, U> type;
+
+			LMAT_ENSURE_INLINE
+			static type get(Mat& mat)
+			{
+				return type(mat.ptr_data(), mat.row_stride());
+			}
+		};
+
+		template<class Mat, typename U>
+		struct steprow_updater_map
+		{
+			typedef typename matrix_traits<Mat>::value_type T;
+			typedef stepvec_updater<T, U> type;
+
+			LMAT_ENSURE_INLINE
+			static type get(Mat& mat)
+			{
+				return type(mat.ptr_data(), mat.col_stride());
+			}
+		};
+
+		struct invalid_updater_map { };
+
+		template<class Mat, typename U>
+		struct vec_updater_map
+		{
+			typedef
+			typename meta::if_<meta::is_continuous<Mat>,	contvec_updater_map<Mat, U>,
+			typename meta::if_<meta::is_col<Mat>, 			stepcol_updater_map<Mat, U>,
+			typename meta::if_<meta::is_row<Mat>, 			steprow_updater_map<Mat, U>,
+															invalid_updater_map
+			>::type >::type >::type internal_map;
+
+			typedef typename internal_map::type type;
+
+			LMAT_ENSURE_INLINE
+			static type get(Mat& mat)
+			{
+				return internal_map::get(mat);
+			}
+		};
+	};
+
+
+	template<class Mat, typename U>
+	LMAT_ENSURE_INLINE
+	inline typename internal::vec_updater_map<Mat, U>::type
+	make_vec_accessor(U, const in_out_wrap<Mat, atags::normal>& wrap)
+	{
+		return internal::vec_updater_map<Mat, U>::get(wrap.arg());
+	}
+
 }
 
 #endif /* VEC_ACCESSORS_H_ */

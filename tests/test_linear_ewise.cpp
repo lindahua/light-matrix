@@ -17,10 +17,27 @@
 #include <light_mat/matrix/matrix_classes.h>
 #include <light_mat/mateval/ewise_eval.h>
 
+#include <light_mat/math/sse_ops.h>
+#ifdef LMAT_HAS_AVX
+#include <light_mat/math/avx_ops.h>
+#endif
+
+
 using namespace lmat;
 using namespace lmat::test;
 
 // core functions
+
+struct my_update_kernel
+{
+	template<typename T>
+	LMAT_ENSURE_INLINE
+	void operator() (const T& s, T& d) const
+	{
+		d += s;
+	}
+};
+
 
 template<typename U, int M, int N>
 void test_linear_ewise_cont_cont()
@@ -35,6 +52,8 @@ void test_linear_ewise_cont_cont()
 	src.fill_lin();
 	mat_host<cont, double, M, N> dst(m, n);
 
+	dense_matrix<double, M, N> rmat(m, n);
+
 	smat_t smat = src.get_cmat();
 	dmat_t dmat = dst.get_mat();
 
@@ -44,6 +63,13 @@ void test_linear_ewise_cont_cont()
 			copy_kernel(), in_(smat), out_(dmat));
 
 	ASSERT_MAT_EQ(m, n, smat, dmat);
+
+	for (index_t i = 0; i < m * n; ++i) rmat[i] = smat[i] + dmat[i];
+
+	linear_ewise(U(), shape).apply(
+			my_update_kernel(), in_(smat), in_out_(dmat));
+
+	ASSERT_MAT_EQ(m, n, dmat, rmat);
 }
 
 template<typename U, typename STag, typename DTag, int M>
@@ -58,6 +84,8 @@ void test_linear_ewise_col()
 	src.fill_lin();
 	mat_host<DTag, double, M, 1> dst(m, 1);
 
+	dense_matrix<double, M, 1> rmat(m, 1);
+
 	smat_t smat = src.get_cmat();
 	dmat_t dmat = dst.get_mat();
 
@@ -67,6 +95,13 @@ void test_linear_ewise_col()
 			copy_kernel(), in_(smat), out_(dmat));
 
 	ASSERT_MAT_EQ(m, 1, smat, dmat);
+
+	for (index_t i = 0; i < m; ++i) rmat[i] = smat[i] + dmat[i];
+
+	linear_ewise(U(), shape).apply(
+			my_update_kernel(), in_(smat), in_out_(dmat));
+
+	ASSERT_MAT_EQ(m, 1, dmat, rmat);
 }
 
 template<typename U, typename STag, typename DTag, int N>
@@ -81,6 +116,8 @@ void test_linear_ewise_row()
 	src.fill_lin();
 	mat_host<DTag, double, 1, N> dst(1, n);
 
+	dense_matrix<double, 1, N> rmat(1, n);
+
 	smat_t smat = src.get_cmat();
 	dmat_t dmat = dst.get_mat();
 
@@ -90,6 +127,13 @@ void test_linear_ewise_row()
 			copy_kernel(), in_(smat), out_(dmat));
 
 	ASSERT_MAT_EQ(1, n, smat, dmat);
+
+	for (index_t i = 0; i < n; ++i) rmat[i] = smat[i] + dmat[i];
+
+	linear_ewise(U(), shape).apply(
+			my_update_kernel(), in_(smat), in_out_(dmat));
+
+	ASSERT_MAT_EQ(1, n, dmat, rmat);
 }
 
 
