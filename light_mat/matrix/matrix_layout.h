@@ -102,6 +102,13 @@ namespace lmat
 		}
 
 		LMAT_ENSURE_INLINE
+		typename layout_traits<Derived>::shape_type
+		shape() const
+		{
+			return derived().shape();
+		}
+
+		LMAT_ENSURE_INLINE
 		index_t row_stride() const
 		{
 			return derived().row_stride();
@@ -185,6 +192,12 @@ namespace lmat
 		}
 
 		LMAT_ENSURE_INLINE
+		matrix_shape<M, N> shape() const
+		{
+			return m_shape;
+		}
+
+		LMAT_ENSURE_INLINE
 		index_t row_stride() const
 		{
 			return 1;
@@ -261,6 +274,12 @@ namespace lmat
 		index_t nelems() const
 		{
 			return m_shape.nelems();
+		}
+
+		LMAT_ENSURE_INLINE
+		matrix_shape<M, N> shape() const
+		{
+			return m_shape;
 		}
 
 		LMAT_ENSURE_INLINE
@@ -341,6 +360,12 @@ namespace lmat
 		index_t nelems() const
 		{
 			return m_shape.nelems();
+		}
+
+		LMAT_ENSURE_INLINE
+		matrix_shape<M, N> shape() const
+		{
+			return m_shape;
 		}
 
 		LMAT_ENSURE_INLINE

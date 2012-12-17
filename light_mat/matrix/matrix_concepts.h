@@ -89,6 +89,8 @@ namespace lmat
 		typedef typename matrix_access_types<Derived>::pointer pointer;
 		typedef typename matrix_access_types<Derived>::reference reference;
 
+		typedef matrix_shape< meta::nrows<Derived>::value, meta::ncols<Derived>::value > shape_type;
+
 	public:
 		LMAT_ENSURE_INLINE index_t nelems() const
 		{
@@ -103,6 +105,11 @@ namespace lmat
 		LMAT_ENSURE_INLINE index_t ncolumns() const
 		{
 			return derived().ncolumns();
+		}
+
+		LMAT_ENSURE_INLINE shape_type shape() const
+		{
+			return derived().shape();
 		}
 
 		LMAT_ENSURE_INLINE index_t row_stride() const

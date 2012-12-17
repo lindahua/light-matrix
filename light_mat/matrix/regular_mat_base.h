@@ -81,6 +81,11 @@ namespace lmat
 			return layout().ncolumns();
 		}
 
+		LMAT_ENSURE_INLINE shape_type shape() const
+		{
+			return layout().shape();
+		}
+
 		LMAT_ENSURE_INLINE index_t row_stride() const
 		{
 			return layout().row_stride();
