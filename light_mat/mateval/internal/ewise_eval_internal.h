@@ -45,10 +45,17 @@ namespace lmat { namespace internal {
 		const index_t len = dim.value();
 		const index_t maj_len = int_div<W>::major(len);
 
-		for (index_t i = 0; i < maj_len; i += W)
+		if (maj_len)
 		{
-			kernel(accessors.pack(i)...);
-			pass(accessors.done_pack(i)...);
+			pass(accessors.begin_packs()...);
+
+			for (index_t i = 0; i < maj_len; i += W)
+			{
+				kernel(accessors.pack(i)...);
+				pass(accessors.done_pack(i)...);
+			}
+
+			pass(accessors.end_packs()...);
 		}
 
 		for (index_t i = maj_len; i < len; ++i)

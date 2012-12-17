@@ -427,6 +427,52 @@ namespace lmat
 	}
 
 
+	/********************************************
+	 *
+	 *  accumulator classes
+	 *
+	 ********************************************/
+
+	template<typename T, typename U>
+	class sum_col_accumulator : public multicol_accessor_base
+	{
+	public:
+		template<class Mat>
+		LMAT_ENSURE_INLINE
+		explicit sum_col_accumulator(Mat& col)
+		: m_pbase(col.ptr_data()) { }
+
+		LMAT_ENSURE_INLINE
+		sum_accumulator<T, U> col(index_t j) const
+		{
+			return sum_accumulator<T, U>(m_pbase[j]);
+		}
+
+	private:
+		T *m_pbase;
+	};
+
+	template<typename T, typename U>
+	class sum_colx_accumulator : public multicol_accessor_base
+	{
+	public:
+		template<class Mat>
+		LMAT_ENSURE_INLINE
+		explicit sum_colx_accumulator(Mat& col)
+		: m_pbase(col.ptr_data()), m_step(col.row_stride()) { }
+
+		LMAT_ENSURE_INLINE
+		sum_accumulator<T, U> col(index_t j) const
+		{
+			return sum_accumulator<T, U>(m_pbase[j * m_step]);
+		}
+
+	private:
+		T *m_pbase;
+		index_t m_step;
+	};
+
+
 }
 
 

@@ -36,10 +36,17 @@ namespace lmat
 		struct repcol { };
 		struct reprow { };
 
-		struct accum { };
-		struct accum_col { };
-		struct accum_row { };
+		struct sum { };
+		struct max { };
+		struct min { };
 
+		struct sum_col { };
+		struct max_col { };
+		struct min_col { };
+
+		struct sum_row { };
+		struct max_row { };
+		struct min_row { };
 	};
 
 	// argument wrapper

@@ -11,6 +11,8 @@
 
 #include <light_mat/mateval/mateval_fwd.h>
 #include <light_mat/matrix/matrix_concepts.h>
+
+#include <light_mat/math/math_base.h>
 #include <light_mat/math/simd_packs.h>
 
 namespace lmat
@@ -28,6 +30,11 @@ namespace lmat
 	template<typename T, typename U> class contvec_updater;
 	template<typename T, typename U> class stepvec_updater;
 
+	template<typename T, typename U> class sum_accumulator;
+	template<typename T, typename U> class max_accumulator;
+	template<typename T, typename U> class min_accumulator;
+
+
 	class scalar_vec_accessor_base
 	{
 	public:
@@ -41,6 +48,12 @@ namespace lmat
 	class simd_vec_accessor_base
 	{
 	public:
+		LMAT_ENSURE_INLINE
+		nil_t begin_packs() const { return nil_t(); }
+
+		LMAT_ENSURE_INLINE
+		nil_t end_packs() const { return nil_t(); }
+
 		LMAT_ENSURE_INLINE
 		nil_t done_scalar(index_t ) const { return nil_t(); }
 
@@ -646,6 +659,266 @@ namespace lmat
 	{
 		return internal::vec_updater_map<Mat, U>::get(wrap.arg());
 	}
+
+
+	/********************************************
+	 *
+	 *  accumulators
+	 *
+	 ********************************************/
+
+	template<typename T>
+	class sum_accumulator<T, atags::scalar> : public scalar_vec_accessor_base
+	{
+	public:
+		LMAT_ENSURE_INLINE
+		sum_accumulator(T& a) : m_val(a), m_p(&a) { }
+
+		LMAT_ENSURE_INLINE
+		T& scalar(index_t ) const
+		{
+			return m_val;
+		}
+
+		LMAT_ENSURE_INLINE
+		nil_t finalize() const
+		{
+			*m_p = m_val;
+			return nil_t();
+		}
+
+	private:
+		mutable T m_val;
+		T *m_p;
+	};
+
+	template<typename T, typename Kind>
+	class sum_accumulator<T, atags::simd<T, Kind> > : public simd_vec_accessor_base
+	{
+	public:
+		typedef math::simd_pack<T, Kind> pack_type;
+
+		LMAT_ENSURE_INLINE
+		sum_accumulator(T& a) : m_val(a), m_p(&a) { }
+
+		LMAT_ENSURE_INLINE
+		T& scalar(index_t ) const
+		{
+			return m_val;
+		}
+
+		LMAT_ENSURE_INLINE
+		pack_type& pack(index_t ) const
+		{
+			return m_pack;
+		}
+
+		LMAT_ENSURE_INLINE
+		nil_t begin_packs() const
+		{
+			m_pack = pack_type::zeros();
+			return nil_t();
+		}
+
+		LMAT_ENSURE_INLINE
+		nil_t end_packs() const
+		{
+			m_val += math::sum(m_pack);
+			return nil_t();
+		}
+
+		LMAT_ENSURE_INLINE
+		nil_t finalize() const
+		{
+			*m_p = m_val;
+			return nil_t();
+		}
+
+	private:
+		mutable pack_type m_pack;
+		mutable T m_val;
+		T *m_p;
+	};
+
+
+	template<typename T>
+	class max_accumulator<T, atags::scalar> : public scalar_vec_accessor_base
+	{
+	public:
+		LMAT_ENSURE_INLINE
+		max_accumulator(T& a) : m_val(a), m_p(&a) { }
+
+		LMAT_ENSURE_INLINE
+		T& scalar(index_t ) const
+		{
+			return m_val;
+		}
+
+		LMAT_ENSURE_INLINE
+		nil_t finalize() const
+		{
+			*m_p = m_val;
+			return nil_t();
+		}
+
+	private:
+		mutable T m_val;
+		T *m_p;
+	};
+
+	template<typename T, typename Kind>
+	class max_accumulator<T, atags::simd<T, Kind> > : public simd_vec_accessor_base
+	{
+	public:
+		typedef math::simd_pack<T, Kind> pack_type;
+
+		LMAT_ENSURE_INLINE
+		max_accumulator(T& a) : m_val(a), m_p(&a) { }
+
+		LMAT_ENSURE_INLINE
+		T& scalar(index_t ) const
+		{
+			return m_val;
+		}
+
+		LMAT_ENSURE_INLINE
+		pack_type& pack(index_t ) const
+		{
+			return m_pack;
+		}
+
+		LMAT_ENSURE_INLINE
+		nil_t begin_packs() const
+		{
+			m_pack = pack_type::neg_inf();
+			return nil_t();
+		}
+
+		LMAT_ENSURE_INLINE
+		nil_t end_packs() const
+		{
+			m_val = math::max(m_val, math::maximum(m_pack));
+			return nil_t();
+		}
+
+		LMAT_ENSURE_INLINE
+		nil_t finalize() const
+		{
+			*m_p = m_val;
+			return nil_t();
+		}
+
+	private:
+		mutable pack_type m_pack;
+		mutable T m_val;
+		T *m_p;
+	};
+
+
+	template<typename T>
+	class min_accumulator<T, atags::scalar> : public scalar_vec_accessor_base
+	{
+	public:
+		LMAT_ENSURE_INLINE
+		min_accumulator(T& a) : m_val(a), m_p(&a) { }
+
+		LMAT_ENSURE_INLINE
+		T& scalar(index_t ) const
+		{
+			return m_val;
+		}
+
+		LMAT_ENSURE_INLINE
+		nil_t finalize() const
+		{
+			*m_p = m_val;
+			return nil_t();
+		}
+
+	private:
+		mutable T m_val;
+		T *m_p;
+	};
+
+	template<typename T, typename Kind>
+	class min_accumulator<T, atags::simd<T, Kind> > : public simd_vec_accessor_base
+	{
+	public:
+		typedef math::simd_pack<T, Kind> pack_type;
+
+		LMAT_ENSURE_INLINE
+		min_accumulator(T& a) : m_val(a), m_p(&a) { }
+
+		LMAT_ENSURE_INLINE
+		T& scalar(index_t ) const
+		{
+			return m_val;
+		}
+
+		LMAT_ENSURE_INLINE
+		pack_type& pack(index_t ) const
+		{
+			return m_pack;
+		}
+
+		LMAT_ENSURE_INLINE
+		nil_t begin_packs() const
+		{
+			m_pack = pack_type::inf();
+			return nil_t();
+		}
+
+		LMAT_ENSURE_INLINE
+		nil_t end_packs() const
+		{
+			m_val = math::min(m_val, math::minimum(m_pack));
+			return nil_t();
+		}
+
+		LMAT_ENSURE_INLINE
+		nil_t finalize() const
+		{
+			*m_p = m_val;
+			return nil_t();
+		}
+
+	private:
+		mutable pack_type m_pack;
+		mutable T m_val;
+		T *m_p;
+	};
+
+
+	/********************************************
+	 *
+	 *  accumulator maps
+	 *
+	 ********************************************/
+
+	template<typename T, typename U>
+	LMAT_ENSURE_INLINE
+	inline sum_accumulator<T, U>
+	make_vec_accessor(U, const in_out_wrap<T, atags::sum>& wrap)
+	{
+		return sum_accumulator<T, U>(wrap.arg());
+	}
+
+	template<typename T, typename U>
+	LMAT_ENSURE_INLINE
+	inline max_accumulator<T, U>
+	make_vec_accessor(U, const in_out_wrap<T, atags::max>& wrap)
+	{
+		return max_accumulator<T, U>(wrap.arg());
+	}
+
+	template<typename T, typename U>
+	LMAT_ENSURE_INLINE
+	inline min_accumulator<T, U>
+	make_vec_accessor(U, const in_out_wrap<T, atags::min>& wrap)
+	{
+		return min_accumulator<T, U>(wrap.arg());
+	}
+
 
 }
 
