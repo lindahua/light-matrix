@@ -19,6 +19,11 @@ namespace lmat
 	template<typename T, typename U> class multi_contcol_reader;
 	template<typename T, typename U> class multi_stepcol_reader;
 
+	template<typename T, typename U> class repeat_contcol_reader;
+	template<typename T, typename U> class repeat_stepcol_reader;
+	template<typename T, typename U> class repeat_controw_reader;
+	template<typename T, typename U> class repeat_steprow_reader;
+
 	template<typename T, typename U> class multi_contcol_writer;
 	template<typename T, typename U> class multi_stepcol_writer;
 
@@ -84,6 +89,95 @@ namespace lmat
 	};
 
 
+	template<typename T, typename U>
+	class repeat_contcol_reader : public multicol_accessor_base
+	{
+	public:
+		template<class Mat>
+		LMAT_ENSURE_INLINE
+		explicit repeat_contcol_reader(const Mat& col)
+		: m_pbase(col.ptr_data())
+		{ }
+
+		LMAT_ENSURE_INLINE
+		contvec_reader<T, U> col(index_t ) const
+		{
+			return contvec_reader<T, U>(m_pbase);
+		}
+
+	private:
+		const T *m_pbase;
+	};
+
+
+	template<typename T, typename U>
+	class repeat_stepcol_reader : public multicol_accessor_base
+	{
+	public:
+		template<class Mat>
+		LMAT_ENSURE_INLINE
+		explicit repeat_stepcol_reader(const Mat& col)
+		: m_pbase(col.ptr_data())
+		, m_step(col.row_stride())
+		{ }
+
+		LMAT_ENSURE_INLINE
+		stepvec_reader<T, U> col(index_t ) const
+		{
+			return stepvec_reader<T, U>(m_pbase, m_step);
+		}
+
+	private:
+		const T *m_pbase;
+		index_t m_step;
+	};
+
+
+	template<typename T, typename U>
+	class repeat_controw_reader : public multicol_accessor_base
+	{
+	public:
+		template<class Mat>
+		LMAT_ENSURE_INLINE
+		explicit repeat_controw_reader(const Mat& row)
+		: m_pbase(row.ptr_data())
+		{ }
+
+		LMAT_ENSURE_INLINE
+		single_reader<T, U> col(index_t j) const
+		{
+			return single_reader<T, U>(m_pbase[j]);
+		}
+
+	private:
+		const T *m_pbase;
+	};
+
+
+	template<typename T, typename U>
+	class repeat_steprow_reader : public multicol_accessor_base
+	{
+	public:
+		template<class Mat>
+		LMAT_ENSURE_INLINE
+		explicit repeat_steprow_reader(const Mat& row)
+		: m_pbase(row.ptr_data())
+		, m_step(row.col_stride())
+		{ }
+
+		LMAT_ENSURE_INLINE
+		single_reader<T, U> col(index_t j) const
+		{
+			return single_reader<T, U>(m_pbase[j * m_step]);
+		}
+
+	private:
+		const T *m_pbase;
+		index_t m_step;
+	};
+
+
+
 	/********************************************
 	 *
 	 *  reader maps
@@ -92,7 +186,6 @@ namespace lmat
 
 	namespace internal
 	{
-
 		template<class Mat, typename U>
 		struct multicol_reader_map
 		{
@@ -103,12 +196,30 @@ namespace lmat
 					multi_contcol_reader<T, U>,
 					multi_stepcol_reader<T, U>
 			>::type type;
+		};
 
-			LMAT_ENSURE_INLINE
-			static type get(const Mat& mat)
-			{
-				return type(mat);
-			}
+		template<class Mat, typename U>
+		struct repeatcol_reader_map
+		{
+			typedef typename matrix_traits<Mat>::value_type T;
+
+			typedef typename meta::if_<
+					meta::is_percol_continuous<Mat>,
+					repeat_contcol_reader<T, U>,
+					repeat_stepcol_reader<T, U>
+			>::type type;
+		};
+
+		template<class Mat, typename U>
+		struct repeatrow_reader_map
+		{
+			typedef typename matrix_traits<Mat>::value_type T;
+
+			typedef typename meta::if_<
+					meta::is_continuous<Mat>,
+					repeat_controw_reader<T, U>,
+					repeat_steprow_reader<T, U>
+			>::type type;
 		};
 	}
 
@@ -117,7 +228,8 @@ namespace lmat
 	inline typename internal::multicol_reader_map<Mat, U>::type
 	make_multicol_accessor(U, const in_wrap<Mat, atags::normal>& wrap)
 	{
-		return internal::multicol_reader_map<Mat, U>::get(wrap.arg());
+		typedef typename internal::multicol_reader_map<Mat, U>::type type;
+		return type(wrap.arg());
 	}
 
 	template<typename T, typename U>
@@ -126,6 +238,24 @@ namespace lmat
 	make_multicol_accessor(U, const in_wrap<T, atags::single>& wrap)
 	{
 		return single_reader<T, U>(wrap.arg());
+	}
+
+	template<class Mat, typename U>
+	LMAT_ENSURE_INLINE
+	inline typename internal::repeatcol_reader_map<Mat, U>::type
+	make_multicol_accessor(U, const in_wrap<Mat, atags::repcol>& wrap)
+	{
+		typedef typename internal::repeatcol_reader_map<Mat, U>::type type;
+		return type(wrap.arg());
+	}
+
+	template<class Mat, typename U>
+	LMAT_ENSURE_INLINE
+	inline typename internal::repeatrow_reader_map<Mat, U>::type
+	make_multicol_accessor(U, const in_wrap<Mat, atags::reprow>& wrap)
+	{
+		typedef typename internal::repeatrow_reader_map<Mat, U>::type type;
+		return type(wrap.arg());
 	}
 
 
