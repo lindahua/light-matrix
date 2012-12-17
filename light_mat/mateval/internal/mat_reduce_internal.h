@@ -20,9 +20,28 @@
 
 namespace lmat { namespace internal {
 
-	template<class Reader>
+	template<typename T>
+	struct _sum_rfun
+	{
+		template<class Pack>
+		LMAT_ENSURE_INLINE
+		T reduce(const Pack& p)
+		{
+			return sum(p);
+		}
+
+		template<class A>
+		LMAT_ENSURE_INLINE
+		void fold(A& a, const A& b)
+		{
+			a += b;
+		}
+	};
+
+
+	template<class Reader, class RFun>
 	inline typename Reader::scalar_type
-	sum_impl(unsigned int len, const Reader& rd)
+	fold_impl(unsigned int len, const Reader& rd, RFun rfun)
 	{
 		typedef typename Reader::scalar_type T;
 		typedef typename Reader::pack_type pack_t;
@@ -49,48 +68,49 @@ namespace lmat { namespace internal {
 
 				for (i = w4; i < l4; i += w4)
 				{
-					a0 += rd.pack(i);
-					a1 += rd.pack(i + pw);
-					a2 += rd.pack(i + pw * 2);
-					a3 += rd.pack(i + pw * 3);
+					rfun.fold(a0, rd.pack(i));
+					rfun.fold(a1, rd.pack(i + pw));
+					rfun.fold(a2, rd.pack(i + pw * 2));
+					rfun.fold(a3, rd.pack(i + pw * 3));
 				}
 
-				a0 += a2;
-				a1 += a3;
+				rfun.fold(a0, a2);
+				rfun.fold(a1, a3);
 
 				if (npacks & 2)
 				{
-					a0 += rd.pack(i);
-					a1 += rd.pack(i + pw);
+					rfun.fold(a0, rd.pack(i));
+					rfun.fold(a1, rd.pack(i + pw));
 					i += pw * 2;
 				}
 
-				a0 += a1;
+				rfun.fold(a0, a1);
 
 				if (npacks & 1)
 				{
-					a0 += rd.pack(i);
+					rfun.fold(a0, rd.pack(i));
 					i += pw;
 				}
 			}
 			else if (npacks >> 1)
 			{
-				a0 = rd.pack(0) + rd.pack(pw);
+				a0 = rd.pack(0);
+				rfun.fold(a0, rd.pack(pw));
 				i = pw << 1;
 
 				if (npacks & 1)
 				{
-					a0 += rd.pack(i);
+					rfun.fold(a0, rd.pack(i));
 					i += pw;
 				}
 			}
 			else
 			{
-				a0 = rd.pack(0);
+				rfun.fold(a0, rd.pack(0));
 				i = pw;
 			}
 
-			r = sum(a0);
+			r = rfun.reduce(a0);
 		}
 		else
 		{
@@ -98,11 +118,18 @@ namespace lmat { namespace internal {
 			i = 0;
 		}
 
-		for (; i < len; ++i) r += rd.scalar(i);
+		for (; i < len; ++i) rfun.fold(r, rd.scalar(i));
 
 		return r;
 	}
 
+	template<class Reader>
+	inline typename Reader::scalar_type
+	sum_impl(unsigned int len, const Reader& rd)
+	{
+		typedef typename Reader::scalar_type T;
+		return fold_impl(len, rd, _sum_rfun<T>());
+	}
 
 
 } }

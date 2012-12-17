@@ -38,7 +38,6 @@ SIMPLE_CASE( full_reduce, sum )
 	dense_col<double> s(max_len);
 	fill_rand(s);
 
-	std::printf("\n");
 	for (index_t k = 0; k <= max_len; ++k)
 	{
 		double r0 = 0;
