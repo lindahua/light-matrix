@@ -41,6 +41,51 @@ namespace lmat
 		return r;
 	}
 
+	template<typename T, class Mat>
+	LMAT_ENSURE_INLINE
+	inline T maximum(const IRegularMatrix<Mat, T>& mat)
+	{
+		static_assert(meta::is_continuous<Mat>::value,
+				"mat should be a compile-time-continuous matrix.");
+
+		unsigned int len = (unsigned int)mat.nelems();
+		T r;
+
+		if (len > 0)
+		{
+			r = internal::maximum_impl((unsigned int)mat.nelems(),
+					contvec_reader<T, atags::simd<T, default_simd_kind> >(mat.ptr_data()));
+		}
+		else
+		{
+			r = - std::numeric_limits<T>::infinity();
+		}
+
+		return r;
+	}
+
+	template<typename T, class Mat>
+	LMAT_ENSURE_INLINE
+	inline T minimum(const IRegularMatrix<Mat, T>& mat)
+	{
+		static_assert(meta::is_continuous<Mat>::value,
+				"mat should be a compile-time-continuous matrix.");
+
+		unsigned int len = (unsigned int)mat.nelems();
+		T r;
+
+		if (len > 0)
+		{
+			r = internal::minimum_impl((unsigned int)mat.nelems(),
+					contvec_reader<T, atags::simd<T, default_simd_kind> >(mat.ptr_data()));
+		}
+		else
+		{
+			r = std::numeric_limits<T>::infinity();
+		}
+
+		return r;
+	}
 
 
 }

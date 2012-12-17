@@ -25,16 +25,52 @@ namespace lmat { namespace internal {
 	{
 		template<class Pack>
 		LMAT_ENSURE_INLINE
-		T reduce(const Pack& p)
+		T reduce(const Pack& p) const
 		{
-			return sum(p);
+			return math::sum(p);
 		}
 
 		template<class A>
 		LMAT_ENSURE_INLINE
-		void fold(A& a, const A& b)
+		void fold(A& a, const A& b) const
 		{
 			a += b;
+		}
+	};
+
+	template<typename T>
+	struct _maximum_rfun
+	{
+		template<class Pack>
+		LMAT_ENSURE_INLINE
+		T reduce(const Pack& p) const
+		{
+			return math::maximum(p);
+		}
+
+		template<class A>
+		LMAT_ENSURE_INLINE
+		void fold(A& a, const A& b) const
+		{
+			a = math::max(a, b);
+		}
+	};
+
+	template<typename T>
+	struct _minimum_rfun
+	{
+		template<class Pack>
+		LMAT_ENSURE_INLINE
+		T reduce(const Pack& p) const
+		{
+			return math::minimum(p);
+		}
+
+		template<class A>
+		LMAT_ENSURE_INLINE
+		void fold(A& a, const A& b) const
+		{
+			a = math::min(a, b);
 		}
 	};
 
@@ -114,8 +150,8 @@ namespace lmat { namespace internal {
 		}
 		else
 		{
-			r = T(0);
-			i = 0;
+			r = rd.scalar(0);
+			i = 1;
 		}
 
 		for (; i < len; ++i) rfun.fold(r, rd.scalar(i));
@@ -131,6 +167,21 @@ namespace lmat { namespace internal {
 		return fold_impl(len, rd, _sum_rfun<T>());
 	}
 
+	template<class Reader>
+	inline typename Reader::scalar_type
+	maximum_impl(unsigned int len, const Reader& rd)
+	{
+		typedef typename Reader::scalar_type T;
+		return fold_impl(len, rd, _maximum_rfun<T>());
+	}
+
+	template<class Reader>
+	inline typename Reader::scalar_type
+	minimum_impl(unsigned int len, const Reader& rd)
+	{
+		typedef typename Reader::scalar_type T;
+		return fold_impl(len, rd, _minimum_rfun<T>());
+	}
 
 } }
 

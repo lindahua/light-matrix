@@ -16,7 +16,8 @@ using namespace lmat::test;
 
 inline double randunif()
 {
-	return (double)std::rand() / double(RAND_MAX);
+	double u = (double)std::rand() / double(RAND_MAX);
+	return u * 2.0 - 1.0;
 }
 
 template<class Mat, typename T>
@@ -48,9 +49,41 @@ SIMPLE_CASE( full_reduce, sum )
 	}
 }
 
+SIMPLE_CASE( full_reduce, maximum )
+{
+	dense_col<double> s(max_len);
+	fill_rand(s);
+
+	for (index_t k = 1; k <= max_len; ++k)
+	{
+		double r0 = - std::numeric_limits<double>::infinity();
+		for (index_t i = 0; i < k; ++i) r0 = math::max(r0, s[i]);
+
+		double r = maximum(s(range(0, k)));
+		ASSERT_EQ(r, r0);
+	}
+}
+
+SIMPLE_CASE( full_reduce, minimum )
+{
+	dense_col<double> s(max_len);
+	fill_rand(s);
+
+	for (index_t k = 1; k <= max_len; ++k)
+	{
+		double r0 = std::numeric_limits<double>::infinity();
+		for (index_t i = 0; i < k; ++i) r0 = math::min(r0, s[i]);
+
+		double r = minimum(s(range(0, k)));
+		ASSERT_EQ(r, r0);
+	}
+}
+
 
 BEGIN_TPACK( full_reduce )
 	ADD_SIMPLE_CASE( full_reduce, sum )
+	ADD_SIMPLE_CASE( full_reduce, maximum )
+	ADD_SIMPLE_CASE( full_reduce, minimum )
 END_TPACK
 
 
