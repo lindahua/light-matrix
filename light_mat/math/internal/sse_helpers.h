@@ -168,16 +168,16 @@ namespace lmat { namespace math { namespace internal {
     	switch (i)
     	{
     	case 0:
-    		s = _mm_cvtss_si32(v);
+    		s = _mm_cvtsi128_si32(v);
     		break;
     	case 1:
-    		s = _mm_cvtss_si32(_mm_srli_si128(v, 4));
+    		s = _mm_cvtsi128_si32(_mm_srli_si128(v, 4));
     		break;
     	case 2:
-    		s = _mm_cvtss_si32(_mm_srli_si128(v, 8));
+    		s = _mm_cvtsi128_si32(_mm_srli_si128(v, 8));
     		break;
     	default:
-    		s = _mm_cvtss_si32(_mm_srli_si128(v, 12));
+    		s = _mm_cvtsi128_si32(_mm_srli_si128(v, 12));
     		break;
     	}
 

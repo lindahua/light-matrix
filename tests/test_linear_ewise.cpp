@@ -9,8 +9,8 @@
 
 #include "test_base.h"
 
-#define DEFAULT_M_VALUE 13;
-#define DEFAULT_N_VALUE 9;
+#define DEFAULT_M_VALUE 13
+#define DEFAULT_N_VALUE 9
 
 #include "multimat_supp.h"
 

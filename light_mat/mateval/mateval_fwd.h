@@ -47,8 +47,7 @@ namespace lmat
 		struct rowwise_sum { };
 		struct rowwise_max { };
 		struct rowwise_min { };
-	};
-
+	}
 
 	struct colwise { };
 	struct rowwise { };
@@ -102,42 +101,42 @@ namespace lmat
 
 	template<class Arg, typename ATag>
 	LMAT_ENSURE_INLINE
-	in_wrap<Arg, ATag> in_(const Arg& arg, ATag)
+	inline in_wrap<Arg, ATag> in_(const Arg& arg, ATag)
 	{
 		return in_wrap<Arg, ATag>(arg);
 	}
 
 	template<class Arg>
 	LMAT_ENSURE_INLINE
-	in_wrap<Arg, atags::normal> in_(const Arg& arg)
+	inline in_wrap<Arg, atags::normal> in_(const Arg& arg)
 	{
 		return in_wrap<Arg, atags::normal>(arg);
 	}
 
 	template<class Arg, typename ATag>
 	LMAT_ENSURE_INLINE
-	out_wrap<Arg, ATag> out_(Arg& arg, ATag)
+	inline out_wrap<Arg, ATag> out_(Arg& arg, ATag)
 	{
 		return out_wrap<Arg, ATag>(arg);
 	}
 
 	template<class Arg>
 	LMAT_ENSURE_INLINE
-	out_wrap<Arg, atags::normal> out_(Arg& arg)
+	inline out_wrap<Arg, atags::normal> out_(Arg& arg)
 	{
 		return out_wrap<Arg, atags::normal>(arg);
 	}
 
 	template<class Arg, typename ATag>
 	LMAT_ENSURE_INLINE
-	in_out_wrap<Arg, ATag> in_out_(Arg& arg, ATag)
+	inline in_out_wrap<Arg, ATag> in_out_(Arg& arg, ATag)
 	{
 		return in_out_wrap<Arg, ATag>(arg);
 	}
 
 	template<class Arg>
 	LMAT_ENSURE_INLINE
-	in_out_wrap<Arg, atags::normal> in_out_(Arg& arg)
+	inline in_out_wrap<Arg, atags::normal> in_out_(Arg& arg)
 	{
 		return in_out_wrap<Arg, atags::normal>(arg);
 	}

@@ -270,7 +270,7 @@ namespace lmat
 				return internal_map::get(mat);
 			}
 		};
-	};
+	}
 
 
 	template<class Mat, typename U>
@@ -464,7 +464,7 @@ namespace lmat
 				return internal_map::get(mat);
 			}
 		};
-	};
+	}
 
 
 	template<class Mat, typename U>
@@ -649,7 +649,7 @@ namespace lmat
 				return internal_map::get(mat);
 			}
 		};
-	};
+	}
 
 
 	template<class Mat, typename U>
