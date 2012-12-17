@@ -98,7 +98,8 @@ set(COMMON_HS
     ${INC}/common/memalloc.h
     ${INC}/common/block.h
     ${INC}/math/math_base.h
-    ${INC}/math/math_constants.h)
+    ${INC}/math/math_constants.h
+    ${INC}/math/math_functors.h)
     
 set(SIMD_BASE_HS
     ${INC}/math/simd_arch.h
@@ -164,6 +165,11 @@ set(MATRIX_EVAL_HS
     ${INC}/mateval/vec_accessors.h
     ${INC}/mateval/multicol_accessors.h
     ${INC}/mateval/ewise_eval.h)
+    
+set(MATRIX_REDUC_HS
+    ${INC}/mateval/internal/mat_reduce_internal.h
+    ${INC}/mateval/mat_reduce.h)
+    
               
 set(MATRIX_HS
     ${COMMON_HS}
@@ -271,6 +277,14 @@ add_executable(test_linear_ewise ${EWISE_EVAL_HS} test_linear_ewise.cpp)
 add_executable(test_percol_ewise ${EWISE_EVAL_HS} test_percol_ewise.cpp)
 add_executable(test_ewise_accum ${EWISE_EVAL_HS} test_ewise_accum.cpp)
 
+
+set(REDUC_HS
+    ${MATRIX_HS}
+    ${MATRIX_EVAL_HS}
+    ${MATRIX_REDUC_HS})
+
+add_executable(test_full_reduce ${REDUC_HS} test_full_reduce.cpp)
+
 # suppress bogus free-nonheap-object complaint under GCC
 
 if (${CMAKE_CXX_COMPILER_ID} MATCHES "GNU")
@@ -309,6 +323,7 @@ set(LMAT_TEST_NAMES
 	test_linear_ewise
 	test_percol_ewise
 	test_ewise_accum
+	test_full_reduce
 )
 	
 foreach(tname ${LMAT_TEST_NAMES})

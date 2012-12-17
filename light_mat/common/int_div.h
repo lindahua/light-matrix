@@ -19,7 +19,7 @@
 		LMAT_ENSURE_INLINE \
 		static index_t rem(index_t n) { return n & (D-1); } \
 		LMAT_ENSURE_INLINE \
-		static index_t major(index_t n) { return (n >> L) << L; } \
+		static index_t maj(index_t n) { return (n >> L) << L; } \
 	};
 
 
@@ -38,7 +38,7 @@ namespace lmat
 		static index_t rem(index_t n) { return 0; }
 
 		LMAT_ENSURE_INLINE
-		static index_t major(index_t n) { return n; }
+		static index_t maj(index_t n) { return n; }
 	};
 
 	LMAT_DEFINE_INT_DIV_C(1, 2)

@@ -77,6 +77,8 @@ namespace lmat
 	class contvec_reader<T, atags::scalar> : public scalar_vec_accessor_base
 	{
 	public:
+		typedef T scalar_type;
+
 		LMAT_ENSURE_INLINE
 		explicit contvec_reader(const T* p) : m_pdata(p) { }
 
@@ -95,6 +97,7 @@ namespace lmat
 	class contvec_reader<T, atags::simd<T, Kind> > : public simd_vec_accessor_base
 	{
 	public:
+		typedef T scalar_type;
 		typedef math::simd_pack<T, Kind> pack_type;
 
 		LMAT_ENSURE_INLINE
@@ -123,6 +126,8 @@ namespace lmat
 	class stepvec_reader<T, atags::scalar> : public scalar_vec_accessor_base
 	{
 	public:
+		typedef T scalar_type;
+
 		LMAT_ENSURE_INLINE
 		explicit stepvec_reader(const T* p, index_t step)
 		: m_pdata(p), m_step(step) { }
@@ -145,6 +150,8 @@ namespace lmat
 	class single_reader<T, atags::scalar> : public scalar_vec_accessor_base
 	{
 	public:
+		typedef T scalar_type;
+
 		LMAT_ENSURE_INLINE
 		explicit single_reader(const T& v)
 		: m_val(v) { }
@@ -170,6 +177,7 @@ namespace lmat
 	class single_reader<T, atags::simd<T, Kind> > : public simd_vec_accessor_base
 	{
 	public:
+		typedef T scalar_type;
 		typedef math::simd_pack<T, Kind> pack_type;
 
 		LMAT_ENSURE_INLINE
@@ -198,9 +206,6 @@ namespace lmat
 		pack_type m_pack;
 		T m_val;
 	};
-
-
-
 
 	/********************************************
 	 *

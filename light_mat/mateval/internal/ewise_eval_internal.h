@@ -43,7 +43,7 @@ namespace lmat { namespace internal {
 		const unsigned int W = math::simd_traits<T, SKind>::pack_width;
 
 		const index_t len = dim.value();
-		const index_t maj_len = int_div<W>::major(len);
+		const index_t maj_len = int_div<W>::maj(len);
 
 		if (maj_len)
 		{
