@@ -37,9 +37,7 @@
 #include <xmmintrin.h>	// SSE
 #endif
 
-namespace lmat { namespace math {
-
-	// SIMD kind
+namespace lmat {
 
 	struct sse_t { };
 	struct avx_t { };
@@ -49,6 +47,15 @@ namespace lmat { namespace math {
 #else
 	typedef avx_t default_simd_kind;
 #endif
+
+namespace math {
+
+	// SIMD kind
+
+	using lmat::sse_t;
+	using lmat::avx_t;
+
+	using lmat::default_simd_kind;
 
 	// forward declaration of classes
 

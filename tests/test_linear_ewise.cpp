@@ -204,14 +204,14 @@ N_CASE( linear_ewise, scalar_steprow_steprow  )
 
 MN_CASE( linear_ewise, sse_cont_cont  )
 {
-	test_linear_ewise_cont_cont<atags::simd<double, lmat::math::sse_t>, M, N>();
+	test_linear_ewise_cont_cont<atags::simd<double, sse_t>, M, N>();
 }
 
 #ifdef LMAT_HAS_AVX
 
 MN_CASE( linear_ewise, avx_cont_cont  )
 {
-	test_linear_ewise_cont_cont<atags::simd<double, lmat::math::avx_t>, M, N>();
+	test_linear_ewise_cont_cont<atags::simd<double, avx_t>, M, N>();
 }
 
 #endif
@@ -224,14 +224,14 @@ MN_CASE( linear_ewise, scalar_single_cont )
 
 MN_CASE( linear_ewise, sse_single_cont )
 {
-	test_linear_ewise_single_cont<atags::simd<double, lmat::math::sse_t>, M, N>();
+	test_linear_ewise_single_cont<atags::simd<double, sse_t>, M, N>();
 }
 
 #ifdef LMAT_HAS_AVX
 
 MN_CASE( linear_ewise, avx_single_cont )
 {
-	test_linear_ewise_single_cont<atags::simd<double, lmat::math::avx_t>, M, N>();
+	test_linear_ewise_single_cont<atags::simd<double, avx_t>, M, N>();
 }
 
 #endif

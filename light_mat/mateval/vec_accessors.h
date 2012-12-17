@@ -672,7 +672,7 @@ namespace lmat
 	{
 	public:
 		LMAT_ENSURE_INLINE
-		sum_accumulator(T& a) : m_val(a), m_p(&a) { }
+		sum_accumulator(T& a) : m_val(0), m_p(&a) { }
 
 		LMAT_ENSURE_INLINE
 		T& scalar(index_t ) const
@@ -683,7 +683,7 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		nil_t finalize() const
 		{
-			*m_p = m_val;
+			*m_p += m_val;
 			return nil_t();
 		}
 
@@ -699,7 +699,7 @@ namespace lmat
 		typedef math::simd_pack<T, Kind> pack_type;
 
 		LMAT_ENSURE_INLINE
-		sum_accumulator(T& a) : m_val(a), m_p(&a) { }
+		sum_accumulator(T& a) : m_val(0), m_p(&a) { }
 
 		LMAT_ENSURE_INLINE
 		T& scalar(index_t ) const
@@ -730,7 +730,7 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		nil_t finalize() const
 		{
-			*m_p = m_val;
+			*m_p += m_val;
 			return nil_t();
 		}
 
@@ -746,7 +746,8 @@ namespace lmat
 	{
 	public:
 		LMAT_ENSURE_INLINE
-		max_accumulator(T& a) : m_val(a), m_p(&a) { }
+		max_accumulator(T& a)
+		: m_val(-std::numeric_limits<T>::infinity()), m_p(&a) { }
 
 		LMAT_ENSURE_INLINE
 		T& scalar(index_t ) const
@@ -757,7 +758,7 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		nil_t finalize() const
 		{
-			*m_p = m_val;
+			*m_p = math::max(*m_p, m_val);
 			return nil_t();
 		}
 
@@ -773,7 +774,8 @@ namespace lmat
 		typedef math::simd_pack<T, Kind> pack_type;
 
 		LMAT_ENSURE_INLINE
-		max_accumulator(T& a) : m_val(a), m_p(&a) { }
+		max_accumulator(T& a)
+		: m_val(-std::numeric_limits<T>::infinity()), m_p(&a) { }
 
 		LMAT_ENSURE_INLINE
 		T& scalar(index_t ) const
@@ -804,7 +806,7 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		nil_t finalize() const
 		{
-			*m_p = m_val;
+			*m_p = math::max(*m_p, m_val);
 			return nil_t();
 		}
 
@@ -820,7 +822,8 @@ namespace lmat
 	{
 	public:
 		LMAT_ENSURE_INLINE
-		min_accumulator(T& a) : m_val(a), m_p(&a) { }
+		min_accumulator(T& a)
+		: m_val(std::numeric_limits<T>::infinity()), m_p(&a) { }
 
 		LMAT_ENSURE_INLINE
 		T& scalar(index_t ) const
@@ -831,7 +834,7 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		nil_t finalize() const
 		{
-			*m_p = m_val;
+			*m_p = math::min(*m_p, m_val);
 			return nil_t();
 		}
 
@@ -847,7 +850,8 @@ namespace lmat
 		typedef math::simd_pack<T, Kind> pack_type;
 
 		LMAT_ENSURE_INLINE
-		min_accumulator(T& a) : m_val(a), m_p(&a) { }
+		min_accumulator(T& a)
+		: m_val(std::numeric_limits<T>::infinity()), m_p(&a) { }
 
 		LMAT_ENSURE_INLINE
 		T& scalar(index_t ) const
@@ -878,7 +882,7 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		nil_t finalize() const
 		{
-			*m_p = m_val;
+			*m_p = math::min(*m_p, m_val);
 			return nil_t();
 		}
 

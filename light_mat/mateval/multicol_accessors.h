@@ -433,14 +433,73 @@ namespace lmat
 	 *
 	 ********************************************/
 
+	// full accumulator
+
 	template<typename T, typename U>
-	class sum_col_accumulator : public multicol_accessor_base
+	class multicol_sum_accumulator : public multicol_accessor_base
+	{
+	public:
+		LMAT_ENSURE_INLINE
+		explicit multicol_sum_accumulator(T& s)
+		: m_p(&s) { }
+
+		LMAT_ENSURE_INLINE
+		sum_accumulator<T, U> col(index_t) const
+		{
+			return sum_accumulator<T, U>(*m_p);
+		}
+
+	private:
+		T *m_p;
+	};
+
+	template<typename T, typename U>
+	class multicol_max_accumulator : public multicol_accessor_base
+	{
+	public:
+		LMAT_ENSURE_INLINE
+		explicit multicol_max_accumulator(T& s)
+		: m_p(&s) { }
+
+		LMAT_ENSURE_INLINE
+		max_accumulator<T, U> col(index_t) const
+		{
+			return max_accumulator<T, U>(*m_p);
+		}
+
+	private:
+		T *m_p;
+	};
+
+	template<typename T, typename U>
+	class multicol_min_accumulator : public multicol_accessor_base
+	{
+	public:
+		LMAT_ENSURE_INLINE
+		explicit multicol_min_accumulator(T& s)
+		: m_p(&s) { }
+
+		LMAT_ENSURE_INLINE
+		min_accumulator<T, U> col(index_t) const
+		{
+			return min_accumulator<T, U>(*m_p);
+		}
+
+	private:
+		T *m_p;
+	};
+
+
+	// colwise accumulator
+
+	template<typename T, typename U>
+	class colwise_sum_accumulator : public multicol_accessor_base
 	{
 	public:
 		template<class Mat>
 		LMAT_ENSURE_INLINE
-		explicit sum_col_accumulator(Mat& col)
-		: m_pbase(col.ptr_data()) { }
+		explicit colwise_sum_accumulator(Mat& row)
+		: m_pbase(row.ptr_data()) { }
 
 		LMAT_ENSURE_INLINE
 		sum_accumulator<T, U> col(index_t j) const
@@ -453,13 +512,13 @@ namespace lmat
 	};
 
 	template<typename T, typename U>
-	class sum_colx_accumulator : public multicol_accessor_base
+	class colwise_sum_accumulator_x : public multicol_accessor_base
 	{
 	public:
 		template<class Mat>
 		LMAT_ENSURE_INLINE
-		explicit sum_colx_accumulator(Mat& col)
-		: m_pbase(col.ptr_data()), m_step(col.row_stride()) { }
+		explicit colwise_sum_accumulator_x(Mat& row)
+		: m_pbase(row.ptr_data()), m_step(row.col_stride()) { }
 
 		LMAT_ENSURE_INLINE
 		sum_accumulator<T, U> col(index_t j) const
@@ -472,6 +531,220 @@ namespace lmat
 		index_t m_step;
 	};
 
+
+	template<typename T, typename U>
+	class colwise_max_accumulator : public multicol_accessor_base
+	{
+	public:
+		template<class Mat>
+		LMAT_ENSURE_INLINE
+		explicit colwise_max_accumulator(Mat& row)
+		: m_pbase(row.ptr_data()) { }
+
+		LMAT_ENSURE_INLINE
+		max_accumulator<T, U> col(index_t j) const
+		{
+			return max_accumulator<T, U>(m_pbase[j]);
+		}
+
+	private:
+		T *m_pbase;
+	};
+
+	template<typename T, typename U>
+	class colwise_max_accumulator_x : public multicol_accessor_base
+	{
+	public:
+		template<class Mat>
+		LMAT_ENSURE_INLINE
+		explicit colwise_max_accumulator_x(Mat& row)
+		: m_pbase(row.ptr_data()), m_step(row.col_stride()) { }
+
+		LMAT_ENSURE_INLINE
+		max_accumulator<T, U> col(index_t j) const
+		{
+			return max_accumulator<T, U>(m_pbase[j * m_step]);
+		}
+
+	private:
+		T *m_pbase;
+		index_t m_step;
+	};
+
+
+	template<typename T, typename U>
+	class colwise_min_accumulator : public multicol_accessor_base
+	{
+	public:
+		template<class Mat>
+		LMAT_ENSURE_INLINE
+		explicit colwise_min_accumulator(Mat& row)
+		: m_pbase(row.ptr_data()) { }
+
+		LMAT_ENSURE_INLINE
+		min_accumulator<T, U> col(index_t j) const
+		{
+			return min_accumulator<T, U>(m_pbase[j]);
+		}
+
+	private:
+		T *m_pbase;
+	};
+
+	template<typename T, typename U>
+	class colwise_min_accumulator_x : public multicol_accessor_base
+	{
+	public:
+		template<class Mat>
+		LMAT_ENSURE_INLINE
+		explicit colwise_min_accumulator_x(Mat& row)
+		: m_pbase(row.ptr_data()), m_step(row.col_stride()) { }
+
+		LMAT_ENSURE_INLINE
+		min_accumulator<T, U> col(index_t j) const
+		{
+			return min_accumulator<T, U>(m_pbase[j * m_step]);
+		}
+
+	private:
+		T *m_pbase;
+		index_t m_step;
+	};
+
+
+	// rowwise accumulator
+
+	template<class Col, typename U>
+	class rowwise_accumulator : public multicol_accessor_base
+	{
+		typedef typename internal::vec_updater_map<Col, U>::type col_type;
+
+	public:
+		LMAT_ENSURE_INLINE
+		explicit rowwise_accumulator(Col& col)
+		: m_col(col) { }
+
+		LMAT_ENSURE_INLINE
+		col_type col(index_t ) const
+		{
+			return internal::vec_updater_map<Col, U>::get(m_col);
+		}
+
+	private:
+		Col& m_col;
+	};
+
+
+
+	/********************************************
+	 *
+	 *  accumulator maps
+	 *
+	 ********************************************/
+
+	namespace internal
+	{
+		template<class Mat, typename U>
+		struct multicol_colwise_accumulator_map
+		{
+			typedef typename matrix_traits<Mat>::value_type T;
+
+			typedef typename meta::if_<
+					meta::is_continuous<Mat>,
+					colwise_sum_accumulator<T, U>,
+					colwise_sum_accumulator_x<T, U>
+			>::type sum_type;
+
+			typedef typename meta::if_<
+					meta::is_continuous<Mat>,
+					colwise_max_accumulator<T, U>,
+					colwise_max_accumulator_x<T, U>
+			>::type max_type;
+
+			typedef typename meta::if_<
+					meta::is_continuous<Mat>,
+					colwise_min_accumulator<T, U>,
+					colwise_min_accumulator_x<T, U>
+			>::type min_type;
+		};
+	}
+
+	template<typename T, typename U>
+	LMAT_ENSURE_INLINE
+	inline multicol_sum_accumulator<T, U>
+	make_multicol_accessor(U, const in_out_wrap<T, atags::sum>& wrap)
+	{
+		return multicol_sum_accumulator<T, U>(wrap.arg());
+	}
+
+	template<typename T, typename U>
+	LMAT_ENSURE_INLINE
+	inline multicol_max_accumulator<T, U>
+	make_multicol_accessor(U, const in_out_wrap<T, atags::max>& wrap)
+	{
+		return multicol_max_accumulator<T, U>(wrap.arg());
+	}
+
+	template<typename T, typename U>
+	LMAT_ENSURE_INLINE
+	inline multicol_min_accumulator<T, U>
+	make_multicol_accessor(U, const in_out_wrap<T, atags::min>& wrap)
+	{
+		return multicol_min_accumulator<T, U>(wrap.arg());
+	}
+
+
+	template<class Mat, typename U>
+	LMAT_ENSURE_INLINE
+	inline typename internal::multicol_colwise_accumulator_map<Mat, U>::sum_type
+	make_multicol_accessor(U, const in_out_wrap<Mat, atags::colwise_sum>& wrap)
+	{
+		typedef typename internal::multicol_colwise_accumulator_map<Mat, U>::sum_type type;
+		return type(wrap.arg());
+	}
+
+	template<class Mat, typename U>
+	LMAT_ENSURE_INLINE
+	inline typename internal::multicol_colwise_accumulator_map<Mat, U>::max_type
+	make_multicol_accessor(U, const in_out_wrap<Mat, atags::colwise_max>& wrap)
+	{
+		typedef typename internal::multicol_colwise_accumulator_map<Mat, U>::max_type type;
+		return type(wrap.arg());
+	}
+
+	template<class Mat, typename U>
+	LMAT_ENSURE_INLINE
+	inline typename internal::multicol_colwise_accumulator_map<Mat, U>::min_type
+	make_multicol_accessor(U, const in_out_wrap<Mat, atags::colwise_min>& wrap)
+	{
+		typedef typename internal::multicol_colwise_accumulator_map<Mat, U>::min_type type;
+		return type(wrap.arg());
+	}
+
+
+	template<class Mat, typename U>
+	LMAT_ENSURE_INLINE
+	inline rowwise_accumulator<Mat, U>
+	make_multicol_accessor(U, const in_out_wrap<Mat, atags::rowwise_sum>& wrap)
+	{
+		return rowwise_accumulator<Mat, U>(wrap.arg());
+	}
+
+	template<class Mat, typename U>
+	LMAT_ENSURE_INLINE
+	inline rowwise_accumulator<Mat, U>
+	make_multicol_accessor(U, const in_out_wrap<Mat, atags::rowwise_max>& wrap)
+	{
+		return rowwise_accumulator<Mat, U>(wrap.arg());
+	}
+
+	template<class Mat, typename U>
+	LMAT_ENSURE_INLINE
+	inline rowwise_accumulator<Mat, U>
+	make_multicol_accessor(U, const in_out_wrap<Mat, atags::rowwise_min>& wrap)
+	{
+		return rowwise_accumulator<Mat, U>(wrap.arg());
+	}
 
 }
 

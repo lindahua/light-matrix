@@ -40,14 +40,18 @@ namespace lmat
 		struct max { };
 		struct min { };
 
-		struct sum_col { };
-		struct max_col { };
-		struct min_col { };
+		struct colwise_sum { };
+		struct colwise_max { };
+		struct colwise_min { };
 
-		struct sum_row { };
-		struct max_row { };
-		struct min_row { };
+		struct rowwise_sum { };
+		struct rowwise_max { };
+		struct rowwise_min { };
 	};
+
+
+	struct colwise { };
+	struct rowwise { };
 
 	// argument wrapper
 
