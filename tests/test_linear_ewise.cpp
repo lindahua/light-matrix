@@ -93,6 +93,32 @@ void test_linear_ewise_row()
 }
 
 
+template<typename U, int M, int N>
+void test_linear_ewise_single_cont()
+{
+	const index_t m = M == 0 ? DM : M;
+	const index_t n = N == 0 ? DN : N;
+
+	typedef typename mat_host<cont, double, M, N>::mat_t dmat_t;
+
+	double v = 2.56;
+	mat_host<cont, double, M, N> dst(m, n);
+
+	dmat_t dmat = dst.get_mat();
+
+	dense_matrix<double, M, N> rmat(m, n);
+	fill(rmat, v);
+
+	matrix_shape<M, N> shape(m, n);
+
+	linear_ewise(U(), shape).apply(
+			copy_kernel(), in_(v, atags::single()), out_(dmat));
+
+	ASSERT_MAT_EQ(m, n, dmat, rmat);
+}
+
+
+
 // Specific test cases
 
 
@@ -147,6 +173,26 @@ MN_CASE( linear_ewise, avx_cont_cont  )
 #endif
 
 
+MN_CASE( linear_ewise, scalar_single_cont )
+{
+	test_linear_ewise_single_cont<atags::scalar, M, N>();
+}
+
+MN_CASE( linear_ewise, sse_single_cont )
+{
+	test_linear_ewise_single_cont<atags::simd<double, lmat::math::sse_t>, M, N>();
+}
+
+#ifdef LMAT_HAS_AVX
+
+MN_CASE( linear_ewise, avx_single_cont )
+{
+	test_linear_ewise_single_cont<atags::simd<double, lmat::math::avx_t>, M, N>();
+}
+
+#endif
+
+
 // Test packs
 
 BEGIN_TPACK( linear_ewise_scalar_cont_cont )
@@ -190,6 +236,22 @@ END_TPACK
 
 #endif
 
+BEGIN_TPACK( linear_ewise_scalar_single_cont )
+	ADD_MN_CASE_3X3( linear_ewise, scalar_single_cont, DM, DN )
+END_TPACK
+
+BEGIN_TPACK( linear_ewise_sse_single_cont )
+	ADD_MN_CASE_3X3( linear_ewise, sse_single_cont, DM, DN )
+END_TPACK
+
+#ifdef LMAT_HAS_AVX
+
+BEGIN_TPACK( linear_ewise_avx_single_cont )
+	ADD_MN_CASE_3X3( linear_ewise, avx_single_cont, DM, DN )
+END_TPACK
+
+#endif
+
 
 BEGIN_MAIN_SUITE
 	ADD_TPACK( linear_ewise_scalar_cont_cont )
@@ -204,6 +266,10 @@ BEGIN_MAIN_SUITE
 #ifdef LMAT_HAS_AVX
 	ADD_TPACK( linear_ewise_avx_cont_cont )
 #endif
+
+	ADD_TPACK( linear_ewise_scalar_single_cont )
+	ADD_TPACK( linear_ewise_sse_single_cont )
+	ADD_TPACK( linear_ewise_avx_single_cont )
 END_MAIN_SUITE
 
 

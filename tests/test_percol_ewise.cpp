@@ -47,6 +47,32 @@ void test_percol_ewise()
 }
 
 
+template<typename DTag, typename U, int M, int N>
+void test_percol_ewise_single()
+{
+	const index_t m = M == 0 ? DM : M;
+	const index_t n = N == 0 ? DN : N;
+
+	typedef typename mat_host<DTag, double, M, N>::mat_t dmat_t;
+
+	const double v = 2.56;
+	mat_host<DTag, double, M, N> dst(m, n);
+
+	dmat_t dmat = dst.get_mat();
+
+	dense_matrix<double, M, N> rmat(m, n);
+	fill(rmat, v);
+
+	matrix_shape<M, N> shape(m, n);
+
+	percol_ewise(U(), shape).apply(
+			copy_kernel(), in_(v, atags::single()), out_(dmat));
+
+	ASSERT_MAT_EQ(m, n, dmat, rmat);
+}
+
+
+
 #define DEFINE_PERCOL_EWISE_SCALAR_TEST( STag, DTag ) \
 		MN_CASE( percol_ewise, scalar_##STag##_##DTag  ) { \
 			test_percol_ewise<STag, DTag, atags::scalar, M, N>(); } \
@@ -54,14 +80,12 @@ void test_percol_ewise()
 			ADD_MN_CASE_3X3( percol_ewise, scalar_##STag##_##DTag, DM, DN ) \
 		END_TPACK
 
-
 #define DEFINE_PERCOL_EWISE_SIMD_TEST( SKindName, STag, DTag ) \
 		MN_CASE( percol_ewise, SKindName##_##STag##_##DTag  ) { \
 			test_percol_ewise<STag, DTag, atags::simd<double, lmat::math::SKindName##_t>, M, N>(); } \
 		BEGIN_TPACK( percol_ewise_##SKindName##_##STag##_##DTag ) \
 			ADD_MN_CASE_3X3( percol_ewise, scalar_##STag##_##DTag, DM, DN ) \
 		END_TPACK
-
 
 DEFINE_PERCOL_EWISE_SCALAR_TEST( cont, cont )
 DEFINE_PERCOL_EWISE_SCALAR_TEST( cont, bloc )
@@ -80,7 +104,6 @@ DEFINE_PERCOL_EWISE_SIMD_TEST( sse, cont, bloc )
 DEFINE_PERCOL_EWISE_SIMD_TEST( sse, bloc, cont )
 DEFINE_PERCOL_EWISE_SIMD_TEST( sse, bloc, bloc )
 
-
 #ifdef LMAT_HAS_AVX
 
 DEFINE_PERCOL_EWISE_SIMD_TEST( avx, cont, cont )
@@ -89,6 +112,37 @@ DEFINE_PERCOL_EWISE_SIMD_TEST( avx, bloc, cont )
 DEFINE_PERCOL_EWISE_SIMD_TEST( avx, bloc, bloc )
 
 #endif
+
+MN_CASE( percol_ewise, scalar_single_cont )
+{
+	test_percol_ewise_single<cont, atags::scalar, M, N>();
+}
+
+MN_CASE( percol_ewise, sse_single_cont )
+{
+	test_percol_ewise_single<cont, atags::simd<double, lmat::math::sse_t>, M, N>();
+}
+
+#ifdef LMAT_HAS_AVX
+
+MN_CASE( percol_ewise, avx_single_cont )
+{
+	test_percol_ewise_single<cont, atags::simd<double, lmat::math::avx_t>, M, N>();
+}
+
+#endif
+
+BEGIN_TPACK( percol_ewise_scalar_single_cont )
+	ADD_MN_CASE_3X3( percol_ewise, scalar_single_cont, DM, DN )
+END_TPACK
+
+BEGIN_TPACK( percol_ewise_sse_single_cont )
+	ADD_MN_CASE_3X3( percol_ewise, sse_single_cont, DM, DN )
+END_TPACK
+
+BEGIN_TPACK( percol_ewise_avx_single_cont )
+	ADD_MN_CASE_3X3( percol_ewise, avx_single_cont, DM, DN )
+END_TPACK
 
 
 BEGIN_MAIN_SUITE
@@ -113,6 +167,10 @@ BEGIN_MAIN_SUITE
 	ADD_TPACK( percol_ewise_avx_bloc_cont )
 	ADD_TPACK( percol_ewise_avx_bloc_bloc )
 #endif
+
+	ADD_TPACK( percol_ewise_scalar_single_cont )
+	ADD_TPACK( percol_ewise_sse_single_cont )
+	ADD_TPACK( percol_ewise_avx_single_cont )
 END_MAIN_SUITE
 
 

@@ -20,6 +20,7 @@ namespace lmat
 
 	template<typename T, typename U> class contvec_reader;
 	template<typename T, typename U> class stepvec_reader;
+	template<typename T, typename U> class single_reader;
 
 	template<typename T, typename U> class contvec_writer;
 	template<typename T, typename U> class stepvec_writer;
@@ -100,7 +101,6 @@ namespace lmat
 	};
 
 
-
 	// stepvec_reader
 
 	template<typename T>
@@ -111,6 +111,7 @@ namespace lmat
 		explicit stepvec_reader(const T* p, index_t step)
 		: m_pdata(p), m_step(step) { }
 
+		LMAT_ENSURE_INLINE
 		T scalar(index_t i) const
 		{
 			return m_pdata[i * m_step];
@@ -120,6 +121,69 @@ namespace lmat
 		const T* m_pdata;
 		index_t m_step;
 	};
+
+
+	// single_reader
+
+	template<typename T>
+	class single_reader<T, atags::scalar> : public scalar_vec_accessor_base
+	{
+	public:
+		LMAT_ENSURE_INLINE
+		explicit single_reader(const T& v)
+		: m_val(v) { }
+
+		LMAT_ENSURE_INLINE
+		T scalar(index_t ) const
+		{
+			return m_val;
+		}
+
+		LMAT_ENSURE_INLINE
+		single_reader col(index_t j) const
+		{
+			return *this;
+		}
+
+	private:
+		const T m_val;
+	};
+
+
+	template<typename T, typename Kind>
+	class single_reader<T, atags::simd<T, Kind> > : public simd_vec_accessor_base
+	{
+	public:
+		typedef math::simd_pack<T, Kind> pack_type;
+
+		LMAT_ENSURE_INLINE
+		explicit single_reader(const T& v)
+		: m_pack(v), m_val(v) { }
+
+		LMAT_ENSURE_INLINE
+		T scalar(index_t ) const
+		{
+			return m_val;
+		}
+
+		LMAT_ENSURE_INLINE
+		pack_type pack(index_t ) const
+		{
+			return m_pack;
+		}
+
+		LMAT_ENSURE_INLINE
+		single_reader col(index_t j) const
+		{
+			return *this;
+		}
+
+	private:
+		pack_type m_pack;
+		T m_val;
+	};
+
+
 
 
 	/********************************************
@@ -202,6 +266,14 @@ namespace lmat
 	}
 
 
+	template<typename T, typename U>
+	LMAT_ENSURE_INLINE
+	inline single_reader<T, U>
+	make_vec_accessor(U, const in_wrap<T, atags::single>& wrap)
+	{
+		return single_reader<T, U>(wrap.arg());
+	}
+
 
 	/********************************************
 	 *
@@ -218,11 +290,13 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		explicit contvec_writer(T* p) : m_pdata(p) { }
 
+		LMAT_ENSURE_INLINE
 		T& scalar(index_t ) const
 		{
 			return m_temp;
 		}
 
+		LMAT_ENSURE_INLINE
 		nil_t done_scalar(index_t i) const
 		{
 			m_pdata[i] = m_temp;
@@ -271,8 +345,8 @@ namespace lmat
 		}
 
 	private:
-		mutable T m_stemp;
 		mutable pack_type m_ptemp;
+		mutable T m_stemp;
 		T* m_pdata;
 	};
 
@@ -286,11 +360,13 @@ namespace lmat
 		explicit stepvec_writer(T* p, index_t step)
 		: m_pdata(p), m_step(step) { }
 
+		LMAT_ENSURE_INLINE
 		T& scalar(index_t ) const
 		{
 			return m_temp;
 		}
 
+		LMAT_ENSURE_INLINE
 		nil_t done_scalar(index_t i) const
 		{
 			m_pdata[i * m_step] = m_temp;

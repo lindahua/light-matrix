@@ -120,6 +120,14 @@ namespace lmat
 		return internal::multicol_reader_map<Mat, U>::get(wrap.arg());
 	}
 
+	template<typename T, typename U>
+	LMAT_ENSURE_INLINE
+	inline single_reader<T, U>
+	make_multicol_accessor(U, const in_wrap<T, atags::single>& wrap)
+	{
+		return single_reader<T, U>(wrap.arg());
+	}
+
 
 	/********************************************
 	 *
