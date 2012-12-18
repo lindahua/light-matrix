@@ -260,6 +260,61 @@ namespace lmat { namespace internal {
 
 
 
+	template<int N, typename T, typename SKind, class Updater, class Reader>
+	inline void pfold_init(const dimension<N>& dim, atags::simd<T, SKind>,
+			const Updater& a, const Reader& rd)
+	{
+		typedef math::simd_pack<T, SKind> pack_t;
+		const index_t pw = (index_t)pack_t::pack_width;
+
+		const index_t len = dim.value();
+		const index_t maj_len = int_div<pack_t::pack_width>::maj(len);
+
+		if (maj_len)
+		{
+			for (index_t i = 0; i < maj_len; i += pw)
+			{
+				a.pack(i) = rd.pack(i);
+				a.done_pack(i);
+			}
+		}
+
+		for (index_t i = maj_len; i < len; ++i)
+		{
+			a.scalar(i) = rd.scalar(i);
+			a.done_scalar(i);
+		}
+	}
+
+	template<int N, typename T, typename SKind, class RFun, class Updater, class Reader>
+	inline void pfold_impl(const dimension<N>& dim, atags::simd<T, SKind>,
+			RFun rfun, const Updater& a, const Reader& rd)
+	{
+		typedef math::simd_pack<T, SKind> pack_t;
+		const index_t pw = (index_t)pack_t::pack_width;
+
+		const index_t len = dim.value();
+		const index_t maj_len = int_div<pack_t::pack_width>::maj(len);
+
+		if (maj_len)
+		{
+			for (index_t i = 0; i < maj_len; i += pw)
+			{
+				rfun.fold(a.pack(i), rd.pack(i));
+				a.done_pack(i);
+			}
+		}
+
+		for (index_t i = maj_len; i < len; ++i)
+		{
+			rfun.fold(a.scalar(i), rd.scalar(i));
+			a.done_scalar(i);
+		}
+	}
+
+
+
+
 	/********************************************
 	 *
 	 *  full reduction
@@ -435,6 +490,36 @@ namespace lmat { namespace internal {
 	{
 		colwise_foldx_impl(shape, u, _minimum_rfun<T>(), dmat, tfun, make_multicol_accessor(u, wraps)...);
 	}
+
+
+	/********************************************
+	 *
+	 *  rowwise reduction
+	 *
+	 ********************************************/
+
+	template<int M, int N, typename U, class RFun, class DMat, class MultiColReader>
+	inline void rowwise_fold_impl(const matrix_shape<M, N>& shape, U u,
+			RFun rfun, DMat& dmat, const MultiColReader& rd)
+	{
+		dimension<M> col_dim(shape.nrows());
+		const index_t n = shape.ncolumns();
+
+		auto a = make_vec_accessor(u, in_out_(dmat));
+		pfold_init(col_dim, u, a, rd.col(0));
+
+		for (index_t j = 1; j < n; ++j)
+		{
+			pfold_impl(col_dim, u, rfun, a, rd.col(j));
+		}
+	}
+
+	template<int M, int N, typename T, typename Kind, class DMat, class Wrap>
+	inline void rowwise_sum_(const matrix_shape<M, N>& shape, atags::simd<T, Kind> u, DMat& dmat, const Wrap& wrap)
+	{
+		rowwise_fold_impl(shape, u, _sum_rfun<T>(), dmat, make_multicol_accessor(u, wrap));
+	}
+
 
 } }
 

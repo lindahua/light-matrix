@@ -198,6 +198,25 @@ namespace lmat
 	LMAT_DEFINE_BASIC_COLWISE_REDUCTION( maximum )
 	LMAT_DEFINE_BASIC_COLWISE_REDUCTION( minimum )
 
+	// rowwise reduction
+
+	template<typename T, class Mat, class DMat>
+	void rowwise_sum(const IRegularMatrix<Mat, T>& mat, IRegularMatrix<DMat, T>& dmat)
+	{
+		typedef default_simd_kind kind;
+		typename meta::shape<Mat>::type shape = reduc_get_shape(mat);
+		LMAT_CHECK_DIMS( dmat.nelems() == shape.nrows() );
+
+		if (shape.ncolumns() > 0)
+		{
+			internal::rowwise_sum_(shape, atags::simd<T, kind>(), dmat.derived(), in_(mat.derived()));
+		}
+		else
+		{
+			fill(dmat, empty_values<T>::sum());
+		}
+	}
+
 
 	/********************************************
 	 *

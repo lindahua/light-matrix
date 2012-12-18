@@ -285,6 +285,7 @@ set(REDUC_HS
 
 add_executable(test_full_reduce ${REDUC_HS} test_full_reduce.cpp)
 add_executable(test_colwise_reduce ${REDUC_HS} test_colwise_reduce.cpp)
+add_executable(test_rowwise_reduce ${REDUC_HS} test_rowwise_reduce.cpp)
 
 # suppress bogus free-nonheap-object complaint under GCC
 
@@ -326,6 +327,7 @@ set(LMAT_TEST_NAMES
 	test_ewise_accum
 	test_full_reduce
 	test_colwise_reduce
+	test_rowwise_reduce
 )
 	
 foreach(tname ${LMAT_TEST_NAMES})
