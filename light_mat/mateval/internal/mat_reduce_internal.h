@@ -343,6 +343,29 @@ namespace lmat { namespace internal {
 		colwise_fold_impl(shape, u, _sum_rfun<T>(), dmat, make_multicol_accessor(u, wrap));
 	}
 
+	template<int M, int N, typename T, typename Kind, class DMat, class Wrap>
+	inline void colwise_mean_(const matrix_shape<M, N>& shape, atags::simd<T, Kind> u, DMat& dmat, const Wrap& wrap)
+	{
+		const index_t m = shape.nrows();
+		const index_t n = shape.ncolumns();
+
+		colwise_fold_impl(shape, u, _sum_rfun<T>(), dmat, make_multicol_accessor(u, wrap));
+		T c = math::rcp( T(m) );
+		for (index_t j = 0; j < n; ++j) dmat[j] *= c;
+	}
+
+	template<int M, int N, typename T, typename Kind, class DMat, class Wrap>
+	inline void colwise_maximum_(const matrix_shape<M, N>& shape, atags::simd<T, Kind> u, DMat& dmat, const Wrap& wrap)
+	{
+		colwise_fold_impl(shape, u, _maximum_rfun<T>(), dmat, make_multicol_accessor(u, wrap));
+	}
+
+	template<int M, int N, typename T, typename Kind, class DMat, class Wrap>
+	inline void colwise_minimum_(const matrix_shape<M, N>& shape, atags::simd<T, Kind> u, DMat& dmat, const Wrap& wrap)
+	{
+		colwise_fold_impl(shape, u, _minimum_rfun<T>(), dmat, make_multicol_accessor(u, wrap));
+	}
+
 
 } }
 

@@ -29,6 +29,18 @@
 			r = empty_values<T>::Name(); } \
 		return r; }
 
+#define LMAT_DEFINE_BASIC_COLWISE_REDUCTION( Name ) \
+	template<typename T, class Mat, class DMat> \
+	LMAT_ENSURE_INLINE \
+	inline void colwise_##Name(const IRegularMatrix<Mat, T>& mat, IRegularMatrix<DMat, T>& dmat) { \
+		typedef default_simd_kind kind; \
+		typename meta::shape<Mat>::type shape = reduc_get_shape(mat); \
+		LMAT_CHECK_DIMS( dmat.nelems() == shape.ncolumns() ); \
+		if (shape.nrows() > 0) { \
+			internal::colwise_##Name##_(shape, atags::simd<T, kind>(), dmat.derived(), in_(mat.derived())); } \
+		else { \
+			fill(dmat.derived(), empty_values<T>::Name()); } }
+
 
 #define LMAT_DEFINE_FULL_REDUCTION_1( Name, Reduc, ScaFun, EmptyVal ) \
 	template<typename T, class Mat> \
@@ -134,7 +146,7 @@ namespace lmat
 
 	/********************************************
 	 *
-	 *  basic full reduction function
+	 *  basic reduction function
 	 *
 	 ********************************************/
 
@@ -143,28 +155,10 @@ namespace lmat
 	LMAT_DEFINE_BASIC_FULL_REDUCTION( maximum )
 	LMAT_DEFINE_BASIC_FULL_REDUCTION( minimum )
 
-
-	/********************************************
-	 *
-	 *  basic colwise reduction function
-	 *
-	 ********************************************/
-
-	template<typename T, class Mat, class DMat>
-	LMAT_ENSURE_INLINE
-	inline void colwise_sum(const IRegularMatrix<Mat, T>& mat, IRegularMatrix<DMat, T>& dmat)
-	{
-		typedef default_simd_kind kind;
-
-		typename meta::shape<Mat>::type shape = reduc_get_shape(mat);
-		LMAT_CHECK_DIMS( dmat.nelems() == shape.ncolumns() );
-
-		if (shape.nrows() > 0)
-			internal::colwise_sum_(shape, atags::simd<T, kind>(), dmat.derived(), in_(mat.derived()));
-		else
-			fill(dmat.derived(), empty_values<T>::sum());
-	}
-
+	LMAT_DEFINE_BASIC_COLWISE_REDUCTION( sum )
+	LMAT_DEFINE_BASIC_COLWISE_REDUCTION( mean )
+	LMAT_DEFINE_BASIC_COLWISE_REDUCTION( maximum )
+	LMAT_DEFINE_BASIC_COLWISE_REDUCTION( minimum )
 
 
 	/********************************************
