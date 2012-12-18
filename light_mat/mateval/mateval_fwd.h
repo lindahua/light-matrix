@@ -49,9 +49,6 @@ namespace lmat
 		struct rowwise_min { };
 	}
 
-	struct colwise { };
-	struct rowwise { };
-
 	// argument wrapper
 
 	template<class Arg, typename ATag>

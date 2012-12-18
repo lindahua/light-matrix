@@ -13,7 +13,7 @@
 #ifndef LIGHTMAT_MAT_REDUCE_INTERNAL_H_
 #define LIGHTMAT_MAT_REDUCE_INTERNAL_H_
 
-#include <light_mat/mateval/vec_accessors.h>
+#include <light_mat/mateval/multicol_accessors.h>
 #include <light_mat/math/math_functors.h>
 #include <light_mat/math/simd.h>
 
@@ -259,9 +259,10 @@ namespace lmat { namespace internal {
 	}
 
 
+
 	/********************************************
 	 *
-	 *  adapters
+	 *  full reduction
 	 *
 	 ********************************************/
 
@@ -314,6 +315,32 @@ namespace lmat { namespace internal {
 	inline T minimumx_(const dimension<N>& dim, atags::simd<T, Kind> u, const TFun& tfun, const Wrap&... wraps)
 	{
 		return foldx_impl(dim, u, _minimum_rfun<T>(), tfun, make_vec_accessor(u, wraps)...);
+	}
+
+	/********************************************
+	 *
+	 *  colwise reduction
+	 *
+	 ********************************************/
+
+	template<int M, int N, typename U, class RFun, class DMat, class MultiColReader>
+	inline void colwise_fold_impl(const matrix_shape<M, N>& shape, U u,
+			RFun rfun, DMat& dmat, const MultiColReader& rd)
+	{
+		dimension<M> col_dim(shape.nrows());
+		const index_t n = shape.ncolumns();
+
+		for (index_t j = 0; j < n; ++j)
+		{
+			dmat[j] = fold_impl(col_dim, u, rfun, rd.col(j));
+		}
+	}
+
+
+	template<int M, int N, typename T, typename Kind, class DMat, class Wrap>
+	inline void colwise_sum_(const matrix_shape<M, N>& shape, atags::simd<T, Kind> u, DMat& dmat, const Wrap& wrap)
+	{
+		colwise_fold_impl(shape, u, _sum_rfun<T>(), dmat, make_multicol_accessor(u, wrap));
 	}
 
 

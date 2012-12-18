@@ -16,6 +16,20 @@
 #include "internal/mat_reduce_internal.h"
 
 
+#define LMAT_DEFINE_BASIC_FULL_REDUCTION( Name ) \
+	template<typename T, class Mat> \
+	LMAT_ENSURE_INLINE \
+	inline T Name(const IRegularMatrix<Mat, T>& mat) { \
+		typedef default_simd_kind kind; \
+		dimension<meta::nelems<Mat>::value> dim = reduc_get_length(mat); \
+		T r; \
+		if (dim.value() > 0) { \
+			r = internal::Name##_(dim, atags::simd<T, kind>(), in_(mat.derived())); } \
+		else { \
+			r = empty_values<T>::Name(); } \
+		return r; }
+
+
 #define LMAT_DEFINE_FULL_REDUCTION_1( Name, Reduc, ScaFun, EmptyVal ) \
 	template<typename T, class Mat> \
 	LMAT_ENSURE_INLINE \
@@ -75,85 +89,80 @@ namespace lmat
 	}
 
 
+	template<typename T, class Mat>
+	LMAT_ENSURE_INLINE
+	inline typename meta::shape<Mat>::type
+	reduc_get_shape(const IRegularMatrix<Mat, T>& mat)
+	{
+		static_assert(meta::is_percol_continuous<Mat>::value,
+				"mat should be a compile-time percol-continuous matrix.");
+
+		return mat.shape();
+	}
+
+	template<typename T, class Mat1, class Mat2>
+	LMAT_ENSURE_INLINE
+	inline typename meta::common_shape<Mat1, Mat2>::type
+	reduc_get_shape(const IRegularMatrix<Mat1, T>& mat1, const IRegularMatrix<Mat2, T>& mat2)
+	{
+		static_assert(meta::is_continuous<Mat1>::value,
+				"mat1 should be a compile-time percol-continuous matrix.");
+
+		static_assert(meta::is_continuous<Mat2>::value,
+				"mat2 should be a compile-time percol-continuous matrix.");
+
+		return common_shape(mat1, mat2);
+	}
+
+
+	template<typename T>
+	struct empty_values
+	{
+		LMAT_ENSURE_INLINE
+		static T sum() { return T(0); }
+
+		LMAT_ENSURE_INLINE
+		static T mean() { return std::numeric_limits<T>::quiet_NaN(); }
+
+		LMAT_ENSURE_INLINE
+		static T maximum() { return - std::numeric_limits<T>::infinity(); }
+
+		LMAT_ENSURE_INLINE
+		static T minimum() { return std::numeric_limits<T>::infinity(); }
+	};
+
+
 	/********************************************
 	 *
-	 *  basic reduction function
+	 *  basic full reduction function
 	 *
 	 ********************************************/
 
-	template<typename T, class Mat>
+	LMAT_DEFINE_BASIC_FULL_REDUCTION( sum )
+	LMAT_DEFINE_BASIC_FULL_REDUCTION( mean )
+	LMAT_DEFINE_BASIC_FULL_REDUCTION( maximum )
+	LMAT_DEFINE_BASIC_FULL_REDUCTION( minimum )
+
+
+	/********************************************
+	 *
+	 *  basic colwise reduction function
+	 *
+	 ********************************************/
+
+	template<typename T, class Mat, class DMat>
 	LMAT_ENSURE_INLINE
-	inline T sum(const IRegularMatrix<Mat, T>& mat)
+	inline void colwise_sum(const IRegularMatrix<Mat, T>& mat, IRegularMatrix<DMat, T>& dmat)
 	{
 		typedef default_simd_kind kind;
 
-		dimension<meta::nelems<Mat>::value> dim = reduc_get_length(mat);
-		T r;
+		typename meta::shape<Mat>::type shape = reduc_get_shape(mat);
+		LMAT_CHECK_DIMS( dmat.nelems() == shape.ncolumns() );
 
-		if (dim.value() > 0)
-			r = internal::sum_(dim, atags::simd<T, kind>(), in_(mat.derived()));
+		if (shape.nrows() > 0)
+			internal::colwise_sum_(shape, atags::simd<T, kind>(), dmat.derived(), in_(mat.derived()));
 		else
-			r = T(0);
-
-		return r;
-	}
-
-
-	template<typename T, class Mat>
-	LMAT_ENSURE_INLINE
-	inline T mean(const IRegularMatrix<Mat, T>& mat)
-	{
-		typedef default_simd_kind kind;
-
-		dimension<meta::nelems<Mat>::value> dim = reduc_get_length(mat);
-		T r;
-
-		if (dim.value() > 0)
-		{
-			r = internal::mean_(dim, atags::simd<T, kind>(), in_(mat.derived()));
-		}
-		else
-		{
-			r = std::numeric_limits<T>::quiet_NaN();
-		}
-
-		return r;
-	}
-
-
-	template<typename T, class Mat>
-	LMAT_ENSURE_INLINE
-	inline T maximum(const IRegularMatrix<Mat, T>& mat)
-	{
-		typedef default_simd_kind kind;
-
-		dimension<meta::nelems<Mat>::value> dim = reduc_get_length(mat);
-		T r;
-
-		if (dim.value() > 0)
-			r = internal::maximum_(dim, atags::simd<T, kind>(), in_(mat.derived()));
-		else
-			r = -std::numeric_limits<T>::infinity();
-
-		return r;
-	}
-
-
-	template<typename T, class Mat>
-	LMAT_ENSURE_INLINE
-	inline T minimum(const IRegularMatrix<Mat, T>& mat)
-	{
-		typedef default_simd_kind kind;
-
-		dimension<meta::nelems<Mat>::value> dim = reduc_get_length(mat);
-		T r;
-
-		if (dim.value() > 0)
-			r = internal::minimum_(dim, atags::simd<T, kind>(), in_(mat.derived()));
-		else
-			r = std::numeric_limits<T>::infinity();
-
-		return r;
+			fill(dmat.derived(), empty_values<T>::sum());
 	}
 
 
