@@ -96,7 +96,8 @@ SIMPLE_CASE( full_reduce, minimum )
 	}
 }
 
-SIMPLE_CASE( full_reduce, L1norm )
+
+SIMPLE_CASE( full_reduce, asum )
 {
 	dense_col<double> s(max_len);
 	fill_rand(s);
@@ -106,12 +107,45 @@ SIMPLE_CASE( full_reduce, L1norm )
 		double r0 = 0;
 		for (index_t i = 0; i < k; ++i) r0 += math::abs(s[i]);
 
-		double r = L1norm(s(range(0, k)));
+		double r = asum(s(range(0, k)));
 		ASSERT_APPROX(r, r0, 1.0e-12);
 	}
 }
 
-SIMPLE_CASE( full_reduce, L2norm )
+SIMPLE_CASE( full_reduce, amean )
+{
+	dense_col<double> s(max_len);
+	fill_rand(s);
+
+	for (index_t k = 0; k <= max_len; ++k)
+	{
+		double r0 = 0;
+		for (index_t i = 0; i < k; ++i) r0 += math::abs(s[i]);
+		r0 /= k;
+
+		double r = amean(s(range(0, k)));
+		ASSERT_APPROX(r, r0, 1.0e-12);
+	}
+}
+
+
+SIMPLE_CASE( full_reduce, amax )
+{
+	dense_col<double> s(max_len);
+	fill_rand(s);
+
+	for (index_t k = 0; k <= max_len; ++k)
+	{
+		double r0 = 0;
+		for (index_t i = 0; i < k; ++i)
+			r0 = math::max(r0, math::abs(s[i]));
+
+		double r = amax(s(range(0, k)));
+		ASSERT_APPROX(r, r0, 1.0e-12);
+	}
+}
+
+SIMPLE_CASE( full_reduce, sqsum )
 {
 	dense_col<double> s(max_len);
 	fill_rand(s);
@@ -120,46 +154,14 @@ SIMPLE_CASE( full_reduce, L2norm )
 	{
 		double r0 = 0;
 		for (index_t i = 0; i < k; ++i) r0 += math::sqr(s[i]);
-		r0 = math::sqrt(r0);
 
-		double r = L2norm(s(range(0, k)));
+		double r = sqsum(s(range(0, k)));
 		ASSERT_APPROX(r, r0, 1.0e-12);
 	}
 }
 
-SIMPLE_CASE( full_reduce, sqL2norm )
-{
-	dense_col<double> s(max_len);
-	fill_rand(s);
 
-	for (index_t k = 0; k <= max_len; ++k)
-	{
-		double r0 = 0;
-		for (index_t i = 0; i < k; ++i) r0 += math::sqr(s[i]);
-
-		double r = sqL2norm(s(range(0, k)));
-		ASSERT_APPROX(r, r0, 1.0e-12);
-	}
-}
-
-SIMPLE_CASE( full_reduce, Linfnorm )
-{
-	dense_col<double> s(max_len);
-	fill_rand(s);
-
-	for (index_t k = 0; k <= max_len; ++k)
-	{
-		double r0 = 0;
-		for (index_t i = 0; i < k; ++i) r0 = math::max(r0, math::abs(s[i]));
-
-		double r = Linfnorm(s(range(0, k)));
-		ASSERT_EQ(r, r0);
-	}
-}
-
-
-
-SIMPLE_CASE( full_reduce, diff_L1norm )
+SIMPLE_CASE( full_reduce, diff_asum )
 {
 	dense_col<double> s(max_len);
 	dense_col<double> s2(max_len);
@@ -171,47 +173,30 @@ SIMPLE_CASE( full_reduce, diff_L1norm )
 		double r0 = 0;
 		for (index_t i = 0; i < k; ++i) r0 += math::abs(s[i] - s2[i]);
 
-		double r = diff_L1norm(s(range(0, k)), s2(range(0, k)));
+		double r = diff_asum(s(range(0, k)), s2(range(0, k)));
 		ASSERT_APPROX(r, r0, 1.0e-12);
 	}
 }
 
-SIMPLE_CASE( full_reduce, diff_sqL2norm )
+SIMPLE_CASE( full_reduce, diff_amean )
 {
 	dense_col<double> s(max_len);
 	dense_col<double> s2(max_len);
 	fill_rand(s);
 	fill_rand(s2);
 
-	for (index_t k = 0; k <= max_len; ++k)
+	for (index_t k = 1; k <= max_len; ++k)
 	{
 		double r0 = 0;
-		for (index_t i = 0; i < k; ++i) r0 += math::sqr(s[i] - s2[i]);
+		for (index_t i = 0; i < k; ++i) r0 += math::abs(s[i] - s2[i]);
+		r0 /= k;
 
-		double r = diff_sqL2norm(s(range(0, k)), s2(range(0, k)));
+		double r = diff_amean(s(range(0, k)), s2(range(0, k)));
 		ASSERT_APPROX(r, r0, 1.0e-12);
 	}
 }
 
-SIMPLE_CASE( full_reduce, diff_L2norm )
-{
-	dense_col<double> s(max_len);
-	dense_col<double> s2(max_len);
-	fill_rand(s);
-	fill_rand(s2);
-
-	for (index_t k = 0; k <= max_len; ++k)
-	{
-		double r0 = 0;
-		for (index_t i = 0; i < k; ++i) r0 += math::sqr(s[i] - s2[i]);
-		r0 = math::sqrt(r0);
-
-		double r = diff_L2norm(s(range(0, k)), s2(range(0, k)));
-		ASSERT_APPROX(r, r0, 1.0e-12);
-	}
-}
-
-SIMPLE_CASE( full_reduce, diff_Linfnorm )
+SIMPLE_CASE( full_reduce, diff_amax )
 {
 	dense_col<double> s(max_len);
 	dense_col<double> s2(max_len);
@@ -224,10 +209,82 @@ SIMPLE_CASE( full_reduce, diff_Linfnorm )
 		for (index_t i = 0; i < k; ++i)
 			r0 = math::max(r0, math::abs(s[i] - s2[i]));
 
-		double r = diff_Linfnorm(s(range(0, k)), s2(range(0, k)));
-		ASSERT_EQ(r, r0);
+		double r = diff_amax(s(range(0, k)), s2(range(0, k)));
+		ASSERT_APPROX(r, r0, 1.0e-12);
 	}
 }
+
+SIMPLE_CASE( full_reduce, diff_sqsum )
+{
+	dense_col<double> s(max_len);
+	dense_col<double> s2(max_len);
+	fill_rand(s);
+	fill_rand(s2);
+
+	for (index_t k = 0; k <= max_len; ++k)
+	{
+		double r0 = 0;
+		for (index_t i = 0; i < k; ++i) r0 += math::sqr(s[i] - s2[i]);
+
+		double r = diff_sqsum(s(range(0, k)), s2(range(0, k)));
+		ASSERT_APPROX(r, r0, 1.0e-12);
+	}
+}
+
+
+SIMPLE_CASE( full_reduce, dot )
+{
+	dense_col<double> s(max_len);
+	dense_col<double> s2(max_len);
+	fill_rand(s);
+	fill_rand(s2);
+
+	for (index_t k = 0; k <= max_len; ++k)
+	{
+		double r0 = 0;
+		for (index_t i = 0; i < k; ++i) r0 += s[i] * s2[i];
+
+		double r = dot(s(range(0, k)), s2(range(0, k)));
+		ASSERT_APPROX(r, r0, 1.0e-12);
+	}
+}
+
+
+SIMPLE_CASE( full_reduce, norms )
+{
+	dense_col<double> s(max_len);
+	fill_rand(s);
+
+	for (index_t k = 0; k <= max_len; ++k)
+	{
+		ref_col<double> sk = s(range(0, k));
+
+		ASSERT_EQ( norm(sk, norms::L1_()), asum(sk) );
+		ASSERT_EQ( norm(sk, norms::L2_()), math::sqrt(sqsum(sk)) );
+		ASSERT_EQ( norm(sk, norms::Linf_()), amax(sk) );
+	}
+}
+
+
+SIMPLE_CASE( full_reduce, diff_norms )
+{
+	dense_col<double> s(max_len);
+	dense_col<double> s2(max_len);
+	fill_rand(s);
+	fill_rand(s2);
+
+	for (index_t k = 0; k <= max_len; ++k)
+	{
+		ref_col<double> sk = s(range(0, k));
+		ref_col<double> sk2 = s2(range(0, k));
+
+		ASSERT_EQ( diff_norm(sk, sk2, norms::L1_()), diff_asum(sk, sk2) );
+		ASSERT_EQ( diff_norm(sk, sk2, norms::L2_()), math::sqrt(diff_sqsum(sk, sk2)) );
+		ASSERT_EQ( diff_norm(sk, sk2, norms::Linf_()), diff_amax(sk, sk2) );
+	}
+}
+
+
 
 
 
@@ -237,15 +294,20 @@ BEGIN_TPACK( full_reduce )
 	ADD_SIMPLE_CASE( full_reduce, maximum )
 	ADD_SIMPLE_CASE( full_reduce, minimum )
 
-	ADD_SIMPLE_CASE( full_reduce, L1norm )
-	ADD_SIMPLE_CASE( full_reduce, sqL2norm )
-	ADD_SIMPLE_CASE( full_reduce, L2norm )
-	ADD_SIMPLE_CASE( full_reduce, Linfnorm )
+	ADD_SIMPLE_CASE( full_reduce, asum )
+	ADD_SIMPLE_CASE( full_reduce, amean )
+	ADD_SIMPLE_CASE( full_reduce, amax )
+	ADD_SIMPLE_CASE( full_reduce, sqsum )
 
-	ADD_SIMPLE_CASE( full_reduce, diff_L1norm )
-	ADD_SIMPLE_CASE( full_reduce, diff_sqL2norm )
-	ADD_SIMPLE_CASE( full_reduce, diff_L2norm )
-	ADD_SIMPLE_CASE( full_reduce, diff_Linfnorm )
+	ADD_SIMPLE_CASE( full_reduce, diff_asum )
+	ADD_SIMPLE_CASE( full_reduce, diff_amean )
+	ADD_SIMPLE_CASE( full_reduce, diff_amax )
+	ADD_SIMPLE_CASE( full_reduce, diff_sqsum )
+
+	ADD_SIMPLE_CASE( full_reduce, dot )
+
+	ADD_SIMPLE_CASE( full_reduce, norms )
+	ADD_SIMPLE_CASE( full_reduce, diff_norms )
 END_TPACK
 
 

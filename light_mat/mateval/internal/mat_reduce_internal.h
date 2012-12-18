@@ -75,25 +75,34 @@ namespace lmat { namespace internal {
 	};
 
 
-	template<class RFun, typename RT, typename Kind, class Reader>
-	inline void fold_impl(unsigned int len, RFun rfun, RT& r_out, Kind kind, const Reader& rd)
-	{
-		typedef math::simd_pack<RT, Kind> pack_t;
+	/********************************************
+	 *
+	 *  core implementation
+	 *
+	 ********************************************/
 
-		const unsigned int pw = pack_t::pack_width;
-		unsigned int npacks = int_div<pw>::quo(len);
-		unsigned int i;
-		RT r;
+	template<int N, typename T, typename SKind, class RFun, class Reader>
+	inline T fold_impl(const dimension<N>& dim, atags::simd<T, SKind>,
+			RFun rfun, const Reader& rd)
+	{
+		typedef math::simd_pack<T, SKind> pack_t;
+
+		const index_t pw = (index_t)pack_t::pack_width;
+
+		const index_t len = dim.value();
+		const index_t npacks = int_div<pack_t::pack_width>::quo(len);
+		index_t i;
+		T r;
 
 		if (npacks)
 		{
 			pack_t a0, a1, a2, a3;
 
-			unsigned int m4 = npacks >> 2;
+			const index_t m4 = npacks >> 2;
 			if (m4)
 			{
-				const unsigned int w4 = pw << 2;
-				unsigned int l4 = m4 * w4;
+				const index_t w4 = pw << 2;
+				const index_t l4 = m4 * w4;
 
 				a0 = rd.pack(0);
 				a1 = rd.pack(pw);
@@ -140,7 +149,7 @@ namespace lmat { namespace internal {
 			}
 			else
 			{
-				rfun.fold(a0, rd.pack(0));
+				a0 = rd.pack(0);
 				i = pw;
 			}
 
@@ -153,30 +162,32 @@ namespace lmat { namespace internal {
 		}
 
 		for (; i < len; ++i) rfun.fold(r, rd.scalar(i));
-		r_out = r;
+		return r;
 	}
 
 
-	template<class RFun, typename RT, typename Kind, typename TFun, typename... Reader>
-	inline void foldx_impl(unsigned int len, RFun rfun, RT& r_out, Kind, TFun tfun, const Reader&... rds)
+	template<int N, typename T, typename SKind, class RFun, typename TFun, typename... Reader>
+	inline T foldx_impl(const dimension<N>& dim, atags::simd<T, SKind>,
+			RFun rfun, const TFun& tfun, const Reader&... rds)
 	{
-		typedef math::simd_pack<RT, Kind> pack_t;
+		typedef math::simd_pack<T, SKind> pack_t;
+		const index_t pw = (index_t)pack_t::pack_width;
 
-		const unsigned int pw = pack_t::pack_width;
-		unsigned int npacks = int_div<pw>::quo(len);
-		unsigned int i;
-		RT r;
+		const index_t len = dim.value();
+		const index_t npacks = int_div<pack_t::pack_width>::quo(len);
+		index_t i;
+		T r;
 
 		if (npacks)
 		{
 			pack_t a0, a1, a2, a3;
 			pack_t t0, t1, t2, t3;
 
-			unsigned int m4 = npacks >> 2;
+			const index_t m4 = npacks >> 2;
 			if (m4)
 			{
-				const unsigned int w4 = pw << 2;
-				unsigned int l4 = m4 * w4;
+				const index_t w4 = pw << 2;
+				const index_t l4 = m4 * w4;
 
 				a0 = tfun(rds.pack(0)...);
 				a1 = tfun(rds.pack(pw)...);
@@ -231,7 +242,7 @@ namespace lmat { namespace internal {
 			}
 			else
 			{
-				rfun.fold(a0, tfun(rds.pack(0)...));
+				a0 = tfun(rds.pack(0)...);
 				i = pw;
 			}
 
@@ -244,63 +255,65 @@ namespace lmat { namespace internal {
 		}
 
 		for (; i < len; ++i) rfun.fold(r, tfun(rds.scalar(i)...));
-		r_out = r;
-	}
-
-
-	// Basic reduction function
-
-	template<typename Kind, class Reader>
-	inline typename Reader::scalar_type
-	sum_impl(unsigned int len, Kind, const Reader& rd)
-	{
-		typedef typename Reader::scalar_type T;
-
-		T r;
-		fold_impl(len, _sum_rfun<T>(), r, Kind(), rd);
 		return r;
 	}
 
-	template<typename Kind, class Reader>
-	inline typename Reader::scalar_type
-	maximum_impl(unsigned int len, Kind, const Reader& rd)
-	{
-		typedef typename Reader::scalar_type T;
 
-		T r;
-		fold_impl(len, _maximum_rfun<T>(), r, Kind(), rd);
-		return r;
+	/********************************************
+	 *
+	 *  adapters
+	 *
+	 ********************************************/
+
+	template<int N, typename T, typename Kind, class Wrap>
+	inline T sum_(const dimension<N>& dim, atags::simd<T, Kind> u, const Wrap& wrap)
+	{
+		return fold_impl(dim, u, _sum_rfun<T>(), make_vec_accessor(u, wrap));
 	}
 
-	template<typename Kind, class Reader>
-	inline typename Reader::scalar_type
-	minimum_impl(unsigned int len, Kind, const Reader& rd)
+	template<int N, typename T, typename Kind, class Wrap>
+	inline T mean_(const dimension<N>& dim, atags::simd<T, Kind> u, const Wrap& wrap)
 	{
-		typedef typename Reader::scalar_type T;
-
-		T r;
-		fold_impl(len, _minimum_rfun<T>(), r, Kind(), rd);
-		return r;
+		T r = sum_(dim, u, wrap);
+		return r / T(dim.value());
 	}
 
-	// Extended reduction function
-
-	template<typename TFun, typename RT, typename Kind, typename... Reader>
-	inline void sum_impl_x(unsigned int len, RT& r, Kind, const TFun& tfun, const Reader&... rds)
+	template<int N, typename T, typename Kind, class Wrap>
+	inline T maximum_(const dimension<N>& dim, atags::simd<T, Kind> u, const Wrap& wrap)
 	{
-		foldx_impl(len, _sum_rfun<RT>(), r, Kind(), tfun, rds...);
+		return fold_impl(dim, u, _maximum_rfun<T>(), make_vec_accessor(u, wrap));
 	}
 
-	template<typename TFun, typename RT, typename Kind, typename... Reader>
-	inline void maximum_impl_x(unsigned int len, RT& r, Kind, const TFun& tfun, const Reader&... rds)
+	template<int N, typename T, typename Kind, class Wrap>
+	inline T minimum_(const dimension<N>& dim, atags::simd<T, Kind> u, const Wrap& wrap)
 	{
-		foldx_impl(len, _maximum_rfun<RT>(), r, Kind(), tfun, rds...);
+		return fold_impl(dim, u, _minimum_rfun<T>(), make_vec_accessor(u, wrap));
 	}
 
-	template<typename TFun, typename RT, typename Kind, typename... Reader>
-	inline void minimum_impl_x(unsigned int len, RT& r, Kind, const TFun& tfun, const Reader&... rds)
+
+	template<int N, typename T, typename Kind, typename TFun, typename... Wrap>
+	inline T sumx_(const dimension<N>& dim, atags::simd<T, Kind> u, const TFun& tfun, const Wrap&... wraps)
 	{
-		foldx_impl(len, _minimum_rfun<RT>(), r, Kind(), tfun, rds...);
+		return foldx_impl(dim, u, _sum_rfun<T>(), tfun, make_vec_accessor(u, wraps)...);
+	}
+
+	template<int N, typename T, typename Kind, typename TFun, typename... Wrap>
+	inline T meanx_(const dimension<N>& dim, atags::simd<T, Kind> u, const TFun& tfun, const Wrap&... wraps)
+	{
+		T r = sumx_(dim, u, tfun, wraps...);
+		return r / T(dim.value());
+	}
+
+	template<int N, typename T, typename Kind, typename TFun, typename... Wrap>
+	inline T maximumx_(const dimension<N>& dim, atags::simd<T, Kind> u, const TFun& tfun, const Wrap&... wraps)
+	{
+		return foldx_impl(dim, u, _maximum_rfun<T>(), tfun, make_vec_accessor(u, wraps)...);
+	}
+
+	template<int N, typename T, typename Kind, typename TFun, typename... Wrap>
+	inline T minimumx_(const dimension<N>& dim, atags::simd<T, Kind> u, const TFun& tfun, const Wrap&... wraps)
+	{
+		return foldx_impl(dim, u, _minimum_rfun<T>(), tfun, make_vec_accessor(u, wraps)...);
 	}
 
 
