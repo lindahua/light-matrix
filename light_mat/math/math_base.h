@@ -62,6 +62,13 @@ namespace lmat { namespace math {
 	LMAT_ENSURE_INLINE inline float  rsqrt(float  x) { return 1.0f / sqrt(x); }
 	LMAT_ENSURE_INLINE inline double rsqrt(double x) { return 1.0 / sqrt(x); }
 
+	LMAT_ENSURE_INLINE inline float  diff_abs(float  x, float  y) { return abs(x - y); }
+	LMAT_ENSURE_INLINE inline double diff_abs(double x, double y) { return abs(x - y); }
+
+	LMAT_ENSURE_INLINE inline float  diff_sqr(float  x, float  y) { return sqr(x - y); }
+	LMAT_ENSURE_INLINE inline double diff_sqr(double x, double y) { return sqr(x - y); }
+
+
 	// exp & log
 
 	using std::exp;

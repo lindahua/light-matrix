@@ -207,6 +207,30 @@ namespace lmat { namespace math {
 	}
 
 	LMAT_ENSURE_INLINE
+	inline avx_f32pk diff_sqr(const avx_f32pk& a, const avx_f32pk& b)
+	{
+		return sqr(a - b);
+	}
+
+	LMAT_ENSURE_INLINE
+	inline avx_f64pk diff_sqr(const avx_f64pk& a, const avx_f64pk& b)
+	{
+		return sqr(a - b);
+	}
+
+	LMAT_ENSURE_INLINE
+	inline avx_f32pk diff_abs(const avx_f32pk& a, const avx_f32pk& b)
+	{
+		return abs(a - b);
+	}
+
+	LMAT_ENSURE_INLINE
+	inline avx_f64pk diff_abs(const avx_f64pk& a, const avx_f64pk& b)
+	{
+		return abs(a - b);
+	}
+
+	LMAT_ENSURE_INLINE
 	inline avx_f32pk cube(const avx_f32pk& a)
 	{
 		return _mm256_mul_ps(_mm256_mul_ps(a, a), a);

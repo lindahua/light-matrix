@@ -14,20 +14,34 @@
 #define LIGHTMAT_MATH_FUNCTORS_H_
 
 #include <light_mat/math/math_base.h>
+#include <light_mat/math/sse_ops.h>
+#include <light_mat/math/sse_math.h>
+#ifdef LMAT_HAS_AVX
+#include <light_mat/math/avx_ops.h>
+#include <light_mat/math/avx_math.h>
+#endif
 
 
 #define LMAT_DEFINE_GENERIC_MATH_FUNCTOR_1( Name, Expr ) \
+	template<typename T> \
 	struct Name##_fun { \
-		template<typename T> \
 		LMAT_ENSURE_INLINE \
-		T operator()(const T& x) { return Expr; } \
+		T operator()(const T& x) const { return Expr; } \
+		template<typename Kind> \
+		LMAT_ENSURE_INLINE \
+		simd_pack<T, Kind> operator()(const simd_pack<T, Kind>& x) const \
+		{ return Expr; } \
 	};
 
 #define LMAT_DEFINE_GENERIC_MATH_FUNCTOR_2( Name, Expr ) \
+	template<typename T> \
 	struct Name##_fun { \
-		template<typename T> \
 		LMAT_ENSURE_INLINE \
-		T operator()(const T& x, const T& y) { return Expr; } \
+		T operator()(const T& x, const T& y) const { return Expr; } \
+		template<typename Kind> \
+		LMAT_ENSURE_INLINE \
+		simd_pack<T, Kind> operator()(const simd_pack<T, Kind>& x, const simd_pack<T, Kind>& y) const \
+		{ return Expr; } \
 	};
 
 #define LMAT_DEFINE_MATH_FUNCTOR_1( Name ) \
@@ -47,14 +61,18 @@ namespace lmat { namespace math {
 	LMAT_DEFINE_GENERIC_MATH_FUNCTOR_1( negate, -x )
 
 	LMAT_DEFINE_MATH_FUNCTOR_1( abs )
+	LMAT_DEFINE_MATH_FUNCTOR_1( sqr )
+	LMAT_DEFINE_MATH_FUNCTOR_1( cube )
+	LMAT_DEFINE_MATH_FUNCTOR_1( rcp )
+
+	LMAT_DEFINE_MATH_FUNCTOR_2( diff_abs )
+	LMAT_DEFINE_MATH_FUNCTOR_2( diff_sqr )
+
 	LMAT_DEFINE_MATH_FUNCTOR_2( max )
 	LMAT_DEFINE_MATH_FUNCTOR_2( min )
 
 	// power
 
-	LMAT_DEFINE_MATH_FUNCTOR_1( sqr )
-	LMAT_DEFINE_MATH_FUNCTOR_1( cube )
-	LMAT_DEFINE_MATH_FUNCTOR_1( rcp )
 	LMAT_DEFINE_MATH_FUNCTOR_1( sqrt )
 	LMAT_DEFINE_MATH_FUNCTOR_1( rsqrt )
 	LMAT_DEFINE_MATH_FUNCTOR_2( pow )
