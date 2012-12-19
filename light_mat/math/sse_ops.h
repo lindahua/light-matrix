@@ -493,6 +493,49 @@ namespace lmat { namespace math {
 
 	/********************************************
 	 *
+	 *  blending
+	 *
+	 ********************************************/
+
+	namespace internal
+	{
+		LMAT_ENSURE_INLINE
+		inline sse_f32pk cond_sse2(const sse_f32bpk& b, const sse_f32pk& x, const sse_f32pk& y)
+		{
+			return _mm_or_ps(_mm_and_ps(b, x),  _mm_and_ps(~b, y));
+		}
+
+		LMAT_ENSURE_INLINE
+		inline sse_f64pk cond_sse2(const sse_f64bpk& b, const sse_f64pk& x, const sse_f64pk& y)
+		{
+			return _mm_or_pd(_mm_and_pd(b, x),  _mm_and_pd(~b, y));
+		}
+	}
+
+	LMAT_ENSURE_INLINE
+	inline sse_f32pk cond(const sse_f32bpk& b, const sse_f32pk& x, const sse_f32pk& y)
+	{
+#ifdef LMAT_HAS_SSE4_1
+		return _mm_blendv_ps(y, x, b);
+#else
+		return cond_sse2(b, x, y);
+#endif
+	}
+
+	LMAT_ENSURE_INLINE
+	inline sse_f64pk cond(const sse_f64bpk& b, const sse_f64pk& x, const sse_f64pk& y)
+	{
+#ifdef LMAT_HAS_SSE4_1
+		return _mm_blendv_pd(y, x, b);
+#else
+		return cond_sse2(b, x, y);
+#endif
+	}
+
+
+
+	/********************************************
+	 *
 	 *  rounding
 	 *
 	 ********************************************/

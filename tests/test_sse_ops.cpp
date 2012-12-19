@@ -756,6 +756,57 @@ T_CASE( sse_logical, ne )
 
 
 
+template<typename T> struct sse_cond_tbody;
+
+template<>
+struct sse_cond_tbody<float>
+{
+	static void run()
+	{
+		typedef simd_pack<float, sse_t> pack_t;
+		typedef simd_bpack<float, sse_t> bpack_t;
+
+		bpack_t b(true, false, false, true);
+		pack_t x(1.0f, 2.0f, 3.0f, 4.0f);
+		pack_t y(5.0f, 6.0f, 7.0f, 8.0f);
+
+		float r0[4] = {1.0f, 6.0f, 7.0f, 4.0f};
+		pack_t r1 = math::cond(b, x, y);
+		pack_t r2 = math::internal::cond_sse2(b, x, y);
+
+		ASSERT_SIMD_EQ( r1, r0 );
+		ASSERT_SIMD_EQ( r2, r0 );
+	}
+};
+
+template<>
+struct sse_cond_tbody<double>
+{
+	static void run()
+	{
+		typedef simd_pack<double, sse_t> pack_t;
+		typedef simd_bpack<double, sse_t> bpack_t;
+
+		bpack_t b(true, false);
+		pack_t x(1.0, 2.0);
+		pack_t y(5.0, 6.0);
+
+		double r0[2] = {1.0, 6.0};
+		pack_t r1 = math::cond(b, x, y);
+		pack_t r2 = math::internal::cond_sse2(b, x, y);
+
+		ASSERT_SIMD_EQ( r1, r0 );
+		ASSERT_SIMD_EQ( r2, r0 );
+	}
+};
+
+
+T_CASE( sse_cond, cond )
+{
+	sse_cond_tbody<T>::run();
+}
+
+
 template<typename T> struct sse_fpclassify_tbody;
 
 template<>
@@ -909,6 +960,8 @@ DEF_TPACK( sse_logical, or )
 DEF_TPACK( sse_logical, eq )
 DEF_TPACK( sse_logical, ne )
 
+DEF_TPACK( sse_cond, cond )
+
 DEF_TPACK( sse_fpclassify, all )
 
 BEGIN_MAIN_SUITE
@@ -938,6 +991,8 @@ BEGIN_MAIN_SUITE
 	ADD_TPACK( sse_logical_or )
 	ADD_TPACK( sse_logical_eq )
 	ADD_TPACK( sse_logical_ne )
+
+	ADD_TPACK( sse_cond_cond )
 
 	ADD_TPACK( sse_fpclassify_all )
 END_MAIN_SUITE

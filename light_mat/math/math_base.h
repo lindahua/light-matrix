@@ -68,6 +68,15 @@ namespace lmat { namespace math {
 	LMAT_ENSURE_INLINE inline float  diff_sqr(float  x, float  y) { return sqr(x - y); }
 	LMAT_ENSURE_INLINE inline double diff_sqr(double x, double y) { return sqr(x - y); }
 
+	// conditional
+
+	template<typename T>
+	LMAT_ENSURE_INLINE
+	inline T cond(bool tf, const T& x, const T& y)
+	{
+		return tf ? x : y;
+	}
+
 
 	// exp & log
 

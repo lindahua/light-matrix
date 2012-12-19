@@ -499,6 +499,25 @@ namespace lmat { namespace math {
 
 	/********************************************
 	 *
+	 *  conditional
+	 *
+	 ********************************************/
+
+	LMAT_ENSURE_INLINE
+	inline avx_f32pk cond(const avx_f32bpk& b, const avx_f32pk& x, const avx_f32pk& y)
+	{
+		return _mm256_blendv_ps(y, x, b);
+	}
+
+	LMAT_ENSURE_INLINE
+	inline avx_f64pk cond(const avx_f64bpk& b, const avx_f64pk& x, const avx_f64pk& y)
+	{
+		return _mm256_blendv_pd(y, x, b);
+	}
+
+
+	/********************************************
+	 *
 	 *  rounding
 	 *
 	 ********************************************/
