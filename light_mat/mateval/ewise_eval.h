@@ -188,6 +188,8 @@ namespace lmat
 	 *
 	 ********************************************/
 
+	// mapping
+
 	template<typename T, class DMat, class Fun, typename... Wraps>
 	LMAT_ENSURE_INLINE
 	inline void map_to_x(IRegularMatrix<DMat, T>& dmat, const Fun& fun, const Wraps&... wraps)
@@ -198,11 +200,69 @@ namespace lmat
 
 	template<typename T, class DMat, class Fun, typename... SMats>
 	LMAT_ENSURE_INLINE
-	inline void map_to(IRegularMatrix<DMat, T>& dmat, const Fun& fun, const SMats&... smats)
+	inline void map_to(IRegularMatrix<DMat, T>& dmat, const Fun& fun, const IRegularMatrix<SMats, T>&... smats)
 	{
-		map_to_x(dmat, fun, in_(smats)...);
+		map_to_x(dmat, fun, in_(smats.derived())...);
 	}
 
+	// accumulation
+
+	template<typename T, class DMat, class SMat>
+	LMAT_ENSURE_INLINE
+	inline void accum_to(IRegularMatrix<DMat, T>& dmat, const IRegularMatrix<SMat, T>& smat)
+	{
+		typedef atags::simd<T, default_simd_kind> atag;
+		linear_ewise(atag(), dmat.shape()).apply(accum_kernel(),
+				in_out_(dmat.derived()), in_(smat.derived()));
+	}
+
+	template<typename T, class DMat, class SMat>
+	LMAT_ENSURE_INLINE
+	inline void accum_to(IRegularMatrix<DMat, T>& dmat, const T& c, const IRegularMatrix<SMat, T>& smat)
+	{
+		typedef atags::simd<T, default_simd_kind> atag;
+		linear_ewise(atag(), dmat.shape()).apply(accumx_kernel(),
+				in_out_(dmat.derived()), in_(c, atags::single()), in_(smat.derived()));
+	}
+
+
+	template<typename T, class DMat, class CMat, class SMat>
+	LMAT_ENSURE_INLINE
+	inline void accum_to(IRegularMatrix<DMat, T>& dmat,
+			const IRegularMatrix<CMat, T>& cmat, const IRegularMatrix<SMat, T>& smat)
+	{
+		typedef atags::simd<T, default_simd_kind> atag;
+		linear_ewise(atag(), dmat.shape()).apply(accumx_kernel(),
+				in_out_(dmat.derived()), in_(cmat.derived()), in_(smat.derived()));
+	}
+
+	template<typename T, class DMat, typename Fun, typename... SMat>
+	LMAT_ENSURE_INLINE
+	inline void accumf_to(IRegularMatrix<DMat, T>& dmat, const Fun& fun, const IRegularMatrix<SMat, T>&... smats)
+	{
+		typedef atags::simd<T, default_simd_kind> atag;
+		linear_ewise(atag(), dmat.shape()).apply(accumf_kernel<Fun>(fun),
+				in_out_(dmat.derived()), in_(smats.derived())...);
+	}
+
+	template<typename T, class DMat, typename Fun, typename... SMat>
+	LMAT_ENSURE_INLINE
+	inline void accumf_to(IRegularMatrix<DMat, T>& dmat, const T& c, const Fun& fun, const IRegularMatrix<SMat, T>&... smats)
+	{
+		typedef atags::simd<T, default_simd_kind> atag;
+		linear_ewise(atag(), dmat.shape()).apply(accumfx_kernel<Fun>(fun),
+				in_out_(dmat.derived()), in_(c, atags::single()), in_(smats.derived())...);
+	}
+
+	template<typename T, class DMat, typename CMat, typename Fun, typename... SMat>
+	LMAT_ENSURE_INLINE
+	inline void accumf_to(IRegularMatrix<DMat, T>& dmat,
+			const IRegularMatrix<CMat, T>& cmat, const Fun& fun, const IRegularMatrix<SMat, T>&... smats)
+	{
+		typedef atags::simd<T, default_simd_kind> atag;
+		linear_ewise(atag(), dmat.shape()).apply(accumfx_kernel<Fun>(fun),
+				in_out_(dmat.derived()), in_(cmat.derived()), in_(smats.derived())...);
+	}
 
 }
 

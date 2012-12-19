@@ -11,6 +11,7 @@
 
 #include <light_mat/mateval/mateval_fwd.h>
 
+
 namespace lmat
 {
 	struct copy_kernel
@@ -22,7 +23,6 @@ namespace lmat
 			d = s;
 		}
 	};
-
 
 	template<typename Fun>
 	struct map_kernel
@@ -37,6 +37,59 @@ namespace lmat
 		void operator() (Tout& out, const Tin&... in) const
 		{
 			out = fun(in...);
+		}
+	};
+
+
+	struct accum_kernel
+	{
+		template<typename T>
+		LMAT_ENSURE_INLINE
+		void operator() (T& a, const T& x) const
+		{
+			a += x;
+		}
+	};
+
+	struct accumx_kernel
+	{
+		template<typename T>
+		LMAT_ENSURE_INLINE
+		void operator() (T& a, const T& c, const T& x) const
+		{
+			a += x * c;
+		}
+	};
+
+	template<typename Fun>
+	struct accumf_kernel
+	{
+		Fun fun;
+
+		LMAT_ENSURE_INLINE
+		accumf_kernel(const Fun& f) : fun(f) { }
+
+		template<typename T, typename... A>
+		LMAT_ENSURE_INLINE
+		void operator() (T& a, const A&... x) const
+		{
+			a += fun(x...);
+		}
+	};
+
+	template<typename Fun>
+	struct accumfx_kernel
+	{
+		Fun fun;
+
+		LMAT_ENSURE_INLINE
+		accumfx_kernel(const Fun& f) : fun(f) { }
+
+		template<typename T, typename... A>
+		LMAT_ENSURE_INLINE
+		void operator() (T& a, const T& c, const A&... x) const
+		{
+			a += c * fun(x...);
 		}
 	};
 

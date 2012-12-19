@@ -276,6 +276,76 @@ MN_CASE( linear_ewise, map )
 }
 
 
+MN_CASE( linear_ewise, accum )
+{
+	const index_t m = M == 0 ? DM : M;
+	const index_t n = N == 0 ? DN : N;
+
+	dense_matrix<double, M, N> a(m, n);
+	dense_matrix<double, M, N> s(m, n);
+	dense_matrix<double, M, N> c(m, n);
+	double cv = c[0] * 2.0;
+
+	dense_matrix<double, M, N> r(m, n);
+
+	do_fill_rand( a.ptr_data(), m * n );
+	do_fill_rand( s.ptr_data(), m * n );
+	do_fill_rand( c.ptr_data(), m * n );
+
+	for (index_t i = 0; i < m * n; ++i) r[i] = a[i] + s[i];
+	accum_to(a, s);
+
+	ASSERT_MAT_EQ( m, n, a, r );
+
+	for (index_t i = 0; i < m * n; ++i) r[i] = a[i] + cv * s[i];
+	accum_to(a, cv, s);
+
+	ASSERT_MAT_EQ( m, n, a, r );
+
+	for (index_t i = 0; i < m * n; ++i) r[i] = a[i] + c[i] * s[i];
+	accum_to(a, c, s);
+
+	ASSERT_MAT_EQ( m, n, a, r );
+}
+
+
+MN_CASE( linear_ewise, accumf )
+{
+	const index_t m = M == 0 ? DM : M;
+	const index_t n = N == 0 ? DN : N;
+
+	dense_matrix<double, M, N> a(m, n);
+	dense_matrix<double, M, N> s(m, n);
+	dense_matrix<double, M, N> c(m, n);
+	double cv = c[0] * 2.0;
+
+	dense_matrix<double, M, N> r(m, n);
+
+	do_fill_rand( a.ptr_data(), m * n );
+	do_fill_rand( s.ptr_data(), m * n );
+	do_fill_rand( c.ptr_data(), m * n );
+
+	math::sqr_fun<double> f;
+
+	for (index_t i = 0; i < m * n; ++i) r[i] = a[i] + f(s[i]);
+	accumf_to(a, f, s);
+
+	ASSERT_MAT_EQ( m, n, a, r );
+
+	for (index_t i = 0; i < m * n; ++i) r[i] = a[i] + cv * f(s[i]);
+	accumf_to(a, cv, f, s);
+
+	ASSERT_MAT_EQ( m, n, a, r );
+
+	for (index_t i = 0; i < m * n; ++i) r[i] = a[i] + c[i] * f(s[i]);
+	accumf_to(a, c, f, s);
+
+	ASSERT_MAT_EQ( m, n, a, r );
+
+}
+
+
+
 // Test packs
 
 BEGIN_TPACK( linear_ewise_scalar_cont_cont )
@@ -340,6 +410,13 @@ BEGIN_TPACK( linear_ewise_map )
 	ADD_MN_CASE_3X3( linear_ewise, map, DM, DN )
 END_TPACK
 
+BEGIN_TPACK( linear_ewise_accum )
+	ADD_MN_CASE_3X3( linear_ewise, accum, DM, DN )
+END_TPACK
+
+BEGIN_TPACK( linear_ewise_accumf )
+	ADD_MN_CASE_3X3( linear_ewise, accumf, DM, DN )
+END_TPACK
 
 
 BEGIN_MAIN_SUITE
@@ -361,6 +438,8 @@ BEGIN_MAIN_SUITE
 	ADD_TPACK( linear_ewise_avx_single_cont )
 
 	ADD_TPACK( linear_ewise_map )
+	ADD_TPACK( linear_ewise_accum )
+	ADD_TPACK( linear_ewise_accumf )
 END_MAIN_SUITE
 
 
