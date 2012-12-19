@@ -74,7 +74,7 @@ struct forloop_copy
 template<typename T>
 struct matrix_copy
 {
-	ref_matrix<T> src;
+	cref_matrix<T> src;
 	ref_matrix<T> dst;
 
 	matrix_copy(index_t m, index_t n, const T* s, T *d)
@@ -100,7 +100,7 @@ struct matrix_copy
 template<typename T>
 struct percol_copy
 {
-	ref_matrix<T> src;
+	cref_matrix<T> src;
 	ref_matrix<T> dst;
 
 	percol_copy(index_t m, index_t n, const T* s, T *d)
@@ -108,7 +108,7 @@ struct percol_copy
 
 	const char *name() const
 	{
-		return "matrix_copy";
+		return "percol_copy";
 	}
 
 	unsigned int size() const
@@ -121,16 +121,81 @@ struct percol_copy
 		const index_t n = src.ncolumns();
 		for (index_t j = 0; j < n; ++j)
 		{
-			copy(src.column(j), dst.column(j));
+			ref_col<T> dcol = dst.column(j);
+			copy(src.column(j), dcol);
 		}
 	}
 };
 
 
 template<typename T>
+struct percol_assign
+{
+	cref_matrix<T> src;
+	ref_matrix<T> dst;
+
+	percol_assign(index_t m, index_t n, const T* s, T *d)
+	: src(s, m, n), dst(d, m, n) { }
+
+	const char *name() const
+	{
+		return "percol_assign";
+	}
+
+	unsigned int size() const
+	{
+		return (unsigned int)src.nelems();
+	}
+
+	void run()
+	{
+		const index_t n = src.ncolumns();
+		for (index_t j = 0; j < n; ++j)
+		{
+			dst.column(j) = src.column(j);
+		}
+	}
+};
+
+
+template<typename T>
+struct perelem_assign
+{
+	cref_matrix<T> src;
+	ref_matrix<T> dst;
+
+	perelem_assign(index_t m, index_t n, const T* s, T *d)
+	: src(s, m, n), dst(d, m, n) { }
+
+	const char *name() const
+	{
+		return "perelem_assign";
+	}
+
+	unsigned int size() const
+	{
+		return (unsigned int)src.nelems();
+	}
+
+	void run()
+	{
+		const index_t m = src.nrows();
+		const index_t n = src.ncolumns();
+
+		for (index_t j = 0; j < n; ++j)
+		{
+			for (index_t i = 0; i < m; ++i)
+				dst(i, j) = src(i, j);
+		}
+	}
+};
+
+
+
+template<typename T>
 struct linearscalar_copy
 {
-	ref_matrix<T> src;
+	cref_matrix<T> src;
 	ref_matrix<T> dst;
 
 	linearscalar_copy(index_t m, index_t n, const T* s, T *d)
@@ -138,7 +203,7 @@ struct linearscalar_copy
 
 	const char *name() const
 	{
-		return "lineareval_copy";
+		return "linearscalar_copy";
 	}
 
 	unsigned int size() const
@@ -157,7 +222,7 @@ struct linearscalar_copy
 template<typename T>
 struct linearsimd_copy
 {
-	ref_matrix<T> src;
+	cref_matrix<T> src;
 	ref_matrix<T> dst;
 
 	linearsimd_copy(index_t m, index_t n, const T* s, T *d)
@@ -165,7 +230,7 @@ struct linearsimd_copy
 
 	const char *name() const
 	{
-		return "lineareval_copy";
+		return "linearsimd_copy";
 	}
 
 	unsigned int size() const
@@ -184,7 +249,7 @@ struct linearsimd_copy
 template<typename T>
 struct percolscalar_copy
 {
-	ref_matrix<T> src;
+	cref_matrix<T> src;
 	ref_matrix<T> dst;
 
 	percolscalar_copy(index_t m, index_t n, const T* s, T *d)
@@ -192,7 +257,7 @@ struct percolscalar_copy
 
 	const char *name() const
 	{
-		return "lineareval_copy";
+		return "percolscalar_copy";
 	}
 
 	unsigned int size() const
@@ -203,7 +268,7 @@ struct percolscalar_copy
 	void run()
 	{
 		typedef atags::scalar tag;
-		percol_ewise(tag(), src.nelems()).copy(in_(src), out_(dst));
+		percol_ewise(tag(), src.shape()).copy(in_(src), out_(dst));
 	}
 };
 
@@ -211,7 +276,7 @@ struct percolscalar_copy
 template<typename T>
 struct percolsimd_copy
 {
-	ref_matrix<T> src;
+	cref_matrix<T> src;
 	ref_matrix<T> dst;
 
 	percolsimd_copy(index_t m, index_t n, const T* s, T *d)
@@ -219,7 +284,7 @@ struct percolsimd_copy
 
 	const char *name() const
 	{
-		return "lineareval_copy";
+		return "percolsimd_copy";
 	}
 
 	unsigned int size() const
@@ -230,7 +295,7 @@ struct percolsimd_copy
 	void run()
 	{
 		typedef atags::simd<T, default_simd_kind> tag;
-		percol_ewise(tag(), src.nelems()).copy(in_(src), out_(dst));
+		percol_ewise(tag(), src.shape()).copy(in_(src), out_(dst));
 	}
 };
 
@@ -245,8 +310,8 @@ unsigned int nruns[] = {
 		   100000,
 		    25000,
 		     4000,
-		     1000,
-		      250};
+		      500,
+		      100};
 
 const unsigned int nsizes = sizeof(sizes) / sizeof(index_t);
 
@@ -271,14 +336,51 @@ void run_bench()
 		std::printf("size = %d x %d:\n", m, n);
 
 		direct_copy<T> job_direct_copy(m, n, ps, pd);
-		time_job(job_direct_copy, 1, nrun, PUNIT_MPS);
+		time_job(job_direct_copy, 1, nrun, PUNIT_GPS);
+
+		forloop_copy<T> job_forloop_copy(m, n, ps, pd);
+		time_job(job_forloop_copy, 1, nrun, PUNIT_GPS);
+
+		matrix_copy<T> job_matrix_copy(m, n, ps, pd);
+		time_job(job_matrix_copy, 1, nrun, PUNIT_GPS);
+
+		percol_copy<T> job_percol_copy(m, n, ps, pd);
+		time_job(job_percol_copy, 1, nrun, PUNIT_GPS);
+
+		percol_assign<T> job_percol_assign(m, n, ps, pd);
+		time_job(job_percol_assign, 1, nrun, PUNIT_GPS);
+
+		perelem_assign<T> job_perelem_assign(m, n, ps, pd);
+		time_job(job_perelem_assign, 1, nrun, PUNIT_GPS);
+
+		linearscalar_copy<T> job_linearscalar_copy(m, n, ps, pd);
+		time_job(job_linearscalar_copy, 1, nrun, PUNIT_GPS);
+
+		linearsimd_copy<T> job_linearsimd_copy(m, n, ps, pd);
+		time_job(job_linearsimd_copy, 1, nrun, PUNIT_GPS);
+
+		percolscalar_copy<T> job_percolscalar_copy(m, n, ps, pd);
+		time_job(job_percolscalar_copy, 1, nrun, PUNIT_GPS);
+
+		percolsimd_copy<T> job_percolsimd_copy(m, n, ps, pd);
+		time_job(job_percolsimd_copy, 1, nrun, PUNIT_GPS);
 	}
 }
 
 
 int main(int argc, char *argv[])
 {
+	std::printf("On float\n");
+	std::printf("**************************************\n");
+	run_bench<float>();
+
+	std::printf("\n");
+
+	std::printf("On double\n");
+	std::printf("**************************************\n");
 	run_bench<double>();
+
+	std::printf("\n");
 }
 
 

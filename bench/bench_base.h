@@ -43,6 +43,9 @@ namespace lmat { namespace bench {
 		case PUNIT_GPS:
 			c = 1.0e-9;
 			break;
+
+		case PUNIT_NONE:
+			break;
 		}
 
 		return double(N) * c / et;
@@ -61,6 +64,9 @@ namespace lmat { namespace bench {
 
 		case PUNIT_GPS:
 			return "GPS";
+
+		case PUNIT_NONE:
+			break;
 		}
 
 		return "";
@@ -76,7 +82,7 @@ namespace lmat { namespace bench {
 		template<class Job>
 		void report(const Job& job, unsigned int nrun, double et)
 		{
-			std::printf("%20s:  %8.4f sec / %7u run", job.name(), et, nrun);
+			std::printf("%20s:  %8.4f sec / %9u run", job.name(), et, nrun);
 
 			uint64_t N = uint64_t(job.size()) * uint64_t(nrun);
 
@@ -115,7 +121,7 @@ namespace lmat { namespace bench {
 
 
 	LMAT_ENSURE_INLINE
-	inline double rand_unif() const
+	inline double rand_unif()
 	{
 		return double(std::rand()) / RAND_MAX;
 	}

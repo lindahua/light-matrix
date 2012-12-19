@@ -18,7 +18,7 @@
 #ifdef LMAT_ENABLE_DIM_CHECKING
 #define LMAT_CHECK_DIMS( cond ) check_arg( cond , "Inconsistent matrix dimensions");
 #else
-#define LMAT_CHECK_DIMS(n1, n2)
+#define LMAT_CHECK_DIMS( cond )
 #endif
 
 namespace lmat
@@ -95,7 +95,7 @@ namespace lmat
 	LMAT_ENSURE_INLINE
 	inline index_t common_nrows(const Mat0& mat0, const Mats&... mats)
 	{
-		LMAT_CHECK_DIMS( have_same_nrows(mat0, mats...) );
+		LMAT_CHECK_DIMS( have_same_nrows(mat0, mats...) )
 		return mat0.nrows();
 	}
 
@@ -103,7 +103,7 @@ namespace lmat
 	LMAT_ENSURE_INLINE
 	inline index_t common_ncols(const Mat0& mat0, const Mats&... mats)
 	{
-		LMAT_CHECK_DIMS( have_same_ncols(mat0, mats...) );
+		LMAT_CHECK_DIMS( have_same_ncols(mat0, mats...) )
 		return mat0.ncolumns();
 	}
 

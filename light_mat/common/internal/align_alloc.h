@@ -14,6 +14,7 @@
 #define LIGHTMAT_ALIGN_ALLOC_H_
 
 #include <light_mat/common/basic_defs.h>
+#include <new>
 
 #if LIGHTMAT_PLATFORM == LIGHTMAT_POSIX
 #include <stdlib.h>

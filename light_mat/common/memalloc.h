@@ -16,7 +16,6 @@
 #include <light_mat/common/basic_defs.h>
 #include "internal/align_alloc.h"
 
-#include <new>
 #include <limits>
 
 namespace lmat
