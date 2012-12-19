@@ -64,9 +64,15 @@ const unsigned int ntest_nrows = sizeof(test_nrows) / sizeof(index_t);
 
 
 DEFINE_ROWWISE_REDUCE_CASE( sum )
+DEFINE_ROWWISE_REDUCE_CASE( mean )
+DEFINE_ROWWISE_REDUCE_CASE( maximum )
+DEFINE_ROWWISE_REDUCE_CASE( minimum )
 
 BEGIN_TPACK( rowwise_reduce )
 	ADD_SIMPLE_CASE( rowwise_reduce, sum )
+	ADD_SIMPLE_CASE( rowwise_reduce, mean )
+	ADD_SIMPLE_CASE( rowwise_reduce, maximum )
+	ADD_SIMPLE_CASE( rowwise_reduce, minimum )
 END_TPACK
 
 

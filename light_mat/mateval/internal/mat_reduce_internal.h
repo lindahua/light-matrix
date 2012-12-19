@@ -13,7 +13,7 @@
 #ifndef LIGHTMAT_MAT_REDUCE_INTERNAL_H_
 #define LIGHTMAT_MAT_REDUCE_INTERNAL_H_
 
-#include <light_mat/mateval/multicol_accessors.h>
+#include <light_mat/mateval/ewise_eval.h>
 #include <light_mat/math/math_functors.h>
 #include <light_mat/math/simd.h>
 
@@ -75,6 +75,23 @@ namespace lmat { namespace internal {
 	};
 
 
+	template<class RFun>
+	struct _fold_kernel
+	{
+		RFun rfun;
+
+		LMAT_ENSURE_INLINE
+		_fold_kernel(const RFun& rf) : rfun(rf) { }
+
+		template<class A>
+		LMAT_ENSURE_INLINE
+		void operator() (A& a, const A& x) const
+		{
+			rfun.fold(a, x);
+		}
+	};
+
+
 	/********************************************
 	 *
 	 *  core implementation
@@ -96,6 +113,8 @@ namespace lmat { namespace internal {
 
 		if (npacks)
 		{
+			rd.begin_packs();
+
 			pack_t a0, a1, a2, a3;
 
 			const index_t m4 = npacks >> 2;
@@ -153,6 +172,8 @@ namespace lmat { namespace internal {
 				i = pw;
 			}
 
+			rd.end_packs();
+
 			r = rfun.reduce(a0);
 		}
 		else
@@ -180,6 +201,8 @@ namespace lmat { namespace internal {
 
 		if (npacks)
 		{
+			pass(rds.begin_packs()...);
+
 			pack_t a0, a1, a2, a3;
 			pack_t t0, t1, t2, t3;
 
@@ -246,6 +269,8 @@ namespace lmat { namespace internal {
 				i = pw;
 			}
 
+			pass(rds.end_packs()...);
+
 			r = rfun.reduce(a0);
 		}
 		else
@@ -257,62 +282,6 @@ namespace lmat { namespace internal {
 		for (; i < len; ++i) rfun.fold(r, tfun(rds.scalar(i)...));
 		return r;
 	}
-
-
-
-	template<int N, typename T, typename SKind, class Updater, class Reader>
-	inline void pfold_init(const dimension<N>& dim, atags::simd<T, SKind>,
-			const Updater& a, const Reader& rd)
-	{
-		typedef math::simd_pack<T, SKind> pack_t;
-		const index_t pw = (index_t)pack_t::pack_width;
-
-		const index_t len = dim.value();
-		const index_t maj_len = int_div<pack_t::pack_width>::maj(len);
-
-		if (maj_len)
-		{
-			for (index_t i = 0; i < maj_len; i += pw)
-			{
-				a.pack(i) = rd.pack(i);
-				a.done_pack(i);
-			}
-		}
-
-		for (index_t i = maj_len; i < len; ++i)
-		{
-			a.scalar(i) = rd.scalar(i);
-			a.done_scalar(i);
-		}
-	}
-
-	template<int N, typename T, typename SKind, class RFun, class Updater, class Reader>
-	inline void pfold_impl(const dimension<N>& dim, atags::simd<T, SKind>,
-			RFun rfun, const Updater& a, const Reader& rd)
-	{
-		typedef math::simd_pack<T, SKind> pack_t;
-		const index_t pw = (index_t)pack_t::pack_width;
-
-		const index_t len = dim.value();
-		const index_t maj_len = int_div<pack_t::pack_width>::maj(len);
-
-		if (maj_len)
-		{
-			for (index_t i = 0; i < maj_len; i += pw)
-			{
-				rfun.fold(a.pack(i), rd.pack(i));
-				a.done_pack(i);
-			}
-		}
-
-		for (index_t i = maj_len; i < len; ++i)
-		{
-			rfun.fold(a.scalar(i), rd.scalar(i));
-			a.done_scalar(i);
-		}
-	}
-
-
 
 
 	/********************************************
@@ -506,11 +475,13 @@ namespace lmat { namespace internal {
 		const index_t n = shape.ncolumns();
 
 		auto a = make_vec_accessor(u, in_out_(dmat));
-		pfold_init(col_dim, u, a, rd.col(0));
 
+		internal::linear_ewise_eval_a(col_dim, u, copy_kernel(), rd.col(0), a);
+
+		_fold_kernel<RFun> fker(rfun);
 		for (index_t j = 1; j < n; ++j)
 		{
-			pfold_impl(col_dim, u, rfun, a, rd.col(j));
+			internal::linear_ewise_eval_a(col_dim, u, fker, a, rd.col(j));
 		}
 	}
 
@@ -520,6 +491,26 @@ namespace lmat { namespace internal {
 		rowwise_fold_impl(shape, u, _sum_rfun<T>(), dmat, make_multicol_accessor(u, wrap));
 	}
 
+	template<int M, int N, typename T, typename Kind, class DMat, class Wrap>
+	inline void rowwise_mean_(const matrix_shape<M, N>& shape, atags::simd<T, Kind> u, DMat& dmat, const Wrap& wrap)
+	{
+		rowwise_fold_impl(shape, u, _sum_rfun<T>(), dmat, make_multicol_accessor(u, wrap));
+
+		T c = T(1) / T(shape.ncolumns());
+		map_to_x(dmat, math::mul_fun<T>(), in_(dmat), in_(c, atags::single()));
+	}
+
+	template<int M, int N, typename T, typename Kind, class DMat, class Wrap>
+	inline void rowwise_maximum_(const matrix_shape<M, N>& shape, atags::simd<T, Kind> u, DMat& dmat, const Wrap& wrap)
+	{
+		rowwise_fold_impl(shape, u, _maximum_rfun<T>(), dmat, make_multicol_accessor(u, wrap));
+	}
+
+	template<int M, int N, typename T, typename Kind, class DMat, class Wrap>
+	inline void rowwise_minimum_(const matrix_shape<M, N>& shape, atags::simd<T, Kind> u, DMat& dmat, const Wrap& wrap)
+	{
+		rowwise_fold_impl(shape, u, _minimum_rfun<T>(), dmat, make_multicol_accessor(u, wrap));
+	}
 
 } }
 
