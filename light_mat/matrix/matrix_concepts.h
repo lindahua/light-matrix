@@ -51,6 +51,8 @@ namespace lmat
 	{
 	public:
 		typedef T value_type;
+		typedef matrix_shape< meta::nrows<Derived>::value, meta::ncols<Derived>::value > shape_type;
+
 		LMAT_CRTP_REF
 
 		LMAT_ENSURE_INLINE index_t nelems() const
@@ -68,6 +70,11 @@ namespace lmat
 			return derived().ncolumns();
 		}
 
+		LMAT_ENSURE_INLINE shape_type shape() const
+		{
+			return derived().shape();
+		}
+
 	}; // end class IMatrixBase
 
 
@@ -81,8 +88,6 @@ namespace lmat
 	class IRegularMatrix : public IMatrixXpr<Derived, T>
 	{
 	public:
-		LMAT_CRTP_REF
-
 		typedef typename matrix_access_types<Derived>::value_type value_type;
 		typedef const value_type* const_pointer;
 		typedef const value_type& const_reference;
@@ -92,6 +97,8 @@ namespace lmat
 		typedef matrix_shape< meta::nrows<Derived>::value, meta::ncols<Derived>::value > shape_type;
 
 	public:
+		LMAT_CRTP_REF
+
 		LMAT_ENSURE_INLINE index_t nelems() const
 		{
 			return derived().nelems();
