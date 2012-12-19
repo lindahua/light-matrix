@@ -92,6 +92,25 @@ namespace lmat { namespace internal {
 	};
 
 
+	template<class RFun, class TFun>
+	struct _foldx_kernel
+	{
+		RFun rfun;
+		TFun tfun;
+
+		LMAT_ENSURE_INLINE
+		_foldx_kernel(const RFun& rf, const TFun& tf)
+		: rfun(rf), tfun(tf) { }
+
+		template<typename A, typename... B>
+		LMAT_ENSURE_INLINE
+		void operator() (A& a, const B&... x) const
+		{
+			rfun.fold(a, tfun(x...));
+		}
+	};
+
+
 	/********************************************
 	 *
 	 *  core implementation
@@ -485,6 +504,25 @@ namespace lmat { namespace internal {
 		}
 	}
 
+	template<int M, int N, typename U, class RFun, class DMat, typename TFun, typename... MultiColReader>
+	inline void rowwise_foldx_impl(const matrix_shape<M, N>& shape, U u,
+			RFun rfun, DMat& dmat, const TFun& tfun, const MultiColReader&... rds)
+	{
+		dimension<M> col_dim(shape.nrows());
+		const index_t n = shape.ncolumns();
+
+		auto a = make_vec_accessor(u, in_out_(dmat));
+
+		internal::linear_ewise_eval_a(col_dim, u, map_kernel<TFun>(tfun), a, rds.col(0)...);
+
+		_foldx_kernel<RFun, TFun> fker(rfun, tfun);
+		for (index_t j = 1; j < n; ++j)
+		{
+			internal::linear_ewise_eval_a(col_dim, u, fker, a, rds.col(j)...);
+		}
+	}
+
+
 	template<int M, int N, typename T, typename Kind, class DMat, class Wrap>
 	inline void rowwise_sum_(const matrix_shape<M, N>& shape, atags::simd<T, Kind> u, DMat& dmat, const Wrap& wrap)
 	{
@@ -510,6 +548,38 @@ namespace lmat { namespace internal {
 	inline void rowwise_minimum_(const matrix_shape<M, N>& shape, atags::simd<T, Kind> u, DMat& dmat, const Wrap& wrap)
 	{
 		rowwise_fold_impl(shape, u, _minimum_rfun<T>(), dmat, make_multicol_accessor(u, wrap));
+	}
+
+
+	template<int M, int N, typename T, typename Kind, class DMat, class TFun, typename... Wrap>
+	inline void rowwise_sumx_(const matrix_shape<M, N>& shape, atags::simd<T, Kind> u, DMat& dmat,
+			const TFun& tfun, const Wrap&... wraps)
+	{
+		rowwise_foldx_impl(shape, u, _sum_rfun<T>(), dmat, tfun, make_multicol_accessor(u, wraps)...);
+	}
+
+	template<int M, int N, typename T, typename Kind, class DMat, class TFun, typename... Wrap>
+	inline void rowwise_meanx_(const matrix_shape<M, N>& shape, atags::simd<T, Kind> u, DMat& dmat,
+			const TFun& tfun, const Wrap&... wraps)
+	{
+		rowwise_foldx_impl(shape, u, _sum_rfun<T>(), dmat, tfun, make_multicol_accessor(u, wraps)...);
+
+		T c = T(1) / T(shape.ncolumns());
+		map_to_x(dmat, math::mul_fun<T>(), in_(dmat), in_(c, atags::single()));
+	}
+
+	template<int M, int N, typename T, typename Kind, class DMat, class TFun, typename... Wrap>
+	inline void rowwise_maximumx_(const matrix_shape<M, N>& shape, atags::simd<T, Kind> u, DMat& dmat,
+			const TFun& tfun, const Wrap&... wraps)
+	{
+		rowwise_foldx_impl(shape, u, _maximum_rfun<T>(), dmat, tfun, make_multicol_accessor(u, wraps)...);
+	}
+
+	template<int M, int N, typename T, typename Kind, class DMat, class TFun, typename... Wrap>
+	inline void rowwise_minimumx_(const matrix_shape<M, N>& shape, atags::simd<T, Kind> u, DMat& dmat,
+			const TFun& tfun, const Wrap&... wraps)
+	{
+		rowwise_foldx_impl(shape, u, _minimum_rfun<T>(), dmat, tfun, make_multicol_accessor(u, wraps)...);
 	}
 
 } }
