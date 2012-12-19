@@ -32,6 +32,12 @@ set(EXECUTABLE_OUTPUT_PATH bin)
 
 # Third-party libraries
 
+# real-time library
+
+if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -lrt")
+endif (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+
 # Intel SVML 
 
 set(SVML_PATH "$ENV{ICC_LIBPATH}")
@@ -56,8 +62,12 @@ if (SVML_PATH)
 
 endif (SVML_PATH)
 
-
 # Add executables
 
 add_executable(bench_copy ${COMMON_HS} bench_copy.cpp)
+
+
+
+
+
 

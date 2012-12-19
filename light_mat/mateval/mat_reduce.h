@@ -91,7 +91,7 @@
 #define LMAT_DEFINE_COLWISE_REDUCTION_1( Name, Reduc, ScaFun, EmptyVal ) \
 	template<typename T, class Mat, class DMat> \
 	LMAT_ENSURE_INLINE \
-	void colwise_##Name(const IRegularMatrix<Mat, T>& mat, IRegularMatrix<DMat, T>& dmat) { \
+	inline void colwise_##Name(const IRegularMatrix<Mat, T>& mat, IRegularMatrix<DMat, T>& dmat) { \
 		typedef default_simd_kind kind; \
 		typename meta::shape<Mat>::type shape = reduc_get_shape(mat); \
 		LMAT_CHECK_DIMS( dmat.nelems() == shape.ncolumns() ); \
@@ -104,7 +104,7 @@
 #define LMAT_DEFINE_COLWISE_REDUCTION_2( Name, Reduc, ScaFun, EmptyVal ) \
 	template<typename T, class Mat1, class Mat2, class DMat> \
 	LMAT_ENSURE_INLINE \
-	void colwise_##Name(const IRegularMatrix<Mat1, T>& mat1, const IRegularMatrix<Mat2, T>& mat2, \
+	inline void colwise_##Name(const IRegularMatrix<Mat1, T>& mat1, const IRegularMatrix<Mat2, T>& mat2, \
 			IRegularMatrix<DMat, T>& dmat) { \
 		typedef default_simd_kind kind; \
 		typename meta::common_shape<Mat1, Mat2>::type shape = reduc_get_shape(mat1, mat2); \
@@ -119,7 +119,7 @@
 #define LMAT_DEFINE_ROWWISE_REDUCTION_1( Name, Reduc, ScaFun, EmptyVal ) \
 	template<typename T, class Mat, class DMat> \
 	LMAT_ENSURE_INLINE \
-	void rowwise_##Name(const IRegularMatrix<Mat, T>& mat, IRegularMatrix<DMat, T>& dmat) { \
+	inline void rowwise_##Name(const IRegularMatrix<Mat, T>& mat, IRegularMatrix<DMat, T>& dmat) { \
 		typedef default_simd_kind kind; \
 		typename meta::shape<Mat>::type shape = reduc_get_shape(mat); \
 		LMAT_CHECK_DIMS( dmat.nelems() == shape.nrows() ); \
@@ -132,7 +132,7 @@
 #define LMAT_DEFINE_ROWWISE_REDUCTION_2( Name, Reduc, ScaFun, EmptyVal ) \
 	template<typename T, class Mat1, class Mat2, class DMat> \
 	LMAT_ENSURE_INLINE \
-	void rowwise_##Name(const IRegularMatrix<Mat1, T>& mat1, const IRegularMatrix<Mat2, T>& mat2, \
+	inline void rowwise_##Name(const IRegularMatrix<Mat1, T>& mat1, const IRegularMatrix<Mat2, T>& mat2, \
 			IRegularMatrix<DMat, T>& dmat) { \
 		typedef default_simd_kind kind; \
 		typename meta::common_shape<Mat1, Mat2>::type shape = reduc_get_shape(mat1, mat2); \

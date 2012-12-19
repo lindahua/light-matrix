@@ -284,13 +284,14 @@ MN_CASE( linear_ewise, accum )
 	dense_matrix<double, M, N> a(m, n);
 	dense_matrix<double, M, N> s(m, n);
 	dense_matrix<double, M, N> c(m, n);
-	double cv = c[0] * 2.0;
-
-	dense_matrix<double, M, N> r(m, n);
 
 	do_fill_rand( a.ptr_data(), m * n );
 	do_fill_rand( s.ptr_data(), m * n );
 	do_fill_rand( c.ptr_data(), m * n );
+
+	double cv = c[0] * 2.0;
+
+	dense_matrix<double, M, N> r(m, n);
 
 	for (index_t i = 0; i < m * n; ++i) r[i] = a[i] + s[i];
 	accum_to(a, s);
@@ -317,13 +318,14 @@ MN_CASE( linear_ewise, accumf )
 	dense_matrix<double, M, N> a(m, n);
 	dense_matrix<double, M, N> s(m, n);
 	dense_matrix<double, M, N> c(m, n);
-	double cv = c[0] * 2.0;
-
-	dense_matrix<double, M, N> r(m, n);
 
 	do_fill_rand( a.ptr_data(), m * n );
 	do_fill_rand( s.ptr_data(), m * n );
 	do_fill_rand( c.ptr_data(), m * n );
+
+	double cv = c[0] * 2.0;
+
+	dense_matrix<double, M, N> r(m, n);
 
 	math::sqr_fun<double> f;
 

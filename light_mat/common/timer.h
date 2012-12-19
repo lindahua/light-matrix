@@ -92,7 +92,7 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		double elapsed_secs() const
 		{
-			timespec_t t;
+			timespec t;
 			::clock_gettime(CLOCK_REALTIME, &t);
 			return 1.0e-9 * to_nanosecs(t);
 		}
@@ -100,7 +100,7 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		double elapsed_msecs() const
 		{
-			timespec_t t;
+			timespec t;
 			::clock_gettime(CLOCK_REALTIME, &t);
 			return 1.0e-6 * to_nanosecs(t);
 		}
@@ -108,21 +108,21 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		double elapsed_usecs() const
 		{
-			timespec_t t;
+			timespec t;
 			::clock_gettime(CLOCK_REALTIME, &t);
 			return 1.0e-3 * to_nanosecs(t);
 		}
 
 	private:
 		LMAT_ENSURE_INLINE
-		double to_nanosecs(const timespec_t& t) const
+		double to_nanosecs(const timespec& t) const
 		{
-			return double(tp.tv_sec - _start_tp.tv_sec) * 1.0e9 +
-					double(tp.tv_nsec - _start_tp.tv_nsec);
+			return double(t.tv_sec - _start_tp.tv_sec) * 1.0e9 +
+					double(t.tv_nsec - _start_tp.tv_nsec);
 		}
 
 	private:
-		timespec_t _start_tp;
+		timespec _start_tp;
 	};
 
 
