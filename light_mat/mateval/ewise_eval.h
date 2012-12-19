@@ -9,7 +9,7 @@
 #ifndef LIGHTMAT_EWISE_EVAL_H_
 #define LIGHTMAT_EWISE_EVAL_H_
 
-#include <light_mat/mateval/mateval_fwd.h>
+#include <light_mat/mateval/common_kernels.h>
 #include "internal/ewise_eval_internal.h"
 
 namespace lmat
@@ -51,6 +51,20 @@ namespace lmat
 		void apply(const Kernel& kernel, Wraps... wraps) const
 		{
 			internal::linear_ewise_eval(m_dim, U(), kernel, wraps...);
+		}
+
+		template<class ArgIn, typename TagIn, class ArgOut, typename TagOut>
+		LMAT_ENSURE_INLINE
+		void copy(const in_wrap<ArgIn, TagIn>& in, const out_wrap<ArgOut, TagOut>& out)
+		{
+			apply(copy_kernel(), in, out);
+		}
+
+		template<class ArgOut, typename TagOut, class TFun, typename... Wraps>
+		LMAT_ENSURE_INLINE
+		void map_to(const out_wrap<ArgOut, TagOut>& out, const TFun& tfun, const Wraps&... wraps)
+		{
+			apply(map_kernel<TFun>(tfun), out, wraps...);
 		}
 
 	private:
@@ -113,6 +127,20 @@ namespace lmat
 			internal::percol_ewise_eval(m_shape, U(), kernel, wraps...);
 		}
 
+		template<class ArgIn, typename TagIn, class ArgOut, typename TagOut>
+		LMAT_ENSURE_INLINE
+		void copy(const in_wrap<ArgIn, TagIn>& in, const out_wrap<ArgOut, TagOut>& out)
+		{
+			apply(copy_kernel(), in, out);
+		}
+
+		template<class ArgOut, typename TagOut, class TFun, typename... Wraps>
+		LMAT_ENSURE_INLINE
+		void map_to(const out_wrap<ArgOut, TagOut>& out, const TFun& tfun, const Wraps&... wraps)
+		{
+			apply(map_kernel<TFun>(tfun), out, wraps...);
+		}
+
 	private:
 		matrix_shape<M, N> m_shape;
 	};
@@ -152,6 +180,29 @@ namespace lmat
 	{
 		return percol_ewise_scheme<U, M, N>(s);
 	}
+
+
+	/********************************************
+	 *
+	 *  convenient functions
+	 *
+	 ********************************************/
+
+	template<typename T, class DMat, class Fun, typename... Wraps>
+	LMAT_ENSURE_INLINE
+	inline void map_to_x(IRegularMatrix<DMat, T>& dmat, const Fun& fun, const Wraps&... wraps)
+	{
+		typedef atags::simd<T, default_simd_kind> atag;
+		linear_ewise(atag(), dmat.shape()).map_to(out_(dmat.derived()), fun, wraps...);
+	}
+
+	template<typename T, class DMat, class Fun, typename... SMats>
+	LMAT_ENSURE_INLINE
+	inline void map_to(IRegularMatrix<DMat, T>& dmat, const Fun& fun, const SMats&... smats)
+	{
+		map_to_x(dmat, fun, in_(smats)...);
+	}
+
 
 }
 

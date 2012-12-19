@@ -55,6 +55,9 @@ namespace lmat
 	class in_wrap
 	{
 	public:
+		typedef Arg arg_type;
+		typedef ATag tag_type;
+
 		LMAT_ENSURE_INLINE
 		in_wrap(const Arg& a) : m_arg(a) { }
 
@@ -70,6 +73,9 @@ namespace lmat
 	class out_wrap
 	{
 	public:
+		typedef Arg arg_type;
+		typedef ATag tag_type;
+
 		LMAT_ENSURE_INLINE
 		out_wrap(Arg& a) : m_arg(a) { }
 
@@ -85,6 +91,9 @@ namespace lmat
 	class in_out_wrap
 	{
 	public:
+		typedef Arg arg_type;
+		typedef ATag tag_type;
+
 		LMAT_ENSURE_INLINE
 		in_out_wrap(Arg& a) : m_arg(a) { }
 
@@ -137,17 +146,6 @@ namespace lmat
 	{
 		return in_out_wrap<Arg, atags::normal>(arg);
 	}
-
-
-	struct copy_kernel
-	{
-		template<typename T>
-		LMAT_ENSURE_INLINE
-		void operator() (const T& s, T& d) const
-		{
-			d = s;
-		}
-	};
 
 }
 

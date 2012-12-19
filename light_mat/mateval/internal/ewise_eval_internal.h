@@ -67,7 +67,6 @@ namespace lmat { namespace internal {
 		pass(accessors.finalize()...);
 	}
 
-
 	template<int N, typename U, class Kernel, typename... Wraps>
 	inline void linear_ewise_eval(const dimension<N>& dim, U u,
 			const Kernel& kernel, const Wraps&... wraps)

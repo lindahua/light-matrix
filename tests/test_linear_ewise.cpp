@@ -15,6 +15,7 @@
 #include "multimat_supp.h"
 
 #include <light_mat/matrix/matrix_classes.h>
+#include <light_mat/math/math_functors.h>
 #include <light_mat/mateval/ewise_eval.h>
 
 #include <light_mat/math/sse_ops.h>
@@ -69,6 +70,14 @@ void test_linear_ewise_cont_cont()
 	linear_ewise(U(), shape).apply(
 			my_update_kernel(), in_(smat), in_out_(dmat));
 
+	ASSERT_MAT_EQ(m, n, dmat, rmat);
+
+	linear_ewise(U(), shape).copy( in_(smat),  out_(dmat) );
+	ASSERT_MAT_EQ(m, n, smat, dmat);
+
+	for (index_t i = 0; i < m * n; ++i) rmat[i] = math::sqr(smat[i]);
+
+	linear_ewise(U(), shape).map_to( out_(dmat), math::sqr_fun<double>(), in_(smat) );
 	ASSERT_MAT_EQ(m, n, dmat, rmat);
 }
 
@@ -237,6 +246,36 @@ MN_CASE( linear_ewise, avx_single_cont )
 #endif
 
 
+MN_CASE( linear_ewise, map )
+{
+	const index_t m = M == 0 ? DM : M;
+	const index_t n = N == 0 ? DN : N;
+
+	dense_matrix<double, M, N> sa(m, n);
+	dense_matrix<double, M, N> sb(m, n);
+	dense_matrix<double, M, N> dst(m, n, zero());
+	dense_matrix<double, M, N> r1(m, n);
+	dense_matrix<double, M, N> r2(m, n);
+
+	for (index_t i = 0; i < m * n; ++i)
+	{
+		sa[i] = double(i + 2);
+		sb[i] = double(i * i + 1);
+
+		r1[i] = math::sqr(sa[i]);
+		r2[i] = sa[i] + sb[i];
+	}
+
+	matrix_shape<M, N> shape(m, n);
+
+	map_to(dst, math::sqr_fun<double>(), sa);
+	ASSERT_MAT_EQ( m, n, dst, r1 );
+
+	map_to(dst, math::add_fun<double>(), sa, sb);
+	ASSERT_MAT_EQ( m, n, dst, r2 );
+}
+
+
 // Test packs
 
 BEGIN_TPACK( linear_ewise_scalar_cont_cont )
@@ -297,6 +336,12 @@ END_TPACK
 #endif
 
 
+BEGIN_TPACK( linear_ewise_map )
+	ADD_MN_CASE_3X3( linear_ewise, map, DM, DN )
+END_TPACK
+
+
+
 BEGIN_MAIN_SUITE
 	ADD_TPACK( linear_ewise_scalar_cont_cont )
 	ADD_TPACK( linear_ewise_scalar_cont_stepcol )
@@ -314,6 +359,8 @@ BEGIN_MAIN_SUITE
 	ADD_TPACK( linear_ewise_scalar_single_cont )
 	ADD_TPACK( linear_ewise_sse_single_cont )
 	ADD_TPACK( linear_ewise_avx_single_cont )
+
+	ADD_TPACK( linear_ewise_map )
 END_MAIN_SUITE
 
 

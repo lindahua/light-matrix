@@ -14,6 +14,7 @@
 #include "multimat_supp.h"
 
 #include <light_mat/matrix/matrix_classes.h>
+#include <light_mat/math/math_functors.h>
 #include <light_mat/mateval/ewise_eval.h>
 
 #include <light_mat/math/sse_ops.h>
@@ -70,6 +71,17 @@ void test_percol_ewise()
 	percol_ewise(U(), shape).apply(
 			my_update_kernel(), in_(smat), in_out_(dmat));
 
+	ASSERT_MAT_EQ(m, n, dmat, rmat);
+
+	percol_ewise(U(), shape).copy( in_(smat),  out_(dmat) );
+	ASSERT_MAT_EQ(m, n, smat, dmat);
+
+	for (index_t j = 0; j < n; ++j)
+	{
+		for (index_t i = 0; i < m; ++i) rmat(i, j) = math::sqr(smat(i, j));
+	}
+
+	percol_ewise(U(), shape).map_to( out_(dmat), math::sqr_fun<double>(), in_(smat) );
 	ASSERT_MAT_EQ(m, n, dmat, rmat);
 }
 

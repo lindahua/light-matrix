@@ -162,6 +162,7 @@ set(MATRIX_CLASS_HS
 set(MATRIX_EVAL_HS
     ${INC}/mateval/internal/ewise_eval_internal.h
     ${INC}/mateval/mateval_fwd.h
+    ${INC}/mateval/common_kernels.h
     ${INC}/mateval/vec_accessors.h
     ${INC}/mateval/multicol_accessors.h
     ${INC}/mateval/ewise_eval.h)
