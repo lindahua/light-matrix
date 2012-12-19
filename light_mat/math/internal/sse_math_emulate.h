@@ -63,7 +63,8 @@
 		return internal::Name##_emulate(a); } \
 	LMAT_ENSURE_INLINE \
 	inline sse_f64pk Name( const sse_f64pk& a ) { \
-		return internal::Name##_emulate(a); }
+		return internal::Name##_emulate(a); } \
+	struct has_sse_##Name { static const bool value = false; };
 
 
 #define LMAT_ACTIVATE_SSE_MATH_EMULATE_2( Name ) \
@@ -72,7 +73,8 @@
 		return internal::Name##_emulate(a, b); } \
 	LMAT_ENSURE_INLINE \
 	inline sse_f64pk Name( const sse_f64pk& a, const sse_f64pk& b ) { \
-		return internal::Name##_emulate(a, b); }
+		return internal::Name##_emulate(a, b); } \
+	struct has_sse_##Name { static const bool value = false; };
 
 
 namespace lmat { namespace math { namespace internal {

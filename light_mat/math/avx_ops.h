@@ -20,6 +20,31 @@
 
 namespace lmat { namespace math {
 
+	// forward
+
+	struct has_avx_add { static const bool value = true; };
+	struct has_avx_sub { static const bool value = true; };
+	struct has_avx_mul { static const bool value = true; };
+	struct has_avx_div { static const bool value = true; };
+	struct has_avx_neg { static const bool value = true; };
+
+	struct has_avx_abs { static const bool value = true; };
+	struct has_avx_sqr { static const bool value = true; };
+	struct has_avx_cube { static const bool value = true; };
+
+	struct has_avx_rcp { static const bool value = true; };
+	struct has_avx_sqrt { static const bool value = true; };
+	struct has_avx_rsqrt { static const bool value = true; };
+
+	struct has_avx_min { static const bool value = true; };
+	struct has_avx_max { static const bool value = true; };
+
+	struct has_avx_floor { static const bool value = true; };
+	struct has_avx_ceil { static const bool value = true; };
+	struct has_avx_round { static const bool value = true; };
+	struct has_avx_trunc { static const bool value = true; };
+
+
 	/********************************************
 	 *
 	 *  Floating-point arithmetics

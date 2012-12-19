@@ -15,6 +15,31 @@
 
 namespace lmat { namespace math {
 
+	// forward
+
+	struct has_sse_add { static const bool value = true; };
+	struct has_sse_sub { static const bool value = true; };
+	struct has_sse_mul { static const bool value = true; };
+	struct has_sse_div { static const bool value = true; };
+	struct has_sse_neg { static const bool value = true; };
+
+	struct has_sse_abs { static const bool value = true; };
+	struct has_sse_sqr { static const bool value = true; };
+	struct has_sse_cube { static const bool value = true; };
+
+	struct has_sse_rcp { static const bool value = true; };
+	struct has_sse_sqrt { static const bool value = true; };
+	struct has_sse_rsqrt { static const bool value = true; };
+
+	struct has_sse_min { static const bool value = true; };
+	struct has_sse_max { static const bool value = true; };
+
+	struct has_sse_floor { static const bool value = true; };
+	struct has_sse_ceil { static const bool value = true; };
+	struct has_sse_round { static const bool value = true; };
+	struct has_sse_trunc { static const bool value = true; };
+
+
 	/********************************************
 	 *
 	 *  Floating-point arithmetics

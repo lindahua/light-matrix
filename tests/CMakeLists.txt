@@ -99,6 +99,7 @@ set(COMMON_HS
     ${INC}/common/block.h
     ${INC}/math/math_base.h
     ${INC}/math/math_constants.h
+    ${INC}/math/fun_tags.h
     ${INC}/math/math_functors.h)
     
 set(SIMD_BASE_HS
@@ -162,6 +163,7 @@ set(MATRIX_CLASS_HS
 set(MATRIX_EVAL_HS
     ${INC}/mateval/internal/ewise_eval_internal.h
     ${INC}/mateval/mateval_fwd.h
+    ${INC}/mateval/fun_maps.h
     ${INC}/mateval/common_kernels.h
     ${INC}/mateval/vec_accessors.h
     ${INC}/mateval/multicol_accessors.h
@@ -176,8 +178,6 @@ set(MATRIX_HS
     ${COMMON_HS}
     ${MATRIX_BASE_HS}
     ${MATRIX_CLASS_HS})    
-    
-    
     
     
 # Executables

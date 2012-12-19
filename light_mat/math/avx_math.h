@@ -104,7 +104,8 @@ extern "C"
 		return LMAT_AVX_F(Name)(a); } \
 	LMAT_ENSURE_INLINE \
 	inline avx_f64pk Name( const avx_f64pk& a ) { \
-		return LMAT_AVX_D(Name)(a); }
+		return LMAT_AVX_D(Name)(a); } \
+	struct has_avx_##Name { static const bool value = true; };
 
 #define LMAT_ACTIVATE_AVX_EXTERN_2( Name ) \
 	LMAT_ENSURE_INLINE \
@@ -112,7 +113,8 @@ extern "C"
 		return LMAT_AVX_F(Name)(a, b); } \
 	LMAT_ENSURE_INLINE \
 	inline avx_f64pk Name( const avx_f64pk& a, const avx_f64pk& b ) { \
-		return LMAT_AVX_D(Name)(a, b); }
+		return LMAT_AVX_D(Name)(a, b); } \
+	struct has_avx_##Name { static const bool value = true; };
 
 
 namespace lmat { namespace math {

@@ -166,7 +166,8 @@ extern "C"
 		return LMAT_SSE_F(Name)(a); } \
 	LMAT_ENSURE_INLINE \
 	inline sse_f64pk Name( const sse_f64pk& a ) { \
-		return LMAT_SSE_D(Name)(a); }
+		return LMAT_SSE_D(Name)(a); } \
+	struct has_sse_##Name { static const bool value = true; };
 
 #define LMAT_ACTIVATE_SSE_EXTERN_2( Name ) \
 	LMAT_ENSURE_INLINE \
@@ -174,8 +175,8 @@ extern "C"
 		return LMAT_SSE_F(Name)(a, b); } \
 	LMAT_ENSURE_INLINE \
 	inline sse_f64pk Name( const sse_f64pk& a, const sse_f64pk& b ) { \
-		return LMAT_SSE_D(Name)(a, b); }
-
+		return LMAT_SSE_D(Name)(a, b); } \
+	struct has_sse_##Name { static const bool value = true; };
 
 namespace lmat { namespace math {
 
@@ -297,6 +298,10 @@ namespace lmat { namespace math {
 #endif
 
 #endif // has C++11 math
+
+
+
+
 
 } }
 

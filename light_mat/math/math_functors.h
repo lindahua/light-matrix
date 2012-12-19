@@ -14,6 +14,8 @@
 #define LIGHTMAT_MATH_FUNCTORS_H_
 
 #include <light_mat/math/math_base.h>
+#include <light_mat/math/fun_tags.h>
+
 #include <light_mat/math/sse_ops.h>
 #include <light_mat/math/sse_math.h>
 #ifdef LMAT_HAS_AVX
@@ -50,6 +52,7 @@
 #define LMAT_DEFINE_MATH_FUNCTOR_2( Name ) \
 	LMAT_DEFINE_GENERIC_MATH_FUNCTOR_2( Name, Name(x, y) )
 
+
 namespace lmat { namespace math {
 
 	// Arithmetic functors
@@ -58,7 +61,7 @@ namespace lmat { namespace math {
 	LMAT_DEFINE_GENERIC_MATH_FUNCTOR_2( sub, x - y )
 	LMAT_DEFINE_GENERIC_MATH_FUNCTOR_2( mul, x * y )
 	LMAT_DEFINE_GENERIC_MATH_FUNCTOR_2( div, x / y )
-	LMAT_DEFINE_GENERIC_MATH_FUNCTOR_1( negate, -x )
+	LMAT_DEFINE_GENERIC_MATH_FUNCTOR_1( neg, -x )
 
 	LMAT_DEFINE_MATH_FUNCTOR_1( abs )
 	LMAT_DEFINE_MATH_FUNCTOR_1( sqr )
@@ -139,8 +142,8 @@ namespace lmat { namespace math {
 
 #endif
 
-
 } }
+
 
 #endif 
 
