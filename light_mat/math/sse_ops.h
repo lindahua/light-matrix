@@ -208,6 +208,18 @@ namespace lmat { namespace math {
 		return _mm_max_pd(a, b);
 	}
 
+	LMAT_ENSURE_INLINE
+	inline sse_f32pk clip(const sse_f32pk& x, const sse_f32pk& lb, const sse_f32pk& ub)
+	{
+		return (min)((max)(x, lb), ub);
+	}
+
+	LMAT_ENSURE_INLINE
+	inline sse_f64pk clip(const sse_f64pk& x, const sse_f64pk& lb, const sse_f64pk& ub)
+	{
+		return (min)((max)(x, lb), ub);
+	}
+
 	/********************************************
 	 *
 	 *  Simple power functions

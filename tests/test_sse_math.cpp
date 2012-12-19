@@ -100,6 +100,8 @@ DEFINE_SSE_MATH_TEST_1( exp,   4, -1.0,  2.0 )
 DEFINE_SSE_MATH_TEST_1( log,   4,  1.0, 10.0 )
 DEFINE_SSE_MATH_TEST_1( log10, 4,  1.0, 50.0 )
 
+DEFINE_SSE_MATH_TEST_2( xlogy, 4, -1.0, 1.0, 0.0, 1.0 )
+
 // trigonometry
 
 DEFINE_SSE_MATH_TEST_1( sin, 4, -3.0, 3.0 )
@@ -160,6 +162,7 @@ BEGIN_MAIN_SUITE
 	ADD_MATH_TPACK( exp )
 	ADD_MATH_TPACK( log )
 	ADD_MATH_TPACK( log10 )
+	ADD_MATH_TPACK( xlogy )
 
 	ADD_MATH_TPACK( sin )
 	ADD_MATH_TPACK( cos )

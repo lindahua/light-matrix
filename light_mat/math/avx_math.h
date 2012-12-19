@@ -9,7 +9,7 @@
 #ifndef LIGHTMAT_AVX_MATH_H_
 #define LIGHTMAT_AVX_MATH_H_
 
-#include <light_mat/math/avx_packs.h>
+#include <light_mat/math/avx_ops.h>
 #include "internal/avx_math_emulate.h"
 
 #if defined(LMAT_USE_INTEL_SVML) && defined(LMAT_USE_AMD_LIBM)
@@ -132,6 +132,23 @@ namespace lmat { namespace math {
 	LMAT_ACTIVATE_AVX_EXTERN_1( exp )
 	LMAT_ACTIVATE_AVX_EXTERN_1( log )
 	LMAT_ACTIVATE_AVX_EXTERN_1( log10 )
+
+	LMAT_ENSURE_INLINE
+	inline avx_f32pk xlogy(const avx_f32pk& a, const avx_f32pk& b)
+	{
+		avx_f32pk z = avx_f32pk::zeros();
+		return cond(a > z, log(b), z) * a;
+	}
+
+	LMAT_ENSURE_INLINE
+	inline avx_f64pk xlogy(const avx_f64pk& a, const avx_f64pk& b)
+	{
+		avx_f64pk z = avx_f64pk::zeros();
+		return cond(a > z, log(b), z) * a;
+	}
+
+	struct has_avx_xlogy { static const bool value = true; };
+
 #elif (defined(LMAT_ENABLE_SIMD_EMULATE))
 	LMAT_ACTIVATE_AVX_MATH_EMULATE_1( exp )
 	LMAT_ACTIVATE_AVX_MATH_EMULATE_1( log )

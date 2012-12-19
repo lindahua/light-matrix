@@ -104,10 +104,10 @@ namespace lmat { namespace math {
 	// max & min
 
 	template<typename T>
-	LMAT_ENSURE_INLINE T (max)(const T& x, const T& y) { return x > y ? x : y; }
+	LMAT_ENSURE_INLINE inline T (max)(const T& x, const T& y) { return x > y ? x : y; }
 
 	template<typename T>
-	LMAT_ENSURE_INLINE T (min)(const T& x, const T& y) { return x < y ? x : y; }
+	LMAT_ENSURE_INLINE inline T (min)(const T& x, const T& y) { return x < y ? x : y; }
 
 #ifdef LMAT_HAS_CXX11_MATH
 	LMAT_ENSURE_INLINE inline float  (max)(float  x, float  y) { return std::fmax(x, y); }
@@ -115,6 +115,25 @@ namespace lmat { namespace math {
 	LMAT_ENSURE_INLINE inline float  (min)(float  x, float  y) { return std::fmin(x, y); }
 	LMAT_ENSURE_INLINE inline double (min)(double x, double y) { return std::fmin(x, y); }
 #endif
+
+	template<typename T>
+	LMAT_ENSURE_INLINE inline T clip(const T& x, const T& lb, const T& ub)
+	{
+		return (min)((max)(x, lb), ub);
+	}
+
+
+	// xlogy
+
+	LMAT_ENSURE_INLINE inline float xlogy(float x, float y)
+	{
+		return x > 0 ? x * log(y) : 0.f;
+	}
+
+	LMAT_ENSURE_INLINE inline double xlogy(double x, double y)
+	{
+		return x > 0 ? x * log(y) : 0.0;
+	}
 
 
 	/********************************************
