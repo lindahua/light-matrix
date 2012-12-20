@@ -16,7 +16,8 @@
 #include <light_mat/matlab/marray.h>
 #include <light_mat/matlab/mdispatch.h>
 
-#include <light_mat/matrix/matrix_eval.h>
+#include <light_mat/matrix/matrix_classes.h>
+#include <light_mat/mateval/ewise_eval.h>
 
 namespace lmat { namespace matlab {
 
@@ -69,7 +70,7 @@ namespace lmat { namespace matlab {
 	{
 		marray r = marray::numeric_matrix<T>(in.nrows(), in.ncolumns());
 
-		typedef ref_matrix<T, ct_rows<Mat>::value, ct_cols<Mat>::value> view_t;
+		typedef ref_matrix<T, meta::nrows<Mat>::value, meta::ncols<Mat>::value> view_t;
 		view_t view(r.data<T>(), in.nrows(), in.ncolumns());
 		view = in;
 
@@ -81,7 +82,7 @@ namespace lmat { namespace matlab {
 	inline marray to_marray(const T *src, index_t m, index_t n)
 	{
 		marray r = marray::numeric_matrix<T>(m, n);
-		copy_mem(m * n, src, r.data<T>());
+		copy_vec(m * n, src, r.data<T>());
 		return r;
 	}
 
@@ -90,7 +91,7 @@ namespace lmat { namespace matlab {
 	inline marray to_marray(const double *src, index_t m, index_t n)
 	{
 		marray r = marray::double_matrix(m, n);
-		copy_mem(m * n, src, r.data<T>());
+		copy_vec(m * n, src, r.data<T>());
 		return r;
 	}
 
