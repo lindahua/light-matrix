@@ -266,6 +266,11 @@ add_executable(test_mat_fill ${REF_MAT_HS} test_mat_fill.cpp)
 add_executable(test_mat_copy ${REF_MAT_HS} test_mat_copy.cpp)
 add_executable(test_dense_eval ${MATRIX_HS} test_dense_eval.cpp)
 
+# suppress bogus free-nonheap-object complaint under GCC
+if (${CMAKE_CXX_COMPILER_ID} MATCHES "GNU")
+set_target_properties(test_dense_eval PROPERTIES COMPILE_FLAGS "-Wno-free-nonheap-object")
+endif (${CMAKE_CXX_COMPILER_ID} MATCHES "GNU")
+
 add_executable(test_mat_vecviews ${MATRIX_HS} test_mat_vecviews.cpp)
 add_executable(test_mat_matviews ${MATRIX_HS} test_mat_matviews.cpp)
 
@@ -288,11 +293,6 @@ add_executable(test_full_reduce ${REDUC_HS} test_full_reduce.cpp)
 add_executable(test_colwise_reduce ${REDUC_HS} test_colwise_reduce.cpp)
 add_executable(test_rowwise_reduce ${REDUC_HS} test_rowwise_reduce.cpp)
 
-# suppress bogus free-nonheap-object complaint under GCC
-
-if (${CMAKE_CXX_COMPILER_ID} MATCHES "GNU")
-set_target_properties(test_dense_eval PROPERTIES COMPILE_FLAGS "-Wno-free-nonheap-object")
-endif (${CMAKE_CXX_COMPILER_ID} MATCHES "GNU")
 
 # Link to test_main
 

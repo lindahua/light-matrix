@@ -214,7 +214,7 @@ struct linearscalar_copy
 	void run()
 	{
 		typedef atags::scalar tag;
-		linear_ewise(tag(), src.nelems()).copy(in_(src), out_(dst));
+		ewise(copy_kernel<T>(), tag())(src.nelems(), in_(src), out_(dst));
 	}
 };
 
@@ -240,8 +240,8 @@ struct linearsimd_copy
 
 	void run()
 	{
-		typedef atags::simd<T, default_simd_kind> tag;
-		linear_ewise(tag(), src.nelems()).copy(in_(src), out_(dst));
+		typedef atags::simd<default_simd_kind> tag;
+		ewise(copy_kernel<T>(), tag())(src.nelems(), in_(src), out_(dst));
 	}
 };
 
@@ -268,7 +268,7 @@ struct percolscalar_copy
 	void run()
 	{
 		typedef atags::scalar tag;
-		percol_ewise(tag(), src.shape()).copy(in_(src), out_(dst));
+		percol(ewise(copy_kernel<T>(), tag()), src.shape(), in_(src), out_(dst));
 	}
 };
 
@@ -294,8 +294,8 @@ struct percolsimd_copy
 
 	void run()
 	{
-		typedef atags::simd<T, default_simd_kind> tag;
-		percol_ewise(tag(), src.shape()).copy(in_(src), out_(dst));
+		typedef atags::simd<default_simd_kind> tag;
+		percol(ewise(copy_kernel<T>(), tag()), src.shape(), in_(src), out_(dst));
 	}
 };
 

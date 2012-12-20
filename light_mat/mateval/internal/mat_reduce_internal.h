@@ -23,6 +23,8 @@ namespace lmat { namespace internal {
 	template<typename T>
 	struct _sum_rfun
 	{
+		typedef T value_type;
+
 		template<class Pack>
 		LMAT_ENSURE_INLINE
 		T reduce(const Pack& p) const
@@ -41,6 +43,8 @@ namespace lmat { namespace internal {
 	template<typename T>
 	struct _maximum_rfun
 	{
+		typedef T value_type;
+
 		template<class Pack>
 		LMAT_ENSURE_INLINE
 		T reduce(const Pack& p) const
@@ -59,6 +63,8 @@ namespace lmat { namespace internal {
 	template<typename T>
 	struct _minimum_rfun
 	{
+		typedef T value_type;
+
 		template<class Pack>
 		LMAT_ENSURE_INLINE
 		T reduce(const Pack& p) const
@@ -78,14 +84,22 @@ namespace lmat { namespace internal {
 	template<class RFun>
 	struct _fold_kernel
 	{
+		typedef typename RFun::value_type value_type;
 		RFun rfun;
 
 		LMAT_ENSURE_INLINE
 		_fold_kernel(const RFun& rf) : rfun(rf) { }
 
-		template<class A>
 		LMAT_ENSURE_INLINE
-		void operator() (A& a, const A& x) const
+		void operator() (value_type& a, const value_type& x) const
+		{
+			rfun.fold(a, x);
+		}
+
+		template<typename Kind>
+		LMAT_ENSURE_INLINE
+		void operator() (math::simd_pack<value_type, Kind>& a,
+				const math::simd_pack<value_type, Kind>& x) const
 		{
 			rfun.fold(a, x);
 		}
@@ -95,6 +109,7 @@ namespace lmat { namespace internal {
 	template<class RFun, class TFun>
 	struct _foldx_kernel
 	{
+		typedef typename RFun::value_type value_type;
 		RFun rfun;
 		TFun tfun;
 
@@ -102,9 +117,17 @@ namespace lmat { namespace internal {
 		_foldx_kernel(const RFun& rf, const TFun& tf)
 		: rfun(rf), tfun(tf) { }
 
-		template<typename A, typename... B>
+		template<typename... A>
 		LMAT_ENSURE_INLINE
-		void operator() (A& a, const B&... x) const
+		void operator() (value_type& a, const A&... x) const
+		{
+			rfun.fold(a, tfun(x...));
+		}
+
+		template<typename Kind, typename... A>
+		LMAT_ENSURE_INLINE
+		void operator() (math::simd_pack<value_type, Kind>& a,
+				const math::simd_pack<A, Kind>&... x) const
 		{
 			rfun.fold(a, tfun(x...));
 		}
@@ -117,10 +140,12 @@ namespace lmat { namespace internal {
 	 *
 	 ********************************************/
 
-	template<int N, typename T, typename SKind, class RFun, class Reader>
-	inline T fold_impl(const dimension<N>& dim, atags::simd<T, SKind>,
+	template<int N, typename SKind, class RFun, class Reader>
+	inline typename RFun::value_type
+	fold_impl(const dimension<N>& dim, atags::simd<SKind>,
 			RFun rfun, const Reader& rd)
 	{
+		typedef typename RFun::value_type T;
 		typedef math::simd_pack<T, SKind> pack_t;
 
 		const index_t pw = (index_t)pack_t::pack_width;
@@ -206,10 +231,12 @@ namespace lmat { namespace internal {
 	}
 
 
-	template<int N, typename T, typename SKind, class RFun, typename TFun, typename... Reader>
-	inline T foldx_impl(const dimension<N>& dim, atags::simd<T, SKind>,
+	template<int N, typename SKind, class RFun, typename TFun, typename... Reader>
+	inline typename RFun::value_type
+	foldx_impl(const dimension<N>& dim, atags::simd<SKind>,
 			RFun rfun, const TFun& tfun, const Reader&... rds)
 	{
+		typedef typename RFun::value_type T;
 		typedef math::simd_pack<T, SKind> pack_t;
 		const index_t pw = (index_t)pack_t::pack_width;
 
@@ -309,53 +336,53 @@ namespace lmat { namespace internal {
 	 *
 	 ********************************************/
 
-	template<int N, typename T, typename Kind, class Wrap>
-	inline T sum_(const dimension<N>& dim, atags::simd<T, Kind> u, const Wrap& wrap)
+	template<typename T, int N, typename Kind, class Wrap>
+	inline T sum_(type_<T>, const dimension<N>& dim, atags::simd<Kind> u, const Wrap& wrap)
 	{
 		return fold_impl(dim, u, _sum_rfun<T>(), make_vec_accessor(u, wrap));
 	}
 
 	template<int N, typename T, typename Kind, class Wrap>
-	inline T mean_(const dimension<N>& dim, atags::simd<T, Kind> u, const Wrap& wrap)
+	inline T mean_(type_<T>, const dimension<N>& dim, atags::simd<Kind> u, const Wrap& wrap)
 	{
-		T r = sum_(dim, u, wrap);
+		T r = sum_(type_<T>(), dim, u, wrap);
 		return r / T(dim.value());
 	}
 
 	template<int N, typename T, typename Kind, class Wrap>
-	inline T maximum_(const dimension<N>& dim, atags::simd<T, Kind> u, const Wrap& wrap)
+	inline T maximum_(type_<T>, const dimension<N>& dim, atags::simd<Kind> u, const Wrap& wrap)
 	{
 		return fold_impl(dim, u, _maximum_rfun<T>(), make_vec_accessor(u, wrap));
 	}
 
 	template<int N, typename T, typename Kind, class Wrap>
-	inline T minimum_(const dimension<N>& dim, atags::simd<T, Kind> u, const Wrap& wrap)
+	inline T minimum_(type_<T>, const dimension<N>& dim, atags::simd<Kind> u, const Wrap& wrap)
 	{
 		return fold_impl(dim, u, _minimum_rfun<T>(), make_vec_accessor(u, wrap));
 	}
 
 
 	template<int N, typename T, typename Kind, typename TFun, typename... Wrap>
-	inline T sumx_(const dimension<N>& dim, atags::simd<T, Kind> u, const TFun& tfun, const Wrap&... wraps)
+	inline T sumx_(type_<T>, const dimension<N>& dim, atags::simd<Kind> u, const TFun& tfun, const Wrap&... wraps)
 	{
 		return foldx_impl(dim, u, _sum_rfun<T>(), tfun, make_vec_accessor(u, wraps)...);
 	}
 
 	template<int N, typename T, typename Kind, typename TFun, typename... Wrap>
-	inline T meanx_(const dimension<N>& dim, atags::simd<T, Kind> u, const TFun& tfun, const Wrap&... wraps)
+	inline T meanx_(type_<T>, const dimension<N>& dim, atags::simd<Kind> u, const TFun& tfun, const Wrap&... wraps)
 	{
-		T r = sumx_(dim, u, tfun, wraps...);
+		T r = sumx_(type_<T>(), dim, u, tfun, wraps...);
 		return r / T(dim.value());
 	}
 
 	template<int N, typename T, typename Kind, typename TFun, typename... Wrap>
-	inline T maximumx_(const dimension<N>& dim, atags::simd<T, Kind> u, const TFun& tfun, const Wrap&... wraps)
+	inline T maximumx_(type_<T>, const dimension<N>& dim, atags::simd<Kind> u, const TFun& tfun, const Wrap&... wraps)
 	{
 		return foldx_impl(dim, u, _maximum_rfun<T>(), tfun, make_vec_accessor(u, wraps)...);
 	}
 
 	template<int N, typename T, typename Kind, typename TFun, typename... Wrap>
-	inline T minimumx_(const dimension<N>& dim, atags::simd<T, Kind> u, const TFun& tfun, const Wrap&... wraps)
+	inline T minimumx_(type_<T>, const dimension<N>& dim, atags::simd<Kind> u, const TFun& tfun, const Wrap&... wraps)
 	{
 		return foldx_impl(dim, u, _minimum_rfun<T>(), tfun, make_vec_accessor(u, wraps)...);
 	}
@@ -383,9 +410,9 @@ namespace lmat { namespace internal {
 	};
 
 
-	template<typename T, typename Kind, class DMat, class TFun>
+	template<typename Kind, class DMat, class TFun>
 	LMAT_ENSURE_INLINE
-	inline void colwise_post(atags::simd<T, Kind>, index_t n, DMat& dmat, const TFun& tfun)
+	inline void colwise_post(atags::simd<Kind>, index_t n, DMat& dmat, const TFun& tfun)
 	{
 		for (index_t j = 0; j < n; ++j) dmat[j] = tfun(dmat[j]);
 	}
@@ -418,15 +445,17 @@ namespace lmat { namespace internal {
 	}
 
 
-	template<int M, int N, typename T, typename Kind, class DMat, class Wrap>
-	inline void colwise_sum_(const matrix_shape<M, N>& shape, atags::simd<T, Kind> u, DMat& dmat, const Wrap& wrap)
+	template<int M, int N, typename Kind, class DMat, class Wrap>
+	inline void colwise_sum_(const matrix_shape<M, N>& shape, atags::simd<Kind> u, DMat& dmat, const Wrap& wrap)
 	{
+		typedef typename matrix_traits<DMat>::value_type T;
 		colwise_fold_impl(shape, u, _sum_rfun<T>(), dmat, make_multicol_accessor(u, wrap));
 	}
 
-	template<int M, int N, typename T, typename Kind, class DMat, class Wrap>
-	inline void colwise_mean_(const matrix_shape<M, N>& shape, atags::simd<T, Kind> u, DMat& dmat, const Wrap& wrap)
+	template<int M, int N, typename Kind, class DMat, class Wrap>
+	inline void colwise_mean_(const matrix_shape<M, N>& shape, atags::simd<Kind> u, DMat& dmat, const Wrap& wrap)
 	{
+		typedef typename matrix_traits<DMat>::value_type T;
 		const index_t m = shape.nrows();
 		const index_t n = shape.ncolumns();
 
@@ -434,30 +463,34 @@ namespace lmat { namespace internal {
 		colwise_post(u, n, dmat, div_by_dim<T>(m));
 	}
 
-	template<int M, int N, typename T, typename Kind, class DMat, class Wrap>
-	inline void colwise_maximum_(const matrix_shape<M, N>& shape, atags::simd<T, Kind> u, DMat& dmat, const Wrap& wrap)
+	template<int M, int N, typename Kind, class DMat, class Wrap>
+	inline void colwise_maximum_(const matrix_shape<M, N>& shape, atags::simd<Kind> u, DMat& dmat, const Wrap& wrap)
 	{
+		typedef typename matrix_traits<DMat>::value_type T;
 		colwise_fold_impl(shape, u, _maximum_rfun<T>(), dmat, make_multicol_accessor(u, wrap));
 	}
 
-	template<int M, int N, typename T, typename Kind, class DMat, class Wrap>
-	inline void colwise_minimum_(const matrix_shape<M, N>& shape, atags::simd<T, Kind> u, DMat& dmat, const Wrap& wrap)
+	template<int M, int N, typename Kind, class DMat, class Wrap>
+	inline void colwise_minimum_(const matrix_shape<M, N>& shape, atags::simd<Kind> u, DMat& dmat, const Wrap& wrap)
 	{
+		typedef typename matrix_traits<DMat>::value_type T;
 		colwise_fold_impl(shape, u, _minimum_rfun<T>(), dmat, make_multicol_accessor(u, wrap));
 	}
 
 
-	template<int M, int N, typename T, typename Kind, class DMat, typename TFun, typename... Wrap>
-	inline void colwise_sumx_(const matrix_shape<M, N>& shape, atags::simd<T, Kind> u, DMat& dmat,
+	template<int M, int N, typename Kind, class DMat, typename TFun, typename... Wrap>
+	inline void colwise_sumx_(const matrix_shape<M, N>& shape, atags::simd<Kind> u, DMat& dmat,
 			const TFun& tfun, const Wrap&... wraps)
 	{
+		typedef typename matrix_traits<DMat>::value_type T;
 		colwise_foldx_impl(shape, u, _sum_rfun<T>(), dmat, tfun, make_multicol_accessor(u, wraps)...);
 	}
 
-	template<int M, int N, typename T, typename Kind, class DMat, typename TFun, typename... Wrap>
-	inline void colwise_meanx_(const matrix_shape<M, N>& shape, atags::simd<T, Kind> u, DMat& dmat,
+	template<int M, int N, typename Kind, class DMat, typename TFun, typename... Wrap>
+	inline void colwise_meanx_(const matrix_shape<M, N>& shape, atags::simd<Kind> u, DMat& dmat,
 			const TFun& tfun, const Wrap&... wraps)
 	{
+		typedef typename matrix_traits<DMat>::value_type T;
 		const index_t m = shape.nrows();
 		const index_t n = shape.ncolumns();
 
@@ -465,17 +498,19 @@ namespace lmat { namespace internal {
 		colwise_post(u, n, dmat, div_by_dim<T>(m));
 	}
 
-	template<int M, int N, typename T, typename Kind, class DMat, typename TFun, typename... Wrap>
-	inline void colwise_maximumx_(const matrix_shape<M, N>& shape, atags::simd<T, Kind> u, DMat& dmat,
+	template<int M, int N, typename Kind, class DMat, typename TFun, typename... Wrap>
+	inline void colwise_maximumx_(const matrix_shape<M, N>& shape, atags::simd<Kind> u, DMat& dmat,
 			const TFun& tfun, const Wrap&... wraps)
 	{
+		typedef typename matrix_traits<DMat>::value_type T;
 		colwise_foldx_impl(shape, u, _maximum_rfun<T>(), dmat, tfun, make_multicol_accessor(u, wraps)...);
 	}
 
-	template<int M, int N, typename T, typename Kind, class DMat, typename TFun, typename... Wrap>
-	inline void colwise_minimumx_(const matrix_shape<M, N>& shape, atags::simd<T, Kind> u, DMat& dmat,
+	template<int M, int N, typename Kind, class DMat, typename TFun, typename... Wrap>
+	inline void colwise_minimumx_(const matrix_shape<M, N>& shape, atags::simd<Kind> u, DMat& dmat,
 			const TFun& tfun, const Wrap&... wraps)
 	{
+		typedef typename matrix_traits<DMat>::value_type T;
 		colwise_foldx_impl(shape, u, _minimum_rfun<T>(), dmat, tfun, make_multicol_accessor(u, wraps)...);
 	}
 
@@ -492,15 +527,16 @@ namespace lmat { namespace internal {
 	{
 		dimension<M> col_dim(shape.nrows());
 		const index_t n = shape.ncolumns();
+		typedef typename matrix_traits<DMat>::value_type T;
 
 		auto a = make_vec_accessor(u, in_out_(dmat));
 
-		internal::linear_ewise_eval_a(col_dim, u, copy_kernel(), rd.col(0), a);
+		internal::linear_ewise_eval(col_dim, u, copy_kernel<T>(), rd.col(0), a);
 
 		_fold_kernel<RFun> fker(rfun);
 		for (index_t j = 1; j < n; ++j)
 		{
-			internal::linear_ewise_eval_a(col_dim, u, fker, a, rd.col(j));
+			internal::linear_ewise_eval(col_dim, u, fker, a, rd.col(j));
 		}
 	}
 
@@ -513,72 +549,82 @@ namespace lmat { namespace internal {
 
 		auto a = make_vec_accessor(u, in_out_(dmat));
 
-		internal::linear_ewise_eval_a(col_dim, u, map_kernel<TFun>(tfun), a, rds.col(0)...);
+		internal::linear_ewise_eval(col_dim, u, map_kernel<TFun>(tfun), a, rds.col(0)...);
 
 		_foldx_kernel<RFun, TFun> fker(rfun, tfun);
 		for (index_t j = 1; j < n; ++j)
 		{
-			internal::linear_ewise_eval_a(col_dim, u, fker, a, rds.col(j)...);
+			internal::linear_ewise_eval(col_dim, u, fker, a, rds.col(j)...);
 		}
 	}
 
 
-	template<int M, int N, typename T, typename Kind, class DMat, class Wrap>
-	inline void rowwise_sum_(const matrix_shape<M, N>& shape, atags::simd<T, Kind> u, DMat& dmat, const Wrap& wrap)
+	template<int M, int N, typename Kind, class DMat, class Wrap>
+	inline void rowwise_sum_(const matrix_shape<M, N>& shape, atags::simd<Kind> u, DMat& dmat, const Wrap& wrap)
 	{
+		typedef typename matrix_traits<DMat>::value_type T;
 		rowwise_fold_impl(shape, u, _sum_rfun<T>(), dmat, make_multicol_accessor(u, wrap));
 	}
 
-	template<int M, int N, typename T, typename Kind, class DMat, class Wrap>
-	inline void rowwise_mean_(const matrix_shape<M, N>& shape, atags::simd<T, Kind> u, DMat& dmat, const Wrap& wrap)
+	template<int M, int N, typename Kind, class DMat, class Wrap>
+	inline void rowwise_mean_(const matrix_shape<M, N>& shape, atags::simd<Kind> u, DMat& dmat, const Wrap& wrap)
 	{
+		typedef typename matrix_traits<DMat>::value_type T;
 		rowwise_fold_impl(shape, u, _sum_rfun<T>(), dmat, make_multicol_accessor(u, wrap));
 
 		T c = T(1) / T(shape.ncolumns());
-		map_to_x(dmat, math::mul_fun<T>(), in_(dmat), in_(c, atags::single()));
+		dimension<M> dim(shape.nrows());
+		map(math::mul_fun<T>(), atags::simd<Kind>())(dim, out_(dmat), in_(dmat), in_(c, atags::single()));
 	}
 
-	template<int M, int N, typename T, typename Kind, class DMat, class Wrap>
-	inline void rowwise_maximum_(const matrix_shape<M, N>& shape, atags::simd<T, Kind> u, DMat& dmat, const Wrap& wrap)
+	template<int M, int N, typename Kind, class DMat, class Wrap>
+	inline void rowwise_maximum_(const matrix_shape<M, N>& shape, atags::simd<Kind> u, DMat& dmat, const Wrap& wrap)
 	{
+		typedef typename matrix_traits<DMat>::value_type T;
 		rowwise_fold_impl(shape, u, _maximum_rfun<T>(), dmat, make_multicol_accessor(u, wrap));
 	}
 
-	template<int M, int N, typename T, typename Kind, class DMat, class Wrap>
-	inline void rowwise_minimum_(const matrix_shape<M, N>& shape, atags::simd<T, Kind> u, DMat& dmat, const Wrap& wrap)
+	template<int M, int N, typename Kind, class DMat, class Wrap>
+	inline void rowwise_minimum_(const matrix_shape<M, N>& shape, atags::simd<Kind> u, DMat& dmat, const Wrap& wrap)
 	{
+		typedef typename matrix_traits<DMat>::value_type T;
 		rowwise_fold_impl(shape, u, _minimum_rfun<T>(), dmat, make_multicol_accessor(u, wrap));
 	}
 
 
-	template<int M, int N, typename T, typename Kind, class DMat, class TFun, typename... Wrap>
-	inline void rowwise_sumx_(const matrix_shape<M, N>& shape, atags::simd<T, Kind> u, DMat& dmat,
+	template<int M, int N, typename Kind, class DMat, class TFun, typename... Wrap>
+	inline void rowwise_sumx_(const matrix_shape<M, N>& shape, atags::simd<Kind> u, DMat& dmat,
 			const TFun& tfun, const Wrap&... wraps)
 	{
+		typedef typename matrix_traits<DMat>::value_type T;
 		rowwise_foldx_impl(shape, u, _sum_rfun<T>(), dmat, tfun, make_multicol_accessor(u, wraps)...);
 	}
 
-	template<int M, int N, typename T, typename Kind, class DMat, class TFun, typename... Wrap>
-	inline void rowwise_meanx_(const matrix_shape<M, N>& shape, atags::simd<T, Kind> u, DMat& dmat,
+	template<int M, int N, typename Kind, class DMat, class TFun, typename... Wrap>
+	inline void rowwise_meanx_(const matrix_shape<M, N>& shape, atags::simd<Kind> u, DMat& dmat,
 			const TFun& tfun, const Wrap&... wraps)
 	{
+		typedef typename matrix_traits<DMat>::value_type T;
 		rowwise_foldx_impl(shape, u, _sum_rfun<T>(), dmat, tfun, make_multicol_accessor(u, wraps)...);
 
 		T c = T(1) / T(shape.ncolumns());
-		map_to_x(dmat, math::mul_fun<T>(), in_(dmat), in_(c, atags::single()));
+		dimension<M> dim(shape.nrows());
+		map(math::mul_fun<T>(), atags::simd<Kind>())(dim, out_(dmat), in_(dmat), in_(c, atags::single()));
 	}
 
-	template<int M, int N, typename T, typename Kind, class DMat, class TFun, typename... Wrap>
-	inline void rowwise_maximumx_(const matrix_shape<M, N>& shape, atags::simd<T, Kind> u, DMat& dmat,
+	template<int M, int N, typename Kind, class DMat, class TFun, typename... Wrap>
+	inline void rowwise_maximumx_(const matrix_shape<M, N>& shape, atags::simd<Kind> u, DMat& dmat,
 			const TFun& tfun, const Wrap&... wraps)
 	{
+		typedef typename matrix_traits<DMat>::value_type T;
 		rowwise_foldx_impl(shape, u, _maximum_rfun<T>(), dmat, tfun, make_multicol_accessor(u, wraps)...);
 	}
 
-	template<int M, int N, typename T, typename Kind, class DMat, class TFun, typename... Wrap>
-	inline void rowwise_minimumx_(const matrix_shape<M, N>& shape, atags::simd<T, Kind> u, DMat& dmat,
+	template<int M, int N, typename Kind, class DMat, class TFun, typename... Wrap>
+	inline void rowwise_minimumx_(const matrix_shape<M, N>& shape, atags::simd<Kind> u, DMat& dmat,
 			const TFun& tfun, const Wrap&... wraps)
 	{
+		typedef typename matrix_traits<DMat>::value_type T;
 		rowwise_foldx_impl(shape, u, _minimum_rfun<T>(), dmat, tfun, make_multicol_accessor(u, wraps)...);
 	}
 

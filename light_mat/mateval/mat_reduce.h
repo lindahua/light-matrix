@@ -32,7 +32,7 @@
 		dimension<meta::nelems<Mat>::value> dim = reduc_get_length(mat); \
 		T r; \
 		if (dim.value() > 0) { \
-			r = internal::Name##_(dim, atags::simd<T, kind>(), in_(mat.derived())); } \
+			r = internal::Name##_(type_<T>(), dim, atags::simd<kind>(), in_(mat.derived())); } \
 		else { \
 			r = empty_values<T>::Name(); } \
 		return r; }
@@ -45,7 +45,7 @@
 		typename meta::shape<Mat>::type shape = reduc_get_shape(mat); \
 		LMAT_CHECK_DIMS( dmat.nelems() == shape.ncolumns() ); \
 		if (shape.nrows() > 0) { \
-			internal::colwise_##Name##_(shape, atags::simd<T, kind>(), dmat.derived(), in_(mat.derived())); } \
+			internal::colwise_##Name##_(shape, atags::simd<kind>(), dmat.derived(), in_(mat.derived())); } \
 		else { \
 			fill(dmat.derived(), empty_values<T>::Name()); } }
 
@@ -56,7 +56,7 @@
 		typename meta::shape<Mat>::type shape = reduc_get_shape(mat); \
 		LMAT_CHECK_DIMS( dmat.nelems() == shape.nrows() ); \
 		if (shape.ncolumns() > 0) { \
-			internal::rowwise_##Name##_(shape, atags::simd<T, kind>(), dmat.derived(), in_(mat.derived())); } \
+			internal::rowwise_##Name##_(shape, atags::simd<kind>(), dmat.derived(), in_(mat.derived())); } \
 		else { fill(dmat, empty_values<T>::Name()); } }
 
 
@@ -70,7 +70,7 @@
 		dimension<meta::nelems<Mat>::value> dim = reduc_get_length(mat); \
 		T r; \
 		if (dim.value() > 0) { \
-			r = internal::Reduc##x_(dim, atags::simd<T, kind>(), ScaFun<T>(), in_(mat.derived())); } \
+			r = internal::Reduc##x_(type_<T>(), dim, atags::simd<kind>(), ScaFun<T>(), in_(mat.derived())); } \
 		else { r = EmptyVal; } \
 		return r; }
 
@@ -82,7 +82,7 @@
 		dimension<meta::common_nelems<Mat1, Mat2>::value> dim = reduc_get_length(mat1, mat2); \
 		T r; \
 		if (dim.value() > 0) { \
-			r = internal::Reduc##x_(dim, atags::simd<T, kind>(), ScaFun<T>(), \
+			r = internal::Reduc##x_(type_<T>(), dim, atags::simd<kind>(), ScaFun<T>(), \
 					in_(mat1.derived()), in_(mat2.derived())); } \
 		else { r = EmptyVal; } \
 		return r; }
@@ -96,7 +96,7 @@
 		typename meta::shape<Mat>::type shape = reduc_get_shape(mat); \
 		LMAT_CHECK_DIMS( dmat.nelems() == shape.ncolumns() ); \
 		if (shape.nrows() > 0) { \
-			internal::colwise_##Reduc##x_(shape, atags::simd<T, kind>(), dmat.derived(), \
+			internal::colwise_##Reduc##x_(shape, atags::simd<kind>(), dmat.derived(), \
 					ScaFun<T>(), in_(mat.derived())); \
 		} \
 		else { fill(dmat.derived(), EmptyVal); } }
@@ -110,7 +110,7 @@
 		typename meta::common_shape<Mat1, Mat2>::type shape = reduc_get_shape(mat1, mat2); \
 		LMAT_CHECK_DIMS( dmat.nelems() == shape.ncolumns() ); \
 		if (shape.nrows() > 0) { \
-			internal::colwise_##Reduc##x_(shape, atags::simd<T, kind>(), dmat.derived(), \
+			internal::colwise_##Reduc##x_(shape, atags::simd<kind>(), dmat.derived(), \
 					ScaFun<T>(), in_(mat1.derived()), in_(mat2.derived())); \
 		} \
 		else { fill(dmat.derived(), EmptyVal); } }
@@ -124,7 +124,7 @@
 		typename meta::shape<Mat>::type shape = reduc_get_shape(mat); \
 		LMAT_CHECK_DIMS( dmat.nelems() == shape.nrows() ); \
 		if (shape.ncolumns() > 0) { \
-			internal::rowwise_##Reduc##x_(shape, atags::simd<T, kind>(), dmat.derived(), \
+			internal::rowwise_##Reduc##x_(shape, atags::simd<kind>(), dmat.derived(), \
 					ScaFun<T>(), in_(mat.derived())); \
 		} \
 		else { fill(dmat.derived(), EmptyVal); } }
@@ -138,7 +138,7 @@
 		typename meta::common_shape<Mat1, Mat2>::type shape = reduc_get_shape(mat1, mat2); \
 		LMAT_CHECK_DIMS( dmat.nelems() == shape.nrows() ); \
 		if (shape.ncolumns() > 0) { \
-			internal::rowwise_##Reduc##x_(shape, atags::simd<T, kind>(), dmat.derived(), \
+			internal::rowwise_##Reduc##x_(shape, atags::simd<kind>(), dmat.derived(), \
 					ScaFun<T>(), in_(mat1.derived()), in_(mat2.derived())); \
 		} \
 		else { fill(dmat.derived(), EmptyVal); } }
@@ -374,7 +374,7 @@ namespace lmat
 	inline void colwise_norm(const IRegularMatrix<Mat, T>& mat, IRegularMatrix<DMat, T>& dmat, norms::L2_)
 	{
 		colwise_sqsum(mat, dmat);
-		internal::colwise_post(atags::simd<T, default_simd_kind>(),
+		internal::colwise_post(atags::simd<default_simd_kind>(),
 				mat.ncolumns(), dmat.derived(), math::sqrt_fun<T>());
 	}
 
@@ -402,7 +402,7 @@ namespace lmat
 			IRegularMatrix<DMat, T>& dmat, norms::L2_)
 	{
 		colwise_diff_sqsum(mat1, mat2, dmat);
-		internal::colwise_post(atags::simd<T, default_simd_kind>(),
+		internal::colwise_post(atags::simd<default_simd_kind>(),
 				mat1.ncolumns(), dmat.derived(), math::sqrt_fun<T>());
 	}
 
@@ -430,7 +430,7 @@ namespace lmat
 	inline void rowwise_norm(const IRegularMatrix<Mat, T>& mat, IRegularMatrix<DMat, T>& dmat, norms::L2_)
 	{
 		rowwise_sqsum(mat, dmat);
-		map_to(dmat.derived(), math::sqrt_fun<T>(), dmat.derived());
+		map(math::sqrt_fun<T>())(dmat.shape(), out_(dmat.derived()), in_(dmat.derived()));
 	}
 
 	template<typename T, class Mat, class DMat>
@@ -456,7 +456,7 @@ namespace lmat
 			IRegularMatrix<DMat, T>& dmat, norms::L2_)
 	{
 		rowwise_diff_sqsum(mat1, mat2, dmat);
-		map_to(dmat.derived(), math::sqrt_fun<T>(), dmat.derived());
+		map(math::sqrt_fun<T>())(dmat.shape(), out_(dmat.derived()), in_(dmat.derived()));
 	}
 
 	template<typename T, class Mat1, class Mat2, class DMat>

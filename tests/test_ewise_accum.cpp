@@ -24,35 +24,65 @@
 using namespace lmat;
 using namespace lmat::test;
 
+template<typename T>
 struct my_sum_kernel
 {
-	template<typename T>
+	typedef T value_type;
+
 	LMAT_ENSURE_INLINE
 	void operator() (const T& x, T& s) const
 	{
 		s += x;
 	}
+
+	template<typename Kind>
+	LMAT_ENSURE_INLINE
+	void operator() (const math::simd_pack<T, Kind>& x, math::simd_pack<T, Kind>& s) const
+	{
+		s += x;
+	}
 };
 
+
+template<typename T>
 struct my_max_kernel
 {
-	template<typename T>
+	typedef T value_type;
+
 	LMAT_ENSURE_INLINE
 	void operator() (const T& x, T& s) const
 	{
 		s = math::max(s, x);
 	}
+
+	template<typename Kind>
+	LMAT_ENSURE_INLINE
+	void operator() (const math::simd_pack<T, Kind>& x, math::simd_pack<T, Kind>& s) const
+	{
+		s = math::max(s, x);
+	}
 };
 
+
+template<typename T>
 struct my_min_kernel
 {
-	template<typename T>
+	typedef T value_type;
+
 	LMAT_ENSURE_INLINE
 	void operator() (const T& x, T& s) const
 	{
 		s = math::min(s, x);
 	}
+
+	template<typename Kind>
+	LMAT_ENSURE_INLINE
+	void operator() (const math::simd_pack<T, Kind>& x, math::simd_pack<T, Kind>& s) const
+	{
+		s = math::min(s, x);
+	}
 };
+
 
 
 template<typename U, int M, int N>
@@ -75,8 +105,7 @@ void test_linear_accum()
 	for (index_t i = 0; i < m * n; ++i) v_sum += smat[i];
 
 	double r_sum = 10.0;
-	linear_ewise(U(), shape).apply(my_sum_kernel(),
-			in_(smat), in_out_(r_sum, atags::sum()));
+	ewise(my_sum_kernel<double>(), U())(shape, in_(smat), in_out_(r_sum, atags::sum()));
 
 	ASSERT_APPROX(r_sum, v_sum, 1.0e-12);
 
@@ -86,8 +115,7 @@ void test_linear_accum()
 	for (index_t i = 0; i < m * n; ++i) if (v_max < smat[i]) v_max = smat[i];
 
 	double r_max = 0.5;
-	linear_ewise(U(), shape).apply(my_max_kernel(),
-			in_(smat), in_out_(r_max, atags::max()));
+	ewise(my_max_kernel<double>(), U())(shape, in_(smat), in_out_(r_max, atags::max()));
 
 	ASSERT_EQ( v_max, r_max );
 
@@ -97,8 +125,7 @@ void test_linear_accum()
 	for (index_t i = 0; i < m * n; ++i) if (v_min > smat[i]) v_min = smat[i];
 
 	double r_min = 0.5;
-	linear_ewise(U(), shape).apply(my_min_kernel(),
-			in_(smat), in_out_(r_min, atags::min()));
+	ewise(my_min_kernel<double>(), U())(shape, in_(smat), in_out_(r_min, atags::min()));
 
 	ASSERT_EQ( v_min, r_min );
 }
@@ -124,7 +151,7 @@ void test_percol_accum()
 	for (index_t i = 0; i < m * n; ++i) v_sum += smat[i];
 
 	double r_sum = 10.0;
-	percol_ewise(U(), shape).apply(my_sum_kernel(),
+	percol(ewise(my_sum_kernel<double>(), U()), shape,
 			in_(smat), in_out_(r_sum, atags::sum()));
 
 	ASSERT_APPROX(r_sum, v_sum, 1.0e-12);
@@ -135,7 +162,7 @@ void test_percol_accum()
 	for (index_t i = 0; i < m * n; ++i) if (v_max < smat[i]) v_max = smat[i];
 
 	double r_max = 0.5;
-	percol_ewise(U(), shape).apply(my_max_kernel(),
+	percol(ewise(my_max_kernel<double>(), U()), shape,
 			in_(smat), in_out_(r_max, atags::max()));
 
 	ASSERT_EQ( v_max, r_max );
@@ -146,7 +173,7 @@ void test_percol_accum()
 	for (index_t i = 0; i < m * n; ++i) if (v_min > smat[i]) v_min = smat[i];
 
 	double r_min = 0.5;
-	percol_ewise(U(), shape).apply(my_min_kernel(),
+	percol(ewise(my_min_kernel<double>(), U()), shape,
 			in_(smat), in_out_(r_min, atags::min()));
 
 	ASSERT_EQ( v_min, r_min );
@@ -189,7 +216,7 @@ void test_accum_colwise()
 		}
 	}
 
-	percol_ewise(U(), shape).apply(my_sum_kernel(),
+	percol(ewise(my_sum_kernel<double>(), U()), shape,
 			in_(smat), in_out_(drow, atags::colwise_sum()));
 
 	ASSERT_MAT_APPROX( 1, n, drow, rrow, 1.0e-12 );
@@ -211,7 +238,7 @@ void test_accum_colwise()
 		}
 	}
 
-	percol_ewise(U(), shape).apply(my_max_kernel(),
+	percol(ewise(my_max_kernel<double>(), U()), shape,
 			in_(smat), in_out_(drow, atags::colwise_max()));
 
 	ASSERT_MAT_EQ( 1, n, drow, rrow );
@@ -234,7 +261,7 @@ void test_accum_colwise()
 		}
 	}
 
-	percol_ewise(U(), shape).apply(my_min_kernel(),
+	percol(ewise(my_min_kernel<double>(), U()), shape,
 			in_(smat), in_out_(drow, atags::colwise_min()));
 
 	ASSERT_MAT_EQ( 1, n, drow, rrow );
@@ -277,7 +304,7 @@ void test_accum_rowwise()
 		}
 	}
 
-	percol_ewise(U(), shape).apply(my_sum_kernel(),
+	percol(ewise(my_sum_kernel<double>(), U()), shape,
 			in_(smat), in_out_(dcol, atags::rowwise_sum()));
 
 	ASSERT_MAT_APPROX( m, 1, dcol, rcol, 1.0e-12 );
@@ -299,7 +326,7 @@ void test_accum_rowwise()
 		}
 	}
 
-	percol_ewise(U(), shape).apply(my_max_kernel(),
+	percol(ewise(my_max_kernel<double>(), U()), shape,
 			in_(smat), in_out_(dcol, atags::rowwise_max()));
 
 	ASSERT_MAT_EQ( m, 1, dcol, rcol );
@@ -321,7 +348,7 @@ void test_accum_rowwise()
 		}
 	}
 
-	percol_ewise(U(), shape).apply(my_min_kernel(),
+	percol(ewise(my_min_kernel<double>(), U()), shape,
 			in_(smat), in_out_(dcol, atags::rowwise_min()));
 
 	ASSERT_MAT_EQ( m, 1, dcol, rcol );
@@ -338,14 +365,14 @@ MN_CASE( ewise_accum, linear_scalar )
 
 MN_CASE( ewise_accum, linear_sse )
 {
-	test_linear_accum<atags::simd<double, sse_t>, M, N>();
+	test_linear_accum<atags::simd<sse_t>, M, N>();
 }
 
 #ifdef LMAT_HAS_AVX
 
 MN_CASE( ewise_accum, linear_avx )
 {
-	test_linear_accum<atags::simd<double, avx_t>, M, N>();
+	test_linear_accum<atags::simd<avx_t>, M, N>();
 }
 
 #endif
@@ -376,14 +403,14 @@ MN_CASE( ewise_accum, percol_scalar )
 
 MN_CASE( ewise_accum, percol_sse )
 {
-	test_percol_accum<atags::simd<double, sse_t>, M, N>();
+	test_percol_accum<atags::simd<sse_t>, M, N>();
 }
 
 #ifdef LMAT_HAS_AVX
 
 MN_CASE( ewise_accum, percol_avx )
 {
-	test_percol_accum<atags::simd<double, avx_t>, M, N>();
+	test_percol_accum<atags::simd<avx_t>, M, N>();
 }
 
 #endif
@@ -414,14 +441,14 @@ MN_CASE( ewise_accum, colwise_scalar_cont )
 
 MN_CASE( ewise_accum, colwise_sse_cont )
 {
-	test_accum_colwise<atags::simd<double, sse_t>, cont, M, N>();
+	test_accum_colwise<atags::simd<sse_t>, cont, M, N>();
 }
 
 #ifdef LMAT_HAS_AVX
 
 MN_CASE( ewise_accum, colwise_avx_cont )
 {
-	test_accum_colwise<atags::simd<double, avx_t>, cont, M, N>();
+	test_accum_colwise<atags::simd<avx_t>, cont, M, N>();
 }
 
 #endif
@@ -433,14 +460,14 @@ MN_CASE( ewise_accum, colwise_scalar_bloc )
 
 MN_CASE( ewise_accum, colwise_sse_bloc )
 {
-	test_accum_colwise<atags::simd<double, sse_t>, bloc, M, N>();
+	test_accum_colwise<atags::simd<sse_t>, bloc, M, N>();
 }
 
 #ifdef LMAT_HAS_AVX
 
 MN_CASE( ewise_accum, colwise_avx_bloc )
 {
-	test_accum_colwise<atags::simd<double, avx_t>, bloc, M, N>();
+	test_accum_colwise<atags::simd<avx_t>, bloc, M, N>();
 }
 
 #endif
@@ -452,14 +479,14 @@ MN_CASE( ewise_accum, colwise_scalar_grid )
 
 MN_CASE( ewise_accum, colwise_sse_grid )
 {
-	test_accum_colwise<atags::simd<double, sse_t>, grid, M, N>();
+	test_accum_colwise<atags::simd<sse_t>, grid, M, N>();
 }
 
 #ifdef LMAT_HAS_AVX
 
 MN_CASE( ewise_accum, colwise_avx_grid )
 {
-	test_accum_colwise<atags::simd<double, avx_t>, grid, M, N>();
+	test_accum_colwise<atags::simd<avx_t>, grid, M, N>();
 }
 
 #endif
@@ -524,14 +551,14 @@ MN_CASE( ewise_accum, rowwise_scalar_cont )
 
 MN_CASE( ewise_accum, rowwise_sse_cont )
 {
-	test_accum_rowwise<atags::simd<double, sse_t>, cont, M, N>();
+	test_accum_rowwise<atags::simd<sse_t>, cont, M, N>();
 }
 
 #ifdef LMAT_HAS_AVX
 
 MN_CASE( ewise_accum, rowwise_avx_cont )
 {
-	test_accum_rowwise<atags::simd<double, avx_t>, cont, M, N>();
+	test_accum_rowwise<atags::simd<avx_t>, cont, M, N>();
 }
 
 #endif
@@ -543,14 +570,14 @@ MN_CASE( ewise_accum, rowwise_scalar_bloc )
 
 MN_CASE( ewise_accum, rowwise_sse_bloc )
 {
-	test_accum_rowwise<atags::simd<double, sse_t>, bloc, M, N>();
+	test_accum_rowwise<atags::simd<sse_t>, bloc, M, N>();
 }
 
 #ifdef LMAT_HAS_AVX
 
 MN_CASE( ewise_accum, rowwise_avx_bloc )
 {
-	test_accum_rowwise<atags::simd<double, avx_t>, bloc, M, N>();
+	test_accum_rowwise<atags::simd<avx_t>, bloc, M, N>();
 }
 
 #endif

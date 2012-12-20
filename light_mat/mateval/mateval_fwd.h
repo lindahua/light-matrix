@@ -13,11 +13,30 @@
 #ifndef LIGHTMAT_MATEVAL_FWD_H_
 #define LIGHTMAT_MATEVAL_FWD_H_
 
-#include <light_mat/math/simd_base.h>
+#include <light_mat/math/simd_packs.h>
 #include <light_mat/matrix/matrix_concepts.h>
 
 namespace lmat
 {
+
+	// type inference devices
+
+	namespace meta
+	{
+		template<class Kernel>
+		struct kernel_value_type
+		{
+			typedef typename Kernel::value_type type;
+		};
+
+		template<class Fun>
+		struct fun_value_type
+		{
+			typedef typename Fun::value_type type;
+		};
+	}
+
+
 	// access tags
 
 	namespace atags
@@ -26,7 +45,7 @@ namespace lmat
 
 		struct scalar { };
 
-		template<typename T, typename Kind>
+		template<typename Kind>
 		struct simd { };
 
 		// access patterns
@@ -48,6 +67,9 @@ namespace lmat
 		struct rowwise_max { };
 		struct rowwise_min { };
 	}
+
+
+	typedef atags::simd<default_simd_kind> default_access_unit_t;
 
 	// argument wrapper
 

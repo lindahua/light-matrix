@@ -94,7 +94,7 @@ namespace lmat
 
 
 	template<typename T, typename Kind>
-	class contvec_reader<T, atags::simd<T, Kind> > : public simd_vec_accessor_base
+	class contvec_reader<T, atags::simd<Kind> > : public simd_vec_accessor_base
 	{
 	public:
 		typedef T scalar_type;
@@ -175,7 +175,7 @@ namespace lmat
 
 
 	template<typename T, typename Kind>
-	class single_reader<T, atags::simd<T, Kind> > : public simd_vec_accessor_base
+	class single_reader<T, atags::simd<Kind> > : public simd_vec_accessor_base
 	{
 	public:
 		typedef T scalar_type;
@@ -333,7 +333,7 @@ namespace lmat
 
 
 	template<typename T, typename Kind>
-	class contvec_writer<T, atags::simd<T, Kind> > : public simd_vec_accessor_base
+	class contvec_writer<T, atags::simd<Kind> > : public simd_vec_accessor_base
 	{
 	public:
 		typedef T scalar_type;
@@ -524,7 +524,7 @@ namespace lmat
 
 
 	template<typename T, typename Kind>
-	class contvec_updater<T, atags::simd<T, Kind> > : public simd_vec_accessor_base
+	class contvec_updater<T, atags::simd<Kind> > : public simd_vec_accessor_base
 	{
 	public:
 		typedef T scalar_type;
@@ -710,7 +710,7 @@ namespace lmat
 	};
 
 	template<typename T, typename Kind>
-	class sum_accumulator<T, atags::simd<T, Kind> > : public simd_vec_accessor_base
+	class sum_accumulator<T, atags::simd<Kind> > : public simd_vec_accessor_base
 	{
 	public:
 		typedef math::simd_pack<T, Kind> pack_type;
@@ -785,7 +785,7 @@ namespace lmat
 	};
 
 	template<typename T, typename Kind>
-	class max_accumulator<T, atags::simd<T, Kind> > : public simd_vec_accessor_base
+	class max_accumulator<T, atags::simd<Kind> > : public simd_vec_accessor_base
 	{
 	public:
 		typedef math::simd_pack<T, Kind> pack_type;
@@ -861,7 +861,7 @@ namespace lmat
 	};
 
 	template<typename T, typename Kind>
-	class min_accumulator<T, atags::simd<T, Kind> > : public simd_vec_accessor_base
+	class min_accumulator<T, atags::simd<Kind> > : public simd_vec_accessor_base
 	{
 	public:
 		typedef math::simd_pack<T, Kind> pack_type;
