@@ -170,7 +170,9 @@ set(MATRIX_EVAL_HS
     ${INC}/mateval/ewise_eval.h)
     
 set(MATRIX_REDUC_HS
+    ${INC}/mateval/internal/mat_fold_internal.h
     ${INC}/mateval/internal/mat_reduce_internal.h
+    ${INC}/mateval/mat_fold.h
     ${INC}/mateval/mat_reduce.h)
     
               
