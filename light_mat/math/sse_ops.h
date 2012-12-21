@@ -209,13 +209,13 @@ namespace lmat { namespace math {
 	}
 
 	LMAT_ENSURE_INLINE
-	inline sse_f32pk clip(const sse_f32pk& x, const sse_f32pk& lb, const sse_f32pk& ub)
+	inline sse_f32pk clamp(const sse_f32pk& x, const sse_f32pk& lb, const sse_f32pk& ub)
 	{
 		return (min)((max)(x, lb), ub);
 	}
 
 	LMAT_ENSURE_INLINE
-	inline sse_f64pk clip(const sse_f64pk& x, const sse_f64pk& lb, const sse_f64pk& ub)
+	inline sse_f64pk clamp(const sse_f64pk& x, const sse_f64pk& lb, const sse_f64pk& ub)
 	{
 		return (min)((max)(x, lb), ub);
 	}
@@ -641,52 +641,52 @@ namespace lmat { namespace math {
 	 ********************************************/
 
 	LMAT_ENSURE_INLINE
-	inline sse_f32bpk is_neg(const sse_f32pk& a)
+	inline sse_f32bpk signbit(const sse_f32pk& a)
 	{
 		return internal::sse_is_neg_ps(a);
 	}
 
 	LMAT_ENSURE_INLINE
-	inline sse_f64bpk is_neg(const sse_f64pk& a)
+	inline sse_f64bpk signbit(const sse_f64pk& a)
 	{
 		return internal::sse_is_neg_pd(a);
 	}
 
 
 	LMAT_ENSURE_INLINE
-	inline sse_f32bpk is_finite(const sse_f32pk& a)
+	inline sse_f32bpk isfinite(const sse_f32pk& a)
 	{
 		return internal::sse_is_finite_ps(a);
 	}
 
 	LMAT_ENSURE_INLINE
-	inline sse_f64bpk is_finite(const sse_f64pk& a)
+	inline sse_f64bpk isfinite(const sse_f64pk& a)
 	{
 		return internal::sse_is_finite_pd(a);
 	}
 
 
 	LMAT_ENSURE_INLINE
-	inline sse_f32bpk is_inf(const sse_f32pk& a)
+	inline sse_f32bpk isinf(const sse_f32pk& a)
 	{
 		return internal::sse_is_inf_ps(a);
 	}
 
 	LMAT_ENSURE_INLINE
-	inline sse_f64bpk is_inf(const sse_f64pk& a)
+	inline sse_f64bpk isinf(const sse_f64pk& a)
 	{
 		return internal::sse_is_inf_pd(a);
 	}
 
 
 	LMAT_ENSURE_INLINE
-	inline sse_f32bpk is_nan(const sse_f32pk& a)
+	inline sse_f32bpk isnan(const sse_f32pk& a)
 	{
 		return internal::sse_is_nan_ps(a);
 	}
 
 	LMAT_ENSURE_INLINE
-	inline sse_f64bpk is_nan(const sse_f64pk& a)
+	inline sse_f64bpk isnan(const sse_f64pk& a)
 	{
 		return internal::sse_is_nan_pd(a);
 	}

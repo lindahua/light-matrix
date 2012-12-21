@@ -844,17 +844,17 @@ struct sse_fpclassify_tbody<float>
 		bint is_nan_r1[4] = { 0, 0, 0, 0 };
 		bint is_nan_r2[4] = { 0, 0, -1, -1 };
 
-		ASSERT_SIMD_EQ( math::is_neg(a1), is_neg_r1  );
-		ASSERT_SIMD_EQ( math::is_neg(a2), is_neg_r2  );
+		ASSERT_SIMD_EQ( math::signbit(a1), is_neg_r1  );
+		ASSERT_SIMD_EQ( math::signbit(a2), is_neg_r2  );
 
-		ASSERT_SIMD_EQ( math::is_finite(a1), is_finite_r1  );
-		ASSERT_SIMD_EQ( math::is_finite(a2), is_finite_r2  );
+		ASSERT_SIMD_EQ( math::isfinite(a1), is_finite_r1  );
+		ASSERT_SIMD_EQ( math::isfinite(a2), is_finite_r2  );
 
-		ASSERT_SIMD_EQ( math::is_inf(a1), is_inf_r1  );
-		ASSERT_SIMD_EQ( math::is_inf(a2), is_inf_r2  );
+		ASSERT_SIMD_EQ( math::isinf(a1), is_inf_r1  );
+		ASSERT_SIMD_EQ( math::isinf(a2), is_inf_r2  );
 
-		ASSERT_SIMD_EQ( math::is_nan(a1), is_nan_r1  );
-		ASSERT_SIMD_EQ( math::is_nan(a2), is_nan_r2  );
+		ASSERT_SIMD_EQ( math::isnan(a1), is_nan_r1  );
+		ASSERT_SIMD_EQ( math::isnan(a2), is_nan_r2  );
 	}
 };
 
@@ -904,26 +904,26 @@ struct sse_fpclassify_tbody<double>
 		bint is_nan_r3[2] = { 0, 0 };
 		bint is_nan_r4[2] = { -1, -1 };
 
-		ASSERT_SIMD_EQ( math::is_neg(a1), is_neg_r1  );
-		ASSERT_SIMD_EQ( math::is_neg(a2), is_neg_r2  );
-		ASSERT_SIMD_EQ( math::is_neg(a3), is_neg_r3  );
-		ASSERT_SIMD_EQ( math::is_neg(a4), is_neg_r4  );
+		ASSERT_SIMD_EQ( math::signbit(a1), is_neg_r1  );
+		ASSERT_SIMD_EQ( math::signbit(a2), is_neg_r2  );
+		ASSERT_SIMD_EQ( math::signbit(a3), is_neg_r3  );
+		ASSERT_SIMD_EQ( math::signbit(a4), is_neg_r4  );
 
-		ASSERT_SIMD_EQ( math::is_finite(a1), is_finite_r1  );
-		ASSERT_SIMD_EQ( math::is_finite(a2), is_finite_r2  );
+		ASSERT_SIMD_EQ( math::isfinite(a1), is_finite_r1  );
+		ASSERT_SIMD_EQ( math::isfinite(a2), is_finite_r2  );
 
-		ASSERT_SIMD_EQ( math::is_finite(a3), is_finite_r3  );
-		ASSERT_SIMD_EQ( math::is_finite(a4), is_finite_r4  );
+		ASSERT_SIMD_EQ( math::isfinite(a3), is_finite_r3  );
+		ASSERT_SIMD_EQ( math::isfinite(a4), is_finite_r4  );
 
-		ASSERT_SIMD_EQ( math::is_inf(a1), is_inf_r1  );
-		ASSERT_SIMD_EQ( math::is_inf(a2), is_inf_r2  );
-		ASSERT_SIMD_EQ( math::is_inf(a3), is_inf_r3 );
-		ASSERT_SIMD_EQ( math::is_inf(a4), is_inf_r4  );
+		ASSERT_SIMD_EQ( math::isinf(a1), is_inf_r1  );
+		ASSERT_SIMD_EQ( math::isinf(a2), is_inf_r2  );
+		ASSERT_SIMD_EQ( math::isinf(a3), is_inf_r3 );
+		ASSERT_SIMD_EQ( math::isinf(a4), is_inf_r4  );
 
-		ASSERT_SIMD_EQ( math::is_nan(a1), is_nan_r1  );
-		ASSERT_SIMD_EQ( math::is_nan(a2), is_nan_r2  );
-		ASSERT_SIMD_EQ( math::is_nan(a3), is_nan_r3  );
-		ASSERT_SIMD_EQ( math::is_nan(a4), is_nan_r4  );
+		ASSERT_SIMD_EQ( math::isnan(a1), is_nan_r1  );
+		ASSERT_SIMD_EQ( math::isnan(a2), is_nan_r2  );
+		ASSERT_SIMD_EQ( math::isnan(a3), is_nan_r3  );
+		ASSERT_SIMD_EQ( math::isnan(a4), is_nan_r4  );
 	}
 };
 
