@@ -130,43 +130,50 @@ namespace lmat
 		return ewise(map_kernel<Fun>(fun), default_access_unit_t());
 	}
 
+	template<typename T, class DMat, class Fun, typename... Wraps>
+	LMAT_ENSURE_INLINE
+	inline void map_to(IRegularMatrix<DMat, T>& dmat, const Fun& fun, const Wraps&... wraps)
+	{
+		map(fun)(dmat.shape(), out_(dmat.derived()), wraps...);
+	}
+
 
 	// accum
 
-	template<typename Shape, typename T, class DMat, class SMat>
+	template<typename T, class DMat, class SMat>
 	LMAT_ENSURE_INLINE
-	inline void accum_to(const Shape& shape, IRegularMatrix<DMat, T>& dmat, const IRegularMatrix<SMat, T>& smat)
+	inline void accum_to(IRegularMatrix<DMat, T>& dmat, const IRegularMatrix<SMat, T>& smat)
 	{
-		return ewise(accum_kernel<T>())(shape, in_out_(dmat.derived()), in_(smat.derived()));
+		return ewise(accum_kernel<T>())(dmat.shape(), in_out_(dmat.derived()), in_(smat.derived()));
 	}
 
-	template<typename Shape, typename T, class DMat, class SMat>
+	template<typename T, class DMat, class SMat>
 	LMAT_ENSURE_INLINE
-	inline void accum_to(const Shape& shape, IRegularMatrix<DMat, T>& dmat, const T& c, const IRegularMatrix<SMat, T>& smat)
+	inline void accum_to(IRegularMatrix<DMat, T>& dmat, const T& c, const IRegularMatrix<SMat, T>& smat)
 	{
-		return ewise(accumx_kernel<T>())(shape, in_out_(dmat.derived()), in_(c, atags::single()), in_(smat.derived()));
+		return ewise(accumx_kernel<T>())(dmat.shape(), in_out_(dmat.derived()), in_(c, atags::single()), in_(smat.derived()));
 	}
 
-	template<typename Shape, typename T, class DMat, class CMat, class SMat>
+	template<typename T, class DMat, class CMat, class SMat>
 	LMAT_ENSURE_INLINE
-	inline void accum_to(const Shape& shape, IRegularMatrix<DMat, T>& dmat, const IRegularMatrix<CMat, T>& cmat, const IRegularMatrix<SMat, T>& smat)
+	inline void accum_to(IRegularMatrix<DMat, T>& dmat, const IRegularMatrix<CMat, T>& cmat, const IRegularMatrix<SMat, T>& smat)
 	{
-		return ewise(accumx_kernel<T>())(shape, in_out_(dmat.derived()), in_(cmat.derived()), in_(smat.derived()));
+		return ewise(accumx_kernel<T>())(dmat.shape(), in_out_(dmat.derived()), in_(cmat.derived()), in_(smat.derived()));
 	}
 
 
-	template<typename Shape, typename T, class DMat, typename Fun, typename... Wraps>
+	template<typename T, class DMat, typename Fun, typename... Wraps>
 	LMAT_ENSURE_INLINE
-	inline void accumf_to(const Shape& shape, IRegularMatrix<DMat, T>& dmat, const Fun& fun, const Wraps&... wraps)
+	inline void accumf_to(IRegularMatrix<DMat, T>& dmat, const Fun& fun, const Wraps&... wraps)
 	{
-		return ewise(accumf_kernel<Fun>(fun))(shape, in_out_(dmat.derived()), wraps...);
+		return ewise(accumf_kernel<Fun>(fun))(dmat.shape(), in_out_(dmat.derived()), wraps...);
 	}
 
-	template<typename Shape, typename T, class DMat, typename Fun, typename... Wraps>
+	template<typename T, class DMat, typename Fun, typename... Wraps>
 	LMAT_ENSURE_INLINE
-	inline void accumf_to(const Shape& shape, IRegularMatrix<DMat, T>& dmat, const T& c, const Fun& fun, const Wraps&... wraps)
+	inline void accumf_to(IRegularMatrix<DMat, T>& dmat, const T& c, const Fun& fun, const Wraps&... wraps)
 	{
-		return ewise(accumfx_kernel<Fun>(fun))(shape, in_out_(dmat.derived()), in_(c, atags::single()), wraps...);
+		return ewise(accumfx_kernel<Fun>(fun))(dmat.shape(), in_out_(dmat.derived()), in_(c, atags::single()), wraps...);
 	}
 
 
