@@ -215,13 +215,13 @@ namespace lmat { namespace math {
 	}
 
 	LMAT_ENSURE_INLINE
-	inline avx_f32pk clip(const avx_f32pk& x, const avx_f32pk& lb, const avx_f32pk& ub)
+	inline avx_f32pk clamp(const avx_f32pk& x, const avx_f32pk& lb, const avx_f32pk& ub)
 	{
 		return (min)((max)(x, lb), ub);
 	}
 
 	LMAT_ENSURE_INLINE
-	inline avx_f64pk clip(const avx_f64pk& x, const avx_f64pk& lb, const avx_f64pk& ub)
+	inline avx_f64pk clamp(const avx_f64pk& x, const avx_f64pk& lb, const avx_f64pk& ub)
 	{
 		return (min)((max)(x, lb), ub);
 	}
@@ -591,7 +591,7 @@ namespace lmat { namespace math {
 	 ********************************************/
 
 	LMAT_ENSURE_INLINE
-	inline avx_f32bpk is_neg(const avx_f32pk& a)
+	inline avx_f32bpk signbit(const avx_f32pk& a)
 	{
 		return internal::combine_m128(
 				internal::sse_is_neg_ps(a.get_low()),
@@ -599,7 +599,7 @@ namespace lmat { namespace math {
 	}
 
 	LMAT_ENSURE_INLINE
-	inline avx_f64bpk is_neg(const avx_f64pk& a)
+	inline avx_f64bpk signbit(const avx_f64pk& a)
 	{
 		return internal::combine_m128d(
 				internal::sse_is_neg_pd(a.get_low()),
@@ -608,7 +608,7 @@ namespace lmat { namespace math {
 
 
 	LMAT_ENSURE_INLINE
-	inline avx_f32bpk is_finite(const avx_f32pk& a)
+	inline avx_f32bpk isfinite(const avx_f32pk& a)
 	{
 		return internal::combine_m128(
 				internal::sse_is_finite_ps(a.get_low()),
@@ -616,7 +616,7 @@ namespace lmat { namespace math {
 	}
 
 	LMAT_ENSURE_INLINE
-	inline avx_f64bpk is_finite(const avx_f64pk& a)
+	inline avx_f64bpk isfinite(const avx_f64pk& a)
 	{
 		return internal::combine_m128d(
 				internal::sse_is_finite_pd(a.get_low()),
@@ -625,7 +625,7 @@ namespace lmat { namespace math {
 
 
 	LMAT_ENSURE_INLINE
-	inline avx_f32bpk is_inf(const avx_f32pk& a)
+	inline avx_f32bpk isinf(const avx_f32pk& a)
 	{
 		return internal::combine_m128(
 				internal::sse_is_inf_ps(a.get_low()),
@@ -633,7 +633,7 @@ namespace lmat { namespace math {
 	}
 
 	LMAT_ENSURE_INLINE
-	inline avx_f64bpk is_inf(const avx_f64pk& a)
+	inline avx_f64bpk isinf(const avx_f64pk& a)
 	{
 		return internal::combine_m128d(
 				internal::sse_is_inf_pd(a.get_low()),
@@ -642,7 +642,7 @@ namespace lmat { namespace math {
 
 
 	LMAT_ENSURE_INLINE
-	inline avx_f32bpk is_nan(const avx_f32pk& a)
+	inline avx_f32bpk isnan(const avx_f32pk& a)
 	{
 		return internal::combine_m128(
 				internal::sse_is_nan_ps(a.get_low()),
@@ -650,7 +650,7 @@ namespace lmat { namespace math {
 	}
 
 	LMAT_ENSURE_INLINE
-	inline avx_f64bpk is_nan(const avx_f64pk& a)
+	inline avx_f64bpk isnan(const avx_f64pk& a)
 	{
 		return internal::combine_m128d(
 				internal::sse_is_nan_pd(a.get_low()),

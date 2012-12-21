@@ -7,12 +7,12 @@
  */
 
 
-#include "test_base.h"
+#include "../test_base.h"
 
 #define DEFAULT_M_VALUE 13
 #define DEFAULT_N_VALUE 9
 
-#include "multimat_supp.h"
+#include "../multimat_supp.h"
 
 #include <light_mat/matrix/matrix_classes.h>
 #include <light_mat/math/math_functors.h>
@@ -272,7 +272,30 @@ MN_CASE( linear_ewise, avx_map )
 #endif
 
 
-MN_CASE( linear_ewise, accum )
+MN_CASE( linear_ewise, map_to )
+{
+	const index_t m = M == 0 ? DM : M;
+	const index_t n = N == 0 ? DN : N;
+
+	dense_matrix<double, M, N> a(m, n);
+	dense_matrix<double, M, N> s1(m, n);
+	dense_matrix<double, M, N> s2(m, n);
+
+	do_fill_rand( s1.ptr_data(), m * n );
+	do_fill_rand( s2.ptr_data(), m * n );
+
+	matrix_shape<M, N> shape(m, n);
+	dense_matrix<double, M, N> r(m, n);
+
+	for (index_t i = 0; i < m * n; ++i) r[i] = s1[i] + s2[i];
+
+	map_to(a, math::add_fun<double>(), in_(s1), in_(s2));
+
+	ASSERT_MAT_EQ(m, n, a, r);
+}
+
+
+MN_CASE( linear_ewise, accum_to )
 {
 	const index_t m = M == 0 ? DM : M;
 	const index_t n = N == 0 ? DN : N;
@@ -291,19 +314,52 @@ MN_CASE( linear_ewise, accum )
 	dense_matrix<double, M, N> r(m, n);
 
 	for (index_t i = 0; i < m * n; ++i) r[i] = a[i] + s[i];
-	accum_to(shape, a, s);
+	accum_to(a, s);
 
 	ASSERT_MAT_EQ( m, n, a, r );
 
 	for (index_t i = 0; i < m * n; ++i) r[i] = a[i] + cv * s[i];
-	accum_to(shape, a, cv, s);
+	accum_to(a, cv, s);
 
 	ASSERT_MAT_EQ( m, n, a, r );
 
 	for (index_t i = 0; i < m * n; ++i) r[i] = a[i] + c[i] * s[i];
-	accum_to(shape, a, c, s);
+	accum_to(a, c, s);
 
 	ASSERT_MAT_EQ(m, n, a, r );
+}
+
+
+MN_CASE( linear_ewise, accumf_to )
+{
+	const index_t m = M == 0 ? DM : M;
+	const index_t n = N == 0 ? DN : N;
+
+	dense_matrix<double, M, N> a(m, n);
+	dense_matrix<double, M, N> s(m, n);
+	dense_matrix<double, M, N> c(m, n);
+
+	do_fill_rand( a.ptr_data(), m * n );
+	do_fill_rand( s.ptr_data(), m * n );
+	do_fill_rand( c.ptr_data(), m * n );
+
+	double cv = c[0] * 2.0;
+
+	matrix_shape<M, N> shape(m, n);
+	dense_matrix<double, M, N> r(m, n);
+
+	math::sqr_fun<double> f;
+
+	for (index_t i = 0; i < m * n; ++i) r[i] = a[i] + f(s[i]);
+	accumf_to(a, f, in_(s));
+
+	ASSERT_MAT_APPROX( m, n, a, r, 1.0e-12 );
+
+	for (index_t i = 0; i < m * n; ++i) r[i] = a[i] + cv * f(s[i]);
+	accumf_to(a, cv, f, in_(s));
+
+	ASSERT_MAT_APPROX( m, n, a, r, 1.0e-12 );
+
 }
 
 
@@ -383,10 +439,19 @@ END_TPACK
 
 #endif
 
-
-BEGIN_TPACK( linear_ewise_accum )
-	ADD_MN_CASE_3X3( linear_ewise, accum, DM, DN )
+BEGIN_TPACK( linear_ewise_map_to )
+	ADD_MN_CASE_3X3( linear_ewise, map_to, DM, DN )
 END_TPACK
+
+BEGIN_TPACK( linear_ewise_accum_to )
+	ADD_MN_CASE_3X3( linear_ewise, accum_to, DM, DN )
+END_TPACK
+
+BEGIN_TPACK( linear_ewise_accumf_to )
+	ADD_MN_CASE_3X3( linear_ewise, accumf_to , DM, DN )
+END_TPACK
+
+
 
 BEGIN_MAIN_SUITE
 	ADD_TPACK( linear_ewise_scalar_cont_cont )
@@ -414,7 +479,9 @@ BEGIN_MAIN_SUITE
 	ADD_TPACK( linear_ewise_avx_map )
 #endif
 
-	ADD_TPACK( linear_ewise_accum )
+	ADD_TPACK( linear_ewise_map_to )
+	ADD_TPACK( linear_ewise_accum_to )
+	ADD_TPACK( linear_ewise_accumf_to )
 END_MAIN_SUITE
 
 

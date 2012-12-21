@@ -7,7 +7,7 @@
  */
 
 
-#include "test_base.h"
+#include "../test_base.h"
 
 #include <light_mat/matrix/step_vecs.h>
 #include <light_mat/common/block.h>

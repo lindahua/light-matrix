@@ -6,7 +6,7 @@
  * @author Dahua Lin
  */
 
-#include "test_base.h"
+#include "../test_base.h"
 
 #include <light_mat/matrix/ref_matrix.h>
 #include <light_mat/common/block.h>

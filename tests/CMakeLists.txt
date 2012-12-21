@@ -186,37 +186,36 @@ set(MATRIX_HS
 
 add_library(test_main STATIC test_main.cpp)
 
-add_executable(test_meta ${COMMON_HS} test_meta.cpp)
-add_executable(test_memory ${COMMON_HS} test_memory.cpp)
-add_executable(test_blocks ${COMMON_HS} test_blocks.cpp)
+add_executable(test_memory ${COMMON_HS} common/test_memory.cpp)
+add_executable(test_blocks ${COMMON_HS} common/test_blocks.cpp)
 
 set(SSE_TEST_HS
     ${COMMON_HS}
     ${SIMD_BASE_HS}
     ${SSE_HS})
 
-add_executable(test_sse_packs ${SSE_TEST_HS} test_sse_packs.cpp)
-add_executable(test_sse_bpacks ${SSE_TEST_HS} test_sse_bpacks.cpp)
-add_executable(test_sse_ops ${SSE_TEST_HS} test_sse_ops.cpp)
-add_executable(test_sse_round ${SSE_TEST_HS} test_sse_round.cpp)
-add_executable(test_sse_reduce ${SSE_TEST_HS} test_sse_reduce.cpp)
+add_executable(test_sse_packs  ${SSE_TEST_HS} math/test_sse_packs.cpp)
+add_executable(test_sse_bpacks ${SSE_TEST_HS} math/test_sse_bpacks.cpp)
+add_executable(test_sse_ops    ${SSE_TEST_HS} math/test_sse_ops.cpp)
+add_executable(test_sse_round  ${SSE_TEST_HS} math/test_sse_round.cpp)
+add_executable(test_sse_reduce ${SSE_TEST_HS} math/test_sse_reduce.cpp)
 
 set(AVX_TEST_HS
     ${COMMON_HS}
     ${SIMD_BASE_HS}
     ${AVX_HS})
 
-add_executable(test_avx_packs ${AVX_TEST_HS} test_avx_packs.cpp)
-add_executable(test_avx_bpacks ${AVX_TEST_HS} test_avx_bpacks.cpp)
-add_executable(test_avx_ops ${AVX_TEST_HS} test_avx_ops.cpp)
-add_executable(test_avx_round ${AVX_TEST_HS} test_avx_round.cpp)
-add_executable(test_avx_reduce ${AVX_TEST_HS} test_avx_reduce.cpp)
+add_executable(test_avx_packs  ${AVX_TEST_HS} math/test_avx_packs.cpp)
+add_executable(test_avx_bpacks ${AVX_TEST_HS} math/test_avx_bpacks.cpp)
+add_executable(test_avx_ops    ${AVX_TEST_HS} math/test_avx_ops.cpp)
+add_executable(test_avx_round  ${AVX_TEST_HS} math/test_avx_round.cpp)
+add_executable(test_avx_reduce ${AVX_TEST_HS} math/test_avx_reduce.cpp)
 
 
 if (SVML_PATH)
 
-add_executable(test_sse_math_svml ${SSE_TEST_HS} test_sse_math.cpp)
-add_executable(test_avx_math_svml ${AVX_TEST_HS} test_avx_math.cpp)
+add_executable(test_sse_math_svml ${SSE_TEST_HS} math/test_sse_math.cpp)
+add_executable(test_avx_math_svml ${AVX_TEST_HS} math/test_avx_math.cpp)
 
 set_target_properties(test_sse_math_svml
 	PROPERTIES
@@ -244,8 +243,8 @@ set(DENSE_MAT_HS
     ${MATRIX_BASE_HS}
     ${INC}/matrix/dense_matrix.h)
 
-add_executable(test_dense_mat ${DENSE_MAT_HS} test_dense_mat.cpp)
-add_executable(test_dense_vec ${DENSE_MAT_HS} test_dense_vec.cpp) 
+add_executable(test_dense_mat ${DENSE_MAT_HS} matrix/test_dense_mat.cpp)
+add_executable(test_dense_vec ${DENSE_MAT_HS} matrix/test_dense_vec.cpp) 
 
 set(REF_MAT_HS
     ${COMMON_HS}
@@ -257,33 +256,33 @@ set(REF_MAT_HS
     ${INC}/matrix/ref_grid.h
     ${INC}/matrix/step_vecs.h)
     
-add_executable(test_ref_mat ${REF_MAT_HS} test_ref_mat.cpp)
-add_executable(test_ref_vec ${REF_MAT_HS} test_ref_vec.cpp)
-add_executable(test_ref_block ${REF_MAT_HS} test_ref_block.cpp)
-add_executable(test_ref_grid ${REF_MAT_HS} test_ref_grid.cpp)
-add_executable(test_step_vec ${REF_MAT_HS} test_step_vec.cpp)
+add_executable(test_ref_mat   ${REF_MAT_HS} matrix/test_ref_mat.cpp)
+add_executable(test_ref_vec   ${REF_MAT_HS} matrix/test_ref_vec.cpp)
+add_executable(test_ref_block ${REF_MAT_HS} matrix/test_ref_block.cpp)
+add_executable(test_ref_grid  ${REF_MAT_HS} matrix/test_ref_grid.cpp)
+add_executable(test_step_vec  ${REF_MAT_HS} matrix/test_step_vec.cpp)
 
-add_executable(test_mat_props ${REF_MAT_HS} test_mat_props.cpp)
-add_executable(test_mat_fill ${REF_MAT_HS} test_mat_fill.cpp)
-add_executable(test_mat_copy ${REF_MAT_HS} test_mat_copy.cpp)
-add_executable(test_dense_eval ${MATRIX_HS} test_dense_eval.cpp)
+add_executable(test_mat_props  ${REF_MAT_HS} matrix/test_mat_props.cpp)
+add_executable(test_mat_fill   ${REF_MAT_HS} matrix/test_mat_fill.cpp)
+add_executable(test_mat_copy   ${REF_MAT_HS} matrix/test_mat_copy.cpp)
+add_executable(test_dense_eval ${MATRIX_HS}  matrix/test_dense_eval.cpp)
 
 # suppress bogus free-nonheap-object complaint under GCC
 if (${CMAKE_CXX_COMPILER_ID} MATCHES "GNU")
 set_target_properties(test_dense_eval PROPERTIES COMPILE_FLAGS "-Wno-free-nonheap-object")
 endif (${CMAKE_CXX_COMPILER_ID} MATCHES "GNU")
 
-add_executable(test_mat_vecviews ${MATRIX_HS} test_mat_vecviews.cpp)
-add_executable(test_mat_matviews ${MATRIX_HS} test_mat_matviews.cpp)
+add_executable(test_mat_vecviews ${MATRIX_HS} matrix/test_mat_vecviews.cpp)
+add_executable(test_mat_matviews ${MATRIX_HS} matrix/test_mat_matviews.cpp)
 
 
 set(EWISE_EVAL_HS
     ${MATRIX_HS}
     ${MATRIX_EVAL_HS})
     
-add_executable(test_linear_ewise ${EWISE_EVAL_HS} test_linear_ewise.cpp)    
-add_executable(test_percol_ewise ${EWISE_EVAL_HS} test_percol_ewise.cpp)
-add_executable(test_ewise_accum ${EWISE_EVAL_HS} test_ewise_accum.cpp)
+add_executable(test_linear_ewise ${EWISE_EVAL_HS} mateval/test_linear_ewise.cpp)    
+add_executable(test_percol_ewise ${EWISE_EVAL_HS} mateval/test_percol_ewise.cpp)
+add_executable(test_ewise_accum ${EWISE_EVAL_HS}  mateval/test_ewise_accum.cpp)
 
 
 set(REDUC_HS
@@ -291,15 +290,14 @@ set(REDUC_HS
     ${MATRIX_EVAL_HS}
     ${MATRIX_REDUC_HS})
 
-add_executable(test_full_reduce ${REDUC_HS} test_full_reduce.cpp)
-add_executable(test_colwise_reduce ${REDUC_HS} test_colwise_reduce.cpp)
-add_executable(test_rowwise_reduce ${REDUC_HS} test_rowwise_reduce.cpp)
+add_executable(test_full_reduce    ${REDUC_HS} mateval/test_full_reduce.cpp)
+add_executable(test_colwise_reduce ${REDUC_HS} mateval/test_colwise_reduce.cpp)
+add_executable(test_rowwise_reduce ${REDUC_HS} mateval/test_rowwise_reduce.cpp)
 
 
 # Link to test_main
 
 set(LMAT_TEST_NAMES
-    test_meta
     test_memory
 	test_blocks
 	test_sse_packs

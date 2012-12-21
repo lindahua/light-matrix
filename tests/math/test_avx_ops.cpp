@@ -819,10 +819,10 @@ struct avx_fpclassify_tbody<float>
 		bint is_inf_r1   [8] = { 0, 0, 0, 0, -1, -1, 0, 0 };
 		bint is_nan_r1   [8] = { 0, 0, 0, 0, 0, 0, -1, -1 };
 
-		ASSERT_SIMD_EQ( math::is_neg(a1), is_neg_r1  );
-		ASSERT_SIMD_EQ( math::is_finite(a1), is_finite_r1  );
-		ASSERT_SIMD_EQ( math::is_inf(a1), is_inf_r1  );
-		ASSERT_SIMD_EQ( math::is_nan(a1), is_nan_r1  );
+		ASSERT_SIMD_EQ( math::signbit(a1), is_neg_r1  );
+		ASSERT_SIMD_EQ( math::isfinite(a1), is_finite_r1  );
+		ASSERT_SIMD_EQ( math::isinf(a1), is_inf_r1  );
+		ASSERT_SIMD_EQ( math::isnan(a1), is_nan_r1  );
 	}
 };
 
@@ -862,17 +862,17 @@ struct avx_fpclassify_tbody<double>
 		bint is_nan_r1[4] = { 0, 0, 0, 0 };
 		bint is_nan_r2[4] = { 0, 0, -1, -1 };
 
-		ASSERT_SIMD_EQ( math::is_neg(a1), is_neg_r1  );
-		ASSERT_SIMD_EQ( math::is_neg(a2), is_neg_r2  );
+		ASSERT_SIMD_EQ( math::signbit(a1), is_neg_r1  );
+		ASSERT_SIMD_EQ( math::signbit(a2), is_neg_r2  );
 
-		ASSERT_SIMD_EQ( math::is_finite(a1), is_finite_r1  );
-		ASSERT_SIMD_EQ( math::is_finite(a2), is_finite_r2  );
+		ASSERT_SIMD_EQ( math::isfinite(a1), is_finite_r1  );
+		ASSERT_SIMD_EQ( math::isfinite(a2), is_finite_r2  );
 
-		ASSERT_SIMD_EQ( math::is_inf(a1), is_inf_r1  );
-		ASSERT_SIMD_EQ( math::is_inf(a2), is_inf_r2  );
+		ASSERT_SIMD_EQ( math::isinf(a1), is_inf_r1  );
+		ASSERT_SIMD_EQ( math::isinf(a2), is_inf_r2  );
 
-		ASSERT_SIMD_EQ( math::is_nan(a1), is_nan_r1  );
-		ASSERT_SIMD_EQ( math::is_nan(a2), is_nan_r2  );
+		ASSERT_SIMD_EQ( math::isnan(a1), is_nan_r1  );
+		ASSERT_SIMD_EQ( math::isnan(a2), is_nan_r2  );
 	}
 };
 

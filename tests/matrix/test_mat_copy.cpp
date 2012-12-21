@@ -6,8 +6,8 @@
  * @author Dahua Lin
  */
 
-#include "test_base.h"
-#include "multimat_supp.h"
+#include "../test_base.h"
+#include "../multimat_supp.h"
 
 #include <light_mat/matrix/ref_matrix.h>
 #include <light_mat/matrix/ref_block.h>

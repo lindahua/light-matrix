@@ -117,7 +117,7 @@ namespace lmat { namespace math {
 #endif
 
 	template<typename T>
-	LMAT_ENSURE_INLINE inline T clip(const T& x, const T& lb, const T& ub)
+	LMAT_ENSURE_INLINE inline T clamp(const T& x, const T& lb, const T& ub)
 	{
 		return (min)((max)(x, lb), ub);
 	}
@@ -184,6 +184,7 @@ namespace lmat { namespace math {
 
 	// classification
 
+	using std::signbit;
 	using std::isinf;
 	using std::isfinite;
 	using std::isnan;
