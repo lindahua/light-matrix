@@ -125,8 +125,8 @@ template<typename VT, int M, int N>
 class mat_host<cont, VT, M, N> : public mat_host_base<VT>
 {
 public:
-	typedef cref_matrix<double, M, N> cmat_t;
-	typedef ref_matrix<double, M, N> mat_t;
+	typedef cref_matrix<VT, M, N> cmat_t;
+	typedef ref_matrix<VT, M, N> mat_t;
 
 	mat_host(index_t m, index_t n)
 	: mat_host_base<VT>(m, n, m * n)
@@ -150,8 +150,8 @@ template<typename VT, int M, int N>
 class mat_host<bloc, VT, M, N> : public mat_host_base<VT>
 {
 public:
-	typedef cref_block<double, M, N> cmat_t;
-	typedef ref_block<double, M, N> mat_t;
+	typedef cref_block<VT, M, N> cmat_t;
+	typedef ref_block<VT, M, N> mat_t;
 
 	mat_host(index_t m, index_t n)
 	: mat_host_base<VT>(m, n, LDim * n)
@@ -176,8 +176,8 @@ template<typename VT, int M, int N>
 class mat_host<grid, VT, M, N> : public mat_host_base<VT>
 {
 public:
-	typedef cref_grid<double, M, N> cmat_t;
-	typedef ref_grid<double, M, N> mat_t;
+	typedef cref_grid<VT, M, N> cmat_t;
+	typedef ref_grid<VT, M, N> mat_t;
 
 	mat_host(index_t m, index_t n)
 	: mat_host_base<VT>(m, n, LDim * n)

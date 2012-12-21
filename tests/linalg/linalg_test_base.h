@@ -10,159 +10,128 @@
 #pragma once
 #endif
 
-#ifndef LINALG_TEST_BASE_H_
-#define LINALG_TEST_BASE_H_
+#ifndef LIGHTMAT_LINALG_TEST_BASE_H_
+#define LIGHTMAT_LINALG_TEST_BASE_H_
 
-#include "test_base.h"
-#include <light_mat/linalg/linalg_base.h>
-#include <cstdlib>
+#include "../test_base.h"
+#include "../multimat_supp.h"
+#include <light_mat/math/math_base.h>
 
 namespace lmat { namespace test {
 
-	template<typename T> struct value_type_name;
+	template<typename T> struct blas_default_tol;
 
-	template<> struct value_type_name<float>
+	template<> struct blas_default_tol<float>
 	{
-		static const char *get() { return "f32"; }
-	};
-
-	template<> struct value_type_name<double>
-	{
-		static const char *get() { return "f64"; }
-	};
-
-
-	template<typename T, int N>
-	class TN_case : public ltest::test_case
-	{
-		std::string m_name;
-
-	public:
-		TN_case(const char *nam)
+		static float get()
 		{
-			std::stringstream ss;
-			ss << nam
-				<< " [" << N << " : " << value_type_name<T>::get() << "]";
-			m_name = ss.str();
-		}
-
-		virtual ~TN_case() { }
-
-		const char *name() const
-		{
-			return m_name.c_str();
+			return 1.0e-5f;
 		}
 	};
 
-	template<typename T, int M, int N>
-	class TMN_case : public ltest::test_case
+	template<> struct blas_default_tol<double>
 	{
-		std::string m_name;
-
-	public:
-		TMN_case(const char *nam)
+		static double get()
 		{
-			std::stringstream ss;
-			ss << nam
-				<< " [" << M << " x " << N << " : " << value_type_name<T>::get() << "]";
-			m_name = ss.str();
-		}
-
-		virtual ~TMN_case() { }
-
-		const char *name() const
-		{
-			return m_name.c_str();
+			return 1.0e-12;
 		}
 	};
 
-
-	template<typename T, class Mat>
-	void fill_rand(IDenseMatrix<Mat, T>& A, const T a, const T b)
+	template<class Mat, typename T>
+	index_t safe_get_vec_intv(const IRegularMatrix<Mat, T>& mat)
 	{
-		const index_t m = A.nrows();
-		const index_t n = A.ncolumns();
+		index_t m = mat.nrows();
+		index_t n = mat.ncolumns();
+		index_t rs = mat.row_stride();
+		index_t cs = mat.col_stride();
 
-		for (index_t j = 0; j < n; ++j)
+		if (cs == m && rs == 1)
 		{
-			for (index_t i = 0; i < m; ++i)
-			{
-				double u = double(std::rand()) / double(RAND_MAX);
-				A(i, j) = a + T(u) * (b - a);
-			}
+			return 1;
+		}
+		else if (n == 1)
+		{
+			return rs;
+		}
+		else if (m == 1)
+		{
+			return cs;
+		}
+		else
+		{
+			throw invalid_argument("safe_get_vec_intv:not a proper vector.");
 		}
 	}
 
 
-	template<typename T, class MatA, class MatB, class MatC>
-	void naive_mtimes(
-			const IDenseMatrix<MatA, T>& A,
-			const IDenseMatrix<MatB, T>& B,
-			IDenseMatrix<MatC, T>& C)
-	{
-		const index_t m = A.nrows();
-		const index_t k = A.ncolumns();
-		const index_t n = B.ncolumns();
+	/********************************************
+	 *
+	 *  emulation of BLAS functions
+	 *
+	 ********************************************/
 
-		for (index_t j = 0; j < n; ++j)
+	// Level 1
+
+	template<typename T>
+	T safe_asum(index_t len, const T *x, index_t incx)
+	{
+		double s(0);
+		for (index_t i = 0; i < len; ++i)
 		{
-			for (index_t i = 0; i < m; ++i)
-			{
-				double s = 0;
-				for (index_t l = 0; l < k; ++l)
-				{
-					s += double( A(i, l) * B(l, j) );
-				}
-				C(i, j) = T(s);
-			}
+			s += math::abs(x[i * incx]);
+		}
+		return static_cast<T>(s);
+	}
+
+	template<typename T>
+	T safe_dot(index_t len, const T *x, index_t incx, const T *y, index_t incy)
+	{
+		double s(0);
+		for (index_t i = 0; i < len; ++i)
+		{
+			s += x[i * incx] * y[i * incy];
+		}
+		return static_cast<T>(s);
+	}
+
+	template<typename T>
+	T safe_nrm2(index_t len, const T *x, index_t incx)
+	{
+		return math::sqrt(safe_dot(len, x, incx, x, incx));
+	}
+
+	template<typename T>
+	void safe_scal(index_t len, T a, const T *x, index_t incx, T *r)
+	{
+		for (index_t i = 0; i < len; ++i)
+		{
+			r[i] = a * x[i * incx];
 		}
 	}
 
+	template<typename T>
+	void safe_axpy(index_t len, T a, const T *x, index_t incx, const T *y, index_t incy, T *r)
+	{
+		for (index_t i = 0; i < len; ++i)
+		{
+			r[i] = a * x[i * incx] + y[i * incy];
+		}
+	}
+
+	template<typename T>
+	void safe_rot(index_t len, T c, T s, const T *x, index_t incx, const T *y, index_t incy, T *rx, T *ry)
+	{
+		for (index_t i = 0; i < len; ++i)
+		{
+			T xi = x[i * incx];
+			T yi = y[i * incy];
+
+			rx[i] = c * xi + s * yi;
+			ry[i] = c * yi - s * xi;
+		}
+	}
 
 } }
 
-
-#define TN_CASE( pname, tname ) \
-	template<typename T, int N> \
-	class TCASE_CLASS(pname, tname) : public lmat::test::TN_case<T, N> { \
-	public: \
-		TCASE_CLASS(pname, tname)() : lmat::test::TN_case<T, N>( #tname ) { } \
-		virtual ~TCASE_CLASS(pname, tname)() { } \
-		virtual void run(); \
-	}; \
-	template<typename T, int N> \
-	void TCASE_CLASS(pname, tname)<T, N>::run()
-
-#define ADD_TN_CASE( pname, tname, ty, n ) \
-		tpack->add( new TCASE_CLASS( pname, tname )<ty, n>()  );
-
-
-#define TMN_CASE( pname, tname ) \
-	template<typename T, int M, int N> \
-	class TCASE_CLASS(pname, tname) : public lmat::test::TMN_case<T, M, N> { \
-	public: \
-		TCASE_CLASS(pname, tname)() : lmat::test::TMN_case<T, M, N>( #tname ) { } \
-		virtual ~TCASE_CLASS(pname, tname)() { } \
-		virtual void run(); \
-	}; \
-	template<typename T, int M, int N> \
-	void TCASE_CLASS(pname, tname)<T, M, N>::run()
-
-#define ADD_TMN_CASE( pname, tname, ty, m, n ) \
-		tpack->add( new TCASE_CLASS( pname, tname )<ty, m,n>()  );
-
-#define ADD_TMN_CASE_3X3( pname, tname, ty, m, n ) \
-		ADD_TMN_CASE( pname, tname, ty, 0, 0 ) \
-		ADD_TMN_CASE( pname, tname, ty, 0, 1 ) \
-		ADD_TMN_CASE( pname, tname, ty, 0, n ) \
-		ADD_TMN_CASE( pname, tname, ty, 1, 0 ) \
-		ADD_TMN_CASE( pname, tname, ty, 1, 1 ) \
-		ADD_TMN_CASE( pname, tname, ty, 1, n ) \
-		ADD_TMN_CASE( pname, tname, ty, m, 0 ) \
-		ADD_TMN_CASE( pname, tname, ty, m, 1 ) \
-		ADD_TMN_CASE( pname, tname, ty, m, n )
-
-#endif /* LINALG_TEST_BASE_H_ */
-
-
+#endif
 

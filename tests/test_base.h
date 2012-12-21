@@ -325,9 +325,9 @@ namespace lmat { namespace test {
 
 #define TMN_CASE( pname, tname ) \
 	template<typename T, int M, int N> \
-	class TCASE_CLASS(pname, tname) : public lmat::test::TN_case<T, M, N> { \
+	class TCASE_CLASS(pname, tname) : public lmat::test::TMN_case<T, M, N> { \
 	public: \
-		TCASE_CLASS(pname, tname)() : lmat::test::TN_case<T, M, N>( #tname ) { } \
+		TCASE_CLASS(pname, tname)() : lmat::test::TMN_case<T, M, N>( #tname ) { } \
 		virtual ~TCASE_CLASS(pname, tname)() { } \
 		virtual void run(); \
 	}; \

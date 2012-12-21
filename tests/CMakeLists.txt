@@ -161,7 +161,6 @@ set(MATRIX_CLASS_HS
     ${INC}/matrix/dense_mutable_view.h
     ${INC}/matrix/matrix_classes.h)
     
-    
 set(MATRIX_EVAL_HS
     ${INC}/mateval/internal/ewise_eval_internal.h
     ${INC}/mateval/mateval_fwd.h
@@ -176,12 +175,17 @@ set(MATRIX_REDUC_HS
     ${INC}/mateval/internal/mat_reduce_internal.h
     ${INC}/mateval/mat_fold.h
     ${INC}/mateval/mat_reduce.h)
-    
-              
+                  
 set(MATRIX_HS
     ${COMMON_HS}
     ${MATRIX_BASE_HS}
     ${MATRIX_CLASS_HS})    
+    
+set(BLAS_HS
+    ${INC}/linalg/internal/linalg_aux.h
+    ${INC}/linalg/blas_extern.h
+    ${INC}/linalg/blas_l1.h)    
+    
     
     
 # Executables
@@ -286,7 +290,6 @@ endif (${CMAKE_CXX_COMPILER_ID} MATCHES "GNU")
 add_executable(test_mat_vecviews ${MATRIX_HS} matrix/test_mat_vecviews.cpp)
 add_executable(test_mat_matviews ${MATRIX_HS} matrix/test_mat_matviews.cpp)
 
-
 set(EWISE_EVAL_HS
     ${MATRIX_HS}
     ${MATRIX_EVAL_HS})
@@ -294,7 +297,6 @@ set(EWISE_EVAL_HS
 add_executable(test_linear_ewise ${EWISE_EVAL_HS} mateval/test_linear_ewise.cpp)    
 add_executable(test_percol_ewise ${EWISE_EVAL_HS} mateval/test_percol_ewise.cpp)
 add_executable(test_ewise_accum ${EWISE_EVAL_HS}  mateval/test_ewise_accum.cpp)
-
 
 set(REDUC_HS
     ${MATRIX_HS}
@@ -305,6 +307,11 @@ add_executable(test_full_reduce    ${REDUC_HS} mateval/test_full_reduce.cpp)
 add_executable(test_colwise_reduce ${REDUC_HS} mateval/test_colwise_reduce.cpp)
 add_executable(test_rowwise_reduce ${REDUC_HS} mateval/test_rowwise_reduce.cpp)
 
+set(BLAS_TEST_HS
+    ${MATRIX_HS}
+    ${BLAS_HS})
+
+add_executable(test_blas_l1 ${BLAS_TEST_HS} linalg/test_blas_l1.cpp)
 
 
 # Groups of test units
@@ -369,6 +376,11 @@ set(LMAT_MATEVAL_TESTS
 	test_colwise_reduce
 	test_rowwise_reduce)
 
+# linalg
+
+set(LMAT_LINALG_TESTS
+    test_blas_l1)
+
 # all
 
 set(LMAT_TEST_NAMES
@@ -376,6 +388,7 @@ set(LMAT_TEST_NAMES
     ${LMAT_MATH_TESTS}
     ${LMAT_MATRIX_TESTS}
     ${LMAT_MATEVAL_TESTS}
+    ${LMAT_LINALG_TESTS}
 )
 
 # Link to test_main
