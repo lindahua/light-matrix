@@ -155,6 +155,21 @@ namespace lmat
 	}
 
 
+	template<typename Shape, typename T, class DMat, typename Fun, typename... Wraps>
+	LMAT_ENSURE_INLINE
+	inline void accumf_to(const Shape& shape, IRegularMatrix<DMat, T>& dmat, const Fun& fun, const Wraps&... wraps)
+	{
+		return ewise(accumf_kernel<Fun>(fun))(shape, in_out_(dmat.derived()), wraps...);
+	}
+
+	template<typename Shape, typename T, class DMat, typename Fun, typename... Wraps>
+	LMAT_ENSURE_INLINE
+	inline void accumf_to(const Shape& shape, IRegularMatrix<DMat, T>& dmat, const T& c, const Fun& fun, const Wraps&... wraps)
+	{
+		return ewise(accumfx_kernel<Fun>(fun))(shape, in_out_(dmat.derived()), in_(c, atags::single()), wraps...);
+	}
+
+
 	// percol
 
 	template<class VecKernel, typename... Wraps>

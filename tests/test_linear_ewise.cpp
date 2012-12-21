@@ -307,6 +307,39 @@ MN_CASE( linear_ewise, accum )
 }
 
 
+MN_CASE( linear_ewise, accumf )
+{
+	const index_t m = M == 0 ? DM : M;
+	const index_t n = N == 0 ? DN : N;
+
+	dense_matrix<double, M, N> a(m, n);
+	dense_matrix<double, M, N> s(m, n);
+	dense_matrix<double, M, N> c(m, n);
+
+	do_fill_rand( a.ptr_data(), m * n );
+	do_fill_rand( s.ptr_data(), m * n );
+	do_fill_rand( c.ptr_data(), m * n );
+
+	double cv = c[0] * 2.0;
+
+	matrix_shape<M, N> shape(m, n);
+	dense_matrix<double, M, N> r(m, n);
+
+	math::sqr_fun<double> f;
+
+	for (index_t i = 0; i < m * n; ++i) r[i] = a[i] + f(s[i]);
+	accumf_to(shape, a, f, in_(s));
+
+	ASSERT_MAT_APPROX( m, n, a, r, 1.0e-12 );
+
+	for (index_t i = 0; i < m * n; ++i) r[i] = a[i] + cv * f(s[i]);
+	accumf_to(shape, a, cv, f, in_(s));
+
+	ASSERT_MAT_APPROX( m, n, a, r, 1.0e-12 );
+
+}
+
+
 // Test packs
 
 BEGIN_TPACK( linear_ewise_scalar_cont_cont )
@@ -388,6 +421,12 @@ BEGIN_TPACK( linear_ewise_accum )
 	ADD_MN_CASE_3X3( linear_ewise, accum, DM, DN )
 END_TPACK
 
+BEGIN_TPACK( linear_ewise_accumf )
+	ADD_MN_CASE_3X3( linear_ewise, accumf, DM, DN )
+END_TPACK
+
+
+
 BEGIN_MAIN_SUITE
 	ADD_TPACK( linear_ewise_scalar_cont_cont )
 	ADD_TPACK( linear_ewise_scalar_cont_stepcol )
@@ -415,6 +454,7 @@ BEGIN_MAIN_SUITE
 #endif
 
 	ADD_TPACK( linear_ewise_accum )
+	ADD_TPACK( linear_ewise_accumf )
 END_MAIN_SUITE
 
 
