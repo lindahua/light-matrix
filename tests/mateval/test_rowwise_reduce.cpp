@@ -7,7 +7,7 @@
  */
 
 
-#include "test_base.h"
+#include "../test_base.h"
 #include <light_mat/matrix/matrix_classes.h>
 #include <light_mat/mateval/mat_reduce.h>
 #include <cstdlib>

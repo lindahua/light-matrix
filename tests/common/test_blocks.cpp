@@ -6,7 +6,7 @@
  * @author Dahua Lin
  */
 
-#include "test_base.h"
+#include "../test_base.h"
 
 #include <light_mat/common/block.h>
 #include "mon_alloc.h"

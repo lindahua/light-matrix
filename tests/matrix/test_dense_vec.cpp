@@ -7,7 +7,7 @@
  */
 
 
-#include "test_base.h"
+#include "../test_base.h"
 
 #include <light_mat/matrix/dense_matrix.h>
 

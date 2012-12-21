@@ -9,7 +9,7 @@
 #ifndef SIMD_TEST_BASE_H_
 #define SIMD_TEST_BASE_H_
 
-#include "test_base.h"
+#include "../test_base.h"
 #include <light_mat/math/simd_debug.h>
 
 

@@ -224,52 +224,6 @@ namespace lmat {  namespace meta {
 	};
 
 
-	/********************************************
-	 *
-	 *  compile-time list
-	 *
-	 ********************************************/
-
-	template<typename... T>
-	struct type_list { };
-
-	template<class List> struct len_;
-
-	template<typename T0, typename... T>
-	struct len_<type_list<T0, T...> >
-	{
-		static const int value = 1 + len_<type_list<T...> >::value;
-	};
-
-	template<>
-	struct len_<type_list<> >
-	{
-		static const int value = 0;
-	};
-
-	template<class List, int I> struct get_;
-
-	template<typename T0, typename... T>
-	struct get_<type_list<T0, T...>, 0>
-	{
-		typedef T0 type;
-	};
-
-	template<typename T0, typename... T, int I>
-	struct get_<type_list<T0, T...>, I>
-	{
-		typedef typename get_<type_list<T...>, I-1>::type type;
-	};
-
-
-	template<template<typename U> class Fun, class List> struct map_;
-
-	template<template<typename U> class Fun, typename... T>
-	struct map_<Fun, type_list<T...> >
-	{
-		typedef type_list<typename Fun<T>::type ...> type;
-	};
-
 
 } } // lmat::meta
 

@@ -7,12 +7,12 @@
  */
 
 
-#include "test_base.h"
+#include "../test_base.h"
 
 #define DEFAULT_M_VALUE 13
 #define DEFAULT_N_VALUE 9
 
-#include "multimat_supp.h"
+#include "../multimat_supp.h"
 
 #include <light_mat/matrix/matrix_classes.h>
 #include <light_mat/math/math_functors.h>
