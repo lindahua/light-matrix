@@ -207,10 +207,23 @@ namespace lmat { namespace math {
 	{
 		return _mm256_max_ps(a, b);
 	}
+
 	LMAT_ENSURE_INLINE
 	inline avx_f64pk (max)(const avx_f64pk& a, const avx_f64pk& b)
 	{
 		return _mm256_max_pd(a, b);
+	}
+
+	LMAT_ENSURE_INLINE
+	inline avx_f32pk clip(const avx_f32pk& x, const avx_f32pk& lb, const avx_f32pk& ub)
+	{
+		return (min)((max)(x, lb), ub);
+	}
+
+	LMAT_ENSURE_INLINE
+	inline avx_f64pk clip(const avx_f64pk& x, const avx_f64pk& lb, const avx_f64pk& ub)
+	{
+		return (min)((max)(x, lb), ub);
 	}
 
 	/********************************************
@@ -494,6 +507,25 @@ namespace lmat { namespace math {
 	{
 		a = a | b;
 		return a;
+	}
+
+
+	/********************************************
+	 *
+	 *  conditional
+	 *
+	 ********************************************/
+
+	LMAT_ENSURE_INLINE
+	inline avx_f32pk cond(const avx_f32bpk& b, const avx_f32pk& x, const avx_f32pk& y)
+	{
+		return _mm256_blendv_ps(y, x, b);
+	}
+
+	LMAT_ENSURE_INLINE
+	inline avx_f64pk cond(const avx_f64bpk& b, const avx_f64pk& x, const avx_f64pk& y)
+	{
+		return _mm256_blendv_pd(y, x, b);
 	}
 
 

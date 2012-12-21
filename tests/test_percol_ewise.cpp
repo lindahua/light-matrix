@@ -29,16 +29,6 @@ using namespace lmat::test;
 
 // test cases
 
-struct my_update_kernel
-{
-	template<typename T>
-	LMAT_ENSURE_INLINE
-	void operator() (const T& s, T& d) const
-	{
-		d += s;
-	}
-};
-
 template<typename STag, typename DTag, typename U, int M, int N>
 void test_percol_ewise()
 {
@@ -57,8 +47,10 @@ void test_percol_ewise()
 
 	matrix_shape<M, N> shape(m, n);
 
-	percol_ewise(U(), shape).apply(
-			copy_kernel(), in_(smat), out_(dmat));
+	copy_kernel<double> cpy_kernel;
+	accum_kernel<double> upd_kernel;
+
+	percol(ewise(cpy_kernel, U()), shape, in_(smat), out_(dmat));
 
 	ASSERT_MAT_EQ(m, n, smat, dmat);
 
@@ -68,20 +60,8 @@ void test_percol_ewise()
 		for (index_t i = 0; i < m; ++i) rmat(i, j) = smat(i, j) + dmat(i, j);
 	}
 
-	percol_ewise(U(), shape).apply(
-			my_update_kernel(), in_(smat), in_out_(dmat));
+	percol(ewise(upd_kernel, U()), shape, in_out_(dmat), in_(smat));
 
-	ASSERT_MAT_EQ(m, n, dmat, rmat);
-
-	percol_ewise(U(), shape).copy( in_(smat),  out_(dmat) );
-	ASSERT_MAT_EQ(m, n, smat, dmat);
-
-	for (index_t j = 0; j < n; ++j)
-	{
-		for (index_t i = 0; i < m; ++i) rmat(i, j) = math::sqr(smat(i, j));
-	}
-
-	percol_ewise(U(), shape).map_to( out_(dmat), math::sqr_fun<double>(), in_(smat) );
 	ASSERT_MAT_EQ(m, n, dmat, rmat);
 }
 
@@ -104,8 +84,7 @@ void test_percol_ewise_single()
 
 	matrix_shape<M, N> shape(m, n);
 
-	percol_ewise(U(), shape).apply(
-			copy_kernel(), in_(v, atags::single()), out_(dmat));
+	percol(ewise(copy_kernel<double>(), U()), shape, in_(v, atags::single()), out_(dmat));
 
 	ASSERT_MAT_EQ(m, n, dmat, rmat);
 }
@@ -138,8 +117,7 @@ void test_percol_ewise_repcol()
 
 	matrix_shape<M, N> shape(m, n);
 
-	percol_ewise(U(), shape).apply(
-			copy_kernel(), in_(col, atags::repcol()), out_(dmat));
+	percol(ewise(copy_kernel<double>(), U()), shape, in_(col, atags::repcol()), out_(dmat));
 
 	ASSERT_MAT_EQ(m, n, dmat, rmat);
 }
@@ -172,8 +150,7 @@ void test_percol_ewise_reprow()
 
 	matrix_shape<M, N> shape(m, n);
 
-	percol_ewise(U(), shape).apply(
-			copy_kernel(), in_(row, atags::reprow()), out_(dmat));
+	percol(ewise(copy_kernel<double>(), U()), shape, in_(row, atags::reprow()), out_(dmat));
 
 	ASSERT_MAT_EQ(m, n, dmat, rmat);
 }
@@ -190,7 +167,7 @@ void test_percol_ewise_reprow()
 
 #define DEFINE_PERCOL_EWISE_SIMD_TEST( SKindName, STag, DTag ) \
 		MN_CASE( percol_ewise, SKindName##_##STag##_##DTag  ) { \
-			test_percol_ewise<STag, DTag, atags::simd<double, SKindName##_t>, M, N>(); } \
+			test_percol_ewise<STag, DTag, atags::simd<SKindName##_t>, M, N>(); } \
 		BEGIN_TPACK( percol_ewise_##SKindName##_##STag##_##DTag ) \
 			ADD_MN_CASE_3X3( percol_ewise, scalar_##STag##_##DTag, DM, DN ) \
 		END_TPACK
@@ -231,14 +208,14 @@ MN_CASE( percol_ewise, scalar_single_cont )
 
 MN_CASE( percol_ewise, sse_single_cont )
 {
-	test_percol_ewise_single<cont, atags::simd<double, sse_t>, M, N>();
+	test_percol_ewise_single<cont, atags::simd<sse_t>, M, N>();
 }
 
 #ifdef LMAT_HAS_AVX
 
 MN_CASE( percol_ewise, avx_single_cont )
 {
-	test_percol_ewise_single<cont, atags::simd<double, avx_t>, M, N>();
+	test_percol_ewise_single<cont, atags::simd<avx_t>, M, N>();
 }
 
 #endif
@@ -270,14 +247,14 @@ MN_CASE( percol_ewise, scalar_repcol_cont )
 
 MN_CASE( percol_ewise, sse_repcol_cont )
 {
-	test_percol_ewise_repcol<cont, atags::simd<double, sse_t>, M, N>();
+	test_percol_ewise_repcol<cont, atags::simd<sse_t>, M, N>();
 }
 
 #ifdef LMAT_HAS_AVX
 
 MN_CASE( percol_ewise, avx_repcol_cont )
 {
-	test_percol_ewise_repcol<cont, atags::simd<double, avx_t>, M, N>();
+	test_percol_ewise_repcol<cont, atags::simd<avx_t>, M, N>();
 }
 
 #endif
@@ -310,14 +287,14 @@ MN_CASE( percol_ewise, scalar_reprow_cont )
 
 MN_CASE( percol_ewise, sse_reprow_cont )
 {
-	test_percol_ewise_reprow<cont, atags::simd<double, sse_t>, M, N>();
+	test_percol_ewise_reprow<cont, atags::simd<sse_t>, M, N>();
 }
 
 #ifdef LMAT_HAS_AVX
 
 MN_CASE( percol_ewise, avx_reprow_cont )
 {
-	test_percol_ewise_reprow<cont, atags::simd<double, avx_t>, M, N>();
+	test_percol_ewise_reprow<cont, atags::simd<avx_t>, M, N>();
 }
 
 #endif

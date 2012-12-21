@@ -27,6 +27,7 @@
 #define LMAT_DEFINE_GENERIC_MATH_FUNCTOR_1( Name, Expr ) \
 	template<typename T> \
 	struct Name##_fun { \
+		typedef T value_type; \
 		LMAT_ENSURE_INLINE \
 		T operator()(const T& x) const { return Expr; } \
 		template<typename Kind> \
@@ -38,6 +39,7 @@
 #define LMAT_DEFINE_GENERIC_MATH_FUNCTOR_2( Name, Expr ) \
 	template<typename T> \
 	struct Name##_fun { \
+		typedef T value_type; \
 		LMAT_ENSURE_INLINE \
 		T operator()(const T& x, const T& y) const { return Expr; } \
 		template<typename Kind> \

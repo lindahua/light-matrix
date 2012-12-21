@@ -13,7 +13,7 @@
 #ifndef LIGHTMAT_SSE_MATH_H_
 #define LIGHTMAT_SSE_MATH_H_
 
-#include <light_mat/math/sse_packs.h>
+#include <light_mat/math/sse_ops.h>
 #include "internal/sse_math_emulate.h"
 
 #if defined(LMAT_USE_INTEL_SVML) && defined(LMAT_USE_AMD_LIBM)
@@ -178,6 +178,7 @@ extern "C"
 		return LMAT_SSE_D(Name)(a, b); } \
 	struct has_sse_##Name { static const bool value = true; };
 
+
 namespace lmat { namespace math {
 
 	// C++ 03
@@ -193,10 +194,29 @@ namespace lmat { namespace math {
 	LMAT_ACTIVATE_SSE_EXTERN_1( exp )
 	LMAT_ACTIVATE_SSE_EXTERN_1( log )
 	LMAT_ACTIVATE_SSE_EXTERN_1( log10 )
+
+	LMAT_ENSURE_INLINE
+	inline sse_f32pk xlogy(const sse_f32pk& a, const sse_f32pk& b)
+	{
+		sse_f32pk z = sse_f32pk::zeros();
+		return cond(a > z, log(b), z) * a;
+	}
+
+	LMAT_ENSURE_INLINE
+	inline sse_f64pk xlogy(const sse_f64pk& a, const sse_f64pk& b)
+	{
+		sse_f64pk z = sse_f64pk::zeros();
+		return cond(a > z, log(b), z) * a;
+	}
+
+	struct has_sse_xlogy { static const bool value = true; };
+
+
 #elif (defined(LMAT_ENABLE_SIMD_EMULATE))
 	LMAT_ACTIVATE_SSE_MATH_EMULATE_1( exp )
 	LMAT_ACTIVATE_SSE_MATH_EMULATE_1( log )
 	LMAT_ACTIVATE_SSE_MATH_EMULATE_1( log10 )
+	LMAT_ACTIVATE_SSE_MATH_EMULATE_2( xlogy )
 #endif
 
 

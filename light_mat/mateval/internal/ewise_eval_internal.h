@@ -23,7 +23,7 @@ namespace lmat { namespace internal {
 	 ********************************************/
 
 	template<int N, class Kernel, typename... Accessors>
-	inline void linear_ewise_eval_a(const dimension<N>& dim, atags::scalar,
+	inline void linear_ewise_eval(const dimension<N>& dim, atags::scalar,
 			const Kernel& kernel, const Accessors&... accessors)
 	{
 		const index_t len = dim.value();
@@ -36,10 +36,11 @@ namespace lmat { namespace internal {
 		pass(accessors.finalize()...);
 	}
 
-	template<int N, typename T, typename SKind, class Kernel, typename... Accessors>
-	inline void linear_ewise_eval_a(const dimension<N>& dim, atags::simd<T, SKind>,
+	template<int N, typename SKind, class Kernel, typename... Accessors>
+	inline void linear_ewise_eval(const dimension<N>& dim, atags::simd<SKind>,
 			const Kernel& kernel, const Accessors&... accessors)
 	{
+		typedef typename meta::kernel_value_type<Kernel>::type T;
 		const unsigned int W = math::simd_traits<T, SKind>::pack_width;
 
 		const index_t len = dim.value();
@@ -67,40 +68,22 @@ namespace lmat { namespace internal {
 		pass(accessors.finalize()...);
 	}
 
-	template<int N, typename U, class Kernel, typename... Wraps>
-	inline void linear_ewise_eval(const dimension<N>& dim, U u,
-			const Kernel& kernel, const Wraps&... wraps)
-	{
-		linear_ewise_eval_a(dim, u, kernel, make_vec_accessor(u, wraps)...);
-	}
 
 
 	/********************************************
 	 *
-	 *  percol element-wise evaluation
+	 *  per-column evaluation
 	 *
 	 ********************************************/
 
-	template<int M, int N, typename U, class Kernel, typename... Accessors>
-	inline void percol_ewise_eval_a(const matrix_shape<M, N>& shape, U u,
-			const Kernel& kernel, const Accessors&... mcol_accessors)
+	template<int N, class VecKernel, typename... MultiColAccessors>
+	inline void percol_eval_a(const dimension<N>& col_dim, const index_t n,
+			const VecKernel& veckernel, const MultiColAccessors&... accs)
 	{
-		const index_t n = shape.ncolumns();
-		dimension<M> col_dim(shape.nrows());
-
 		for (index_t j = 0; j < n; ++j)
 		{
-			linear_ewise_eval_a(col_dim, u, kernel, mcol_accessors.col(j)...);
+			veckernel.apply(col_dim, accs.col(j)...);
 		}
-
-		pass(mcol_accessors.finalize()...);
-	}
-
-	template<int M, int N, typename U, class Kernel, typename... Wraps>
-	inline void percol_ewise_eval(const matrix_shape<M, N>& shape, U u,
-			const Kernel& kernel, const Wraps&... wraps)
-	{
-		percol_ewise_eval_a(shape, u, kernel, make_multicol_accessor(u, wraps)...);
 	}
 
 } }

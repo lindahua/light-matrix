@@ -87,6 +87,8 @@ namespace lmat { namespace math { namespace internal {
 	LMAT_DEFINE_SSE_MATH_EMULATE_1( log )
 	LMAT_DEFINE_SSE_MATH_EMULATE_1( log10 )
 
+	LMAT_DEFINE_SSE_MATH_EMULATE_2( xlogy )
+
 	// trigonometry
 
 	LMAT_DEFINE_SSE_MATH_EMULATE_1( sin )

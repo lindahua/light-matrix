@@ -746,6 +746,47 @@ T_CASE( avx_logical, ne )
 }
 
 
+template<typename T> struct avx_cond_tbody;
+
+template<> struct avx_cond_tbody<float>
+{
+	static void run()
+	{
+		typedef simd_pack<float, avx_t> pack_t;
+		typedef simd_bpack<float, avx_t> bpack_t;
+
+		bpack_t b(true, false, true, false, true, true, false, false);
+		pack_t x( 1.f,  2.f,  3.f,  4.f,  5.f,  6.f,  7.f,  8.f);
+		pack_t y(-1.f, -2.f, -3.f, -4.f, -5.f, -6.f, -7.f, -8.f);
+
+		float r0[8] = {1.f, -2.f, 3.f, -4.f, 5.f, 6.f, -7.f, -8.f};
+
+		ASSERT_SIMD_EQ( cond(b, x, y), r0 );
+	}
+};
+
+template<> struct avx_cond_tbody<double>
+{
+	static void run()
+	{
+		typedef simd_pack<double, avx_t> pack_t;
+		typedef simd_bpack<double, avx_t> bpack_t;
+
+		bpack_t b(true, false, true, false);
+		pack_t x( 1.0,  2.0,  3.0,  4.0);
+		pack_t y(-1.0, -2.0, -3.0, -4.0);
+
+		double r0[8] = {1.0, -2.0, 3.0, -4.0};
+		ASSERT_SIMD_EQ( cond(b, x, y), r0 );
+	}
+};
+
+
+T_CASE( avx_cond, cond )
+{
+	avx_cond_tbody<T>::run();
+}
+
 
 template<typename T> struct avx_fpclassify_tbody;
 
@@ -868,6 +909,8 @@ DEF_TPACK( avx_logical, or )
 DEF_TPACK( avx_logical, eq )
 DEF_TPACK( avx_logical, ne )
 
+DEF_TPACK( avx_cond, cond )
+
 DEF_TPACK( avx_fpclassify, all )
 
 
@@ -898,6 +941,8 @@ BEGIN_MAIN_SUITE
 	ADD_TPACK( avx_logical_or )
 	ADD_TPACK( avx_logical_eq )
 	ADD_TPACK( avx_logical_ne )
+
+	ADD_TPACK( avx_cond_cond )
 
 	ADD_TPACK( avx_fpclassify_all )
 END_MAIN_SUITE
