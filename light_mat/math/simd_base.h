@@ -42,10 +42,10 @@ namespace lmat {
 	struct sse_t { };
 	struct avx_t { };
 
-#if (LMAT_SIMD < LMAT_SIMD_AVX)
-	typedef sse_t default_simd_kind;
-#else
+#if (defined(LMAT_HAS_AVX))
 	typedef avx_t default_simd_kind;
+#else
+	typedef sse_t default_simd_kind;
 #endif
 
 namespace math {

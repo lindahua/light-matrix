@@ -10,6 +10,8 @@ include_directories($ENV{LIGHT_TEST_HOME})
 
 # Compiler configuration
 
+set(HAS_AVX "YES")
+
 set(CMAKE_BUILD_TYPE "Release")
 
 if (MSVC)
@@ -205,34 +207,43 @@ set(AVX_TEST_HS
     ${SIMD_BASE_HS}
     ${AVX_HS})
 
+if (HAS_AVX)
 add_executable(test_avx_packs  ${AVX_TEST_HS} math/test_avx_packs.cpp)
 add_executable(test_avx_bpacks ${AVX_TEST_HS} math/test_avx_bpacks.cpp)
 add_executable(test_avx_ops    ${AVX_TEST_HS} math/test_avx_ops.cpp)
 add_executable(test_avx_round  ${AVX_TEST_HS} math/test_avx_round.cpp)
 add_executable(test_avx_reduce ${AVX_TEST_HS} math/test_avx_reduce.cpp)
-
+endif (HAS_AVX)
 
 if (SVML_PATH)
 
 add_executable(test_sse_math_svml ${SSE_TEST_HS} math/test_sse_math.cpp)
+if (HAS_AVX)
 add_executable(test_avx_math_svml ${AVX_TEST_HS} math/test_avx_math.cpp)
+endif (HAS_AVX)
 
 set_target_properties(test_sse_math_svml
 	PROPERTIES
 	COMPILE_FLAGS "-DLMAT_USE_INTEL_SVML"
 )
 
+if (HAS_AVX)
 set_target_properties(test_avx_math_svml
 	PROPERTIES
 	COMPILE_FLAGS "-DLMAT_USE_INTEL_SVML"
 )
+endif (HAS_AVX)
 
 if (MSVC)
 target_link_libraries(test_sse_math_svml test_main ${SVML} ${LIBIRC})
+if (HAS_AVX)
 target_link_libraries(test_avx_math_svml test_main ${SVML} ${LIBIRC})
+endif (HAS_AVX)
 else (MSVC)
 target_link_libraries(test_sse_math_svml test_main ${SVML})
+if (HAS_AVX)
 target_link_libraries(test_avx_math_svml test_main ${SVML})
+endif (HAS_AVX)
 endif (MSVC)
 
 endif (SVML_PATH)
@@ -295,22 +306,46 @@ add_executable(test_colwise_reduce ${REDUC_HS} mateval/test_colwise_reduce.cpp)
 add_executable(test_rowwise_reduce ${REDUC_HS} mateval/test_rowwise_reduce.cpp)
 
 
-# Link to test_main
 
-set(LMAT_TEST_NAMES
+# Groups of test units
+
+# common
+
+set(LMAT_COMMON_TESTS
     test_memory
-	test_blocks
-	test_sse_packs
-	test_sse_bpacks
-	test_sse_ops
-	test_sse_round
-	test_sse_reduce
-	test_avx_packs
-	test_avx_bpacks
-	test_avx_ops
-	test_avx_round
-	test_avx_reduce
-	test_dense_mat
+    test_blocks)
+    
+# math    
+    
+set(LMAT_SSE_TESTS
+    test_sse_packs
+    test_sse_bpacks
+    test_sse_ops
+    test_sse_round
+    test_sse_reduce)
+
+if (HAS_AVX)
+set(LMAT_AVX_TESTS
+    test_avx_packs
+    test_avx_bpacks
+    test_avx_ops
+    test_avx_round
+    test_avx_reduce)
+endif (HAS_AVX)
+
+if (HAS_AVX)
+    set(LMAT_MATH_TESTS
+        ${LMAT_SSE_TESTS}
+        ${LMAT_AVX_TESTS})
+else (HAS_AVX)
+    set(LMAT_MATH_TESTS
+        ${LMAT_SSE_TESTS})
+endif (HAS_AVX)        
+
+# matrix
+
+set(LMAT_MATRIX_TESTS
+    test_dense_mat
 	test_dense_vec
 	test_ref_mat
 	test_ref_vec
@@ -322,14 +357,28 @@ set(LMAT_TEST_NAMES
 	test_mat_copy
 	test_dense_eval
 	test_mat_vecviews
-	test_mat_matviews
-	test_linear_ewise
+	test_mat_matviews)
+
+# mateval
+	
+set(LMAT_MATEVAL_TESTS
+    test_linear_ewise
 	test_percol_ewise
 	test_ewise_accum
 	test_full_reduce
 	test_colwise_reduce
-	test_rowwise_reduce
+	test_rowwise_reduce)
+
+# all
+
+set(LMAT_TEST_NAMES
+    ${LMAT_COMMON_TESTS}
+    ${LMAT_MATH_TESTS}
+    ${LMAT_MATRIX_TESTS}
+    ${LMAT_MATEVAL_TESTS}
 )
+
+# Link to test_main
 	
 foreach(tname ${LMAT_TEST_NAMES})
 	target_link_libraries(${tname} test_main)
@@ -344,7 +393,9 @@ endforeach(tname)
 
 if (SVML_PATH)
 add_test(NAME test_sse_math_svml COMMAND test_sse_math_svml)
+if (HAS_AVX)
 add_test(NAME test_avx_math_svml COMMAND test_avx_math_svml)
+endif (HAS_AVX)
 endif (SVML_PATH)
 
 
