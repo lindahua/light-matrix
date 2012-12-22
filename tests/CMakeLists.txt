@@ -184,6 +184,7 @@ set(MATRIX_HS
     ${MATRIX_CLASS_HS})    
     
 set(BLAS_HS
+    ${INC}/linalg/linalg_fwd.h
     ${INC}/linalg/internal/linalg_aux.h
     ${INC}/linalg/blas_extern.h
     ${INC}/linalg/blas_l1.h)    

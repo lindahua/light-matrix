@@ -66,6 +66,83 @@ namespace lmat { namespace test {
 
 	/********************************************
 	 *
+	 *  prepare specific type of matrices
+	 *
+	 ********************************************/
+
+	template<typename T>
+	T randunif(const T& a, const T& b)
+	{
+		double u = double(std::rand()) / RAND_MAX;
+		return static_cast<T>(a + (b - a) * u);
+	}
+
+
+	template<typename T, class Mat>
+	void fill_rand_sym(IRegularMatrix<Mat, T>& mat)
+	{
+		index_t n = mat.nrows();
+
+		for (index_t i = 1; i < n; ++i)
+		{
+			for (index_t j = 0; j < i; ++j)
+			{
+				T v = randunif<T>(T(-1.0), T(1.0));
+				mat(i, j) = v;
+				mat(j, i) = v;
+			}
+		}
+
+		for (index_t i = 0; i < n; ++i)
+		{
+			mat(i, i) = randunif<T>(T(-1.0), T(1.0));
+		}
+	}
+
+
+	template<typename T, class Mat>
+	void fill_rand_tri(IRegularMatrix<Mat, T>& mat, char uplo, bool uni=false)
+	{
+		index_t n = mat.nrows();
+
+		if (uplo == 'L' || uplo == 'l')
+		{
+			for (index_t i = 1; i < n; ++i)
+			{
+				for (index_t j = 0; j < i; ++j)
+				{
+					T v = randunif<T>(T(-0.5), T(0.5));
+					mat(i, j) = v;
+				}
+			}
+		}
+		else
+		{
+			for (index_t i = 0; i < n-1; ++i)
+			{
+				for (index_t j = i+1; j < n; ++j)
+				{
+					T v = randunif<T>(T(-0.5), T(0.5));
+					mat(i, j) = v;
+				}
+			}
+		}
+
+		if (uni)
+		{
+			for (index_t i = 0; i < n; ++i)
+				mat(i, i) = T(1.0);
+		}
+		else
+		{
+			for (index_t i = 0; i < n; ++i)
+				mat(i, i) = randunif<T>(T(1.0), T(3.0));
+		}
+	}
+
+
+	/********************************************
+	 *
 	 *  emulation of BLAS functions
 	 *
 	 ********************************************/

@@ -13,7 +13,7 @@
 #ifndef LIGHTMAT_LINALG_AUX_H_
 #define LIGHTMAT_LINALG_AUX_H_
 
-#include <light_mat/matrix/matrix_properties.h>
+#include <light_mat/linalg/linalg_fwd.h>
 
 namespace lmat { namespace internal {
 

@@ -292,6 +292,11 @@ namespace lmat { namespace test {
 #define ADD_TN_CASE( pname, tname, ty, n ) \
 	tpack->add( new TCASE_CLASS( pname, tname )<ty, n>() );
 
+#define ADD_TN_CASE_3( pname, tname, ty, n ) \
+		ADD_TN_CASE( pname, tname, ty, 0 ) \
+		ADD_TN_CASE( pname, tname, ty, 1 ) \
+		ADD_TN_CASE( pname, tname, ty, n )
+
 
 // MN cases
 
