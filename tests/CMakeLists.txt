@@ -34,8 +34,7 @@ set(CMAKE_CXX_FLAGS "${TEST_CXX_FLAGS}")
 
 # Find third-party libraries
 
-# set(CMAKE_MODULE_PATH "../cmake_modules" ${CMAKE_MODULE_PATH})
-# find_package(MKL)
+set(CMAKE_MODULE_PATH "../cmake_modules" ${CMAKE_MODULE_PATH})
 
 # Intel SVML 
 
@@ -79,6 +78,9 @@ if ( LIBM_HOME )
 endif ( LIBM_HOME )
 
 
+# Intel MKL
+
+find_package(MKL)
 
 
 # Header file groups (to be used as dependencies)
@@ -312,6 +314,8 @@ set(BLAS_TEST_HS
     ${BLAS_HS})
 
 add_executable(test_blas_l1 ${BLAS_TEST_HS} linalg/test_blas_l1.cpp)
+
+target_link_libraries(test_blas_l1 ${MKL_LIBRARY})
 
 
 # Groups of test units
