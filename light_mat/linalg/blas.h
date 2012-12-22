@@ -1,0 +1,16 @@
+/**
+ * @file blas.h
+ *
+ * @brief Overall header for BLAS
+ *
+ * @author Dahua Lin
+ */
+
+#ifndef LIGHTMAT_BLAS_H_
+#define LIGHTMAT_BLAS_H_
+
+#include <light_mat/linalg/blas_l1.h>
+#include <light_mat/linalg/blas_l2.h>
+#include <light_mat/linalg/blas_l3.h>
+
+#endif /* BLAS_H_ */

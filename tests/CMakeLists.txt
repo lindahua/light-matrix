@@ -187,7 +187,10 @@ set(BLAS_HS
     ${INC}/linalg/linalg_fwd.h
     ${INC}/linalg/internal/linalg_aux.h
     ${INC}/linalg/blas_extern.h
-    ${INC}/linalg/blas_l1.h)    
+    ${INC}/linalg/blas_l1.h
+    ${INC}/linalg/blas_l2.h
+    ${INC}/linalg/blas_l3.h
+    ${INC}/linalg/blas.h)    
     
     
     
@@ -316,9 +319,8 @@ set(BLAS_TEST_HS
 
 add_executable(test_blas_l1 ${BLAS_TEST_HS} linalg/test_blas_l1.cpp)
 add_executable(test_blas_l2 ${BLAS_TEST_HS} linalg/test_blas_l2.cpp)
+add_executable(test_blas_l3 ${BLAS_TEST_HS} linalg/test_blas_l3.cpp)
 
-target_link_libraries(test_blas_l1 ${MKL_LIBRARY})
-target_link_libraries(test_blas_l2 ${MKL_LIBRARY})
 
 # Groups of test units
 
@@ -386,7 +388,14 @@ set(LMAT_MATEVAL_TESTS
 
 set(LMAT_LINALG_TESTS
     test_blas_l1
-    test_blas_l2)
+    test_blas_l2
+    test_blas_l3)
+    
+# Link to MKL
+
+foreach(tname ${LMAT_LINALG_TESTS})
+    target_link_libraries(${tname} ${MKL_LIBRARY})
+endforeach(tname)
 
 # all
 

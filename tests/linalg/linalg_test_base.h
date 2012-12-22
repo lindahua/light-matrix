@@ -209,7 +209,7 @@ namespace lmat { namespace test {
 	}
 
 
-	// Level 2 & 3
+	// Level 2
 
 	template<typename T, class A, class X, class Y, class R>
 	void safe_mv(const T& alpha, const A& a, char trans, const X& x, const T& beta, const Y& y, R& r)
@@ -223,11 +223,11 @@ namespace lmat { namespace test {
 
 			for (index_t i = 0; i < m ; ++i)
 			{
-				T v = 0;
+				double v = 0;
 				for (index_t j = 0; j < n; ++j)
 					v += a(i, j) * x[j];
 
-				r[i] = alpha * v + beta * y[i];
+				r[i] = (T)(alpha * v + beta * y[i]);
 			}
 		}
 		else
@@ -236,14 +236,91 @@ namespace lmat { namespace test {
 
 			for (index_t j = 0; j < n; ++j)
 			{
-				T v = 0;
+				double v = 0;
 				for (index_t i = 0; i < m; ++i)
 					v += a(i, j) * x[i];
 
-				r[j] = alpha * v + beta * y[j];
+				r[j] = (T)(alpha * v + beta * y[j]);
 			}
 		}
 	}
+
+
+	// Level 3
+
+	template<typename T, class A, class B, class C, class R>
+	void safe_mm(const T& alpha, const A& a, char transa, const B& b, char transb,
+			const T& beta, const C& c, R& r)
+	{
+		bool ta = !(transa == 'n' || transa == 'N');
+		bool tb = !(transb == 'n' || transb == 'N');
+
+		if (!ta && !tb)
+		{
+			index_t m = a.nrows();
+			index_t k = a.ncolumns();
+			index_t n = b.ncolumns();
+
+			for (index_t j = 0; j < n; ++j)
+			{
+				for (index_t i = 0; i < m; ++i)
+				{
+					double v = 0;
+					for (index_t l = 0; l < k; ++l) v += a(i, l) * b(l, j);
+					r(i, j) = (T)(alpha * v + beta * c(i, j));
+				}
+			}
+		}
+		else if (!ta && tb)
+		{
+			index_t m = a.nrows();
+			index_t k = a.ncolumns();
+			index_t n = b.nrows();
+
+			for (index_t j = 0; j < n; ++j)
+			{
+				for (index_t i = 0; i < m; ++i)
+				{
+					double v = 0;
+					for (index_t l = 0; l < k; ++l) v += a(i, l) * b(j, l);
+					r(i, j) = (T)(alpha * v + beta * c(i, j));
+				}
+			}
+		}
+		else if (ta && !tb)
+		{
+			index_t k = a.nrows();
+			index_t m = a.ncolumns();
+			index_t n = b.ncolumns();
+
+			for (index_t j = 0; j < n; ++j)
+			{
+				for (index_t i = 0; i < m; ++i)
+				{
+					double v = 0;
+					for (index_t l = 0; l < k; ++l) v += a(l, i) * b(l, j);
+					r(i, j) = (T)(alpha * v + beta * c(i, j));
+				}
+			}
+		}
+		else // ta && tb
+		{
+			index_t k = a.nrows();
+			index_t m = a.ncolumns();
+			index_t n = b.nrows();
+
+			for (index_t j = 0; j < n; ++j)
+			{
+				for (index_t i = 0; i < m; ++i)
+				{
+					double v = 0;
+					for (index_t l = 0; l < k; ++l) v += a(l, i) * b(j, l);
+					r(i, j) = (T)(alpha * v + beta * c(i, j));
+				}
+			}
+		}
+	}
+
 
 } }
 
