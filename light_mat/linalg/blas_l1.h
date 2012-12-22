@@ -26,7 +26,7 @@ namespace lmat { namespace blas {
 	inline float asum(const IRegularMatrix<X, float>& x)
 	{
 		blas_int n = (blas_int)(x.nelems());
-		blas_int incx = (blas_int)(internal::get_vector_intv(x));
+		blas_int incx = (blas_int)(lmat::internal::get_vector_intv(x));
 
 		return LMAT_BLAS_NAME(sasum)(&n, x.ptr_data(), &incx);
 	}
@@ -36,7 +36,7 @@ namespace lmat { namespace blas {
 	inline double asum(const IRegularMatrix<X, double>& x)
 	{
 		blas_int n = (blas_int)(x.nelems());
-		blas_int incx = (blas_int)(internal::get_vector_intv(x));
+		blas_int incx = (blas_int)(lmat::internal::get_vector_intv(x));
 
 		return LMAT_BLAS_NAME(dasum)(&n, x.ptr_data(), &incx);
 	}
@@ -51,8 +51,8 @@ namespace lmat { namespace blas {
 		blas_int n = (blas_int)(x.nelems());
 		LMAT_CHECK_DIMS( x.nelems() == y.nelems() );
 
-		blas_int incx = (blas_int)(internal::get_vector_intv(x));
-		blas_int incy = (blas_int)(internal::get_vector_intv(y));
+		blas_int incx = (blas_int)(lmat::internal::get_vector_intv(x));
+		blas_int incy = (blas_int)(lmat::internal::get_vector_intv(y));
 
 		LMAT_BLAS_NAME(saxpy)(&n, &a, x.ptr_data(), &incx, y.ptr_data(), &incy);
 	}
@@ -64,8 +64,8 @@ namespace lmat { namespace blas {
 		blas_int n = (blas_int)(x.nelems());
 		LMAT_CHECK_DIMS( x.nelems() == y.nelems() );
 
-		blas_int incx = (blas_int)(internal::get_vector_intv(x));
-		blas_int incy = (blas_int)(internal::get_vector_intv(y));
+		blas_int incx = (blas_int)(lmat::internal::get_vector_intv(x));
+		blas_int incy = (blas_int)(lmat::internal::get_vector_intv(y));
 
 		LMAT_BLAS_NAME(daxpy)(&n, &a, x.ptr_data(), &incx, y.ptr_data(), &incy);
 	}
@@ -78,7 +78,7 @@ namespace lmat { namespace blas {
 	inline float nrm2(const IRegularMatrix<X, float>& x)
 	{
 		blas_int n = (blas_int)(x.nelems());
-		blas_int incx = (blas_int)(internal::get_vector_intv(x));
+		blas_int incx = (blas_int)(lmat::internal::get_vector_intv(x));
 
 		return LMAT_BLAS_NAME(snrm2)(&n, x.ptr_data(), &incx);
 	}
@@ -88,7 +88,7 @@ namespace lmat { namespace blas {
 	inline double nrm2(const IRegularMatrix<X, double>& x)
 	{
 		blas_int n = (blas_int)(x.nelems());
-		blas_int incx = (blas_int)(internal::get_vector_intv(x));
+		blas_int incx = (blas_int)(lmat::internal::get_vector_intv(x));
 
 		return LMAT_BLAS_NAME(dnrm2)(&n, x.ptr_data(), &incx);
 	}
@@ -102,8 +102,8 @@ namespace lmat { namespace blas {
 		blas_int n = (blas_int)(x.nelems());
 		LMAT_CHECK_DIMS( x.nelems() == y.nelems() );
 
-		blas_int incx = (blas_int)(internal::get_vector_intv(x));
-		blas_int incy = (blas_int)(internal::get_vector_intv(y));
+		blas_int incx = (blas_int)(lmat::internal::get_vector_intv(x));
+		blas_int incy = (blas_int)(lmat::internal::get_vector_intv(y));
 
 		return LMAT_BLAS_NAME(sdot)(&n, x.ptr_data(), &incx, y.ptr_data(), &incy);
 	}
@@ -115,8 +115,8 @@ namespace lmat { namespace blas {
 		blas_int n = (blas_int)(x.nelems());
 		LMAT_CHECK_DIMS( x.nelems() == y.nelems() );
 
-		blas_int incx = (blas_int)(internal::get_vector_intv(x));
-		blas_int incy = (blas_int)(internal::get_vector_intv(y));
+		blas_int incx = (blas_int)(lmat::internal::get_vector_intv(x));
+		blas_int incy = (blas_int)(lmat::internal::get_vector_intv(y));
 
 		return LMAT_BLAS_NAME(ddot)(&n, x.ptr_data(), &incx, y.ptr_data(), &incy);
 	}
@@ -130,8 +130,8 @@ namespace lmat { namespace blas {
 		blas_int n = (blas_int)(x.nelems());
 		LMAT_CHECK_DIMS( x.nelems() == y.nelems() );
 
-		blas_int incx = (blas_int)(internal::get_vector_intv(x));
-		blas_int incy = (blas_int)(internal::get_vector_intv(y));
+		blas_int incx = (blas_int)(lmat::internal::get_vector_intv(x));
+		blas_int incy = (blas_int)(lmat::internal::get_vector_intv(y));
 
 		LMAT_BLAS_NAME(srot)(&n, x.ptr_data(), &incx, y.ptr_data(), &incy, &c, &s);
 	}
@@ -143,8 +143,8 @@ namespace lmat { namespace blas {
 		blas_int n = (blas_int)(x.nelems());
 		LMAT_CHECK_DIMS( x.nelems() == y.nelems() );
 
-		blas_int incx = (blas_int)(internal::get_vector_intv(x));
-		blas_int incy = (blas_int)(internal::get_vector_intv(y));
+		blas_int incx = (blas_int)(lmat::internal::get_vector_intv(x));
+		blas_int incy = (blas_int)(lmat::internal::get_vector_intv(y));
 
 		LMAT_BLAS_NAME(drot)(&n, x.ptr_data(), &incx, y.ptr_data(), &incy, &c, &s);
 	}
@@ -156,7 +156,7 @@ namespace lmat { namespace blas {
 	inline void scal(IRegularMatrix<X, float>& x, float a)
 	{
 		blas_int n = (blas_int)(x.nelems());
-		blas_int incx = (blas_int)(internal::get_vector_intv(x));
+		blas_int incx = (blas_int)(lmat::internal::get_vector_intv(x));
 
 		LMAT_BLAS_NAME(sscal)(&n, &a, x.ptr_data(), &incx);
 	}
@@ -166,7 +166,7 @@ namespace lmat { namespace blas {
 	inline void scal(IRegularMatrix<X, double>& x, double a)
 	{
 		blas_int n = (blas_int)(x.nelems());
-		blas_int incx = (blas_int)(internal::get_vector_intv(x));
+		blas_int incx = (blas_int)(lmat::internal::get_vector_intv(x));
 
 		LMAT_BLAS_NAME(dscal)(&n, &a, x.ptr_data(), &incx);
 	}

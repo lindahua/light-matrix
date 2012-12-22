@@ -314,9 +314,10 @@ set(BLAS_TEST_HS
     ${BLAS_HS})
 
 add_executable(test_blas_l1 ${BLAS_TEST_HS} linalg/test_blas_l1.cpp)
+add_executable(test_blas_l2 ${BLAS_TEST_HS} linalg/test_blas_l2.cpp)
 
 target_link_libraries(test_blas_l1 ${MKL_LIBRARY})
-
+target_link_libraries(test_blas_l2 ${MKL_LIBRARY})
 
 # Groups of test units
 
@@ -383,7 +384,8 @@ set(LMAT_MATEVAL_TESTS
 # linalg
 
 set(LMAT_LINALG_TESTS
-    test_blas_l1)
+    test_blas_l1
+    test_blas_l2)
 
 # all
 

@@ -131,6 +131,43 @@ namespace lmat { namespace test {
 		}
 	}
 
+
+	// Level 2 & 3
+
+	template<typename T, class A, class X, class Y, class R>
+	void safe_mv(const T& alpha, const A& a, char trans, const X& x, const T& beta, const Y& y, R& r)
+	{
+		index_t m = a.nrows();
+		index_t n = a.ncolumns();
+
+		if (trans == 'n' || trans == 'N')
+		{
+			// (m x n) . (n) --> (m)
+
+			for (index_t i = 0; i < m ; ++i)
+			{
+				T v = 0;
+				for (index_t j = 0; j < n; ++j)
+					v += a(i, j) * x[j];
+
+				r[i] = alpha * v + beta * y[i];
+			}
+		}
+		else
+		{
+			// (n x m) . (m) --> (n)
+
+			for (index_t j = 0; j < n; ++j)
+			{
+				T v = 0;
+				for (index_t i = 0; i < m; ++i)
+					v += a(i, j) * x[i];
+
+				r[j] = alpha * v + beta * y[j];
+			}
+		}
+	}
+
 } }
 
 #endif
