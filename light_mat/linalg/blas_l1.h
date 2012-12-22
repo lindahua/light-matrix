@@ -125,7 +125,7 @@ namespace lmat { namespace blas {
 
 	template<class X, class Y>
 	LMAT_ENSURE_INLINE
-	inline void rot(const IRegularMatrix<X, float>& x, IRegularMatrix<Y, float>& y, float c, float s)
+	inline void rot(IRegularMatrix<X, float>& x, IRegularMatrix<Y, float>& y, float c, float s)
 	{
 		blas_int n = (blas_int)(x.nelems());
 		LMAT_CHECK_DIMS( x.nelems() == y.nelems() );
@@ -138,7 +138,7 @@ namespace lmat { namespace blas {
 
 	template<class X, class Y>
 	LMAT_ENSURE_INLINE
-	inline void rot(const IRegularMatrix<X, double>& x, IRegularMatrix<Y, double>& y, double c, double s)
+	inline void rot(IRegularMatrix<X, double>& x, IRegularMatrix<Y, double>& y, double c, double s)
 	{
 		blas_int n = (blas_int)(x.nelems());
 		LMAT_CHECK_DIMS( x.nelems() == y.nelems() );
@@ -151,7 +151,7 @@ namespace lmat { namespace blas {
 
 	// scale
 
-	template<class X, class Y>
+	template<class X>
 	LMAT_ENSURE_INLINE
 	inline void scal(IRegularMatrix<X, float>& x, float a)
 	{
@@ -161,7 +161,7 @@ namespace lmat { namespace blas {
 		LMAT_BLAS_NAME(sscal)(&n, &a, x.ptr_data(), &incx);
 	}
 
-	template<class X, class Y>
+	template<class X>
 	LMAT_ENSURE_INLINE
 	inline void scal(IRegularMatrix<X, double>& x, double a)
 	{
