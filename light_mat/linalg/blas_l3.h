@@ -10,8 +10,43 @@
 #define LIGHTMAT_BLAS_L3_H_
 
 #include <light_mat/matrix/matrix_classes.h>
-#include <light_mat/linalg/blas_extern.h>
 #include "internal/linalg_aux.h"
+
+extern "C"
+{
+	void LMAT_BLAS_NAME(sgemm)(const char *transa, const char *transb, const blas_int *m, const blas_int *n, const blas_int *k,
+	           const float *alpha, const float *a, const blas_int *lda, const float *b, const blas_int *ldb,
+	           const float *beta, float *c, const blas_int *ldc);
+	void LMAT_BLAS_NAME(ssymm)(const char *side, const char *uplo, const blas_int *m, const blas_int *n,
+	           const float *alpha, const float *a, const blas_int *lda, const float *b, const blas_int *ldb,
+	           const float *beta, float *c, const blas_int *ldc);
+	void LMAT_BLAS_NAME(ssyrk)(const char *uplo, const char *trans, const blas_int *n, const blas_int *k,
+	           const float *alpha, const float *a, const blas_int *lda, const float *beta,
+	           float *c, const blas_int *ldc);
+	void LMAT_BLAS_NAME(strmm)(const char *side, const char *uplo, const char *transa, const char *diag,
+	           const blas_int *m, const blas_int *n, const float *alpha, const float *a, const blas_int *lda,
+	           float *b, const blas_int *ldb);
+	void LMAT_BLAS_NAME(strsm)(const char *side, const char *uplo, const char *transa, const char *diag,
+	           const blas_int *m, const blas_int *n, const float *alpha, const float *a, const blas_int *lda,
+	           float *b, const blas_int *ldb);
+
+	void LMAT_BLAS_NAME(dgemm)(const char *transa, const char *transb, const blas_int *m, const blas_int *n, const blas_int *k,
+	           const double *alpha, const double *a, const blas_int *lda, const double *b, const blas_int *ldb,
+	           const double *beta, double *c, const blas_int *ldc);
+	void LMAT_BLAS_NAME(dsymm)(const char *side, const char *uplo, const blas_int *m, const blas_int *n,
+	           const double *alpha, const double *a, const blas_int *lda, const double *b, const blas_int *ldb,
+	           const double *beta, double *c, const blas_int *ldc);
+	void LMAT_BLAS_NAME(dsyrk)(const char *uplo, const char *trans, const blas_int *n, const blas_int *k,
+	           const double *alpha, const double *a, const blas_int *lda, const double *beta,
+	           double *c, const blas_int *ldc);
+	void LMAT_BLAS_NAME(dtrmm)(const char *side, const char *uplo, const char *transa, const char *diag,
+	           const blas_int *m, const blas_int *n, const double *alpha, const double *a, const blas_int *lda,
+	           double *b, const blas_int *ldb);
+	void LMAT_BLAS_NAME(dtrsm)(const char *side, const char *uplo, const char *transa, const char *diag,
+	           const blas_int *m, const blas_int *n, const double *alpha, const double *a, const blas_int *lda,
+	           double *b, const blas_int *ldb);
+}
+
 
 namespace lmat { namespace blas {
 

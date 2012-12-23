@@ -14,8 +14,31 @@
 #define LIGHTMAT_BLAS_L1_H_
 
 #include <light_mat/matrix/matrix_classes.h>
-#include <light_mat/linalg/blas_extern.h>
 #include "internal/linalg_aux.h"
+
+
+extern "C"
+{
+	float   LMAT_BLAS_NAME(sasum)(const blas_int *n, const float *x, const blas_int *incx);
+	void    LMAT_BLAS_NAME(saxpy)(const blas_int *n, const float *alpha, const float *x, const blas_int *incx, float *y, const blas_int *incy);
+	void    LMAT_BLAS_NAME(scopy)(const blas_int *n, const float *x, const blas_int *incx, float *y, const blas_int *incy);
+	float   LMAT_BLAS_NAME(sdot) (const blas_int *n, const float *x, const blas_int *incx, const float *y, const blas_int *incy);
+	float   LMAT_BLAS_NAME(snrm2)(const blas_int *n, const float *x, const blas_int *incx);
+	void    LMAT_BLAS_NAME(srot) (const blas_int *n, float *x, const blas_int *incx, float *y, const blas_int *incy, const float *c, const float *s);
+	void    LMAT_BLAS_NAME(sscal)(const blas_int *n, const float *a, float *x, const blas_int *incx);
+	void    LMAT_BLAS_NAME(sswap)(const blas_int *n, float *x, const blas_int *incx, float *y, const blas_int *incy);
+
+	double  LMAT_BLAS_NAME(dasum)(const blas_int *n, const double *x, const blas_int *incx);
+	void    LMAT_BLAS_NAME(daxpy)(const blas_int *n, const double *alpha, const double *x, const blas_int *incx, double *y, const blas_int *incy);
+	void    LMAT_BLAS_NAME(dcopy)(const blas_int *n, const double *x, const blas_int *incx, double *y, const blas_int *incy);
+	double  LMAT_BLAS_NAME(ddot) (const blas_int *n, const double *x, const blas_int *incx, const double *y, const blas_int *incy);
+	double  LMAT_BLAS_NAME(dnrm2)(const blas_int *n, const double *x, const blas_int *incx);
+	void    LMAT_BLAS_NAME(drot) (const blas_int *n, double *x, const blas_int *incx, double *y, const blas_int *incy, const double *c, const double *s);
+	void    LMAT_BLAS_NAME(dscal)(const blas_int *n, const double *a, double *x, const blas_int *incx);
+	void    LMAT_BLAS_NAME(dswap)(const blas_int *n, double *x, const blas_int *incx, double *y, const blas_int *incy);
+}
+
+
 
 namespace lmat { namespace blas {
 
