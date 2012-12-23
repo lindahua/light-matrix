@@ -79,6 +79,41 @@ namespace lmat { namespace test {
 
 
 	template<typename T, class Mat>
+	void fill_eye(IRegularMatrix<Mat, T>& mat)
+	{
+		index_t m = mat.nrows();
+		index_t n = mat.ncolumns();
+
+		index_t d = m < n ? m : n;
+
+		zero(mat);
+		for (index_t i = 0; i < d; ++i)
+		{
+			mat(i, i) = T(1);
+		}
+	}
+
+	template<typename T, class Mat>
+	void fill_prand(IRegularMatrix<Mat, T>& mat, const T& adv)
+	{
+		index_t n = mat.nrows();
+
+		for (index_t i = 0; i < n; ++i)
+		{
+			for (index_t j = 0; j < n; ++j)
+			{
+				T v = randunif<T>(T(0.0), T(1.0));
+				mat(i, j) = v;
+			}
+		}
+
+		for (index_t i = 0; i < n; ++i)
+		{
+			mat(i, i) += adv;
+		}
+	}
+
+	template<typename T, class Mat>
 	void fill_rand_sym(IRegularMatrix<Mat, T>& mat)
 	{
 		index_t n = mat.nrows();
