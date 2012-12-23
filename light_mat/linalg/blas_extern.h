@@ -23,8 +23,6 @@ typedef int blas_int;
 
 #define LMAT_BLAS_NAME(name) name
 
-typedef int MKL_INT;
-
 extern "C"
 {
 	// BLAS LEVEL 1
