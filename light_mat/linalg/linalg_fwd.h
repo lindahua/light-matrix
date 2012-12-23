@@ -10,7 +10,7 @@
 #define LINALG_FWD_H_
 
 #include <light_mat/config/config.h>
-#include <light_mat/matrix/matrix_properties.h>
+#include <light_mat/matrix/matrix_classes.h>
 
 #ifdef LMAT_BLAS_ILP64
 typedef long long blas_int;

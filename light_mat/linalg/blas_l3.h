@@ -9,7 +9,6 @@
 #ifndef LIGHTMAT_BLAS_L3_H_
 #define LIGHTMAT_BLAS_L3_H_
 
-#include <light_mat/matrix/matrix_classes.h>
 #include "internal/linalg_aux.h"
 
 extern "C"
