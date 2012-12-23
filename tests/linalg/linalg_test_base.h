@@ -136,6 +136,28 @@ namespace lmat { namespace test {
 
 
 	template<typename T, class Mat>
+	void fill_rand_pdm(IRegularMatrix<Mat, T>& mat)
+	{
+		index_t n = mat.nrows();
+
+		for (index_t i = 1; i < n; ++i)
+		{
+			for (index_t j = 0; j < i; ++j)
+			{
+				T v = randunif<T>(T(-1.0), T(1.0));
+				mat(i, j) = v;
+				mat(j, i) = v;
+			}
+		}
+
+		for (index_t i = 0; i < n; ++i)
+		{
+			mat(i, i) = randunif<T>(T(2.0), T(5.0)) + T(n);
+		}
+	}
+
+
+	template<typename T, class Mat>
 	void fill_rand_tri(IRegularMatrix<Mat, T>& mat, char uplo, bool uni=false)
 	{
 		index_t n = mat.nrows();

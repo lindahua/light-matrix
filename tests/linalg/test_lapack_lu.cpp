@@ -39,8 +39,7 @@ void test_lu_solve( char trans )
 
 	T tol = (T)(sizeof(T) == 4 ? 2.0e-5 : 1.0e-10);
 
-	lu_fac<T> lu;
-	lu.set(a);
+	lu_fac<T> lu(a);
 
 	bool is_ipiv_sorted = true;
 	for (index_t i = 0; i < m-1; ++i)
@@ -68,7 +67,7 @@ void test_lu_solve( char trans )
 }
 
 template<typename T>
-void test_lu_inv()
+void test_inv()
 {
 	typedef mat_host<bloc, T, 0, 0> host_t;
 	typedef typename host_t::cmat_t cmat_t;
@@ -82,7 +81,7 @@ void test_lu_inv()
 
 	cmat_t a = a_host.get_cmat();
 
-	dense_matrix<T> b = lapack::inv(a);
+	dense_matrix<T> b = inv(a);
 
 	ASSERT_EQ( b.nrows(), m );
 	ASSERT_EQ( b.ncolumns(), m );
@@ -118,7 +117,9 @@ void test_gesv()
 	cmat_t a = a_host.get_cmat();
 	cmat_t b = b_host.get_cmat();
 
-	dense_matrix<T> x = lapack::solve(a, x);
+	dense_matrix<T> a_(a);
+	dense_matrix<T> x(b);
+	lapack::gesv(a_, x);
 
 	dense_matrix<T> r(m, n);
 	blas::gemm(a, x, r);
@@ -142,12 +143,12 @@ T_CASE( mat_lu, solve_t )
 
 T_CASE( mat_lu, inv )
 {
-	test_lu_inv<T>();
+	test_inv<T>();
 }
 
 T_CASE( mat_lu, gesv )
 {
-	test_lu_inv<T>();
+	test_gesv<T>();
 }
 
 
@@ -158,7 +159,7 @@ BEGIN_TPACK( mat_lu_solve )
 	ADD_T_CASE( mat_lu, solve_t, double )
 END_TPACK
 
-BEGIN_TPACK( mat_lu_inv )
+BEGIN_TPACK( mat_inv )
 	ADD_T_CASE( mat_lu, inv, float )
 	ADD_T_CASE( mat_lu, inv, double )
 END_TPACK
@@ -170,7 +171,7 @@ END_TPACK
 
 BEGIN_MAIN_SUITE
 	ADD_TPACK( mat_lu_solve )
-	ADD_TPACK( mat_lu_inv )
+	ADD_TPACK( mat_inv )
 	ADD_TPACK( mat_gesv )
 END_MAIN_SUITE
 

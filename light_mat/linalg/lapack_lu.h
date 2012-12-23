@@ -136,15 +136,17 @@ namespace lmat { namespace lapack {
 		template<class L>
 		void getl(IRegularMatrix<L, T>& mat) const
 		{
+			LMAT_CHECK_PERCOL_CONT(L)
 			LMAT_CHECK_DIMS( mat.nrows() == m_dim && mat.ncolumns() == m_dim )
 
 			zero(mat);
 			lmat::internal::get_tril(m_dim, m_a, mat, true);
 		}
 
-		template<class L>
-		void getu(IRegularMatrix<L, T>& mat) const
+		template<class U>
+		void getu(IRegularMatrix<U, T>& mat) const
 		{
+			LMAT_CHECK_PERCOL_CONT(U)
 			LMAT_CHECK_DIMS( mat.nrows() == m_dim && mat.ncolumns() == m_dim )
 
 			zero(mat);
@@ -153,11 +155,8 @@ namespace lmat { namespace lapack {
 
 	protected:
 		template<class Mat>
-		void set_mat(const IRegularMatrix<Mat, T>& mat)
+		void set_mat(const IMatrixXpr<Mat, T>& mat)
 		{
-			static_assert( meta::is_percol_continuous<Mat>::value,
-					"Mat must be percol continuous.");
-
 			LMAT_CHECK_DIMS( mat.nrows() == mat.ncolumns() )
 
 			m_dim = mat.nrows();
@@ -176,8 +175,18 @@ namespace lmat { namespace lapack {
 	class lu_fac<float> : public lu_base<float>
 	{
 	public:
+		LMAT_ENSURE_INLINE
+		explicit lu_fac() { }
+
 		template<class Mat>
-		void set(const IRegularMatrix<Mat, float>& mat)
+		LMAT_ENSURE_INLINE
+		lu_fac(const IMatrixXpr<Mat, float>& mat)
+		{
+			set(mat);
+		}
+
+		template<class Mat>
+		void set(const IMatrixXpr<Mat, float>& mat)
 		{
 			this->set_mat(mat);
 			trf(this->m_a, this->m_ipiv.ptr_data());
@@ -200,7 +209,7 @@ namespace lmat { namespace lapack {
 		}
 
 		template<class B, class X>
-		void solve(const IRegularMatrix<B, float>& b, IRegularMatrix<X, float>& x, char trans='N') const
+		void solve(const IMatrixXpr<B, float>& b, IRegularMatrix<X, float>& x, char trans='N') const
 		{
 			LMAT_CHECK_PERCOL_CONT(X)
 
@@ -232,7 +241,7 @@ namespace lmat { namespace lapack {
 		}
 
 		template<class A, class B>
-		static void inv(const IRegularMatrix<A, float>& a, IRegularMatrix<B, float>& b)
+		static void inv(const IMatrixXpr<A, float>& a, IRegularMatrix<B, float>& b)
 		{
 			LMAT_CHECK_PERCOL_CONT(B)
 
@@ -255,13 +264,22 @@ namespace lmat { namespace lapack {
 	};
 
 
-
 	template<>
 	class lu_fac<double> : public lu_base<double>
 	{
 	public:
+		LMAT_ENSURE_INLINE
+		explicit lu_fac() { }
+
 		template<class Mat>
-		void set(const IRegularMatrix<Mat, double>& mat)
+		LMAT_ENSURE_INLINE
+		lu_fac(const IMatrixXpr<Mat, double>& mat)
+		{
+			set(mat);
+		}
+
+		template<class Mat>
+		void set(const IMatrixXpr<Mat, double>& mat)
 		{
 			this->set_mat(mat);
 			trf(this->m_a, this->m_ipiv.ptr_data());
@@ -284,7 +302,7 @@ namespace lmat { namespace lapack {
 		}
 
 		template<class B, class X>
-		void solve(const IRegularMatrix<B, double>& b, IRegularMatrix<X, double>& x, char trans='N') const
+		void solve(const IMatrixXpr<B, double>& b, IRegularMatrix<X, double>& x, char trans='N') const
 		{
 			LMAT_CHECK_PERCOL_CONT(X)
 
@@ -316,7 +334,7 @@ namespace lmat { namespace lapack {
 		}
 
 		template<class A, class B>
-		static void inv(const IRegularMatrix<A, double>& a, IRegularMatrix<B, double>& b)
+		static void inv(const IMatrixXpr<A, double>& a, IRegularMatrix<B, double>& b)
 		{
 			LMAT_CHECK_PERCOL_CONT(B)
 
@@ -341,13 +359,12 @@ namespace lmat { namespace lapack {
 
 	/************************************************
 	 *
-	 *  convenient functions
+	 *  GESV
 	 *
 	 ************************************************/
 
 	template<class A, class B>
-	inline dense_matrix<float, meta::nrows<B>::value, meta::ncols<B>::value>
-	gesv(const IRegularMatrix<A, float>& a, IRegularMatrix<B, float>& b)
+	inline void gesv(IRegularMatrix<A, float>& a, IRegularMatrix<B, float>& b)
 	{
 		LMAT_CHECK_PERCOL_CONT(A)
 		LMAT_CHECK_PERCOL_CONT(B)
@@ -366,8 +383,7 @@ namespace lmat { namespace lapack {
 	}
 
 	template<class A, class B>
-	inline dense_matrix<double, meta::nrows<B>::value, meta::ncols<B>::value>
-	gesv(const IRegularMatrix<A, double>& a, IRegularMatrix<B, double>& b)
+	inline void gesv(IRegularMatrix<A, double>& a, IRegularMatrix<B, double>& b)
 	{
 		LMAT_CHECK_PERCOL_CONT(A)
 		LMAT_CHECK_PERCOL_CONT(B)
@@ -385,50 +401,110 @@ namespace lmat { namespace lapack {
 		LMAT_CHECK_LAPACK_INFO( dgesv, info );
 	}
 
-	template<class A, class B>
-	inline dense_matrix<float, meta::nrows<B>::value, meta::ncols<B>::value>
-	solve(const IRegularMatrix<A, float>& a, const IRegularMatrix<B, float>& b)
-	{
-		LMAT_CHECK_PERCOL_CONT(A)
-
-		typedef dense_matrix<float, meta::nrows<B>::value, meta::ncols<B>::value> rmat_t;
-		rmat_t x = b;
-		gesv(a, x);
-		return x;
-	}
-
-	template<class A, class B>
-	inline dense_matrix<double, meta::nrows<B>::value, meta::ncols<B>::value>
-	solve(const IRegularMatrix<A, double>& a, const IRegularMatrix<B, double>& b)
-	{
-		LMAT_CHECK_PERCOL_CONT(A)
-
-		typedef dense_matrix<double, meta::nrows<B>::value, meta::ncols<B>::value> rmat_t;
-		rmat_t x = b;
-		gesv(a, x);
-		return x;
-	}
-
-	template<class A>
-	inline dense_matrix<float, meta::nrows<A>::value, meta::ncols<A>::value>
-	inv(const IRegularMatrix<A, float>& a)
-	{
-		typedef dense_matrix<float, meta::nrows<A>::value, meta::ncols<A>::value> rmat_t;
-		rmat_t r;
-		lu_fac<float>::inv(a, r);
-		return r;
-	}
-
-	template<class A>
-	inline dense_matrix<double, meta::nrows<A>::value, meta::ncols<A>::value>
-	inv(const IRegularMatrix<A, double>& a)
-	{
-		typedef dense_matrix<double, meta::nrows<A>::value, meta::ncols<A>::value> rmat_t;
-		rmat_t r;
-		lu_fac<double>::inv(a, r);
-		return r;
-	}
-
 } }
+
+
+namespace lmat
+{
+
+	template<class Arg> class inv_expr;
+
+	/************************************************
+	 *
+	 *  inversion expression
+	 *
+	 ************************************************/
+
+	template<class Arg>
+	struct matrix_traits<inv_expr<Arg> >
+	{
+		static const int num_dimensions = 2;
+		static const int ct_num_rows = meta::sq_dim<Arg>::value;
+		static const int ct_num_cols = ct_num_rows;
+
+		static const bool is_readonly = true;
+
+		typedef matrix_shape<ct_num_rows, ct_num_cols> shape_type;
+		typedef typename matrix_traits<Arg>::value_type value_type;
+		typedef typename matrix_traits<Arg>::domain domain;
+	};
+
+
+	namespace internal
+	{
+		template<class Arg>
+		LMAT_ENSURE_INLINE
+		inline typename matrix_traits<inv_expr<Arg> >::shape_type
+		inv_shape(const Arg& a)
+		{
+			LMAT_CHECK_DIMS( a.nrows() == a.ncolumns() )
+
+			typedef typename matrix_traits<inv_expr<Arg> >::shape_type shape_t;
+			return shape_t(a.nrows(), a.ncolumns());
+		}
+	}
+
+	template<class Arg>
+	class inv_expr : public IMatrixXpr<inv_expr<Arg>, typename matrix_traits<Arg>::value_type>
+	{
+	public:
+		static const int ct_dim = meta::sq_dim<Arg>::value;
+		typedef matrix_shape<ct_dim, ct_dim> shape_type;
+
+		LMAT_ENSURE_INLINE
+		explicit inv_expr(const Arg& a)
+		: m_shape(internal::inv_shape(a)), m_arg(a)
+		{ }
+
+		LMAT_ENSURE_INLINE
+		index_t nrows() const { return m_shape.nrows(); }
+
+		LMAT_ENSURE_INLINE
+		index_t ncolumns() const { return m_shape.ncolumns(); }
+
+		LMAT_ENSURE_INLINE
+		index_t nelems() const { return m_shape.nelems(); }
+
+		LMAT_ENSURE_INLINE
+		shape_type shape() const { return m_shape; }
+
+		LMAT_ENSURE_INLINE
+		const Arg& arg() const
+		{
+			return m_arg;
+		}
+
+	private:
+		shape_type m_shape;
+		const Arg& m_arg;
+	};
+
+
+	template<class Arg, class DMat>
+	inline void evaluate(const inv_expr<Arg>& expr,
+			IRegularMatrix<DMat, typename matrix_traits<Arg>::value_type>& dmat)
+	{
+		LMAT_CHECK_PERCOL_CONT(DMat)
+
+		typedef typename matrix_traits<Arg>::value_type T;
+		lapack::lu_fac<T>::inv(expr.arg(), dmat.derived());
+	}
+
+	template<class Arg>
+	LMAT_ENSURE_INLINE
+	inline inv_expr<Arg> inv(const IMatrixXpr<Arg, float>& a)
+	{
+		return inv_expr<Arg>(a.derived());
+	}
+
+	template<class Arg>
+	LMAT_ENSURE_INLINE
+	inline inv_expr<Arg> inv(const IMatrixXpr<Arg, double>& a)
+	{
+		return inv_expr<Arg>(a.derived());
+	}
+
+}
+
 
 #endif /* LAPACK_LU_H_ */

@@ -27,6 +27,18 @@ typedef blas_int lapack_int;
 
 namespace lmat
 {
+
+	namespace meta
+	{
+		template<class Mat>
+		struct sq_dim
+		{
+			static const int value = meta::common_dim<
+					meta::nrows<Mat>::value, meta::ncols<Mat>::value>::value;
+		};
+	}
+
+
 	namespace blas
 	{
 		struct trs
