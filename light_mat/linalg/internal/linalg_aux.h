@@ -120,6 +120,30 @@ namespace lmat { namespace internal {
 		}
 	}
 
+
+	template<typename T, class Mat>
+	inline void complete_sym(index_t n, IRegularMatrix<Mat, T>& a, char uplo)
+	{
+		T *pa = a.ptr_data();
+		index_t as = a.col_stride();
+
+		if (uplo == 'L' || uplo == 'l')
+		{
+			pa += as;
+			for (index_t j = 1; j < n; ++j, pa += as)
+			{
+				for (index_t i = 0; i < j; ++i) pa[i] = a.elem(j, i);
+			}
+		}
+		else
+		{
+			for (index_t j = 0; j < n-1; ++j, pa += as)
+			{
+				for (index_t i = j+1; i < n; ++i) pa[i] = a.elem(j, i);
+			}
+		}
+	}
+
 } }
 
 #endif 

@@ -40,6 +40,7 @@ void test_lu_solve( char trans )
 	T tol = (T)(sizeof(T) == 4 ? 2.0e-5 : 1.0e-10);
 
 	lu_fac<T> lu(a);
+	ASSERT_EQ( lu.dim(), m );
 
 	bool is_ipiv_sorted = true;
 	for (index_t i = 0; i < m-1; ++i)

@@ -180,7 +180,7 @@ namespace lmat { namespace lapack {
 
 		template<class Mat>
 		LMAT_ENSURE_INLINE
-		lu_fac(const IMatrixXpr<Mat, float>& mat)
+		explicit lu_fac(const IMatrixXpr<Mat, float>& mat)
 		{
 			set(mat);
 		}
@@ -273,7 +273,7 @@ namespace lmat { namespace lapack {
 
 		template<class Mat>
 		LMAT_ENSURE_INLINE
-		lu_fac(const IMatrixXpr<Mat, double>& mat)
+		explicit lu_fac(const IMatrixXpr<Mat, double>& mat)
 		{
 			set(mat);
 		}
