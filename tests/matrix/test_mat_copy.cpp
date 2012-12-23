@@ -165,6 +165,108 @@ MN_CASE( mat_export, grid )
 }
 
 
+template<class S, class D>
+void safe_copy_triu(index_t m, index_t n, const S& smat, D& dmat, index_t k)
+{
+	for (index_t j = 0; j < n; ++j)
+	{
+		for (index_t i = 0; i < m; ++i)
+		{
+			if (j - i >= k) dmat(i, j) = smat(i, j);
+		}
+	}
+}
+
+template<class S, class D>
+void safe_copy_tril(index_t m, index_t n, const S& smat, D& dmat, index_t k)
+{
+	for (index_t j = 0; j < n; ++j)
+	{
+		for (index_t i = 0; i < m; ++i)
+		{
+			if (j - i <= k) dmat(i, j) = smat(i, j);
+		}
+	}
+}
+
+
+
+SIMPLE_CASE( mat_copy, triu )
+{
+	index_t LDimA = 9;
+	index_t LDimB = 10;
+
+	index_t max_m = 8;
+	index_t max_n = 8;
+
+	dense_matrix<double> A(LDimA, max_n);
+	for (index_t i = 0; i < A.nelems(); ++i) A[i] = double(i+1);
+
+	dense_matrix<double> B(LDimB, max_n);
+
+	for (index_t m = 1; m < max_m; ++m)
+	{
+		for (index_t n = 1; n < max_n; ++n)
+		{
+			cref_block<double> a(A.ptr_data(), m, n, LDimA);
+			ref_block<double> b(B.ptr_data(), m, n, LDimB);
+
+			dense_matrix<double> r(m, n);
+
+			index_t max_k = m < n ? m - 1 : n - 1;
+			for (index_t k = -max_k; k <= max_k; ++k)
+			{
+				zero_vec(B.nelems(), B.ptr_data());
+				zero_vec(r.nelems(), r.ptr_data());
+
+				copy_triu(a, b, k);
+				safe_copy_triu(m, n, a, r, k);
+
+				ASSERT_MAT_EQ(m, n, b, r);
+			}
+		}
+	}
+}
+
+
+SIMPLE_CASE( mat_copy, tril )
+{
+	index_t LDimA = 9;
+	index_t LDimB = 10;
+
+	index_t max_m = 8;
+	index_t max_n = 8;
+
+	dense_matrix<double> A(LDimA, max_n);
+	for (index_t i = 0; i < A.nelems(); ++i) A[i] = double(i+1);
+
+	dense_matrix<double> B(LDimB, max_n);
+
+	for (index_t m = 1; m < max_m; ++m)
+	{
+		for (index_t n = 1; n < max_n; ++n)
+		{
+			cref_block<double> a(A.ptr_data(), m, n, LDimA);
+			ref_block<double> b(B.ptr_data(), m, n, LDimB);
+
+			dense_matrix<double> r(m, n);
+
+			index_t max_k = m < n ? m - 1 : n - 1;
+			for (index_t k = -max_k; k <= max_k; ++k)
+			{
+				zero_vec(B.nelems(), B.ptr_data());
+				zero_vec(r.nelems(), r.ptr_data());
+
+				copy_tril(a, b, k);
+				safe_copy_tril(m, n, a, r, k);
+
+				ASSERT_MAT_EQ(m, n, b, r);
+			}
+		}
+	}
+}
+
+
 
 BEGIN_TPACK( mat_copy_cc )
 	ADD_MN_CASE_3X3( mat_copy, cont_to_cont, 3, 4 );
@@ -226,6 +328,10 @@ BEGIN_TPACK( mat_export_grid )
 	ADD_MN_CASE_3X3( mat_export, grid, 3, 4 )
 END_TPACK
 
+BEGIN_TPACK( mat_copy_tri )
+	ADD_SIMPLE_CASE( mat_copy, triu )
+	ADD_SIMPLE_CASE( mat_copy, tril )
+END_TPACK
 
 
 BEGIN_MAIN_SUITE
@@ -246,6 +352,8 @@ BEGIN_MAIN_SUITE
 	ADD_TPACK( mat_export_cont )
 	ADD_TPACK( mat_export_bloc )
 	ADD_TPACK( mat_export_grid )
+
+	ADD_TPACK( mat_copy_tri )
 END_MAIN_SUITE
 
 

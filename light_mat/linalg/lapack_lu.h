@@ -140,7 +140,8 @@ namespace lmat { namespace lapack {
 			LMAT_CHECK_DIMS( mat.nrows() == m_dim && mat.ncolumns() == m_dim )
 
 			zero(mat);
-			lmat::internal::get_tril(m_dim, m_a, mat, true);
+			copy_tril(m_a, mat, -1);
+			for (index_t i = 0; i < m_dim; ++i) mat(i, i) = T(1);
 		}
 
 		template<class U>
@@ -150,7 +151,7 @@ namespace lmat { namespace lapack {
 			LMAT_CHECK_DIMS( mat.nrows() == m_dim && mat.ncolumns() == m_dim )
 
 			zero(mat);
-			lmat::internal::get_triu(m_dim, m_a, mat);
+			copy_triu(m_a, mat, 0);
 		}
 
 	protected:

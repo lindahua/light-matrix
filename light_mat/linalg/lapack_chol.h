@@ -160,11 +160,11 @@ namespace lmat { namespace lapack {
 
 			if (is_lower())
 			{
-				lmat::internal::get_tril(m_dim, m_a, mat);
+				copy_tril(m_a, mat);
 			}
 			else
 			{
-				lmat::internal::get_triu(m_dim, m_a, mat);
+				copy_triu(m_a, mat);
 			}
 		}
 

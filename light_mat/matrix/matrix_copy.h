@@ -55,6 +55,93 @@ namespace lmat
 		copy(sexpr.derived(), dmat.derived());
 	}
 
+
+	/********************************************
+	 *
+	 *  copy part of the matrix
+	 *
+	 ********************************************/
+
+
+	// copy all elements with j - i >= k
+
+	template<typename T, class SMat, class DMat>
+	inline void copy_triu(const IRegularMatrix<SMat, T>& smat, IRegularMatrix<DMat, T>& dmat, index_t k=0)
+	{
+		static_assert(meta::is_percol_continuous<SMat>::value, "smat should be percol continuous");
+		static_assert(meta::is_percol_continuous<DMat>::value, "dmat should be percol continuous");
+
+		index_t m = smat.nrows();
+		index_t n = smat.ncolumns();
+
+		index_t dm = dmat.nrows();
+		index_t dn = dmat.ncolumns();
+
+		LMAT_CHECK_DIMS( (dm >= m || dm >= n-k) && dn == n )
+
+		const T *ps = smat.ptr_data();
+		T *pd = dmat.ptr_data();
+
+		index_t ss = smat.col_stride();
+		index_t ds = dmat.col_stride();
+
+		index_t j0 = k >= 0 ? k : 0;
+		if (j0 > 0)
+		{
+			ps += j0 * ss;
+			pd += j0 * ds;
+		}
+
+		if (n <= m + k)
+		{
+			for (index_t j = j0; j < n; ++j, ps += ss, pd += ds)
+				copy_vec(j-k+1, ps, pd);
+		}
+		else
+		{
+			for (index_t j = j0; j < m+k; ++j, ps += ss, pd += ds)
+				copy_vec(j-k+1, ps, pd);
+
+			for (index_t j = m+k; j < n; ++j, ps += ss, pd += ds)
+				copy_vec(m, ps, pd);
+		}
+	}
+
+
+	// copy all elements with j - i <= k
+
+	template<typename T, class SMat, class DMat>
+	inline void copy_tril(const IRegularMatrix<SMat, T>& smat, IRegularMatrix<DMat, T>& dmat, index_t k=0)
+	{
+		static_assert(meta::is_percol_continuous<SMat>::value, "smat should be percol continuous");
+		static_assert(meta::is_percol_continuous<DMat>::value, "dmat should be percol continuous");
+
+		index_t m = smat.nrows();
+		index_t n = smat.ncolumns();
+
+		index_t dm = dmat.nrows();
+		index_t dn = dmat.ncolumns();
+
+		LMAT_CHECK_DIMS( dm == m && (dn >= n || dn >= m + k) )
+
+		const T *ps = smat.ptr_data();
+		T *pd = dmat.ptr_data();
+
+		index_t ss = smat.col_stride();
+		index_t ds = dmat.col_stride();
+
+		for (index_t j = 0; j <= k; ++j, ps += ss, pd += ds)
+			copy_vec(m, ps, pd);
+
+		index_t j0 = k >= -1 ? k + 1 : 0;
+		for (index_t j = j0; j <= m+k; ++j, ps += ss, pd += ds)
+		{
+			index_t di = j-k;
+			copy_vec(m-di, ps+di, pd+di);
+		}
+	}
+
+
 }
 
 #endif 
