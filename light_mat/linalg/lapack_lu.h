@@ -137,6 +137,8 @@ namespace lmat { namespace lapack {
 		void getl(IRegularMatrix<L, T>& mat) const
 		{
 			LMAT_CHECK_DIMS( mat.nrows() == m_dim && mat.ncolumns() == m_dim )
+
+			zero(mat);
 			lmat::internal::get_tril(m_dim, m_a, mat, true);
 		}
 
@@ -144,6 +146,8 @@ namespace lmat { namespace lapack {
 		void getu(IRegularMatrix<L, T>& mat) const
 		{
 			LMAT_CHECK_DIMS( mat.nrows() == m_dim && mat.ncolumns() == m_dim )
+
+			zero(mat);
 			lmat::internal::get_triu(m_dim, m_a, mat);
 		}
 
