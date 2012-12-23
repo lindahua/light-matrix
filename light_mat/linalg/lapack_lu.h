@@ -128,6 +128,25 @@ namespace lmat { namespace lapack {
 			return m_ipiv.ptr_data();
 		}
 
+		const dense_matrix<T>& intern() const
+		{
+			return m_a;
+		}
+
+		template<class L>
+		void getl(IRegularMatrix<L, T>& mat) const
+		{
+			LMAT_CHECK_DIMS( mat.nrows() == m_dim && mat.ncolumns() == m_dim )
+			lmat::internal::get_tril(m_dim, m_a, mat, true);
+		}
+
+		template<class L>
+		void getu(IRegularMatrix<L, T>& mat) const
+		{
+			LMAT_CHECK_DIMS( mat.nrows() == m_dim && mat.ncolumns() == m_dim )
+			lmat::internal::get_triu(m_dim, m_a, mat);
+		}
+
 	protected:
 		template<class Mat>
 		void set_mat(const IRegularMatrix<Mat, T>& mat)

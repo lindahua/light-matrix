@@ -37,15 +37,32 @@ void test_lu_solve( char trans )
 	cmat_t b = b_host.get_cmat();
 	mat_t x = x_host.get_mat();
 
+	T tol = (T)(sizeof(T) == 4 ? 2.0e-5 : 1.0e-10);
+
 	lu_fac<T> lu;
 	lu.set(a);
+
+	bool is_ipiv_sorted = true;
+	for (index_t i = 0; i < m-1; ++i)
+	{
+		if (lu.ipiv()[i+1] != lu.ipiv()[i] + 1) is_ipiv_sorted = false;
+	}
+
+	if (is_ipiv_sorted)
+	{
+		dense_matrix<T> lmat(m, m, zero()); lu.getl(lmat);
+		dense_matrix<T> umat(m, m, zero()); lu.getu(umat);
+
+		dense_matrix<T> prod(m, m, zero());
+		blas::gemm(lmat, umat, prod);
+
+		ASSERT_MAT_APPROX( m, m, prod, a, tol );
+	}
 
 	lu.solve(b, x, trans);
 
 	dense_matrix<T> r(m, n);
 	blas::gemm(a, x, r, trans, 'n');
-
-	T tol = (T)(sizeof(T) == 4 ? 2.0e-5 : 1.0e-10);
 
 	ASSERT_MAT_APPROX(m, n, b, r, tol);
 }
