@@ -23,6 +23,7 @@ typedef blas_int lapack_int;
 #define LMAT_BLAS_NAME(name) name
 #define LMAT_LAPACK_NAME(name) LMAT_BLAS_NAME(name)
 
+#define LMAT_CHECK_PERCOL_CONT(Ty) static_assert( meta::is_percol_continuous<Ty>::value, #Ty " must be percol continuous.");
 
 namespace lmat
 {

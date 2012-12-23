@@ -183,9 +183,11 @@ namespace lmat { namespace lapack {
 			trf(this->m_a, this->m_ipiv.ptr_data());
 		}
 
-		template<class X>
-		void solve_inplace(IRegularMatrix<X, float>& b, char trans='N') const
+		template<class B>
+		void solve_inplace(IRegularMatrix<B, float>& b, char trans='N') const
 		{
+			LMAT_CHECK_PERCOL_CONT(B)
+
 			lapack_int n = (lapack_int)(this->m_dim);
 			lapack_int nrhs = (lapack_int)(b.ncolumns());
 			lapack_int lda = (lapack_int)(this->m_a.col_stride());
@@ -200,6 +202,8 @@ namespace lmat { namespace lapack {
 		template<class B, class X>
 		void solve(const IRegularMatrix<B, float>& b, IRegularMatrix<X, float>& x, char trans='N') const
 		{
+			LMAT_CHECK_PERCOL_CONT(X)
+
 			x.derived() = b.derived();
 			solve_inplace(x, trans);
 		}
@@ -208,8 +212,7 @@ namespace lmat { namespace lapack {
 		template<class A>
 		static void inv_inplace(IRegularMatrix<A, float>& a)
 		{
-			static_assert( meta::is_percol_continuous<A>::value,
-					"a must be percol continuous.");
+			LMAT_CHECK_PERCOL_CONT(A)
 
 			LMAT_CHECK_DIMS( a.nrows() == a.ncolumns() );
 
@@ -231,6 +234,8 @@ namespace lmat { namespace lapack {
 		template<class A, class B>
 		static void inv(const IRegularMatrix<A, float>& a, IRegularMatrix<B, float>& b)
 		{
+			LMAT_CHECK_PERCOL_CONT(B)
+
 			b.derived() = a.derived();
 			inv_inplace(b);
 		}
@@ -262,9 +267,11 @@ namespace lmat { namespace lapack {
 			trf(this->m_a, this->m_ipiv.ptr_data());
 		}
 
-		template<class X>
-		void solve_inplace(IRegularMatrix<X, double>& b, char trans='N') const
+		template<class B>
+		void solve_inplace(IRegularMatrix<B, double>& b, char trans='N') const
 		{
+			LMAT_CHECK_PERCOL_CONT(B)
+
 			lapack_int n = (lapack_int)(this->m_dim);
 			lapack_int nrhs = (lapack_int)(b.ncolumns());
 			lapack_int lda = (lapack_int)(this->m_a.col_stride());
@@ -279,6 +286,8 @@ namespace lmat { namespace lapack {
 		template<class B, class X>
 		void solve(const IRegularMatrix<B, double>& b, IRegularMatrix<X, double>& x, char trans='N') const
 		{
+			LMAT_CHECK_PERCOL_CONT(X)
+
 			x.derived() = b.derived();
 			solve_inplace(x, trans);
 		}
@@ -287,8 +296,7 @@ namespace lmat { namespace lapack {
 		template<class A>
 		static void inv_inplace(IRegularMatrix<A, double>& a)
 		{
-			static_assert( meta::is_percol_continuous<A>::value,
-					"a must be percol continuous.");
+			LMAT_CHECK_PERCOL_CONT(A)
 
 			LMAT_CHECK_DIMS( a.nrows() == a.ncolumns() );
 
@@ -310,6 +318,8 @@ namespace lmat { namespace lapack {
 		template<class A, class B>
 		static void inv(const IRegularMatrix<A, double>& a, IRegularMatrix<B, double>& b)
 		{
+			LMAT_CHECK_PERCOL_CONT(B)
+
 			b.derived() = a.derived();
 			inv_inplace(b);
 		}
@@ -339,6 +349,9 @@ namespace lmat { namespace lapack {
 	inline dense_matrix<float, meta::nrows<B>::value, meta::ncols<B>::value>
 	gesv(const IRegularMatrix<A, float>& a, IRegularMatrix<B, float>& b)
 	{
+		LMAT_CHECK_PERCOL_CONT(A)
+		LMAT_CHECK_PERCOL_CONT(B)
+
 		LMAT_CHECK_DIMS( a.nrows() == a.ncolumns() && a.nrows() == b.nrows() );
 
 		lapack_int n = (lapack_int)a.nrows();
@@ -356,6 +369,9 @@ namespace lmat { namespace lapack {
 	inline dense_matrix<double, meta::nrows<B>::value, meta::ncols<B>::value>
 	gesv(const IRegularMatrix<A, double>& a, IRegularMatrix<B, double>& b)
 	{
+		LMAT_CHECK_PERCOL_CONT(A)
+		LMAT_CHECK_PERCOL_CONT(B)
+
 		LMAT_CHECK_DIMS( a.nrows() == a.ncolumns() && a.nrows() == b.nrows() );
 
 		lapack_int n = (lapack_int)a.nrows();
@@ -373,6 +389,8 @@ namespace lmat { namespace lapack {
 	inline dense_matrix<float, meta::nrows<B>::value, meta::ncols<B>::value>
 	solve(const IRegularMatrix<A, float>& a, const IRegularMatrix<B, float>& b)
 	{
+		LMAT_CHECK_PERCOL_CONT(A)
+
 		typedef dense_matrix<float, meta::nrows<B>::value, meta::ncols<B>::value> rmat_t;
 		rmat_t x = b;
 		gesv(a, x);
@@ -383,6 +401,8 @@ namespace lmat { namespace lapack {
 	inline dense_matrix<double, meta::nrows<B>::value, meta::ncols<B>::value>
 	solve(const IRegularMatrix<A, double>& a, const IRegularMatrix<B, double>& b)
 	{
+		LMAT_CHECK_PERCOL_CONT(A)
+
 		typedef dense_matrix<double, meta::nrows<B>::value, meta::ncols<B>::value> rmat_t;
 		rmat_t x = b;
 		gesv(a, x);
