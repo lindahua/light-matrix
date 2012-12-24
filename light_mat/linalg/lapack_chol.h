@@ -9,8 +9,7 @@
 #ifndef LIGHTMAT_LAPACK_CHOL_H_
 #define LIGHTMAT_LAPACK_CHOL_H_
 
-#include <light_mat/matrix/matrix_classes.h>
-#include "internal/linalg_aux.h"
+#include <light_mat/linalg/lapack_fwd.h>
 
 
 /************************************************
@@ -217,9 +216,8 @@ namespace lmat { namespace lapack {
 			lapack_int ldb = (lapack_int)(b.col_stride());
 			lapack_int info = 0;
 
-			LMAT_LAPACK_NAME(spotrs)(&(this->m_uplo), &n, &nrhs,
-					this->m_a.ptr_data(), &lda, b.ptr_data(), &ldb, &info);
-			LMAT_CHECK_LAPACK_INFO(spotrs, info);
+			LMAT_CALL_LAPACK(spotrs, (&(this->m_uplo), &n, &nrhs,
+					this->m_a.ptr_data(), &lda, b.ptr_data(), &ldb, &info));
 		}
 
 		template<class B, class X>
@@ -245,8 +243,7 @@ namespace lmat { namespace lapack {
 			lapack_int lda = (lapack_int)a.col_stride();
 			lapack_int info = 0;
 
-			LMAT_LAPACK_NAME(spotri)(&uplo, &n, a.ptr_data(), &lda, &info);
-			LMAT_CHECK_LAPACK_INFO(spotri, info);
+			LMAT_CALL_LAPACK(spotri, (&uplo, &n, a.ptr_data(), &lda, &info));
 
 			lmat::internal::complete_sym(a.nrows(), a, uplo);
 		}
@@ -269,8 +266,7 @@ namespace lmat { namespace lapack {
 			lapack_int lda = (lapack_int)(a.col_stride());
 			lapack_int info = 0;
 
-			LMAT_LAPACK_NAME(spotrf)(&uplo, &n, a.ptr_data(), &lda, &info);
-			LMAT_CHECK_LAPACK_INFO(spotrf, info);
+			LMAT_CALL_LAPACK(spotrf, (&uplo, &n, a.ptr_data(), &lda, &info));
 		}
 	};
 
@@ -307,9 +303,8 @@ namespace lmat { namespace lapack {
 			lapack_int ldb = (lapack_int)(b.col_stride());
 			lapack_int info = 0;
 
-			LMAT_LAPACK_NAME(dpotrs)(&(this->m_uplo), &n, &nrhs,
-					this->m_a.ptr_data(), &lda, b.ptr_data(), &ldb, &info);
-			LMAT_CHECK_LAPACK_INFO(dpotrs, info);
+			LMAT_CALL_LAPACK(dpotrs, (&(this->m_uplo), &n, &nrhs,
+					this->m_a.ptr_data(), &lda, b.ptr_data(), &ldb, &info));
 		}
 
 		template<class B, class X>
@@ -335,8 +330,7 @@ namespace lmat { namespace lapack {
 			lapack_int lda = (lapack_int)a.col_stride();
 			lapack_int info = 0;
 
-			LMAT_LAPACK_NAME(dpotri)(&uplo, &n, a.ptr_data(), &lda, &info);
-			LMAT_CHECK_LAPACK_INFO(dpotri, info);
+			LMAT_CALL_LAPACK(dpotri, (&uplo, &n, a.ptr_data(), &lda, &info));
 
 			lmat::internal::complete_sym(a.nrows(), a, uplo);
 		}
@@ -359,8 +353,7 @@ namespace lmat { namespace lapack {
 			lapack_int lda = (lapack_int)(a.col_stride());
 			lapack_int info = 0;
 
-			LMAT_LAPACK_NAME(dpotrf)(&uplo, &n, a.ptr_data(), &lda, &info);
-			LMAT_CHECK_LAPACK_INFO(dpotrf, info);
+			LMAT_CALL_LAPACK(dpotrf, (&uplo, &n, a.ptr_data(), &lda, &info));
 		}
 	};
 
@@ -386,8 +379,7 @@ namespace lmat { namespace lapack {
 		lapack_int ldb = (lapack_int)b.col_stride();
 
 		lapack_int info = 0;
-		LMAT_LAPACK_NAME(sposv)(&uplo, &n, &nrhs, a.ptr_data(), &lda, b.ptr_data(), &ldb, &info);
-		LMAT_CHECK_LAPACK_INFO( sposv, info );
+		LMAT_CALL_LAPACK(sposv, (&uplo, &n, &nrhs, a.ptr_data(), &lda, b.ptr_data(), &ldb, &info));
 	}
 
 	template<class A, class B>
@@ -405,8 +397,7 @@ namespace lmat { namespace lapack {
 		lapack_int ldb = (lapack_int)b.col_stride();
 
 		lapack_int info = 0;
-		LMAT_LAPACK_NAME(dposv)(&uplo, &n, &nrhs, a.ptr_data(), &lda, b.ptr_data(), &ldb, &info);
-		LMAT_CHECK_LAPACK_INFO( dposv, info );
+		LMAT_CALL_LAPACK(dposv, (&uplo, &n, &nrhs, a.ptr_data(), &lda, b.ptr_data(), &ldb, &info));
 	}
 
 

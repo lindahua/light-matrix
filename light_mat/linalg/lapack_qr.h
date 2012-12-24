@@ -9,8 +9,7 @@
 #ifndef LIGHTMAT_LAPACK_QR_H_
 #define LIGHTMAT_LAPACK_QR_H_
 
-#include "internal/linalg_aux.h"
-#include <light_mat/math/math_base.h>
+#include <light_mat/linalg/lapack_fwd.h>
 
 extern "C"
 {
@@ -169,13 +168,19 @@ namespace lmat { namespace lapack {
 			lapack_int m = (lapack_int)(this->m_nrows);
 			lapack_int n = (lapack_int)(this->m_ncols);
 			lapack_int lda = (lapack_int)(this->m_a.col_stride());
-			lapack_int lwork = n * 64;
-			dense_col<float> ws((index_t)lwork);
-			lapack_int info = 0;
 
-			LMAT_LAPACK_NAME(sgeqrf)(&m, &n, this->m_a.ptr_data(), &lda, this->m_tau.ptr_data(),
-					ws.ptr_data(), &lwork, &info);
-			LMAT_CHECK_LAPACK_INFO(sgeqrf, info);
+			lapack_int info = 0;
+			lapack_int lwork = -1;
+			float lwork_opt = 0;
+
+			LMAT_CALL_LAPACK(sgeqrf, (&m, &n, this->m_a.ptr_data(), &lda, this->m_tau.ptr_data(),
+					&lwork_opt, &lwork, &info));
+
+			lwork = (lapack_int)lwork_opt;
+			dense_col<float> ws((index_t)lwork);
+
+			LMAT_CALL_LAPACK(sgeqrf, (&m, &n, this->m_a.ptr_data(), &lda, this->m_tau.ptr_data(),
+					ws.ptr_data(), &lwork, &info));
 		}
 
 		template<class Q>
@@ -197,15 +202,20 @@ namespace lmat { namespace lapack {
 			lapack_int m = (lapack_int)q.nrows();
 			lapack_int n = (lapack_int)q.ncolumns();
 			lapack_int k_ = (lapack_int)k;
-
 			lapack_int ldq = (lapack_int)q.col_stride();
-			lapack_int lwork = n * 64;
-			dense_col<float> ws((index_t)lwork);
-			lapack_int info;
 
-			LMAT_LAPACK_NAME(sorgqr)(&m, &n, &k_, q.ptr_data(), &ldq,
-					this->m_tau.ptr_data(), ws.ptr_data(), &lwork, &info);
-			LMAT_CHECK_LAPACK_INFO(sorgqr, info);
+			lapack_int lwork = -1;
+			float lwork_opt = 0;
+			lapack_int info = 0;
+
+			LMAT_CALL_LAPACK(sorgqr, (&m, &n, &k_, q.ptr_data(), &ldq,
+					this->m_tau.ptr_data(), &lwork_opt, &lwork, &info));
+
+			lwork = (lapack_int)lwork_opt;
+			dense_col<float> ws((index_t)lwork);
+
+			LMAT_CALL_LAPACK(sorgqr, (&m, &n, &k_, q.ptr_data(), &ldq,
+					this->m_tau.ptr_data(), ws.ptr_data(), &lwork, &info));
 		}
 
 
@@ -221,13 +231,18 @@ namespace lmat { namespace lapack {
 			lapack_int lda = (lapack_int)this->m_a.col_stride();
 			lapack_int ldx = (lapack_int)x.col_stride();
 
-			lapack_int lwork = (side == 'L' || side == 'l' ? n : m) * 64;
-			dense_col<float> ws((index_t)lwork);
+			lapack_int lwork = -1;
+			float lwork_opt = 0;
 			lapack_int info = 0;
 
-			LMAT_LAPACK_NAME(sormqr)(&side, &trans, &m, &n, &k, this->m_a.ptr_data(), &lda,
-					this->m_tau.ptr_data(), x.ptr_data(), &ldx, ws.ptr_data(), &lwork, &info);
-			LMAT_CHECK_LAPACK_INFO(sormqr, info);
+			LMAT_CALL_LAPACK(sormqr, (&side, &trans, &m, &n, &k, this->m_a.ptr_data(), &lda,
+					this->m_tau.ptr_data(), x.ptr_data(), &ldx, &lwork_opt, &lwork, &info));
+
+			lwork = (lapack_int)lwork_opt;
+			dense_col<float> ws((index_t)lwork);
+
+			LMAT_CALL_LAPACK(sormqr, (&side, &trans, &m, &n, &k, this->m_a.ptr_data(), &lda,
+					this->m_tau.ptr_data(), x.ptr_data(), &ldx, ws.ptr_data(), &lwork, &info));
 		}
 
 		template<class X, class Y>
@@ -298,13 +313,19 @@ namespace lmat { namespace lapack {
 			lapack_int m = (lapack_int)(this->m_nrows);
 			lapack_int n = (lapack_int)(this->m_ncols);
 			lapack_int lda = (lapack_int)(this->m_a.col_stride());
-			lapack_int lwork = n * 64;
-			dense_col<double> ws((index_t)lwork);
-			lapack_int info = 0;
 
-			LMAT_LAPACK_NAME(dgeqrf)(&m, &n, this->m_a.ptr_data(), &lda, this->m_tau.ptr_data(),
-					ws.ptr_data(), &lwork, &info);
-			LMAT_CHECK_LAPACK_INFO(dgeqrf, info);
+			lapack_int info = 0;
+			lapack_int lwork = -1;
+			double lwork_opt = 0;
+
+			LMAT_CALL_LAPACK(dgeqrf, (&m, &n, this->m_a.ptr_data(), &lda, this->m_tau.ptr_data(),
+					&lwork_opt, &lwork, &info));
+
+			lwork = (lapack_int)lwork_opt;
+			dense_col<double> ws((index_t)lwork);
+
+			LMAT_CALL_LAPACK(dgeqrf, (&m, &n, this->m_a.ptr_data(), &lda, this->m_tau.ptr_data(),
+					ws.ptr_data(), &lwork, &info));
 		}
 
 		template<class Q>
@@ -326,15 +347,20 @@ namespace lmat { namespace lapack {
 			lapack_int m = (lapack_int)q.nrows();
 			lapack_int n = (lapack_int)q.ncolumns();
 			lapack_int k_ = (lapack_int)k;
-
 			lapack_int ldq = (lapack_int)q.col_stride();
-			lapack_int lwork = n * 64;
-			dense_col<double> ws((index_t)lwork);
-			lapack_int info;
 
-			LMAT_LAPACK_NAME(dorgqr)(&m, &n, &k_, q.ptr_data(), &ldq,
-					this->m_tau.ptr_data(), ws.ptr_data(), &lwork, &info);
-			LMAT_CHECK_LAPACK_INFO(dorgqr, info);
+			lapack_int lwork = -1;
+			double lwork_opt = 0;
+			lapack_int info = 0;
+
+			LMAT_CALL_LAPACK(dorgqr, (&m, &n, &k_, q.ptr_data(), &ldq,
+					this->m_tau.ptr_data(), &lwork_opt, &lwork, &info));
+
+			lwork = (lapack_int)lwork_opt;
+			dense_col<double> ws((index_t)lwork);
+
+			LMAT_CALL_LAPACK(dorgqr, (&m, &n, &k_, q.ptr_data(), &ldq,
+					this->m_tau.ptr_data(), ws.ptr_data(), &lwork, &info));
 		}
 
 		template<class X>
@@ -349,13 +375,18 @@ namespace lmat { namespace lapack {
 			lapack_int lda = (lapack_int)this->m_a.col_stride();
 			lapack_int ldx = (lapack_int)x.col_stride();
 
-			lapack_int lwork = (side == 'L' || side == 'l' ? n : m) * 64;
-			dense_col<double> ws((index_t)lwork);
+			lapack_int lwork = -1;
+			double lwork_opt = 0;
 			lapack_int info = 0;
 
-			LMAT_LAPACK_NAME(dormqr)(&side, &trans, &m, &n, &k, this->m_a.ptr_data(), &lda,
-					this->m_tau.ptr_data(), x.ptr_data(), &ldx, ws.ptr_data(), &lwork, &info);
-			LMAT_CHECK_LAPACK_INFO(dormqr, info);
+			LMAT_CALL_LAPACK(dormqr, (&side, &trans, &m, &n, &k, this->m_a.ptr_data(), &lda,
+					this->m_tau.ptr_data(), x.ptr_data(), &ldx, &lwork_opt, &lwork, &info));
+
+			lwork = (lapack_int)lwork_opt;
+			dense_col<double> ws((index_t)lwork);
+
+			LMAT_CALL_LAPACK(dormqr, (&side, &trans, &m, &n, &k, this->m_a.ptr_data(), &lda,
+					this->m_tau.ptr_data(), x.ptr_data(), &ldx, ws.ptr_data(), &lwork, &info));
 		}
 
 		template<class X, class Y>

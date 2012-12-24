@@ -9,7 +9,7 @@
 #ifndef LIGHTMAT_LAPACK_LU_H_
 #define LIGHTMAT_LAPACK_LU_H_
 
-#include "internal/linalg_aux.h"
+#include <light_mat/linalg/lapack_fwd.h>
 
 
 /************************************************
@@ -204,9 +204,8 @@ namespace lmat { namespace lapack {
 			lapack_int ldb = (lapack_int)(b.col_stride());
 			lapack_int info = 0;
 
-			LMAT_LAPACK_NAME(sgetrs)(&trans, &n, &nrhs, this->m_a.ptr_data(), &lda,
-					this->m_ipiv.ptr_data(), b.ptr_data(), &ldb, &info);
-			LMAT_CHECK_LAPACK_INFO( sgetrs, info );
+			LMAT_CALL_LAPACK(sgetrs, (&trans, &n, &nrhs, this->m_a.ptr_data(), &lda,
+					this->m_ipiv.ptr_data(), b.ptr_data(), &ldb, &info));
 		}
 
 		template<class B, class X>
@@ -234,11 +233,14 @@ namespace lmat { namespace lapack {
 			lapack_int lda = (lapack_int)a.col_stride();
 			lapack_int info = 0;
 
-			lapack_int lwork = 64 * n;
+			lapack_int lwork = -1;
+			float lwork_opt = 0;
+			LMAT_CALL_LAPACK(sgetri, (&n, a.ptr_data(), &lda, ipiv.ptr_data(), &lwork_opt, &lwork, &info));
+
+			lwork = (lapack_int)lwork_opt;
 			dense_col<float> ws((index_t)lwork);
 
-			LMAT_LAPACK_NAME(sgetri)(&n, a.ptr_data(), &lda, ipiv.ptr_data(), ws.ptr_data(), &lwork, &info);
-			LMAT_CHECK_LAPACK_INFO( sgetri, info );
+			LMAT_CALL_LAPACK(sgetri, (&n, a.ptr_data(), &lda, ipiv.ptr_data(), ws.ptr_data(), &lwork, &info));
 		}
 
 		template<class A, class B>
@@ -259,8 +261,7 @@ namespace lmat { namespace lapack {
 			lapack_int lda = (lapack_int)(a.col_stride());
 			lapack_int info = 0;
 
-			LMAT_LAPACK_NAME(sgetrf)(&n, &n, a.ptr_data(), &lda, ipiv, &info);
-			LMAT_CHECK_LAPACK_INFO( sgetrf, info);
+			LMAT_CALL_LAPACK(sgetrf, (&n, &n, a.ptr_data(), &lda, ipiv, &info));
 		}
 	};
 
@@ -297,9 +298,8 @@ namespace lmat { namespace lapack {
 			lapack_int ldb = (lapack_int)(b.col_stride());
 			lapack_int info = 0;
 
-			LMAT_LAPACK_NAME(dgetrs)(&trans, &n, &nrhs, this->m_a.ptr_data(), &lda,
-					this->m_ipiv.ptr_data(), b.ptr_data(), &ldb, &info);
-			LMAT_CHECK_LAPACK_INFO( dgetrs, info );
+			LMAT_CALL_LAPACK(dgetrs, (&trans, &n, &nrhs, this->m_a.ptr_data(), &lda,
+					this->m_ipiv.ptr_data(), b.ptr_data(), &ldb, &info));
 		}
 
 		template<class B, class X>
@@ -327,11 +327,14 @@ namespace lmat { namespace lapack {
 			lapack_int lda = (lapack_int)a.col_stride();
 			lapack_int info = 0;
 
-			lapack_int lwork = 64 * n;
+			lapack_int lwork = -1;
+			double lwork_opt = 0;
+			LMAT_CALL_LAPACK(dgetri, (&n, a.ptr_data(), &lda, ipiv.ptr_data(), &lwork_opt, &lwork, &info));
+
+			lwork = (lapack_int)lwork_opt;
 			dense_col<double> ws((index_t)lwork);
 
-			LMAT_LAPACK_NAME(dgetri)(&n, a.ptr_data(), &lda, ipiv.ptr_data(), ws.ptr_data(), &lwork, &info);
-			LMAT_CHECK_LAPACK_INFO( dgetri, info );
+			LMAT_CALL_LAPACK(dgetri, (&n, a.ptr_data(), &lda, ipiv.ptr_data(), ws.ptr_data(), &lwork, &info));
 		}
 
 		template<class A, class B>
@@ -352,8 +355,7 @@ namespace lmat { namespace lapack {
 			lapack_int lda = (lapack_int)(a.col_stride());
 			lapack_int info = 0;
 
-			LMAT_LAPACK_NAME(dgetrf)(&n, &n, a.ptr_data(), &lda, ipiv, &info);
-			LMAT_CHECK_LAPACK_INFO( dgetrf, info);
+			LMAT_CALL_LAPACK(dgetrf, (&n, &n, a.ptr_data(), &lda, ipiv, &info));
 		}
 	};
 
@@ -379,8 +381,7 @@ namespace lmat { namespace lapack {
 		dense_col<lapack_int> ipiv(n);
 
 		lapack_int info = 0;
-		LMAT_LAPACK_NAME(sgesv)(&n, &nrhs, a.ptr_data(), &lda, ipiv.ptr_data(), b.ptr_data(), &ldb, &info);
-		LMAT_CHECK_LAPACK_INFO( sgesv, info );
+		LMAT_CALL_LAPACK(sgesv, (&n, &nrhs, a.ptr_data(), &lda, ipiv.ptr_data(), b.ptr_data(), &ldb, &info));
 	}
 
 	template<class A, class B>
@@ -398,8 +399,7 @@ namespace lmat { namespace lapack {
 		dense_col<lapack_int> ipiv(n);
 
 		lapack_int info = 0;
-		LMAT_LAPACK_NAME(dgesv)(&n, &nrhs, a.ptr_data(), &lda, ipiv.ptr_data(), b.ptr_data(), &ldb, &info);
-		LMAT_CHECK_LAPACK_INFO( dgesv, info );
+		LMAT_CALL_LAPACK(dgesv, (&n, &nrhs, a.ptr_data(), &lda, ipiv.ptr_data(), b.ptr_data(), &ldb, &info));
 	}
 
 } }

@@ -192,8 +192,10 @@ set(BLAS_HS
     ${INC}/linalg/blas.h)    
     
 set(LAPACK_HS
+    ${INC}/linalg/lapack_fwd.h
     ${INC}/linalg/lapack_lu.h
-    ${INC}/linalg/lapack_chol.h)
+    ${INC}/linalg/lapack_chol.h
+    ${INC}/linalg/lapack_qr.h)
     
 # Executables
 
