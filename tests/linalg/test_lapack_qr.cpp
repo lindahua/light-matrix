@@ -36,11 +36,15 @@ void test_qr_fac(index_t m, index_t n)
 
 	qr_fac<T> qr(a);
 
-	dense_matrix<T> r0(m, n, zero());
+	dense_matrix<T> r0;
 	qr.getr(r0);
+	ASSERT_EQ(r0.nrows(), m);
+	ASSERT_EQ(r0.ncolumns(), n);
 
-	dense_matrix<T> q0(m, m, zero());
+	dense_matrix<T> q0;
 	qr.getq(q0);
+	ASSERT_EQ(q0.nrows(), m);
+	ASSERT_EQ(q0.ncolumns(), m);
 
 	dense_matrix<T> e0(m, m); fill_eye(e0);
 	dense_matrix<T> g0(m, m); blas::gemm(q0, q0, g0, 'T', 'N');
@@ -52,10 +56,15 @@ void test_qr_fac(index_t m, index_t n)
 
 	if (m > n)
 	{
-		dense_matrix<T> r0s(n, n, zero());
-		qr.getr(r0s);
-		dense_matrix<T> q0s(m, n, zero());
-		qr.getq(q0s);
+		dense_matrix<T> r0s;
+		qr.getr(r0s, n);
+		ASSERT_EQ( r0s.nrows(), n );
+		ASSERT_EQ( r0s.ncolumns(), n );
+
+		dense_matrix<T> q0s;
+		qr.getq(q0s, n);
+		ASSERT_EQ( q0s.nrows(), m );
+		ASSERT_EQ( q0s.ncolumns(), n );
 
 		ASSERT_MAT_EQ( m, n, q0, q0s );
 
@@ -65,8 +74,11 @@ void test_qr_fac(index_t m, index_t n)
 	}
 
 	index_t n2 = math::min(m, n) - 2;
-	dense_matrix<T> q2(m, n2);
-	qr.getq(q2);
+	dense_matrix<T> q2;
+	qr.getq(q2, n2);
+	ASSERT_EQ( q2.nrows(), m );
+	ASSERT_EQ( q2.ncolumns(), n2 );
+
 	ASSERT_MAT_EQ( m, n2, q0, q2 );
 }
 
@@ -111,8 +123,10 @@ void test_qr_multq(index_t m, index_t n, char side)
 		for (index_t i = 0; i < mx; ++i) x(i, j) = randunif(T(-2.0), T(2.0));
 	}
 
-	dense_matrix<T> qmat(m, m);
+	dense_matrix<T> qmat;
 	qr.getq(qmat);
+	ASSERT_EQ( qmat.nrows(), m );
+	ASSERT_EQ( qmat.ncolumns(), m );
 
 	dense_matrix<T> rn(mx, nx, zero());
 	dense_matrix<T> rt(mx, nx, zero());

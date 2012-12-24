@@ -50,8 +50,13 @@ void test_lu_solve( char trans )
 
 	if (is_ipiv_sorted)
 	{
-		dense_matrix<T> lmat(m, m); lu.getl(lmat);
-		dense_matrix<T> umat(m, m); lu.getu(umat);
+		dense_matrix<T> lmat; lu.getl(lmat);
+		dense_matrix<T> umat; lu.getu(umat);
+
+		ASSERT_EQ( lmat.nrows(), m );
+		ASSERT_EQ( lmat.ncolumns(), m );
+		ASSERT_EQ( umat.nrows(), m );
+		ASSERT_EQ( umat.ncolumns(), m );
 
 		dense_matrix<T> prod(m, m, zero());
 		blas::gemm(lmat, umat, prod);

@@ -63,6 +63,57 @@ extern "C"
 
 namespace lmat { namespace lapack {
 
+
+	/********************************************
+	 *
+	 *  range value range
+	 *
+	 ********************************************/
+
+	struct eigval_irange
+	{
+		const index_t ibegin;
+		const index_t iend;
+
+		LMAT_ENSURE_INLINE
+		eigval_irange(index_t b, index_t e)
+		: ibegin(b), iend(e)
+		{
+			check_arg(b >= 0 && b <= e, "Invalid values for eigval_irange");
+		}
+	};
+
+
+	LMAT_ENSURE_INLINE
+	inline eigval_irange evr_I(index_t b, index_t e)
+	{
+		return eigval_irange(b, e);
+	}
+
+
+	template<typename T>
+	struct eigval_vrange
+	{
+		const T lbound;
+		const T ubound;  // lbound < e <= ubound
+
+		LMAT_ENSURE_INLINE
+		eigval_vrange(index_t l, index_t u)
+		: lbound(l), ubound(u)
+		{
+			check_arg(l <= u, "Invalid values for eigval_vrange");
+		}
+	};
+
+
+	template<typename T>
+	LMAT_ENSURE_INLINE
+	inline eigval_vrange<T> evr_V(T l, T u)
+	{
+		return eigval_vrange<T>(l, u);
+	}
+
+
 	/********************************************
 	 *
 	 *  SYEV
@@ -125,7 +176,8 @@ namespace lmat { namespace lapack {
 		LMAT_CHECK_WHOLE_CONT(W)
 
 		index_t n = a.nrows();
-		LMAT_CHECK_DIMS(a.ncolumns() == n && w.nelems() == n)
+		LMAT_CHECK_DIMS(a.ncolumns() == n)
+		w.require_size(n, 1);
 
 		dense_matrix<float> a_(a);
 		internal::_syev(a_, w, 'N', uplo);
@@ -138,7 +190,9 @@ namespace lmat { namespace lapack {
 		LMAT_CHECK_PERCOL_CONT(V)
 
 		index_t n = a.nrows();
-		LMAT_CHECK_DIMS(a.ncolumns() == n && w.nelems() == n && v.nrows() == n && v.ncolumns() == n)
+		LMAT_CHECK_DIMS(a.ncolumns() == n)
+		w.require_size(n, 1);
+		v.require_size(n, n);
 
 		dense_matrix<float> a_(a);
 		internal::_syev(a_, w, 'V', uplo);
@@ -152,7 +206,8 @@ namespace lmat { namespace lapack {
 		LMAT_CHECK_WHOLE_CONT(W)
 
 		index_t n = a.nrows();
-		LMAT_CHECK_DIMS(a.ncolumns() == n && w.nelems() == n)
+		LMAT_CHECK_DIMS(a.ncolumns() == n)
+		w.require_size(n, 1);
 
 		dense_matrix<double> a_(a);
 		internal::_syev(a_, w, 'N', uplo);
@@ -165,7 +220,9 @@ namespace lmat { namespace lapack {
 		LMAT_CHECK_PERCOL_CONT(V)
 
 		index_t n = a.nrows();
-		LMAT_CHECK_DIMS(a.ncolumns() == n && w.nelems() == n && v.nrows() == n && v.ncolumns() == n)
+		LMAT_CHECK_DIMS(a.ncolumns() == n)
+		w.require_size(n, 1);
+		v.require_size(n, n);
 
 		dense_matrix<double> a_(a);
 		internal::_syev(a_, w, 'V', uplo);
@@ -244,7 +301,8 @@ namespace lmat { namespace lapack {
 		LMAT_CHECK_WHOLE_CONT(W)
 
 		index_t n = a.nrows();
-		LMAT_CHECK_DIMS(a.ncolumns() == n && w.nelems() == n)
+		LMAT_CHECK_DIMS(a.ncolumns() == n)
+		w.require_size(n, 1);
 
 		dense_matrix<float> a_(a);
 		internal::_syevd(a_, w, 'N', uplo);
@@ -257,7 +315,9 @@ namespace lmat { namespace lapack {
 		LMAT_CHECK_PERCOL_CONT(V)
 
 		index_t n = a.nrows();
-		LMAT_CHECK_DIMS(a.ncolumns() == n && w.nelems() == n && v.nrows() == n && v.ncolumns() == n)
+		LMAT_CHECK_DIMS(a.ncolumns() == n)
+		w.require_size(n, 1);
+		v.require_size(n, n);
 
 		dense_matrix<float> a_(a);
 		internal::_syevd(a_, w, 'V', uplo);
@@ -271,7 +331,8 @@ namespace lmat { namespace lapack {
 		LMAT_CHECK_WHOLE_CONT(W)
 
 		index_t n = a.nrows();
-		LMAT_CHECK_DIMS(a.ncolumns() == n && w.nelems() == n)
+		LMAT_CHECK_DIMS(a.ncolumns() == n)
+		w.require_size(n, 1);
 
 		dense_matrix<double> a_(a);
 		internal::_syevd(a_, w, 'N', uplo);
@@ -284,7 +345,9 @@ namespace lmat { namespace lapack {
 		LMAT_CHECK_PERCOL_CONT(V)
 
 		index_t n = a.nrows();
-		LMAT_CHECK_DIMS(a.ncolumns() == n && w.nelems() == n && v.nrows() == n && v.ncolumns() == n)
+		LMAT_CHECK_DIMS(a.ncolumns() == n)
+		w.require_size(n, 1);
+		v.require_size(n, n);
 
 		dense_matrix<double> a_(a);
 		internal::_syevd(a_, w, 'V', uplo);
@@ -292,6 +355,177 @@ namespace lmat { namespace lapack {
 		copy(a_.derived(), v.derived());
 	}
 
+
+	/********************************************
+	 *
+	 *  SYEVR
+	 *
+	 ********************************************/
+
+	namespace internal
+	{
+		template<typename T>
+		LMAT_ENSURE_INLINE
+		inline void _set_eigval_range(index_t n, whole,
+				char &range, T &vl, T &vu, lapack_int &il, lapack_int &iu)
+		{
+			range = 'A';
+			vl = T(0);
+			vu = T(0);
+			il = 1;
+			iu = (lapack_int)n;
+		}
+
+		template<typename T>
+		LMAT_ENSURE_INLINE
+		inline void _set_eigval_range(index_t n, eigval_irange& irgn,
+				char &range, T &vl, T &vu, lapack_int &il, lapack_int &iu)
+		{
+			check_arg(irgn.iend <= n, "Invalid eigenvalue index range");
+
+			range = 'I';
+			vl = T(0);
+			vu = T(0);
+			il = (lapack_int)(irgn.ibegin + 1);
+			iu = (lapack_int)(irgn.iend);
+		}
+
+		template<typename T>
+		LMAT_ENSURE_INLINE
+		inline void _set_eigval_range(index_t n, eigval_vrange<T>& vrgn,
+				char &range, T &vl, T &vu, lapack_int &il, lapack_int &iu)
+		{
+			range = 'V';
+			vl = vrgn.lbound;
+			vu = vrgn.ubound;
+			il = 0;
+			iu = 0;
+		}
+
+
+		template<class A, class W, class V, typename Range>
+		inline index_t _syevr(IRegularMatrix<A, float>& a, IRegularMatrix<W, float>& w, IRegularMatrix<V, float>& z,
+				char jobz, char uplo, float abstol, const Range& ergn)
+		{
+			LMAT_CHECK_WHOLE_CONT(W)
+			LMAT_CHECK_PERCOL_CONT(A)
+			LMAT_CHECK_PERCOL_CONT(V)
+
+			lapack_int m = 0;
+			lapack_int n = (lapack_int)a.nrows();
+			lapack_int lda = (lapack_int)a.col_stride();
+			lapack_int ldz = (lapack_int)z.col_stride();
+
+			float lwork_opt = 0;
+			lapack_int lwork = -1;
+			lapack_int liwork_opt = 0;
+			lapack_int liwork = -1;
+			lapack_int info = 0;
+
+			dense_col<lapack_int> isuppz;
+			if (jobz == 'V' || jobz == 'v')
+				isuppz.require_size(n);
+
+			char range;
+			float vl, vu;
+			lapack_int il, iu;
+			_set_eigval_range(n, ergn, range, vl, vu, il, iu);
+
+			LMAT_CALL_LAPACK(ssyevr, (&jobz, &range, &uplo, &n, a.ptr_data(), &lda, &vl, &vu, &il, &iu, &abstol,
+					&m, w.ptr_data(), z.ptr_data(), &ldz, isuppz.ptr_data(),
+					&lwork_opt, &lwork, &liwork_opt, &liwork, &info));
+
+			lwork = (lapack_int)lwork_opt;
+			liwork = liwork_opt;
+
+			dense_col<float> ws((index_t)lwork);
+			dense_col<lapack_int> iws((index_t)liwork);
+
+			LMAT_CALL_LAPACK(ssyevr, (&jobz, &range, &uplo, &n, a.ptr_data(), &lda, &vl, &vu, &il, &iu, &abstol,
+					&m, w.ptr_data(), z.ptr_data(), &ldz, isuppz.ptr_data(),
+					ws.ptr_data(), &lwork, iws.ptr_data(), &liwork, &info));
+
+			return (index_t)m;
+		}
+
+
+		template<class A, class W, class V, typename Range>
+		inline index_t _syevr(IRegularMatrix<A, double>& a, IRegularMatrix<W, double>& w, IRegularMatrix<V, double>& z,
+				char jobz, char uplo, double abstol, const Range& ergn)
+		{
+			LMAT_CHECK_WHOLE_CONT(W)
+			LMAT_CHECK_PERCOL_CONT(A)
+			LMAT_CHECK_PERCOL_CONT(V)
+
+			lapack_int m = 0;
+			lapack_int n = (lapack_int)a.nrows();
+			lapack_int lda = (lapack_int)a.col_stride();
+			lapack_int ldz = (lapack_int)z.col_stride();
+
+			double lwork_opt = 0;
+			lapack_int lwork = -1;
+			lapack_int liwork_opt = 0;
+			lapack_int liwork = -1;
+			lapack_int info = 0;
+
+			dense_col<lapack_int> isuppz;
+			if (jobz == 'V' || jobz == 'v')
+				isuppz.require_size(n);
+
+			char range;
+			double vl, vu;
+			lapack_int il, iu;
+			_set_eigval_range(n, ergn, range, vl, vu, il, iu);
+
+			LMAT_CALL_LAPACK(dsyevr, (&jobz, &range, &uplo, &n, a.ptr_data(), &lda, &vl, &vu, &il, &iu, &abstol,
+					&m, w.ptr_data(), z.ptr_data(), &ldz, isuppz.ptr_data(),
+					&lwork_opt, &lwork, &liwork_opt, &liwork, &info));
+
+			lwork = (lapack_int)lwork_opt;
+			liwork = liwork_opt;
+
+			dense_col<double> ws((index_t)lwork);
+			dense_col<lapack_int> iws((index_t)liwork);
+
+			LMAT_CALL_LAPACK(dsyevr, (&jobz, &range, &uplo, &n, a.ptr_data(), &lda, &vl, &vu, &il, &iu, &abstol,
+					&m, w.ptr_data(), z.ptr_data(), &ldz, isuppz.ptr_data(),
+					ws.ptr_data(), &lwork, iws.ptr_data(), &liwork, &info));
+
+			return (index_t)m;
+		}
+	}
+
+
+	template<class A, class W>
+	inline index_t syevr(const IMatrixXpr<A, double>& a, IRegularMatrix<W, double>& w,
+			double abstol, char uplo='L')
+	{
+		LMAT_CHECK_WHOLE_CONT(W)
+
+		index_t n = a.nrows();
+		LMAT_CHECK_DIMS(a.ncolumns() == n)
+		w.require_size(n, 1);
+
+		dense_matrix<double> a_(a);
+		dense_matrix<double> v_;
+		return internal::_syevr(a_, w, v_, 'N', uplo, abstol, whole());
+	}
+
+	template<class A, class W, class V>
+	inline index_t syevr(const IMatrixXpr<A, double>& a, IRegularMatrix<W, double>& w, IRegularMatrix<V, double>& v,
+			double abstol, char uplo='L')
+	{
+		LMAT_CHECK_WHOLE_CONT(W)
+		LMAT_CHECK_PERCOL_CONT(V)
+
+		index_t n = a.nrows();
+		LMAT_CHECK_DIMS(a.ncolumns() == n)
+		w.require_size(n, 1);
+		v.require_size(n, n);
+
+		dense_matrix<double> a_(a);
+		return internal::_syevr(a_, w, v, 'V', uplo, abstol, whole());
+	}
 
 
 } }

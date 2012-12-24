@@ -61,6 +61,8 @@ namespace lmat
 			return m_data;
 		}
 
+		LMAT_DEFINE_NO_RESIZE( cref_grid )
+
 	private:
 		const T *m_data;
 		layout_type m_layout;
@@ -132,6 +134,8 @@ namespace lmat
 		{
 			return m_data;
 		}
+
+		LMAT_DEFINE_NO_RESIZE( ref_grid )
 
 	private:
 		template<class Expr>

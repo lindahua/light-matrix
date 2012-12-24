@@ -137,7 +137,7 @@ namespace lmat { namespace lapack {
 		void getl(IRegularMatrix<L, T>& mat) const
 		{
 			LMAT_CHECK_PERCOL_CONT(L)
-			LMAT_CHECK_DIMS( mat.nrows() == m_dim && mat.ncolumns() == m_dim )
+			mat.require_size(m_dim, m_dim);
 
 			zero(mat);
 			copy_tril(m_a, mat, -1);
@@ -148,7 +148,7 @@ namespace lmat { namespace lapack {
 		void getu(IRegularMatrix<U, T>& mat) const
 		{
 			LMAT_CHECK_PERCOL_CONT(U)
-			LMAT_CHECK_DIMS( mat.nrows() == m_dim && mat.ncolumns() == m_dim )
+			mat.require_size(m_dim, m_dim);
 
 			zero(mat);
 			copy_triu(m_a, mat, 0);

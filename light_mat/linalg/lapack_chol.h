@@ -153,8 +153,7 @@ namespace lmat { namespace lapack {
 		template<class L>
 		void get(IRegularMatrix<L, T>& mat) const
 		{
-			LMAT_CHECK_DIMS( mat.nrows() == m_dim && mat.ncolumns() == m_dim )
-
+			mat.require_size(m_dim, m_dim);
 			zero(mat);
 
 			if (is_lower())

@@ -65,6 +65,8 @@ namespace lmat
 			return m_data;
 		}
 
+		LMAT_DEFINE_NO_RESIZE( cref_block )
+
 	private:
 		const T *m_data;
 		layout_type m_layout;
@@ -136,6 +138,8 @@ namespace lmat
 		{
 			return m_data;
 		}
+
+		LMAT_DEFINE_NO_RESIZE( ref_block )
 
 	private:
 		template<class Expr>

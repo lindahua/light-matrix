@@ -70,6 +70,8 @@ namespace lmat
 			return m_data;
 		}
 
+		LMAT_DEFINE_NO_RESIZE( cref_matrix )
+
 	private:
 		const T *m_data;
 		layout_type m_layout;
@@ -148,6 +150,8 @@ namespace lmat
 		{
 			return m_data;
 		}
+
+		LMAT_DEFINE_NO_RESIZE( ref_matrix )
 
 	private:
 

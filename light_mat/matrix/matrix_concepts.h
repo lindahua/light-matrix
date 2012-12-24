@@ -185,6 +185,10 @@ namespace lmat
 			return elem(i, j);
 		}
 
+		LMAT_ENSURE_INLINE void require_size(index_t m, index_t n)
+		{
+			derived().require_size(m, n);
+		}
 
 	public:
 

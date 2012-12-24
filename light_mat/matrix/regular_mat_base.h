@@ -29,6 +29,10 @@
 	typedef VT& reference; \
 	typedef VT* pointer;
 
+#define LMAT_DEFINE_NO_RESIZE( classname ) \
+		LMAT_ENSURE_INLINE void require_size(index_t m, index_t n) { \
+			check_arg(this->nrows() == m && this->ncolumns() == n, \
+					"Cannot change the size of an instance of class " #classname); }
 
 namespace lmat
 {

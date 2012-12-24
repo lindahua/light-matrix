@@ -49,14 +49,20 @@ void test_chol_solve( char uplo )
 
 	if (chol.is_lower())
 	{
-		dense_matrix<T> L(m, m);
+		dense_matrix<T> L;
 		chol.get(L);
+		ASSERT_EQ(L.nrows(), m);
+		ASSERT_EQ(L.ncolumns(), m);
+
 		blas::gemm(L, L, prod, 'n', 't');
 	}
 	else
 	{
 		dense_matrix<T> R(m, m);
 		chol.get(R);
+		ASSERT_EQ(R.nrows(), m);
+		ASSERT_EQ(R.ncolumns(), m);
+
 		blas::gemm(R, R, prod, 't', 'n');
 	}
 
