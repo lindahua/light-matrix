@@ -81,6 +81,12 @@ namespace lmat { namespace lapack {
 		{
 			check_arg(b >= 0 && b <= e, "Invalid values for eigval_irange");
 		}
+
+		LMAT_ENSURE_INLINE
+		index_t num() const
+		{
+			return iend - ibegin;
+		}
 	};
 
 
@@ -98,7 +104,7 @@ namespace lmat { namespace lapack {
 		const T ubound;  // lbound < e <= ubound
 
 		LMAT_ENSURE_INLINE
-		eigval_vrange(index_t l, index_t u)
+		eigval_vrange(T l, T u)
 		: lbound(l), ubound(u)
 		{
 			check_arg(l <= u, "Invalid values for eigval_vrange");
@@ -378,7 +384,7 @@ namespace lmat { namespace lapack {
 
 		template<typename T>
 		LMAT_ENSURE_INLINE
-		inline void _set_eigval_range(index_t n, eigval_irange& irgn,
+		inline void _set_eigval_range(index_t n, const eigval_irange& irgn,
 				char &range, T &vl, T &vu, lapack_int &il, lapack_int &iu)
 		{
 			check_arg(irgn.iend <= n, "Invalid eigenvalue index range");
@@ -392,7 +398,7 @@ namespace lmat { namespace lapack {
 
 		template<typename T>
 		LMAT_ENSURE_INLINE
-		inline void _set_eigval_range(index_t n, eigval_vrange<T>& vrgn,
+		inline void _set_eigval_range(index_t n, const eigval_vrange<T>& vrgn,
 				char &range, T &vl, T &vu, lapack_int &il, lapack_int &iu)
 		{
 			range = 'V';
@@ -424,7 +430,7 @@ namespace lmat { namespace lapack {
 
 			dense_col<lapack_int> isuppz;
 			if (jobz == 'V' || jobz == 'v')
-				isuppz.require_size(n);
+				isuppz.require_size(2 * n);
 
 			char range;
 			float vl, vu;
@@ -470,7 +476,7 @@ namespace lmat { namespace lapack {
 
 			dense_col<lapack_int> isuppz;
 			if (jobz == 'V' || jobz == 'v')
-				isuppz.require_size(n);
+				isuppz.require_size(2 * n);
 
 			char range;
 			double vl, vu;
@@ -486,6 +492,7 @@ namespace lmat { namespace lapack {
 
 			dense_col<double> ws((index_t)lwork);
 			dense_col<lapack_int> iws((index_t)liwork);
+			m = 0;
 
 			LMAT_CALL_LAPACK(dsyevr, (&jobz, &range, &uplo, &n, a.ptr_data(), &lda, &vl, &vu, &il, &iu, &abstol,
 					&m, w.ptr_data(), z.ptr_data(), &ldz, isuppz.ptr_data(),
@@ -493,40 +500,152 @@ namespace lmat { namespace lapack {
 
 			return (index_t)m;
 		}
+
+		template<typename T, class A, class W, typename Range>
+		inline index_t _syevr_n(const IMatrixXpr<A, T>& a, IRegularMatrix<W, T>& w, index_t ns, const Range& ergn, T abstol, char uplo)
+		{
+			LMAT_CHECK_WHOLE_CONT(W)
+
+			index_t n = a.nrows();
+			LMAT_CHECK_DIMS(a.ncolumns() == n)
+			w.require_size(ns, 1);
+
+			dense_matrix<T> a_(a);
+			dense_matrix<T> v_(1, n);
+
+			index_t ret;
+
+			if (ns == n)
+			{
+				ret = internal::_syevr(a_, w, v_, 'N', uplo, abstol, ergn);
+			}
+			else
+			{
+				dense_col<T> w_(n);
+				ret = internal::_syevr(a_, w_, v_, 'N', uplo, abstol, ergn);
+				copy_vec(ns, w_.ptr_data(), w.ptr_data());
+			}
+
+			return ret;
+		}
+
+		template<typename T, class A, class W, class V, typename Range>
+		inline index_t _syevr_v(const IMatrixXpr<A, T>& a, IRegularMatrix<W, T>& w, IRegularMatrix<V, T>& v,
+				index_t ns, const Range& ergn, T abstol, char uplo)
+		{
+			LMAT_CHECK_WHOLE_CONT(W)
+			LMAT_CHECK_PERCOL_CONT(V)
+
+			index_t n = a.nrows();
+			LMAT_CHECK_DIMS(a.ncolumns() == n)
+			w.require_size(ns, 1);
+			v.require_size(n, ns);
+
+			dense_matrix<T> a_(a);
+
+			index_t ret;
+
+			if (ns == n)
+			{
+				ret = internal::_syevr(a_, w, v, 'V', uplo, abstol, ergn);
+			}
+			else
+			{
+				dense_col<T> w_(n);
+				ret = internal::_syevr(a_, w_, v, 'V', uplo, abstol, ergn);
+				copy_vec(ns, w_.ptr_data(), w.ptr_data());
+			}
+
+			return ret;
+		}
+
+	}
+
+
+	template<class A, class W>
+	inline index_t syevr(const IMatrixXpr<A, float>& a, IRegularMatrix<W, float>& w,
+			float abstol=0.0f, char uplo='L')
+	{
+		return internal::_syevr_n(a, w, a.nrows(), whole(), abstol, uplo);
+	}
+
+	template<class A, class W>
+	inline index_t syevr(const IMatrixXpr<A, float>& a, IRegularMatrix<W, float>& w,
+			const eigval_irange& ergn, float abstol=0.0f, char uplo='L')
+	{
+		return internal::_syevr_n(a, w, ergn.num(), ergn, abstol, uplo);
+	}
+
+	template<class A, class W>
+	inline index_t syevr(const IMatrixXpr<A, float>& a, IRegularMatrix<W, float>& w,
+			const eigval_vrange<float>& ergn, float abstol=0.0f, char uplo='L')
+	{
+		return internal::_syevr_n(a, w, a.nrows(), ergn, abstol, uplo);
+	}
+
+	template<class A, class W, class V>
+	inline index_t syevr(const IMatrixXpr<A, float>& a, IRegularMatrix<W, float>& w, IRegularMatrix<V, float>& v,
+			float abstol=0.0f, char uplo='L')
+	{
+		return internal::_syevr_v(a, w, v, a.nrows(), whole(), abstol, uplo);
+	}
+
+	template<class A, class W, class V>
+	inline index_t syevr(const IMatrixXpr<A, float>& a, IRegularMatrix<W, float>& w, IRegularMatrix<V, float>& v,
+			const eigval_irange& ergn, float abstol=0.0f, char uplo='L')
+	{
+		return internal::_syevr_v(a, w, v, ergn.num(), ergn, abstol, uplo);
+	}
+
+	template<class A, class W, class V>
+	inline index_t syevr(const IMatrixXpr<A, float>& a, IRegularMatrix<W, float>& w, IRegularMatrix<V, float>& v,
+			const eigval_vrange<float>& ergn, float abstol=0.0f, char uplo='L')
+	{
+		return internal::_syevr_v(a, w, v, a.nrows(), ergn, abstol, uplo);
 	}
 
 
 	template<class A, class W>
 	inline index_t syevr(const IMatrixXpr<A, double>& a, IRegularMatrix<W, double>& w,
-			double abstol, char uplo='L')
+			double abstol=0.0, char uplo='L')
 	{
-		LMAT_CHECK_WHOLE_CONT(W)
+		return internal::_syevr_n(a, w, a.nrows(), whole(), abstol, uplo);
+	}
 
-		index_t n = a.nrows();
-		LMAT_CHECK_DIMS(a.ncolumns() == n)
-		w.require_size(n, 1);
+	template<class A, class W>
+	inline index_t syevr(const IMatrixXpr<A, double>& a, IRegularMatrix<W, double>& w,
+			const eigval_irange& ergn, double abstol=0.0, char uplo='L')
+	{
+		return internal::_syevr_n(a, w, ergn.num(), ergn, abstol, uplo);
+	}
 
-		dense_matrix<double> a_(a);
-		dense_matrix<double> v_;
-		return internal::_syevr(a_, w, v_, 'N', uplo, abstol, whole());
+	template<class A, class W>
+	inline index_t syevr(const IMatrixXpr<A, double>& a, IRegularMatrix<W, double>& w,
+			const eigval_vrange<double>& ergn, double abstol=0.0, char uplo='L')
+	{
+		return internal::_syevr_n(a, w, a.nrows(), ergn, abstol, uplo);
 	}
 
 	template<class A, class W, class V>
 	inline index_t syevr(const IMatrixXpr<A, double>& a, IRegularMatrix<W, double>& w, IRegularMatrix<V, double>& v,
-			double abstol, char uplo='L')
+			double abstol=0.0, char uplo='L')
 	{
-		LMAT_CHECK_WHOLE_CONT(W)
-		LMAT_CHECK_PERCOL_CONT(V)
-
-		index_t n = a.nrows();
-		LMAT_CHECK_DIMS(a.ncolumns() == n)
-		w.require_size(n, 1);
-		v.require_size(n, n);
-
-		dense_matrix<double> a_(a);
-		return internal::_syevr(a_, w, v, 'V', uplo, abstol, whole());
+		return internal::_syevr_v(a, w, v, a.nrows(), whole(), abstol, uplo);
 	}
 
+	template<class A, class W, class V>
+	inline index_t syevr(const IMatrixXpr<A, double>& a, IRegularMatrix<W, double>& w, IRegularMatrix<V, double>& v,
+			const eigval_irange& ergn, double abstol=0.0, char uplo='L')
+	{
+		return internal::_syevr_v(a, w, v, ergn.num(), ergn, abstol, uplo);
+	}
+
+	template<class A, class W, class V>
+	inline index_t syevr(const IMatrixXpr<A, double>& a, IRegularMatrix<W, double>& w, IRegularMatrix<V, double>& v,
+			const eigval_vrange<double>& ergn, double abstol=0.0, char uplo='L')
+	{
+		return internal::_syevr_v(a, w, v, a.nrows(), ergn, abstol, uplo);
+	}
 
 } }
 
