@@ -100,9 +100,20 @@ namespace lmat { namespace lapack {
 		void getr(IRegularMatrix<R, T>& r) const
 		{
 			LMAT_CHECK_PERCOL_CONT(R)
-			LMAT_CHECK_DIMS( r.ncolumns() == m_ncols )
+			LMAT_CHECK_DIMS( r.nrows() <= m_nrows && r.ncolumns() == m_ncols )
 
-			copy_triu(m_a, r);
+			index_t mr = r.nrows();
+
+			zero(r);
+
+			if (mr == m_nrows)
+			{
+				copy_triu(m_a, r);
+			}
+			else
+			{
+				copy_triu(m_a(range(0, mr), whole()), r);
+			}
 		}
 
 	protected:
