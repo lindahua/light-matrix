@@ -47,6 +47,14 @@ extern "C"
 	             const lapack_int* lda, const double* tau, double* c,
 	             const lapack_int* ldc, double* work, const lapack_int* lwork,
 	             lapack_int* info );
+
+	void LMAT_BLAS_NAME(strsm)(const char *side, const char *uplo, const char *transa, const char *diag,
+	           const blas_int *m, const blas_int *n, const float *alpha, const float *a, const blas_int *lda,
+	           float *b, const blas_int *ldb);
+
+	void LMAT_BLAS_NAME(dtrsm)(const char *side, const char *uplo, const char *transa, const char *diag,
+	           const blas_int *m, const blas_int *n, const double *alpha, const double *a, const blas_int *lda,
+	           double *b, const blas_int *ldb);
 }
 
 
@@ -67,8 +75,7 @@ namespace lmat { namespace lapack {
 	{
 	public:
 		qr_base()
-		: m_nrows(0), m_ncols(0), m_a()
-		, m_tau(), m_ws(), m_ws_size(0)
+		: m_nrows(0), m_ncols(0), m_a(), m_tau()
 		{ }
 
 		bool emtpy() const
@@ -117,6 +124,12 @@ namespace lmat { namespace lapack {
 		}
 
 	protected:
+		bool check_multq_dims(char side, index_t mx, index_t nx) const
+		{
+			index_t r = (side == 'L' || side == 'l') ? mx : nx;
+			return m_nrows == r;
+		}
+
 		template<class Mat>
 		void set_mat(const IMatrixXpr<Mat, T>& mat)
 		{
@@ -126,13 +139,6 @@ namespace lmat { namespace lapack {
 
 			index_t ltau = math::max(1, math::min(m_nrows, m_ncols));
 			m_tau.require_size(ltau);
-
-			index_t lws = 64 * math::max(m_nrows, m_ncols);
-			if (lws != m_ws_size)
-			{
-				m_ws.require_size(lws);
-				m_ws_size = lws;
-			}
 		}
 
 	protected:
@@ -140,9 +146,6 @@ namespace lmat { namespace lapack {
 		index_t m_ncols;
 		dense_matrix<T> m_a;
 		dense_col<T> m_tau;
-
-		dense_col<T> m_ws;
-		index_t m_ws_size;
 	};
 
 
@@ -166,11 +169,12 @@ namespace lmat { namespace lapack {
 			lapack_int m = (lapack_int)(this->m_nrows);
 			lapack_int n = (lapack_int)(this->m_ncols);
 			lapack_int lda = (lapack_int)(this->m_a.col_stride());
-			lapack_int lwork = (lapack_int)(this->m_ws_size);
+			lapack_int lwork = n * 64;
+			dense_col<float> ws((index_t)lwork);
 			lapack_int info = 0;
 
 			LMAT_LAPACK_NAME(sgeqrf)(&m, &n, this->m_a.ptr_data(), &lda, this->m_tau.ptr_data(),
-					this->m_ws.ptr_data(), &lwork, &info);
+					ws.ptr_data(), &lwork, &info);
 			LMAT_CHECK_LAPACK_INFO(sgeqrf, info);
 		}
 
@@ -195,15 +199,82 @@ namespace lmat { namespace lapack {
 			lapack_int k_ = (lapack_int)k;
 
 			lapack_int ldq = (lapack_int)q.col_stride();
-			lapack_int lwork = (lapack_int)this->m_ws_size;
-			float *pws = const_cast<float*>(m_ws.ptr_data());
+			lapack_int lwork = n * 64;
+			dense_col<float> ws((index_t)lwork);
 			lapack_int info;
 
 			LMAT_LAPACK_NAME(sorgqr)(&m, &n, &k_, q.ptr_data(), &ldq,
-					this->m_tau.ptr_data(), pws, &lwork, &info);
+					this->m_tau.ptr_data(), ws.ptr_data(), &lwork, &info);
 			LMAT_CHECK_LAPACK_INFO(sorgqr, info);
 		}
 
+
+		template<class X>
+		void multq_inplace(IRegularMatrix<X, float>& x, char trans='N', char side='L') const
+		{
+			LMAT_CHECK_PERCOL_CONT(X)
+			LMAT_CHECK_DIMS( this->check_multq_dims(side, x.nrows(), x.ncolumns()) )
+
+			lapack_int m = (lapack_int)x.nrows();
+			lapack_int n = (lapack_int)x.ncolumns();
+			lapack_int k = math::min(this->m_nrows, this->m_ncols);
+			lapack_int lda = (lapack_int)this->m_a.col_stride();
+			lapack_int ldx = (lapack_int)x.col_stride();
+
+			lapack_int lwork = (side == 'L' || side == 'l' ? n : m) * 64;
+			dense_col<float> ws((index_t)lwork);
+			lapack_int info = 0;
+
+			LMAT_LAPACK_NAME(sormqr)(&side, &trans, &m, &n, &k, this->m_a.ptr_data(), &lda,
+					this->m_tau.ptr_data(), x.ptr_data(), &ldx, ws.ptr_data(), &lwork, &info);
+			LMAT_CHECK_LAPACK_INFO(sormqr, info);
+		}
+
+		template<class X, class Y>
+		void multq(const IMatrixXpr<X, float>& x, IRegularMatrix<Y, float>& y, char trans='N', char side='L') const
+		{
+			LMAT_CHECK_PERCOL_CONT(Y)
+			y.derived() = x.derived();
+			multq_inplace(y, trans, side);
+		}
+
+		template<class X>
+		void solve_inplace(IRegularMatrix<X, float>& x) const // require: m >= n
+		{
+			LMAT_CHECK_PERCOL_CONT(X)
+
+			check_arg(this->m_nrows >= this->m_ncols, "QR-solve only applies when m >= n");
+			LMAT_CHECK_DIMS( x.nrows() == this->m_nrows );
+
+			multq_inplace(x, 'T', 'L');
+
+			char side = 'L';
+			char uplo = 'U';
+			char transa = 'N';
+			char diag = 'N';
+
+			lapack_int m = (lapack_int)this->m_ncols;
+			lapack_int n = (lapack_int)x.ncolumns();
+			lapack_int lda = (lapack_int)this->m_a.col_stride();
+			lapack_int ldb = (lapack_int)x.col_stride();
+			float alpha = 1;
+
+			LMAT_BLAS_NAME(strsm)(&side, &uplo, &transa, &diag,
+					&m, &n, &alpha, this->m_a.ptr_data(), &lda, x.ptr_data(), &ldb);
+		}
+
+		template<class X, class B>
+		void solve(const IMatrixXpr<X, float>& x, IRegularMatrix<B, float>& b) const
+		{
+			LMAT_CHECK_PERCOL_CONT(B)
+			LMAT_CHECK_DIMS( x.nrows() == this->m_nrows && b.nrows() == this->m_ncols
+					&& x.ncolumns() == b.ncolumns() );
+
+			dense_matrix<float> x_(x);
+			solve_inplace(x_);
+
+			copy(x_(range(0, this->m_ncols), whole()), b.derived());
+		}
 	};
 
 
@@ -227,11 +298,12 @@ namespace lmat { namespace lapack {
 			lapack_int m = (lapack_int)(this->m_nrows);
 			lapack_int n = (lapack_int)(this->m_ncols);
 			lapack_int lda = (lapack_int)(this->m_a.col_stride());
-			lapack_int lwork = (lapack_int)(this->m_ws_size);
+			lapack_int lwork = n * 64;
+			dense_col<double> ws((index_t)lwork);
 			lapack_int info = 0;
 
 			LMAT_LAPACK_NAME(dgeqrf)(&m, &n, this->m_a.ptr_data(), &lda, this->m_tau.ptr_data(),
-					this->m_ws.ptr_data(), &lwork, &info);
+					ws.ptr_data(), &lwork, &info);
 			LMAT_CHECK_LAPACK_INFO(dgeqrf, info);
 		}
 
@@ -256,13 +328,80 @@ namespace lmat { namespace lapack {
 			lapack_int k_ = (lapack_int)k;
 
 			lapack_int ldq = (lapack_int)q.col_stride();
-			lapack_int lwork = (lapack_int)this->m_ws_size;
-			double *pws = const_cast<double*>(m_ws.ptr_data());
+			lapack_int lwork = n * 64;
+			dense_col<double> ws((index_t)lwork);
 			lapack_int info;
 
 			LMAT_LAPACK_NAME(dorgqr)(&m, &n, &k_, q.ptr_data(), &ldq,
-					this->m_tau.ptr_data(), pws, &lwork, &info);
+					this->m_tau.ptr_data(), ws.ptr_data(), &lwork, &info);
 			LMAT_CHECK_LAPACK_INFO(dorgqr, info);
+		}
+
+		template<class X>
+		void multq_inplace(IRegularMatrix<X, double>& x, char trans='N', char side='L') const
+		{
+			LMAT_CHECK_PERCOL_CONT(X)
+			LMAT_CHECK_DIMS( this->check_multq_dims(side, x.nrows(), x.ncolumns()) )
+
+			lapack_int m = (lapack_int)x.nrows();
+			lapack_int n = (lapack_int)x.ncolumns();
+			lapack_int k = math::min(this->m_nrows, this->m_ncols);
+			lapack_int lda = (lapack_int)this->m_a.col_stride();
+			lapack_int ldx = (lapack_int)x.col_stride();
+
+			lapack_int lwork = (side == 'L' || side == 'l' ? n : m) * 64;
+			dense_col<double> ws((index_t)lwork);
+			lapack_int info = 0;
+
+			LMAT_LAPACK_NAME(dormqr)(&side, &trans, &m, &n, &k, this->m_a.ptr_data(), &lda,
+					this->m_tau.ptr_data(), x.ptr_data(), &ldx, ws.ptr_data(), &lwork, &info);
+			LMAT_CHECK_LAPACK_INFO(dormqr, info);
+		}
+
+		template<class X, class Y>
+		void multq(const IMatrixXpr<X, double>& x, IRegularMatrix<Y, double>& y, char trans='N', char side='L') const
+		{
+			LMAT_CHECK_PERCOL_CONT(Y)
+			y.derived() = x.derived();
+			multq_inplace(y, trans, side);
+		}
+
+		template<class X>
+		void solve_inplace(IRegularMatrix<X, double>& x) const // require: m >= n
+		{
+			LMAT_CHECK_PERCOL_CONT(X)
+
+			check_arg(this->m_nrows >= this->m_ncols, "QR-solve only applies when m >= n");
+			LMAT_CHECK_DIMS( x.nrows() == this->m_nrows );
+
+			multq_inplace(x, 'T', 'L');
+
+			char side = 'L';
+			char uplo = 'U';
+			char transa = 'N';
+			char diag = 'N';
+
+			lapack_int m = (lapack_int)this->m_ncols;
+			lapack_int n = (lapack_int)x.ncolumns();
+			lapack_int lda = (lapack_int)this->m_a.col_stride();
+			lapack_int ldb = (lapack_int)x.col_stride();
+			double alpha = 1;
+
+			LMAT_BLAS_NAME(dtrsm)(&side, &uplo, &transa, &diag,
+					&m, &n, &alpha, this->m_a.ptr_data(), &lda, x.ptr_data(), &ldb);
+		}
+
+		template<class X, class B>
+		void solve(const IMatrixXpr<X, double>& x, IRegularMatrix<B, double>& b) const
+		{
+			LMAT_CHECK_PERCOL_CONT(B)
+			LMAT_CHECK_DIMS( x.nrows() == this->m_nrows && b.nrows() == this->m_ncols
+					&& x.ncolumns() == b.ncolumns() );
+
+			dense_matrix<double> x_(x);
+			solve_inplace(x_);
+
+			copy(x_(range(0, this->m_ncols), whole()), b.derived());
 		}
 
 	};
