@@ -329,7 +329,7 @@ set(LAPACK_TEST_HS
     
 add_executable(test_lapack_lu ${LAPACK_TEST_HS} linalg/test_lapack_lu.cpp)
 add_executable(test_lapack_chol ${LAPACK_TEST_HS} linalg/test_lapack_chol.cpp)
-
+add_executable(test_lapack_qr ${LAPACK_TEST_HS} linalg/test_lapack_qr.cpp)
 
 # Groups of test units
 
@@ -400,7 +400,8 @@ set(LMAT_LINALG_TESTS
     test_blas_l2
     test_blas_l3
     test_lapack_lu
-    test_lapack_chol)
+    test_lapack_chol
+    test_lapack_qr)
     
 # Link to MKL
 
