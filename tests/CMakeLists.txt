@@ -172,6 +172,11 @@ set(MATRIX_EVAL_HS
     ${INC}/mateval/multicol_accessors.h
     ${INC}/mateval/ewise_eval.h)
     
+set(MAP_EXPR_HS
+    ${INC}/mateval/internal/map_expr_internal.h
+    ${INC}/mateval/map_accessors.h
+    ${INC}/mateval/map_expr.h)
+    
 set(MATRIX_REDUC_HS
     ${INC}/mateval/internal/mat_fold_internal.h
     ${INC}/mateval/internal/mat_reduce_internal.h
@@ -309,6 +314,13 @@ add_executable(test_linear_ewise ${EWISE_EVAL_HS} mateval/test_linear_ewise.cpp)
 add_executable(test_percol_ewise ${EWISE_EVAL_HS} mateval/test_percol_ewise.cpp)
 add_executable(test_ewise_accum ${EWISE_EVAL_HS}  mateval/test_ewise_accum.cpp)
 
+set(MAP_EXPR_TEST_HS
+    ${MATRIX_HS}
+    ${MATRIX_EVAL_HS}
+    ${MAP_EXPR_HS})
+    
+add_executable(test_map_expr ${MAP_EXPR_TEST_HS} mateval/test_map_expr.cpp)
+
 set(REDUC_HS
     ${MATRIX_HS}
     ${MATRIX_EVAL_HS}
@@ -395,6 +407,7 @@ set(LMAT_MATEVAL_TESTS
     test_linear_ewise
 	test_percol_ewise
 	test_ewise_accum
+	test_map_expr
 	test_full_reduce
 	test_colwise_reduce
 	test_rowwise_reduce)
