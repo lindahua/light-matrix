@@ -233,14 +233,14 @@ namespace lmat
 
 	template<typename FTag, typename T1, class A1, typename T2>
 	LMAT_ENSURE_INLINE
-	inline map_expr<FTag, A1, T2> make_map_expr(const FTag& ftag, const IMatrixXpr<A1, T1>& a1, const T2& a2)
+	inline map_expr<FTag, A1, T2> make_map_expr_fix2(const FTag& ftag, const IMatrixXpr<A1, T1>& a1, const T2& a2)
 	{
 		return map_expr<FTag, A1, T2>(ftag, a1.derived(), a2);
 	}
 
 	template<typename FTag, typename T1, typename T2, class A2>
 	LMAT_ENSURE_INLINE
-	inline map_expr<FTag, T1, A2> make_map_expr(const FTag& ftag, const T1& a1, const IMatrixXpr<A2, T2>& a2)
+	inline map_expr<FTag, T1, A2> make_map_expr_fix1(const FTag& ftag, const T1& a1, const IMatrixXpr<A2, T2>& a2)
 	{
 		return map_expr<FTag, T1, A2>(ftag, a1, a2.derived());
 	}
@@ -255,42 +255,42 @@ namespace lmat
 
 	template<typename FTag, typename T1, class A1, typename T2, typename T3>
 	LMAT_ENSURE_INLINE
-	inline map_expr<FTag, A1, T2, T3> make_map_expr(const FTag& ftag, const IMatrixXpr<A1, T1>& a1, const T2& a2, const T3& a3)
+	inline map_expr<FTag, A1, T2, T3> make_map_expr_fix23(const FTag& ftag, const IMatrixXpr<A1, T1>& a1, const T2& a2, const T3& a3)
 	{
 		return map_expr<FTag, A1, T2, T3>(ftag, a1.derived(), a2, a3);
 	}
 
 	template<typename FTag, typename T1, typename T2, class A2, typename T3>
 	LMAT_ENSURE_INLINE
-	inline map_expr<FTag, T1, A2, T3> make_map_expr(const FTag& ftag, T1& a1, const IMatrixXpr<A2, T2>& a2, const T3& a3)
+	inline map_expr<FTag, T1, A2, T3> make_map_expr_fix13(const FTag& ftag, T1& a1, const IMatrixXpr<A2, T2>& a2, const T3& a3)
 	{
 		return map_expr<FTag, T1, A2, T3>(ftag, a1, a2.derived(), a3);
 	}
 
 	template<typename FTag, typename T1, typename T2, class A3, typename T3>
 	LMAT_ENSURE_INLINE
-	inline map_expr<FTag, T1, T2, A3> make_map_expr(const FTag& ftag, const T1& a1, const T2& a2, const IMatrixXpr<A3, T3>& a3)
+	inline map_expr<FTag, T1, T2, A3> make_map_expr_fix12(const FTag& ftag, const T1& a1, const T2& a2, const IMatrixXpr<A3, T3>& a3)
 	{
 		return map_expr<FTag, T1, T2, A3>(ftag, a1, a2, a3.derived());
 	}
 
 	template<typename FTag, class A1, typename T1, class A2, typename T2, typename T3>
 	LMAT_ENSURE_INLINE
-	inline map_expr<FTag, A1, A2, T3> make_map_expr(const FTag& ftag, const IMatrixXpr<A1, T1>& a1, const IMatrixXpr<A2, T2>& a2, const T3& a3)
+	inline map_expr<FTag, A1, A2, T3> make_map_expr_fix3(const FTag& ftag, const IMatrixXpr<A1, T1>& a1, const IMatrixXpr<A2, T2>& a2, const T3& a3)
 	{
 		return map_expr<FTag, A1, A2, T3>(ftag, a1.derived(), a2.derived(), a3);
 	}
 
 	template<typename FTag, class A1, typename T1, typename T2, class A3, typename T3>
 	LMAT_ENSURE_INLINE
-	inline map_expr<FTag, A1, T2, A3> make_map_expr(const FTag& ftag, const IMatrixXpr<A1, T1>& a1, T2& a2, const IMatrixXpr<A3, T3>& a3)
+	inline map_expr<FTag, A1, T2, A3> make_map_expr_fix2(const FTag& ftag, const IMatrixXpr<A1, T1>& a1, T2& a2, const IMatrixXpr<A3, T3>& a3)
 	{
 		return map_expr<FTag, A1, T2, A3>(ftag, a1.derived(), a2, a3.derived());
 	}
 
 	template<typename FTag, typename T1, class A2, typename T2, class A3, typename T3>
 	LMAT_ENSURE_INLINE
-	inline map_expr<FTag, T1, A2, A3> make_map_expr(const FTag& ftag, const T1& a1, IMatrixXpr<A2, T2>& a2, const IMatrixXpr<A3, T3>& a3)
+	inline map_expr<FTag, T1, A2, A3> make_map_expr_fix1(const FTag& ftag, const T1& a1, IMatrixXpr<A2, T2>& a2, const IMatrixXpr<A3, T3>& a3)
 	{
 		return map_expr<FTag, T1, A2, A3>(ftag, a1, a2.derived(), a3.derived());
 	}
@@ -324,7 +324,7 @@ namespace lmat
 			static type get(const expr_type& expr)
 			{
 				return type(fun_type(), U(),
-						make_vec_accessor(U(), in_(expr.arg1())) );
+						internal::arg_vec_reader_map<Arg1, U>::get(expr.arg1()) );
 			}
 		};
 
@@ -342,8 +342,8 @@ namespace lmat
 			static type get(const expr_type& expr)
 			{
 				return type(fun_type(), U(),
-						make_vec_accessor(U(), in_(expr.arg1())),
-						make_vec_accessor(U(), in_(expr.arg2())) );
+						internal::arg_vec_reader_map<Arg1, U>::get(expr.arg1()),
+						internal::arg_vec_reader_map<Arg2, U>::get(expr.arg2()) );
 			}
 		};
 
@@ -362,9 +362,9 @@ namespace lmat
 			static type get(const expr_type& expr)
 			{
 				return type(fun_type(), U(),
-						make_vec_accessor(U(), in_(expr.arg1())),
-						make_vec_accessor(U(), in_(expr.arg2())),
-						make_vec_accessor(U(), in_(expr.arg3())) );
+						internal::arg_vec_reader_map<Arg1, U>::get(expr.arg1()),
+						internal::arg_vec_reader_map<Arg2, U>::get(expr.arg2()),
+						internal::arg_vec_reader_map<Arg3, U>::get(expr.arg3()) );
 			}
 		};
 
@@ -382,7 +382,7 @@ namespace lmat
 			static type get(const expr_type& expr)
 			{
 				return type(fun_type(), U(),
-						make_multicol_accessor(U(), in_(expr.arg1())) );
+						internal::arg_multicol_reader_map<Arg1, U>::get(expr.arg1()) );
 			}
 		};
 
@@ -400,8 +400,8 @@ namespace lmat
 			static type get(const expr_type& expr)
 			{
 				return type(fun_type(), U(),
-						make_multicol_accessor(U(), in_(expr.arg1())),
-						make_multicol_accessor(U(), in_(expr.arg2())) );
+						internal::arg_multicol_reader_map<Arg1, U>::get(expr.arg1()),
+						internal::arg_multicol_reader_map<Arg2, U>::get(expr.arg2()) );
 			}
 		};
 
@@ -420,9 +420,9 @@ namespace lmat
 			static type get(const expr_type& expr)
 			{
 				return type(fun_type(), U(),
-						make_multicol_accessor(U(), in_(expr.arg1())),
-						make_multicol_accessor(U(), in_(expr.arg2())),
-						make_multicol_accessor(U(), in_(expr.arg3())) );
+						internal::arg_multicol_reader_map<Arg1, U>::get(expr.arg1()),
+						internal::arg_multicol_reader_map<Arg2, U>::get(expr.arg2()),
+						internal::arg_multicol_reader_map<Arg3, U>::get(expr.arg3()) );
 			}
 		};
 	}
@@ -439,24 +439,24 @@ namespace lmat
 		template<typename FTag, typename Arg1>
 		struct prefers_linear<map_expr<FTag, Arg1> >
 		{
-			static const bool value = prefers_linear<Arg1>::value;
+			static const bool value = arg_prefers_linear<Arg1>::value;
 		};
 
 		template<typename FTag, typename Arg1, typename Arg2>
 		struct prefers_linear<map_expr<FTag, Arg1, Arg2> >
 		{
 			static const bool value =
-					prefers_linear<Arg1>::value &&
-					prefers_linear<Arg2>::value;
+					arg_prefers_linear<Arg1>::value &&
+					arg_prefers_linear<Arg2>::value;
 		};
 
 		template<typename FTag, typename Arg1, typename Arg2, typename Arg3>
 		struct prefers_linear<map_expr<FTag, Arg1, Arg2, Arg3> >
 		{
 			static const bool value =
-					prefers_linear<Arg1>::value &&
-					prefers_linear<Arg2>::value &&
-					prefers_linear<Arg3>::value;
+					arg_prefers_linear<Arg1>::value &&
+					arg_prefers_linear<Arg2>::value &&
+					arg_prefers_linear<Arg3>::value;
 		};
 
 
@@ -466,7 +466,7 @@ namespace lmat
 		{
 			static const bool value =
 					has_simd_support<FTag, T, Kind>::value &&
-					prefers_simd<Arg1, T, Kind, IsLinear>::value;
+					arg_prefers_simd<Arg1, Kind, IsLinear>::value;
 		};
 
 		template<typename FTag, typename Arg1, typename Arg2,
@@ -475,8 +475,8 @@ namespace lmat
 		{
 			static const bool value =
 					has_simd_support<FTag, T, Kind>::value &&
-					prefers_simd<Arg1, T, Kind, IsLinear>::value &&
-					prefers_simd<Arg2, T, Kind, IsLinear>::value;
+					arg_prefers_simd<Arg1, Kind, IsLinear>::value &&
+					arg_prefers_simd<Arg2, Kind, IsLinear>::value;
 		};
 
 		template<typename FTag, typename Arg1, typename Arg2, typename Arg3,
@@ -485,9 +485,9 @@ namespace lmat
 		{
 			static const bool value =
 					has_simd_support<FTag, T, Kind>::value &&
-					prefers_simd<Arg1, T, Kind, IsLinear>::value &&
-					prefers_simd<Arg2, T, Kind, IsLinear>::value &&
-					prefers_simd<Arg3, T, Kind, IsLinear>::value;
+					arg_prefers_simd<Arg1, Kind, IsLinear>::value &&
+					arg_prefers_simd<Arg2, Kind, IsLinear>::value &&
+					arg_prefers_simd<Arg3, Kind, IsLinear>::value;
 		};
 	}
 

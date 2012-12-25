@@ -476,6 +476,45 @@ namespace lmat { namespace internal {
 	};
 
 
+	template<typename Arg, bool IsXpr>
+	struct _arg_prefers_linear
+	{
+		static const bool value = true;
+	};
+
+	template<typename Arg>
+	struct _arg_prefers_linear<Arg, true>
+	{
+		static const bool value = prefers_linear<Arg>::value;
+	};
+
+	template<typename Arg, bool IsXpr, typename Kind, bool IsLinear>
+	struct _arg_prefers_simd
+	{
+		static const bool value = true;
+	};
+
+	template<typename Arg, typename Kind, bool IsLinear>
+	struct _arg_prefers_simd<Arg, true, Kind, IsLinear>
+	{
+		typedef typename matrix_traits<Arg>::value_type T;
+		static const bool value = prefers_simd<Arg, T, Kind, IsLinear>::value;
+	};
+
+
+	template<typename Arg>
+	struct arg_prefers_linear
+	{
+		static const bool value = _arg_prefers_linear<Arg, meta::is_mat_xpr<Arg>::value>::value;
+	};
+
+	template<typename Arg, typename Kind, bool IsLinear>
+	struct arg_prefers_simd
+	{
+		static const bool value =
+				_arg_prefers_simd<Arg, meta::is_mat_xpr<Arg>::value, Kind, IsLinear>::value;
+	};
+
 
 
 } }

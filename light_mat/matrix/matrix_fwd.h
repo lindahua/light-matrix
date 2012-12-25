@@ -45,7 +45,12 @@ namespace lmat
 	struct cuda_domain { };
 
 	template<class Layout> struct layout_traits;
-	template<class Derived> struct matrix_traits;
+
+	template<class Derived>
+	struct matrix_traits
+	{
+		typedef nil_t value_type;
+	};
 
 	template<class Derived, typename T> class IMatrixXpr;
 	template<class Derived, typename T> class IRegularMatrix;

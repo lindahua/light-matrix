@@ -88,8 +88,8 @@ void test_mapexpr_2()
 	smat2_t s2 = s2_h.get_cmat();
 	dmat_t d = d_h.get_mat();
 
-	typedef map_expr<sqr_, smat1_t> expr_t;
-	expr_t e = make_map_expr(sqr_(), s1);
+	typedef map_expr<sub_, smat1_t, smat2_t> expr_t;
+	expr_t e = make_map_expr(sub_(), s1, s2);
 
 	ASSERT_EQ( e.nrows(), m );
 	ASSERT_EQ( e.ncolumns(), n );
@@ -101,11 +101,32 @@ void test_mapexpr_2()
 	for (index_t j = 0; j < n; ++j)
 	{
 		for (index_t i = 0; i < m; ++i)
-			r(i, j) = s1(i, j) + s2(i, j);
+			r(i, j) = s1(i, j) - s2(i, j);
 	}
 
 	double tol = 1.0e-14;
 	ASSERT_MAT_APPROX(m, n, d, r, tol);
+
+	// other forms
+
+	double cv = 2.5;
+
+	d = make_map_expr_fix2(sub_(), s1, cv);
+	for (index_t j = 0; j < n; ++j)
+	{
+		for (index_t i = 0; i < m; ++i)
+			r(i, j) = s1(i, j) - cv;
+	}
+	ASSERT_MAT_APPROX(m, n, d, r, tol);
+
+	d = make_map_expr_fix1(sub_(), cv, s2);
+	for (index_t j = 0; j < n; ++j)
+	{
+		for (index_t i = 0; i < m; ++i)
+			r(i, j) = cv - s2(i, j);
+	}
+	ASSERT_MAT_APPROX(m, n, d, r, tol);
+
 }
 
 
@@ -129,10 +150,46 @@ DEF_MEXPR_TESTS_1( grid, grid )
 
 // Binary expression
 
-MN_CASE( map_expr, binary_cont_cont_cont ) { test_mapexpr_2<cont, cont, cont, M, N>(); }
+#define DEF_MEXPR_TESTS_2( stag1, stag2, dtag ) \
+		MN_CASE( map_expr, binary_##stag1##_##stag2##_##dtag ) { test_mapexpr_2<stag1, stag2, dtag, M, N>(); } \
+		BEGIN_TPACK( binary_map_expr_##stag1##_##stag2##_##dtag ) \
+		ADD_MN_CASE_3X3( map_expr, binary_##stag1##_##stag2##_##dtag, DM, DN ) \
+		END_TPACK
 
+DEF_MEXPR_TESTS_2( cont, cont, cont )
+DEF_MEXPR_TESTS_2( cont, cont, bloc )
+DEF_MEXPR_TESTS_2( cont, cont, grid )
+DEF_MEXPR_TESTS_2( cont, bloc, cont )
+DEF_MEXPR_TESTS_2( cont, bloc, bloc )
+DEF_MEXPR_TESTS_2( cont, bloc, grid )
+DEF_MEXPR_TESTS_2( cont, grid, cont )
+DEF_MEXPR_TESTS_2( cont, grid, bloc )
+DEF_MEXPR_TESTS_2( cont, grid, grid )
+
+DEF_MEXPR_TESTS_2( bloc, cont, cont )
+DEF_MEXPR_TESTS_2( bloc, cont, bloc )
+DEF_MEXPR_TESTS_2( bloc, cont, grid )
+DEF_MEXPR_TESTS_2( bloc, bloc, cont )
+DEF_MEXPR_TESTS_2( bloc, bloc, bloc )
+DEF_MEXPR_TESTS_2( bloc, bloc, grid )
+DEF_MEXPR_TESTS_2( bloc, grid, cont )
+DEF_MEXPR_TESTS_2( bloc, grid, bloc )
+DEF_MEXPR_TESTS_2( bloc, grid, grid )
+
+DEF_MEXPR_TESTS_2( grid, cont, cont )
+DEF_MEXPR_TESTS_2( grid, cont, bloc )
+DEF_MEXPR_TESTS_2( grid, cont, grid )
+DEF_MEXPR_TESTS_2( grid, bloc, cont )
+DEF_MEXPR_TESTS_2( grid, bloc, bloc )
+DEF_MEXPR_TESTS_2( grid, bloc, grid )
+DEF_MEXPR_TESTS_2( grid, grid, cont )
+DEF_MEXPR_TESTS_2( grid, grid, bloc )
+DEF_MEXPR_TESTS_2( grid, grid, grid )
 
 BEGIN_MAIN_SUITE
+
+	// unary
+
 	ADD_TPACK( unary_map_expr_cont_cont )
 	ADD_TPACK( unary_map_expr_cont_bloc )
 	ADD_TPACK( unary_map_expr_cont_grid )
@@ -142,5 +199,37 @@ BEGIN_MAIN_SUITE
 	ADD_TPACK( unary_map_expr_grid_cont )
 	ADD_TPACK( unary_map_expr_grid_bloc )
 	ADD_TPACK( unary_map_expr_grid_grid )
+
+	// binary
+
+	ADD_TPACK( binary_map_expr_cont_cont_cont )
+	ADD_TPACK( binary_map_expr_cont_cont_bloc )
+	ADD_TPACK( binary_map_expr_cont_cont_grid )
+	ADD_TPACK( binary_map_expr_cont_bloc_cont )
+	ADD_TPACK( binary_map_expr_cont_bloc_bloc )
+	ADD_TPACK( binary_map_expr_cont_bloc_grid )
+	ADD_TPACK( binary_map_expr_cont_grid_cont )
+	ADD_TPACK( binary_map_expr_cont_grid_bloc )
+	ADD_TPACK( binary_map_expr_cont_grid_grid )
+
+	ADD_TPACK( binary_map_expr_bloc_cont_cont )
+	ADD_TPACK( binary_map_expr_bloc_cont_bloc )
+	ADD_TPACK( binary_map_expr_bloc_cont_grid )
+	ADD_TPACK( binary_map_expr_bloc_bloc_cont )
+	ADD_TPACK( binary_map_expr_bloc_bloc_bloc )
+	ADD_TPACK( binary_map_expr_bloc_bloc_grid )
+	ADD_TPACK( binary_map_expr_bloc_grid_cont )
+	ADD_TPACK( binary_map_expr_bloc_grid_bloc )
+	ADD_TPACK( binary_map_expr_bloc_grid_grid )
+
+	ADD_TPACK( binary_map_expr_grid_cont_cont )
+	ADD_TPACK( binary_map_expr_grid_cont_bloc )
+	ADD_TPACK( binary_map_expr_grid_cont_grid )
+	ADD_TPACK( binary_map_expr_grid_bloc_cont )
+	ADD_TPACK( binary_map_expr_grid_bloc_bloc )
+	ADD_TPACK( binary_map_expr_grid_bloc_grid )
+	ADD_TPACK( binary_map_expr_grid_grid_cont )
+	ADD_TPACK( binary_map_expr_grid_grid_bloc )
+	ADD_TPACK( binary_map_expr_grid_grid_grid )
 END_MAIN_SUITE
 
