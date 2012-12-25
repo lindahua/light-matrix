@@ -203,6 +203,158 @@ namespace lmat { namespace lapack {
 	}
 
 
+	/********************************************
+	 *
+	 *  GESDD
+	 *
+	 ********************************************/
+
+	namespace internal
+	{
+		template<class A, class S, class U, class VT>
+		inline void _gesdd(IRegularMatrix<A, float>& a, IRegularMatrix<S, float>& s,
+				IRegularMatrix<U, float>& u, IRegularMatrix<VT, float>& vt, char jobz)
+		{
+			lapack_int m = (lapack_int)a.nrows();
+			lapack_int n = (lapack_int)a.ncolumns();
+
+			lapack_int lda = (lapack_int)a.col_stride();
+			lapack_int ldu = (lapack_int)u.col_stride();
+			lapack_int ldvt = (lapack_int)vt.col_stride();
+
+			if (ldu <= 0) ldu = 1;
+			if (ldvt <= 0) ldvt = 1;
+
+			float lwork_opt = 0;
+			lapack_int lwork = -1;
+			lapack_int info = 0;
+
+			index_t iws_len = 8 * math::max(1, math::min(m, n));
+			dense_col<lapack_int> iws(iws_len);
+
+			LMAT_CALL_LAPACK(sgesdd, (&jobz, &m, &n, a.ptr_data(), &lda, s.ptr_data(), u.ptr_data(), &ldu,
+					vt.ptr_data(), &ldvt, &lwork_opt, &lwork, iws.ptr_data(), &info));
+
+			lwork = (lapack_int)lwork_opt;
+			dense_col<float> ws((index_t)lwork);
+
+			LMAT_CALL_LAPACK(sgesdd, (&jobz, &m, &n, a.ptr_data(), &lda, s.ptr_data(), u.ptr_data(), &ldu,
+					vt.ptr_data(), &ldvt, ws.ptr_data(), &lwork, iws.ptr_data(), &info));
+		}
+
+
+		template<class A, class S, class U, class VT>
+		inline void _gesdd(IRegularMatrix<A, double>& a, IRegularMatrix<S, double>& s,
+				IRegularMatrix<U, double>& u, IRegularMatrix<VT, double>& vt, char jobz)
+		{
+			lapack_int m = (lapack_int)a.nrows();
+			lapack_int n = (lapack_int)a.ncolumns();
+
+			lapack_int lda = (lapack_int)a.col_stride();
+			lapack_int ldu = (lapack_int)u.col_stride();
+			lapack_int ldvt = (lapack_int)vt.col_stride();
+
+			if (ldu <= 0) ldu = 1;
+			if (ldvt <= 0) ldvt = 1;
+
+			double lwork_opt = 0;
+			lapack_int lwork = -1;
+			lapack_int info = 0;
+
+			index_t iws_len = 8 * math::max(1, math::min(m, n));
+			dense_col<lapack_int> iws(iws_len);
+
+			LMAT_CALL_LAPACK(dgesdd, (&jobz, &m, &n, a.ptr_data(), &lda, s.ptr_data(), u.ptr_data(), &ldu,
+					vt.ptr_data(), &ldvt, &lwork_opt, &lwork, iws.ptr_data(), &info));
+
+			lwork = (lapack_int)lwork_opt;
+			dense_col<double> ws((index_t)lwork);
+
+			LMAT_CALL_LAPACK(dgesdd, (&jobz, &m, &n, a.ptr_data(), &lda, s.ptr_data(), u.ptr_data(), &ldu,
+					vt.ptr_data(), &ldvt, ws.ptr_data(), &lwork, iws.ptr_data(), &info));
+		}
+
+
+		template<typename T, class A, class S>
+		inline void _gesdd_(const IMatrixXpr<A, T>& a, IRegularMatrix<S, T>& s)
+		{
+			LMAT_CHECK_WHOLE_CONT(S)
+
+			dense_matrix<T> a_(a);
+
+			index_t m = a_.nrows();
+			index_t n = a_.ncolumns();
+			index_t rk = math::min(m, n);
+
+			s.require_size(rk, 1);
+
+			dense_matrix<T> u;
+			dense_matrix<T> vt;
+			_gesdd(a_, s, u, vt, 'N');
+		}
+
+		template<typename T, class A, class S, class U, class VT>
+		inline void _gesdd_(const IMatrixXpr<A, T>& a, IRegularMatrix<S, T>& s,
+				IRegularMatrix<U, T>& u, IRegularMatrix<VT, T>& vt, char jobz)
+		{
+			LMAT_CHECK_PERCOL_CONT(U)
+			LMAT_CHECK_PERCOL_CONT(VT)
+			LMAT_CHECK_WHOLE_CONT(S)
+
+			jobz = check_svd_jobc(jobz);
+
+			dense_matrix<T> a_(a);
+
+			index_t m = a_.nrows();
+			index_t n = a_.ncolumns();
+			index_t rk = math::min(m, n);
+
+			s.require_size(rk, 1);
+
+			if (jobz == 'A')
+			{
+				u.require_size(m, m);
+				vt.require_size(n, n);
+			}
+			else if (jobz == 'S')
+			{
+				u.require_size(m, rk);
+				vt.require_size(rk, n);
+			}
+
+			_gesdd(a_, s, u, vt, jobz);
+		}
+
+	}
+
+
+	template<class A, class S>
+	inline void gesdd(const IMatrixXpr<A, float>& a, IRegularMatrix<S, float>& s)
+	{
+		internal::_gesdd_(a, s);
+	}
+
+	template<class A, class S>
+	inline void gesdd(const IMatrixXpr<A, double>& a, IRegularMatrix<S, double>& s)
+	{
+		internal::_gesdd_(a, s);
+	}
+
+	template<class A, class S, class U, class VT>
+	inline void gesdd(const IMatrixXpr<A, float>& a, IRegularMatrix<S, float>& s,
+			IRegularMatrix<U, float>& u, IRegularMatrix<VT, float>& vt, char jobz ='A')
+	{
+		internal::_gesdd_(a, s, u, vt, jobz);
+	}
+
+	template<class A, class S, class U, class VT>
+	inline void gesdd(const IMatrixXpr<A, double>& a, IRegularMatrix<S, double>& s,
+			IRegularMatrix<U, double>& u, IRegularMatrix<VT, double>& vt, char jobz='A')
+	{
+		internal::_gesdd_(a, s, u, vt, jobz);
+	}
+
+
 } }
 
 

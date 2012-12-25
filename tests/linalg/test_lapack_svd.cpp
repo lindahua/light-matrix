@@ -15,6 +15,8 @@ using namespace lmat;
 using namespace lmat::test;
 
 using lmat::lapack::gesvd;
+using lmat::lapack::gesdd;
+
 
 #define DISP(a) std::printf("\n" #a "=\n"); printf_mat("%10.4g ", a); std::printf("\n")
 
@@ -158,7 +160,7 @@ void test_svd( index_t m, index_t n )
 	ASSERT_EQ(vt2.nrows(), n);
 	ASSERT_EQ(vt2.ncolumns(), n);
 
-	ASSERT_TRUE( is_sorted_desc(s1) );
+	ASSERT_TRUE( is_sorted_desc(s2) );
 	ASSERT_VEC_APPROX(k, s2, s0, tol);
 	ASSERT_TRUE( is_orth(u2, 'N', tol) );
 	ASSERT_TRUE( is_orth(vt2, 'T', tol) );
@@ -178,7 +180,7 @@ void test_svd( index_t m, index_t n )
 	ASSERT_EQ(vt3.nrows(), k);
 	ASSERT_EQ(vt3.ncolumns(), n);
 
-	ASSERT_TRUE( is_sorted_desc(s1) );
+	ASSERT_TRUE( is_sorted_desc(s3) );
 	ASSERT_VEC_APPROX(k, s3, s0, tol);
 
 	ASSERT_TRUE( is_orth(u3, 'N', tol) );
@@ -224,6 +226,67 @@ void test_svd( index_t m, index_t n )
 }
 
 
+template<typename T>
+void test_sdd( index_t m, index_t n )
+{
+	dense_matrix<T> a(m, n);
+	do_fill_rand(a.ptr_data(), m * n);
+
+	index_t k = math::min(m, n);
+	T tol = (T)(sizeof(T) == 4 ? 2.0e-5 : 1.0e-10);
+
+	dense_col<T> s0;
+
+	gesvd(a, s0);
+	ASSERT_EQ(s0.nrows(), k);
+	ASSERT_EQ(s0.ncolumns(), 1);
+	ASSERT_TRUE( is_sorted_desc(s0) );
+
+	dense_col<T> s;
+	dense_matrix<T> u;
+	dense_matrix<T> vt;
+
+	gesdd(a, s, u, vt);
+
+	ASSERT_EQ(s.nrows(), k);
+	ASSERT_EQ(s.ncolumns(), 1);
+	ASSERT_EQ(u.nrows(), m);
+	ASSERT_EQ(u.ncolumns(), m);
+	ASSERT_EQ(vt.nrows(), n);
+	ASSERT_EQ(vt.ncolumns(), n);
+
+	ASSERT_TRUE( is_sorted_desc(s) );
+	ASSERT_VEC_APPROX(k, s, s0, tol);
+
+	ASSERT_TRUE( is_orth(u, 'N', tol) );
+	ASSERT_TRUE( is_orth(vt, 'T', tol) );
+
+	ASSERT_TRUE( check_svd(a, s, u, vt, tol) );
+
+	dense_col<T> s3;
+	dense_matrix<T> u3;
+	dense_matrix<T> vt3;
+
+	gesdd(a, s3, u3, vt3, 'S');
+
+	ASSERT_EQ(s3.nrows(), k);
+	ASSERT_EQ(s3.ncolumns(), 1);
+	ASSERT_EQ(u3.nrows(), m);
+	ASSERT_EQ(u3.ncolumns(), k);
+	ASSERT_EQ(vt3.nrows(), k);
+	ASSERT_EQ(vt3.ncolumns(), n);
+
+	ASSERT_TRUE( is_sorted_desc(s3) );
+	ASSERT_VEC_APPROX(k, s3, s0, tol);
+
+	ASSERT_TRUE( is_orth(u3, 'N', tol) );
+	ASSERT_TRUE( is_orth(vt3, 'T', tol) );
+
+	ASSERT_TRUE( check_svd(a, s3, u3, vt3, tol) );
+}
+
+
+
 T_CASE( mat_svd, svd_eq )
 {
 	test_svd<T>(8, 8);
@@ -240,6 +303,22 @@ T_CASE( mat_svd, svd_lt )
 }
 
 
+T_CASE( mat_svd, sdd_eq )
+{
+	test_sdd<T>(8, 8);
+}
+
+T_CASE( mat_svd, sdd_gt )
+{
+	test_sdd<T>(8, 5);
+}
+
+T_CASE( mat_svd, sdd_lt )
+{
+	test_sdd<T>(5, 8);
+}
+
+
 BEGIN_TPACK( mat_svd )
 	ADD_T_CASE( mat_svd, svd_eq, float )
 	ADD_T_CASE( mat_svd, svd_gt, float )
@@ -249,9 +328,18 @@ BEGIN_TPACK( mat_svd )
 	ADD_T_CASE( mat_svd, svd_lt, double )
 END_TPACK
 
+BEGIN_TPACK( mat_sdd )
+	ADD_T_CASE( mat_svd, sdd_eq, float )
+	ADD_T_CASE( mat_svd, sdd_gt, float )
+	ADD_T_CASE( mat_svd, sdd_lt, float )
+	ADD_T_CASE( mat_svd, sdd_eq, double )
+	ADD_T_CASE( mat_svd, sdd_gt, double )
+	ADD_T_CASE( mat_svd, sdd_lt, double )
+END_TPACK
 
 BEGIN_MAIN_SUITE
 	ADD_TPACK( mat_svd )
+	ADD_TPACK( mat_sdd )
 END_MAIN_SUITE
 
 
