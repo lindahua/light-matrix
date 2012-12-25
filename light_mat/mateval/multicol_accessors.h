@@ -46,6 +46,8 @@ namespace lmat
 	class multi_contcol_reader : public multicol_accessor_base
 	{
 	public:
+		typedef contvec_reader<T, U> col_accessor_type;
+
 		template<class Mat>
 		LMAT_ENSURE_INLINE
 		explicit multi_contcol_reader(const Mat& mat)
@@ -53,9 +55,9 @@ namespace lmat
 		{ }
 
 		LMAT_ENSURE_INLINE
-		contvec_reader<T, U> col(index_t j) const
+		col_accessor_type col(index_t j) const
 		{
-			return contvec_reader<T, U>(m_pbase + m_colstride * j);
+			return col_accessor_type(m_pbase + m_colstride * j);
 		}
 
 	private:
@@ -68,6 +70,8 @@ namespace lmat
 	class multi_stepcol_reader : public multicol_accessor_base
 	{
 	public:
+		typedef stepvec_reader<T, U> col_accessor_type;
+
 		template<class Mat>
 		LMAT_ENSURE_INLINE
 		explicit multi_stepcol_reader(const Mat& mat)
@@ -77,9 +81,9 @@ namespace lmat
 		{ }
 
 		LMAT_ENSURE_INLINE
-		stepvec_reader<T, U> col(index_t j) const
+		col_accessor_type col(index_t j) const
 		{
-			return stepvec_reader<T, U>(m_pbase + m_colstride * j, m_rowstride);
+			return col_accessor_type(m_pbase + m_colstride * j, m_rowstride);
 		}
 
 	private:
@@ -93,6 +97,8 @@ namespace lmat
 	class repeat_contcol_reader : public multicol_accessor_base
 	{
 	public:
+		typedef contvec_reader<T, U> col_accessor_type;
+
 		template<class Mat>
 		LMAT_ENSURE_INLINE
 		explicit repeat_contcol_reader(const Mat& col)
@@ -100,9 +106,9 @@ namespace lmat
 		{ }
 
 		LMAT_ENSURE_INLINE
-		contvec_reader<T, U> col(index_t ) const
+		col_accessor_type col(index_t ) const
 		{
-			return contvec_reader<T, U>(m_pbase);
+			return col_accessor_type(m_pbase);
 		}
 
 	private:
@@ -114,6 +120,8 @@ namespace lmat
 	class repeat_stepcol_reader : public multicol_accessor_base
 	{
 	public:
+		typedef stepvec_reader<T, U> col_accessor_type;
+
 		template<class Mat>
 		LMAT_ENSURE_INLINE
 		explicit repeat_stepcol_reader(const Mat& col)
@@ -122,9 +130,9 @@ namespace lmat
 		{ }
 
 		LMAT_ENSURE_INLINE
-		stepvec_reader<T, U> col(index_t ) const
+		col_accessor_type col(index_t ) const
 		{
-			return stepvec_reader<T, U>(m_pbase, m_step);
+			return col_accessor_type(m_pbase, m_step);
 		}
 
 	private:
@@ -137,6 +145,8 @@ namespace lmat
 	class repeat_controw_reader : public multicol_accessor_base
 	{
 	public:
+		typedef single_reader<T, U> col_accessor_type;
+
 		template<class Mat>
 		LMAT_ENSURE_INLINE
 		explicit repeat_controw_reader(const Mat& row)
@@ -144,9 +154,9 @@ namespace lmat
 		{ }
 
 		LMAT_ENSURE_INLINE
-		single_reader<T, U> col(index_t j) const
+		col_accessor_type col(index_t j) const
 		{
-			return single_reader<T, U>(m_pbase[j]);
+			return col_accessor_type(m_pbase[j]);
 		}
 
 	private:
@@ -158,6 +168,8 @@ namespace lmat
 	class repeat_steprow_reader : public multicol_accessor_base
 	{
 	public:
+		typedef single_reader<T, U> col_accessor_type;
+
 		template<class Mat>
 		LMAT_ENSURE_INLINE
 		explicit repeat_steprow_reader(const Mat& row)
@@ -166,9 +178,9 @@ namespace lmat
 		{ }
 
 		LMAT_ENSURE_INLINE
-		single_reader<T, U> col(index_t j) const
+		col_accessor_type col(index_t j) const
 		{
-			return single_reader<T, U>(m_pbase[j * m_step]);
+			return col_accessor_type(m_pbase[j * m_step]);
 		}
 
 	private:
@@ -269,6 +281,8 @@ namespace lmat
 	class multi_contcol_writer : public multicol_accessor_base
 	{
 	public:
+		typedef contvec_writer<T, U> col_accessor_type;
+
 		template<class Mat>
 		LMAT_ENSURE_INLINE
 		explicit multi_contcol_writer(Mat& mat)
@@ -276,9 +290,9 @@ namespace lmat
 		{ }
 
 		LMAT_ENSURE_INLINE
-		contvec_writer<T, U> col(index_t j) const
+		col_accessor_type col(index_t j) const
 		{
-			return contvec_writer<T, U>(m_pbase + m_colstride * j);
+			return col_accessor_type(m_pbase + m_colstride * j);
 		}
 
 	private:
@@ -291,6 +305,8 @@ namespace lmat
 	class multi_stepcol_writer : public multicol_accessor_base
 	{
 	public:
+		typedef stepvec_writer<T, U> col_accessor_type;
+
 		template<class Mat>
 		LMAT_ENSURE_INLINE
 		explicit multi_stepcol_writer(Mat& mat)
@@ -300,9 +316,9 @@ namespace lmat
 		{ }
 
 		LMAT_ENSURE_INLINE
-		stepvec_writer<T, U> col(index_t j) const
+		col_accessor_type col(index_t j) const
 		{
-			return stepvec_writer<T, U>(m_pbase + m_colstride * j, m_rowstride);
+			return col_accessor_type(m_pbase + m_colstride * j, m_rowstride);
 		}
 
 	private:
@@ -353,6 +369,8 @@ namespace lmat
 	class multi_contcol_updater : public multicol_accessor_base
 	{
 	public:
+		typedef contvec_updater<T, U> col_accessor_type;
+
 		template<class Mat>
 		LMAT_ENSURE_INLINE
 		explicit multi_contcol_updater(Mat& mat)
@@ -360,9 +378,9 @@ namespace lmat
 		{ }
 
 		LMAT_ENSURE_INLINE
-		contvec_updater<T, U> col(index_t j) const
+		col_accessor_type col(index_t j) const
 		{
-			return contvec_updater<T, U>(m_pbase + m_colstride * j);
+			return col_accessor_type(m_pbase + m_colstride * j);
 		}
 
 	private:
@@ -375,6 +393,8 @@ namespace lmat
 	class multi_stepcol_updater : public multicol_accessor_base
 	{
 	public:
+		typedef stepvec_updater<T, U> col_accessor_type;
+
 		template<class Mat>
 		LMAT_ENSURE_INLINE
 		explicit multi_stepcol_updater(Mat& mat)
@@ -384,9 +404,9 @@ namespace lmat
 		{ }
 
 		LMAT_ENSURE_INLINE
-		stepvec_updater<T, U> col(index_t j) const
+		col_accessor_type col(index_t j) const
 		{
-			return stepvec_updater<T, U>(m_pbase + m_colstride * j, m_rowstride);
+			return col_accessor_type(m_pbase + m_colstride * j, m_rowstride);
 		}
 
 	private:
@@ -439,14 +459,16 @@ namespace lmat
 	class multicol_sum_accumulator : public multicol_accessor_base
 	{
 	public:
+		typedef sum_accumulator<T, U> col_accessor_type;
+
 		LMAT_ENSURE_INLINE
 		explicit multicol_sum_accumulator(T& s)
 		: m_p(&s) { }
 
 		LMAT_ENSURE_INLINE
-		sum_accumulator<T, U> col(index_t) const
+		col_accessor_type col(index_t) const
 		{
-			return sum_accumulator<T, U>(*m_p);
+			return col_accessor_type(*m_p);
 		}
 
 	private:
@@ -457,14 +479,16 @@ namespace lmat
 	class multicol_max_accumulator : public multicol_accessor_base
 	{
 	public:
+		typedef max_accumulator<T, U> col_accessor_type;
+
 		LMAT_ENSURE_INLINE
 		explicit multicol_max_accumulator(T& s)
 		: m_p(&s) { }
 
 		LMAT_ENSURE_INLINE
-		max_accumulator<T, U> col(index_t) const
+		col_accessor_type col(index_t) const
 		{
-			return max_accumulator<T, U>(*m_p);
+			return col_accessor_type(*m_p);
 		}
 
 	private:
@@ -475,14 +499,16 @@ namespace lmat
 	class multicol_min_accumulator : public multicol_accessor_base
 	{
 	public:
+		typedef min_accumulator<T, U> col_accessor_type;
+
 		LMAT_ENSURE_INLINE
 		explicit multicol_min_accumulator(T& s)
 		: m_p(&s) { }
 
 		LMAT_ENSURE_INLINE
-		min_accumulator<T, U> col(index_t) const
+		col_accessor_type col(index_t) const
 		{
-			return min_accumulator<T, U>(*m_p);
+			return col_accessor_type(*m_p);
 		}
 
 	private:
@@ -496,15 +522,17 @@ namespace lmat
 	class colwise_sum_accumulator : public multicol_accessor_base
 	{
 	public:
+		typedef sum_accumulator<T, U> col_accessor_type;
+
 		template<class Mat>
 		LMAT_ENSURE_INLINE
 		explicit colwise_sum_accumulator(Mat& row)
 		: m_pbase(row.ptr_data()) { }
 
 		LMAT_ENSURE_INLINE
-		sum_accumulator<T, U> col(index_t j) const
+		col_accessor_type col(index_t j) const
 		{
-			return sum_accumulator<T, U>(m_pbase[j]);
+			return col_accessor_type(m_pbase[j]);
 		}
 
 	private:
@@ -515,15 +543,17 @@ namespace lmat
 	class colwise_sum_accumulator_x : public multicol_accessor_base
 	{
 	public:
+		typedef sum_accumulator<T, U> col_accessor_type;
+
 		template<class Mat>
 		LMAT_ENSURE_INLINE
 		explicit colwise_sum_accumulator_x(Mat& row)
 		: m_pbase(row.ptr_data()), m_step(row.col_stride()) { }
 
 		LMAT_ENSURE_INLINE
-		sum_accumulator<T, U> col(index_t j) const
+		col_accessor_type col(index_t j) const
 		{
-			return sum_accumulator<T, U>(m_pbase[j * m_step]);
+			return col_accessor_type(m_pbase[j * m_step]);
 		}
 
 	private:
@@ -536,15 +566,17 @@ namespace lmat
 	class colwise_max_accumulator : public multicol_accessor_base
 	{
 	public:
+		typedef max_accumulator<T, U> col_accessor_type;
+
 		template<class Mat>
 		LMAT_ENSURE_INLINE
 		explicit colwise_max_accumulator(Mat& row)
 		: m_pbase(row.ptr_data()) { }
 
 		LMAT_ENSURE_INLINE
-		max_accumulator<T, U> col(index_t j) const
+		col_accessor_type col(index_t j) const
 		{
-			return max_accumulator<T, U>(m_pbase[j]);
+			return col_accessor_type(m_pbase[j]);
 		}
 
 	private:
@@ -555,15 +587,17 @@ namespace lmat
 	class colwise_max_accumulator_x : public multicol_accessor_base
 	{
 	public:
+		typedef max_accumulator<T, U> col_accessor_type;
+
 		template<class Mat>
 		LMAT_ENSURE_INLINE
 		explicit colwise_max_accumulator_x(Mat& row)
 		: m_pbase(row.ptr_data()), m_step(row.col_stride()) { }
 
 		LMAT_ENSURE_INLINE
-		max_accumulator<T, U> col(index_t j) const
+		col_accessor_type col(index_t j) const
 		{
-			return max_accumulator<T, U>(m_pbase[j * m_step]);
+			return col_accessor_type(m_pbase[j * m_step]);
 		}
 
 	private:
@@ -576,15 +610,17 @@ namespace lmat
 	class colwise_min_accumulator : public multicol_accessor_base
 	{
 	public:
+		typedef min_accumulator<T, U> col_accessor_type;
+
 		template<class Mat>
 		LMAT_ENSURE_INLINE
 		explicit colwise_min_accumulator(Mat& row)
 		: m_pbase(row.ptr_data()) { }
 
 		LMAT_ENSURE_INLINE
-		min_accumulator<T, U> col(index_t j) const
+		col_accessor_type col(index_t j) const
 		{
-			return min_accumulator<T, U>(m_pbase[j]);
+			return col_accessor_type(m_pbase[j]);
 		}
 
 	private:
@@ -595,15 +631,17 @@ namespace lmat
 	class colwise_min_accumulator_x : public multicol_accessor_base
 	{
 	public:
+		typedef min_accumulator<T, U> col_accessor_type;
+
 		template<class Mat>
 		LMAT_ENSURE_INLINE
 		explicit colwise_min_accumulator_x(Mat& row)
 		: m_pbase(row.ptr_data()), m_step(row.col_stride()) { }
 
 		LMAT_ENSURE_INLINE
-		min_accumulator<T, U> col(index_t j) const
+		col_accessor_type col(index_t j) const
 		{
-			return min_accumulator<T, U>(m_pbase[j * m_step]);
+			return col_accessor_type(m_pbase[j * m_step]);
 		}
 
 	private:
@@ -617,15 +655,15 @@ namespace lmat
 	template<class Col, typename U>
 	class rowwise_accumulator : public multicol_accessor_base
 	{
-		typedef typename internal::vec_updater_map<Col, U>::type col_type;
-
 	public:
+		typedef typename internal::vec_updater_map<Col, U>::type col_accessor_type;
+
 		LMAT_ENSURE_INLINE
 		explicit rowwise_accumulator(Col& col)
 		: m_col(col) { }
 
 		LMAT_ENSURE_INLINE
-		col_type col(index_t ) const
+		col_accessor_type col(index_t ) const
 		{
 			return internal::vec_updater_map<Col, U>::get(m_col);
 		}

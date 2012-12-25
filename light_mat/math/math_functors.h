@@ -34,6 +34,10 @@
 		LMAT_ENSURE_INLINE \
 		simd_pack<T, Kind> operator()(const simd_pack<T, Kind>& x) const \
 		{ return Expr; } \
+	}; \
+	template<typename T, typename Kind> \
+	struct fun_simd_pack<Name##_fun<T>, Kind> { \
+		typedef simd_pack<T, Kind> type; \
 	};
 
 #define LMAT_DEFINE_GENERIC_MATH_FUNCTOR_2( Name, Expr ) \
@@ -46,6 +50,10 @@
 		LMAT_ENSURE_INLINE \
 		simd_pack<T, Kind> operator()(const simd_pack<T, Kind>& x, const simd_pack<T, Kind>& y) const \
 		{ return Expr; } \
+	}; \
+	template<typename T, typename Kind> \
+	struct fun_simd_pack<Name##_fun<T>, Kind> { \
+		typedef simd_pack<T, Kind> type; \
 	};
 
 #define LMAT_DEFINE_MATH_FUNCTOR_1( Name ) \
@@ -56,6 +64,8 @@
 
 
 namespace lmat { namespace math {
+
+	template<class Fun, typename Kind> struct fun_simd_pack;
 
 	// Arithmetic functors
 

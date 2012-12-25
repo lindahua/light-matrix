@@ -434,6 +434,14 @@ namespace lmat { namespace meta {
 	 *
 	 ********************************************/
 
+	template<class SExpr>
+	struct supports_ewise_access
+	{
+		static const bool value =
+				is_percol_continuous_ex<SExpr>::value;
+	};
+
+
 	template<class SExpr, class DMat>
 	struct is_mat_assignable
 	{
