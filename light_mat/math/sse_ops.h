@@ -13,31 +13,38 @@
 #include <light_mat/math/sse_bpacks.h>
 #include "internal/sse2_round_impl.h"
 
+
+#define LMAT_DEFINE_HAS_SSE_SUPPORT( FTag ) \
+	template<> struct has_simd_support<FTag, float, sse_t> { static const bool value = true; }; \
+	template<> struct has_simd_support<FTag, double, sse_t> { static const bool value = true; };
+
+namespace lmat
+{
+	LMAT_DEFINE_HAS_SSE_SUPPORT( add_ )
+	LMAT_DEFINE_HAS_SSE_SUPPORT( sub_ )
+	LMAT_DEFINE_HAS_SSE_SUPPORT( mul_ )
+	LMAT_DEFINE_HAS_SSE_SUPPORT( div_ )
+	LMAT_DEFINE_HAS_SSE_SUPPORT( neg_ )
+
+	LMAT_DEFINE_HAS_SSE_SUPPORT( abs_ )
+	LMAT_DEFINE_HAS_SSE_SUPPORT( sqr_ )
+	LMAT_DEFINE_HAS_SSE_SUPPORT( cube_ )
+
+	LMAT_DEFINE_HAS_SSE_SUPPORT( rcp_ )
+	LMAT_DEFINE_HAS_SSE_SUPPORT( sqrt_ )
+	LMAT_DEFINE_HAS_SSE_SUPPORT( rsqrt_ )
+
+	LMAT_DEFINE_HAS_SSE_SUPPORT( min_ )
+	LMAT_DEFINE_HAS_SSE_SUPPORT( max_ )
+	LMAT_DEFINE_HAS_SSE_SUPPORT( clamp_ )
+
+	LMAT_DEFINE_HAS_SSE_SUPPORT( floor_ )
+	LMAT_DEFINE_HAS_SSE_SUPPORT( ceil_ )
+	LMAT_DEFINE_HAS_SSE_SUPPORT( round_ )
+	LMAT_DEFINE_HAS_SSE_SUPPORT( trunc_ )
+}
+
 namespace lmat { namespace math {
-
-	// forward
-
-	struct has_sse_add { static const bool value = true; };
-	struct has_sse_sub { static const bool value = true; };
-	struct has_sse_mul { static const bool value = true; };
-	struct has_sse_div { static const bool value = true; };
-	struct has_sse_neg { static const bool value = true; };
-
-	struct has_sse_abs { static const bool value = true; };
-	struct has_sse_sqr { static const bool value = true; };
-	struct has_sse_cube { static const bool value = true; };
-
-	struct has_sse_rcp { static const bool value = true; };
-	struct has_sse_sqrt { static const bool value = true; };
-	struct has_sse_rsqrt { static const bool value = true; };
-
-	struct has_sse_min { static const bool value = true; };
-	struct has_sse_max { static const bool value = true; };
-
-	struct has_sse_floor { static const bool value = true; };
-	struct has_sse_ceil { static const bool value = true; };
-	struct has_sse_round { static const bool value = true; };
-	struct has_sse_trunc { static const bool value = true; };
 
 
 	/********************************************

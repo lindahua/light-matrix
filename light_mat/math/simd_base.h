@@ -11,6 +11,7 @@
 
 #include <light_mat/math/simd_arch.h>
 #include <light_mat/common/basic_defs.h>
+#include <light_mat/math/fun_tags.h>
 #include <limits>
 
 // system headers for SIMD intrinsics
@@ -47,6 +48,13 @@ namespace lmat {
 #else
 	typedef sse_t default_simd_kind;
 #endif
+
+	template<typename FTag, typename T, typename Kind>
+	struct has_simd_support
+	{
+		static const bool value = false;
+	};
+
 
 namespace math {
 

@@ -18,32 +18,37 @@
 #include "internal/numrepr_format.h"
 
 
+#define LMAT_DEFINE_HAS_AVX_SUPPORT( FTag ) \
+	template<> struct has_simd_support<FTag, float, avx_t> { static const bool value = true; }; \
+	template<> struct has_simd_support<FTag, double, avx_t> { static const bool value = true; };
+
+namespace lmat
+{
+	LMAT_DEFINE_HAS_AVX_SUPPORT( add_ )
+	LMAT_DEFINE_HAS_AVX_SUPPORT( sub_ )
+	LMAT_DEFINE_HAS_AVX_SUPPORT( mul_ )
+	LMAT_DEFINE_HAS_AVX_SUPPORT( div_ )
+	LMAT_DEFINE_HAS_AVX_SUPPORT( neg_ )
+
+	LMAT_DEFINE_HAS_AVX_SUPPORT( abs_ )
+	LMAT_DEFINE_HAS_AVX_SUPPORT( sqr_ )
+	LMAT_DEFINE_HAS_AVX_SUPPORT( cube_ )
+
+	LMAT_DEFINE_HAS_AVX_SUPPORT( rcp_ )
+	LMAT_DEFINE_HAS_AVX_SUPPORT( sqrt_ )
+	LMAT_DEFINE_HAS_AVX_SUPPORT( rsqrt_ )
+
+	LMAT_DEFINE_HAS_AVX_SUPPORT( min_ )
+	LMAT_DEFINE_HAS_AVX_SUPPORT( max_ )
+	LMAT_DEFINE_HAS_AVX_SUPPORT( clamp_ )
+
+	LMAT_DEFINE_HAS_AVX_SUPPORT( floor_ )
+	LMAT_DEFINE_HAS_AVX_SUPPORT( ceil_ )
+	LMAT_DEFINE_HAS_AVX_SUPPORT( round_ )
+	LMAT_DEFINE_HAS_AVX_SUPPORT( trunc_ )
+}
+
 namespace lmat { namespace math {
-
-	// forward
-
-	struct has_avx_add { static const bool value = true; };
-	struct has_avx_sub { static const bool value = true; };
-	struct has_avx_mul { static const bool value = true; };
-	struct has_avx_div { static const bool value = true; };
-	struct has_avx_neg { static const bool value = true; };
-
-	struct has_avx_abs { static const bool value = true; };
-	struct has_avx_sqr { static const bool value = true; };
-	struct has_avx_cube { static const bool value = true; };
-
-	struct has_avx_rcp { static const bool value = true; };
-	struct has_avx_sqrt { static const bool value = true; };
-	struct has_avx_rsqrt { static const bool value = true; };
-
-	struct has_avx_min { static const bool value = true; };
-	struct has_avx_max { static const bool value = true; };
-
-	struct has_avx_floor { static const bool value = true; };
-	struct has_avx_ceil { static const bool value = true; };
-	struct has_avx_round { static const bool value = true; };
-	struct has_avx_trunc { static const bool value = true; };
-
 
 	/********************************************
 	 *

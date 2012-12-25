@@ -28,6 +28,11 @@
 	template<typename T> \
 	struct fun_traits<Tag, T, T> { typedef T result_type; };
 
+#define LMAT_DEFINE_GENERIC_FUNTAG_3( Tag ) \
+	struct Tag { }; \
+	template<typename T> \
+	struct fun_traits<Tag, T, T, T> { typedef T result_type; };
+
 #define LMAT_DEFINE_REAL_FUNTAG_1( Tag ) \
 	struct Tag { }; \
 	template<> struct fun_traits<Tag, float> { typedef float result_type; }; \
@@ -58,6 +63,7 @@ namespace lmat {
 
 	LMAT_DEFINE_GENERIC_FUNTAG_2( max_ )
 	LMAT_DEFINE_GENERIC_FUNTAG_2( min_ )
+	LMAT_DEFINE_GENERIC_FUNTAG_3( clamp_ )
 
 	// real math
 
@@ -72,6 +78,7 @@ namespace lmat {
 	LMAT_DEFINE_REAL_FUNTAG_1( exp_ )
 	LMAT_DEFINE_REAL_FUNTAG_1( log_ )
 	LMAT_DEFINE_REAL_FUNTAG_1( log10_ )
+	LMAT_DEFINE_REAL_FUNTAG_2( xlogy_ )
 
 	LMAT_DEFINE_REAL_FUNTAG_1( sin_ )
 	LMAT_DEFINE_REAL_FUNTAG_1( cos_ )

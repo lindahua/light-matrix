@@ -14,6 +14,7 @@
 #define LIGHTMAT_MATH_BASE_H_
 
 #include <light_mat/common/basic_defs.h>
+#include <light_mat/math/fun_tags.h>
 
 #if ((LIGHTMAT_PLATFORM == LIGHTMAT_POSIX) || defined(__INTEL_COMPILER))
 #define LMAT_PLATFORM_HAS_CXX11_MATH

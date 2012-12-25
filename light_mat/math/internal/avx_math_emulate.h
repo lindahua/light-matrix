@@ -61,8 +61,7 @@
 		return internal::Name##_emulate(a); } \
 	LMAT_ENSURE_INLINE \
 	inline avx_f64pk Name( const avx_f64pk& a ) { \
-		return internal::Name##_emulate(a); } \
-	struct has_avx_##Name { static const bool value = false; };
+		return internal::Name##_emulate(a); }
 
 
 #define LMAT_ACTIVATE_AVX_MATH_EMULATE_2( Name ) \
@@ -71,8 +70,7 @@
 		return internal::Name##_emulate(a, b); } \
 	LMAT_ENSURE_INLINE \
 	inline avx_f64pk Name( const avx_f64pk& a, const avx_f64pk& b ) { \
-		return internal::Name##_emulate(a, b); } \
-	struct has_avx_##Name { static const bool value = false; };
+		return internal::Name##_emulate(a, b); }
 
 
 namespace lmat { namespace math { namespace internal {

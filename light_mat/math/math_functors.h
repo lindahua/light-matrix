@@ -56,11 +56,31 @@
 		typedef simd_pack<T, Kind> type; \
 	};
 
+#define LMAT_DEFINE_GENERIC_MATH_FUNCTOR_3( Name, Expr ) \
+	template<typename T> \
+	struct Name##_fun { \
+		typedef T value_type; \
+		LMAT_ENSURE_INLINE \
+		T operator()(const T& x, const T& y, const T& z) const { return Expr; } \
+		template<typename Kind> \
+		LMAT_ENSURE_INLINE \
+		simd_pack<T, Kind> operator()(const simd_pack<T, Kind>& x, const simd_pack<T, Kind>& y, const simd_pack<T, Kind>& z) const \
+		{ return Expr; } \
+	}; \
+	template<typename T, typename Kind> \
+	struct fun_simd_pack<Name##_fun<T>, Kind> { \
+		typedef simd_pack<T, Kind> type; \
+	};
+
+
 #define LMAT_DEFINE_MATH_FUNCTOR_1( Name ) \
 	LMAT_DEFINE_GENERIC_MATH_FUNCTOR_1( Name, Name(x) )
 
 #define LMAT_DEFINE_MATH_FUNCTOR_2( Name ) \
 	LMAT_DEFINE_GENERIC_MATH_FUNCTOR_2( Name, Name(x, y) )
+
+#define LMAT_DEFINE_MATH_FUNCTOR_3( Name ) \
+	LMAT_DEFINE_GENERIC_MATH_FUNCTOR_3( Name, Name(x, y, z) )
 
 
 namespace lmat { namespace math {
@@ -85,6 +105,7 @@ namespace lmat { namespace math {
 
 	LMAT_DEFINE_MATH_FUNCTOR_2( max )
 	LMAT_DEFINE_MATH_FUNCTOR_2( min )
+	LMAT_DEFINE_MATH_FUNCTOR_3( clamp )
 
 	// power
 
@@ -102,6 +123,7 @@ namespace lmat { namespace math {
 	LMAT_DEFINE_MATH_FUNCTOR_1( exp )
 	LMAT_DEFINE_MATH_FUNCTOR_1( log )
 	LMAT_DEFINE_MATH_FUNCTOR_1( log10 )
+	LMAT_DEFINE_MATH_FUNCTOR_2( xlogy )
 
 	// trigonometry
 

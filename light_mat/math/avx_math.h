@@ -104,8 +104,7 @@ extern "C"
 		return LMAT_AVX_F(Name)(a); } \
 	LMAT_ENSURE_INLINE \
 	inline avx_f64pk Name( const avx_f64pk& a ) { \
-		return LMAT_AVX_D(Name)(a); } \
-	struct has_avx_##Name { static const bool value = true; };
+		return LMAT_AVX_D(Name)(a); }
 
 #define LMAT_ACTIVATE_AVX_EXTERN_2( Name ) \
 	LMAT_ENSURE_INLINE \
@@ -113,8 +112,79 @@ extern "C"
 		return LMAT_AVX_F(Name)(a, b); } \
 	LMAT_ENSURE_INLINE \
 	inline avx_f64pk Name( const avx_f64pk& a, const avx_f64pk& b ) { \
-		return LMAT_AVX_D(Name)(a, b); } \
-	struct has_avx_##Name { static const bool value = true; };
+		return LMAT_AVX_D(Name)(a, b); }
+
+
+namespace lmat
+{
+#ifdef LMAT_HAS_EXTERN_SSE_POW
+	LMAT_DEFINE_HAS_AVX_SUPPORT( pow_ )
+#endif
+
+#ifdef LMAT_HAS_EXTERN_SSE_EXPLOG
+	LMAT_DEFINE_HAS_AVX_SUPPORT( exp_ )
+	LMAT_DEFINE_HAS_AVX_SUPPORT( log_ )
+	LMAT_DEFINE_HAS_AVX_SUPPORT( log10_ )
+	LMAT_DEFINE_HAS_AVX_SUPPORT( xlogy_ )
+#endif
+
+#ifdef LMAT_HAS_EXTERN_SSE_TRI
+	LMAT_DEFINE_HAS_AVX_SUPPORT( sin_ )
+	LMAT_DEFINE_HAS_AVX_SUPPORT( cos_ )
+	LMAT_DEFINE_HAS_AVX_SUPPORT( tan_ )
+#endif
+
+#ifdef LMAT_HAS_EXTERN_SSE_ARCTRI
+	LMAT_DEFINE_HAS_AVX_SUPPORT( asin_ )
+	LMAT_DEFINE_HAS_AVX_SUPPORT( acos_ )
+	LMAT_DEFINE_HAS_AVX_SUPPORT( atan_ )
+	LMAT_DEFINE_HAS_AVX_SUPPORT( atan2_ )
+#endif
+
+#ifdef LMAT_HAS_EXTERN_SSE_HYPERB
+	LMAT_DEFINE_HAS_AVX_SUPPORT( sinh_ )
+	LMAT_DEFINE_HAS_AVX_SUPPORT( cosh_ )
+	LMAT_DEFINE_HAS_AVX_SUPPORT( tanh_ )
+#endif
+
+#ifdef LMAT_HAS_CXX11_MATH
+
+#ifdef LMAT_HAS_EXTERN_SSE_HYPOT
+	LMAT_DEFINE_HAS_AVX_SUPPORT( hypot_ )
+#endif
+
+#ifdef LMAT_HAS_EXTERN_SSE_CBRT
+	LMAT_DEFINE_HAS_AVX_SUPPORT( cbrt_ )
+#endif
+
+#ifdef LMAT_HAS_EXTERN_SSE_EXPLOG2
+	LMAT_DEFINE_HAS_AVX_SUPPORT( exp2_ )
+	LMAT_DEFINE_HAS_AVX_SUPPORT( log2_ )
+#endif
+
+#ifdef LMAT_HAS_EXTERN_SSE_EXPLOG_EX
+	LMAT_DEFINE_HAS_AVX_SUPPORT( expm1_ )
+	LMAT_DEFINE_HAS_AVX_SUPPORT( log1p_ )
+#endif
+
+#ifdef LMAT_HAS_EXTERN_SSE_ERF
+	LMAT_DEFINE_HAS_AVX_SUPPORT( erf_ )
+	LMAT_DEFINE_HAS_AVX_SUPPORT( erfc_ )
+#endif
+
+#ifdef LMAT_HAS_EXTERN_SSE_ARCHYPERB
+	LMAT_DEFINE_HAS_AVX_SUPPORT( asinh_ )
+	LMAT_DEFINE_HAS_AVX_SUPPORT( acosh_ )
+	LMAT_DEFINE_HAS_AVX_SUPPORT( atanh_ )
+#endif
+
+#ifdef LMAT_HAS_EXTERN_SSE_GAMMA
+	LMAT_DEFINE_HAS_AVX_SUPPORT( lgamma_ )
+	LMAT_DEFINE_HAS_AVX_SUPPORT( tgamma_ )
+#endif
+
+#endif // has C++ 11 math
+}
 
 
 namespace lmat { namespace math {

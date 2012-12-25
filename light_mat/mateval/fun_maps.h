@@ -17,55 +17,34 @@
 #include <light_mat/math/math_functors.h>
 
 
-#define LMAT_DEFINE_NATIVE_SUPPORT( Name, KindName ) \
-	template<> struct has_native_support<Name##_, KindName##_t> { \
-		static const bool value = math::has_##KindName##_##Name::value; };
-
-#ifdef LMAT_HAS_AVX
-#define LMAT_DEFINE_NATIVE_SUPPORTS( Name ) \
-	LMAT_DEFINE_NATIVE_SUPPORT( Name, sse ) \
-	LMAT_DEFINE_NATIVE_SUPPORT( Name, avx )
-#else
-#define LMAT_DEFINE_NATIVE_SUPPORTS( Name ) \
-	LMAT_DEFINE_NATIVE_SUPPORT( Name, sse )
-#endif
-
-
 #define LMAT_DEFINE_GENERIC_FUNMAP_1( Name ) \
 	template<typename T> \
 	struct fun_map<Name##_, T> { \
-		typedef math::Name##_fun<T> type; }; \
-	LMAT_DEFINE_NATIVE_SUPPORTS( Name )
+		typedef math::Name##_fun<T> type; };
 
 
 #define LMAT_DEFINE_GENERIC_FUNMAP_2( Name ) \
 	template<typename T> \
 	struct fun_map<Name##_, T, T> { \
-		typedef math::Name##_fun<T> type; }; \
-	LMAT_DEFINE_NATIVE_SUPPORTS( Name )
+		typedef math::Name##_fun<T> type; };
 
 #define LMAT_DEFINE_REAL_FUNMAP_1( Name ) \
 	template<> struct fun_map<Name##_, float> { \
 		typedef math::Name##_fun<float> type; }; \
 	template<> struct fun_map<Name##_, double> { \
-		typedef math::Name##_fun<double> type; }; \
-	LMAT_DEFINE_NATIVE_SUPPORTS( Name )
+		typedef math::Name##_fun<double> type; };
 
 #define LMAT_DEFINE_REAL_FUNMAP_2( Name ) \
 	template<> struct fun_map<Name##_, float, float> { \
 		typedef math::Name##_fun<float> type; }; \
 	template<> struct fun_map<Name##_, double, double> { \
-		typedef math::Name##_fun<double> type; }; \
-	LMAT_DEFINE_NATIVE_SUPPORTS( Name )
+		typedef math::Name##_fun<double> type; };
 
 
 namespace lmat
 {
 	template<typename FTag, typename... T>
 	struct fun_map;
-
-	template<typename FTag, typename SKind>
-	struct has_native_support;
 
 	// arithmetics
 

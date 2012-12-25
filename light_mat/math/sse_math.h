@@ -166,8 +166,7 @@ extern "C"
 		return LMAT_SSE_F(Name)(a); } \
 	LMAT_ENSURE_INLINE \
 	inline sse_f64pk Name( const sse_f64pk& a ) { \
-		return LMAT_SSE_D(Name)(a); } \
-	struct has_sse_##Name { static const bool value = true; };
+		return LMAT_SSE_D(Name)(a); }
 
 #define LMAT_ACTIVATE_SSE_EXTERN_2( Name ) \
 	LMAT_ENSURE_INLINE \
@@ -175,8 +174,79 @@ extern "C"
 		return LMAT_SSE_F(Name)(a, b); } \
 	LMAT_ENSURE_INLINE \
 	inline sse_f64pk Name( const sse_f64pk& a, const sse_f64pk& b ) { \
-		return LMAT_SSE_D(Name)(a, b); } \
-	struct has_sse_##Name { static const bool value = true; };
+		return LMAT_SSE_D(Name)(a, b); }
+
+
+namespace lmat
+{
+#ifdef LMAT_HAS_EXTERN_SSE_POW
+	LMAT_DEFINE_HAS_SSE_SUPPORT( pow_ )
+#endif
+
+#ifdef LMAT_HAS_EXTERN_SSE_EXPLOG
+	LMAT_DEFINE_HAS_SSE_SUPPORT( exp_ )
+	LMAT_DEFINE_HAS_SSE_SUPPORT( log_ )
+	LMAT_DEFINE_HAS_SSE_SUPPORT( log10_ )
+	LMAT_DEFINE_HAS_SSE_SUPPORT( xlogy_ )
+#endif
+
+#ifdef LMAT_HAS_EXTERN_SSE_TRI
+	LMAT_DEFINE_HAS_SSE_SUPPORT( sin_ )
+	LMAT_DEFINE_HAS_SSE_SUPPORT( cos_ )
+	LMAT_DEFINE_HAS_SSE_SUPPORT( tan_ )
+#endif
+
+#ifdef LMAT_HAS_EXTERN_SSE_ARCTRI
+	LMAT_DEFINE_HAS_SSE_SUPPORT( asin_ )
+	LMAT_DEFINE_HAS_SSE_SUPPORT( acos_ )
+	LMAT_DEFINE_HAS_SSE_SUPPORT( atan_ )
+	LMAT_DEFINE_HAS_SSE_SUPPORT( atan2_ )
+#endif
+
+#ifdef LMAT_HAS_EXTERN_SSE_HYPERB
+	LMAT_DEFINE_HAS_SSE_SUPPORT( sinh_ )
+	LMAT_DEFINE_HAS_SSE_SUPPORT( cosh_ )
+	LMAT_DEFINE_HAS_SSE_SUPPORT( tanh_ )
+#endif
+
+#ifdef LMAT_HAS_CXX11_MATH
+
+#ifdef LMAT_HAS_EXTERN_SSE_HYPOT
+	LMAT_DEFINE_HAS_SSE_SUPPORT( hypot_ )
+#endif
+
+#ifdef LMAT_HAS_EXTERN_SSE_CBRT
+	LMAT_DEFINE_HAS_SSE_SUPPORT( cbrt_ )
+#endif
+
+#ifdef LMAT_HAS_EXTERN_SSE_EXPLOG2
+	LMAT_DEFINE_HAS_SSE_SUPPORT( exp2_ )
+	LMAT_DEFINE_HAS_SSE_SUPPORT( log2_ )
+#endif
+
+#ifdef LMAT_HAS_EXTERN_SSE_EXPLOG_EX
+	LMAT_DEFINE_HAS_SSE_SUPPORT( expm1_ )
+	LMAT_DEFINE_HAS_SSE_SUPPORT( log1p_ )
+#endif
+
+#ifdef LMAT_HAS_EXTERN_SSE_ERF
+	LMAT_DEFINE_HAS_SSE_SUPPORT( erf_ )
+	LMAT_DEFINE_HAS_SSE_SUPPORT( erfc_ )
+#endif
+
+#ifdef LMAT_HAS_EXTERN_SSE_ARCHYPERB
+	LMAT_DEFINE_HAS_SSE_SUPPORT( asinh_ )
+	LMAT_DEFINE_HAS_SSE_SUPPORT( acosh_ )
+	LMAT_DEFINE_HAS_SSE_SUPPORT( atanh_ )
+#endif
+
+#ifdef LMAT_HAS_EXTERN_SSE_GAMMA
+	LMAT_DEFINE_HAS_SSE_SUPPORT( lgamma_ )
+	LMAT_DEFINE_HAS_SSE_SUPPORT( tgamma_ )
+#endif
+
+#endif // has C++ 11 math
+}
 
 
 namespace lmat { namespace math {
@@ -318,10 +388,6 @@ namespace lmat { namespace math {
 #endif
 
 #endif // has C++11 math
-
-
-
-
 
 } }
 
