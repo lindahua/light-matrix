@@ -163,12 +163,6 @@ namespace lmat
 			return m_val;
 		}
 
-		LMAT_ENSURE_INLINE
-		single_reader col(index_t j) const
-		{
-			return *this;
-		}
-
 	private:
 		const T m_val;
 	};
@@ -196,12 +190,6 @@ namespace lmat
 		pack_type pack(index_t ) const
 		{
 			return m_pack;
-		}
-
-		LMAT_ENSURE_INLINE
-		single_reader col(index_t j) const
-		{
-			return *this;
 		}
 
 	private:

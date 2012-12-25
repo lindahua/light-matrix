@@ -43,6 +43,26 @@ namespace lmat
 	 ********************************************/
 
 	template<typename T, typename U>
+	class multicol_single_reader : public multicol_accessor_base
+	{
+	public:
+		typedef single_reader<T, U> col_accessor_type;
+
+		LMAT_ENSURE_INLINE
+		explicit multicol_single_reader(const T& v)
+		: m_intern(v) { }
+
+		LMAT_ENSURE_INLINE
+		col_accessor_type col(index_t j) const
+		{
+			return m_intern;
+		}
+
+	private:
+		col_accessor_type m_intern;
+	};
+
+	template<typename T, typename U>
 	class multi_contcol_reader : public multicol_accessor_base
 	{
 	public:
@@ -246,10 +266,10 @@ namespace lmat
 
 	template<typename T, typename U>
 	LMAT_ENSURE_INLINE
-	inline single_reader<T, U>
+	inline multicol_single_reader<T, U>
 	make_multicol_accessor(U, const in_wrap<T, atags::single>& wrap)
 	{
-		return single_reader<T, U>(wrap.arg());
+		return multicol_single_reader<T, U>(wrap.arg());
 	}
 
 	template<class Mat, typename U>
