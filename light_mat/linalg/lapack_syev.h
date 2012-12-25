@@ -13,15 +13,15 @@
 
 extern "C"
 {
-	void ssyev( const char* jobz, const char* uplo, const lapack_int* n, float* a,
+	void LMAT_LAPACK_NAME(ssyev)( const char* jobz, const char* uplo, const lapack_int* n, float* a,
 	            const lapack_int* lda, float* w, float* work, const lapack_int* lwork,
 	            lapack_int* info );
 
-	void ssyevd( const char* jobz, const char* uplo, const lapack_int* n, float* a,
+	void LMAT_LAPACK_NAME(ssyevd)( const char* jobz, const char* uplo, const lapack_int* n, float* a,
 	             const lapack_int* lda, float* w, float* work, const lapack_int* lwork,
 	             lapack_int* iwork, const lapack_int* liwork, lapack_int* info );
 
-	void ssyevr( const char* jobz, const char* range, const char* uplo,
+	void LMAT_LAPACK_NAME(ssyevr)( const char* jobz, const char* range, const char* uplo,
 	             const lapack_int* n, float* a, const lapack_int* lda, const float* vl,
 	             const float* vu, const lapack_int* il, const lapack_int* iu,
 	             const float* abstol, lapack_int* m, float* w, float* z,
@@ -29,22 +29,22 @@ extern "C"
 	             const lapack_int* lwork, lapack_int* iwork, const lapack_int* liwork,
 	             lapack_int* info );
 
-	void ssyevx( const char* jobz, const char* range, const char* uplo,
+	void LMAT_LAPACK_NAME(ssyevx)( const char* jobz, const char* range, const char* uplo,
 	             const lapack_int* n, float* a, const lapack_int* lda, const float* vl,
 	             const float* vu, const lapack_int* il, const lapack_int* iu,
 	             const float* abstol, lapack_int* m, float* w, float* z,
 	             const lapack_int* ldz, float* work, const lapack_int* lwork,
 	             lapack_int* iwork, lapack_int* ifail, lapack_int* info );
 
-	void dsyev( const char* jobz, const char* uplo, const lapack_int* n, double* a,
+	void LMAT_LAPACK_NAME(dsyev)( const char* jobz, const char* uplo, const lapack_int* n, double* a,
 	            const lapack_int* lda, double* w, double* work, const lapack_int* lwork,
 	            lapack_int* info );
 
-	void dsyevd( const char* jobz, const char* uplo, const lapack_int* n, double* a,
+	void LMAT_LAPACK_NAME(dsyevd)( const char* jobz, const char* uplo, const lapack_int* n, double* a,
 	             const lapack_int* lda, double* w, double* work, const lapack_int* lwork,
 	             lapack_int* iwork, const lapack_int* liwork, lapack_int* info );
 
-	void dsyevr( const char* jobz, const char* range, const char* uplo,
+	void LMAT_LAPACK_NAME(dsyevr)( const char* jobz, const char* range, const char* uplo,
 	             const lapack_int* n, double* a, const lapack_int* lda, const double* vl,
 	             const double* vu, const lapack_int* il, const lapack_int* iu,
 	             const double* abstol, lapack_int* m, double* w, double* z,
@@ -52,7 +52,7 @@ extern "C"
 	             const lapack_int* lwork, lapack_int* iwork, const lapack_int* liwork,
 	             lapack_int* info );
 
-	void dsyevx( const char* jobz, const char* range, const char* uplo,
+	void LMAT_LAPACK_NAME(dsyevx)( const char* jobz, const char* range, const char* uplo,
 	             const lapack_int* n, double* a, const lapack_int* lda, const double* vl,
 	             const double* vu, const lapack_int* il, const lapack_int* iu,
 	             const double* abstol, lapack_int* m, double* w, double* z,
@@ -421,6 +421,7 @@ namespace lmat { namespace lapack {
 			lapack_int n = (lapack_int)a.nrows();
 			lapack_int lda = (lapack_int)a.col_stride();
 			lapack_int ldz = (lapack_int)z.col_stride();
+			if (ldz == 0) ldz = 1;
 
 			float lwork_opt = 0;
 			lapack_int lwork = -1;
@@ -467,6 +468,7 @@ namespace lmat { namespace lapack {
 			lapack_int n = (lapack_int)a.nrows();
 			lapack_int lda = (lapack_int)a.col_stride();
 			lapack_int ldz = (lapack_int)z.col_stride();
+			if (ldz == 0) ldz = 1;
 
 			double lwork_opt = 0;
 			lapack_int lwork = -1;
@@ -511,7 +513,7 @@ namespace lmat { namespace lapack {
 			w.require_size(ns, 1);
 
 			dense_matrix<T> a_(a);
-			dense_matrix<T> v_(1, n);
+			dense_matrix<T> v_;
 
 			index_t ret;
 
