@@ -255,7 +255,10 @@ namespace lmat
 			typename meta::if_<meta::is_col<Mat>, 			stepcol_reader_map<Mat, U>,
 			typename meta::if_<meta::is_row<Mat>, 			steprow_reader_map<Mat, U>,
 															invalid_reader_map
-			>::type >::type >::type internal_map;
+			>::type >::type >::type internal_map_;
+
+			typedef typename meta::if_<meta::is_regular_mat<Mat>,
+					internal_map_, invalid_reader_map>::type internal_map;
 
 			typedef typename internal_map::type type;
 

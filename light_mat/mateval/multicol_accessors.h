@@ -218,16 +218,26 @@ namespace lmat
 
 	namespace internal
 	{
+		struct invalid_multicol_reader { };
+
 		template<class Mat, typename U>
 		struct multicol_reader_map
 		{
 			typedef typename matrix_traits<Mat>::value_type T;
 
 			typedef typename meta::if_<
-					meta::is_percol_continuous<Mat>,
-					multi_contcol_reader<T, U>,
-					multi_stepcol_reader<T, U>
+					meta::is_regular_mat<Mat>,
+					typename meta::if_<meta::is_percol_continuous<Mat>,
+						multi_contcol_reader<T, U>,
+						multi_stepcol_reader<T, U> >::type,
+					invalid_multicol_reader
 			>::type type;
+
+			LMAT_ENSURE_INLINE
+			static type get(const Mat& mat)
+			{
+				return type(mat);
+			}
 		};
 
 		template<class Mat, typename U>
@@ -236,9 +246,11 @@ namespace lmat
 			typedef typename matrix_traits<Mat>::value_type T;
 
 			typedef typename meta::if_<
-					meta::is_percol_continuous<Mat>,
-					repeat_contcol_reader<T, U>,
-					repeat_stepcol_reader<T, U>
+					meta::is_regular_mat<Mat>,
+						typename meta::if_<meta::is_percol_continuous<Mat>,
+						repeat_contcol_reader<T, U>,
+						repeat_stepcol_reader<T, U> >::type,
+					invalid_multicol_reader
 			>::type type;
 		};
 
@@ -248,9 +260,11 @@ namespace lmat
 			typedef typename matrix_traits<Mat>::value_type T;
 
 			typedef typename meta::if_<
-					meta::is_continuous<Mat>,
-					repeat_controw_reader<T, U>,
-					repeat_steprow_reader<T, U>
+					meta::is_regular_mat<Mat>,
+						typename meta::if_<meta::is_continuous<Mat>,
+						repeat_controw_reader<T, U>,
+						repeat_steprow_reader<T, U> >::type,
+					invalid_multicol_reader
 			>::type type;
 		};
 	}
@@ -260,8 +274,7 @@ namespace lmat
 	inline typename internal::multicol_reader_map<Mat, U>::type
 	make_multicol_accessor(U, const in_wrap<Mat, atags::normal>& wrap)
 	{
-		typedef typename internal::multicol_reader_map<Mat, U>::type type;
-		return type(wrap.arg());
+		return internal::multicol_reader_map<Mat, U>::get(wrap.arg());
 	}
 
 	template<typename T, typename U>
