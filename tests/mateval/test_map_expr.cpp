@@ -130,6 +130,59 @@ void test_mapexpr_2()
 }
 
 
+template<typename STag1, typename STag2, typename STag3, typename DTag, int M, int N>
+void test_mapexpr_3()
+{
+	index_t m = M == 0 ? DM : M;
+	index_t n = N == 0 ? DN : N;
+
+	typedef mat_host<STag1, double, M, N> shost1_t;
+	typedef mat_host<STag2, double, M, N> shost2_t;
+	typedef mat_host<STag3, double, M, N> shost3_t;
+	typedef mat_host<DTag, double, M, N> dhost_t;
+
+	typedef typename shost1_t::cmat_t smat1_t;
+	typedef typename shost2_t::cmat_t smat2_t;
+	typedef typename shost3_t::cmat_t smat3_t;
+	typedef typename dhost_t::mat_t dmat_t;
+
+	shost1_t s1_h(m, n);
+	shost2_t s2_h(m, n);
+	shost3_t s3_h(m, n);
+	dhost_t d_h(m, n);
+
+	s1_h.fill_rand();
+	s2_h.fill_rand();
+	s3_h.fill_rand();
+
+	smat1_t s1 = s1_h.get_cmat();
+	smat2_t s2 = s2_h.get_cmat();
+	smat3_t s3 = s3_h.get_cmat();
+	dmat_t d = d_h.get_mat();
+
+	typedef map_expr<fma_, smat1_t, smat2_t, smat3_t> expr_t;
+	expr_t e = make_map_expr(fma_(), s1, s2, s3);
+
+	ASSERT_EQ( e.nrows(), m );
+	ASSERT_EQ( e.ncolumns(), n );
+	ASSERT_EQ( e.nelems(), m * n);
+
+	d = e;
+
+	dense_matrix<double> r(m, n);
+	for (index_t j = 0; j < n; ++j)
+	{
+		for (index_t i = 0; i < m; ++i)
+			r(i, j) = s1(i, j) * s2(i, j) + s3(i, j);
+	}
+
+	double tol = 1.0e-14;
+	ASSERT_MAT_APPROX(m, n, d, r, tol);
+
+}
+
+
+
 // Unary expressions
 
 #define DEF_MEXPR_TESTS_1( stag, dtag ) \
@@ -186,6 +239,37 @@ DEF_MEXPR_TESTS_2( grid, grid, cont )
 DEF_MEXPR_TESTS_2( grid, grid, bloc )
 DEF_MEXPR_TESTS_2( grid, grid, grid )
 
+// Ternary expression
+
+
+#define DEF_MEXPR_TESTS_3( stag1, stag2, stag3, dtag ) \
+		MN_CASE( map_expr, ternary_##stag1##_##stag2##_##stag3##_##dtag ) { test_mapexpr_3<stag1, stag2, stag3, dtag, M, N>(); } \
+		BEGIN_TPACK( ternary_map_expr_##stag1##_##stag2##_##stag3##_##dtag ) \
+		ADD_MN_CASE_3X3( map_expr, ternary_##stag1##_##stag2##_##stag3##_##dtag, DM, DN ) \
+		END_TPACK
+
+DEF_MEXPR_TESTS_3( cont, cont, cont, cont )
+DEF_MEXPR_TESTS_3( cont, cont, cont, bloc )
+DEF_MEXPR_TESTS_3( cont, cont, cont, grid )
+DEF_MEXPR_TESTS_3( cont, cont, bloc, cont )
+DEF_MEXPR_TESTS_3( cont, cont, bloc, bloc )
+DEF_MEXPR_TESTS_3( cont, cont, bloc, grid )
+DEF_MEXPR_TESTS_3( cont, cont, grid, cont )
+DEF_MEXPR_TESTS_3( cont, cont, grid, bloc )
+DEF_MEXPR_TESTS_3( cont, cont, grid, grid )
+
+DEF_MEXPR_TESTS_3( cont, bloc, cont, cont )
+DEF_MEXPR_TESTS_3( cont, bloc, cont, bloc )
+DEF_MEXPR_TESTS_3( cont, bloc, cont, grid )
+DEF_MEXPR_TESTS_3( bloc, cont, bloc, cont )
+DEF_MEXPR_TESTS_3( bloc, cont, bloc, bloc )
+DEF_MEXPR_TESTS_3( bloc, cont, bloc, grid )
+DEF_MEXPR_TESTS_3( cont, bloc, grid, cont )
+DEF_MEXPR_TESTS_3( cont, bloc, grid, bloc )
+DEF_MEXPR_TESTS_3( cont, bloc, grid, grid )
+
+
+
 BEGIN_MAIN_SUITE
 
 	// unary
@@ -231,5 +315,28 @@ BEGIN_MAIN_SUITE
 	ADD_TPACK( binary_map_expr_grid_grid_cont )
 	ADD_TPACK( binary_map_expr_grid_grid_bloc )
 	ADD_TPACK( binary_map_expr_grid_grid_grid )
+
+	// ternary
+
+	ADD_TPACK( ternary_map_expr_cont_cont_cont_cont )
+	ADD_TPACK( ternary_map_expr_cont_cont_cont_bloc )
+	ADD_TPACK( ternary_map_expr_cont_cont_cont_grid )
+	ADD_TPACK( ternary_map_expr_cont_cont_bloc_cont )
+	ADD_TPACK( ternary_map_expr_cont_cont_bloc_bloc )
+	ADD_TPACK( ternary_map_expr_cont_cont_bloc_grid )
+	ADD_TPACK( ternary_map_expr_cont_cont_grid_cont )
+	ADD_TPACK( ternary_map_expr_cont_cont_grid_bloc )
+	ADD_TPACK( ternary_map_expr_cont_cont_grid_grid )
+
+	ADD_TPACK( ternary_map_expr_cont_bloc_cont_cont )
+	ADD_TPACK( ternary_map_expr_cont_bloc_cont_bloc )
+	ADD_TPACK( ternary_map_expr_cont_bloc_cont_grid )
+	ADD_TPACK( ternary_map_expr_bloc_cont_bloc_cont )
+	ADD_TPACK( ternary_map_expr_bloc_cont_bloc_bloc )
+	ADD_TPACK( ternary_map_expr_bloc_cont_bloc_grid )
+	ADD_TPACK( ternary_map_expr_cont_bloc_grid_cont )
+	ADD_TPACK( ternary_map_expr_cont_bloc_grid_bloc )
+	ADD_TPACK( ternary_map_expr_cont_bloc_grid_grid )
+
 END_MAIN_SUITE
 

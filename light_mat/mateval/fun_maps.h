@@ -40,6 +40,12 @@
 	template<> struct fun_map<Name##_, double, double> { \
 		typedef math::Name##_fun<double> type; };
 
+#define LMAT_DEFINE_REAL_FUNMAP_3( Name ) \
+	template<> struct fun_map<Name##_, float, float, float> { \
+		typedef math::Name##_fun<float> type; }; \
+	template<> struct fun_map<Name##_, double, double, double> { \
+		typedef math::Name##_fun<double> type; };
+
 
 namespace lmat
 {
@@ -62,6 +68,9 @@ namespace lmat
 	LMAT_DEFINE_GENERIC_FUNMAP_2( min )
 
 	// real math
+
+	LMAT_DEFINE_REAL_FUNMAP_3( clamp )
+	LMAT_DEFINE_REAL_FUNMAP_3( fma )
 
 	LMAT_DEFINE_REAL_FUNMAP_1( rcp )
 	LMAT_DEFINE_REAL_FUNMAP_1( sqrt )
