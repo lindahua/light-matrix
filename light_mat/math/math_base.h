@@ -190,6 +190,11 @@ namespace lmat { namespace math {
 	using std::isfinite;
 	using std::isnan;
 
+#else
+
+	LMAT_ENSURE_INLINE inline float fma( float x, float y, float z ) { return x * y + z; }
+	LMAT_ENSURE_INLINE inline double fma( double x, double y, double z ) { return x * y + z; }
+
 #endif
 
 

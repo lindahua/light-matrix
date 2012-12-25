@@ -27,6 +27,7 @@ namespace lmat
 	LMAT_DEFINE_HAS_SSE_SUPPORT( neg_ )
 
 	LMAT_DEFINE_HAS_SSE_SUPPORT( abs_ )
+	LMAT_DEFINE_HAS_SSE_SUPPORT( fma_ )
 	LMAT_DEFINE_HAS_SSE_SUPPORT( sqr_ )
 	LMAT_DEFINE_HAS_SSE_SUPPORT( cube_ )
 
@@ -128,6 +129,19 @@ namespace lmat { namespace math {
 		return _mm_andnot_pd(
 				_mm_castsi128_pd(internal::sse_signmask_pd()), a);
 	}
+
+	LMAT_ENSURE_INLINE
+	inline sse_f32pk fma(const sse_f32pk& x, const sse_f32pk& y, const sse_f32pk& z)
+	{
+		return _mm_add_ps(_mm_mul_ps(x, y), z);
+	}
+
+	LMAT_ENSURE_INLINE
+	inline sse_f64pk fma(const sse_f64pk& x, const sse_f64pk& y, const sse_f64pk& z)
+	{
+		return _mm_add_pd(_mm_mul_pd(x, y), z);
+	}
+
 
 	LMAT_ENSURE_INLINE
 	inline sse_f32pk& operator += (sse_f32pk& a, const sse_f32pk& b)

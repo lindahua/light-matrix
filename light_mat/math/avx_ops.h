@@ -31,6 +31,7 @@ namespace lmat
 	LMAT_DEFINE_HAS_AVX_SUPPORT( neg_ )
 
 	LMAT_DEFINE_HAS_AVX_SUPPORT( abs_ )
+	LMAT_DEFINE_HAS_AVX_SUPPORT( fma_ )
 	LMAT_DEFINE_HAS_AVX_SUPPORT( sqr_ )
 	LMAT_DEFINE_HAS_AVX_SUPPORT( cube_ )
 
@@ -130,6 +131,18 @@ namespace lmat { namespace math {
 	{
 		typedef internal::num_fmt<double> fmt;
 		return _mm256_andnot_pd(_mm256_castsi256_pd(_mm256_set1_epi64x(fmt::sign_bit)), a);
+	}
+
+	LMAT_ENSURE_INLINE
+	inline avx_f32pk fma(const avx_f32pk& x, const avx_f32pk& y, const avx_f32pk& z)
+	{
+		return _mm256_add_ps(_mm256_mul_ps(x, y), z);
+	}
+
+	LMAT_ENSURE_INLINE
+	inline avx_f64pk fma(const avx_f64pk& x, const avx_f64pk& y, const avx_f64pk& z)
+	{
+		return _mm256_add_pd(_mm256_mul_pd(x, y), z);
 	}
 
 	LMAT_ENSURE_INLINE

@@ -43,6 +43,10 @@
 	template<> struct fun_traits<Tag, float, float> { typedef float result_type; }; \
 	template<> struct fun_traits<Tag, double, double> { typedef double result_type; };
 
+#define LMAT_DEFINE_REAL_FUNTAG_3( Tag ) \
+	struct Tag { }; \
+	template<> struct fun_traits<Tag, float, float, float> { typedef float result_type; }; \
+	template<> struct fun_traits<Tag, double, double, double> { typedef double result_type; };
 
 namespace lmat {
 
@@ -67,6 +71,7 @@ namespace lmat {
 
 	// real math
 
+	LMAT_DEFINE_REAL_FUNTAG_3( fma_ )
 	LMAT_DEFINE_REAL_FUNTAG_1( rcp_ )
 	LMAT_DEFINE_REAL_FUNTAG_1( sqrt_ )
 	LMAT_DEFINE_REAL_FUNTAG_1( rsqrt_ )

@@ -99,6 +99,7 @@ namespace lmat { namespace math {
 	LMAT_DEFINE_MATH_FUNCTOR_1( sqr )
 	LMAT_DEFINE_MATH_FUNCTOR_1( cube )
 	LMAT_DEFINE_MATH_FUNCTOR_1( rcp )
+	LMAT_DEFINE_MATH_FUNCTOR_3( fma )
 
 	LMAT_DEFINE_MATH_FUNCTOR_2( diff_abs )
 	LMAT_DEFINE_MATH_FUNCTOR_2( diff_sqr )

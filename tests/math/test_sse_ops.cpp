@@ -196,6 +196,36 @@ T_CASE( sse_arith, abs )
 }
 
 
+T_CASE( sse_arith, fma )
+{
+	typedef simd_pack<T, sse_t> pack_t;
+	const unsigned int width = pack_t::pack_width;
+
+	T a_src[width];
+	T b_src[width];
+	T c_src[width];
+
+	T r1[width];
+
+	for (unsigned i = 0; i < width; ++i)
+	{
+		a_src[i] = T(i + 1);
+		b_src[i] = T(2 * i + 3);
+		c_src[i] = T(5) - T(i);
+
+		r1[i] = math::fma(a_src[i], b_src[i], c_src[i]);
+	}
+
+	pack_t a; a.load_u(a_src);
+	pack_t b; b.load_u(b_src);
+	pack_t c; c.load_u(c_src);
+
+	pack_t r = fma(a, b, c);
+	ASSERT_SIMD_EQ(r, r1);
+}
+
+
+
 T_CASE( sse_arith, max )
 {
 	typedef simd_pack<T, sse_t> pack_t;
@@ -939,6 +969,8 @@ DEF_TPACK( sse_arith, mul )
 DEF_TPACK( sse_arith, div )
 DEF_TPACK( sse_arith, neg )
 DEF_TPACK( sse_arith, abs )
+DEF_TPACK( sse_arith, fma )
+
 DEF_TPACK( sse_arith, max )
 DEF_TPACK( sse_arith, min )
 DEF_TPACK( sse_arith, sqr )
@@ -971,6 +1003,8 @@ BEGIN_MAIN_SUITE
 	ADD_TPACK( sse_arith_div )
 	ADD_TPACK( sse_arith_neg )
 	ADD_TPACK( sse_arith_abs )
+	ADD_TPACK( sse_arith_fma )
+
 	ADD_TPACK( sse_arith_max )
 	ADD_TPACK( sse_arith_min )
 	ADD_TPACK( sse_arith_sqr )
