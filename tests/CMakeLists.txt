@@ -196,7 +196,8 @@ set(LAPACK_HS
     ${INC}/linalg/lapack_lu.h
     ${INC}/linalg/lapack_chol.h
     ${INC}/linalg/lapack_qr.h
-    ${INC}/linalg/lapack_syev.h)
+    ${INC}/linalg/lapack_syev.h
+    ${INC}/linalg/lapack_svd.h)
     
 # Executables
 
@@ -334,6 +335,7 @@ add_executable(test_lapack_lu ${LAPACK_TEST_HS} linalg/test_lapack_lu.cpp)
 add_executable(test_lapack_chol ${LAPACK_TEST_HS} linalg/test_lapack_chol.cpp)
 add_executable(test_lapack_qr ${LAPACK_TEST_HS} linalg/test_lapack_qr.cpp)
 add_executable(test_lapack_syev ${LAPACK_TEST_HS} linalg/test_lapack_syev.cpp)
+add_executable(test_lapack_svd ${LAPACK_TEST_HS} linalg/test_lapack_svd.cpp)
 
 # Groups of test units
 
@@ -406,7 +408,8 @@ set(LMAT_LINALG_TESTS
     test_lapack_lu
     test_lapack_chol
     test_lapack_qr
-    test_lapack_syev)
+    test_lapack_syev
+    test_lapack_svd)
     
 # Link to MKL
 
