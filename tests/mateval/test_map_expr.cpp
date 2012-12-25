@@ -179,6 +179,59 @@ void test_mapexpr_3()
 	double tol = 1.0e-14;
 	ASSERT_MAT_APPROX(m, n, d, r, tol);
 
+	// other forms
+
+	double v1 = 2.5;
+	double v2 = 3.2;
+	double v3 = -1.8;
+
+	d = make_map_expr_fix1(fma_(), v1, s2, s3);
+	for (index_t j = 0; j < n; ++j)
+	{
+		for (index_t i = 0; i < m; ++i)
+			r(i, j) = math::fma(v1, s2(i, j), s3(i, j));
+	}
+	ASSERT_MAT_APPROX(m, n, d, r, tol);
+
+	d = make_map_expr_fix2(fma_(), s1, v2, s3);
+	for (index_t j = 0; j < n; ++j)
+	{
+		for (index_t i = 0; i < m; ++i)
+			r(i, j) = math::fma(s1(i, j), v2, s3(i, j));
+	}
+	ASSERT_MAT_APPROX(m, n, d, r, tol);
+
+	d = make_map_expr_fix3(fma_(), s1, s2, v3);
+	for (index_t j = 0; j < n; ++j)
+	{
+		for (index_t i = 0; i < m; ++i)
+			r(i, j) = math::fma(s1(i, j), s2(i, j), v3);
+	}
+	ASSERT_MAT_APPROX(m, n, d, r, tol);
+
+	d = make_map_expr_fix12(fma_(), v1, v2, s3);
+	for (index_t j = 0; j < n; ++j)
+	{
+		for (index_t i = 0; i < m; ++i)
+			r(i, j) = math::fma(v1, v2, s3(i, j));
+	}
+	ASSERT_MAT_APPROX(m, n, d, r, tol);
+
+	d = make_map_expr_fix13(fma_(), v1, s2, v3);
+	for (index_t j = 0; j < n; ++j)
+	{
+		for (index_t i = 0; i < m; ++i)
+			r(i, j) = math::fma(v1, s2(i, j), v3);
+	}
+	ASSERT_MAT_APPROX(m, n, d, r, tol);
+
+	d = make_map_expr_fix23(fma_(), s1, v2, v3);
+	for (index_t j = 0; j < n; ++j)
+	{
+		for (index_t i = 0; i < m; ++i)
+			r(i, j) = math::fma(s1(i, j), v2, v3);
+	}
+	ASSERT_MAT_APPROX(m, n, d, r, tol);
 }
 
 
