@@ -320,7 +320,7 @@ namespace lmat
 	inline typename meta::enable_if<
 		meta::and_<meta::supports_ewise_access<A2>, meta::supports_ewise_access<A3> >,
 		map_expr<FTag, T1, A2, A3> >::type
-	make_map_expr_fix1(const FTag& ftag, const T1& a1, IMatrixXpr<A2, T2>& a2, const IMatrixXpr<A3, T3>& a3)
+	make_map_expr_fix1(const FTag& ftag, const T1& a1, const IMatrixXpr<A2, T2>& a2, const IMatrixXpr<A3, T3>& a3)
 	{
 		return map_expr<FTag, T1, A2, A3>(ftag, a1, a2.derived(), a3.derived());
 	}
@@ -332,7 +332,7 @@ namespace lmat
 		meta::supports_ewise_access<A2>::value &&
 		meta::supports_ewise_access<A3>::value,
 		map_expr<FTag, A1, A2, A3> >::type
-	make_map_expr(const FTag& ftag, const IMatrixXpr<A1, T1>& a1, IMatrixXpr<A2, T2>& a2, const IMatrixXpr<A3, T3>& a3)
+	make_map_expr(const FTag& ftag, const IMatrixXpr<A1, T1>& a1, const IMatrixXpr<A2, T2>& a2, const IMatrixXpr<A3, T3>& a3)
 	{
 		return map_expr<FTag, A1, A2, A3>(ftag, a1.derived(), a2.derived(), a3.derived());
 	}
