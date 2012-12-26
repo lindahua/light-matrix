@@ -35,6 +35,45 @@
 	FunName (const T& x, const IMatrixXpr<Y, T>& y) \
 	{ return make_map_expr_fix1(FTag(), x, y); }
 
+#define LMAT_DEFINE_MAT_MATH_FUN_S3( FunName, T, FTag ) \
+	template<class X, class Y, class Z> \
+	LMAT_ENSURE_INLINE \
+	inline map_expr<FTag, X, Y, Z> \
+	FunName (const IMatrixXpr<X, T>& x, const IMatrixXpr<Y, T>& y, const IMatrixXpr<Z, T>& z) \
+	{ return make_map_expr(FTag(), x, y, z); } \
+	template<class X, class Y> \
+	LMAT_ENSURE_INLINE \
+	inline map_expr<FTag, X, Y, T> \
+	FunName (const IMatrixXpr<X, T>& x, const IMatrixXpr<Y, T>& y, const T& z) \
+	{ return make_map_expr_fix3(FTag(), x, y, z); } \
+	template<class X, class Z> \
+	LMAT_ENSURE_INLINE \
+	inline map_expr<FTag, X, T, Z> \
+	FunName (const IMatrixXpr<X, T>& x, const T& y, const IMatrixXpr<Z, T>& z) \
+	{ return make_map_expr_fix2(FTag(), x, y, z); } \
+	template<class Y, class Z> \
+	LMAT_ENSURE_INLINE \
+	inline map_expr<FTag, T, Y, Z> \
+	FunName (const T& x, const IMatrixXpr<Y, T>& y, const IMatrixXpr<Z, T>& z) \
+	{ return make_map_expr_fix1(FTag(), x, y, z); } \
+	template<class X> \
+	LMAT_ENSURE_INLINE \
+	inline map_expr<FTag, X, T, T> \
+	FunName (const IMatrixXpr<X, T>& x, const T& y, const T& z) \
+	{ return make_map_expr_fix23(FTag(), x, y, z); } \
+	template<class Y> \
+	LMAT_ENSURE_INLINE \
+	inline map_expr<FTag, T, Y, T> \
+	FunName (const T& x, const IMatrixXpr<Y, T>& y, const T& z) \
+	{ return make_map_expr_fix13(FTag(), x, y, z); } \
+	template<class Z> \
+	LMAT_ENSURE_INLINE \
+	inline map_expr<FTag, T, T, Z> \
+	FunName (const T& x, const T& y, const IMatrixXpr<Z, T>& z) \
+	{ return make_map_expr_fix12(FTag(), x, y, z); }
+
+
+
 #define LMAT_DEFINE_MAT_MATH_FUN_R1( FunName ) \
 		LMAT_DEFINE_MAT_MATH_FUN_S1( FunName, float, FunName##_ ) \
 		LMAT_DEFINE_MAT_MATH_FUN_S1( FunName, double, FunName##_ )
@@ -43,8 +82,15 @@
 		LMAT_DEFINE_MAT_MATH_FUN_S2( FunName, float, FunName##_ ) \
 		LMAT_DEFINE_MAT_MATH_FUN_S2( FunName, double, FunName##_ )
 
+#define LMAT_DEFINE_MAT_MATH_FUN_R3( FunName ) \
+		LMAT_DEFINE_MAT_MATH_FUN_S3( FunName, float, FunName##_ ) \
+		LMAT_DEFINE_MAT_MATH_FUN_S3( FunName, double, FunName##_ )
+
 namespace lmat
 {
+	LMAT_DEFINE_MAT_MATH_FUN_R3( fma )
+	LMAT_DEFINE_MAT_MATH_FUN_R3( clamp )
+
 	LMAT_DEFINE_MAT_MATH_FUN_R1( rcp )
 	LMAT_DEFINE_MAT_MATH_FUN_R1( sqrt )
 	LMAT_DEFINE_MAT_MATH_FUN_R1( rsqrt )

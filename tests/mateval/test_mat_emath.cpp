@@ -90,6 +90,47 @@ struct tspec{ };
 	ADD_MN_CASE_3X3( mat_emath, matfun, DM, DN ) \
 	END_TPACK
 
+#define TEST_TERNARY_EMATH(matfun, scafun, al, ah, bl, bh, cl, ch, tol) \
+	MN_CASE( mat_emath, matfun ) { \
+	typedef dense_matrix<double, M, N> mat_t; \
+	const index_t m = M == 0 ? DM : M; \
+	const index_t n = N == 0 ? DN : N; \
+	mat_t A(m, n); fill_ran(A, al, ah); \
+	mat_t B(m, n); fill_ran(B, bl, bh); \
+	mat_t C(m, n); fill_ran(C, cl, ch); \
+	mat_t R1_r(m, n); \
+	for (index_t i = 0; i < m * n; ++i) R1_r[i] = scafun(A[i], B[i], C[i]); \
+	mat_t R1 = matfun(A, B, C); \
+	ASSERT_TRUE( my_is_approx(R1, R1_r, tol) ); \
+	mat_t R2_r(m, n); \
+	for (index_t i = 0; i < m * n; ++i) R2_r[i] = scafun(A[0], B[i], C[i]); \
+	mat_t R2 = matfun(A[0], B, C); \
+	ASSERT_TRUE( my_is_approx(R2, R2_r, tol) ); \
+	mat_t R3_r(m, n); \
+	for (index_t i = 0; i < m * n; ++i) R3_r[i] = scafun(A[i], B[0], C[i]); \
+	mat_t R3 = matfun(A, B[0], C); \
+	ASSERT_TRUE( my_is_approx(R3, R3_r, tol) ); \
+	mat_t R4_r(m, n); \
+	for (index_t i = 0; i < m * n; ++i) R4_r[i] = scafun(A[i], B[i], C[0]); \
+	mat_t R4 = matfun(A, B, C[0]); \
+	ASSERT_TRUE( my_is_approx(R4, R4_r, tol) ); \
+	mat_t R5_r(m, n); \
+	for (index_t i = 0; i < m * n; ++i) R5_r[i] = scafun(A[0], B[0], C[i]); \
+	mat_t R5 = matfun(A[0], B[0], C); \
+	ASSERT_TRUE( my_is_approx(R5, R5_r, tol) ); \
+	mat_t R6_r(m, n); \
+	for (index_t i = 0; i < m * n; ++i) R6_r[i] = scafun(A[0], B[i], C[0]); \
+	mat_t R6 = matfun(A[0], B, C[0]); \
+	ASSERT_TRUE( my_is_approx(R6, R6_r, tol) ); \
+	mat_t R7_r(m, n); \
+	for (index_t i = 0; i < m * n; ++i) R7_r[i] = scafun(A[i], B[0], C[0]); \
+	mat_t R7 = matfun(A, B[0], C[0]); \
+	ASSERT_TRUE( my_is_approx(R7, R7_r, tol) ); \
+	} \
+	BEGIN_TPACK( mat_##matfun ) \
+	ADD_MN_CASE_3X3( mat_emath, matfun, DM, DN ) \
+	END_TPACK
+
 
 template<typename T>
 inline T my_sqr(T x) { return x * x; }
@@ -103,7 +144,21 @@ inline T my_rcp(T x) { return T(1) / x; }
 template<typename T>
 inline T my_rsqrt(T x) { return T(1) / std::sqrt(x); }
 
+template<typename T>
+inline T my_fma(T x, T y, T z) { return x * y + z; }
 
+template<typename T>
+inline T my_clamp(T x, T y, T z)
+{
+	T r = x;
+	if (r < y) r = y;
+	if (r > z) r = z;
+	return r;
+}
+
+
+TEST_TERNARY_EMATH(fma, my_fma, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, 1.0e-15)
+TEST_TERNARY_EMATH(clamp, my_clamp, -1.0, 1.0, -1.0, 0.0, 0.0, 1.0, 1.0e-15)
 
 TEST_UNARY_EMATH(sqrt, std::sqrt, 0.0, 5.0, 1.0e-14)
 TEST_UNARY_EMATH(rcp, my_rcp, 0.5, 5.0, 1.0e-14)
@@ -156,6 +211,9 @@ TEST_UNARY_EMATH(tgamma, std::tgamma, 1.0, 3.0, 1.0e-12)
 
 
 BEGIN_MAIN_SUITE
+
+	ADD_TPACK( mat_fma )
+	ADD_TPACK( mat_clamp )
 
 	ADD_TPACK( mat_sqrt )
 	ADD_TPACK( mat_rcp )
