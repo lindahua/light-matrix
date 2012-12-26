@@ -6,11 +6,10 @@
  * @author Dahua Lin
  */
 
-#include "test_base.h"
-#include "multimat_supp.h"
+#include "../test_base.h"
+#include "../multimat_supp.h"
 
-#include <light_mat/matexpr/matrix_arith.h>
-#include <light_mat/matexpr/matrix_ewise_eval.h>
+#include <light_mat/mateval/mat_arith.h>
 
 using namespace lmat;
 using namespace lmat::test;
@@ -28,80 +27,22 @@ void fill_ran(dense_matrix<double, M, N>& X, double a, double b)
 }
 
 
-template<class Tag1, class Tag2, int M, int N>
-void test_scheme_choice()
+template<class A, class B>
+bool my_is_equal(const A& a, const B& b)
 {
-	const index_t m = M == 0 ? DM : M;
-	const index_t n = N == 0 ? DN : N;
+	if ( have_same_shape(a, b) )
+	{
+		index_t m = a.nrows();
+		index_t n = a.ncolumns();
 
-	typedef typename mat_host<Tag1, double, M, N>::cmat_t cmat1_t;
-	typedef typename mat_host<Tag2, double, M, N>::cmat_t cmat2_t;
-
-	mat_host<Tag1, double, M, N> a_src(m, n);
-	mat_host<Tag2, double, M, N> b_src(m, n);
-
-	cmat1_t a = a_src.get_cmat();
-	cmat2_t b = b_src.get_cmat();
-
-	bool supp_lin1 = meta::is_continuous<cmat1_t>::value || meta::is_vector<cmat1_t>::value;
-	bool supp_lin2 = meta::is_continuous<cmat2_t>::value || meta::is_vector<cmat2_t>::value;
-
-	dmat_t r(m, n);
-
-	bool expect_lin_u = get_default_macc_scheme(-a, r).use_linear();
-
-	ASSERT_EQ( expect_lin_u, supp_lin1 );
-
-	bool expect_lin_b = get_default_macc_scheme(a + b, r).use_linear();
-
-	ASSERT_EQ( expect_lin_b, supp_lin1 && supp_lin2 );
+		return ltest::test_matrix_equal(m, n, a, b);
+	}
+	else
+	{
+		return false;
+	}
 }
 
-
-MN_CASE( sch_choice, mat_mat )
-{
-	test_scheme_choice<cont, cont, M, N>();
-}
-
-MN_CASE( sch_choice, mat_blk )
-{
-	test_scheme_choice<cont, bloc, M, N>();
-}
-
-MN_CASE( sch_choice, mat_grid )
-{
-	test_scheme_choice<cont, grid, M, N>();
-}
-
-MN_CASE( sch_choice, blk_mat )
-{
-	test_scheme_choice<bloc, cont, M, N>();
-}
-
-MN_CASE( sch_choice, blk_blk )
-{
-	test_scheme_choice<bloc, bloc, M, N>();
-}
-
-MN_CASE( sch_choice, blk_grid )
-{
-	test_scheme_choice<bloc, grid, M, N>();
-}
-
-MN_CASE( sch_choice, grid_mat )
-{
-	test_scheme_choice<grid, cont, M, N>();
-}
-
-MN_CASE( sch_choice, grid_blk )
-{
-	test_scheme_choice<grid, bloc, M, N>();
-}
-
-MN_CASE( sch_choice, grid_grid )
-{
-	test_scheme_choice<grid, grid, M, N>();
-}
 
 
 MN_CASE( mat_arith, add )
@@ -132,13 +73,13 @@ MN_CASE( mat_arith, add )
 	// default evaluation
 
 	mat_t AB = A + B;
-	ASSERT_TRUE( is_equal(AB, AB_r) );
+	ASSERT_TRUE( my_is_equal(AB, AB_r) );
 
 	mat_t AC = A + c;
-	ASSERT_TRUE( is_equal(AC, AC_r) );
+	ASSERT_TRUE( my_is_equal(AC, AC_r) );
 
 	mat_t CB = c + B;
-	ASSERT_TRUE( is_equal(CB, CB_r) );
+	ASSERT_TRUE( my_is_equal(CB, CB_r) );
 
 }
 
@@ -169,11 +110,11 @@ MN_CASE( mat_arith, add_ip )
 
 	mat_t AB(A);
 	AB += B;
-	ASSERT_TRUE( is_equal(AB, AB_r) );
+	ASSERT_TRUE( my_is_equal(AB, AB_r) );
 
 	mat_t AC(A);
 	AC += c;
-	ASSERT_TRUE( is_equal(AC, AC_r) );
+	ASSERT_TRUE( my_is_equal(AC, AC_r) );
 }
 
 
@@ -206,13 +147,13 @@ MN_CASE( mat_arith, sub )
 	// default evaluation
 
 	mat_t AB = A - B;
-	ASSERT_TRUE( is_equal(AB, AB_r) );
+	ASSERT_TRUE( my_is_equal(AB, AB_r) );
 
 	mat_t AC = A - c;
-	ASSERT_TRUE( is_equal(AC, AC_r) );
+	ASSERT_TRUE( my_is_equal(AC, AC_r) );
 
 	mat_t CB = c - B;
-	ASSERT_TRUE( is_equal(CB, CB_r) );
+	ASSERT_TRUE( my_is_equal(CB, CB_r) );
 
 }
 
@@ -242,11 +183,11 @@ MN_CASE( mat_arith, sub_ip )
 
 	mat_t AB(A);
 	AB -= B;
-	ASSERT_TRUE( is_equal(AB, AB_r) );
+	ASSERT_TRUE( my_is_equal(AB, AB_r) );
 
 	mat_t AC(A);
 	AC -= c;
-	ASSERT_TRUE( is_equal(AC, AC_r) );
+	ASSERT_TRUE( my_is_equal(AC, AC_r) );
 }
 
 
@@ -278,13 +219,13 @@ MN_CASE( mat_arith, mul )
 	// default evaluation
 
 	mat_t AB = A * B;
-	ASSERT_TRUE( is_equal(AB, AB_r) );
+	ASSERT_TRUE( my_is_equal(AB, AB_r) );
 
 	mat_t AC = A * c;
-	ASSERT_TRUE( is_equal(AC, AC_r) );
+	ASSERT_TRUE( my_is_equal(AC, AC_r) );
 
 	mat_t CB = c * B;
-	ASSERT_TRUE( is_equal(CB, CB_r) );
+	ASSERT_TRUE( my_is_equal(CB, CB_r) );
 }
 
 MN_CASE( mat_arith, mul_ip )
@@ -313,11 +254,11 @@ MN_CASE( mat_arith, mul_ip )
 
 	mat_t AB(A);
 	AB *= B;
-	ASSERT_TRUE( is_equal(AB, AB_r) );
+	ASSERT_TRUE( my_is_equal(AB, AB_r) );
 
 	mat_t AC(A);
 	AC *= c;
-	ASSERT_TRUE( is_equal(AC, AC_r) );
+	ASSERT_TRUE( my_is_equal(AC, AC_r) );
 }
 
 
@@ -349,13 +290,13 @@ MN_CASE( mat_arith, div )
 	// default evaluation
 
 	mat_t AB = A / B;
-	ASSERT_TRUE( is_equal(AB, AB_r) );
+	ASSERT_TRUE( my_is_equal(AB, AB_r) );
 
 	mat_t AC = A / c;
-	ASSERT_TRUE( is_equal(AC, AC_r) );
+	ASSERT_TRUE( my_is_equal(AC, AC_r) );
 
 	mat_t CB = c / B;
-	ASSERT_TRUE( is_equal(CB, CB_r) );
+	ASSERT_TRUE( my_is_equal(CB, CB_r) );
 }
 
 
@@ -385,11 +326,11 @@ MN_CASE( mat_arith, div_ip )
 
 	mat_t AB(A);
 	AB /= B;
-	ASSERT_TRUE( is_equal(AB, AB_r) );
+	ASSERT_TRUE( my_is_equal(AB, AB_r) );
 
 	mat_t AC(A);
 	AC /= c;
-	ASSERT_TRUE( is_equal(AC, AC_r) );
+	ASSERT_TRUE( my_is_equal(AC, AC_r) );
 }
 
 
@@ -411,7 +352,7 @@ MN_CASE( mat_arith, neg )
 	// default evaluation
 
 	mat_t R = -A;
-	ASSERT_TRUE( is_equal(R, R_r) );
+	ASSERT_TRUE( my_is_equal(R, R_r) );
 }
 
 
@@ -433,7 +374,7 @@ MN_CASE( mat_arith, abs )
 	// default evaluation
 
 	mat_t R = abs(A);
-	ASSERT_TRUE( is_equal(R, R_r) );
+	ASSERT_TRUE( my_is_equal(R, R_r) );
 }
 
 MN_CASE( mat_arith, max )
@@ -457,13 +398,13 @@ MN_CASE( mat_arith, max )
 	for (index_t i = 0; i < m * n; ++i) CB_r[i] = c > B[i] ? c : B[i];
 
 	mat_t AB = (max)(A, B);
-	ASSERT_TRUE( is_equal(AB, AB_r) );
+	ASSERT_TRUE( my_is_equal(AB, AB_r) );
 
 	mat_t AC = (max)(A, c);
-	ASSERT_TRUE( is_equal(AC, AC_r) );
+	ASSERT_TRUE( my_is_equal(AC, AC_r) );
 
 	mat_t CB = (max)(c, B);
-	ASSERT_TRUE( is_equal(CB, CB_r) );
+	ASSERT_TRUE( my_is_equal(CB, CB_r) );
 }
 
 MN_CASE( mat_arith, min )
@@ -487,152 +428,15 @@ MN_CASE( mat_arith, min )
 	for (index_t i = 0; i < m * n; ++i) CB_r[i] = c < B[i] ? c : B[i];
 
 	mat_t AB = (min)(A, B);
-	ASSERT_TRUE( is_equal(AB, AB_r) );
+	ASSERT_TRUE( my_is_equal(AB, AB_r) );
 
 	mat_t AC = (min)(A, c);
-	ASSERT_TRUE( is_equal(AC, AC_r) );
+	ASSERT_TRUE( my_is_equal(AC, AC_r) );
 
 	mat_t CB = (min)(c, B);
-	ASSERT_TRUE( is_equal(CB, CB_r) );
+	ASSERT_TRUE( my_is_equal(CB, CB_r) );
 }
 
-
-MN_CASE( mat_arith_ex,  add_block_to_block )
-{
-	const index_t m = M == 0 ? DM : M;
-	const index_t n = N == 0 ? DN : N;
-
-	double v = 1.5;
-	dblock<double> blk_x(LDim * n);
-	dblock<double> blk_y(LDim * n, fill(v));
-
-	for (index_t i = 0; i < LDim * n; ++i) blk_x[i] = double(i+1);
-
-	cref_block<double, M, N> x(blk_x.ptr_data(), m, n, LDim);
-	ref_block<double, M, N> y(blk_y.ptr_data(), m, n, LDim);
-
-	dense_matrix<double, M, N> r(m, n);
-	for (index_t j = 0; j < n; ++j)
-	{
-		for (index_t i = 0; i < m; ++i) r(i, j) = x(i, j) + v;
-	}
-
-	y += x;
-
-	ASSERT_MAT_EQ(m, n, y, r);
-}
-
-MN_CASE( mat_arith_ex,  add_grid_to_grid )
-{
-	const index_t m = M == 0 ? DM : M;
-	const index_t n = N == 0 ? DN : N;
-
-	double v = 1.5;
-	dblock<double> blk_x(LDim * n);
-	dblock<double> blk_y(LDim * n, fill(v));
-
-	for (index_t i = 0; i < LDim * n; ++i) blk_x[i] = double(i+1);
-
-	cref_grid<double, M, N> x(blk_x.ptr_data(), m, n, rs, cs);
-	ref_grid<double, M, N> y(blk_y.ptr_data(), m, n, rs, cs);
-
-	dense_matrix<double, M, N> r(m, n);
-	for (index_t j = 0; j < n; ++j)
-	{
-		for (index_t i = 0; i < m; ++i) r(i, j) = x(i, j) + v;
-	}
-
-	y += x;
-
-	ASSERT_MAT_EQ(m, n, y, r);
-}
-
-MN_CASE( mat_arith_ex,  negate_block )
-{
-	const index_t m = M == 0 ? DM : M;
-	const index_t n = N == 0 ? DN : N;
-
-	double v = 1.5;
-	dblock<double> blk_x(LDim * n);
-	dblock<double> blk_y(LDim * n, fill(v));
-
-	for (index_t i = 0; i < LDim * n; ++i) blk_x[i] = double(i+1);
-
-	cref_block<double, M, N> x(blk_x.ptr_data(), m, n, LDim);
-	ref_block<double, M, N> y(blk_y.ptr_data(), m, n, LDim);
-
-	dense_matrix<double, M, N> r(m, n);
-	for (index_t j = 0; j < n; ++j)
-	{
-		for (index_t i = 0; i < m; ++i) r(i, j) = - x(i, j);
-	}
-
-	y = -x;
-
-	ASSERT_MAT_EQ(m, n, y, r);
-}
-
-MN_CASE( mat_arith_ex,  negate_grid )
-{
-	const index_t m = M == 0 ? DM : M;
-	const index_t n = N == 0 ? DN : N;
-
-	double v = 1.5;
-	dblock<double> blk_x(LDim * n);
-	dblock<double> blk_y(LDim * n, fill(v));
-
-	for (index_t i = 0; i < LDim * n; ++i) blk_x[i] = double(i+1);
-
-	cref_grid<double, M, N> x(blk_x.ptr_data(), m, n, rs, cs);
-	ref_grid<double, M, N> y(blk_y.ptr_data(), m, n, rs, cs);
-
-	dense_matrix<double, M, N> r(m, n);
-	for (index_t j = 0; j < n; ++j)
-	{
-		for (index_t i = 0; i < m; ++i) r(i, j) = - x(i, j);
-	}
-
-	y = -x;
-
-	ASSERT_MAT_EQ(m, n, y, r);
-}
-
-
-BEGIN_TPACK( sch_choice_mat_mat )
-	ADD_MN_CASE_3X3( sch_choice, mat_mat, DM, DN )
-END_TPACK
-
-BEGIN_TPACK( sch_choice_mat_blk )
-	ADD_MN_CASE_3X3( sch_choice, mat_blk, DM, DN )
-END_TPACK
-
-BEGIN_TPACK( sch_choice_mat_grid )
-	ADD_MN_CASE_3X3( sch_choice, mat_grid, DM, DN )
-END_TPACK
-
-BEGIN_TPACK( sch_choice_blk_mat )
-	ADD_MN_CASE_3X3( sch_choice, blk_mat, DM, DN )
-END_TPACK
-
-BEGIN_TPACK( sch_choice_blk_blk )
-	ADD_MN_CASE_3X3( sch_choice, blk_blk, DM, DN )
-END_TPACK
-
-BEGIN_TPACK( sch_choice_blk_grid )
-	ADD_MN_CASE_3X3( sch_choice, blk_grid, DM, DN )
-END_TPACK
-
-BEGIN_TPACK( sch_choice_grid_mat )
-	ADD_MN_CASE_3X3( sch_choice, grid_mat, DM, DN )
-END_TPACK
-
-BEGIN_TPACK( sch_choice_grid_blk )
-	ADD_MN_CASE_3X3( sch_choice, grid_blk, DM, DN )
-END_TPACK
-
-BEGIN_TPACK( sch_choice_grid_grid )
-	ADD_MN_CASE_3X3( sch_choice, grid_grid, DM, DN )
-END_TPACK
 
 
 BEGIN_TPACK( mat_arith_add )
@@ -688,34 +492,8 @@ BEGIN_TPACK( mat_arith_min )
 END_TPACK
 
 
-BEGIN_TPACK( mat_arith_ex_add_block )
-	ADD_MN_CASE_3X3( mat_arith_ex, add_block_to_block, DM, DN )
-END_TPACK
-
-BEGIN_TPACK( mat_arith_ex_add_grid )
-	ADD_MN_CASE_3X3( mat_arith_ex, add_grid_to_grid, DM, DN )
-END_TPACK
-
-BEGIN_TPACK( mat_arith_ex_neg_block )
-	ADD_MN_CASE_3X3( mat_arith_ex, negate_block, DM, DN )
-END_TPACK
-
-BEGIN_TPACK( mat_arith_ex_neg_grid )
-	ADD_MN_CASE_3X3( mat_arith_ex, negate_grid, DM, DN )
-END_TPACK
-
 
 BEGIN_MAIN_SUITE
-	ADD_TPACK( sch_choice_mat_mat )
-	ADD_TPACK( sch_choice_mat_blk )
-	ADD_TPACK( sch_choice_mat_grid )
-	ADD_TPACK( sch_choice_blk_mat )
-	ADD_TPACK( sch_choice_blk_blk )
-	ADD_TPACK( sch_choice_blk_grid )
-	ADD_TPACK( sch_choice_grid_mat )
-	ADD_TPACK( sch_choice_grid_blk )
-	ADD_TPACK( sch_choice_grid_grid )
-
 	ADD_TPACK( mat_arith_add )
 	ADD_TPACK( mat_arith_add_ip )
 	ADD_TPACK( mat_arith_sub )
@@ -730,12 +508,6 @@ BEGIN_MAIN_SUITE
 
 	ADD_TPACK( mat_arith_max )
 	ADD_TPACK( mat_arith_min )
-
-	ADD_TPACK( mat_arith_ex_add_block )
-	ADD_TPACK( mat_arith_ex_add_grid )
-	ADD_TPACK( mat_arith_ex_neg_block )
-	ADD_TPACK( mat_arith_ex_neg_grid )
-
 END_MAIN_SUITE
 
 

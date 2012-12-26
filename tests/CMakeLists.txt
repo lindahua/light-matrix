@@ -175,7 +175,8 @@ set(MATRIX_EVAL_HS
 set(MAP_EXPR_HS
     ${INC}/mateval/internal/map_expr_internal.h
     ${INC}/mateval/map_accessors.h
-    ${INC}/mateval/map_expr.h)
+    ${INC}/mateval/map_expr.h
+    ${INC}/mateval/mat_arith.h)
     
 set(MATRIX_REDUC_HS
     ${INC}/mateval/internal/mat_fold_internal.h
@@ -320,6 +321,7 @@ set(MAP_EXPR_TEST_HS
     ${MAP_EXPR_HS})
     
 add_executable(test_map_expr ${MAP_EXPR_TEST_HS} mateval/test_map_expr.cpp)
+add_executable(test_mat_arith ${MAP_EXPR_TEST_HS} mateval/test_mat_arith.cpp)
 
 set(REDUC_HS
     ${MATRIX_HS}
@@ -408,6 +410,7 @@ set(LMAT_MATEVAL_TESTS
 	test_percol_ewise
 	test_ewise_accum
 	test_map_expr
+	test_mat_arith
 	test_full_reduce
 	test_colwise_reduce
 	test_rowwise_reduce)
