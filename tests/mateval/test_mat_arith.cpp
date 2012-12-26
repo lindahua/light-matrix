@@ -377,6 +377,43 @@ MN_CASE( mat_arith, abs )
 	ASSERT_TRUE( my_is_equal(R, R_r) );
 }
 
+
+MN_CASE( mat_arith, sqr )
+{
+	typedef dense_matrix<double, M, N> mat_t;
+
+	const index_t m = M == 0 ? DM : M;
+	const index_t n = N == 0 ? DN : N;
+
+	mat_t A(m, n);
+	for (index_t i = 0; i < m * n; ++i) A[i] = double((i+1));
+
+	mat_t R_r(m, n);
+	for (index_t i = 0; i < m * n; ++i) R_r[i] = A[i] * A[i];
+
+	mat_t R = sqr(A);
+	ASSERT_TRUE( my_is_equal(R, R_r) );
+}
+
+
+MN_CASE( mat_arith, cube )
+{
+	typedef dense_matrix<double, M, N> mat_t;
+
+	const index_t m = M == 0 ? DM : M;
+	const index_t n = N == 0 ? DN : N;
+
+	mat_t A(m, n);
+	for (index_t i = 0; i < m * n; ++i) A[i] = double((i+1));
+
+	mat_t R_r(m, n);
+	for (index_t i = 0; i < m * n; ++i) R_r[i] = A[i] * A[i] * A[i];
+
+	mat_t R = cube(A);
+	ASSERT_TRUE( my_is_equal(R, R_r) );
+}
+
+
 MN_CASE( mat_arith, max )
 {
 	typedef dense_matrix<double, M, N> mat_t;
@@ -483,6 +520,15 @@ BEGIN_TPACK( mat_arith_abs )
 	ADD_MN_CASE_3X3( mat_arith, abs, DM, DN )
 END_TPACK
 
+BEGIN_TPACK( mat_arith_sqr )
+	ADD_MN_CASE_3X3( mat_arith, sqr, DM, DN )
+END_TPACK
+
+BEGIN_TPACK( mat_arith_cube )
+	ADD_MN_CASE_3X3( mat_arith, cube, DM, DN )
+END_TPACK
+
+
 BEGIN_TPACK( mat_arith_max )
 	ADD_MN_CASE_3X3( mat_arith, max, DM, DN )
 END_TPACK
@@ -505,6 +551,8 @@ BEGIN_MAIN_SUITE
 
 	ADD_TPACK( mat_arith_neg )
 	ADD_TPACK( mat_arith_abs )
+	ADD_TPACK( mat_arith_sqr )
+	ADD_TPACK( mat_arith_cube )
 
 	ADD_TPACK( mat_arith_max )
 	ADD_TPACK( mat_arith_min )
