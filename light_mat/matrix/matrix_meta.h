@@ -437,8 +437,7 @@ namespace lmat { namespace meta {
 	template<class SExpr>
 	struct supports_ewise_access
 	{
-		static const bool value =
-				is_percol_continuous_ex<SExpr>::value;
+		static const bool value = is_regular_mat<SExpr>::value;
 	};
 
 

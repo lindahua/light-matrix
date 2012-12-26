@@ -223,81 +223,116 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<typename FTag, typename T1, class A1>
+	template<typename FTag, class A1, typename T1>
 	LMAT_ENSURE_INLINE
-	inline map_expr<FTag, A1> make_map_expr(const FTag& ftag, const IMatrixXpr<A1, T1>& a1)
+	inline typename meta::enable_if<
+		meta::supports_ewise_access<A1>,
+		map_expr<FTag, A1> >::type
+	make_map_expr(const FTag& ftag, const IMatrixXpr<A1, T1>& a1)
 	{
 		return map_expr<FTag, A1>(ftag, a1.derived());
 	}
 
 
-	template<typename FTag, typename T1, class A1, typename T2>
+	template<typename FTag, class A1, typename T1, typename T2>
 	LMAT_ENSURE_INLINE
-	inline map_expr<FTag, A1, T2> make_map_expr_fix2(const FTag& ftag, const IMatrixXpr<A1, T1>& a1, const T2& a2)
+	inline typename meta::enable_if<
+		meta::supports_ewise_access<A1>,
+		map_expr<FTag, A1, T2> >::type
+	make_map_expr_fix2(const FTag& ftag, const IMatrixXpr<A1, T1>& a1, const T2& a2)
 	{
 		return map_expr<FTag, A1, T2>(ftag, a1.derived(), a2);
 	}
 
-	template<typename FTag, typename T1, typename T2, class A2>
+	template<typename FTag, typename T1, class A2, typename T2>
 	LMAT_ENSURE_INLINE
-	inline map_expr<FTag, T1, A2> make_map_expr_fix1(const FTag& ftag, const T1& a1, const IMatrixXpr<A2, T2>& a2)
+	inline typename meta::enable_if<
+		meta::supports_ewise_access<A2>,
+		map_expr<FTag, T1, A2> >::type
+	make_map_expr_fix1(const FTag& ftag, const T1& a1, const IMatrixXpr<A2, T2>& a2)
 	{
 		return map_expr<FTag, T1, A2>(ftag, a1, a2.derived());
 	}
 
 	template<typename FTag, typename A1, typename T1, typename T2, class A2>
 	LMAT_ENSURE_INLINE
-	inline map_expr<FTag, A1, A2> make_map_expr(const FTag& ftag, const IMatrixXpr<A1, T1>& a1, const IMatrixXpr<A2, T2>& a2)
+	inline typename meta::enable_if<
+		meta::and_<meta::supports_ewise_access<A1>, meta::supports_ewise_access<A2> >,
+		map_expr<FTag, A1, A2> >::type
+	make_map_expr(const FTag& ftag, const IMatrixXpr<A1, T1>& a1, const IMatrixXpr<A2, T2>& a2)
 	{
 		return map_expr<FTag, A1, A2>(ftag, a1.derived(), a2.derived());
 	}
 
 
-	template<typename FTag, typename T1, class A1, typename T2, typename T3>
+	template<typename FTag, class A1, typename T1, typename T2, typename T3>
 	LMAT_ENSURE_INLINE
-	inline map_expr<FTag, A1, T2, T3> make_map_expr_fix23(const FTag& ftag, const IMatrixXpr<A1, T1>& a1, const T2& a2, const T3& a3)
+	inline typename meta::enable_if<
+		meta::supports_ewise_access<A1>,
+		map_expr<FTag, A1, T2, T3> >::type
+	make_map_expr_fix23(const FTag& ftag, const IMatrixXpr<A1, T1>& a1, const T2& a2, const T3& a3)
 	{
 		return map_expr<FTag, A1, T2, T3>(ftag, a1.derived(), a2, a3);
 	}
 
-	template<typename FTag, typename T1, typename T2, class A2, typename T3>
+	template<typename FTag, typename T1, class A2, typename T2, typename T3>
 	LMAT_ENSURE_INLINE
-	inline map_expr<FTag, T1, A2, T3> make_map_expr_fix13(const FTag& ftag, T1& a1, const IMatrixXpr<A2, T2>& a2, const T3& a3)
+	inline typename meta::enable_if<
+		meta::supports_ewise_access<A2>,
+		map_expr<FTag, T1, A2, T3> >::type
+	make_map_expr_fix13(const FTag& ftag, T1& a1, const IMatrixXpr<A2, T2>& a2, const T3& a3)
 	{
 		return map_expr<FTag, T1, A2, T3>(ftag, a1, a2.derived(), a3);
 	}
 
 	template<typename FTag, typename T1, typename T2, class A3, typename T3>
 	LMAT_ENSURE_INLINE
-	inline map_expr<FTag, T1, T2, A3> make_map_expr_fix12(const FTag& ftag, const T1& a1, const T2& a2, const IMatrixXpr<A3, T3>& a3)
+	inline typename meta::enable_if<
+		meta::supports_ewise_access<A3>,
+		map_expr<FTag, T1, T2, A3> >::type
+	make_map_expr_fix12(const FTag& ftag, const T1& a1, const T2& a2, const IMatrixXpr<A3, T3>& a3)
 	{
 		return map_expr<FTag, T1, T2, A3>(ftag, a1, a2, a3.derived());
 	}
 
 	template<typename FTag, class A1, typename T1, class A2, typename T2, typename T3>
 	LMAT_ENSURE_INLINE
-	inline map_expr<FTag, A1, A2, T3> make_map_expr_fix3(const FTag& ftag, const IMatrixXpr<A1, T1>& a1, const IMatrixXpr<A2, T2>& a2, const T3& a3)
+	inline typename meta::enable_if<
+		meta::and_<meta::supports_ewise_access<A1>, meta::supports_ewise_access<A2> >,
+		map_expr<FTag, A1, A2, T3> >::type
+	make_map_expr_fix3(const FTag& ftag, const IMatrixXpr<A1, T1>& a1, const IMatrixXpr<A2, T2>& a2, const T3& a3)
 	{
 		return map_expr<FTag, A1, A2, T3>(ftag, a1.derived(), a2.derived(), a3);
 	}
 
 	template<typename FTag, class A1, typename T1, typename T2, class A3, typename T3>
 	LMAT_ENSURE_INLINE
-	inline map_expr<FTag, A1, T2, A3> make_map_expr_fix2(const FTag& ftag, const IMatrixXpr<A1, T1>& a1, T2& a2, const IMatrixXpr<A3, T3>& a3)
+	inline typename meta::enable_if<
+		meta::and_<meta::supports_ewise_access<A1>, meta::supports_ewise_access<A3> >,
+		map_expr<FTag, A1, T2, A3> >::type
+	make_map_expr_fix2(const FTag& ftag, const IMatrixXpr<A1, T1>& a1, T2& a2, const IMatrixXpr<A3, T3>& a3)
 	{
 		return map_expr<FTag, A1, T2, A3>(ftag, a1.derived(), a2, a3.derived());
 	}
 
 	template<typename FTag, typename T1, class A2, typename T2, class A3, typename T3>
 	LMAT_ENSURE_INLINE
-	inline map_expr<FTag, T1, A2, A3> make_map_expr_fix1(const FTag& ftag, const T1& a1, IMatrixXpr<A2, T2>& a2, const IMatrixXpr<A3, T3>& a3)
+	inline typename meta::enable_if<
+		meta::and_<meta::supports_ewise_access<A2>, meta::supports_ewise_access<A3> >,
+		map_expr<FTag, T1, A2, A3> >::type
+	make_map_expr_fix1(const FTag& ftag, const T1& a1, IMatrixXpr<A2, T2>& a2, const IMatrixXpr<A3, T3>& a3)
 	{
 		return map_expr<FTag, T1, A2, A3>(ftag, a1, a2.derived(), a3.derived());
 	}
 
 	template<typename FTag, class A1, typename T1, class A2, typename T2, class A3, typename T3>
 	LMAT_ENSURE_INLINE
-	inline map_expr<FTag, A1, A2, A3> make_map_expr(const FTag& ftag, const IMatrixXpr<A1, T1>& a1, IMatrixXpr<A2, T2>& a2, const IMatrixXpr<A3, T3>& a3)
+	inline typename meta::enable_if_c<
+		meta::supports_ewise_access<A1>::value &&
+		meta::supports_ewise_access<A2>::value &&
+		meta::supports_ewise_access<A3>::value,
+		map_expr<FTag, A1, A2, A3> >::type
+	make_map_expr(const FTag& ftag, const IMatrixXpr<A1, T1>& a1, IMatrixXpr<A2, T2>& a2, const IMatrixXpr<A3, T3>& a3)
 	{
 		return map_expr<FTag, A1, A2, A3>(ftag, a1.derived(), a2.derived(), a3.derived());
 	}

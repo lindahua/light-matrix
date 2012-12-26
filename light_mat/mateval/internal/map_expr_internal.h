@@ -84,9 +84,14 @@ namespace lmat { namespace internal {
 	 *
 	 ********************************************/
 
+#define LMAT_CHECK_EWISE_ACC_SUPPORT(A) \
+		static_assert(meta::supports_ewise_access<A>::value, #A " must supports element-wise access.");
+
 	template<typename Arg>
 	struct map_expr_helper1
 	{
+		LMAT_CHECK_EWISE_ACC_SUPPORT(Arg)
+
 		static const int ct_nrows = meta::nrows<Arg>::value;
 		static const int ct_ncols = meta::ncols<Arg>::value;
 		typedef matrix_shape<ct_nrows, ct_ncols> shape_type;
@@ -105,6 +110,8 @@ namespace lmat { namespace internal {
 	template<typename Arg1, typename Arg2>
 	struct map_expr_helper2<Arg1, Arg2, false, true>
 	{
+		LMAT_CHECK_EWISE_ACC_SUPPORT(Arg2)
+
 		static const int ct_nrows = meta::nrows<Arg2>::value;
 		static const int ct_ncols = meta::ncols<Arg2>::value;
 		typedef matrix_shape<ct_nrows, ct_ncols> shape_type;
@@ -119,6 +126,8 @@ namespace lmat { namespace internal {
 	template<typename Arg1, typename Arg2>
 	struct map_expr_helper2<Arg1, Arg2, true, false>
 	{
+		LMAT_CHECK_EWISE_ACC_SUPPORT(Arg1)
+
 		static const int ct_nrows = meta::nrows<Arg1>::value;
 		static const int ct_ncols = meta::ncols<Arg1>::value;
 		typedef matrix_shape<ct_nrows, ct_ncols> shape_type;
@@ -133,6 +142,9 @@ namespace lmat { namespace internal {
 	template<typename Arg1, typename Arg2>
 	struct map_expr_helper2<Arg1, Arg2, true, true>
 	{
+		LMAT_CHECK_EWISE_ACC_SUPPORT(Arg1)
+		LMAT_CHECK_EWISE_ACC_SUPPORT(Arg2)
+
 		static const int ct_nrows = meta::common_nrows<Arg1, Arg2>::value;
 		static const int ct_ncols = meta::common_ncols<Arg1, Arg2>::value;
 		typedef matrix_shape<ct_nrows, ct_ncols> shape_type;
@@ -151,6 +163,8 @@ namespace lmat { namespace internal {
 	template<typename Arg1, typename Arg2, typename Arg3>
 	struct map_expr_helper3<Arg1, Arg2, Arg3, false, false, true>
 	{
+		LMAT_CHECK_EWISE_ACC_SUPPORT(Arg3)
+
 		static const int ct_nrows = meta::nrows<Arg3>::value;
 		static const int ct_ncols = meta::ncols<Arg3>::value;
 		typedef matrix_shape<ct_nrows, ct_ncols> shape_type;
@@ -165,6 +179,8 @@ namespace lmat { namespace internal {
 	template<typename Arg1, typename Arg2, typename Arg3>
 	struct map_expr_helper3<Arg1, Arg2, Arg3, false, true, false>
 	{
+		LMAT_CHECK_EWISE_ACC_SUPPORT(Arg2)
+
 		static const int ct_nrows = meta::nrows<Arg2>::value;
 		static const int ct_ncols = meta::ncols<Arg2>::value;
 		typedef matrix_shape<ct_nrows, ct_ncols> shape_type;
@@ -179,6 +195,8 @@ namespace lmat { namespace internal {
 	template<typename Arg1, typename Arg2, typename Arg3>
 	struct map_expr_helper3<Arg1, Arg2, Arg3, true, false, false>
 	{
+		LMAT_CHECK_EWISE_ACC_SUPPORT(Arg1)
+
 		static const int ct_nrows = meta::nrows<Arg1>::value;
 		static const int ct_ncols = meta::ncols<Arg1>::value;
 		typedef matrix_shape<ct_nrows, ct_ncols> shape_type;
@@ -193,6 +211,9 @@ namespace lmat { namespace internal {
 	template<typename Arg1, typename Arg2, typename Arg3>
 	struct map_expr_helper3<Arg1, Arg2, Arg3, false, true, true>
 	{
+		LMAT_CHECK_EWISE_ACC_SUPPORT(Arg2)
+		LMAT_CHECK_EWISE_ACC_SUPPORT(Arg3)
+
 		static const int ct_nrows = meta::common_nrows<Arg2, Arg3>::value;
 		static const int ct_ncols = meta::common_ncols<Arg2, Arg3>::value;
 		typedef matrix_shape<ct_nrows, ct_ncols> shape_type;
@@ -207,6 +228,9 @@ namespace lmat { namespace internal {
 	template<typename Arg1, typename Arg2, typename Arg3>
 	struct map_expr_helper3<Arg1, Arg2, Arg3, true, false, true>
 	{
+		LMAT_CHECK_EWISE_ACC_SUPPORT(Arg1)
+		LMAT_CHECK_EWISE_ACC_SUPPORT(Arg3)
+
 		static const int ct_nrows = meta::common_nrows<Arg1, Arg3>::value;
 		static const int ct_ncols = meta::common_ncols<Arg1, Arg3>::value;
 		typedef matrix_shape<ct_nrows, ct_ncols> shape_type;
@@ -221,6 +245,9 @@ namespace lmat { namespace internal {
 	template<typename Arg1, typename Arg2, typename Arg3>
 	struct map_expr_helper3<Arg1, Arg2, Arg3, true, true, false>
 	{
+		LMAT_CHECK_EWISE_ACC_SUPPORT(Arg1)
+		LMAT_CHECK_EWISE_ACC_SUPPORT(Arg2)
+
 		static const int ct_nrows = meta::common_nrows<Arg1, Arg2>::value;
 		static const int ct_ncols = meta::common_ncols<Arg1, Arg2>::value;
 		typedef matrix_shape<ct_nrows, ct_ncols> shape_type;
@@ -235,6 +262,10 @@ namespace lmat { namespace internal {
 	template<typename Arg1, typename Arg2, typename Arg3>
 	struct map_expr_helper3<Arg1, Arg2, Arg3, true, true, true>
 	{
+		LMAT_CHECK_EWISE_ACC_SUPPORT(Arg1)
+		LMAT_CHECK_EWISE_ACC_SUPPORT(Arg2)
+		LMAT_CHECK_EWISE_ACC_SUPPORT(Arg3)
+
 		static const int ct_nrows = meta::common_nrows<Arg1, Arg2, Arg3>::value;
 		static const int ct_ncols = meta::common_ncols<Arg1, Arg2, Arg3>::value;
 		typedef matrix_shape<ct_nrows, ct_ncols> shape_type;
