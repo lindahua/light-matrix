@@ -6,10 +6,10 @@
  * @author Dahua Lin
  */
 
-#include "test_base.h"
+#include "../test_base.h"
 
 #include <light_mat/matrix/matrix_classes.h>
-#include <light_mat/matexpr/matrix_cast.h>
+#include <light_mat/mateval/mat_cast.h>
 
 using namespace lmat;
 using namespace lmat::test;
@@ -30,7 +30,7 @@ const index_t DN = 6;
 		for (index_t i = 0; i < m * n; ++i) { \
 			rmat[i] = static_cast<T>(smat[i]); \
 		} \
-		dense_matrix<T, M, N> tmat1 = cast(smat, type<T>()); \
+		dense_matrix<T, M, N> tmat1 = cast(smat, type_<T>()); \
 		ASSERT_EQ( tmat1.nrows(), m ); \
 		ASSERT_EQ( tmat1.ncolumns(), n ); \
 		ASSERT_MAT_EQ( m, n, tmat1, rmat ); \
