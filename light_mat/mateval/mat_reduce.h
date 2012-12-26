@@ -27,7 +27,7 @@
 #define LMAT_DEFINE_BASIC_FULL_REDUCTION( Name ) \
 	template<typename T, class Mat> \
 	LMAT_ENSURE_INLINE \
-	inline T Name(const IRegularMatrix<Mat, T>& mat) { \
+	inline T Name(const IEWiseMatrix<Mat, T>& mat) { \
 		typedef default_simd_kind kind; \
 		dimension<meta::nelems<Mat>::value> dim = reduc_get_length(mat); \
 		T r; \
@@ -40,7 +40,7 @@
 #define LMAT_DEFINE_BASIC_COLWISE_REDUCTION( Name ) \
 	template<typename T, class Mat, class DMat> \
 	LMAT_ENSURE_INLINE \
-	inline void colwise_##Name(const IRegularMatrix<Mat, T>& mat, IRegularMatrix<DMat, T>& dmat) { \
+	inline void colwise_##Name(const IEWiseMatrix<Mat, T>& mat, IRegularMatrix<DMat, T>& dmat) { \
 		typedef default_simd_kind kind; \
 		typename meta::shape<Mat>::type shape = reduc_get_shape(mat); \
 		LMAT_CHECK_DIMS( dmat.nelems() == shape.ncolumns() ); \
@@ -51,7 +51,7 @@
 
 #define LMAT_DEFINE_BASIC_ROWWISE_REDUCTION( Name ) \
 	template<typename T, class Mat, class DMat> \
-	void rowwise_##Name(const IRegularMatrix<Mat, T>& mat, IRegularMatrix<DMat, T>& dmat) { \
+	void rowwise_##Name(const IEWiseMatrix<Mat, T>& mat, IRegularMatrix<DMat, T>& dmat) { \
 		typedef default_simd_kind kind; \
 		typename meta::shape<Mat>::type shape = reduc_get_shape(mat); \
 		LMAT_CHECK_DIMS( dmat.nelems() == shape.nrows() ); \
@@ -65,7 +65,7 @@
 #define LMAT_DEFINE_FULL_REDUCTION_1( Name, Reduc, ScaFun, EmptyVal ) \
 	template<typename T, class Mat> \
 	LMAT_ENSURE_INLINE \
-	inline T Name(const IRegularMatrix<Mat, T>& mat) { \
+	inline T Name(const IEWiseMatrix<Mat, T>& mat) { \
 		typedef default_simd_kind kind; \
 		dimension<meta::nelems<Mat>::value> dim = reduc_get_length(mat); \
 		T r; \
@@ -77,7 +77,7 @@
 #define LMAT_DEFINE_FULL_REDUCTION_2( Name, Reduc, ScaFun, EmptyVal ) \
 	template<typename T, class Mat1, class Mat2> \
 	LMAT_ENSURE_INLINE \
-	inline T Name(const IRegularMatrix<Mat1, T>& mat1, const IRegularMatrix<Mat2, T>& mat2) { \
+	inline T Name(const IEWiseMatrix<Mat1, T>& mat1, const IEWiseMatrix<Mat2, T>& mat2) { \
 		typedef default_simd_kind kind; \
 		dimension<meta::common_nelems<Mat1, Mat2>::value> dim = reduc_get_length(mat1, mat2); \
 		T r; \
@@ -91,7 +91,7 @@
 #define LMAT_DEFINE_COLWISE_REDUCTION_1( Name, Reduc, ScaFun, EmptyVal ) \
 	template<typename T, class Mat, class DMat> \
 	LMAT_ENSURE_INLINE \
-	inline void colwise_##Name(const IRegularMatrix<Mat, T>& mat, IRegularMatrix<DMat, T>& dmat) { \
+	inline void colwise_##Name(const IEWiseMatrix<Mat, T>& mat, IRegularMatrix<DMat, T>& dmat) { \
 		typedef default_simd_kind kind; \
 		typename meta::shape<Mat>::type shape = reduc_get_shape(mat); \
 		LMAT_CHECK_DIMS( dmat.nelems() == shape.ncolumns() ); \
@@ -104,7 +104,7 @@
 #define LMAT_DEFINE_COLWISE_REDUCTION_2( Name, Reduc, ScaFun, EmptyVal ) \
 	template<typename T, class Mat1, class Mat2, class DMat> \
 	LMAT_ENSURE_INLINE \
-	inline void colwise_##Name(const IRegularMatrix<Mat1, T>& mat1, const IRegularMatrix<Mat2, T>& mat2, \
+	inline void colwise_##Name(const IEWiseMatrix<Mat1, T>& mat1, const IEWiseMatrix<Mat2, T>& mat2, \
 			IRegularMatrix<DMat, T>& dmat) { \
 		typedef default_simd_kind kind; \
 		typename meta::common_shape<Mat1, Mat2>::type shape = reduc_get_shape(mat1, mat2); \
@@ -119,7 +119,7 @@
 #define LMAT_DEFINE_ROWWISE_REDUCTION_1( Name, Reduc, ScaFun, EmptyVal ) \
 	template<typename T, class Mat, class DMat> \
 	LMAT_ENSURE_INLINE \
-	inline void rowwise_##Name(const IRegularMatrix<Mat, T>& mat, IRegularMatrix<DMat, T>& dmat) { \
+	inline void rowwise_##Name(const IEWiseMatrix<Mat, T>& mat, IRegularMatrix<DMat, T>& dmat) { \
 		typedef default_simd_kind kind; \
 		typename meta::shape<Mat>::type shape = reduc_get_shape(mat); \
 		LMAT_CHECK_DIMS( dmat.nelems() == shape.nrows() ); \
@@ -132,7 +132,7 @@
 #define LMAT_DEFINE_ROWWISE_REDUCTION_2( Name, Reduc, ScaFun, EmptyVal ) \
 	template<typename T, class Mat1, class Mat2, class DMat> \
 	LMAT_ENSURE_INLINE \
-	inline void rowwise_##Name(const IRegularMatrix<Mat1, T>& mat1, const IRegularMatrix<Mat2, T>& mat2, \
+	inline void rowwise_##Name(const IEWiseMatrix<Mat1, T>& mat1, const IEWiseMatrix<Mat2, T>& mat2, \
 			IRegularMatrix<DMat, T>& dmat) { \
 		typedef default_simd_kind kind; \
 		typename meta::common_shape<Mat1, Mat2>::type shape = reduc_get_shape(mat1, mat2); \
@@ -156,7 +156,7 @@ namespace lmat
 
 	template<typename T, class Mat>
 	LMAT_ENSURE_INLINE
-	inline index_t reduc_get_length(const IRegularMatrix<Mat, T>& mat)
+	inline index_t reduc_get_length(const IEWiseMatrix<Mat, T>& mat)
 	{
 		static_assert(meta::is_continuous<Mat>::value,
 				"mat should be a compile-time-continuous matrix.");
@@ -166,7 +166,7 @@ namespace lmat
 
 	template<typename T, class Mat1, class Mat2>
 	LMAT_ENSURE_INLINE
-	inline index_t reduc_get_length(const IRegularMatrix<Mat1, T>& mat1, const IRegularMatrix<Mat2, T>& mat2)
+	inline index_t reduc_get_length(const IEWiseMatrix<Mat1, T>& mat1, const IEWiseMatrix<Mat2, T>& mat2)
 	{
 		static_assert(meta::is_continuous<Mat1>::value,
 				"mat1 should be a compile-time-continuous matrix.");
@@ -181,7 +181,7 @@ namespace lmat
 	template<typename T, class Mat>
 	LMAT_ENSURE_INLINE
 	inline typename meta::shape<Mat>::type
-	reduc_get_shape(const IRegularMatrix<Mat, T>& mat)
+	reduc_get_shape(const IEWiseMatrix<Mat, T>& mat)
 	{
 		static_assert(meta::is_percol_continuous<Mat>::value,
 				"mat should be a compile-time percol-continuous matrix.");
@@ -192,7 +192,7 @@ namespace lmat
 	template<typename T, class Mat1, class Mat2>
 	LMAT_ENSURE_INLINE
 	inline typename meta::common_shape<Mat1, Mat2>::type
-	reduc_get_shape(const IRegularMatrix<Mat1, T>& mat1, const IRegularMatrix<Mat2, T>& mat2)
+	reduc_get_shape(const IEWiseMatrix<Mat1, T>& mat1, const IEWiseMatrix<Mat2, T>& mat2)
 	{
 		static_assert(meta::is_percol_continuous<Mat1>::value,
 				"mat1 should be a compile-time percol-continuous matrix.");
@@ -315,21 +315,21 @@ namespace lmat
 
 	template<typename T, class Mat>
 	LMAT_ENSURE_INLINE
-	inline T norm(const IRegularMatrix<Mat, T>& mat, norms::L1_)
+	inline T norm(const IEWiseMatrix<Mat, T>& mat, norms::L1_)
 	{
 		return asum(mat.derived());
 	}
 
 	template<typename T, class Mat>
 	LMAT_ENSURE_INLINE
-	inline T norm(const IRegularMatrix<Mat, T>& mat, norms::L2_)
+	inline T norm(const IEWiseMatrix<Mat, T>& mat, norms::L2_)
 	{
 		return math::sqrt(sqsum(mat));
 	}
 
 	template<typename T, class Mat>
 	LMAT_ENSURE_INLINE
-	inline T norm(const IRegularMatrix<Mat, T>& mat, norms::Linf_)
+	inline T norm(const IEWiseMatrix<Mat, T>& mat, norms::Linf_)
 	{
 		return amax(mat);
 	}
@@ -337,24 +337,24 @@ namespace lmat
 
 	template<typename T, class Mat1, class Mat2>
 	LMAT_ENSURE_INLINE
-	inline T diff_norm( const IRegularMatrix<Mat1, T>& mat1,
-						const IRegularMatrix<Mat2, T>& mat2, norms::L1_)
+	inline T diff_norm( const IEWiseMatrix<Mat1, T>& mat1,
+						const IEWiseMatrix<Mat2, T>& mat2, norms::L1_)
 	{
 		return diff_asum(mat1, mat2);
 	}
 
 	template<typename T, class Mat1, class Mat2>
 	LMAT_ENSURE_INLINE
-	inline T diff_norm( const IRegularMatrix<Mat1, T>& mat1,
-						const IRegularMatrix<Mat2, T>& mat2, norms::L2_)
+	inline T diff_norm( const IEWiseMatrix<Mat1, T>& mat1,
+						const IEWiseMatrix<Mat2, T>& mat2, norms::L2_)
 	{
 		return math::sqrt(diff_sqsum(mat1, mat2));
 	}
 
 	template<typename T, class Mat1, class Mat2>
 	LMAT_ENSURE_INLINE
-	inline T diff_norm( const IRegularMatrix<Mat1, T>& mat1,
-						const IRegularMatrix<Mat2, T>& mat2, norms::Linf_)
+	inline T diff_norm( const IEWiseMatrix<Mat1, T>& mat1,
+						const IEWiseMatrix<Mat2, T>& mat2, norms::Linf_)
 	{
 		return diff_amax(mat1, mat2);
 	}
@@ -364,14 +364,14 @@ namespace lmat
 
 	template<typename T, class Mat, class DMat>
 	LMAT_ENSURE_INLINE
-	inline void colwise_norm(const IRegularMatrix<Mat, T>& mat, IRegularMatrix<DMat, T>& dmat, norms::L1_)
+	inline void colwise_norm(const IEWiseMatrix<Mat, T>& mat, IRegularMatrix<DMat, T>& dmat, norms::L1_)
 	{
 		colwise_asum(mat, dmat);
 	}
 
 	template<typename T, class Mat, class DMat>
 	LMAT_ENSURE_INLINE
-	inline void colwise_norm(const IRegularMatrix<Mat, T>& mat, IRegularMatrix<DMat, T>& dmat, norms::L2_)
+	inline void colwise_norm(const IEWiseMatrix<Mat, T>& mat, IRegularMatrix<DMat, T>& dmat, norms::L2_)
 	{
 		colwise_sqsum(mat, dmat);
 		internal::colwise_post(atags::simd<default_simd_kind>(),
@@ -380,7 +380,7 @@ namespace lmat
 
 	template<typename T, class Mat, class DMat>
 	LMAT_ENSURE_INLINE
-	inline void colwise_norm(const IRegularMatrix<Mat, T>& mat, IRegularMatrix<DMat, T>& dmat, norms::Linf_)
+	inline void colwise_norm(const IEWiseMatrix<Mat, T>& mat, IRegularMatrix<DMat, T>& dmat, norms::Linf_)
 	{
 		colwise_amax(mat, dmat);
 	}
@@ -389,7 +389,7 @@ namespace lmat
 	template<typename T, class Mat1, class Mat2, class DMat>
 	LMAT_ENSURE_INLINE
 	inline void colwise_diff_norm(
-			const IRegularMatrix<Mat1, T>& mat1, const IRegularMatrix<Mat2, T>& mat2,
+			const IEWiseMatrix<Mat1, T>& mat1, const IEWiseMatrix<Mat2, T>& mat2,
 			IRegularMatrix<DMat, T>& dmat, norms::L1_)
 	{
 		colwise_diff_asum(mat1, mat2, dmat);
@@ -398,7 +398,7 @@ namespace lmat
 	template<typename T, class Mat1, class Mat2, class DMat>
 	LMAT_ENSURE_INLINE
 	inline void colwise_diff_norm(
-			const IRegularMatrix<Mat1, T>& mat1, const IRegularMatrix<Mat2, T>& mat2,
+			const IEWiseMatrix<Mat1, T>& mat1, const IEWiseMatrix<Mat2, T>& mat2,
 			IRegularMatrix<DMat, T>& dmat, norms::L2_)
 	{
 		colwise_diff_sqsum(mat1, mat2, dmat);
@@ -409,7 +409,7 @@ namespace lmat
 	template<typename T, class Mat1, class Mat2, class DMat>
 	LMAT_ENSURE_INLINE
 	inline void colwise_diff_norm(
-			const IRegularMatrix<Mat1, T>& mat1, const IRegularMatrix<Mat2, T>& mat2,
+			const IEWiseMatrix<Mat1, T>& mat1, const IEWiseMatrix<Mat2, T>& mat2,
 			IRegularMatrix<DMat, T>& dmat, norms::Linf_)
 	{
 		colwise_diff_amax(mat1, mat2, dmat);
@@ -420,14 +420,14 @@ namespace lmat
 
 	template<typename T, class Mat, class DMat>
 	LMAT_ENSURE_INLINE
-	inline void rowwise_norm(const IRegularMatrix<Mat, T>& mat, IRegularMatrix<DMat, T>& dmat, norms::L1_)
+	inline void rowwise_norm(const IEWiseMatrix<Mat, T>& mat, IRegularMatrix<DMat, T>& dmat, norms::L1_)
 	{
 		rowwise_asum(mat, dmat);
 	}
 
 	template<typename T, class Mat, class DMat>
 	LMAT_ENSURE_INLINE
-	inline void rowwise_norm(const IRegularMatrix<Mat, T>& mat, IRegularMatrix<DMat, T>& dmat, norms::L2_)
+	inline void rowwise_norm(const IEWiseMatrix<Mat, T>& mat, IRegularMatrix<DMat, T>& dmat, norms::L2_)
 	{
 		rowwise_sqsum(mat, dmat);
 		map(math::sqrt_fun<T>())(dmat.shape(), out_(dmat.derived()), in_(dmat.derived()));
@@ -435,7 +435,7 @@ namespace lmat
 
 	template<typename T, class Mat, class DMat>
 	LMAT_ENSURE_INLINE
-	inline void rowwise_norm(const IRegularMatrix<Mat, T>& mat, IRegularMatrix<DMat, T>& dmat, norms::Linf_)
+	inline void rowwise_norm(const IEWiseMatrix<Mat, T>& mat, IRegularMatrix<DMat, T>& dmat, norms::Linf_)
 	{
 		rowwise_amax(mat, dmat);
 	}
@@ -443,7 +443,7 @@ namespace lmat
 	template<typename T, class Mat1, class Mat2, class DMat>
 	LMAT_ENSURE_INLINE
 	inline void rowwise_diff_norm(
-			const IRegularMatrix<Mat1, T>& mat1, const IRegularMatrix<Mat2, T>& mat2,
+			const IEWiseMatrix<Mat1, T>& mat1, const IEWiseMatrix<Mat2, T>& mat2,
 			IRegularMatrix<DMat, T>& dmat, norms::L1_)
 	{
 		rowwise_diff_asum(mat1, mat2, dmat);
@@ -452,7 +452,7 @@ namespace lmat
 	template<typename T, class Mat1, class Mat2, class DMat>
 	LMAT_ENSURE_INLINE
 	inline void rowwise_diff_norm(
-			const IRegularMatrix<Mat1, T>& mat1, const IRegularMatrix<Mat2, T>& mat2,
+			const IEWiseMatrix<Mat1, T>& mat1, const IEWiseMatrix<Mat2, T>& mat2,
 			IRegularMatrix<DMat, T>& dmat, norms::L2_)
 	{
 		rowwise_diff_sqsum(mat1, mat2, dmat);
@@ -462,7 +462,7 @@ namespace lmat
 	template<typename T, class Mat1, class Mat2, class DMat>
 	LMAT_ENSURE_INLINE
 	inline void rowwise_diff_norm(
-			const IRegularMatrix<Mat1, T>& mat1, const IRegularMatrix<Mat2, T>& mat2,
+			const IEWiseMatrix<Mat1, T>& mat1, const IEWiseMatrix<Mat2, T>& mat2,
 			IRegularMatrix<DMat, T>& dmat, norms::Linf_)
 	{
 		rowwise_diff_amax(mat1, mat2, dmat);

@@ -15,7 +15,7 @@
 	template<typename S, class SMat> \
 	LMAT_ENSURE_INLINE \
 	inline map_expr<cast_<T>, SMat> \
-	Fun(const IMatrixXpr<SMat, S>& smat) { \
+	Fun(const IEWiseMatrix<SMat, S>& smat) { \
 		return make_map_expr(cast_<T>(), smat); }
 
 namespace lmat
@@ -63,7 +63,7 @@ namespace lmat
 	template<typename S, class SMat, typename T>
 	LMAT_ENSURE_INLINE
 	inline map_expr<cast_<T>, SMat>
-	cast(const IMatrixXpr<SMat, S>& smat, type_<T>)
+	cast(const IEWiseMatrix<SMat, S>& smat, type_<T>)
 	{
 		return make_map_expr(cast_<T>(), smat);
 	}

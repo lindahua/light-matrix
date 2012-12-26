@@ -53,6 +53,7 @@ namespace lmat
 	};
 
 	template<class Derived, typename T> class IMatrixXpr;
+	template<class Derived, typename T> class IEWiseMatrix;
 	template<class Derived, typename T> class IRegularMatrix;
 
 	// forward declaration of some important types

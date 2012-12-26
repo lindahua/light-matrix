@@ -75,7 +75,45 @@ namespace lmat
 			return derived().shape();
 		}
 
-	}; // end class IMatrixBase
+	}; // end class IMatrixXpr
+
+
+	/********************************************
+	 *
+	 *  IMatrixXpr
+	 *
+	 ********************************************/
+
+	template<class Derived, typename T>
+	class IEWiseMatrix : public IMatrixXpr<Derived, T>
+	{
+	public:
+		typedef T value_type;
+		typedef matrix_shape< meta::nrows<Derived>::value, meta::ncols<Derived>::value > shape_type;
+
+		LMAT_CRTP_REF
+
+		LMAT_ENSURE_INLINE index_t nelems() const
+		{
+			return derived().nelems();
+		}
+
+		LMAT_ENSURE_INLINE index_t nrows() const
+		{
+			return derived().nrows();
+		}
+
+		LMAT_ENSURE_INLINE index_t ncolumns() const
+		{
+			return derived().ncolumns();
+		}
+
+		LMAT_ENSURE_INLINE shape_type shape() const
+		{
+			return derived().shape();
+		}
+
+	}; // end class IEWiseMatrix
 
 
 	/********************************************
@@ -85,7 +123,7 @@ namespace lmat
 	 ********************************************/
 
 	template<class Derived, typename T>
-	class IRegularMatrix : public IMatrixXpr<Derived, T>
+	class IRegularMatrix : public IEWiseMatrix<Derived, T>
 	{
 	public:
 		typedef typename matrix_access_types<Derived>::value_type value_type;
@@ -317,7 +355,7 @@ namespace lmat
 			return diagview_map<Derived>::get(derived());
 		}
 
-	}; // end class IDenseMatrixBlock
+	}; // end class IRegularMatrix
 
 
 }

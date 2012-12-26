@@ -42,18 +42,10 @@ namespace lmat
 		typedef typename helper_t::domain domain;
 	};
 
-	namespace meta
-	{
-		template<typename FTag, typename... Args>
-		struct supports_ewise_access<map_expr<FTag, Args...> >
-		{
-			static const bool value = true;
-		};
-	}
 
 	template<typename FTag, typename Arg1>
 	class map_expr<FTag, Arg1>
-	: public IMatrixXpr<map_expr<FTag, Arg1>,
+	: public IEWiseMatrix<map_expr<FTag, Arg1>,
 	  typename internal::map_expr_value<FTag, Arg1>::type>
 	{
 		typedef typename internal::map_expr_helper<Arg1>::type helper_t;
@@ -101,7 +93,7 @@ namespace lmat
 
 	template<typename FTag, typename Arg1, typename Arg2>
 	class map_expr<FTag, Arg1, Arg2>
-	: public IMatrixXpr<map_expr<FTag, Arg1, Arg2>,
+	: public IEWiseMatrix<map_expr<FTag, Arg1, Arg2>,
 	  typename internal::map_expr_value<FTag, Arg1, Arg2>::type>
 	{
 		typedef typename internal::map_expr_helper<Arg1, Arg2>::type helper_t;
@@ -157,7 +149,7 @@ namespace lmat
 
 	template<typename FTag, typename Arg1, typename Arg2, typename Arg3>
 	class map_expr<FTag, Arg1, Arg2, Arg3>
-	: public IMatrixXpr<map_expr<FTag, Arg1, Arg2, Arg3>,
+	: public IEWiseMatrix<map_expr<FTag, Arg1, Arg2, Arg3>,
 	  typename internal::map_expr_value<FTag, Arg1, Arg2, Arg3>::type>
 	{
 		typedef typename internal::map_expr_helper<Arg1, Arg2, Arg3>::type helper_t;
@@ -225,10 +217,8 @@ namespace lmat
 
 	template<typename FTag, class A1, typename T1>
 	LMAT_ENSURE_INLINE
-	inline typename meta::enable_if<
-		meta::supports_ewise_access<A1>,
-		map_expr<FTag, A1> >::type
-	make_map_expr(const FTag& ftag, const IMatrixXpr<A1, T1>& a1)
+	inline map_expr<FTag, A1>
+	make_map_expr(const FTag& ftag, const IEWiseMatrix<A1, T1>& a1)
 	{
 		return map_expr<FTag, A1>(ftag, a1.derived());
 	}
@@ -236,30 +226,24 @@ namespace lmat
 
 	template<typename FTag, class A1, typename T1, typename T2>
 	LMAT_ENSURE_INLINE
-	inline typename meta::enable_if<
-		meta::supports_ewise_access<A1>,
-		map_expr<FTag, A1, T2> >::type
-	make_map_expr_fix2(const FTag& ftag, const IMatrixXpr<A1, T1>& a1, const T2& a2)
+	inline map_expr<FTag, A1, T2>
+	make_map_expr_fix2(const FTag& ftag, const IEWiseMatrix<A1, T1>& a1, const T2& a2)
 	{
 		return map_expr<FTag, A1, T2>(ftag, a1.derived(), a2);
 	}
 
 	template<typename FTag, typename T1, class A2, typename T2>
 	LMAT_ENSURE_INLINE
-	inline typename meta::enable_if<
-		meta::supports_ewise_access<A2>,
-		map_expr<FTag, T1, A2> >::type
-	make_map_expr_fix1(const FTag& ftag, const T1& a1, const IMatrixXpr<A2, T2>& a2)
+	inline map_expr<FTag, T1, A2>
+	make_map_expr_fix1(const FTag& ftag, const T1& a1, const IEWiseMatrix<A2, T2>& a2)
 	{
 		return map_expr<FTag, T1, A2>(ftag, a1, a2.derived());
 	}
 
 	template<typename FTag, typename A1, typename T1, typename T2, class A2>
 	LMAT_ENSURE_INLINE
-	inline typename meta::enable_if<
-		meta::and_<meta::supports_ewise_access<A1>, meta::supports_ewise_access<A2> >,
-		map_expr<FTag, A1, A2> >::type
-	make_map_expr(const FTag& ftag, const IMatrixXpr<A1, T1>& a1, const IMatrixXpr<A2, T2>& a2)
+	inline map_expr<FTag, A1, A2>
+	make_map_expr(const FTag& ftag, const IEWiseMatrix<A1, T1>& a1, const IEWiseMatrix<A2, T2>& a2)
 	{
 		return map_expr<FTag, A1, A2>(ftag, a1.derived(), a2.derived());
 	}
@@ -267,72 +251,56 @@ namespace lmat
 
 	template<typename FTag, class A1, typename T1, typename T2, typename T3>
 	LMAT_ENSURE_INLINE
-	inline typename meta::enable_if<
-		meta::supports_ewise_access<A1>,
-		map_expr<FTag, A1, T2, T3> >::type
-	make_map_expr_fix23(const FTag& ftag, const IMatrixXpr<A1, T1>& a1, const T2& a2, const T3& a3)
+	inline map_expr<FTag, A1, T2, T3>
+	make_map_expr_fix23(const FTag& ftag, const IEWiseMatrix<A1, T1>& a1, const T2& a2, const T3& a3)
 	{
 		return map_expr<FTag, A1, T2, T3>(ftag, a1.derived(), a2, a3);
 	}
 
 	template<typename FTag, typename T1, class A2, typename T2, typename T3>
 	LMAT_ENSURE_INLINE
-	inline typename meta::enable_if<
-		meta::supports_ewise_access<A2>,
-		map_expr<FTag, T1, A2, T3> >::type
-	make_map_expr_fix13(const FTag& ftag, const T1& a1, const IMatrixXpr<A2, T2>& a2, const T3& a3)
+	inline map_expr<FTag, T1, A2, T3>
+	make_map_expr_fix13(const FTag& ftag, const T1& a1, const IEWiseMatrix<A2, T2>& a2, const T3& a3)
 	{
 		return map_expr<FTag, T1, A2, T3>(ftag, a1, a2.derived(), a3);
 	}
 
 	template<typename FTag, typename T1, typename T2, class A3, typename T3>
 	LMAT_ENSURE_INLINE
-	inline typename meta::enable_if<
-		meta::supports_ewise_access<A3>,
-		map_expr<FTag, T1, T2, A3> >::type
-	make_map_expr_fix12(const FTag& ftag, const T1& a1, const T2& a2, const IMatrixXpr<A3, T3>& a3)
+	inline map_expr<FTag, T1, T2, A3>
+	make_map_expr_fix12(const FTag& ftag, const T1& a1, const T2& a2, const IEWiseMatrix<A3, T3>& a3)
 	{
 		return map_expr<FTag, T1, T2, A3>(ftag, a1, a2, a3.derived());
 	}
 
 	template<typename FTag, class A1, typename T1, class A2, typename T2, typename T3>
 	LMAT_ENSURE_INLINE
-	inline typename meta::enable_if<
-		meta::and_<meta::supports_ewise_access<A1>, meta::supports_ewise_access<A2> >,
-		map_expr<FTag, A1, A2, T3> >::type
-	make_map_expr_fix3(const FTag& ftag, const IMatrixXpr<A1, T1>& a1, const IMatrixXpr<A2, T2>& a2, const T3& a3)
+	inline map_expr<FTag, A1, A2, T3>
+	make_map_expr_fix3(const FTag& ftag, const IEWiseMatrix<A1, T1>& a1, const IEWiseMatrix<A2, T2>& a2, const T3& a3)
 	{
 		return map_expr<FTag, A1, A2, T3>(ftag, a1.derived(), a2.derived(), a3);
 	}
 
 	template<typename FTag, class A1, typename T1, typename T2, class A3, typename T3>
 	LMAT_ENSURE_INLINE
-	inline typename meta::enable_if<
-		meta::and_<meta::supports_ewise_access<A1>, meta::supports_ewise_access<A3> >,
-		map_expr<FTag, A1, T2, A3> >::type
-	make_map_expr_fix2(const FTag& ftag, const IMatrixXpr<A1, T1>& a1, const T2& a2, const IMatrixXpr<A3, T3>& a3)
+	inline map_expr<FTag, A1, T2, A3>
+	make_map_expr_fix2(const FTag& ftag, const IEWiseMatrix<A1, T1>& a1, const T2& a2, const IEWiseMatrix<A3, T3>& a3)
 	{
 		return map_expr<FTag, A1, T2, A3>(ftag, a1.derived(), a2, a3.derived());
 	}
 
 	template<typename FTag, typename T1, class A2, typename T2, class A3, typename T3>
 	LMAT_ENSURE_INLINE
-	inline typename meta::enable_if<
-		meta::and_<meta::supports_ewise_access<A2>, meta::supports_ewise_access<A3> >,
-		map_expr<FTag, T1, A2, A3> >::type
-	make_map_expr_fix1(const FTag& ftag, const T1& a1, const IMatrixXpr<A2, T2>& a2, const IMatrixXpr<A3, T3>& a3)
+	inline map_expr<FTag, T1, A2, A3>
+	make_map_expr_fix1(const FTag& ftag, const T1& a1, const IEWiseMatrix<A2, T2>& a2, const IEWiseMatrix<A3, T3>& a3)
 	{
 		return map_expr<FTag, T1, A2, A3>(ftag, a1, a2.derived(), a3.derived());
 	}
 
 	template<typename FTag, class A1, typename T1, class A2, typename T2, class A3, typename T3>
 	LMAT_ENSURE_INLINE
-	inline typename meta::enable_if_c<
-		meta::supports_ewise_access<A1>::value &&
-		meta::supports_ewise_access<A2>::value &&
-		meta::supports_ewise_access<A3>::value,
-		map_expr<FTag, A1, A2, A3> >::type
-	make_map_expr(const FTag& ftag, const IMatrixXpr<A1, T1>& a1, const IMatrixXpr<A2, T2>& a2, const IMatrixXpr<A3, T3>& a3)
+	inline map_expr<FTag, A1, A2, A3>
+	make_map_expr(const FTag& ftag, const IEWiseMatrix<A1, T1>& a1, const IEWiseMatrix<A2, T2>& a2, const IEWiseMatrix<A3, T3>& a3)
 	{
 		return map_expr<FTag, A1, A2, A3>(ftag, a1.derived(), a2.derived(), a3.derived());
 	}
@@ -532,7 +500,7 @@ namespace lmat
 	{
 		template<typename T, class Expr, class DMat>
 		LMAT_ENSURE_INLINE
-		static void eval(const IMatrixXpr<Expr, T>& expr, IRegularMatrix<DMat, T>& dmat)
+		static void eval(const IEWiseMatrix<Expr, T>& expr, IRegularMatrix<DMat, T>& dmat)
 		{
 			const Expr& s = expr.derived();
 			DMat& d = dmat.derived();
@@ -547,7 +515,7 @@ namespace lmat
 	{
 		template<typename T, class Expr, class DMat>
 		LMAT_ENSURE_INLINE
-		static void eval(const IMatrixXpr<Expr, T>& expr, IRegularMatrix<DMat, T>& dmat)
+		static void eval(const IEWiseMatrix<Expr, T>& expr, IRegularMatrix<DMat, T>& dmat)
 		{
 			const Expr& s = expr.derived();
 			DMat& d = dmat.derived();

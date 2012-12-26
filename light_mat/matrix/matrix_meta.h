@@ -50,6 +50,12 @@ namespace lmat { namespace meta {
 	};
 
 	template<class Mat>
+	struct is_ewise_mat
+	{
+		static const bool value = has_matrix_interface<Mat, IEWiseMatrix>::value;
+	};
+
+	template<class Mat>
 	struct is_regular_mat
 	{
 		static const bool value = has_matrix_interface<Mat, IRegularMatrix>::value;
@@ -439,13 +445,6 @@ namespace lmat { namespace meta {
 	 *  Evaluation
 	 *
 	 ********************************************/
-
-	template<class SExpr>
-	struct supports_ewise_access
-	{
-		static const bool value = is_regular_mat<SExpr>::value;
-	};
-
 
 	template<class SExpr, class DMat>
 	struct is_mat_assignable
