@@ -35,6 +35,39 @@
 	FunName (const T& x, const IEWiseMatrix<Y, T>& y) \
 	{ return make_map_expr_fix1(FTag(), x, y); }
 
+#define LMAT_DEFINE_MAT_LOGICAL_FUN_1( FunName, FTag ) \
+	template<typename T, class X> \
+	LMAT_ENSURE_INLINE \
+	inline map_expr<FTag, X> \
+	FunName (const IEWiseMatrix<X, mask_t<T> >& x) \
+	{ return make_map_expr(FTag(), x); } \
+	template<class X> \
+	LMAT_ENSURE_INLINE \
+	inline map_expr<FTag, X> \
+	FunName (const IEWiseMatrix<X, bool >& x) \
+	{ return make_map_expr(FTag(), x); }
+
+#define LMAT_DEFINE_MAT_LOGICAL_FUN_2( FunName, FTag ) \
+	template<typename T, class X, class Y> \
+	LMAT_ENSURE_INLINE \
+	inline map_expr<FTag, X, Y> \
+	FunName (const IEWiseMatrix<X, mask_t<T> >& x, const IEWiseMatrix<Y, mask_t<T> >& y) \
+	{ return make_map_expr(FTag(), x, y); } \
+	template<typename T, class X, class Y> \
+	LMAT_ENSURE_INLINE \
+	inline map_expr<FTag, X, Y> \
+	FunName (const IEWiseMatrix<X, mask_t<T> >& x, const IEWiseMatrix<Y, bool>& y) \
+	{ return make_map_expr(FTag(), x, y); } \
+	template<typename T, class X, class Y> \
+	LMAT_ENSURE_INLINE \
+	inline map_expr<FTag, X, Y> \
+	FunName (const IEWiseMatrix<X, bool>& x, const IEWiseMatrix<Y, mask_t<T> >& y) \
+	{ return make_map_expr(FTag(), x, y); } \
+	template<class X, class Y> \
+	LMAT_ENSURE_INLINE \
+	inline map_expr<FTag, X, Y> \
+	FunName (const IEWiseMatrix<X, bool>& x, const IEWiseMatrix<Y, bool>& y) \
+	{ return make_map_expr(FTag(), x, y); } \
 
 namespace lmat
 {
@@ -57,6 +90,14 @@ namespace lmat
 	LMAT_DEFINE_MAT_PRED_FUN_G1( isnan,    isnan_ )
 
 #endif
+
+	// logical
+
+	LMAT_DEFINE_MAT_LOGICAL_FUN_1( operator ~,  logical_not_ )
+	LMAT_DEFINE_MAT_LOGICAL_FUN_2( operator &,  logical_and_ )
+	LMAT_DEFINE_MAT_LOGICAL_FUN_2( operator |,  logical_or_ )
+	LMAT_DEFINE_MAT_LOGICAL_FUN_2( operator ==, logical_eq_ )
+	LMAT_DEFINE_MAT_LOGICAL_FUN_2( operator !=, logical_ne_ )
 
 }
 

@@ -56,7 +56,7 @@
 #define LMAT_DEFINE_LOGICAL_FUNTAG_1( Tag ) \
 	struct Tag { }; \
 	template<typename T> \
-	struct fun_traits<Tag, mask_t<T>, mask_t<T> > { typedef mask_t<T> result_type; }; \
+	struct fun_traits<Tag, mask_t<T> > { typedef mask_t<T> result_type; }; \
 	template<> \
 	struct fun_traits<Tag, bool > { typedef bool result_type; };
 

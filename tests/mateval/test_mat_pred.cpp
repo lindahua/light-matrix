@@ -109,6 +109,55 @@ bool my_is_equal(const A& a, const B& b)
 			ADD_MN_CASE_3X3( mat_pred, name, DM, DN ) \
 		END_TPACK
 
+#define DEF_LOGICAL_TESTS_1( name, op, bop ) \
+		MN_CASE( mat_logical, name ) { \
+			typedef dense_matrix<bool, M, N> bmat_t; \
+			typedef dense_matrix<fmsk, M, N> mmat_t; \
+			const index_t m = M == 0 ? DM : M; \
+			const index_t n = N == 0 ? DN : N; \
+			bmat_t A(m, n); \
+			for (index_t i = 0; i < m * n; ++i) A[i] = bool(i % 2); \
+			mmat_t Am = to_f64m(A); \
+			bmat_t R_r(m, n); \
+			for (index_t i = 0; i < m * n; ++i) R_r[i] = bop(A[i]); \
+			bmat_t R = op(A); \
+			mmat_t Rm = op(Am); \
+			bmat_t Rmb = to_bool(Rm); \
+			ASSERT_TRUE( my_is_equal(R, R_r) ); \
+			ASSERT_TRUE( my_is_equal(Rmb, R_r) ); } \
+		BEGIN_TPACK( mat_logical_##name ) \
+			ADD_MN_CASE_3X3( mat_logical, name, DM, DN ) \
+		END_TPACK
+
+#define DEF_LOGICAL_TESTS_2( name, op, bop ) \
+		MN_CASE( mat_logical, name ) { \
+			typedef dense_matrix<bool, M, N> bmat_t; \
+			typedef dense_matrix<fmsk, M, N> mmat_t; \
+			const index_t m = M == 0 ? DM : M; \
+			const index_t n = N == 0 ? DN : N; \
+			bmat_t A(m, n); \
+			bmat_t B(m, n); \
+			for (index_t i = 0; i < m * n; ++i) A[i] = bool(i % 2); \
+			for (index_t i = 0; i < m * n; ++i) B[i] = bool(i % 3); \
+			mmat_t Am = to_f64m(A); \
+			mmat_t Bm = to_f64m(B); \
+			bmat_t R_r(m, n); \
+			for (index_t i = 0; i < m * n; ++i) R_r[i] = (A[i] bop B[i]); \
+			bmat_t R1 = A op B; \
+			mmat_t Rm2 = Am op Bm; \
+			bmat_t R2 = to_bool(Rm2); \
+			mmat_t Rm3 = Am op B; \
+			bmat_t R3 = to_bool(Rm3); \
+			mmat_t Rm4 = A op Bm; \
+			bmat_t R4 = to_bool(Rm4); \
+			ASSERT_TRUE( my_is_equal(R1, R_r) ); \
+			ASSERT_TRUE( my_is_equal(R2, R_r) ); \
+			ASSERT_TRUE( my_is_equal(R3, R_r) ); \
+			ASSERT_TRUE( my_is_equal(R4, R_r) ); } \
+		BEGIN_TPACK( mat_logical_##name ) \
+			ADD_MN_CASE_3X3( mat_logical, name, DM, DN ) \
+		END_TPACK
+
 
 // specific tests
 
@@ -124,6 +173,15 @@ DEF_NUMPRED_TESTS( isfinite )
 DEF_NUMPRED_TESTS( isinf )
 DEF_NUMPRED_TESTS( isnan )
 
+
+// ewise logical tests
+
+DEF_LOGICAL_TESTS_1( not, ~, !)
+DEF_LOGICAL_TESTS_2( and, &, && )
+DEF_LOGICAL_TESTS_2( or,  |, || )
+DEF_LOGICAL_TESTS_2( eq,  ==, == )
+DEF_LOGICAL_TESTS_2( ne,  !=, != )
+
 BEGIN_MAIN_SUITE
 	ADD_TPACK( mat_eq )
 	ADD_TPACK( mat_ne )
@@ -136,6 +194,12 @@ BEGIN_MAIN_SUITE
 	ADD_TPACK( mat_isfinite )
 	ADD_TPACK( mat_isinf )
 	ADD_TPACK( mat_isnan )
+
+	ADD_TPACK( mat_logical_not )
+	ADD_TPACK( mat_logical_and )
+	ADD_TPACK( mat_logical_or )
+	ADD_TPACK( mat_logical_eq )
+	ADD_TPACK( mat_logical_ne )
 END_MAIN_SUITE
 
 
