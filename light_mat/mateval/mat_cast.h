@@ -82,6 +82,8 @@ namespace lmat
 	LMAT_DEFINE_MAT_CAST_FUN(uint64_t, to_u64)
 
 	LMAT_DEFINE_MAT_CAST_FUN( bool, to_bool)
+	LMAT_DEFINE_MAT_CAST_FUN( mask_t<double>, to_f64m )
+	LMAT_DEFINE_MAT_CAST_FUN( mask_t<float>,  to_f32m )
 
 }
 
