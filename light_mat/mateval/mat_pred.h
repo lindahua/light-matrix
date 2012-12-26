@@ -51,10 +51,10 @@ namespace lmat
 
 	// classification
 
-	LMAT_DEFINE_MAT_PRED_FUN_G2( signbit,  signbit_ )
-	LMAT_DEFINE_MAT_PRED_FUN_G2( isfinite, isfinite_ )
-	LMAT_DEFINE_MAT_PRED_FUN_G2( isinf,    isinf_ )
-	LMAT_DEFINE_MAT_PRED_FUN_G2( isnan,    isnan_ )
+	LMAT_DEFINE_MAT_PRED_FUN_G1( signbit,  signbit_ )
+	LMAT_DEFINE_MAT_PRED_FUN_G1( isfinite, isfinite_ )
+	LMAT_DEFINE_MAT_PRED_FUN_G1( isinf,    isinf_ )
+	LMAT_DEFINE_MAT_PRED_FUN_G1( isnan,    isnan_ )
 
 #endif
 

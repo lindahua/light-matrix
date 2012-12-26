@@ -162,6 +162,11 @@ namespace lmat
 	LMAT_DEFINE_REAL_FUNMAP_1( lgamma )
 	LMAT_DEFINE_REAL_FUNMAP_1( tgamma )
 
+	LMAT_DEFINE_REAL_FUNMAP_1( signbit )
+	LMAT_DEFINE_REAL_FUNMAP_1( isfinite )
+	LMAT_DEFINE_REAL_FUNMAP_1( isinf )
+	LMAT_DEFINE_REAL_FUNMAP_1( isnan )
+
 #endif
 
 }
