@@ -6,10 +6,10 @@
  * @author Dahua Lin
  */
 
-#include "test_base.h"
-#include "multimat_supp.h"
+#include "../test_base.h"
+#include "../multimat_supp.h"
 
-#include <light_mat/matexpr/matrix_transpose.h>
+#include <light_mat/matrix/matrix_transpose.h>
 
 
 template<class Tag1, class Tag2, int M, int N>
@@ -31,7 +31,7 @@ void test_direct_trans()
 	cmat_t smat = src.get_cmat();
 	mat_t dmat = dst.get_mat();
 
-	direct_transpose(smat, dmat);
+	transpose(smat, dmat);
 
 	dense_matrix<double, N, M> rmat(n, m);
 	for (index_t i = 0; i < m; ++i)
@@ -54,7 +54,7 @@ void test_direct_trans()
 	cmat2_t smat2 = src2.get_cmat();
 	mat2_t dmat2 = dst2.get_mat();
 
-	direct_transpose(smat2, dmat2);
+	transpose(smat2, dmat2);
 
 	dense_matrix<double, M, N> rmat2(m, n);
 	for (index_t i = 0; i < m; ++i)

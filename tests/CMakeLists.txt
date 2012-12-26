@@ -164,6 +164,10 @@ set(MATRIX_CLASS_HS
     ${INC}/matrix/dense_mutable_view.h
     ${INC}/matrix/matrix_classes.h)
     
+set(MATRIX_MANIP_HS
+    ${INC}/matrix/internal/matrix_transpose_internal.h
+    ${INC}/matrix/matrix_transpose.h)
+    
 set(MATRIX_EVAL_HS
     ${INC}/mateval/internal/ewise_eval_internal.h
     ${INC}/mateval/mateval_fwd.h
@@ -312,6 +316,15 @@ endif (${CMAKE_CXX_COMPILER_ID} MATCHES "GNU")
 add_executable(test_mat_vecviews ${MATRIX_HS} matrix/test_mat_vecviews.cpp)
 add_executable(test_mat_matviews ${MATRIX_HS} matrix/test_mat_matviews.cpp)
 
+set(MAT_MANIP_TEST_HS
+    ${COMMON_HS}
+    ${MATRIX_BASE_HS}
+    ${MATRIX_CLASS_HS}
+    ${MATRIX_MANIP_HS})
+    
+add_executable(test_direct_trans ${MAT_MANIP_TEST_HS} matrix/test_direct_trans.cpp)    
+
+
 set(EWISE_EVAL_HS
     ${MATRIX_HS}
     ${MATRIX_EVAL_HS})
@@ -424,7 +437,8 @@ set(LMAT_MATRIX_TESTS
 	test_mat_copy
 	test_dense_eval
 	test_mat_vecviews
-	test_mat_matviews)
+	test_mat_matviews
+	test_direct_trans)
 
 # mateval
 	
