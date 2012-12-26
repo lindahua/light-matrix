@@ -325,6 +325,19 @@ add_executable(test_map_expr ${MAP_EXPR_TEST_HS} mateval/test_map_expr.cpp)
 add_executable(test_mat_arith ${MAP_EXPR_TEST_HS} mateval/test_mat_arith.cpp)
 add_executable(test_mat_emath ${MAP_EXPR_TEST_HS} mateval/test_mat_emath.cpp)
 
+if (SVML_PATH)
+set_target_properties(test_mat_emath
+	PROPERTIES
+	COMPILE_FLAGS "-DLMAT_USE_INTEL_SVML"
+)
+if (MSVC)
+target_link_libraries(test_mat_emath test_main ${SVML} ${LIBIRC})
+else (MSVC)
+target_link_libraries(test_mat_emath test_main ${SVML})
+endif (MSVC)
+endif (SVML_PATH)
+
+
 set(REDUC_HS
     ${MATRIX_HS}
     ${MATRIX_EVAL_HS}

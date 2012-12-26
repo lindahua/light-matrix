@@ -30,7 +30,6 @@ void fill_ran(dense_matrix<double, M, N>& X, double a, double b)
 	}
 }
 
-
 template<class A, class B, typename T>
 bool my_is_approx(const A& a, const B& b, const T& tol)
 {
