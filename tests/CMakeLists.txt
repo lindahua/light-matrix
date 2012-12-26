@@ -323,7 +323,7 @@ set(MAT_MANIP_TEST_HS
     ${MATRIX_MANIP_HS})
     
 add_executable(test_direct_trans ${MAT_MANIP_TEST_HS} matrix/test_direct_trans.cpp)    
-
+add_executable(test_transpose_expr ${MAT_MANIP_TEST_HS} matrix/test_transpose_expr.cpp) 
 
 set(EWISE_EVAL_HS
     ${MATRIX_HS}
@@ -438,7 +438,8 @@ set(LMAT_MATRIX_TESTS
 	test_dense_eval
 	test_mat_vecviews
 	test_mat_matviews
-	test_direct_trans)
+	test_direct_trans
+	test_transpose_expr)
 
 # mateval
 	
