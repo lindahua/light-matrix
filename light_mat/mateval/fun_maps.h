@@ -169,6 +169,21 @@ namespace lmat
 
 #endif
 
+	// conditional selection
+
+	template<typename T>
+	struct fun_map<cond_, bool, T, T>
+	{
+		typedef math::cond_fun<T> type;
+	};
+
+	template<typename T>
+	struct fun_map<cond_, mask_t<T>, T, T>
+	{
+		typedef math::cond_fun<T> type;
+	};
+
+
 }
 
 #endif 

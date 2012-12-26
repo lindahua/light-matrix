@@ -54,6 +54,15 @@ bool my_is_equal(const A& a, const B& b)
 	}
 }
 
+template<int M, int N>
+void fill_ran(dense_matrix<double, M, N>& X)
+{
+	for (index_t i = 0; i < X.nelems(); ++i)
+	{
+		X[i] = (double(std::rand()) / RAND_MAX);
+	}
+}
+
 
 #define DEF_NUMCOMP_CASE( name, op, aexpr, bexpr, cexpr ) \
 		MN_CASE( mat_comp, name ) { \
@@ -173,7 +182,6 @@ DEF_NUMPRED_TESTS( isfinite )
 DEF_NUMPRED_TESTS( isinf )
 DEF_NUMPRED_TESTS( isnan )
 
-
 // ewise logical tests
 
 DEF_LOGICAL_TESTS_1( not, ~, !)
@@ -181,6 +189,82 @@ DEF_LOGICAL_TESTS_2( and, &, && )
 DEF_LOGICAL_TESTS_2( or,  |, || )
 DEF_LOGICAL_TESTS_2( eq,  ==, == )
 DEF_LOGICAL_TESTS_2( ne,  !=, != )
+
+// conditional selection
+
+MN_CASE( mat_cond, cond_b )
+{
+	typedef dense_matrix<bool, M, N> bmat_t;
+	typedef dense_matrix<double, M, N> mat_t;
+
+	const index_t m = M == 0 ? DM : M; \
+	const index_t n = N == 0 ? DN : N;
+
+	bmat_t C(m, n);
+	for (index_t i = 0; i < m * n; ++i) C[i] = bool(i % 2);
+
+	mat_t X(m, n); fill_ran(X);
+	mat_t Y(m, n); fill_ran(Y);
+	double cv = X[0] + Y[0];
+
+	mat_t R1 = cond(C, X, Y);
+	mat_t R1_r(m, n);
+	for (index_t i = 0; i < m * n; ++i) R1_r[i] = C[i] ? X[i] : Y[i];
+	ASSERT_TRUE( my_is_equal(R1, R1_r) );
+
+	mat_t R2 = cond(C, X, cv);
+	mat_t R2_r(m, n);
+	for (index_t i = 0; i < m * n; ++i) R2_r[i] = C[i] ? X[i] : cv;
+	ASSERT_TRUE( my_is_equal(R2, R2_r) );
+
+	mat_t R3 = cond(C, cv, Y);
+	mat_t R3_r(m, n);
+	for (index_t i = 0; i < m * n; ++i) R3_r[i] = C[i] ? cv : Y[i];
+	ASSERT_TRUE( my_is_equal(R3, R3_r) );
+}
+
+MN_CASE( mat_cond, cond_m )
+{
+	typedef dense_matrix<bool, M, N> bmat_t;
+	typedef dense_matrix<fmsk, M, N> mmat_t;
+	typedef dense_matrix<double, M, N> mat_t;
+
+	const index_t m = M == 0 ? DM : M; \
+	const index_t n = N == 0 ? DN : N;
+
+	bmat_t C(m, n);
+	for (index_t i = 0; i < m * n; ++i) C[i] = bool(i % 2);
+	mmat_t Cm = to_f64m(C);
+
+	mat_t X(m, n); fill_ran(X);
+	mat_t Y(m, n); fill_ran(Y);
+	double cv = X[0] + Y[0];
+
+	mat_t R1 = cond(Cm, X, Y);
+	mat_t R1_r(m, n);
+	for (index_t i = 0; i < m * n; ++i) R1_r[i] = C[i] ? X[i] : Y[i];
+	ASSERT_TRUE( my_is_equal(R1, R1_r) );
+
+	mat_t R2 = cond(Cm, X, cv);
+	mat_t R2_r(m, n);
+	for (index_t i = 0; i < m * n; ++i) R2_r[i] = C[i] ? X[i] : cv;
+	ASSERT_TRUE( my_is_equal(R2, R2_r) );
+
+	mat_t R3 = cond(Cm, cv, Y);
+	mat_t R3_r(m, n);
+	for (index_t i = 0; i < m * n; ++i) R3_r[i] = C[i] ? cv : Y[i];
+	ASSERT_TRUE( my_is_equal(R3, R3_r) );
+}
+
+
+BEGIN_TPACK( mat_cond_b )
+	ADD_MN_CASE_3X3( mat_cond, cond_b, DM, DN )
+END_TPACK
+
+BEGIN_TPACK( mat_cond_m )
+	ADD_MN_CASE_3X3( mat_cond, cond_m, DM, DN )
+END_TPACK
+
 
 BEGIN_MAIN_SUITE
 	ADD_TPACK( mat_eq )
@@ -200,6 +284,9 @@ BEGIN_MAIN_SUITE
 	ADD_TPACK( mat_logical_or )
 	ADD_TPACK( mat_logical_eq )
 	ADD_TPACK( mat_logical_ne )
+
+	ADD_TPACK( mat_cond_b )
+	ADD_TPACK( mat_cond_m )
 END_MAIN_SUITE
 
 

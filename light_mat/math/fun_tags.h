@@ -174,6 +174,12 @@ namespace lmat {
 	LMAT_DEFINE_REALPRED_FUNTAG_1( isinf_ )
 	LMAT_DEFINE_REALPRED_FUNTAG_1( isnan_ )
 
+	// conditional operation
+
+	struct cond_ { };
+	template<typename T> struct fun_traits<cond_, bool,      T, T> { typedef T result_type; };
+	template<typename T> struct fun_traits<cond_, mask_t<T>, T, T> { typedef T result_type; };
+
 }
 
 #endif 

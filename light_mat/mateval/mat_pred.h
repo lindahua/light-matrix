@@ -69,6 +69,7 @@
 	FunName (const IEWiseMatrix<X, bool>& x, const IEWiseMatrix<Y, bool>& y) \
 	{ return make_map_expr(FTag(), x, y); } \
 
+
 namespace lmat
 {
 	// comparison
@@ -98,6 +99,61 @@ namespace lmat
 	LMAT_DEFINE_MAT_LOGICAL_FUN_2( operator |,  logical_or_ )
 	LMAT_DEFINE_MAT_LOGICAL_FUN_2( operator ==, logical_eq_ )
 	LMAT_DEFINE_MAT_LOGICAL_FUN_2( operator !=, logical_ne_ )
+
+
+	/********************************************
+	 *
+	 *  conditional operation
+	 *
+	 ********************************************/
+
+	template<typename T, class C, class X, class Y>
+	LMAT_ENSURE_INLINE
+	inline map_expr<cond_, C, X, Y>
+	cond(const IEWiseMatrix<C, bool>& c, const IEWiseMatrix<X, T>& x, const IEWiseMatrix<Y, T>& y)
+	{
+		return make_map_expr(cond_(), c, x, y);
+	}
+
+	template<typename T, class C, class X, class Y>
+	LMAT_ENSURE_INLINE
+	inline map_expr<cond_, C, X, Y>
+	cond(const IEWiseMatrix<C, mask_t<T> >& c, const IEWiseMatrix<X, T>& x, const IEWiseMatrix<Y, T>& y)
+	{
+		return make_map_expr(cond_(), c, x, y);
+	}
+
+	template<typename T, class C, class X>
+	LMAT_ENSURE_INLINE
+	inline map_expr<cond_, C, X, T>
+	cond(const IEWiseMatrix<C, bool>& c, const IEWiseMatrix<X, T>& x, const T& y)
+	{
+		return make_map_expr_fix3(cond_(), c, x, y);
+	}
+
+	template<typename T, class C, class X>
+	LMAT_ENSURE_INLINE
+	inline map_expr<cond_, C, X, T>
+	cond(const IEWiseMatrix<C, mask_t<T> >& c, const IEWiseMatrix<X, T>& x, const T& y)
+	{
+		return make_map_expr_fix3(cond_(), c, x, y);
+	}
+
+	template<typename T, class C, class Y>
+	LMAT_ENSURE_INLINE
+	inline map_expr<cond_, C, T, Y>
+	cond(const IEWiseMatrix<C, bool>& c, const T& x, const IEWiseMatrix<Y, T>& y)
+	{
+		return make_map_expr_fix2(cond_(), c, x, y);
+	}
+
+	template<typename T, class C, class Y>
+	LMAT_ENSURE_INLINE
+	inline map_expr<cond_, C, T, Y>
+	cond(const IEWiseMatrix<C, mask_t<T> >& c, const T& x, const IEWiseMatrix<Y, T>& y)
+	{
+		return make_map_expr_fix2(cond_(), c, x, y);
+	}
 
 }
 

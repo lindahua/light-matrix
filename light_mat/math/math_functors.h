@@ -282,6 +282,65 @@ namespace lmat { namespace math {
 
 #endif
 
+
+	// conditional selection
+
+	template<typename T>
+	struct cond_fun
+	{
+		typedef T value_type;
+
+		LMAT_ENSURE_INLINE
+		T operator() (bool b, const T& x, const T& y) const { return cond(b, x, y); }
+
+		LMAT_ENSURE_INLINE
+		T operator() (mask_t<T> m, const T& x, const T& y) const { return cond(m.bvalue, x, y); }
+	};
+
+	template<> struct cond_fun<float>
+	{
+		typedef float value_type;
+
+		LMAT_ENSURE_INLINE
+		float operator() (bool b, const float& x, const float& y) const
+		{ return cond(b, x, y); }
+
+		LMAT_ENSURE_INLINE
+		float operator() (mask_t<float> b, const float& x, const float& y) const
+		{ return cond(b, x, y); }
+
+		template<typename Kind>
+		LMAT_ENSURE_INLINE
+		simd_pack<float, Kind> operator() (const simd_bpack<float, Kind>& b,
+				const simd_pack<float, Kind>& x, const simd_pack<float, Kind>& y) const
+		{ return cond(b, x, y); }
+	};
+
+	template<> struct cond_fun<double>
+	{
+		typedef double value_type;
+
+		LMAT_ENSURE_INLINE
+		double operator() (bool b, const double& x, const double& y) const
+		{ return cond(b, x, y); }
+
+		LMAT_ENSURE_INLINE
+		double operator() (mask_t<double> b, const double& x, const double& y) const
+		{ return cond(b, x, y); }
+
+		template<typename Kind>
+		LMAT_ENSURE_INLINE
+		simd_pack<double, Kind> operator() (const simd_bpack<double, Kind>& b,
+				const simd_pack<double, Kind>& x, const simd_pack<double, Kind>& y) const
+		{ return cond(b, x, y); }
+	};
+
+	template<typename Kind>
+	struct fun_simd_pack<cond_fun<float>, Kind> { typedef simd_pack<float, Kind> type; };
+
+	template<typename Kind>
+	struct fun_simd_pack<cond_fun<double>, Kind> { typedef simd_pack<double, Kind> type; };
+
 } }
 
 

@@ -78,6 +78,13 @@ namespace lmat { namespace math {
 		return tf ? x : y;
 	}
 
+	template<typename T>
+	LMAT_ENSURE_INLINE
+	inline T cond(const mask_t<T>& m, const T& x, const T& y)
+	{
+		return m.bvalue ? x : y;
+	}
+
 
 	// exp & log
 
