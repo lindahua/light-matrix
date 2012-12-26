@@ -73,9 +73,8 @@ namespace lmat
 #error Invalid value for LMAT_INDEX_SIZE
 #endif
 
-	/**
-	 * @brief The base class to ensure derived classes to be non-copyable.
-	 */
+	// non-copyable
+
 	class noncopyable
 	{
 	protected:

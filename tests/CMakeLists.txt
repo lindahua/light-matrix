@@ -101,6 +101,7 @@ set(COMMON_HS
     ${INC}/common/memory.h
     ${INC}/common/memalloc.h
     ${INC}/common/block.h
+    ${INC}/common/mask_type.h
     ${INC}/math/math_base.h
     ${INC}/math/math_constants.h
     ${INC}/math/fun_tags.h

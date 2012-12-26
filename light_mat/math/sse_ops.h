@@ -18,6 +18,8 @@
 	template<> struct has_simd_support<FTag, float, sse_t> { static const bool value = true; }; \
 	template<> struct has_simd_support<FTag, double, sse_t> { static const bool value = true; };
 
+#define LMAT_DEFINE_HAS_
+
 namespace lmat
 {
 	LMAT_DEFINE_HAS_SSE_SUPPORT( add_ )
@@ -25,6 +27,18 @@ namespace lmat
 	LMAT_DEFINE_HAS_SSE_SUPPORT( mul_ )
 	LMAT_DEFINE_HAS_SSE_SUPPORT( div_ )
 	LMAT_DEFINE_HAS_SSE_SUPPORT( neg_ )
+
+	LMAT_DEFINE_HAS_SSE_SUPPORT( eq_ )
+	LMAT_DEFINE_HAS_SSE_SUPPORT( ne_ )
+	LMAT_DEFINE_HAS_SSE_SUPPORT( gt_ )
+	LMAT_DEFINE_HAS_SSE_SUPPORT( ge_ )
+	LMAT_DEFINE_HAS_SSE_SUPPORT( lt_ )
+	LMAT_DEFINE_HAS_SSE_SUPPORT( le_ )
+
+	LMAT_DEFINE_HAS_SSE_SUPPORT( logical_and_ )
+	LMAT_DEFINE_HAS_SSE_SUPPORT( logical_or_ )
+	LMAT_DEFINE_HAS_SSE_SUPPORT( logical_eq_ )
+	LMAT_DEFINE_HAS_SSE_SUPPORT( logical_ne_ )
 
 	LMAT_DEFINE_HAS_SSE_SUPPORT( abs_ )
 	LMAT_DEFINE_HAS_SSE_SUPPORT( fma_ )
@@ -43,6 +57,11 @@ namespace lmat
 	LMAT_DEFINE_HAS_SSE_SUPPORT( ceil_ )
 	LMAT_DEFINE_HAS_SSE_SUPPORT( round_ )
 	LMAT_DEFINE_HAS_SSE_SUPPORT( trunc_ )
+
+	LMAT_DEFINE_HAS_SSE_SUPPORT( signbit_ )
+	LMAT_DEFINE_HAS_SSE_SUPPORT( isfinite_ )
+	LMAT_DEFINE_HAS_SSE_SUPPORT( isinf_ )
+	LMAT_DEFINE_HAS_SSE_SUPPORT( isnan_ )
 }
 
 namespace lmat { namespace math {

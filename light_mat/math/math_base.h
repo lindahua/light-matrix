@@ -123,7 +123,6 @@ namespace lmat { namespace math {
 		return (min)((max)(x, lb), ub);
 	}
 
-
 	// xlogy
 
 	LMAT_ENSURE_INLINE inline float xlogy(float x, float y)

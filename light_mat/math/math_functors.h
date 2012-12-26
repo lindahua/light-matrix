@@ -72,6 +72,83 @@
 		typedef simd_pack<T, Kind> type; \
 	};
 
+#define LMAT_DEFINE_NUMPRED_FUNCTOR( Name, Expr ) \
+	template<typename T> \
+	struct Name##_fun { \
+		typedef mask_t<T> value_type; \
+		LMAT_ENSURE_INLINE \
+		mask_t<T> operator()(const T& x) const { return Expr; } \
+		template<typename Kind> \
+		LMAT_ENSURE_INLINE \
+		simd_bpack<T, Kind> operator()(const simd_pack<T, Kind>& x) const \
+		{ return Expr; } \
+	}; \
+	template<typename T, typename Kind> \
+	struct fun_simd_pack<Name##_fun<T>, Kind> { \
+		typedef simd_bpack<T, Kind> type; \
+	};
+
+#define LMAT_DEFINE_COMPARISON_FUNCTOR( Name, Expr ) \
+	template<typename T> \
+	struct Name##_fun { \
+		typedef mask_t<T> value_type; \
+		LMAT_ENSURE_INLINE \
+		mask_t<T> operator()(const T& x, const T& y) const { return Expr; } \
+		template<typename Kind> \
+		LMAT_ENSURE_INLINE \
+		simd_bpack<T, Kind> operator()(const simd_pack<T, Kind>& x, const simd_pack<T, Kind>& y) const \
+		{ return Expr; } \
+	}; \
+	template<typename T, typename Kind> \
+	struct fun_simd_pack<Name##_fun<T>, Kind> { \
+		typedef simd_bpack<T, Kind> type; \
+	};
+
+#define LMAT_DEFINE_LOGICAL_FUNCTOR_1( Name, MExpr, BExpr ) \
+	template<typename T> \
+	struct Name##_fun { \
+		typedef mask_t<T> value_type; \
+		LMAT_ENSURE_INLINE \
+		mask_t<T> operator()(const mask_t<T>& x) const { return MExpr; } \
+		template<typename Kind> \
+		LMAT_ENSURE_INLINE \
+		simd_bpack<T, Kind> operator()(const simd_bpack<T, Kind>& x) const \
+		{ return MExpr; } \
+	}; \
+	template<> \
+	struct Name##_fun<bool> { \
+		typedef bool value_type; \
+		LMAT_ENSURE_INLINE \
+		bool operator()(const bool& x) const { return BExpr; } \
+	}; \
+	template<typename Kind> \
+	struct fun_simd_pack<Name##_fun<float>, Kind> { typedef simd_bpack<float, Kind> type; }; \
+	template<typename Kind> \
+	struct fun_simd_pack<Name##_fun<double>, Kind> { typedef simd_bpack<double, Kind> type; };
+
+
+#define LMAT_DEFINE_LOGICAL_FUNCTOR_2( Name, MExpr, BExpr ) \
+	template<typename T> \
+	struct Name##_fun { \
+		typedef mask_t<T> value_type; \
+		LMAT_ENSURE_INLINE \
+		mask_t<T> operator()(const mask_t<T>& x, const mask_t<T>& y) const { return MExpr; } \
+		template<typename Kind> \
+		LMAT_ENSURE_INLINE \
+		simd_bpack<T, Kind> operator()(const simd_bpack<T, Kind>& x, const simd_bpack<T, Kind>& y) const \
+		{ return MExpr; } \
+	}; \
+	template<> \
+	struct Name##_fun<bool> { \
+		typedef bool value_type; \
+		LMAT_ENSURE_INLINE \
+		bool operator()(const bool& x, const bool& y) const { return BExpr; } \
+	}; \
+	template<typename Kind> \
+	struct fun_simd_pack<Name##_fun<float>, Kind> { typedef simd_bpack<float, Kind> type; }; \
+	template<typename Kind> \
+	struct fun_simd_pack<Name##_fun<double>, Kind> { typedef simd_bpack<double, Kind> type; };
+
 
 #define LMAT_DEFINE_MATH_FUNCTOR_1( Name ) \
 	LMAT_DEFINE_GENERIC_MATH_FUNCTOR_1( Name, Name(x) )
@@ -81,6 +158,10 @@
 
 #define LMAT_DEFINE_MATH_FUNCTOR_3( Name ) \
 	LMAT_DEFINE_GENERIC_MATH_FUNCTOR_3( Name, Name(x, y, z) )
+
+
+#define LMAT_DEFINE_NUMPRED_FUNCTOR_1( Name ) \
+	LMAT_DEFINE_NUMPRED_FUNCTOR( Name, Name(x) )
 
 
 namespace lmat { namespace math {
@@ -107,6 +188,23 @@ namespace lmat { namespace math {
 	LMAT_DEFINE_MATH_FUNCTOR_2( max )
 	LMAT_DEFINE_MATH_FUNCTOR_2( min )
 	LMAT_DEFINE_MATH_FUNCTOR_3( clamp )
+
+	// Comparison functors
+
+	LMAT_DEFINE_COMPARISON_FUNCTOR( eq, x == y )
+	LMAT_DEFINE_COMPARISON_FUNCTOR( ne, x != y )
+	LMAT_DEFINE_COMPARISON_FUNCTOR( ge, x >= y )
+	LMAT_DEFINE_COMPARISON_FUNCTOR( gt, x > y )
+	LMAT_DEFINE_COMPARISON_FUNCTOR( le, x <= y )
+	LMAT_DEFINE_COMPARISON_FUNCTOR( lt, x < y )
+
+	// logical functors
+
+	LMAT_DEFINE_LOGICAL_FUNCTOR_1( logical_not, ~x, !x )
+	LMAT_DEFINE_LOGICAL_FUNCTOR_2( logical_eq,  x == y, x == y )
+	LMAT_DEFINE_LOGICAL_FUNCTOR_2( logical_ne,  x != y, x != y )
+	LMAT_DEFINE_LOGICAL_FUNCTOR_2( logical_or,  x | y,  x || y )
+	LMAT_DEFINE_LOGICAL_FUNCTOR_2( logical_and, x & y,  x && y )
 
 	// power
 
@@ -174,6 +272,13 @@ namespace lmat { namespace math {
 	LMAT_DEFINE_MATH_FUNCTOR_1( erfc )
 	LMAT_DEFINE_MATH_FUNCTOR_1( lgamma )
 	LMAT_DEFINE_MATH_FUNCTOR_1( tgamma )
+
+	// numeric predicates
+
+	LMAT_DEFINE_NUMPRED_FUNCTOR_1( signbit )
+	LMAT_DEFINE_NUMPRED_FUNCTOR_1( isfinite )
+	LMAT_DEFINE_NUMPRED_FUNCTOR_1( isinf )
+	LMAT_DEFINE_NUMPRED_FUNCTOR_1( isnan )
 
 #endif
 

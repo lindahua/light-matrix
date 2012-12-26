@@ -476,10 +476,29 @@ namespace lmat { namespace internal {
 		static const bool value = meta::is_percol_continuous<Mat>::value && (mod_ == 0);
 	};
 
+
+	template<typename T1, typename T2>
+	struct are_simd_compatible_types
+	{
+		static const bool value = false;
+	};
+
+	template<typename T>
+	struct are_simd_compatible_types<T, T> { static const bool value = true; };
+
+	template<typename T>
+	struct are_simd_compatible_types<mask_t<T>, T> { static const bool value = true; };
+
+	template<typename T>
+	struct are_simd_compatible_types<T, mask_t<T> > { static const bool value = true; };
+
+
 	template<typename Mat, typename T, typename Kind, bool IsLinear>
 	struct prefers_simd
 	{
-		static const bool value = _prefers_simd<Mat, T, Kind, IsLinear>::value;
+		typedef typename matrix_traits<Mat>::value_type VT;
+		static const bool value = are_simd_compatible_types<VT, T>::value
+				&& _prefers_simd<Mat, T, Kind, IsLinear>::value;
 	};
 
 

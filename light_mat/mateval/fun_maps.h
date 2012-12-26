@@ -22,7 +22,6 @@
 	struct fun_map<Name##_, T> { \
 		typedef math::Name##_fun<T> type; };
 
-
 #define LMAT_DEFINE_GENERIC_FUNMAP_2( Name ) \
 	template<typename T> \
 	struct fun_map<Name##_, T, T> { \
@@ -46,6 +45,30 @@
 	template<> struct fun_map<Name##_, double, double, double> { \
 		typedef math::Name##_fun<double> type; };
 
+#define LMAT_DEFINE_LOGICAL_FUNMAP_1( Name ) \
+	template<> struct fun_map<Name##_, bool> { \
+		typedef math::Name##_fun<bool> type; }; \
+	template<> struct fun_map<Name##_, mask_t<float> > { \
+		typedef math::Name##_fun<float> type; }; \
+	template<> struct fun_map<Name##_, mask_t<double> > { \
+		typedef math::Name##_fun<double> type; };
+
+#define LMAT_DEFINE_LOGICAL_FUNMAP_2( Name ) \
+	template<> struct fun_map<Name##_, bool, bool> { \
+		typedef math::Name##_fun<bool> type; }; \
+	template<> struct fun_map<Name##_, bool, mask_t<float> > { \
+		typedef math::Name##_fun<bool> type; }; \
+	template<> struct fun_map<Name##_, mask_t<float>, bool > { \
+		typedef math::Name##_fun<bool> type; }; \
+	template<> struct fun_map<Name##_, bool, mask_t<double> > { \
+		typedef math::Name##_fun<bool> type; }; \
+	template<> struct fun_map<Name##_, mask_t<double>, bool > { \
+		typedef math::Name##_fun<bool> type; }; \
+	template<> struct fun_map<Name##_, mask_t<float>, mask_t<float> > { \
+		typedef math::Name##_fun<float> type; }; \
+	template<> struct fun_map<Name##_, mask_t<double>, mask_t<double> > { \
+		typedef math::Name##_fun<double> type; };
+
 
 namespace lmat
 {
@@ -66,6 +89,23 @@ namespace lmat
 
 	LMAT_DEFINE_GENERIC_FUNMAP_2( max )
 	LMAT_DEFINE_GENERIC_FUNMAP_2( min )
+
+	// comparison
+
+	LMAT_DEFINE_GENERIC_FUNMAP_2( eq )
+	LMAT_DEFINE_GENERIC_FUNMAP_2( ne )
+	LMAT_DEFINE_GENERIC_FUNMAP_2( ge )
+	LMAT_DEFINE_GENERIC_FUNMAP_2( gt )
+	LMAT_DEFINE_GENERIC_FUNMAP_2( le )
+	LMAT_DEFINE_GENERIC_FUNMAP_2( lt )
+
+	// logical
+
+	LMAT_DEFINE_LOGICAL_FUNMAP_1( logical_not )
+	LMAT_DEFINE_LOGICAL_FUNMAP_2( logical_and )
+	LMAT_DEFINE_LOGICAL_FUNMAP_2( logical_or )
+	LMAT_DEFINE_LOGICAL_FUNMAP_2( logical_eq )
+	LMAT_DEFINE_LOGICAL_FUNMAP_2( logical_ne )
 
 	// real math
 
