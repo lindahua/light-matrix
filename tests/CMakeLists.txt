@@ -180,7 +180,8 @@ set(MAP_EXPR_HS
     ${INC}/mateval/mat_arith.h
     ${INC}/mateval/mat_emath.h
     ${INC}/mateval/mat_cast.h
-    ${INC}/mateval/mat_pred.h)
+    ${INC}/mateval/mat_pred.h
+    ${INC}/mateval/repvec_expr.h)
     
 set(MATRIX_REDUC_HS
     ${INC}/mateval/internal/mat_fold_internal.h
@@ -330,6 +331,8 @@ add_executable(test_mat_emath ${MAP_EXPR_TEST_HS} mateval/test_mat_emath.cpp)
 add_executable(test_mat_cast ${MAP_EXPR_TEST_HS} mateval/test_mat_cast.cpp)
 add_executable(test_mat_pred ${MAP_EXPR_TEST_HS} mateval/test_mat_pred.cpp)
 
+add_executable(test_repvecs ${MAP_EXPR_TEST_HS} mateval/test_repvecs.cpp)
+
 if (SVML_PATH)
 set_target_properties(test_mat_emath
 	PROPERTIES
@@ -434,6 +437,7 @@ set(LMAT_MATEVAL_TESTS
 	test_mat_emath
 	test_mat_cast
 	test_mat_pred
+	test_repvecs
 	test_full_reduce
 	test_colwise_reduce
 	test_rowwise_reduce)

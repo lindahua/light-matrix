@@ -525,15 +525,21 @@ namespace lmat
 	};
 
 
+	template<typename T, class SExpr, class DMat>
+	LMAT_ENSURE_INLINE
+	inline void evaluate_by_map(const IEWiseMatrix<SExpr, T>& sexpr, IRegularMatrix<DMat, T>& dmat)
+	{
+		typedef typename internal::preferred_map_policy<SExpr, DMat>::type policy_t;
+		policy_t::eval(sexpr, dmat.derived());
+	}
+
+
 	template<typename FTag, typename... Args, class DMat>
 	LMAT_ENSURE_INLINE
 	inline void evaluate(const map_expr<FTag, Args...>& sexpr,
 			IRegularMatrix<DMat, typename internal::map_expr_value<FTag, Args...>::type>& dmat)
 	{
-		typedef map_expr<FTag, Args...> expr_type;
-		typedef typename internal::preferred_map_policy<expr_type, DMat>::type policy_t;
-
-		policy_t::eval(sexpr, dmat.derived());
+		evaluate_by_map(sexpr, dmat);
 	}
 
 
