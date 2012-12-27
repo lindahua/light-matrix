@@ -16,8 +16,6 @@
 
 #include <light_mat/mateval/mat_reduce.h>
 
-#include <light_mat/matrix/matrix_transpose.h>
-#include <light_mat/matrix/matrix_asvec.h>
 #include <light_mat/mateval/repvec_expr.h>
 
 

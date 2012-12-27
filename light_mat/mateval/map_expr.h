@@ -9,6 +9,7 @@
 #ifndef LIGHTMAT_MAP_EXPR_H_
 #define LIGHTMAT_MAP_EXPR_H_
 
+#include <light_mat/matrix/matrix_classes.h>
 #include "internal/map_expr_internal.h"
 
 namespace lmat
