@@ -102,6 +102,26 @@ namespace lmat { namespace internal {
 	};
 
 
+	template<class Folder, class TExpr, class DMat>
+	struct colwise_reduc_policy
+	{
+		static_assert(meta::supports_linear_index<DMat>::value,
+				"DMat should support linear indexing.");
+
+		static const bool use_linear = false;
+
+		typedef typename matrix_traits<TExpr>::value_type vtype;
+		typedef default_simd_kind simd_kind;
+
+		static const bool use_simd = folder_supports_simd<Folder>::value &&
+			prefers_simd<TExpr, vtype, simd_kind, use_linear>::value;
+
+		typedef typename meta::if_c<use_simd,
+				atags::simd<simd_kind>,
+				atags::scalar>::type atag;
+	};
+
+
 	/********************************************
 	 *
 	 *  helpers on shape and empty value
@@ -110,33 +130,33 @@ namespace lmat { namespace internal {
 
 	template<typename T, class Mat>
 	LMAT_ENSURE_INLINE
-	inline index_t reduc_get_length(const IEWiseMatrix<Mat, T>& mat)
+	inline index_t reduc_get_length(const IEWiseMatrix<Mat, T>& a)
 	{
-		return mat.nelems();
+		return a.nelems();
 	}
 
 	template<typename T, class Mat1, class Mat2>
 	LMAT_ENSURE_INLINE
-	inline index_t reduc_get_length(const IEWiseMatrix<Mat1, T>& mat1, const IEWiseMatrix<Mat2, T>& mat2)
+	inline index_t reduc_get_length(const IEWiseMatrix<Mat1, T>& a, const IEWiseMatrix<Mat2, T>& b)
 	{
-		return common_shape(mat1.derived(), mat2.derived()).nelems();
+		return common_shape(a.derived(), b.derived()).nelems();
 	}
 
 
 	template<typename T, class Mat>
 	LMAT_ENSURE_INLINE
 	inline typename meta::shape<Mat>::type
-	reduc_get_shape(const IEWiseMatrix<Mat, T>& mat)
+	reduc_get_shape(const IEWiseMatrix<Mat, T>& a)
 	{
-		return mat.shape();
+		return a.shape();
 	}
 
 	template<typename T, class Mat1, class Mat2>
 	LMAT_ENSURE_INLINE
 	inline typename meta::common_shape<Mat1, Mat2>::type
-	reduc_get_shape(const IEWiseMatrix<Mat1, T>& mat1, const IEWiseMatrix<Mat2, T>& mat2)
+	reduc_get_shape(const IEWiseMatrix<Mat1, T>& a, const IEWiseMatrix<Mat2, T>& b)
 	{
-		return common_shape(mat1.derived(), mat2.derived());
+		return common_shape(a.derived(), b.derived());
 	}
 
 	template<typename T>
@@ -176,89 +196,6 @@ namespace lmat { namespace internal {
 		{
 			dmat[j] = fker.apply(col_dim, rd.col(j));
 		}
-	}
-
-	template<int M, int N, typename U, class Folder, class DMat, typename TFun, typename... MultiColReader>
-	inline void colwise_foldx_impl(const matrix_shape<M, N>& shape, U u,
-			const Folder& folder, DMat& dmat, const TFun& tfun, const MultiColReader&... rds)
-	{
-		dimension<M> col_dim(shape.nrows());
-		const index_t n = shape.ncolumns();
-
-		vecfoldf_kernel<Folder, TFun, U> fker = foldf(folder, tfun, u);
-
-		for (index_t j = 0; j < n; ++j)
-		{
-			dmat[j] = fker.apply(col_dim, rds.col(j)...);
-		}
-	}
-
-
-	template<int M, int N, typename Kind, class DMat, class Wrap>
-	inline void colwise_sum_(const matrix_shape<M, N>& shape, atags::simd<Kind> u, DMat& dmat, const Wrap& wrap)
-	{
-		typedef typename matrix_traits<DMat>::value_type T;
-		colwise_fold_impl(shape, u, sum_folder<T>(), dmat, make_multicol_accessor(u, wrap));
-	}
-
-	template<int M, int N, typename Kind, class DMat, class Wrap>
-	inline void colwise_mean_(const matrix_shape<M, N>& shape, atags::simd<Kind> u, DMat& dmat, const Wrap& wrap)
-	{
-		typedef typename matrix_traits<DMat>::value_type T;
-		const index_t m = shape.nrows();
-
-		colwise_fold_impl(shape, u, sum_folder<T>(), dmat, make_multicol_accessor(u, wrap));
-		dmat *= math::rcp((T)(m));
-	}
-
-	template<int M, int N, typename Kind, class DMat, class Wrap>
-	inline void colwise_maximum_(const matrix_shape<M, N>& shape, atags::simd<Kind> u, DMat& dmat, const Wrap& wrap)
-	{
-		typedef typename matrix_traits<DMat>::value_type T;
-		colwise_fold_impl(shape, u, maximum_folder<T>(), dmat, make_multicol_accessor(u, wrap));
-	}
-
-	template<int M, int N, typename Kind, class DMat, class Wrap>
-	inline void colwise_minimum_(const matrix_shape<M, N>& shape, atags::simd<Kind> u, DMat& dmat, const Wrap& wrap)
-	{
-		typedef typename matrix_traits<DMat>::value_type T;
-		colwise_fold_impl(shape, u, minimum_folder<T>(), dmat, make_multicol_accessor(u, wrap));
-	}
-
-
-	template<int M, int N, typename Kind, class DMat, typename TFun, typename... Wrap>
-	inline void colwise_sumx_(const matrix_shape<M, N>& shape, atags::simd<Kind> u, DMat& dmat,
-			const TFun& tfun, const Wrap&... wraps)
-	{
-		typedef typename matrix_traits<DMat>::value_type T;
-		colwise_foldx_impl(shape, u, sum_folder<T>(), dmat, tfun, make_multicol_accessor(u, wraps)...);
-	}
-
-	template<int M, int N, typename Kind, class DMat, typename TFun, typename... Wrap>
-	inline void colwise_meanx_(const matrix_shape<M, N>& shape, atags::simd<Kind> u, DMat& dmat,
-			const TFun& tfun, const Wrap&... wraps)
-	{
-		typedef typename matrix_traits<DMat>::value_type T;
-		const index_t m = shape.nrows();
-
-		colwise_foldx_impl(shape, u, sum_folder<T>(), dmat, tfun, make_multicol_accessor(u, wraps)...);
-		dmat *= math::rcp((T)m);
-	}
-
-	template<int M, int N, typename Kind, class DMat, typename TFun, typename... Wrap>
-	inline void colwise_maximumx_(const matrix_shape<M, N>& shape, atags::simd<Kind> u, DMat& dmat,
-			const TFun& tfun, const Wrap&... wraps)
-	{
-		typedef typename matrix_traits<DMat>::value_type T;
-		colwise_foldx_impl(shape, u, maximum_folder<T>(), dmat, tfun, make_multicol_accessor(u, wraps)...);
-	}
-
-	template<int M, int N, typename Kind, class DMat, typename TFun, typename... Wrap>
-	inline void colwise_minimumx_(const matrix_shape<M, N>& shape, atags::simd<Kind> u, DMat& dmat,
-			const TFun& tfun, const Wrap&... wraps)
-	{
-		typedef typename matrix_traits<DMat>::value_type T;
-		colwise_foldx_impl(shape, u, minimum_folder<T>(), dmat, tfun, make_multicol_accessor(u, wraps)...);
 	}
 
 

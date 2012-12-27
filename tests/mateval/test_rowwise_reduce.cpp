@@ -49,9 +49,9 @@ const unsigned int ntest_nrows = sizeof(test_nrows) / sizeof(index_t);
 					tsrc(j, i) = src(i, j); } \
 			for (unsigned k = 0; k < ntest_nrows; ++k) { \
 				index_t nr = test_nrows[k]; \
-				auto s1 = src(range(0, nr), 1); \
+				auto s1 = src(range(0, nr), 0); \
 				auto sn = src(range(0, nr), whole()); \
-				auto t1 = tsrc(1, range(0, nr)); \
+				auto t1 = tsrc(range(0, 1), range(0, nr)); \
 				auto tn = tsrc(whole(), range(0, nr)); \
 				dense_col<double> d(nr); \
 				dense_col<double> r(nr); \
@@ -77,12 +77,12 @@ const unsigned int ntest_nrows = sizeof(test_nrows) / sizeof(index_t);
 					tsrc2(j, i) = src2(i, j); } } \
 			for (unsigned k = 0; k < ntest_nrows; ++k) { \
 				index_t nr = test_nrows[k]; \
-				auto s11 = src1(range(0, nr), 1); \
-				auto s12 = src2(range(0, nr), 1); \
+				auto s11 = src1(range(0, nr), 0); \
+				auto s12 = src2(range(0, nr), 0); \
 				auto sn1 = src1(range(0, nr), whole()); \
 				auto sn2 = src2(range(0, nr), whole()); \
-				auto t11 = tsrc1(1, range(0, nr)); \
-				auto t12 = tsrc2(1, range(0, nr)); \
+				auto t11 = tsrc1(range(0, 1), range(0, nr)); \
+				auto t12 = tsrc2(range(0, 1), range(0, nr)); \
 				auto tn1 = tsrc1(whole(), range(0, nr)); \
 				auto tn2 = tsrc2(whole(), range(0, nr)); \
 				dense_col<double> d(nr); \
