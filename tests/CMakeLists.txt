@@ -166,7 +166,8 @@ set(MATRIX_CLASS_HS
     
 set(MATRIX_MANIP_HS
     ${INC}/matrix/internal/matrix_transpose_internal.h
-    ${INC}/matrix/matrix_transpose.h)
+    ${INC}/matrix/matrix_transpose.h
+    ${INC}/matrix/matrix_asvec.h)
     
 set(MATRIX_EVAL_HS
     ${INC}/mateval/internal/ewise_eval_internal.h
@@ -321,7 +322,8 @@ set(MAT_MANIP_TEST_HS
     ${MATRIX_BASE_HS}
     ${MATRIX_CLASS_HS}
     ${MATRIX_MANIP_HS})
-    
+
+add_executable(test_mat_asvec ${MAT_MANIP_TEST_HS} matrix/test_mat_asvec.cpp)      
 add_executable(test_direct_trans ${MAT_MANIP_TEST_HS} matrix/test_direct_trans.cpp)    
 add_executable(test_transpose_expr ${MAT_MANIP_TEST_HS} matrix/test_transpose_expr.cpp) 
 
@@ -438,6 +440,7 @@ set(LMAT_MATRIX_TESTS
 	test_dense_eval
 	test_mat_vecviews
 	test_mat_matviews
+	test_mat_asvec
 	test_direct_trans
 	test_transpose_expr)
 

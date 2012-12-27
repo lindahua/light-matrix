@@ -19,7 +19,6 @@
 
 namespace lmat
 {
-
 	// column views
 
 	template<class Mat, class Rgn>
