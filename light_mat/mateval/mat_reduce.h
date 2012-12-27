@@ -45,14 +45,15 @@
 		else { fill(dmat, internal::empty_values<T>::Name()); } }
 
 #define LMAT_DEFINE_BASIC_ROWWISE_REDUCTION( Name ) \
-	template<typename T, class Mat, class DMat> \
-	void rowwise_##Name(const IEWiseMatrix<Mat, T>& mat, IRegularMatrix<DMat, T>& dmat) { \
-		typedef default_simd_kind kind; \
-		typename meta::shape<Mat>::type shape = internal::reduc_get_shape(mat); \
-		LMAT_CHECK_DIMS( dmat.nelems() == shape.nrows() ); \
+	template<typename T, class A, class DMat> \
+	inline void rowwise_##Name(const IEWiseMatrix<A, T>& a, IRegularMatrix<DMat, T>& dmat) { \
+		typedef typename internal::rowwise_reduc_policy<Name##_folder<T>, A, DMat>::atag atag; \
+		auto shape = internal::reduc_get_shape(a); \
 		if (shape.ncolumns() > 0) { \
-			internal::rowwise_##Name##_(shape, atags::simd<kind>(), dmat.derived(), in_(mat.derived())); } \
-		else { fill(dmat, internal::empty_values<T>::Name()); } }
+			internal::rowwise_fold_impl(shape, atag(), Name##_folder<T>(), dmat.derived(), \
+					make_multicol_accessor(atag(), in_(a.derived())) ); } \
+		else { \
+			fill(dmat, internal::empty_values<T>::Name()); } }
 
 
 // derived reduction
@@ -158,7 +159,7 @@ namespace lmat
 		if (shape.nrows() > 0)
 		{
 			colwise_sum(a, dmat);
-			dmat *= math::rcp((T)a.nrows());
+			dmat *= math::rcp((T)shape.nrows());
 		}
 		else
 		{
@@ -170,9 +171,23 @@ namespace lmat
 	// rowwise reduction
 
 	LMAT_DEFINE_BASIC_ROWWISE_REDUCTION( sum )
-	LMAT_DEFINE_BASIC_ROWWISE_REDUCTION( mean )
 	LMAT_DEFINE_BASIC_ROWWISE_REDUCTION( maximum )
 	LMAT_DEFINE_BASIC_ROWWISE_REDUCTION( minimum )
+
+	template<typename T, class A, class DMat>
+	inline void rowwise_mean(const IEWiseMatrix<A, T>& a, IRegularMatrix<DMat, T>& dmat)
+	{
+		auto shape = internal::reduc_get_shape(a);
+		if (shape.ncolumns() > 0)
+		{
+			rowwise_sum(a, dmat);
+			dmat *= math::rcp((T)shape.ncolumns());
+		}
+		else
+		{
+			fill(dmat, internal::empty_values<T>::mean());
+		}
+	}
 
 
 	/********************************************
