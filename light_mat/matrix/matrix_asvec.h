@@ -30,6 +30,22 @@ namespace lmat
 		return internal::as_col_map<Mat>::get(mat.derived());
 	}
 
+	template<typename T, class Mat>
+	LMAT_ENSURE_INLINE
+	inline typename internal::as_row_map<Mat>::const_type
+	as_row(const IRegularMatrix<Mat, T>& mat)
+	{
+		return internal::as_row_map<Mat>::get(mat.derived());
+	}
+
+	template<typename T, class Mat>
+	LMAT_ENSURE_INLINE
+	inline typename internal::as_row_map<Mat>::_type
+	as_row(IRegularMatrix<Mat, T>& mat)
+	{
+		return internal::as_row_map<Mat>::get(mat.derived());
+	}
+
 }
 
 #endif /* MATRIX_ASVEC_H_ */
