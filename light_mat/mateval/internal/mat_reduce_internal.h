@@ -77,6 +77,60 @@ namespace lmat { namespace internal {
 
 	/********************************************
 	 *
+	 *  helpers on shape and empty value
+	 *
+	 ********************************************/
+
+	template<typename T, class Mat>
+	LMAT_ENSURE_INLINE
+	inline index_t reduc_get_length(const IEWiseMatrix<Mat, T>& mat)
+	{
+		return mat.nelems();
+	}
+
+	template<typename T, class Mat1, class Mat2>
+	LMAT_ENSURE_INLINE
+	inline index_t reduc_get_length(const IEWiseMatrix<Mat1, T>& mat1, const IEWiseMatrix<Mat2, T>& mat2)
+	{
+		return common_shape(mat1.derived(), mat2.derived()).nelems();
+	}
+
+
+	template<typename T, class Mat>
+	LMAT_ENSURE_INLINE
+	inline typename meta::shape<Mat>::type
+	reduc_get_shape(const IEWiseMatrix<Mat, T>& mat)
+	{
+		return mat.shape();
+	}
+
+	template<typename T, class Mat1, class Mat2>
+	LMAT_ENSURE_INLINE
+	inline typename meta::common_shape<Mat1, Mat2>::type
+	reduc_get_shape(const IEWiseMatrix<Mat1, T>& mat1, const IEWiseMatrix<Mat2, T>& mat2)
+	{
+		return common_shape(mat1.derived(), mat2.derived());
+	}
+
+	template<typename T>
+	struct empty_values
+	{
+		LMAT_ENSURE_INLINE
+		static T sum() { return T(0); }
+
+		LMAT_ENSURE_INLINE
+		static T mean() { return std::numeric_limits<T>::quiet_NaN(); }
+
+		LMAT_ENSURE_INLINE
+		static T maximum() { return - std::numeric_limits<T>::infinity(); }
+
+		LMAT_ENSURE_INLINE
+		static T minimum() { return std::numeric_limits<T>::infinity(); }
+	};
+
+
+	/********************************************
+	 *
 	 *  full reduction
 	 *
 	 ********************************************/

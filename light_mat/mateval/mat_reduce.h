@@ -29,12 +29,12 @@
 	LMAT_ENSURE_INLINE \
 	inline T Name(const IEWiseMatrix<Mat, T>& mat) { \
 		typedef default_simd_kind kind; \
-		dimension<meta::nelems<Mat>::value> dim = reduc_get_length(mat); \
+		dimension<meta::nelems<Mat>::value> dim = internal::reduc_get_length(mat); \
 		T r; \
 		if (dim.value() > 0) { \
 			r = internal::Name##_(type_<T>(), dim, atags::simd<kind>(), in_(mat.derived())); } \
 		else { \
-			r = empty_values<T>::Name(); } \
+			r = internal::empty_values<T>::Name(); } \
 		return r; }
 
 #define LMAT_DEFINE_BASIC_COLWISE_REDUCTION( Name ) \
@@ -42,22 +42,22 @@
 	LMAT_ENSURE_INLINE \
 	inline void colwise_##Name(const IEWiseMatrix<Mat, T>& mat, IRegularMatrix<DMat, T>& dmat) { \
 		typedef default_simd_kind kind; \
-		typename meta::shape<Mat>::type shape = reduc_get_shape(mat); \
+		typename meta::shape<Mat>::type shape = internal::reduc_get_shape(mat); \
 		LMAT_CHECK_DIMS( dmat.nelems() == shape.ncolumns() ); \
 		if (shape.nrows() > 0) { \
 			internal::colwise_##Name##_(shape, atags::simd<kind>(), dmat.derived(), in_(mat.derived())); } \
 		else { \
-			fill(dmat.derived(), empty_values<T>::Name()); } }
+			fill(dmat.derived(), internal::empty_values<T>::Name()); } }
 
 #define LMAT_DEFINE_BASIC_ROWWISE_REDUCTION( Name ) \
 	template<typename T, class Mat, class DMat> \
 	void rowwise_##Name(const IEWiseMatrix<Mat, T>& mat, IRegularMatrix<DMat, T>& dmat) { \
 		typedef default_simd_kind kind; \
-		typename meta::shape<Mat>::type shape = reduc_get_shape(mat); \
+		typename meta::shape<Mat>::type shape = internal::reduc_get_shape(mat); \
 		LMAT_CHECK_DIMS( dmat.nelems() == shape.nrows() ); \
 		if (shape.ncolumns() > 0) { \
 			internal::rowwise_##Name##_(shape, atags::simd<kind>(), dmat.derived(), in_(mat.derived())); } \
-		else { fill(dmat, empty_values<T>::Name()); } }
+		else { fill(dmat, internal::empty_values<T>::Name()); } }
 
 
 // derived reduction
@@ -66,7 +66,7 @@
 	template<typename T, class A> \
 	LMAT_ENSURE_INLINE \
 	inline T Name(const IEWiseMatrix<A, T>& a) { \
-		dimension<meta::nelems<A>::value> dim = reduc_get_length(a); \
+		dimension<meta::nelems<A>::value> dim = internal::reduc_get_length(a); \
 		return dim.value() > 0 ? Reduc(TExpr) : EmptyVal; \
 	}
 
@@ -74,7 +74,7 @@
 	template<typename T, class A, class B> \
 	LMAT_ENSURE_INLINE \
 	inline T Name(const IEWiseMatrix<A, T>& a, const IEWiseMatrix<B, T>& b) { \
-		dimension<meta::common_nelems<A, B>::value> dim = reduc_get_length(a, b); \
+		dimension<meta::common_nelems<A, B>::value> dim = internal::reduc_get_length(a, b); \
 		return dim.value() > 0 ? Reduc(TExpr) : EmptyVal; }
 
 
@@ -82,7 +82,7 @@
 	template<typename T, class A, class DMat> \
 	LMAT_ENSURE_INLINE \
 	inline void colwise_##Name(const IEWiseMatrix<A, T>& a, IRegularMatrix<DMat, T>& dmat) { \
-		typename meta::shape<A>::type shape = reduc_get_shape(a); \
+		typename meta::shape<A>::type shape = internal::reduc_get_shape(a); \
 		LMAT_CHECK_DIMS( dmat.nelems() == shape.ncolumns() ); \
 		if (shape.nrows() > 0) { \
 			colwise_##Reduc(TExpr, dmat); \
@@ -94,7 +94,7 @@
 	LMAT_ENSURE_INLINE \
 	inline void colwise_##Name(const IEWiseMatrix<A, T>& a, const IEWiseMatrix<B, T>& b, \
 			IRegularMatrix<DMat, T>& dmat) { \
-		typename meta::common_shape<A, B>::type shape = reduc_get_shape(a, b); \
+		typename meta::common_shape<A, B>::type shape = internal::reduc_get_shape(a, b); \
 		LMAT_CHECK_DIMS( dmat.nelems() == shape.ncolumns() ); \
 		if (shape.nrows() > 0) { \
 			colwise_##Reduc(TExpr, dmat); \
@@ -106,7 +106,7 @@
 	template<typename T, class A, class DMat> \
 	LMAT_ENSURE_INLINE \
 	inline void rowwise_##Name(const IEWiseMatrix<A, T>& a, IRegularMatrix<DMat, T>& dmat) { \
-		typename meta::shape<A>::type shape = reduc_get_shape(a); \
+		typename meta::shape<A>::type shape = internal::reduc_get_shape(a); \
 		LMAT_CHECK_DIMS( dmat.nelems() == shape.nrows() ); \
 		if (shape.ncolumns() > 0) { \
 			rowwise_##Reduc(TExpr, dmat); \
@@ -118,7 +118,7 @@
 	LMAT_ENSURE_INLINE \
 	inline void rowwise_##Name(const IEWiseMatrix<A, T>& a, const IEWiseMatrix<B, T>& b, \
 			IRegularMatrix<DMat, T>& dmat) { \
-		typename meta::common_shape<A, B>::type shape = reduc_get_shape(a, b); \
+		typename meta::common_shape<A, B>::type shape = internal::reduc_get_shape(a, b); \
 		LMAT_CHECK_DIMS( dmat.nelems() == shape.nrows() ); \
 		if (shape.ncolumns() > 0) { \
 			rowwise_##Reduc(TExpr, dmat); \
@@ -129,62 +129,6 @@
 
 namespace lmat
 {
-
-	/********************************************
-	 *
-	 *  auxiliary function
-	 *
-	 ********************************************/
-
-	template<typename T, class Mat>
-	LMAT_ENSURE_INLINE
-	inline index_t reduc_get_length(const IEWiseMatrix<Mat, T>& mat)
-	{
-		return mat.nelems();
-	}
-
-	template<typename T, class Mat1, class Mat2>
-	LMAT_ENSURE_INLINE
-	inline index_t reduc_get_length(const IEWiseMatrix<Mat1, T>& mat1, const IEWiseMatrix<Mat2, T>& mat2)
-	{
-		return common_shape(mat1.derived(), mat2.derived()).nelems();
-	}
-
-
-	template<typename T, class Mat>
-	LMAT_ENSURE_INLINE
-	inline typename meta::shape<Mat>::type
-	reduc_get_shape(const IEWiseMatrix<Mat, T>& mat)
-	{
-		return mat.shape();
-	}
-
-	template<typename T, class Mat1, class Mat2>
-	LMAT_ENSURE_INLINE
-	inline typename meta::common_shape<Mat1, Mat2>::type
-	reduc_get_shape(const IEWiseMatrix<Mat1, T>& mat1, const IEWiseMatrix<Mat2, T>& mat2)
-	{
-		return common_shape(mat1.derived(), mat2.derived());
-	}
-
-
-	template<typename T>
-	struct empty_values
-	{
-		LMAT_ENSURE_INLINE
-		static T sum() { return T(0); }
-
-		LMAT_ENSURE_INLINE
-		static T mean() { return std::numeric_limits<T>::quiet_NaN(); }
-
-		LMAT_ENSURE_INLINE
-		static T maximum() { return - std::numeric_limits<T>::infinity(); }
-
-		LMAT_ENSURE_INLINE
-		static T minimum() { return std::numeric_limits<T>::infinity(); }
-	};
-
-
 	/********************************************
 	 *
 	 *  basic reduction function
