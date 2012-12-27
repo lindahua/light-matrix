@@ -16,6 +16,8 @@
 #include <light_mat/mateval/mat_fold.h>
 #include <light_mat/mateval/common_kernels.h>
 #include <light_mat/math/math_functors.h>
+#include <light_mat/mateval/mat_arith.h>
+#include <light_mat/mateval/mat_emath.h>
 
 namespace lmat { namespace internal {
 
@@ -136,31 +138,6 @@ namespace lmat { namespace internal {
 	 *
 	 ********************************************/
 
-	template<typename T>
-	struct div_by_dim
-	{
-		LMAT_ENSURE_INLINE
-		div_by_dim(index_t n)
-		: coeff(T(1) / T(n)) { }
-
-		T operator() (const T& x) const
-		{
-			return x * coeff;
-		}
-
-	private:
-		T coeff;
-	};
-
-
-	template<typename Kind, class DMat, class TFun>
-	LMAT_ENSURE_INLINE
-	inline void colwise_post(atags::simd<Kind>, index_t n, DMat& dmat, const TFun& tfun)
-	{
-		for (index_t j = 0; j < n; ++j) dmat[j] = tfun(dmat[j]);
-	}
-
-
 	template<int M, int N, typename U, class Folder, class DMat, class MultiColReader>
 	inline void colwise_fold_impl(const matrix_shape<M, N>& shape, U u,
 			const Folder& folder, DMat& dmat, const MultiColReader& rd)
@@ -204,10 +181,9 @@ namespace lmat { namespace internal {
 	{
 		typedef typename matrix_traits<DMat>::value_type T;
 		const index_t m = shape.nrows();
-		const index_t n = shape.ncolumns();
 
 		colwise_fold_impl(shape, u, sum_folder<T>(), dmat, make_multicol_accessor(u, wrap));
-		colwise_post(u, n, dmat, div_by_dim<T>(m));
+		dmat *= math::rcp((T)(m));
 	}
 
 	template<int M, int N, typename Kind, class DMat, class Wrap>
@@ -239,10 +215,9 @@ namespace lmat { namespace internal {
 	{
 		typedef typename matrix_traits<DMat>::value_type T;
 		const index_t m = shape.nrows();
-		const index_t n = shape.ncolumns();
 
 		colwise_foldx_impl(shape, u, sum_folder<T>(), dmat, tfun, make_multicol_accessor(u, wraps)...);
-		colwise_post(u, n, dmat, div_by_dim<T>(m));
+		dmat *= math::rcp((T)m);
 	}
 
 	template<int M, int N, typename Kind, class DMat, typename TFun, typename... Wrap>

@@ -62,84 +62,70 @@
 
 // derived reduction
 
-#define LMAT_DEFINE_FULL_REDUCTION_1( Name, Reduc, ScaFun, EmptyVal ) \
-	template<typename T, class Mat> \
+#define LMAT_DEFINE_FULL_REDUCTION_1( Name, Reduc, TExpr, EmptyVal ) \
+	template<typename T, class A> \
 	LMAT_ENSURE_INLINE \
-	inline T Name(const IEWiseMatrix<Mat, T>& mat) { \
-		typedef default_simd_kind kind; \
-		dimension<meta::nelems<Mat>::value> dim = reduc_get_length(mat); \
-		T r; \
-		if (dim.value() > 0) { \
-			r = internal::Reduc##x_(type_<T>(), dim, atags::simd<kind>(), ScaFun<T>(), in_(mat.derived())); } \
-		else { r = EmptyVal; } \
-		return r; }
+	inline T Name(const IEWiseMatrix<A, T>& a) { \
+		dimension<meta::nelems<A>::value> dim = reduc_get_length(a); \
+		return dim.value() > 0 ? Reduc(TExpr) : EmptyVal; \
+	}
 
-#define LMAT_DEFINE_FULL_REDUCTION_2( Name, Reduc, ScaFun, EmptyVal ) \
-	template<typename T, class Mat1, class Mat2> \
+#define LMAT_DEFINE_FULL_REDUCTION_2( Name, Reduc, TExpr, EmptyVal ) \
+	template<typename T, class A, class B> \
 	LMAT_ENSURE_INLINE \
-	inline T Name(const IEWiseMatrix<Mat1, T>& mat1, const IEWiseMatrix<Mat2, T>& mat2) { \
-		typedef default_simd_kind kind; \
-		dimension<meta::common_nelems<Mat1, Mat2>::value> dim = reduc_get_length(mat1, mat2); \
-		T r; \
-		if (dim.value() > 0) { \
-			r = internal::Reduc##x_(type_<T>(), dim, atags::simd<kind>(), ScaFun<T>(), \
-					in_(mat1.derived()), in_(mat2.derived())); } \
-		else { r = EmptyVal; } \
-		return r; }
+	inline T Name(const IEWiseMatrix<A, T>& a, const IEWiseMatrix<B, T>& b) { \
+		dimension<meta::common_nelems<A, B>::value> dim = reduc_get_length(a, b); \
+		return dim.value() > 0 ? Reduc(TExpr) : EmptyVal; }
 
 
-#define LMAT_DEFINE_COLWISE_REDUCTION_1( Name, Reduc, ScaFun, EmptyVal ) \
-	template<typename T, class Mat, class DMat> \
+#define LMAT_DEFINE_COLWISE_REDUCTION_1( Name, Reduc, TExpr, EmptyVal ) \
+	template<typename T, class A, class DMat> \
 	LMAT_ENSURE_INLINE \
-	inline void colwise_##Name(const IEWiseMatrix<Mat, T>& mat, IRegularMatrix<DMat, T>& dmat) { \
+	inline void colwise_##Name(const IEWiseMatrix<A, T>& a, IRegularMatrix<DMat, T>& dmat) { \
 		typedef default_simd_kind kind; \
-		typename meta::shape<Mat>::type shape = reduc_get_shape(mat); \
+		typename meta::shape<A>::type shape = reduc_get_shape(a); \
 		LMAT_CHECK_DIMS( dmat.nelems() == shape.ncolumns() ); \
 		if (shape.nrows() > 0) { \
-			internal::colwise_##Reduc##x_(shape, atags::simd<kind>(), dmat.derived(), \
-					ScaFun<T>(), in_(mat.derived())); \
+			colwise_##Reduc(TExpr, dmat); \
 		} \
 		else { fill(dmat.derived(), EmptyVal); } }
 
-#define LMAT_DEFINE_COLWISE_REDUCTION_2( Name, Reduc, ScaFun, EmptyVal ) \
-	template<typename T, class Mat1, class Mat2, class DMat> \
+#define LMAT_DEFINE_COLWISE_REDUCTION_2( Name, Reduc, TExpr, EmptyVal ) \
+	template<typename T, class A, class B, class DMat> \
 	LMAT_ENSURE_INLINE \
-	inline void colwise_##Name(const IEWiseMatrix<Mat1, T>& mat1, const IEWiseMatrix<Mat2, T>& mat2, \
+	inline void colwise_##Name(const IEWiseMatrix<A, T>& a, const IEWiseMatrix<B, T>& b, \
 			IRegularMatrix<DMat, T>& dmat) { \
 		typedef default_simd_kind kind; \
-		typename meta::common_shape<Mat1, Mat2>::type shape = reduc_get_shape(mat1, mat2); \
+		typename meta::common_shape<A, B>::type shape = reduc_get_shape(a, b); \
 		LMAT_CHECK_DIMS( dmat.nelems() == shape.ncolumns() ); \
 		if (shape.nrows() > 0) { \
-			internal::colwise_##Reduc##x_(shape, atags::simd<kind>(), dmat.derived(), \
-					ScaFun<T>(), in_(mat1.derived()), in_(mat2.derived())); \
+			colwise_##Reduc(TExpr, dmat); \
 		} \
 		else { fill(dmat.derived(), EmptyVal); } }
 
 
-#define LMAT_DEFINE_ROWWISE_REDUCTION_1( Name, Reduc, ScaFun, EmptyVal ) \
-	template<typename T, class Mat, class DMat> \
+#define LMAT_DEFINE_ROWWISE_REDUCTION_1( Name, Reduc, TExpr, EmptyVal ) \
+	template<typename T, class A, class DMat> \
 	LMAT_ENSURE_INLINE \
-	inline void rowwise_##Name(const IEWiseMatrix<Mat, T>& mat, IRegularMatrix<DMat, T>& dmat) { \
+	inline void rowwise_##Name(const IEWiseMatrix<A, T>& a, IRegularMatrix<DMat, T>& dmat) { \
 		typedef default_simd_kind kind; \
-		typename meta::shape<Mat>::type shape = reduc_get_shape(mat); \
+		typename meta::shape<A>::type shape = reduc_get_shape(a); \
 		LMAT_CHECK_DIMS( dmat.nelems() == shape.nrows() ); \
 		if (shape.ncolumns() > 0) { \
-			internal::rowwise_##Reduc##x_(shape, atags::simd<kind>(), dmat.derived(), \
-					ScaFun<T>(), in_(mat.derived())); \
+			rowwise_##Reduc(TExpr, dmat); \
 		} \
 		else { fill(dmat.derived(), EmptyVal); } }
 
-#define LMAT_DEFINE_ROWWISE_REDUCTION_2( Name, Reduc, ScaFun, EmptyVal ) \
-	template<typename T, class Mat1, class Mat2, class DMat> \
+#define LMAT_DEFINE_ROWWISE_REDUCTION_2( Name, Reduc, TExpr, EmptyVal ) \
+	template<typename T, class A, class B, class DMat> \
 	LMAT_ENSURE_INLINE \
-	inline void rowwise_##Name(const IEWiseMatrix<Mat1, T>& mat1, const IEWiseMatrix<Mat2, T>& mat2, \
+	inline void rowwise_##Name(const IEWiseMatrix<A, T>& a, const IEWiseMatrix<B, T>& b, \
 			IRegularMatrix<DMat, T>& dmat) { \
 		typedef default_simd_kind kind; \
-		typename meta::common_shape<Mat1, Mat2>::type shape = reduc_get_shape(mat1, mat2); \
+		typename meta::common_shape<A, B>::type shape = reduc_get_shape(a, b); \
 		LMAT_CHECK_DIMS( dmat.nelems() == shape.nrows() ); \
 		if (shape.ncolumns() > 0) { \
-			internal::rowwise_##Reduc##x_(shape, atags::simd<kind>(), dmat.derived(), \
-					ScaFun<T>(), in_(mat1.derived()), in_(mat2.derived())); \
+			rowwise_##Reduc(TExpr, dmat); \
 		} \
 		else { fill(dmat.derived(), EmptyVal); } }
 
@@ -158,9 +144,6 @@ namespace lmat
 	LMAT_ENSURE_INLINE
 	inline index_t reduc_get_length(const IEWiseMatrix<Mat, T>& mat)
 	{
-		static_assert(meta::is_continuous<Mat>::value,
-				"mat should be a compile-time-continuous matrix.");
-
 		return mat.nelems();
 	}
 
@@ -168,12 +151,6 @@ namespace lmat
 	LMAT_ENSURE_INLINE
 	inline index_t reduc_get_length(const IEWiseMatrix<Mat1, T>& mat1, const IEWiseMatrix<Mat2, T>& mat2)
 	{
-		static_assert(meta::is_continuous<Mat1>::value,
-				"mat1 should be a compile-time-continuous matrix.");
-
-		static_assert(meta::is_continuous<Mat2>::value,
-				"mat2 should be a compile-time-continuous matrix.");
-
 		return common_shape(mat1.derived(), mat2.derived()).nelems();
 	}
 
@@ -183,9 +160,6 @@ namespace lmat
 	inline typename meta::shape<Mat>::type
 	reduc_get_shape(const IEWiseMatrix<Mat, T>& mat)
 	{
-		static_assert(meta::is_percol_continuous<Mat>::value,
-				"mat should be a compile-time percol-continuous matrix.");
-
 		return mat.shape();
 	}
 
@@ -194,12 +168,6 @@ namespace lmat
 	inline typename meta::common_shape<Mat1, Mat2>::type
 	reduc_get_shape(const IEWiseMatrix<Mat1, T>& mat1, const IEWiseMatrix<Mat2, T>& mat2)
 	{
-		static_assert(meta::is_percol_continuous<Mat1>::value,
-				"mat1 should be a compile-time percol-continuous matrix.");
-
-		static_assert(meta::is_percol_continuous<Mat2>::value,
-				"mat2 should be a compile-time percol-continuous matrix.");
-
 		return common_shape(mat1.derived(), mat2.derived());
 	}
 
@@ -257,45 +225,45 @@ namespace lmat
 
 	// full reduction
 
-	LMAT_DEFINE_FULL_REDUCTION_1( asum,  sum,     math::abs_fun, T(0) )
-	LMAT_DEFINE_FULL_REDUCTION_1( amean, mean,    math::abs_fun, T(0) )
-	LMAT_DEFINE_FULL_REDUCTION_1( amax,  maximum, math::abs_fun, T(0) )
-	LMAT_DEFINE_FULL_REDUCTION_1( sqsum, sum,     math::sqr_fun, T(0) )
+	LMAT_DEFINE_FULL_REDUCTION_1( asum,  sum,     abs(a), T(0) )
+	LMAT_DEFINE_FULL_REDUCTION_1( amean, mean,    abs(a), T(0) )
+	LMAT_DEFINE_FULL_REDUCTION_1( amax,  maximum, abs(a), T(0) )
+	LMAT_DEFINE_FULL_REDUCTION_1( sqsum, sum,     sqr(a), T(0) )
 
-	LMAT_DEFINE_FULL_REDUCTION_2( diff_asum,  sum,     math::diff_abs_fun, T(0) )
-	LMAT_DEFINE_FULL_REDUCTION_2( diff_amean, mean,    math::diff_abs_fun, T(0) )
-	LMAT_DEFINE_FULL_REDUCTION_2( diff_amax,  maximum, math::diff_abs_fun, T(0) )
-	LMAT_DEFINE_FULL_REDUCTION_2( diff_sqsum, sum,     math::diff_sqr_fun, T(0) )
+	LMAT_DEFINE_FULL_REDUCTION_2( diff_asum,  sum,     abs(a - b), T(0) )
+	LMAT_DEFINE_FULL_REDUCTION_2( diff_amean, mean,    abs(a - b), T(0) )
+	LMAT_DEFINE_FULL_REDUCTION_2( diff_amax,  maximum, abs(a - b), T(0) )
+	LMAT_DEFINE_FULL_REDUCTION_2( diff_sqsum, sum,     sqr(a - b), T(0) )
 
-	LMAT_DEFINE_FULL_REDUCTION_2( dot, sum, math::mul_fun, T(0) )
+	LMAT_DEFINE_FULL_REDUCTION_2( dot, sum, a * b, T(0) )
 
 	// colwise reduction
 
-	LMAT_DEFINE_COLWISE_REDUCTION_1( asum,  sum,     math::abs_fun, T(0) )
-	LMAT_DEFINE_COLWISE_REDUCTION_1( amean, mean,    math::abs_fun, T(0) )
-	LMAT_DEFINE_COLWISE_REDUCTION_1( amax,  maximum, math::abs_fun, T(0) )
-	LMAT_DEFINE_COLWISE_REDUCTION_1( sqsum, sum,     math::sqr_fun, T(0) )
+	LMAT_DEFINE_COLWISE_REDUCTION_1( asum,  sum,     abs(a), T(0) )
+	LMAT_DEFINE_COLWISE_REDUCTION_1( amean, mean,    abs(a), T(0) )
+	LMAT_DEFINE_COLWISE_REDUCTION_1( amax,  maximum, abs(a), T(0) )
+	LMAT_DEFINE_COLWISE_REDUCTION_1( sqsum, sum,     sqr(a), T(0) )
 
-	LMAT_DEFINE_COLWISE_REDUCTION_2( diff_asum,  sum,     math::diff_abs_fun, T(0) )
-	LMAT_DEFINE_COLWISE_REDUCTION_2( diff_amean, mean,    math::diff_abs_fun, T(0) )
-	LMAT_DEFINE_COLWISE_REDUCTION_2( diff_amax,  maximum, math::diff_abs_fun, T(0) )
-	LMAT_DEFINE_COLWISE_REDUCTION_2( diff_sqsum, sum,     math::diff_sqr_fun, T(0) )
+	LMAT_DEFINE_COLWISE_REDUCTION_2( diff_asum,  sum,     abs(a - b), T(0) )
+	LMAT_DEFINE_COLWISE_REDUCTION_2( diff_amean, mean,    abs(a - b), T(0) )
+	LMAT_DEFINE_COLWISE_REDUCTION_2( diff_amax,  maximum, abs(a - b), T(0) )
+	LMAT_DEFINE_COLWISE_REDUCTION_2( diff_sqsum, sum,     sqr(a - b), T(0) )
 
-	LMAT_DEFINE_COLWISE_REDUCTION_2( dot, sum, math::mul_fun, T(0) )
+	LMAT_DEFINE_COLWISE_REDUCTION_2( dot, sum, a * b, T(0) )
 
 	// rowwise reduction
 
-	LMAT_DEFINE_ROWWISE_REDUCTION_1( asum,  sum,     math::abs_fun, T(0) )
-	LMAT_DEFINE_ROWWISE_REDUCTION_1( amean, mean,    math::abs_fun, T(0) )
-	LMAT_DEFINE_ROWWISE_REDUCTION_1( amax,  maximum, math::abs_fun, T(0) )
-	LMAT_DEFINE_ROWWISE_REDUCTION_1( sqsum, sum,     math::sqr_fun, T(0) )
+	LMAT_DEFINE_ROWWISE_REDUCTION_1( asum,  sum,     abs(a), T(0) )
+	LMAT_DEFINE_ROWWISE_REDUCTION_1( amean, mean,    abs(a), T(0) )
+	LMAT_DEFINE_ROWWISE_REDUCTION_1( amax,  maximum, abs(a), T(0) )
+	LMAT_DEFINE_ROWWISE_REDUCTION_1( sqsum, sum,     sqr(a), T(0) )
 
-	LMAT_DEFINE_ROWWISE_REDUCTION_2( diff_asum,  sum,     math::diff_abs_fun, T(0) )
-	LMAT_DEFINE_ROWWISE_REDUCTION_2( diff_amean, mean,    math::diff_abs_fun, T(0) )
-	LMAT_DEFINE_ROWWISE_REDUCTION_2( diff_amax,  maximum, math::diff_abs_fun, T(0) )
-	LMAT_DEFINE_ROWWISE_REDUCTION_2( diff_sqsum, sum,     math::diff_sqr_fun, T(0) )
+	LMAT_DEFINE_ROWWISE_REDUCTION_2( diff_asum,  sum,     abs(a - b), T(0) )
+	LMAT_DEFINE_ROWWISE_REDUCTION_2( diff_amean, mean,    abs(a - b), T(0) )
+	LMAT_DEFINE_ROWWISE_REDUCTION_2( diff_amax,  maximum, abs(a - b), T(0) )
+	LMAT_DEFINE_ROWWISE_REDUCTION_2( diff_sqsum, sum,     sqr(a - b), T(0) )
 
-	LMAT_DEFINE_ROWWISE_REDUCTION_2( dot, sum, math::mul_fun, T(0) )
+	LMAT_DEFINE_ROWWISE_REDUCTION_2( dot, sum, a * b, T(0) )
 
 
 	/********************************************
@@ -374,8 +342,7 @@ namespace lmat
 	inline void colwise_norm(const IEWiseMatrix<Mat, T>& mat, IRegularMatrix<DMat, T>& dmat, norms::L2_)
 	{
 		colwise_sqsum(mat, dmat);
-		internal::colwise_post(atags::simd<default_simd_kind>(),
-				mat.ncolumns(), dmat.derived(), math::sqrt_fun<T>());
+		dmat.derived() = sqrt(dmat);
 	}
 
 	template<typename T, class Mat, class DMat>
@@ -392,7 +359,7 @@ namespace lmat
 			const IEWiseMatrix<Mat1, T>& mat1, const IEWiseMatrix<Mat2, T>& mat2,
 			IRegularMatrix<DMat, T>& dmat, norms::L1_)
 	{
-		colwise_diff_asum(mat1, mat2, dmat);
+		colwise_asum(mat1.derived() - mat2.derived(), dmat);
 	}
 
 	template<typename T, class Mat1, class Mat2, class DMat>
@@ -402,8 +369,7 @@ namespace lmat
 			IRegularMatrix<DMat, T>& dmat, norms::L2_)
 	{
 		colwise_diff_sqsum(mat1, mat2, dmat);
-		internal::colwise_post(atags::simd<default_simd_kind>(),
-				mat1.ncolumns(), dmat.derived(), math::sqrt_fun<T>());
+		dmat.derived() = sqrt(dmat);
 	}
 
 	template<typename T, class Mat1, class Mat2, class DMat>
@@ -430,7 +396,7 @@ namespace lmat
 	inline void rowwise_norm(const IEWiseMatrix<Mat, T>& mat, IRegularMatrix<DMat, T>& dmat, norms::L2_)
 	{
 		rowwise_sqsum(mat, dmat);
-		map(math::sqrt_fun<T>())(dmat.shape(), out_(dmat.derived()), in_(dmat.derived()));
+		dmat.derived() = sqrt(dmat);
 	}
 
 	template<typename T, class Mat, class DMat>
@@ -456,7 +422,7 @@ namespace lmat
 			IRegularMatrix<DMat, T>& dmat, norms::L2_)
 	{
 		rowwise_diff_sqsum(mat1, mat2, dmat);
-		map(math::sqrt_fun<T>())(dmat.shape(), out_(dmat.derived()), in_(dmat.derived()));
+		dmat.derived() = sqrt(dmat);
 	}
 
 	template<typename T, class Mat1, class Mat2, class DMat>
