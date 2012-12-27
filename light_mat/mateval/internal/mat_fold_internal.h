@@ -15,7 +15,12 @@
 
 #include <light_mat/mateval/mateval_fwd.h>
 
-namespace lmat { namespace internal {
+namespace lmat {
+
+	template<class Folder, typename Kind>
+	struct folder_simd_pack;
+
+	namespace internal {
 
 	/********************************************
 	 *
@@ -29,7 +34,7 @@ namespace lmat { namespace internal {
 			const Folder& folder, const Reader& rd)
 	{
 		typedef typename Folder::value_type T;
-		typedef math::simd_pack<T, SKind> pack_t;
+		typedef typename folder_simd_pack<Folder, SKind>::type pack_t;
 
 		const index_t pw = (index_t)pack_t::pack_width;
 
@@ -120,7 +125,7 @@ namespace lmat { namespace internal {
 			const Folder& folder, const TFun& tfun, const Reader&... rds)
 	{
 		typedef typename Folder::value_type T;
-		typedef math::simd_pack<T, SKind> pack_t;
+		typedef typename folder_simd_pack<Folder, SKind>::type pack_t;
 		const index_t pw = (index_t)pack_t::pack_width;
 
 		const index_t len = dim.value();
