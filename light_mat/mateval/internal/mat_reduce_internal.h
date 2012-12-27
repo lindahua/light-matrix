@@ -77,6 +77,33 @@ namespace lmat { namespace internal {
 
 	/********************************************
 	 *
+	 *  helpers on atag
+	 *
+	 ********************************************/
+
+	template<class Folder, class TExpr>
+	struct full_reduc_policy
+	{
+		static_assert(prefers_linear<TExpr>::value,
+				"TExpr should allow linear access.");
+
+		static const bool use_linear = prefers_linear<TExpr>::value;
+
+		typedef typename matrix_traits<TExpr>::value_type vtype;
+		typedef default_simd_kind simd_kind;
+
+		static const bool use_simd =
+				folder_supports_simd<Folder>::value &&
+				prefers_simd<TExpr, vtype, simd_kind, use_linear>::value;
+
+		typedef typename meta::if_c<use_simd,
+				atags::simd<simd_kind>,
+				atags::scalar>::type atag;
+	};
+
+
+	/********************************************
+	 *
 	 *  helpers on shape and empty value
 	 *
 	 ********************************************/
@@ -129,62 +156,6 @@ namespace lmat { namespace internal {
 	};
 
 
-	/********************************************
-	 *
-	 *  full reduction
-	 *
-	 ********************************************/
-
-	template<typename T, int N, typename U, class Wrap>
-	inline T sum_(type_<T>, const dimension<N>& dim, U u, const Wrap& wrap)
-	{
-		return fold(sum_folder<T>(), u)(dim, wrap);
-	}
-
-	template<int N, typename T, typename U, class Wrap>
-	inline T mean_(type_<T>, const dimension<N>& dim, U u, const Wrap& wrap)
-	{
-		T r = sum_(type_<T>(), dim, u, wrap);
-		return r / T(dim.value());
-	}
-
-	template<int N, typename T, typename U, class Wrap>
-	inline T maximum_(type_<T>, const dimension<N>& dim, U u, const Wrap& wrap)
-	{
-		return fold(maximum_folder<T>(), u)(dim, wrap);
-	}
-
-	template<int N, typename T, typename U, class Wrap>
-	inline T minimum_(type_<T>, const dimension<N>& dim, U u, const Wrap& wrap)
-	{
-		return fold(minimum_folder<T>(), u)(dim, wrap);
-	}
-
-
-	template<int N, typename T, typename U, typename TFun, typename... Wrap>
-	inline T sumx_(type_<T>, const dimension<N>& dim, U u, const TFun& tfun, const Wrap&... wraps)
-	{
-		return foldf(sum_folder<T>(), tfun, u)(dim, wraps...);
-	}
-
-	template<int N, typename T, typename U, typename TFun, typename... Wrap>
-	inline T meanx_(type_<T>, const dimension<N>& dim, U u, const TFun& tfun, const Wrap&... wraps)
-	{
-		T r = sumx_(type_<T>(), dim, u, tfun, wraps...);
-		return r / T(dim.value());
-	}
-
-	template<int N, typename T, typename U, typename TFun, typename... Wrap>
-	inline T maximumx_(type_<T>, const dimension<N>& dim, U u, const TFun& tfun, const Wrap&... wraps)
-	{
-		return foldf(maximum_folder<T>(), tfun, u)(dim, wraps...);
-	}
-
-	template<int N, typename T, typename U, typename TFun, typename... Wrap>
-	inline T minimumx_(type_<T>, const dimension<N>& dim, U u, const TFun& tfun, const Wrap&... wraps)
-	{
-		return foldf(minimum_folder<T>(), tfun, u)(dim, wraps...);
-	}
 
 	/********************************************
 	 *

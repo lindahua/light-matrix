@@ -25,17 +25,15 @@
 // basic reduction
 
 #define LMAT_DEFINE_BASIC_FULL_REDUCTION( Name ) \
-	template<typename T, class Mat> \
+	template<typename T, class A> \
 	LMAT_ENSURE_INLINE \
-	inline T Name(const IEWiseMatrix<Mat, T>& mat) { \
-		typedef default_simd_kind kind; \
-		dimension<meta::nelems<Mat>::value> dim = internal::reduc_get_length(mat); \
-		T r; \
-		if (dim.value() > 0) { \
-			r = internal::Name##_(type_<T>(), dim, atags::simd<kind>(), in_(mat.derived())); } \
-		else { \
-			r = internal::empty_values<T>::Name(); } \
-		return r; }
+	inline T Name(const IEWiseMatrix<A, T>& a) { \
+		typedef typename internal::full_reduc_policy<Name##_folder<T>, A>::atag atag; \
+		dimension<meta::nelems<A>::value> dim = internal::reduc_get_length(a); \
+		return dim.value() > 0 ? \
+				fold(Name##_folder<T>(), atag())(dim, in_(a.derived())) : \
+				internal::empty_values<T>::Name(); }
+
 
 #define LMAT_DEFINE_BASIC_COLWISE_REDUCTION( Name ) \
 	template<typename T, class Mat, class DMat> \
@@ -138,9 +136,19 @@ namespace lmat
 	// full reduction
 
 	LMAT_DEFINE_BASIC_FULL_REDUCTION( sum )
-	LMAT_DEFINE_BASIC_FULL_REDUCTION( mean )
 	LMAT_DEFINE_BASIC_FULL_REDUCTION( maximum )
 	LMAT_DEFINE_BASIC_FULL_REDUCTION( minimum )
+
+	template<typename T, class A>
+	LMAT_ENSURE_INLINE
+	inline T mean(const IEWiseMatrix<A, T>& a)
+	{
+		dimension<meta::nelems<A>::value> dim = internal::reduc_get_length(a);
+		return dim.value() > 0 ?
+				sum(a) / T(dim.value()) :
+				internal::empty_values<T>::mean();
+	}
+
 
 	// colwise reduction
 
