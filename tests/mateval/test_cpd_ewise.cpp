@@ -6,9 +6,9 @@
  * @author Dahua Lin
  */
 
-#include "test_base.h"
+#include "../test_base.h"
 
-#include <light_mat/matexpr/matexpr_eval.h>
+#include <light_mat/mateval/mateval.h>
 #include <light_mat/math/math_constants.h>
 #include <cstdlib>
 
@@ -53,7 +53,9 @@ MN_CASE( cpd_expr, ewise_sqdist )
 		}
 	}
 
-	ASSERT_TRUE( is_approx(Y, R, tol) );
+	ASSERT_EQ( Y.nrows(), m );
+	ASSERT_EQ( Y.ncolumns(), n );
+	ASSERT_MAT_APPROX( m, n, Y, R, tol );
 }
 
 
@@ -85,7 +87,9 @@ MN_CASE( cpd_expr, ewise_normpdf )
 		}
 	}
 
-	ASSERT_TRUE( is_approx(Y, R, tol) );
+	ASSERT_EQ( Y.nrows(), m );
+	ASSERT_EQ( Y.ncolumns(), n );
+	ASSERT_MAT_APPROX( m, n, Y, R, tol );
 }
 
 
@@ -102,7 +106,7 @@ MN_CASE( cpd_expr, axpy_cast )
 	fill_ran(Y, -5.0, 5.0);
 	const float tol = 1.0e-5f;
 
-	dense_matrix<float, M, N> Z = cast(a * X + Y, type<float>());
+	dense_matrix<float, M, N> Z = to_f32(a * X + Y);
 	dense_matrix<float, M, N> R(m, n);
 
 	for (index_t j = 0; j < n; ++j)
@@ -113,7 +117,9 @@ MN_CASE( cpd_expr, axpy_cast )
 		}
 	}
 
-	ASSERT_TRUE( is_approx(Z, R, tol) );
+	ASSERT_EQ( Z.nrows(), m );
+	ASSERT_EQ( Z.ncolumns(), n );
+	ASSERT_MAT_APPROX( m, n, Z, R, tol );
 }
 
 
@@ -130,9 +136,9 @@ MN_CASE( cpd_expr, pwise_sqdist )
 	const double tol = 1.0e-12;
 
 	dense_matrix<double, M, N> Y =
-			  rep_col(sqr(vx), n)
-			+ rep_row(sqr(vy), m)
-			- 2.0 * rep_col(vx, n) * rep_row(vy, m);
+			  repcol(eval(sqr(vx)), n)
+			+ reprow(eval(sqr(vy)), m)
+			- 2.0 * repcol(vx, n) * reprow(vy, m);
 
 	dense_matrix<double, M, N> R(m, n);
 
@@ -144,40 +150,11 @@ MN_CASE( cpd_expr, pwise_sqdist )
 		}
 	}
 
-	ASSERT_TRUE( is_approx(Y, R, tol) );
+	ASSERT_EQ( Y.nrows(), m );
+	ASSERT_EQ( Y.ncolumns(), n );
+	ASSERT_MAT_APPROX( m, n, Y, R, tol );
 }
 
-
-MN_CASE( cpd_expr, pwise_sqdist2 )
-{
-	const index_t m = M == 0 ? 5 : M;
-	const index_t n = N == 0 ? 6 : N;
-
-	dense_col<double, M> vx(m);
-	dense_col<double, N> vy(n);
-
-	fill_ran(vx, -5.0, 5.0);
-	fill_ran(vy, -5.0, 5.0);
-
-
-	dense_matrix<double, M, N> Y =
-			  rep_col(sqr(vx), n)
-			+ trans(rep_col(sqr(vy), m))
-			- 2.0 * rep_col(vx, n) * rep_row(trans(vy), m);
-
-	dense_matrix<double, M, N> R(m, n);
-
-	for (index_t j = 0; j < n; ++j)
-	{
-		for (index_t i = 0; i < m; ++i)
-		{
-			R(i,j) = math::sqr(vx[i] - vy[j]);
-		}
-	}
-
-	const double tol = 1.0e-12;
-	ASSERT_TRUE( is_approx(Y, R, tol) );
-}
 
 
 BEGIN_TPACK( cpd_ewise_sqdist )
@@ -196,17 +173,12 @@ BEGIN_TPACK( cpd_pwise_sqdist )
 	ADD_MN_CASE_3X3( cpd_expr, pwise_sqdist, 5, 6 )
 END_TPACK
 
-BEGIN_TPACK( cpd_pwise_sqdist2 )
-	ADD_MN_CASE_3X3( cpd_expr, pwise_sqdist2, 5, 6 )
-END_TPACK
-
 
 BEGIN_MAIN_SUITE
 	ADD_TPACK( cpd_ewise_sqdist )
 	ADD_TPACK( cpd_ewise_normpdf )
 	ADD_TPACK( cpd_ewise_axpy_cast )
 	ADD_TPACK( cpd_pwise_sqdist )
-	ADD_TPACK( cpd_pwise_sqdist2 )
 END_MAIN_SUITE
 
 

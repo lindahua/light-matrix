@@ -197,8 +197,9 @@ set(MATRIX_REDUC_HS
 set(MATRIX_HS
     ${COMMON_HS}
     ${MATRIX_BASE_HS}
-    ${MATRIX_CLASS_HS})    
-    
+    ${MATRIX_CLASS_HS}
+    ${MATRIX_MANIP_HS})    
+        
 set(BLAS_HS
     ${INC}/linalg/linalg_fwd.h
     ${INC}/linalg/internal/linalg_aux.h
@@ -347,16 +348,23 @@ add_executable(test_mat_cast ${MAP_EXPR_TEST_HS} mateval/test_mat_cast.cpp)
 add_executable(test_mat_pred ${MAP_EXPR_TEST_HS} mateval/test_mat_pred.cpp)
 
 add_executable(test_repvecs ${MAP_EXPR_TEST_HS} mateval/test_repvecs.cpp)
+add_executable(test_cpd_ewise ${MAP_EXPR_TEST_HS} mateval/test_cpd_ewise.cpp)
 
 if (SVML_PATH)
 set_target_properties(test_mat_emath
 	PROPERTIES
 	COMPILE_FLAGS "-DLMAT_USE_INTEL_SVML"
 )
+set_target_properties(test_cpd_ewise
+	PROPERTIES
+	COMPILE_FLAGS "-DLMAT_USE_INTEL_SVML"
+)
 if (MSVC)
 target_link_libraries(test_mat_emath test_main ${SVML} ${LIBIRC})
+target_link_libraries(test_cpd_ewise test_main ${SVML} ${LIBIRC})
 else (MSVC)
 target_link_libraries(test_mat_emath test_main ${SVML})
+target_link_libraries(test_cpd_ewise test_main ${SVML})
 endif (MSVC)
 endif (SVML_PATH)
 
@@ -456,6 +464,7 @@ set(LMAT_MATEVAL_TESTS
 	test_mat_cast
 	test_mat_pred
 	test_repvecs
+	test_cpd_ewise
 	test_full_reduce
 	test_colwise_reduce
 	test_rowwise_reduce)
