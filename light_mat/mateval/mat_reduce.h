@@ -82,7 +82,6 @@
 	template<typename T, class A, class DMat> \
 	LMAT_ENSURE_INLINE \
 	inline void colwise_##Name(const IEWiseMatrix<A, T>& a, IRegularMatrix<DMat, T>& dmat) { \
-		typedef default_simd_kind kind; \
 		typename meta::shape<A>::type shape = reduc_get_shape(a); \
 		LMAT_CHECK_DIMS( dmat.nelems() == shape.ncolumns() ); \
 		if (shape.nrows() > 0) { \
@@ -95,7 +94,6 @@
 	LMAT_ENSURE_INLINE \
 	inline void colwise_##Name(const IEWiseMatrix<A, T>& a, const IEWiseMatrix<B, T>& b, \
 			IRegularMatrix<DMat, T>& dmat) { \
-		typedef default_simd_kind kind; \
 		typename meta::common_shape<A, B>::type shape = reduc_get_shape(a, b); \
 		LMAT_CHECK_DIMS( dmat.nelems() == shape.ncolumns() ); \
 		if (shape.nrows() > 0) { \
@@ -108,7 +106,6 @@
 	template<typename T, class A, class DMat> \
 	LMAT_ENSURE_INLINE \
 	inline void rowwise_##Name(const IEWiseMatrix<A, T>& a, IRegularMatrix<DMat, T>& dmat) { \
-		typedef default_simd_kind kind; \
 		typename meta::shape<A>::type shape = reduc_get_shape(a); \
 		LMAT_CHECK_DIMS( dmat.nelems() == shape.nrows() ); \
 		if (shape.ncolumns() > 0) { \
@@ -121,7 +118,6 @@
 	LMAT_ENSURE_INLINE \
 	inline void rowwise_##Name(const IEWiseMatrix<A, T>& a, const IEWiseMatrix<B, T>& b, \
 			IRegularMatrix<DMat, T>& dmat) { \
-		typedef default_simd_kind kind; \
 		typename meta::common_shape<A, B>::type shape = reduc_get_shape(a, b); \
 		LMAT_CHECK_DIMS( dmat.nelems() == shape.nrows() ); \
 		if (shape.ncolumns() > 0) { \
