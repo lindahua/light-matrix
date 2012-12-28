@@ -9,9 +9,10 @@
 
 #include "../test_base.h"
 #include <light_mat/matrix/matrix_classes.h>
-#include <light_mat/mateval/mat_reduce.h>
 
+#include <light_mat/mateval/mat_enorms.h>
 #include <light_mat/mateval/mat_minmax.h>
+
 
 #include <cstdlib>
 
@@ -41,6 +42,85 @@ const index_t max_len = 48;
 const index_t max_nrows = 32;
 index_t test_nrows[] = { 1, 2, 3, 4, 5, 6, 7, 8, 10, 12, 16, 24, 28, 32 };
 const unsigned int ntest_nrows = sizeof(test_nrows) / sizeof(index_t);
+
+
+// norms
+
+SIMPLE_CASE( norms, full )
+{
+	dense_col<double> s(max_len);
+	fill_rand(s);
+
+	for (index_t k = 0; k <= max_len; ++k)
+	{
+		ref_col<double> sk = s(range(0, k));
+
+		ASSERT_EQ( norm(sk, norms::L1_()), asum(sk) );
+		ASSERT_EQ( norm(sk, norms::L2_()), math::sqrt(sqsum(sk)) );
+		ASSERT_EQ( norm(sk, norms::Linf_()), amax(sk) );
+	}
+}
+
+SIMPLE_CASE( norms, colwise )
+{
+	const index_t n = 6;
+	dense_matrix<double> src(max_nrows, n);
+	fill_rand(src);
+
+	dense_row<double> rrow(n, zero());
+	dense_row<double> drow(n, zero());
+
+	for (unsigned k = 0; k < ntest_nrows; ++k)
+	{
+		index_t cl = test_nrows[k];
+		ref_block<double> s = src(range(0, cl), whole());
+
+		colwise_asum(s, rrow);
+		colwise_norm(s, drow, norms::L1_());
+		ASSERT_MAT_EQ(1, n, drow, rrow);
+
+		colwise_sqsum(s, rrow);
+		for (index_t j = 0; j < n; ++j) rrow[j] = math::sqrt(rrow[j]);
+		colwise_norm(s, drow, norms::L2_());
+		ASSERT_MAT_APPROX(1, n, drow, rrow, 1.0e-14);
+
+		colwise_amax(s, rrow);
+		colwise_norm(s, drow, norms::Linf_());
+		ASSERT_MAT_EQ(1, n, drow, rrow);
+	}
+}
+
+SIMPLE_CASE( norms, rowwise )
+{
+	const index_t n = 6;
+	dense_matrix<double> src(max_nrows, n);
+	fill_rand(src);
+
+	for (unsigned k = 0; k < ntest_nrows; ++k)
+	{
+		index_t cl = test_nrows[k];
+		ref_block<double> s = src(range(0, cl), whole());
+
+		dense_col<double> rcol(cl, zero());
+		dense_col<double> dcol(cl, zero());
+
+		rowwise_asum(s, rcol);
+		rowwise_norm(s, dcol, norms::L1_());
+		ASSERT_MAT_EQ(cl, 1, dcol, rcol);
+
+		rowwise_sqsum(s, rcol);
+		for (index_t i = 0; i < cl; ++i) rcol[i] = math::sqrt(rcol[i]);
+		rowwise_norm(s, dcol, norms::L2_());
+		ASSERT_MAT_APPROX(cl, 1, dcol, rcol, 1.0e-14);
+
+		rowwise_amax(s, rcol);
+		rowwise_norm(s, dcol, norms::Linf_());
+		ASSERT_MAT_EQ(cl, 1, dcol, rcol);
+	}
+}
+
+
+// min-max
 
 SIMPLE_CASE( minmax, full )
 {
@@ -85,6 +165,11 @@ SIMPLE_CASE( minmax, colwise )
 }
 
 
+BEGIN_TPACK( mat_norms )
+	ADD_SIMPLE_CASE( norms, full )
+	ADD_SIMPLE_CASE( norms, colwise )
+	ADD_SIMPLE_CASE( norms, rowwise )
+END_TPACK
 
 BEGIN_TPACK( mat_minmax )
 	ADD_SIMPLE_CASE( minmax, full )
@@ -93,6 +178,7 @@ END_TPACK
 
 
 BEGIN_MAIN_SUITE
+	ADD_TPACK( mat_norms )
 	ADD_TPACK( mat_minmax )
 END_MAIN_SUITE
 

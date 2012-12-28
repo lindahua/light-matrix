@@ -96,69 +96,6 @@ DEFINE_COLWISE_REDUCE_CASE_2( diff_sqsum )
 DEFINE_COLWISE_REDUCE_CASE_2( dot )
 
 
-SIMPLE_CASE( colwise_reduce, norms )
-{
-	const index_t n = 6;
-	dense_matrix<double> src(max_nrows, n);
-	fill_rand(src);
-
-	dense_row<double> rrow(n, zero());
-	dense_row<double> drow(n, zero());
-
-	for (unsigned k = 0; k < ntest_nrows; ++k)
-	{
-		index_t cl = test_nrows[k];
-		ref_block<double> s = src(range(0, cl), whole());
-
-		colwise_asum(s, rrow);
-		colwise_norm(s, drow, norms::L1_());
-		ASSERT_MAT_EQ(1, n, drow, rrow);
-
-		colwise_sqsum(s, rrow);
-		for (index_t j = 0; j < n; ++j) rrow[j] = math::sqrt(rrow[j]);
-		colwise_norm(s, drow, norms::L2_());
-		ASSERT_MAT_APPROX(1, n, drow, rrow, 1.0e-14);
-
-		colwise_amax(s, rrow);
-		colwise_norm(s, drow, norms::Linf_());
-		ASSERT_MAT_EQ(1, n, drow, rrow);
-	}
-}
-
-
-SIMPLE_CASE( colwise_reduce, diff_norms )
-{
-	const index_t n = 6;
-	dense_matrix<double> src1(max_nrows, n);
-	dense_matrix<double> src2(max_nrows, n);
-	fill_rand(src1);
-	fill_rand(src2);
-
-	dense_row<double> rrow(n, zero());
-	dense_row<double> drow(n, zero());
-
-	for (unsigned k = 0; k < ntest_nrows; ++k)
-	{
-		index_t cl = test_nrows[k];
-		ref_block<double> s1 = src1(range(0, cl), whole());
-		ref_block<double> s2 = src2(range(0, cl), whole());
-
-		colwise_diff_asum(s1, s2, rrow);
-		colwise_diff_norm(s1, s2, drow, norms::L1_());
-		ASSERT_MAT_EQ(1, n, drow, rrow);
-
-		colwise_diff_sqsum(s1, s2, rrow);
-		for (index_t j = 0; j < n; ++j) rrow[j] = math::sqrt(rrow[j]);
-		colwise_diff_norm(s1, s2, drow, norms::L2_());
-		ASSERT_MAT_APPROX(1, n, drow, rrow, 1.0e-14);
-
-		colwise_diff_amax(s1, s2, rrow);
-		colwise_diff_norm(s1, s2, drow, norms::Linf_());
-		ASSERT_MAT_EQ(1, n, drow, rrow);
-	}
-}
-
-
 BEGIN_TPACK( colwise_reduce )
 	ADD_SIMPLE_CASE( colwise_reduce, sum )
 	ADD_SIMPLE_CASE( colwise_reduce, mean )
@@ -176,9 +113,6 @@ BEGIN_TPACK( colwise_reduce )
 	ADD_SIMPLE_CASE( colwise_reduce, diff_sqsum )
 
 	ADD_SIMPLE_CASE( colwise_reduce, dot )
-
-	ADD_SIMPLE_CASE( colwise_reduce, norms )
-	ADD_SIMPLE_CASE( colwise_reduce, diff_norms )
 END_TPACK
 
 BEGIN_MAIN_SUITE

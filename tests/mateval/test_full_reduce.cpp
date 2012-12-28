@@ -250,44 +250,6 @@ SIMPLE_CASE( full_reduce, dot )
 }
 
 
-SIMPLE_CASE( full_reduce, norms )
-{
-	dense_col<double> s(max_len);
-	fill_rand(s);
-
-	for (index_t k = 0; k <= max_len; ++k)
-	{
-		ref_col<double> sk = s(range(0, k));
-
-		ASSERT_EQ( norm(sk, norms::L1_()), asum(sk) );
-		ASSERT_EQ( norm(sk, norms::L2_()), math::sqrt(sqsum(sk)) );
-		ASSERT_EQ( norm(sk, norms::Linf_()), amax(sk) );
-	}
-}
-
-
-SIMPLE_CASE( full_reduce, diff_norms )
-{
-	dense_col<double> s(max_len);
-	dense_col<double> s2(max_len);
-	fill_rand(s);
-	fill_rand(s2);
-
-	for (index_t k = 0; k <= max_len; ++k)
-	{
-		ref_col<double> sk = s(range(0, k));
-		ref_col<double> sk2 = s2(range(0, k));
-
-		ASSERT_EQ( diff_norm(sk, sk2, norms::L1_()), diff_asum(sk, sk2) );
-		ASSERT_EQ( diff_norm(sk, sk2, norms::L2_()), math::sqrt(diff_sqsum(sk, sk2)) );
-		ASSERT_EQ( diff_norm(sk, sk2, norms::Linf_()), diff_amax(sk, sk2) );
-	}
-}
-
-
-
-
-
 BEGIN_TPACK( full_reduce )
 	ADD_SIMPLE_CASE( full_reduce, sum )
 	ADD_SIMPLE_CASE( full_reduce, mean )
@@ -305,9 +267,6 @@ BEGIN_TPACK( full_reduce )
 	ADD_SIMPLE_CASE( full_reduce, diff_sqsum )
 
 	ADD_SIMPLE_CASE( full_reduce, dot )
-
-	ADD_SIMPLE_CASE( full_reduce, norms )
-	ADD_SIMPLE_CASE( full_reduce, diff_norms )
 END_TPACK
 
 

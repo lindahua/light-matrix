@@ -276,6 +276,7 @@ set(MATRIX_REDUC_HS_
     ${INC}/mateval/internal/mat_reduce_internal.h
     ${INC}/mateval/mat_fold.h
     ${INC}/mateval/mat_reduce.h
+    ${INC}/mateval/mat_enorms.h
     ${INC}/mateval/mat_minmax.h)   
     
 set(MATEVAL_HS
