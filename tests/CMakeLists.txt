@@ -257,6 +257,7 @@ set(MATRIX_EVAL_HS_
     ${INC}/mateval/common_kernels.h
     ${INC}/mateval/vec_accessors.h
     ${INC}/mateval/multicol_accessors.h
+    ${INC}/mateval/macc_policy.h
     ${INC}/mateval/ewise_eval.h)
     
 set(MAP_EXPR_HS_

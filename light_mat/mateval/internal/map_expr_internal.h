@@ -15,13 +15,6 @@
 #include <light_mat/mateval/fun_maps.h>
 
 
-namespace lmat
-{
-	template<typename U> struct linear_map_policy;
-	template<typename U> struct percol_map_policy;
-}
-
-
 namespace lmat { namespace internal {
 
 	/********************************************
@@ -390,148 +383,48 @@ namespace lmat { namespace internal {
 	};
 
 
-
 	/********************************************
 	 *
 	 *  Evaluation policy
 	 *
 	 ********************************************/
 
-	template<typename Mat>
-	struct prefers_linear
-	{
-		static const bool value = meta::supports_linear_index<Mat>::value;
-	};
-
-	template<typename Mat, typename T, typename Kind, bool IsLinear>
-	struct _prefers_simd
-	{
-		static const bool value = false;
-	};
-
-	template<typename Mat, typename Kind>
-	struct _prefers_simd<Mat, float, Kind, true>
-	{
-		static const int pw = math::simd_traits<float, Kind>::pack_width;
-		static const int mod_ = meta::nelems<Mat>::value % pw;
-
-		static const bool value = meta::is_continuous<Mat>::value && (mod_ == 0);
-	};
-
-	template<typename Mat, typename Kind>
-	struct _prefers_simd<Mat, double, Kind, true>
-	{
-		static const int pw = math::simd_traits<float, Kind>::pack_width;
-		static const int mod_ = meta::nelems<Mat>::value % pw;
-
-		static const bool value = meta::is_continuous<Mat>::value && (mod_ == 0);
-	};
-
-	template<typename Mat, typename Kind>
-	struct _prefers_simd<Mat, float, Kind, false>
-	{
-		static const int pw = math::simd_traits<float, Kind>::pack_width;
-		static const int mod_ = meta::nrows<Mat>::value % pw;
-
-		static const bool value = meta::is_percol_continuous<Mat>::value && (mod_ == 0);
-	};
-
-	template<typename Mat, typename Kind>
-	struct _prefers_simd<Mat, double, Kind, false>
-	{
-		static const int pw = math::simd_traits<float, Kind>::pack_width;
-		static const int mod_ = meta::nrows<Mat>::value % pw;
-
-		static const bool value = meta::is_percol_continuous<Mat>::value && (mod_ == 0);
-	};
-
-
-	template<typename T1, typename T2>
-	struct are_simd_compatible_types
-	{
-		static const bool value = false;
-	};
-
-	template<typename T>
-	struct are_simd_compatible_types<T, T> { static const bool value = true; };
-
-	template<typename T>
-	struct are_simd_compatible_types<mask_t<T>, T> { static const bool value = true; };
-
-	template<typename T>
-	struct are_simd_compatible_types<T, mask_t<T> > { static const bool value = true; };
-
-
-	template<typename Mat, typename T, typename Kind, bool IsLinear>
-	struct prefers_simd
-	{
-		typedef typename matrix_traits<Mat>::value_type VT;
-		static const bool value = are_simd_compatible_types<VT, T>::value
-				&& _prefers_simd<Mat, T, Kind, IsLinear>::value;
-	};
-
-
-	template<class S, class D>
-	struct preferred_map_policy
-	{
-		typedef typename meta::common_value_type<S, D>::type vtype;
-
-		static const bool prefer_linear =
-				prefers_linear<S>::value &&
-				prefers_linear<D>::value;
-
-		static const bool prefer_simd =
-				prefers_simd<S, vtype, default_simd_kind, prefer_linear>::value &&
-				prefers_simd<D, vtype, default_simd_kind, prefer_linear>::value;
-
-		typedef typename meta::if_c<prefer_simd,
-				atags::simd<default_simd_kind>,
-				atags::scalar >::type atag;
-
-		typedef typename meta::if_c<prefer_linear,
-				linear_map_policy<atag>,
-				percol_map_policy<atag> >::type type;
-
-	};
-
-
 	template<typename Arg, bool IsXpr>
-	struct _arg_prefers_linear
+	struct _arg_supp_linear
 	{
 		static const bool value = true;
 	};
 
 	template<typename Arg>
-	struct _arg_prefers_linear<Arg, true>
+	struct _arg_supp_linear<Arg, true>
 	{
-		static const bool value = prefers_linear<Arg>::value;
+		static const bool value = supports_linear_macc<Arg>::value;
 	};
 
-	template<typename Arg, bool IsXpr, typename Kind, bool IsLinear>
-	struct _arg_prefers_simd
+	template<typename Arg, bool IsXpr, typename T, typename Kind, bool IsLinear>
+	struct _arg_supp_simd
 	{
-		static const bool value = true;
+		static const bool value = are_simd_compatible_types<Arg, T>::value;
 	};
 
-	template<typename Arg, typename Kind, bool IsLinear>
-	struct _arg_prefers_simd<Arg, true, Kind, IsLinear>
+	template<typename Arg, typename T, typename Kind, bool IsLinear>
+	struct _arg_supp_simd<Arg, true, T, Kind, IsLinear>
 	{
-		typedef typename matrix_traits<Arg>::value_type T;
-		static const bool value = prefers_simd<Arg, T, Kind, IsLinear>::value;
+		static const bool value = supports_simd<Arg, T, Kind, IsLinear>::value;
 	};
 
 
 	template<typename Arg>
-	struct arg_prefers_linear
+	struct arg_supp_linear
 	{
-		static const bool value = _arg_prefers_linear<Arg, meta::is_mat_xpr<Arg>::value>::value;
+		static const bool value = _arg_supp_linear<Arg, meta::is_mat_xpr<Arg>::value>::value;
 	};
 
-	template<typename Arg, typename Kind, bool IsLinear>
-	struct arg_prefers_simd
+	template<typename Arg, typename T, typename Kind, bool IsLinear>
+	struct arg_supp_simd
 	{
 		static const bool value =
-				_arg_prefers_simd<Arg, meta::is_mat_xpr<Arg>::value, Kind, IsLinear>::value;
+				_arg_supp_simd<Arg, meta::is_mat_xpr<Arg>::value, T, Kind, IsLinear>::value;
 	};
 
 

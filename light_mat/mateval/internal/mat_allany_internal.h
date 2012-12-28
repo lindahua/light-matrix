@@ -9,7 +9,7 @@
 #ifndef LIGHTMAT_MAT_ALLANY_INTERNAL_H_
 #define LIGHTMAT_MAT_ALLANY_INTERNAL_H_
 
-#include <light_mat/mateval/mateval_fwd.h>
+#include <light_mat/mateval/macc_policy.h>
 #include <light_mat/math/sse_reduce.h>
 #ifdef LMAT_HAS_AVX
 #include <light_mat/math/avx_reduce.h>

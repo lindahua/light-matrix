@@ -55,17 +55,17 @@ namespace lmat { namespace internal {
 	template<class Folder, class TExpr>
 	struct full_reduc_policy
 	{
-		static_assert(prefers_linear<TExpr>::value,
+		static_assert(supports_linear_macc<TExpr>::value,
 				"TExpr should allow linear access.");
 
-		static const bool use_linear = prefers_linear<TExpr>::value;
+		static const bool use_linear = supports_linear_macc<TExpr>::value;
 
 		typedef typename matrix_traits<TExpr>::value_type vtype;
 		typedef default_simd_kind simd_kind;
 
 		static const bool use_simd =
 				folder_supports_simd<Folder>::value &&
-				prefers_simd<TExpr, vtype, simd_kind, use_linear>::value;
+				supports_simd<TExpr, vtype, simd_kind, use_linear>::value;
 
 		typedef typename meta::if_c<use_simd,
 				atags::simd<simd_kind>,
@@ -85,7 +85,7 @@ namespace lmat { namespace internal {
 		typedef default_simd_kind simd_kind;
 
 		static const bool use_simd = folder_supports_simd<Folder>::value &&
-			prefers_simd<TExpr, vtype, simd_kind, use_linear>::value;
+			supports_simd<TExpr, vtype, simd_kind, use_linear>::value;
 
 		typedef typename meta::if_c<use_simd,
 				atags::simd<simd_kind>,
@@ -105,7 +105,7 @@ namespace lmat { namespace internal {
 		typedef default_simd_kind simd_kind;
 
 		static const bool use_simd = folder_supports_simd<Folder>::value &&
-			prefers_simd<TExpr, vtype, simd_kind, use_linear>::value;
+			supports_simd<TExpr, vtype, simd_kind, use_linear>::value;
 
 		typedef typename meta::if_c<use_simd,
 				atags::simd<simd_kind>,

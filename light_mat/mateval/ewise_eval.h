@@ -10,6 +10,7 @@
 #define LIGHTMAT_EWISE_EVAL_H_
 
 #include <light_mat/mateval/common_kernels.h>
+#include <light_mat/mateval/macc_policy.h>
 #include "internal/ewise_eval_internal.h"
 
 namespace lmat

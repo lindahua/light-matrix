@@ -24,11 +24,11 @@ namespace lmat
 	template<typename T, class Mat>
 	inline bool all(const IEWiseMatrix<Mat, mask_t<T> >& mat, bool val=true)
 	{
-		static_assert(internal::prefers_linear<Mat>::value,
-				"mat should allow linear accessing");
+		static_assert(supports_linear_macc<Mat>::value,
+				"mat should support linear accessing");
 
 		typedef default_simd_kind kind;
-		const bool use_simd = internal::prefers_simd<Mat, T, kind, true>::value;
+		const bool use_simd = supports_simd<Mat, T, kind, true>::value;
 
 		typedef typename meta::if_c<use_simd, atags::simd<kind>, atags::scalar>::type atag;
 
@@ -50,7 +50,7 @@ namespace lmat
 	template<class Mat>
 	inline bool all(const IEWiseMatrix<Mat, bool>& mat, bool val=true)
 	{
-		static_assert(internal::prefers_linear<Mat>::value,
+		static_assert(supports_linear_macc<Mat>::value,
 				"mat should allow linear accessing");
 
 		typedef atags::scalar atag;
@@ -72,11 +72,11 @@ namespace lmat
 	template<typename T, class Mat>
 	inline bool any(const IEWiseMatrix<Mat, mask_t<T> >& mat, bool val=true)
 	{
-		static_assert(internal::prefers_linear<Mat>::value,
+		static_assert(supports_linear_macc<Mat>::value,
 				"mat should allow linear accessing");
 
 		typedef default_simd_kind kind;
-		const bool use_simd = internal::prefers_simd<Mat, T, kind, true>::value;
+		const bool use_simd = supports_simd<Mat, T, kind, true>::value;
 
 		typedef typename meta::if_c<use_simd, atags::simd<kind>, atags::scalar>::type atag;
 
@@ -97,7 +97,7 @@ namespace lmat
 	template<class Mat>
 	inline bool any(const IEWiseMatrix<Mat, bool>& mat, bool val=true)
 	{
-		static_assert(internal::prefers_linear<Mat>::value,
+		static_assert(supports_linear_macc<Mat>::value,
 				"mat should allow linear accessing");
 
 		typedef atags::scalar atag;

@@ -438,100 +438,90 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	namespace internal
+	template<typename FTag, typename Arg1>
+	struct supports_linear_macc<map_expr<FTag, Arg1> >
 	{
-		template<typename FTag, typename Arg1>
-		struct prefers_linear<map_expr<FTag, Arg1> >
-		{
-			static const bool value = arg_prefers_linear<Arg1>::value;
-		};
+		static const bool value = internal::arg_supp_linear<Arg1>::value;
+	};
 
-		template<typename FTag, typename Arg1, typename Arg2>
-		struct prefers_linear<map_expr<FTag, Arg1, Arg2> >
-		{
-			static const bool value =
-					arg_prefers_linear<Arg1>::value &&
-					arg_prefers_linear<Arg2>::value;
-		};
+	template<typename FTag, typename Arg1, typename Arg2>
+	struct supports_linear_macc<map_expr<FTag, Arg1, Arg2> >
+	{
+		static const bool value =
+				internal::arg_supp_linear<Arg1>::value &&
+				internal::arg_supp_linear<Arg2>::value;
+	};
 
-		template<typename FTag, typename Arg1, typename Arg2, typename Arg3>
-		struct prefers_linear<map_expr<FTag, Arg1, Arg2, Arg3> >
-		{
-			static const bool value =
-					arg_prefers_linear<Arg1>::value &&
-					arg_prefers_linear<Arg2>::value &&
-					arg_prefers_linear<Arg3>::value;
-		};
+	template<typename FTag, typename Arg1, typename Arg2, typename Arg3>
+	struct supports_linear_macc<map_expr<FTag, Arg1, Arg2, Arg3> >
+	{
+		static const bool value =
+				internal::arg_supp_linear<Arg1>::value &&
+				internal::arg_supp_linear<Arg2>::value &&
+				internal::arg_supp_linear<Arg3>::value;
+	};
 
 
-		template<typename FTag, typename Arg1,
-			typename T, typename Kind, bool IsLinear>
-		struct prefers_simd<map_expr<FTag, Arg1>, T, Kind, IsLinear>
-		{
-			static const bool value =
-					has_simd_support<FTag, T, Kind>::value &&
-					arg_prefers_simd<Arg1, Kind, IsLinear>::value;
-		};
+	template<typename FTag, typename Arg1,
+		typename T, typename Kind, bool IsLinear>
+	struct supports_simd<map_expr<FTag, Arg1>, T, Kind, IsLinear>
+	{
+		static const bool value =
+				has_simd_support<FTag, T, Kind>::value &&
+				internal::arg_supp_simd<Arg1, T, Kind, IsLinear>::value;
+	};
 
-		template<typename FTag, typename Arg1, typename Arg2,
-			typename T, typename Kind, bool IsLinear>
-		struct prefers_simd<map_expr<FTag, Arg1, Arg2>, T, Kind, IsLinear>
-		{
-			static const bool value =
-					has_simd_support<FTag, T, Kind>::value &&
-					arg_prefers_simd<Arg1, Kind, IsLinear>::value &&
-					arg_prefers_simd<Arg2, Kind, IsLinear>::value;
-		};
+	template<typename FTag, typename Arg1, typename Arg2,
+		typename T, typename Kind, bool IsLinear>
+	struct supports_simd<map_expr<FTag, Arg1, Arg2>, T, Kind, IsLinear>
+	{
+		static const bool value =
+				has_simd_support<FTag, T, Kind>::value &&
+				internal::arg_supp_simd<Arg1, T, Kind, IsLinear>::value &&
+				internal::arg_supp_simd<Arg2, T, Kind, IsLinear>::value;
+	};
 
-		template<typename FTag, typename Arg1, typename Arg2, typename Arg3,
-			typename T, typename Kind, bool IsLinear>
-		struct prefers_simd<map_expr<FTag, Arg1, Arg2, Arg3>, T, Kind, IsLinear>
-		{
-			static const bool value =
-					has_simd_support<FTag, T, Kind>::value &&
-					arg_prefers_simd<Arg1, Kind, IsLinear>::value &&
-					arg_prefers_simd<Arg2, Kind, IsLinear>::value &&
-					arg_prefers_simd<Arg3, Kind, IsLinear>::value;
-		};
+	template<typename FTag, typename Arg1, typename Arg2, typename Arg3,
+		typename T, typename Kind, bool IsLinear>
+	struct supports_simd<map_expr<FTag, Arg1, Arg2, Arg3>, T, Kind, IsLinear>
+	{
+		static const bool value =
+				has_simd_support<FTag, T, Kind>::value &&
+				internal::arg_supp_simd<Arg1, T, Kind, IsLinear>::value &&
+				internal::arg_supp_simd<Arg2, T, Kind, IsLinear>::value &&
+				internal::arg_supp_simd<Arg3, T, Kind, IsLinear>::value;
+	};
+
+
+
+	template<typename T, typename U, class Expr, class DMat>
+	LMAT_ENSURE_INLINE
+	inline void evaluate(const IEWiseMatrix<Expr, T>& expr, IRegularMatrix<DMat, T>& dmat, linear_macc<U>)
+	{
+		const Expr& s = expr.derived();
+		DMat& d = dmat.derived();
+
+		ewise(copy_kernel<T>(), U())(common_shape(s, d), in_(s), out_(d));
 	}
 
 
-	template<typename U>
-	struct linear_map_policy
+	template<typename T, typename U, class Expr, class DMat>
+	LMAT_ENSURE_INLINE
+	inline void evaluate(const IEWiseMatrix<Expr, T>& expr, IRegularMatrix<DMat, T>& dmat, percol_macc<U>)
 	{
-		template<typename T, class Expr, class DMat>
-		LMAT_ENSURE_INLINE
-		static void eval(const IEWiseMatrix<Expr, T>& expr, IRegularMatrix<DMat, T>& dmat)
-		{
-			const Expr& s = expr.derived();
-			DMat& d = dmat.derived();
+		const Expr& s = expr.derived();
+		DMat& d = dmat.derived();
 
-			ewise(copy_kernel<T>(), U())(common_shape(s, d), in_(s), out_(d));
-		}
-	};
-
-
-	template<typename U>
-	struct percol_map_policy
-	{
-		template<typename T, class Expr, class DMat>
-		LMAT_ENSURE_INLINE
-		static void eval(const IEWiseMatrix<Expr, T>& expr, IRegularMatrix<DMat, T>& dmat)
-		{
-			const Expr& s = expr.derived();
-			DMat& d = dmat.derived();
-
-			percol(ewise(copy_kernel<T>(), U()), common_shape(s, d), in_(s), out_(d));
-		}
-	};
+		percol(ewise(copy_kernel<T>(), U()), common_shape(s, d), in_(s), out_(d));
+	}
 
 
 	template<typename T, class SExpr, class DMat>
 	LMAT_ENSURE_INLINE
 	inline void evaluate_by_map(const IEWiseMatrix<SExpr, T>& sexpr, IRegularMatrix<DMat, T>& dmat)
 	{
-		typedef typename internal::preferred_map_policy<SExpr, DMat>::type policy_t;
-		policy_t::eval(sexpr, dmat.derived());
+		typedef typename preferred_macc_policy_2<SExpr, DMat>::type policy_t;
+		evaluate(sexpr, dmat, policy_t());
 	}
 
 

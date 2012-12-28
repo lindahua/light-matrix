@@ -235,34 +235,33 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	namespace internal
+	template<typename Arg, int N>
+	struct supports_linear_macc<repcol_expr<Arg, N> >
 	{
-		template<typename Arg, int N>
-		struct prefers_linear<repcol_expr<Arg, N> >
-		{
-			static const bool value = false;
-		};
+		static const bool value = false;
+	};
 
-		template<typename Arg, int M>
-		struct prefers_linear<reprow_expr<Arg, M> >
-		{
-			static const bool value = false;
-		};
+	template<typename Arg, int M>
+	struct supports_linear_macc<reprow_expr<Arg, M> >
+	{
+		static const bool value = false;
+	};
 
-		template<typename Arg, int N,
-			typename T, typename Kind, bool IsLinear>
-		struct prefers_simd<repcol_expr<Arg, N>, T, Kind, IsLinear>
-		{
-			static const bool value = arg_prefers_simd<Arg, Kind, IsLinear>::value;
-		};
+	template<typename Arg, int N,
+		typename T, typename Kind, bool IsLinear>
+	struct supports_simd<repcol_expr<Arg, N>, T, Kind, IsLinear>
+	{
+		static const bool value = supports_simd<Arg, T, Kind, true>::value;
+	};
 
-		template<typename Arg, int M,
-			typename T, typename Kind, bool IsLinear>
-		struct prefers_simd<reprow_expr<Arg, M>, T, Kind, IsLinear>
-		{
-			static const bool value = arg_prefers_simd<Arg, Kind, IsLinear>::value;
-		};
-	}
+	template<typename Arg, int M,
+		typename T, typename Kind, bool IsLinear>
+	struct supports_simd<reprow_expr<Arg, M>, T, Kind, IsLinear>
+	{
+		static const bool value =
+				internal::are_simd_compatible_types<typename matrix_traits<Arg>::value_type, T>::value;
+	};
+
 
 	template<typename Arg, int N, class DMat>
 	inline void evaluate(const repcol_expr<Arg, N>& sexpr,

@@ -207,6 +207,12 @@ MN_CASE( mat_cond, cond_b )
 	mat_t Y(m, n); fill_ran(Y);
 	double cv = X[0] + Y[0];
 
+	typedef map_expr<cond_, bmat_t, mat_t, mat_t> expr_t;
+	typedef preferred_macc_policy<expr_t> pmap;
+
+	ASSERT_TRUE( pmap::prefer_linear );
+	ASSERT_FALSE( pmap::prefer_simd );
+
 	mat_t R1 = cond(C, X, Y);
 	mat_t R1_r(m, n);
 	for (index_t i = 0; i < m * n; ++i) R1_r[i] = C[i] ? X[i] : Y[i];
@@ -225,34 +231,44 @@ MN_CASE( mat_cond, cond_b )
 
 MN_CASE( mat_cond, cond_m )
 {
-	typedef dense_matrix<bool, M, N> bmat_t;
-	typedef dense_matrix<fmsk, M, N> mmat_t;
 	typedef dense_matrix<double, M, N> mat_t;
 
 	const index_t m = M == 0 ? DM : M; \
 	const index_t n = N == 0 ? DN : N;
 
-	bmat_t C(m, n);
-	for (index_t i = 0; i < m * n; ++i) C[i] = bool(i % 2);
-	mmat_t Cm = to_f64m(C);
+	mat_t A(m, n);
+	mat_t B(m, n);
+	for (index_t i = 0; i < m * n; ++i)
+	{
+		A[i] = double(i + 1);
+		B[i] = A[i] + double(i % 2);
+	}
 
 	mat_t X(m, n); fill_ran(X);
 	mat_t Y(m, n); fill_ran(Y);
 	double cv = X[0] + Y[0];
 
-	mat_t R1 = cond(Cm, X, Y);
+	typedef map_expr<cond_, map_expr<eq_, mat_t, mat_t>, mat_t, mat_t> expr_t;
+	typedef preferred_macc_policy<expr_t> pmap;
+
+	const int pw = math::simd_traits<double, default_simd_kind>::pack_width;
+	ASSERT_TRUE( pmap::prefer_linear );
+	bool use_simd = ((M * N) % pw == 0);
+	ASSERT_EQ( pmap::prefer_simd, use_simd );
+
+	mat_t R1 = cond(A == B, X, Y);
 	mat_t R1_r(m, n);
-	for (index_t i = 0; i < m * n; ++i) R1_r[i] = C[i] ? X[i] : Y[i];
+	for (index_t i = 0; i < m * n; ++i) R1_r[i] = A[i] == B[i] ? X[i] : Y[i];
 	ASSERT_TRUE( my_is_equal(R1, R1_r) );
 
-	mat_t R2 = cond(Cm, X, cv);
+	mat_t R2 = cond(A == B, X, cv);
 	mat_t R2_r(m, n);
-	for (index_t i = 0; i < m * n; ++i) R2_r[i] = C[i] ? X[i] : cv;
+	for (index_t i = 0; i < m * n; ++i) R2_r[i] = A[i] == B[i] ? X[i] : cv;
 	ASSERT_TRUE( my_is_equal(R2, R2_r) );
 
-	mat_t R3 = cond(Cm, cv, Y);
+	mat_t R3 = cond(A == B, cv, Y);
 	mat_t R3_r(m, n);
-	for (index_t i = 0; i < m * n; ++i) R3_r[i] = C[i] ? cv : Y[i];
+	for (index_t i = 0; i < m * n; ++i) R3_r[i] = A[i] == B[i] ? cv : Y[i];
 	ASSERT_TRUE( my_is_equal(R3, R3_r) );
 }
 

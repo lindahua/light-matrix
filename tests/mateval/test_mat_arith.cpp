@@ -43,8 +43,6 @@ bool my_is_equal(const A& a, const B& b)
 	}
 }
 
-
-
 MN_CASE( mat_arith, add )
 {
 	typedef dense_matrix<double, M, N> mat_t;
