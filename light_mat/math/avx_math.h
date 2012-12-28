@@ -126,6 +126,7 @@ namespace lmat
 	LMAT_DEFINE_HAS_AVX_SUPPORT( log_ )
 	LMAT_DEFINE_HAS_AVX_SUPPORT( log10_ )
 	LMAT_DEFINE_HAS_AVX_SUPPORT( xlogy_ )
+	LMAT_DEFINE_HAS_AVX_SUPPORT( xlogx_ )
 #endif
 
 #ifdef LMAT_HAS_EXTERN_SSE_TRI
@@ -217,7 +218,18 @@ namespace lmat { namespace math {
 		return cond(a > z, log(b), z) * a;
 	}
 
-	struct has_avx_xlogy { static const bool value = true; };
+	LMAT_ENSURE_INLINE
+	inline avx_f32pk xlogx(const avx_f32pk& a)
+	{
+		return xlogy(a, a);
+	}
+
+	LMAT_ENSURE_INLINE
+	inline avx_f64pk xlogx(const avx_f64pk& a)
+	{
+		return xlogy(a, a);
+	}
+
 
 #elif (defined(LMAT_ENABLE_SIMD_EMULATE))
 	LMAT_ACTIVATE_AVX_MATH_EMULATE_1( exp )

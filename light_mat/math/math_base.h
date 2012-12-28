@@ -142,6 +142,16 @@ namespace lmat { namespace math {
 		return x > 0 ? x * log(y) : 0.0;
 	}
 
+	LMAT_ENSURE_INLINE inline float xlogx(float x)
+	{
+		return x > 0 ? x * log(x) : 0.f;
+	}
+
+	LMAT_ENSURE_INLINE inline double xlogx(double x)
+	{
+		return x > 0 ? x * log(x) : 0.0;
+	}
+
 
 	/********************************************
 	 *

@@ -188,6 +188,7 @@ namespace lmat
 	LMAT_DEFINE_HAS_SSE_SUPPORT( log_ )
 	LMAT_DEFINE_HAS_SSE_SUPPORT( log10_ )
 	LMAT_DEFINE_HAS_SSE_SUPPORT( xlogy_ )
+	LMAT_DEFINE_HAS_SSE_SUPPORT( xlogx_ )
 #endif
 
 #ifdef LMAT_HAS_EXTERN_SSE_TRI
@@ -279,7 +280,17 @@ namespace lmat { namespace math {
 		return cond(a > z, log(b), z) * a;
 	}
 
-	struct has_sse_xlogy { static const bool value = true; };
+	LMAT_ENSURE_INLINE
+	inline sse_f32pk xlogx(const sse_f32pk& a)
+	{
+		return xlogy(a, a);
+	}
+
+	LMAT_ENSURE_INLINE
+	inline sse_f64pk xlogx(const sse_f64pk& a)
+	{
+		return xlogy(a, a);
+	}
 
 
 #elif (defined(LMAT_ENABLE_SIMD_EMULATE))

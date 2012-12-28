@@ -170,6 +170,8 @@ TEST_UNARY_EMATH(ceil, std::ceil, -5.0, 5.0, 1.0e-16)
 TEST_UNARY_EMATH(exp, std::exp, -1.0, 3.0, 1.0e-14)
 TEST_UNARY_EMATH(log, std::log, 0.5, 10.0, 1.0e-14)
 TEST_UNARY_EMATH(log10, std::log10, 0.5, 20.0, 1.0e-14)
+TEST_UNARY_EMATH(xlogx, math::xlogx, -1.0, 3.0, 1.0e-14)
+TEST_BINARY_EMATH(xlogy, math::xlogy, -1.0, 3.0, 1.0, 4.0, 1.0e-14)
 
 TEST_UNARY_EMATH(sin, std::sin, -3.0, 3.0, 1.0e-14)
 TEST_UNARY_EMATH(cos, std::cos, -3.0, 3.0, 1.0e-14)
@@ -225,6 +227,8 @@ BEGIN_MAIN_SUITE
 	ADD_TPACK( mat_exp )
 	ADD_TPACK( mat_log )
 	ADD_TPACK( mat_log10 )
+	ADD_TPACK( mat_xlogy )
+	ADD_TPACK( mat_xlogx )
 
 	ADD_TPACK( mat_sin )
 	ADD_TPACK( mat_cos )

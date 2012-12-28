@@ -223,6 +223,7 @@ namespace lmat { namespace math {
 	LMAT_DEFINE_MATH_FUNCTOR_1( log )
 	LMAT_DEFINE_MATH_FUNCTOR_1( log10 )
 	LMAT_DEFINE_MATH_FUNCTOR_2( xlogy )
+	LMAT_DEFINE_MATH_FUNCTOR_1( xlogx )
 
 	// trigonometry
 
