@@ -16,6 +16,7 @@
 #include <light_mat/mateval/ewise_eval.h>
 #include "internal/mat_fold_internal.h"
 
+#include <utility>
 
 namespace lmat
 {
@@ -45,22 +46,33 @@ namespace lmat
 		typedef T value_type;
 
 		LMAT_ENSURE_INLINE
-		void fold(T& a, const T& b) const { a += b; }
+		T init(const T& x) const { return x; }
+
+		template<typename Kind>
+		LMAT_ENSURE_INLINE
+		math::simd_pack<T, Kind> init(const math::simd_pack<T, Kind>& x) const
+		{
+			return x;
+		}
+
+		LMAT_ENSURE_INLINE
+		void fold(T& a, const T& x) const { a += x; }
 
 		template<typename Kind>
 		LMAT_ENSURE_INLINE
 		void fold(math::simd_pack<T, Kind>& a,
-				const math::simd_pack<T, Kind>& b) const { a += b; }
+				const math::simd_pack<T, Kind>& x) const { a += x; }
 
 		template<typename Kind>
 		LMAT_ENSURE_INLINE
-		T reduce(const math::simd_pack<T, Kind>& p) const { return math::sum(p); }
+		T reduce(const math::simd_pack<T, Kind>& a) const { return math::sum(a); }
 	};
 
 	template<typename T>
 	struct folder_supports_simd<sum_folder<T> >
 	{
-		static const bool value = true;
+		static const bool value =
+				std::is_same<T, float>::value || std::is_same<T, double>::value;
 	};
 
 	template<typename T, typename Kind>
@@ -77,22 +89,33 @@ namespace lmat
 		typedef T value_type;
 
 		LMAT_ENSURE_INLINE
-		void fold(T& a, const T& b) const { a = math::max(a, b); }
+		T init(const T& x) const { return x; }
+
+		template<typename Kind>
+		LMAT_ENSURE_INLINE
+		math::simd_pack<T, Kind> init(const math::simd_pack<T, Kind>& x) const
+		{
+			return x;
+		}
+
+		LMAT_ENSURE_INLINE
+		void fold(T& a, const T& x) const { a = math::max(a, x); }
 
 		template<typename Kind>
 		LMAT_ENSURE_INLINE
 		void fold(math::simd_pack<T, Kind>& a,
-				const math::simd_pack<T, Kind>& b) const { a = math::max(a, b); }
+				const math::simd_pack<T, Kind>& x) const { a = math::max(a, x); }
 
 		template<typename Kind>
 		LMAT_ENSURE_INLINE
-		T reduce(const math::simd_pack<T, Kind>& p) const { return math::maximum(p); }
+		T reduce(const math::simd_pack<T, Kind>& a) const { return math::maximum(a); }
 	};
 
 	template<typename T>
 	struct folder_supports_simd<maximum_folder<T> >
 	{
-		static const bool value = true;
+		static const bool value =
+				std::is_same<T, float>::value || std::is_same<T, double>::value;
 	};
 
 	template<typename T, typename Kind>
@@ -109,22 +132,33 @@ namespace lmat
 		typedef T value_type;
 
 		LMAT_ENSURE_INLINE
-		void fold(T& a, const T& b) const { a = math::min(a, b); }
+		T init(const T& x) const { return x; }
+
+		template<typename Kind>
+		LMAT_ENSURE_INLINE
+		math::simd_pack<T, Kind> init(const math::simd_pack<T, Kind>& x) const
+		{
+			return x;
+		}
+
+		LMAT_ENSURE_INLINE
+		void fold(T& a, const T& x) const { a = math::min(a, x); }
 
 		template<typename Kind>
 		LMAT_ENSURE_INLINE
 		void fold(math::simd_pack<T, Kind>& a,
-				const math::simd_pack<T, Kind>& b) const { a = math::min(a, b); }
+				const math::simd_pack<T, Kind>& x) const { a = math::min(a, x); }
 
 		template<typename Kind>
 		LMAT_ENSURE_INLINE
-		T reduce(const math::simd_pack<T, Kind>& p) const { return math::minimum(p); }
+		T reduce(const math::simd_pack<T, Kind>& a) const { return math::minimum(a); }
 	};
 
 	template<typename T>
 	struct folder_supports_simd<minimum_folder<T> >
 	{
-		static const bool value = true;
+		static const bool value =
+				std::is_same<T, float>::value || std::is_same<T, double>::value;
 	};
 
 	template<typename T, typename Kind>
@@ -132,7 +166,6 @@ namespace lmat
 	{
 		typedef math::simd_pack<T, Kind> type;
 	};
-
 
 
 	/********************************************
@@ -186,50 +219,6 @@ namespace lmat
 	};
 
 
-	template<class Folder, class TermFun, typename U>
-	class vecfoldf_kernel
-	{
-	public:
-		typedef typename meta::fun_value_type<Folder>::type value_type;
-
-		LMAT_ENSURE_INLINE
-		vecfoldf_kernel(const Folder& folder, const TermFun& termf)
-		: m_folder(folder), m_termfun(termf) { }
-
-		template<int N, typename... Accessors>
-		LMAT_ENSURE_INLINE
-		value_type apply(dimension<N> dim, const Accessors&... accs)
-		{
-			return internal::foldf_impl(dim, U(), m_folder, m_termfun, accs...);
-		}
-
-		template<typename... Accessors>
-		LMAT_ENSURE_INLINE
-		value_type apply(index_t len, const Accessors&... accs)
-		{
-			return apply(dimension<0>(len), accs...);
-		}
-
-		template<int N, typename... Wraps>
-		LMAT_ENSURE_INLINE
-		value_type operator() (dimension<N> dim, const Wraps&... wraps)
-		{
-			return apply(dim, make_vec_accessor(U(), wraps)...);
-		}
-
-		template<int N, typename... Wraps>
-		LMAT_ENSURE_INLINE
-		value_type operator() (index_t len, const Wraps&... wraps)
-		{
-			return apply(dimension<0>(len), make_vec_accessor(U(), wraps)...);
-		}
-
-	private:
-		Folder m_folder;
-		TermFun m_termfun;
-	};
-
-
 	/********************************************
 	 *
 	 *  convenient function
@@ -248,20 +237,6 @@ namespace lmat
 	inline vecfold_kernel<Folder, default_access_unit_t> fold(const Folder& folder)
 	{
 		return vecfold_kernel<Folder, default_access_unit_t>(folder);
-	}
-
-	template<class Folder, class TermFun, typename U>
-	LMAT_ENSURE_INLINE
-	inline vecfoldf_kernel<Folder, TermFun, U> foldf(const Folder& folder, const TermFun& tfun, U)
-	{
-		return vecfoldf_kernel<Folder, TermFun, U>(folder, tfun);
-	}
-
-	template<class Folder, class TermFun>
-	LMAT_ENSURE_INLINE
-	inline vecfoldf_kernel<Folder, TermFun, default_access_unit_t> foldf(const Folder& folder, const TermFun& tfun)
-	{
-		return vecfoldf_kernel<Folder, TermFun, default_access_unit_t>(folder, tfun);
 	}
 
 
