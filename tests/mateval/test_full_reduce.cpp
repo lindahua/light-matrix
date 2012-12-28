@@ -14,6 +14,8 @@
 using namespace lmat;
 using namespace lmat::test;
 
+typedef atags::simd<default_simd_kind> simd_tag;
+
 inline double randunif()
 {
 	double u = (double)std::rand() / double(RAND_MAX);
@@ -34,20 +36,52 @@ void fill_rand(IRegularMatrix<Mat, T>& mat)
 
 const index_t max_len = 48;
 
-SIMPLE_CASE( full_reduce, sum )
-{
-	dense_col<double> s(max_len);
-	fill_rand(s);
+#define DEF_FULL_REDUC_CASE(Name, UpdateExpr, initk, emptyval, tol ) \
+		SIMPLE_CASE( full_reduce, Name ) { \
+			dense_col<double> s(max_len); \
+			fill_rand(s); \
+			for (index_t k = initk; k <= max_len; ++k) { \
+				auto sk = s(range(0, k)); \
+				double r0 = emptyval; \
+				for (index_t i = 0; i < k; ++i) UpdateExpr; \
+				double r = Name(sk); \
+				ASSERT_APPROX(r, r0, tol); \
+				double r1 = Name(sk, linear_macc<atags::scalar>()); \
+				ASSERT_APPROX(r1, r0, tol); \
+				double r2 = Name(sk, linear_macc<simd_tag>()); \
+				ASSERT_APPROX(r2, r0, tol); \
+				double r3 = Name(sk, percol_macc<atags::scalar>()); \
+				ASSERT_APPROX(r3, r0, tol); \
+				double r4 = Name(sk, percol_macc<simd_tag>()); \
+				ASSERT_APPROX(r4, r0, tol); } }
 
-	for (index_t k = 0; k <= max_len; ++k)
-	{
-		double r0 = 0;
-		for (index_t i = 0; i < k; ++i) r0 += s[i];
+#define DEF_FULL_REDUC_CASE_2(Name, UpdateExpr, initk, emptyval, tol ) \
+		SIMPLE_CASE( full_reduce, Name ) { \
+			dense_col<double> s1(max_len); \
+			dense_col<double> s2(max_len); \
+			fill_rand(s1); \
+			fill_rand(s2); \
+			for (index_t k = initk; k <= max_len; ++k) { \
+				auto sk1 = s1(range(0, k)); \
+				auto sk2 = s2(range(0, k)); \
+				double r0 = emptyval; \
+				for (index_t i = 0; i < k; ++i) UpdateExpr; \
+				double r = Name(sk1, sk2); \
+				ASSERT_APPROX(r, r0, tol); \
+				double r1 = Name(sk1, sk2, linear_macc<atags::scalar>()); \
+				ASSERT_APPROX(r1, r0, tol); \
+				double r2 = Name(sk1, sk2, linear_macc<simd_tag>()); \
+				ASSERT_APPROX(r2, r0, tol); \
+				double r3 = Name(sk1, sk2, percol_macc<atags::scalar>()); \
+				ASSERT_APPROX(r3, r0, tol); \
+				double r4 = Name(sk1, sk2, percol_macc<simd_tag>()); \
+				ASSERT_APPROX(r4, r0, tol); } }
 
-		double r = sum(s(range(0, k)));
-		ASSERT_APPROX(r, r0, 1.0e-12);
-	}
-}
+
+
+DEF_FULL_REDUC_CASE( sum, r0 += s[i], 0, 0.0, 1.0e-12 )
+DEF_FULL_REDUC_CASE( maximum, r0 = math::max(r0, s[i]), 1, -1000.0, 1.0e-16 )
+DEF_FULL_REDUC_CASE( minimum, r0 = math::min(r0, s[i]), 1,  1000.0, 1.0e-16 )
 
 SIMPLE_CASE( full_reduce, mean )
 {
@@ -56,215 +90,123 @@ SIMPLE_CASE( full_reduce, mean )
 
 	for (index_t k = 1; k <= max_len; ++k)
 	{
+		auto sk = s(range(0, k));
+
 		double r0 = 0;
 		for (index_t i = 0; i < k; ++i) r0 += s[i];
 		r0 /= k;
 
-		double r = mean(s(range(0, k)));
+		double r = mean(sk);
+		ASSERT_APPROX(r, r0, 1.0e-12);
+
+		r = mean(sk, linear_macc<atags::scalar>());
+		ASSERT_APPROX(r, r0, 1.0e-12);
+
+		r = mean(sk, linear_macc<simd_tag>());
+		ASSERT_APPROX(r, r0, 1.0e-12);
+
+		r = mean(sk, percol_macc<atags::scalar>());
+		ASSERT_APPROX(r, r0, 1.0e-12);
+
+		r = mean(sk, percol_macc<simd_tag>());
 		ASSERT_APPROX(r, r0, 1.0e-12);
 	}
 }
 
 
-SIMPLE_CASE( full_reduce, maximum )
-{
-	dense_col<double> s(max_len);
-	fill_rand(s);
-
-	for (index_t k = 1; k <= max_len; ++k)
-	{
-		double r0 = - std::numeric_limits<double>::infinity();
-		for (index_t i = 0; i < k; ++i) r0 = math::max(r0, s[i]);
-
-		double r = maximum(s(range(0, k)));
-		ASSERT_EQ(r, r0);
-	}
-}
-
-SIMPLE_CASE( full_reduce, minimum )
-{
-	dense_col<double> s(max_len);
-	fill_rand(s);
-
-	for (index_t k = 1; k <= max_len; ++k)
-	{
-		double r0 = std::numeric_limits<double>::infinity();
-		for (index_t i = 0; i < k; ++i) r0 = math::min(r0, s[i]);
-
-		double r = minimum(s(range(0, k)));
-		ASSERT_EQ(r, r0);
-	}
-}
-
-
-SIMPLE_CASE( full_reduce, asum )
-{
-	dense_col<double> s(max_len);
-	fill_rand(s);
-
-	for (index_t k = 0; k <= max_len; ++k)
-	{
-		double r0 = 0;
-		for (index_t i = 0; i < k; ++i) r0 += math::abs(s[i]);
-
-		double r = asum(s(range(0, k)));
-		ASSERT_APPROX(r, r0, 1.0e-12);
-	}
-}
+DEF_FULL_REDUC_CASE( asum, r0 += math::abs(s[i]), 0, 0.0, 1.0e-12 )
+DEF_FULL_REDUC_CASE( amax, r0 = math::max(r0, math::abs(s[i])), 0, 0.0, 1.0e-16 )
+DEF_FULL_REDUC_CASE( sqsum, r0 += math::sqr(s[i]), 0, 0.0, 1.0e-12 )
 
 SIMPLE_CASE( full_reduce, amean )
 {
 	dense_col<double> s(max_len);
 	fill_rand(s);
 
-	for (index_t k = 0; k <= max_len; ++k)
+	for (index_t k = 1; k <= max_len; ++k)
 	{
+		auto sk = s(range(0, k));
+
 		double r0 = 0;
 		for (index_t i = 0; i < k; ++i) r0 += math::abs(s[i]);
 		r0 /= k;
 
-		double r = amean(s(range(0, k)));
+		double r = amean(sk);
+		ASSERT_APPROX(r, r0, 1.0e-12);
+
+		r = amean(sk, linear_macc<atags::scalar>());
+		ASSERT_APPROX(r, r0, 1.0e-12);
+
+		r = amean(sk, linear_macc<simd_tag>());
+		ASSERT_APPROX(r, r0, 1.0e-12);
+
+		r = amean(sk, percol_macc<atags::scalar>());
+		ASSERT_APPROX(r, r0, 1.0e-12);
+
+		r = amean(sk, percol_macc<simd_tag>());
 		ASSERT_APPROX(r, r0, 1.0e-12);
 	}
 }
 
 
-SIMPLE_CASE( full_reduce, amax )
-{
-	dense_col<double> s(max_len);
-	fill_rand(s);
-
-	for (index_t k = 0; k <= max_len; ++k)
-	{
-		double r0 = 0;
-		for (index_t i = 0; i < k; ++i)
-			r0 = math::max(r0, math::abs(s[i]));
-
-		double r = amax(s(range(0, k)));
-		ASSERT_APPROX(r, r0, 1.0e-12);
-	}
-}
-
-SIMPLE_CASE( full_reduce, sqsum )
-{
-	dense_col<double> s(max_len);
-	fill_rand(s);
-
-	for (index_t k = 0; k <= max_len; ++k)
-	{
-		double r0 = 0;
-		for (index_t i = 0; i < k; ++i) r0 += math::sqr(s[i]);
-
-		double r = sqsum(s(range(0, k)));
-		ASSERT_APPROX(r, r0, 1.0e-12);
-	}
-}
-
-
-SIMPLE_CASE( full_reduce, diff_asum )
-{
-	dense_col<double> s(max_len);
-	dense_col<double> s2(max_len);
-	fill_rand(s);
-	fill_rand(s2);
-
-	for (index_t k = 0; k <= max_len; ++k)
-	{
-		double r0 = 0;
-		for (index_t i = 0; i < k; ++i) r0 += math::abs(s[i] - s2[i]);
-
-		double r = diff_asum(s(range(0, k)), s2(range(0, k)));
-		ASSERT_APPROX(r, r0, 1.0e-12);
-	}
-}
+DEF_FULL_REDUC_CASE_2( diff_asum, r0 += math::abs(sk1[i] - sk2[i]), 0, 0.0, 1.0e-12 )
+DEF_FULL_REDUC_CASE_2( diff_amax, r0 = math::max(r0, math::abs(sk1[i] - sk2[i])), 0, 0.0, 1.0e-16 )
+DEF_FULL_REDUC_CASE_2( diff_sqsum, r0 += math::sqr(sk1[i] - sk2[i]), 0, 0.0, 1.0e-12 )
 
 SIMPLE_CASE( full_reduce, diff_amean )
 {
-	dense_col<double> s(max_len);
+	dense_col<double> s1(max_len);
 	dense_col<double> s2(max_len);
-	fill_rand(s);
+	fill_rand(s1);
 	fill_rand(s2);
+
+	double tol = 1.0e-12;
 
 	for (index_t k = 1; k <= max_len; ++k)
 	{
+		auto sk1 = s1(range(0, k));
+		auto sk2 = s2(range(0, k));
+
 		double r0 = 0;
-		for (index_t i = 0; i < k; ++i) r0 += math::abs(s[i] - s2[i]);
+		for (index_t i = 0; i < k; ++i) r0 += math::abs(sk1[i] - sk2[i]);
 		r0 /= k;
 
-		double r = diff_amean(s(range(0, k)), s2(range(0, k)));
-		ASSERT_APPROX(r, r0, 1.0e-12);
-	}
-}
+		double r = diff_amean(sk1, sk2);
+		ASSERT_APPROX(r, r0, tol);
 
-SIMPLE_CASE( full_reduce, diff_amax )
-{
-	dense_col<double> s(max_len);
-	dense_col<double> s2(max_len);
-	fill_rand(s);
-	fill_rand(s2);
+		r = diff_amean(sk1, sk2, linear_macc<atags::scalar>());
+		ASSERT_APPROX(r, r0, tol);
 
-	for (index_t k = 0; k <= max_len; ++k)
-	{
-		double r0 = 0;
-		for (index_t i = 0; i < k; ++i)
-			r0 = math::max(r0, math::abs(s[i] - s2[i]));
+		r = diff_amean(sk1, sk2, linear_macc<simd_tag>());
+		ASSERT_APPROX(r, r0, tol);
 
-		double r = diff_amax(s(range(0, k)), s2(range(0, k)));
-		ASSERT_APPROX(r, r0, 1.0e-12);
-	}
-}
+		r = diff_amean(sk1, sk2, percol_macc<atags::scalar>());
+		ASSERT_APPROX(r, r0, tol);
 
-SIMPLE_CASE( full_reduce, diff_sqsum )
-{
-	dense_col<double> s(max_len);
-	dense_col<double> s2(max_len);
-	fill_rand(s);
-	fill_rand(s2);
-
-	for (index_t k = 0; k <= max_len; ++k)
-	{
-		double r0 = 0;
-		for (index_t i = 0; i < k; ++i) r0 += math::sqr(s[i] - s2[i]);
-
-		double r = diff_sqsum(s(range(0, k)), s2(range(0, k)));
-		ASSERT_APPROX(r, r0, 1.0e-12);
+		r = diff_amean(sk1, sk2, percol_macc<simd_tag>());
+		ASSERT_APPROX(r, r0, tol);
 	}
 }
 
 
-SIMPLE_CASE( full_reduce, dot )
-{
-	dense_col<double> s(max_len);
-	dense_col<double> s2(max_len);
-	fill_rand(s);
-	fill_rand(s2);
-
-	for (index_t k = 0; k <= max_len; ++k)
-	{
-		double r0 = 0;
-		for (index_t i = 0; i < k; ++i) r0 += s[i] * s2[i];
-
-		double r = dot(s(range(0, k)), s2(range(0, k)));
-		ASSERT_APPROX(r, r0, 1.0e-12);
-	}
-}
+DEF_FULL_REDUC_CASE_2( dot, r0 += sk1[i] * sk2[i], 0, 0.0, 1.0e-12 )
 
 
 BEGIN_TPACK( full_reduce )
 	ADD_SIMPLE_CASE( full_reduce, sum )
-	ADD_SIMPLE_CASE( full_reduce, mean )
 	ADD_SIMPLE_CASE( full_reduce, maximum )
 	ADD_SIMPLE_CASE( full_reduce, minimum )
+	ADD_SIMPLE_CASE( full_reduce, mean )
 
 	ADD_SIMPLE_CASE( full_reduce, asum )
-	ADD_SIMPLE_CASE( full_reduce, amean )
 	ADD_SIMPLE_CASE( full_reduce, amax )
 	ADD_SIMPLE_CASE( full_reduce, sqsum )
+	ADD_SIMPLE_CASE( full_reduce, amean )
 
 	ADD_SIMPLE_CASE( full_reduce, diff_asum )
-	ADD_SIMPLE_CASE( full_reduce, diff_amean )
 	ADD_SIMPLE_CASE( full_reduce, diff_amax )
 	ADD_SIMPLE_CASE( full_reduce, diff_sqsum )
+	ADD_SIMPLE_CASE( full_reduce, diff_amean )
 
 	ADD_SIMPLE_CASE( full_reduce, dot )
 END_TPACK

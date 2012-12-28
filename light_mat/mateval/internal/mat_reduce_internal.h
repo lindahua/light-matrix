@@ -55,9 +55,6 @@ namespace lmat { namespace internal {
 	template<class Folder, class TExpr>
 	struct full_reduc_policy
 	{
-		static_assert(supports_linear_macc<TExpr>::value,
-				"TExpr should allow linear access.");
-
 		static const bool use_linear = supports_linear_macc<TExpr>::value;
 
 		typedef typename matrix_traits<TExpr>::value_type vtype;
@@ -70,6 +67,10 @@ namespace lmat { namespace internal {
 		typedef typename meta::if_c<use_simd,
 				atags::simd<simd_kind>,
 				atags::scalar>::type atag;
+
+		typedef typename meta::if_c<use_linear,
+				linear_macc<atag>,
+				percol_macc<atag> >::type type;
 	};
 
 
@@ -167,12 +168,55 @@ namespace lmat { namespace internal {
 	};
 
 
-
 	/********************************************
 	 *
-	 *  colwise reduction
+	 *  full reduction implementation
 	 *
 	 ********************************************/
+
+	template<int M, int N, class Folder, class A, typename U>
+	LMAT_ENSURE_INLINE
+	inline typename Folder::value_type
+	_full_reduce(const matrix_shape<M, N>& shape, const Folder& folder,
+			const A& a, linear_macc<U>)
+	{
+		dimension<meta::nelems<A>::value> dim = a.nelems();
+		return fold_impl( dim, U(), folder, make_vec_accessor(U(), in_(a)) );
+	}
+
+	template<int M, int N, class Folder, class A, typename U>
+	inline typename Folder::value_type
+	_full_reduce(const matrix_shape<M, N>& shape, const Folder& folder,
+			const A& a, percol_macc<U>)
+	{
+		typedef typename Folder::value_type T;
+
+		dimension<meta::nrows<A>::value> col_dim = a.nrows();
+		auto rd = make_multicol_accessor(U(), in_(a));
+
+		T r = fold_impl(col_dim, U(), folder, rd.col(0));
+
+		const index_t n = shape.ncolumns();
+		for (index_t j = 1; j < n; ++j)
+		{
+			T rj = fold_impl(col_dim, U(), folder, rd.col(j));
+			folder.fold(r, rj);
+		}
+
+		return r;
+	}
+
+	template<int M, int N, class Folder, class A>
+	LMAT_ENSURE_INLINE
+	inline typename Folder::value_type
+	_full_reduce(const matrix_shape<M, N>& shape, const Folder& folder, const A& a)
+	{
+		typedef typename full_reduc_policy<Folder, A>::type policy_t;
+		return _full_reduce(shape, folder, a, policy_t());
+	}
+
+
+	// column wise reduction
 
 	template<int M, int N, typename U, class Folder, class DMat, class MultiColReader>
 	inline void colwise_fold_impl(const matrix_shape<M, N>& shape, U u,
@@ -192,11 +236,8 @@ namespace lmat { namespace internal {
 	}
 
 
-	/********************************************
-	 *
-	 *  rowwise reduction
-	 *
-	 ********************************************/
+
+	// row wise reduction
 
 	template<int M, int N, typename U, class RFun, class DMat, class MultiColReader>
 	inline void rowwise_fold_impl(const matrix_shape<M, N>& shape, U u,

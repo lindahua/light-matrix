@@ -25,13 +25,23 @@
 // basic reduction
 
 #define LMAT_DEFINE_BASIC_FULL_REDUCTION( Name ) \
+	template<typename T, class A, typename U> \
+	LMAT_ENSURE_INLINE \
+	inline T Name(const IEWiseMatrix<A, T>& a, linear_macc<U> policy) { \
+		return a.nelems() > 0 ? \
+				internal::_full_reduce(a.shape(), Name##_folder<T>(), a.derived(), policy) : \
+				internal::empty_values<T>::Name(); } \
+	template<typename T, class A, typename U> \
+	LMAT_ENSURE_INLINE \
+	inline T Name(const IEWiseMatrix<A, T>& a, percol_macc<U> policy) { \
+		return a.nelems() > 0 ? \
+				internal::_full_reduce(a.shape(), Name##_folder<T>(), a.derived(), policy) : \
+				internal::empty_values<T>::Name(); } \
 	template<typename T, class A> \
 	LMAT_ENSURE_INLINE \
 	inline T Name(const IEWiseMatrix<A, T>& a) { \
-		typedef typename internal::full_reduc_policy<Name##_folder<T>, A>::atag atag; \
-		dimension<meta::nelems<A>::value> dim = a.nelems(); \
-		return dim.value() > 0 ? \
-				fold(Name##_folder<T>(), atag())(dim, in_(a.derived())) : \
+		return a.nelems() > 0 ? \
+				internal::_full_reduce(a.shape(), Name##_folder<T>(), a.derived()) : \
 				internal::empty_values<T>::Name(); }
 
 #define LMAT_DEFINE_BASIC_COLWISE_REDUCTION( Name ) \
@@ -63,15 +73,24 @@
 	LMAT_ENSURE_INLINE \
 	inline T Name(const IEWiseMatrix<A, T>& a) { \
 		dimension<meta::nelems<A>::value> dim = internal::reduc_get_length(a); \
-		return dim.value() > 0 ? Reduc(TExpr) : EmptyVal; \
-	}
+		return dim.value() > 0 ? Reduc(TExpr) : EmptyVal; } \
+	template<typename T, class A, typename Policy> \
+	LMAT_ENSURE_INLINE \
+	inline T Name(const IEWiseMatrix<A, T>& a, Policy policy) { \
+		dimension<meta::nelems<A>::value> dim = internal::reduc_get_length(a); \
+		return dim.value() > 0 ? Reduc(TExpr, policy) : EmptyVal; }
 
 #define LMAT_DEFINE_FULL_REDUCTION_2( Name, Reduc, TExpr, EmptyVal ) \
 	template<typename T, class A, class B> \
 	LMAT_ENSURE_INLINE \
 	inline T Name(const IEWiseMatrix<A, T>& a, const IEWiseMatrix<B, T>& b) { \
 		dimension<meta::common_nelems<A, B>::value> dim = internal::reduc_get_length(a, b); \
-		return dim.value() > 0 ? Reduc(TExpr) : EmptyVal; }
+		return dim.value() > 0 ? Reduc(TExpr) : EmptyVal; } \
+	template<typename T, class A, class B, typename Policy> \
+	LMAT_ENSURE_INLINE \
+	inline T Name(const IEWiseMatrix<A, T>& a, const IEWiseMatrix<B, T>& b, Policy policy) { \
+		dimension<meta::common_nelems<A, B>::value> dim = internal::reduc_get_length(a, b); \
+		return dim.value() > 0 ? Reduc(TExpr, policy) : EmptyVal; }
 
 #define LMAT_DEFINE_COLWISE_REDUCTION_1( Name, Reduc, TExpr, EmptyVal ) \
 	template<typename T, class A, class DMat> \
@@ -143,6 +162,16 @@ namespace lmat
 		dimension<meta::nelems<A>::value> dim = internal::reduc_get_length(a);
 		return dim.value() > 0 ?
 				sum(a) / T(dim.value()) :
+				internal::empty_values<T>::mean();
+	}
+
+	template<typename T, class A, typename Policy>
+	LMAT_ENSURE_INLINE
+	inline T mean(const IEWiseMatrix<A, T>& a, Policy policy)
+	{
+		dimension<meta::nelems<A>::value> dim = internal::reduc_get_length(a);
+		return dim.value() > 0 ?
+				sum(a, policy) / T(dim.value()) :
 				internal::empty_values<T>::mean();
 	}
 
@@ -236,13 +265,6 @@ namespace lmat
 	LMAT_DEFINE_ROWWISE_REDUCTION_2( diff_sqsum, sum,     sqr(a - b), T(0) )
 
 	LMAT_DEFINE_ROWWISE_REDUCTION_2( dot, sum, a * b, T(0) )
-
-
-	/********************************************
-	 *
-	 *  norms
-	 *
-	 ********************************************/
 
 
 }

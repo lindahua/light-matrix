@@ -28,10 +28,21 @@ namespace lmat {
 	 *
 	 ********************************************/
 
+	template<int N, class Folder, class Reader>
+	LMAT_ENSURE_INLINE
+	inline typename Folder::value_type
+	fold_impl(const dimension<N>& dim, atags::scalar, const Folder& folder, const Reader& rd)
+	{
+		typedef typename Folder::value_type T;
+		T r = folder.init(rd.scalar(0));
+		const index_t len = dim.value();
+		for (index_t i = 1; i < len; ++i) folder.fold(r, rd.scalar(i));
+		return r;
+	}
+
 	template<int N, typename SKind, class Folder, class Reader>
 	inline typename Folder::value_type
-	fold_impl(const dimension<N>& dim, atags::simd<SKind>,
-			const Folder& folder, const Reader& rd)
+	fold_impl(const dimension<N>& dim, atags::simd<SKind>, const Folder& folder, const Reader& rd)
 	{
 		typedef typename Folder::value_type T;
 		typedef typename folder_simd_pack<Folder, SKind>::type pack_t;
