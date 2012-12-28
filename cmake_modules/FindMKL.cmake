@@ -50,26 +50,15 @@ if (MKLROOT_PATH)
 	endif (IS_DIRECTORY ${EXPECT_MKL_LIBPATH})
 	
 	# find specific library files
-	
-	if (CMAKE_SIZEOF_VOID_P MATCHES 8)
-	    find_library(LIB_MKL_INTEL NAMES mkl_intel_lp64 HINTS ${MKL_LIBRARY_DIR})
-	else (CMAKE_SIZEOF_VOID_P MATCHES 8)
-	    find_library(LIB_MKL_INTEL NAMES mkl_intel HINTS ${MKL_LIBRARY_DIR})
-	endif (CMAKE_SIZEOF_VOID_P MATCHES 8)
-	
-	find_library(LIB_MKL_INTEL_THREAD NAMES mkl_intel_thread HINTS ${MKL_LIBRARY_DIR})	
-	find_library(LIB_MKL_CORE NAMES mkl_core HINTS ${MKL_LIBRARY_DIR})	
-	find_library(LIB_IOMP5 NAMES iomp5 HINTS ${MKL_LIBRARY_DIR} ${EXPECT_ICC_LIBPATH})	
+		
+	find_library(LIB_MKL_RT NAMES mkl_rt HINTS ${MKL_LIBRARY_DIR})
 	find_library(LIB_PTHREAD NAMES pthread)	
 	find_library(LIB_IMF NAMES imf HINTS ${MKL_LIBRARY_DIR} ${EXPECT_ICC_LIBPATH})
 	
 endif (MKLROOT_PATH)
 
 set(MKL_LIBRARY 
-	${LIB_MKL_INTEL} 
-	${LIB_MKL_INTEL_THREAD}
-	${LIB_MKL_CORE}
-	${LIB_IOMP5}
+	${LIB_MKL_RT} 
 	${LIB_PTHREAD}
 	${LIB_IMF})
 	
@@ -79,14 +68,11 @@ include(FindPackageHandleStandardArgs)
 
 find_package_handle_standard_args(MKL DEFAULT_MSG 
     MKL_LIBRARY_DIR
-    LIB_MKL_INTEL 
-    LIB_MKL_INTEL_THREAD 
-    LIB_MKL_CORE
-    LIB_IOMP5
+    LIB_MKL_RT
     LIB_PTHREAD
     LIB_IMF
     MKL_INCLUDE_DIR)
     
-mark_as_advanced(LIB_MKL_INTEL LIB_MKL_INTEL_THREAD LIB_MKL_CORE LIB_IOMP5 LIB_PTHREAD LIB_IMF MKL_INCLUDE_DIR)
+mark_as_advanced(LIB_MKL_RT LIB_PTHREAD LIB_IMF MKL_INCLUDE_DIR)
 
 

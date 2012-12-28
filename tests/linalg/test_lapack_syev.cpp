@@ -91,7 +91,7 @@ T_CASE( mat_syev, syev )
 
 	syev(a, w, V);
 
-	T tol0 = (T)(sizeof(T) == 4 ? 1.0e-6 : 1.0e-13);
+	T tol0 = (T)(sizeof(T) == 4 ? 1.0e-4 : 1.0e-13);
 	T tol = (T)(sizeof(T) == 4 ? 1.0e-4 : 1.0e-10);
 
 	test_syev(a, w0, w, V, tol0, tol);
