@@ -167,7 +167,6 @@ namespace lmat
 		}
 	}
 
-
 	// rowwise reduction
 
 	LMAT_DEFINE_BASIC_ROWWISE_REDUCTION( sum )
