@@ -55,7 +55,7 @@ void do_fill_rand(T *p, const index_t n)
 {
 	for (index_t i = 0; i < n; ++i)
 	{
-		p[i] = (T)std::rand() / RAND_MAX;
+		p[i] = (T)std::rand() / (T)RAND_MAX;
 	}
 }
 
@@ -64,7 +64,7 @@ void do_fill_rand(T *p, const index_t n, T lb, T ub)
 {
 	for (index_t i = 0; i < n; ++i)
 	{
-		T u = (T)std::rand() / RAND_MAX;
+		T u = (T)std::rand() / (T)RAND_MAX;
 		p[i] = lb + u * (ub - lb);
 	}
 }

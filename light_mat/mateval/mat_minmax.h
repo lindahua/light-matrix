@@ -72,7 +72,7 @@ namespace lmat
 
 	template<typename T>
 	LMAT_ENSURE_INLINE
-	minmax_stat<T> minmax_empty_value()
+	inline minmax_stat<T> minmax_empty_value()
 	{
 		T v0 = std::numeric_limits<T>::infinity();
 		T v1 = -std::numeric_limits<T>::infinity();

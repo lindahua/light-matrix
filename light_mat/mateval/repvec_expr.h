@@ -166,28 +166,28 @@ namespace lmat
 
 	template<typename T, class Arg>
 	LMAT_ENSURE_INLINE
-	repcol_expr<Arg, 0> repcol(const IRegularMatrix<Arg, T>& arg, index_t n)
+	inline repcol_expr<Arg, 0> repcol(const IRegularMatrix<Arg, T>& arg, index_t n)
 	{
 		return repcol_expr<Arg, 0>(arg.derived(), n);
 	}
 
 	template<typename T, class Arg, int N>
 	LMAT_ENSURE_INLINE
-	repcol_expr<Arg, N> repcol(const IRegularMatrix<Arg, T>& arg, dimension<N> n)
+	inline repcol_expr<Arg, N> repcol(const IRegularMatrix<Arg, T>& arg, dimension<N> n)
 	{
 		return repcol_expr<Arg, N>(arg.derived(), n);
 	}
 
 	template<typename T, class Arg>
 	LMAT_ENSURE_INLINE
-	reprow_expr<Arg, 0> reprow(const IRegularMatrix<Arg, T>& arg, index_t m)
+	inline reprow_expr<Arg, 0> reprow(const IRegularMatrix<Arg, T>& arg, index_t m)
 	{
 		return reprow_expr<Arg, 0>(arg.derived(), m);
 	}
 
 	template<typename T, class Arg, int M>
 	LMAT_ENSURE_INLINE
-	reprow_expr<Arg, M> reprow(const IRegularMatrix<Arg, T>& arg, dimension<M> m)
+	inline reprow_expr<Arg, M> reprow(const IRegularMatrix<Arg, T>& arg, dimension<M> m)
 	{
 		return reprow_expr<Arg, M>(arg.derived(), m);
 	}

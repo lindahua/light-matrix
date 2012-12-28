@@ -22,7 +22,7 @@ if (MSVC)
 	set(LANG_FLAGS "${ARCH_FLAG} /EHsc")
 	set(WARNING_FLAGS "/W4")
 else (MSVC)
-	set(LANG_FLAGS "-std=c++0x -pedantic ${ARCH_FLAG}")
+	set(LANG_FLAGS "-std=c++0x -pedantic -m64 ${ARCH_FLAG}")
 	set(WARNING_FLAGS "-Wall -Wextra -Wconversion -Wformat -Wno-unused-parameter ")
 endif (MSVC)
 

@@ -461,7 +461,11 @@ MN_CASE( map_expr, compound_expr )
 	ASSERT_EQ( e.ncolumns(), n );
 	ASSERT_EQ( e.nelems(), m * n);
 
-	d = e;
+	d = make_map_expr(
+			fma_(),
+			s1,
+			make_map_expr_fix2(sub_(), s2, cv),
+			make_map_expr(sqr_(), s3) );
 
 	dense_matrix<double> r(m, n);
 	for (index_t j = 0; j < n; ++j)

@@ -6,8 +6,8 @@
  * @author Dahua Lin
  */
 
-#ifndef LINALG_FWD_H_
-#define LINALG_FWD_H_
+#ifndef LIGHTMAT_LINALG_FWD_H_
+#define LIGHTMAT_LINALG_FWD_H_
 
 #include <light_mat/config/config.h>
 #include <light_mat/matrix/matrix_classes.h>

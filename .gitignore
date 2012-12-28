@@ -9,3 +9,11 @@ build-bench/*
 .project
 .cproject
 .settings/*
+
+# Backup files
+
+*.cmake~
+*.txt~
+*.h~
+*.cpp~
+

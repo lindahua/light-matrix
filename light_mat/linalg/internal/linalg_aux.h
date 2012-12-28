@@ -46,7 +46,7 @@ namespace lmat { namespace internal {
 
 	template<typename T, class Mat>
 	LMAT_ENSURE_INLINE
-	inline index_t scale_columns(index_t m, index_t n, index_t lda, double *A, double *s)
+	inline void scale_columns(index_t m, index_t n, index_t lda, double *A, double *s)
 	{
 		for (index_t j = 0; j < n; ++j)
 		{
