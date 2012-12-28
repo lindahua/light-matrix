@@ -155,17 +155,33 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<typename T, class A> \
+	template<typename T, class A>
 	LMAT_ENSURE_INLINE
 	inline minmax_stat<T> minmax(const IEWiseMatrix<A, T>& a)
 	{
-		typedef typename internal::full_reduc_policy<minmax_folder<T>, A>::atag atag; \
-		dimension<meta::nelems<A>::value> dim = a.nelems();
-
-		return dim.value() > 0 ?
-				fold(minmax_folder<T>(), atag())(dim, in_(a.derived())) :
+		return a.nelems() > 0 ?
+				internal::_full_reduce(a.shape(), minmax_folder<T>(), a.derived()) :
 				minmax_empty_value<T>();
 	}
+
+	template<typename T, class A, typename U>
+	LMAT_ENSURE_INLINE
+	inline minmax_stat<T> minmax(const IEWiseMatrix<A, T>& a, linear_macc<U> policy)
+	{
+		return a.nelems() > 0 ?
+				internal::_full_reduce(a.shape(), minmax_folder<T>(), a.derived(), policy) :
+				minmax_empty_value<T>();
+	}
+
+	template<typename T, class A, typename U>
+	LMAT_ENSURE_INLINE
+	inline minmax_stat<T> minmax(const IEWiseMatrix<A, T>& a, percol_macc<U> policy)
+	{
+		return a.nelems() > 0 ?
+				internal::_full_reduce(a.shape(), minmax_folder<T>(), a.derived(), policy) :
+				minmax_empty_value<T>();
+	}
+
 
 	template<typename T, class A, class DMat1, class DMat2>
 	inline void colwise_minmax(const IEWiseMatrix<A, T>& a,

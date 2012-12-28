@@ -80,13 +80,11 @@ namespace lmat { namespace internal {
 		static_assert(meta::supports_linear_index<DMat>::value,
 				"DMat should support linear indexing.");
 
-		static const bool use_linear = false;
-
 		typedef typename matrix_traits<TExpr>::value_type vtype;
 		typedef default_simd_kind simd_kind;
 
 		static const bool use_simd = folder_supports_simd<Folder>::value &&
-			supports_simd<TExpr, vtype, simd_kind, use_linear>::value;
+			supports_simd<TExpr, vtype, simd_kind, false>::value;
 
 		typedef typename meta::if_c<use_simd,
 				atags::simd<simd_kind>,
@@ -97,16 +95,14 @@ namespace lmat { namespace internal {
 	template<class Folder, class TExpr, class DMat>
 	struct rowwise_reduc_policy
 	{
-		static_assert(meta::is_continuous<DMat>::value,
-				"DMat should be continuous.");
-
-		static const bool use_linear = false;
+		static_assert(supports_linear_macc<DMat>::value,
+				"DMat should support linear access.");
 
 		typedef typename matrix_traits<TExpr>::value_type vtype;
 		typedef default_simd_kind simd_kind;
 
 		static const bool use_simd = folder_supports_simd<Folder>::value &&
-			supports_simd<TExpr, vtype, simd_kind, use_linear>::value;
+			supports_simd<TExpr, vtype, simd_kind, false>::value;
 
 		typedef typename meta::if_c<use_simd,
 				atags::simd<simd_kind>,
@@ -216,6 +212,12 @@ namespace lmat { namespace internal {
 	}
 
 
+	/********************************************
+	 *
+	 *  vector-wise reduction implementation
+	 *
+	 ********************************************/
+
 	// column wise reduction
 
 	template<int M, int N, typename U, class Folder, class DMat, class MultiColReader>
@@ -234,7 +236,6 @@ namespace lmat { namespace internal {
 			dmat[j] = fker.apply(col_dim, rd.col(j));
 		}
 	}
-
 
 
 	// row wise reduction
