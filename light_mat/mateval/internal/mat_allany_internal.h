@@ -34,6 +34,7 @@ namespace lmat { namespace internal {
 
 
 	template<int N, typename T, typename SKind, class Reader>
+	LMAT_ENSURE_INLINE
 	inline bool all_impl(const dimension<N>& dim, type_<T>, atags::simd<SKind>, const Reader& rd)
 	{
 		typedef typename math::simd_bpack<T, SKind> pack_t;
@@ -72,6 +73,7 @@ namespace lmat { namespace internal {
 
 
 	template<int N, typename T, typename SKind, class Reader>
+	LMAT_ENSURE_INLINE
 	inline bool any_impl(const dimension<N>& dim, type_<T>, atags::simd<SKind>, const Reader& rd)
 	{
 		typedef typename math::simd_bpack<T, SKind> pack_t;
@@ -91,6 +93,60 @@ namespace lmat { namespace internal {
 		}
 
 		return any_impl(dim, type_<T>(), atags::scalar(), rd, i);
+	}
+
+
+	template<int M, int N, typename T, class Mat, typename U>
+	inline bool all_(const matrix_shape<M, N>& shape, const IEWiseMatrix<Mat, T>& mat, linear_macc<U>)
+	{
+		dimension<M * N> dim(shape.nelems());
+		return all_impl(dim, type_<T>(), U(), make_vec_accessor(U(), in_(mat.derived())));
+	}
+
+	template<int M, int N, typename T, class Mat, typename U>
+	inline bool all_(const matrix_shape<M, N>& shape, const IEWiseMatrix<Mat, T>& mat, percol_macc<U>)
+	{
+		if (shape.nelems() > 0)
+		{
+			dimension<M> col_dim(shape.nrows());
+			auto rd = make_multicol_accessor(U(), in_(mat.derived()));
+
+			const index_t n = shape.ncolumns();
+			for (index_t j = 0; j < n; ++j)
+			{
+				if (!all_impl(col_dim, type_<T>(), U(), rd.col(j)))
+					return false;
+			}
+		}
+
+		return true;
+	}
+
+
+	template<int M, int N, typename T, class Mat, typename U>
+	inline bool any_(const matrix_shape<M, N>& shape, const IEWiseMatrix<Mat, T>& mat, linear_macc<U>)
+	{
+		dimension<M * N> dim(shape.nelems());
+		return any_impl(dim, type_<T>(), U(), make_vec_accessor(U(), in_(mat.derived())));
+	}
+
+	template<int M, int N, typename T, class Mat, typename U>
+	inline bool any_(const matrix_shape<M, N>& shape, const IEWiseMatrix<Mat, T>& mat, percol_macc<U>)
+	{
+		if (shape.nelems() > 0)
+		{
+			dimension<M> col_dim(shape.nrows());
+			auto rd = make_multicol_accessor(U(), in_(mat.derived()));
+
+			const index_t n = shape.ncolumns();
+			for (index_t j = 0; j < n; ++j)
+			{
+				if (any_impl(col_dim, type_<T>(), U(), rd.col(j)))
+					return true;
+			}
+		}
+
+		return false;
 	}
 
 

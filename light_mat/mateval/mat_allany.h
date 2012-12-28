@@ -24,96 +24,50 @@ namespace lmat
 	template<typename T, class Mat>
 	inline bool all(const IEWiseMatrix<Mat, mask_t<T> >& mat, bool val=true)
 	{
-		static_assert(supports_linear_macc<Mat>::value,
-				"mat should support linear accessing");
-
-		typedef default_simd_kind kind;
-		const bool use_simd = supports_simd<Mat, T, kind, true>::value;
-
-		typedef typename meta::if_c<use_simd, atags::simd<kind>, atags::scalar>::type atag;
-
-		dimension<meta::nelems<Mat>::value> dim(mat.nelems());
+		typedef typename preferred_macc_policy<Mat>::type policy_t;
 
 		if (val)
-		{
-			return internal::all_impl(dim, type_<T>(), atag(),
-					make_vec_accessor(atag(), in_(mat.derived())));
-		}
+			return internal::all_(mat.shape(), mat, policy_t());
 		else
-		{
-			return !internal::any_impl(dim, type_<T>(), atag(),
-					make_vec_accessor(atag(), in_(mat.derived())));
-		}
+			return !internal::any_(mat.shape(), mat, policy_t());
 	}
 
 
 	template<class Mat>
 	inline bool all(const IEWiseMatrix<Mat, bool>& mat, bool val=true)
 	{
-		static_assert(supports_linear_macc<Mat>::value,
-				"mat should allow linear accessing");
-
-		typedef atags::scalar atag;
-		dimension<meta::nelems<Mat>::value> dim(mat.nelems());
+		typedef typename preferred_macc_policy<Mat>::type policy_t;
 
 		if (val)
-		{
-			return internal::all_impl(dim, type_<bool>(), atag(),
-					make_vec_accessor(atag(), in_(mat.derived())));
-		}
+			return internal::all_(mat.shape(), mat, policy_t());
 		else
-		{
-			return !internal::any_impl(dim, type_<bool>(), atag(),
-					make_vec_accessor(atag(), in_(mat.derived())));
-		}
+			return !internal::any_(mat.shape(), mat, policy_t());
 	}
 
 
 	template<typename T, class Mat>
 	inline bool any(const IEWiseMatrix<Mat, mask_t<T> >& mat, bool val=true)
 	{
-		static_assert(supports_linear_macc<Mat>::value,
-				"mat should allow linear accessing");
-
-		typedef default_simd_kind kind;
-		const bool use_simd = supports_simd<Mat, T, kind, true>::value;
-
-		typedef typename meta::if_c<use_simd, atags::simd<kind>, atags::scalar>::type atag;
-
-		dimension<meta::nelems<Mat>::value> dim(mat.nelems());
+		typedef typename preferred_macc_policy<Mat>::type policy_t;
 
 		if (val)
-		{
-			return internal::any_impl(dim, type_<T>(), atag(),
-					make_vec_accessor(atag(), in_(mat.derived())));
-		}
+			return internal::any_(mat.shape(), mat, policy_t());
 		else
-		{
-			return !internal::all_impl(dim, type_<T>(), atag(),
-					make_vec_accessor(atag(), in_(mat.derived())));
-		}
+			return !internal::all_(mat.shape(), mat, policy_t());
 	}
+
 
 	template<class Mat>
 	inline bool any(const IEWiseMatrix<Mat, bool>& mat, bool val=true)
 	{
-		static_assert(supports_linear_macc<Mat>::value,
-				"mat should allow linear accessing");
-
-		typedef atags::scalar atag;
-		dimension<meta::nelems<Mat>::value> dim(mat.nelems());
+		typedef typename preferred_macc_policy<Mat>::type policy_t;
 
 		if (val)
-		{
-			return internal::any_impl(dim, type_<bool>(), atag(),
-					make_vec_accessor(atag(), in_(mat.derived())));
-		}
+			return internal::any_(mat.shape(), mat, policy_t());
 		else
-		{
-			return !internal::all_impl(dim, type_<bool>(), atag(),
-					make_vec_accessor(atag(), in_(mat.derived())));
-		}
+			return !internal::all_(mat.shape(), mat, policy_t());
 	}
+
 
 }
 

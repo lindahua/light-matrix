@@ -17,6 +17,80 @@ using namespace lmat::test;
 
 const index_t max_len = 28;
 
+
+template<class A, class B>
+inline bool my_all_eq(const A& a, const B& b)
+{
+	index_t m = common_nrows(a, b);
+	index_t n = common_ncols(a, b);
+
+	for (index_t j = 0; j < n; ++j)
+	{
+		for (index_t i = 0; i < m; ++i)
+		{
+			if (a(i, j) != b(i, j)) return false;
+		}
+	}
+
+	return true;
+}
+
+template<class A, class B>
+inline bool my_all_ne(const A& a, const B& b)
+{
+	index_t m = common_nrows(a, b);
+	index_t n = common_ncols(a, b);
+
+	for (index_t j = 0; j < n; ++j)
+	{
+		for (index_t i = 0; i < m; ++i)
+		{
+			if (a(i, j) == b(i, j)) return false;
+		}
+	}
+
+	return true;
+}
+
+
+template<class A, class B>
+inline bool my_any_eq(const A& a, const B& b)
+{
+	index_t m = common_nrows(a, b);
+	index_t n = common_ncols(a, b);
+
+	for (index_t j = 0; j < n; ++j)
+	{
+		for (index_t i = 0; i < m; ++i)
+		{
+			if (a(i, j) == b(i, j)) return true;
+		}
+	}
+
+	return false;
+}
+
+
+template<class A, class B>
+inline bool my_any_ne(const A& a, const B& b)
+{
+	index_t m = common_nrows(a, b);
+	index_t n = common_ncols(a, b);
+
+	for (index_t j = 0; j < n; ++j)
+	{
+		for (index_t i = 0; i < m; ++i)
+		{
+			if (a(i, j) != b(i, j)) return true;
+		}
+	}
+
+	return false;
+}
+
+
+
+
 T_CASE( full_reduc, all_true )
 {
 	dense_col<T> a(max_len);
@@ -31,15 +105,15 @@ T_CASE( full_reduc, all_true )
 
 		// all-eq
 		for (index_t i = 0; i < k; ++i) bk[i] = ak[i];
-		ASSERT_EQ( all(ak == bk, true),  true );
+		ASSERT_EQ( all(ak == bk, true),  my_all_eq(ak, bk) );
 
 		// all-ne
 		for (index_t i = 0; i < k; ++i) bk[i] = ak[i] + 1;
-		ASSERT_EQ( all(ak == bk, true),  k == 0 );
+		ASSERT_EQ( all(ak == bk, true),  my_all_eq(ak, bk) );
 
 		// half-half
 		for (index_t i = 0; i < k; ++i) bk[i] = ak[i] + T(i % 2);
-		ASSERT_EQ( all(ak == bk, true),  k < 2 );
+		ASSERT_EQ( all(ak == bk, true),  my_all_eq(ak, bk) );
 	}
 }
 
@@ -57,15 +131,15 @@ T_CASE( full_reduc, all_false )
 
 		// all-eq
 		for (index_t i = 0; i < k; ++i) bk[i] = ak[i];
-		ASSERT_EQ( all(ak == bk, false),  k == 0 );
+		ASSERT_EQ( all(ak == bk, false),  my_all_ne(ak, bk) );
 
 		// all-ne
 		for (index_t i = 0; i < k; ++i) bk[i] = ak[i] + 1;
-		ASSERT_EQ( all(ak == bk, false),  true );
+		ASSERT_EQ( all(ak == bk, false),  my_all_ne(ak, bk) );
 
 		// half-half
 		for (index_t i = 0; i < k; ++i) bk[i] = ak[i] + T(i % 2);
-		ASSERT_EQ( all(ak == bk, false),  k == 0 );
+		ASSERT_EQ( all(ak == bk, false),  my_all_ne(ak, bk) );
 	}
 }
 
@@ -83,15 +157,15 @@ T_CASE( full_reduc, any_true )
 
 		// all-eq
 		for (index_t i = 0; i < k; ++i) bk[i] = ak[i];
-		ASSERT_EQ( any(ak == bk, true),  k > 0 );
+		ASSERT_EQ( any(ak == bk, true),  my_any_eq(ak, bk) );
 
 		// all-ne
 		for (index_t i = 0; i < k; ++i) bk[i] = ak[i] + 1;
-		ASSERT_EQ( any(ak == bk, true),  false );
+		ASSERT_EQ( any(ak == bk, true),  my_any_eq(ak, bk) );
 
 		// half-half
 		for (index_t i = 0; i < k; ++i) bk[i] = ak[i] + T(i % 2);
-		ASSERT_EQ( any(ak == bk, true),  k > 0 );
+		ASSERT_EQ( any(ak == bk, true),  my_any_eq(ak, bk) );
 	}
 }
 
@@ -109,15 +183,15 @@ T_CASE( full_reduc, any_false )
 
 		// all-eq
 		for (index_t i = 0; i < k; ++i) bk[i] = ak[i];
-		ASSERT_EQ( any(ak == bk, false),  false );
+		ASSERT_EQ( any(ak == bk, false),  my_any_ne(ak, bk) );
 
 		// all-ne
 		for (index_t i = 0; i < k; ++i) bk[i] = ak[i] + 1;
-		ASSERT_EQ( any(ak == bk, false),  k > 0 );
+		ASSERT_EQ( any(ak == bk, false),  my_any_ne(ak, bk));
 
 		// half-half
 		for (index_t i = 0; i < k; ++i) bk[i] = ak[i] + T(i % 2);
-		ASSERT_EQ( any(ak == bk, false),  k >= 2 );
+		ASSERT_EQ( any(ak == bk, false),  my_any_ne(ak, bk) );
 	}
 }
 
