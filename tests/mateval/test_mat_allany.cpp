@@ -14,9 +14,8 @@
 using namespace lmat;
 using namespace lmat::test;
 
-
-const index_t max_len = 28;
-
+const index_t DM = 5;
+const index_t DN = 8;
 
 template<class A, class B>
 inline bool my_all_eq(const A& a, const B& b)
@@ -89,127 +88,125 @@ inline bool my_any_ne(const A& a, const B& b)
 }
 
 
-
-
-T_CASE( full_reduc, all_true )
+TMN_CASE( full_reduc, all_true )
 {
-	dense_col<T> a(max_len);
-	dense_col<T> b(max_len);
+	const index_t m = M == 0 ? DM : M;
+	const index_t n = N == 0 ? DN : N;
 
-	for (index_t i = 0; i < max_len; ++i) a[i] = T(i+1);
+	dense_matrix<T, M, N> a(m, n);
+	dense_matrix<T, M, N> b(m, n);
 
-	for (index_t k = 0; k <= max_len; ++k)
-	{
-		auto ak = a(range(0, k));
-		auto bk = b(range(0, k));
+	for (index_t i = 0; i < m * n; ++i) a[i] = T(i+1);
 
-		// all-eq
-		for (index_t i = 0; i < k; ++i) bk[i] = ak[i];
-		ASSERT_EQ( all(ak == bk, true),  my_all_eq(ak, bk) );
+	// all-eq
+	for (index_t i = 0; i < m * n; ++i) b[i] = a[i];
+	ASSERT_EQ( all(a == b, true),  my_all_eq(a, b) );
 
-		// all-ne
-		for (index_t i = 0; i < k; ++i) bk[i] = ak[i] + 1;
-		ASSERT_EQ( all(ak == bk, true),  my_all_eq(ak, bk) );
+	// all-ne
+	for (index_t i = 0; i < m * n; ++i) b[i] = a[i] + 1;
+	ASSERT_EQ( all(a == b, true),  my_all_eq(a, b) );
 
-		// half-half
-		for (index_t i = 0; i < k; ++i) bk[i] = ak[i] + T(i % 2);
-		ASSERT_EQ( all(ak == bk, true),  my_all_eq(ak, bk) );
-	}
+	// half-half
+	for (index_t i = 0; i < m * n; ++i) b[i] = a[i] + T(i % 2);
+	ASSERT_EQ( all(a == b, true),  my_all_eq(a, b) );
 }
 
-T_CASE( full_reduc, all_false )
+TMN_CASE( full_reduc, all_false )
 {
-	dense_col<T> a(max_len);
-	dense_col<T> b(max_len);
+	const index_t m = M == 0 ? DM : M;
+	const index_t n = N == 0 ? DN : N;
 
-	for (index_t i = 0; i < max_len; ++i) a[i] = T(i+1);
+	dense_matrix<T, M, N> a(m, n);
+	dense_matrix<T, M, N> b(m, n);
 
-	for (index_t k = 0; k <= max_len; ++k)
-	{
-		auto ak = a(range(0, k));
-		auto bk = b(range(0, k));
+	for (index_t i = 0; i < m * n; ++i) a[i] = T(i+1);
 
-		// all-eq
-		for (index_t i = 0; i < k; ++i) bk[i] = ak[i];
-		ASSERT_EQ( all(ak == bk, false),  my_all_ne(ak, bk) );
+	// all-eq
+	for (index_t i = 0; i < m * n; ++i) b[i] = a[i];
+	ASSERT_EQ( all(a == b, false),  my_all_ne(a, b) );
 
-		// all-ne
-		for (index_t i = 0; i < k; ++i) bk[i] = ak[i] + 1;
-		ASSERT_EQ( all(ak == bk, false),  my_all_ne(ak, bk) );
+	// all-ne
+	for (index_t i = 0; i < m * n; ++i) b[i] = a[i] + 1;
+	ASSERT_EQ( all(a == b, false),  my_all_ne(a, b) );
 
-		// half-half
-		for (index_t i = 0; i < k; ++i) bk[i] = ak[i] + T(i % 2);
-		ASSERT_EQ( all(ak == bk, false),  my_all_ne(ak, bk) );
-	}
+	// half-half
+	for (index_t i = 0; i < m * n; ++i) b[i] = a[i] + T(i % 2);
+	ASSERT_EQ( all(a == b, false),  my_all_ne(a, b) );
 }
 
-T_CASE( full_reduc, any_true )
+TMN_CASE( full_reduc, any_true )
 {
-	dense_col<T> a(max_len);
-	dense_col<T> b(max_len);
+	const index_t m = M == 0 ? DM : M;
+	const index_t n = N == 0 ? DN : N;
 
-	for (index_t i = 0; i < max_len; ++i) a[i] = T(i+1);
+	dense_matrix<T, M, N> a(m, n);
+	dense_matrix<T, M, N> b(m, n);
 
-	for (index_t k = 0; k <= max_len; ++k)
-	{
-		auto ak = a(range(0, k));
-		auto bk = b(range(0, k));
+	for (index_t i = 0; i < m * n; ++i) a[i] = T(i+1);
 
-		// all-eq
-		for (index_t i = 0; i < k; ++i) bk[i] = ak[i];
-		ASSERT_EQ( any(ak == bk, true),  my_any_eq(ak, bk) );
+	// any-eq
+	for (index_t i = 0; i < m * n; ++i) b[i] = a[i];
+	ASSERT_EQ( any(a == b, true),  my_any_eq(a, b) );
 
-		// all-ne
-		for (index_t i = 0; i < k; ++i) bk[i] = ak[i] + 1;
-		ASSERT_EQ( any(ak == bk, true),  my_any_eq(ak, bk) );
+	// any-ne
+	for (index_t i = 0; i < m * n; ++i) b[i] = a[i] + 1;
+	ASSERT_EQ( any(a == b, true),  my_any_eq(a, b) );
 
-		// half-half
-		for (index_t i = 0; i < k; ++i) bk[i] = ak[i] + T(i % 2);
-		ASSERT_EQ( any(ak == bk, true),  my_any_eq(ak, bk) );
-	}
+	// half-half
+	for (index_t i = 0; i < m * n; ++i) b[i] = a[i] + T(i % 2);
+	ASSERT_EQ( any(a == b, true),  my_any_eq(a, b) );
 }
 
-T_CASE( full_reduc, any_false )
+TMN_CASE( full_reduc, any_false )
 {
-	dense_col<T> a(max_len);
-	dense_col<T> b(max_len);
+	const index_t m = M == 0 ? DM : M;
+	const index_t n = N == 0 ? DN : N;
 
-	for (index_t i = 0; i < max_len; ++i) a[i] = T(i+1);
+	dense_matrix<T, M, N> a(m, n);
+	dense_matrix<T, M, N> b(m, n);
 
-	for (index_t k = 0; k <= max_len; ++k)
-	{
-		auto ak = a(range(0, k));
-		auto bk = b(range(0, k));
+	for (index_t i = 0; i < m * n; ++i) a[i] = T(i+1);
 
-		// all-eq
-		for (index_t i = 0; i < k; ++i) bk[i] = ak[i];
-		ASSERT_EQ( any(ak == bk, false),  my_any_ne(ak, bk) );
+	// any-eq
+	for (index_t i = 0; i < m * n; ++i) b[i] = a[i];
+	ASSERT_EQ( any(a == b, false),  my_any_ne(a, b) );
 
-		// all-ne
-		for (index_t i = 0; i < k; ++i) bk[i] = ak[i] + 1;
-		ASSERT_EQ( any(ak == bk, false),  my_any_ne(ak, bk));
+	// any-ne
+	for (index_t i = 0; i < m * n; ++i) b[i] = a[i] + 1;
+	ASSERT_EQ( any(a == b, false),  my_any_ne(a, b) );
 
-		// half-half
-		for (index_t i = 0; i < k; ++i) bk[i] = ak[i] + T(i % 2);
-		ASSERT_EQ( any(ak == bk, false),  my_any_ne(ak, bk) );
-	}
+	// half-half
+	for (index_t i = 0; i < m * n; ++i) b[i] = a[i] + T(i % 2);
+	ASSERT_EQ( any(a == b, false),  my_any_ne(a, b) );
 }
 
 
-
-BEGIN_TPACK( mat_full_allany )
-	ADD_T_CASE( full_reduc, all_true,  double )
-	ADD_T_CASE( full_reduc, all_true,  int )
-	ADD_T_CASE( full_reduc, all_false, double )
-	ADD_T_CASE( full_reduc, all_false, int )
-	ADD_T_CASE( full_reduc, any_true,  double )
-	ADD_T_CASE( full_reduc, any_true,  int )
-	ADD_T_CASE( full_reduc, any_false, double )
-	ADD_T_CASE( full_reduc, any_false, int )
+BEGIN_TPACK( mat_full_alltrue )
+	ADD_TMN_CASE_3X3( full_reduc, all_true, double, DM, DN )
+	ADD_TMN_CASE_3X3( full_reduc, all_true, int, DM, DN )
 END_TPACK
 
+BEGIN_TPACK( mat_full_allfalse )
+	ADD_TMN_CASE_3X3( full_reduc, all_false, double, DM, DN )
+	ADD_TMN_CASE_3X3( full_reduc, all_false, int, DM, DN )
+END_TPACK
+
+BEGIN_TPACK( mat_full_anytrue )
+	ADD_TMN_CASE_3X3( full_reduc, any_true, double, DM, DN )
+	ADD_TMN_CASE_3X3( full_reduc, any_true, int, DM, DN )
+END_TPACK
+
+BEGIN_TPACK( mat_full_anyfalse )
+	ADD_TMN_CASE_3X3( full_reduc, any_false, double, DM, DN )
+	ADD_TMN_CASE_3X3( full_reduc, any_false, int, DM, DN )
+END_TPACK
+
+
 BEGIN_MAIN_SUITE
-	ADD_TPACK( mat_full_allany )
+	ADD_TPACK( mat_full_alltrue )
+	ADD_TPACK( mat_full_allfalse )
+	ADD_TPACK( mat_full_anytrue )
+	ADD_TPACK( mat_full_anyfalse )
 END_MAIN_SUITE
 
 
