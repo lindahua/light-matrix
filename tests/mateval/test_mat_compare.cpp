@@ -7,12 +7,8 @@
  */
 
 
-#include "test_base.h"
-
-#include <light_mat/matrix/ref_matrix.h>
-#include <light_mat/matrix/ref_block.h>
-#include <light_mat/matrix/ref_grid.h>
-#include <light_mat/common/block.h>
+#include "../test_base.h"
+#include <light_mat/mateval/mat_compare.h>
 
 using namespace lmat;
 using namespace lmat::test;

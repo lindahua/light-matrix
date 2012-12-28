@@ -280,7 +280,8 @@ set(MATRIX_REDUC_HS_
     ${INC}/mateval/mat_reduce.h
     ${INC}/mateval/mat_enorms.h
     ${INC}/mateval/mat_minmax.h
-    ${INC}/mateval/mat_allany.h)   
+    ${INC}/mateval/mat_allany.h
+    ${INC}/mateval/mat_compare.h)   
     
 set(MATEVAL_HS
     ${MATRIX_EVAL_HS_}
@@ -519,6 +520,7 @@ add_executable(test_colwise_reduce ${MATREDUC_TEST_HS} mateval/test_colwise_redu
 add_executable(test_rowwise_reduce ${MATREDUC_TEST_HS} mateval/test_rowwise_reduce.cpp)
 add_executable(test_more_reduce ${MATREDUC_TEST_HS} mateval/test_more_reduce.cpp)
 add_executable(test_mat_allany ${MATREDUC_TEST_HS} mateval/test_mat_allany.cpp)
+add_executable(test_mat_compare ${MATREDUC_TEST_HS} mateval/test_mat_compare.cpp)
 
 set(MATEVAL_ALL_TEST_HS
     ${MATEVAL_HS_EX})
@@ -540,6 +542,7 @@ set(LMAT_MATEVAL_TESTS
 	test_rowwise_reduce
 	test_more_reduce
 	test_mat_allany
+	test_mat_compare
 	test_cpd_ewise)
 
 
