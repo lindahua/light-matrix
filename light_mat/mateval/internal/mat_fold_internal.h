@@ -118,7 +118,6 @@ namespace lmat {
 		return r;
 	}
 
-
 } }
 
 #endif 
