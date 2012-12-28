@@ -27,11 +27,10 @@ namespace lmat
 		typedef typename preferred_macc_policy<Mat>::type policy_t;
 
 		if (val)
-			return internal::all_(mat.shape(), mat, policy_t());
+			return internal::all_(mat.shape(), type_<T>(), mat, policy_t());
 		else
-			return !internal::any_(mat.shape(), mat, policy_t());
+			return !internal::any_(mat.shape(), type_<T>(), mat, policy_t());
 	}
-
 
 	template<class Mat>
 	inline bool all(const IEWiseMatrix<Mat, bool>& mat, bool val=true)
@@ -39,11 +38,10 @@ namespace lmat
 		typedef typename preferred_macc_policy<Mat>::type policy_t;
 
 		if (val)
-			return internal::all_(mat.shape(), mat, policy_t());
+			return internal::all_(mat.shape(), type_<bool>(), mat, policy_t());
 		else
-			return !internal::any_(mat.shape(), mat, policy_t());
+			return !internal::any_(mat.shape(), type_<bool>(), mat, policy_t());
 	}
-
 
 	template<typename T, class Mat>
 	inline bool any(const IEWiseMatrix<Mat, mask_t<T> >& mat, bool val=true)
@@ -51,11 +49,10 @@ namespace lmat
 		typedef typename preferred_macc_policy<Mat>::type policy_t;
 
 		if (val)
-			return internal::any_(mat.shape(), mat, policy_t());
+			return internal::any_(mat.shape(), type_<T>(), mat, policy_t());
 		else
-			return !internal::all_(mat.shape(), mat, policy_t());
+			return !internal::all_(mat.shape(), type_<T>(), mat, policy_t());
 	}
-
 
 	template<class Mat>
 	inline bool any(const IEWiseMatrix<Mat, bool>& mat, bool val=true)
@@ -63,12 +60,58 @@ namespace lmat
 		typedef typename preferred_macc_policy<Mat>::type policy_t;
 
 		if (val)
-			return internal::any_(mat.shape(), mat, policy_t());
+			return internal::any_(mat.shape(), type_<bool>(), mat, policy_t());
 		else
-			return !internal::all_(mat.shape(), mat, policy_t());
+			return !internal::all_(mat.shape(), type_<bool>(), mat, policy_t());
 	}
 
 
+	/********************************************
+	 *
+	 *  colwise reduction
+	 *
+	 ********************************************/
+
+	template<typename T, class Mat, class DMat>
+	inline void colwise_all(const IEWiseMatrix<Mat, mask_t<T> >& mat,
+			IRegularMatrix<DMat, bool>& dmat, bool val=true)
+	{
+		typedef default_simd_kind kind;
+		const bool use_simd = supports_simd<Mat, T, kind, false>::value;
+		typedef typename meta::if_c<use_simd, atags::simd<kind>, atags::scalar>::type U;
+
+		LMAT_CHECK_DIMS( dmat.nelems() == mat.ncolumns() )
+		internal::colwise_all_(mat.shape(), type_<T>(), mat.derived(), dmat.derived(), val, U());
+	}
+
+	template<class Mat, class DMat>
+	inline void colwise_all(const IEWiseMatrix<Mat, bool>& mat,
+			IRegularMatrix<DMat, bool>& dmat, bool val=true)
+	{
+		LMAT_CHECK_DIMS( dmat.nelems() == mat.ncolumns() )
+		internal::colwise_all_(mat.shape(), type_<bool>(), mat.derived(), dmat.derived(), val, atags::scalar());
+	}
+
+	template<typename T, class Mat, class DMat>
+	inline void colwise_any(const IEWiseMatrix<Mat, mask_t<T> >& mat,
+			IRegularMatrix<DMat, bool>& dmat, bool val=true)
+	{
+		typedef default_simd_kind kind;
+		const bool use_simd = supports_simd<Mat, T, kind, false>::value;
+		typedef typename meta::if_c<use_simd, atags::simd<kind>, atags::scalar>::type U;
+
+		LMAT_CHECK_DIMS( dmat.nelems() == mat.ncolumns() )
+		internal::colwise_any_(mat.shape(), type_<T>(), mat.derived(), dmat.derived(), val, U());
+	}
+
+	template<class Mat, class DMat>
+	inline void colwise_any(const IEWiseMatrix<Mat, bool>& mat,
+			IRegularMatrix<DMat, bool>& dmat, bool val=true)
+	{
+
+		LMAT_CHECK_DIMS( dmat.nelems() == mat.ncolumns() )
+		internal::colwise_any_(mat.shape(), type_<bool>(), mat.derived(), dmat.derived(), val, atags::scalar());
+	}
 }
 
 #endif

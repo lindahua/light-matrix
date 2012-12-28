@@ -96,15 +96,15 @@ namespace lmat { namespace internal {
 	}
 
 
-	template<int M, int N, typename T, class Mat, typename U>
-	inline bool all_(const matrix_shape<M, N>& shape, const IEWiseMatrix<Mat, T>& mat, linear_macc<U>)
+	template<int M, int N, typename T, typename VT, class Mat, typename U>
+	inline bool all_(const matrix_shape<M, N>& shape, type_<T>, const IEWiseMatrix<Mat, VT>& mat, linear_macc<U>)
 	{
 		dimension<M * N> dim(shape.nelems());
 		return all_impl(dim, type_<T>(), U(), make_vec_accessor(U(), in_(mat.derived())));
 	}
 
-	template<int M, int N, typename T, class Mat, typename U>
-	inline bool all_(const matrix_shape<M, N>& shape, const IEWiseMatrix<Mat, T>& mat, percol_macc<U>)
+	template<int M, int N, typename T, typename VT, class Mat, typename U>
+	inline bool all_(const matrix_shape<M, N>& shape, type_<T>, const IEWiseMatrix<Mat, VT>& mat, percol_macc<U>)
 	{
 		if (shape.nelems() > 0)
 		{
@@ -123,15 +123,15 @@ namespace lmat { namespace internal {
 	}
 
 
-	template<int M, int N, typename T, class Mat, typename U>
-	inline bool any_(const matrix_shape<M, N>& shape, const IEWiseMatrix<Mat, T>& mat, linear_macc<U>)
+	template<int M, int N, typename T, typename VT, class Mat, typename U>
+	inline bool any_(const matrix_shape<M, N>& shape, type_<T>, const IEWiseMatrix<Mat, VT>& mat, linear_macc<U>)
 	{
 		dimension<M * N> dim(shape.nelems());
 		return any_impl(dim, type_<T>(), U(), make_vec_accessor(U(), in_(mat.derived())));
 	}
 
-	template<int M, int N, typename T, class Mat, typename U>
-	inline bool any_(const matrix_shape<M, N>& shape, const IEWiseMatrix<Mat, T>& mat, percol_macc<U>)
+	template<int M, int N, typename T, typename VT, class Mat, typename U>
+	inline bool any_(const matrix_shape<M, N>& shape, type_<T>, const IEWiseMatrix<Mat, VT>& mat, percol_macc<U>)
 	{
 		if (shape.nelems() > 0)
 		{
@@ -147,6 +147,53 @@ namespace lmat { namespace internal {
 		}
 
 		return false;
+	}
+
+
+	template<int M, int N, typename T, class A, class D, typename U>
+	inline void colwise_all_(const matrix_shape<M, N>& shape, type_<T>, const A& a, D& d, bool expect_val, U)
+	{
+		const index_t n = a.ncolumns();
+		auto rd = make_multicol_accessor(U(), in_(a));
+		dimension<M> col_dim(shape.nrows());
+
+		if (expect_val)
+		{
+			for (index_t j = 0; j < n; ++j)
+			{
+				d[j] = all_impl(col_dim, type_<T>(), U(), rd.col(j));
+			}
+		}
+		else
+		{
+			for (index_t j = 0; j < n; ++j)
+			{
+				d[j] = !any_impl(col_dim, type_<T>(), U(), rd.col(j));
+			}
+		}
+	}
+
+	template<int M, int N, typename T, class A, class D, typename U>
+	inline void colwise_any_(const matrix_shape<M, N>& shape, type_<T>, const A& a, D& d, bool expect_val, U)
+	{
+		const index_t n = a.ncolumns();
+		auto rd = make_multicol_accessor(U(), in_(a));
+		dimension<M> col_dim(shape.nrows());
+
+		if (expect_val)
+		{
+			for (index_t j = 0; j < n; ++j)
+			{
+				d[j] = any_impl(col_dim, type_<T>(), U(), rd.col(j));
+			}
+		}
+		else
+		{
+			for (index_t j = 0; j < n; ++j)
+			{
+				d[j] = !all_impl(col_dim, type_<T>(), U(), rd.col(j));
+			}
+		}
 	}
 
 

@@ -275,6 +275,7 @@ set(REPVEC_EXPR_HS_
 set(MATRIX_REDUC_HS_
     ${INC}/mateval/internal/mat_fold_internal.h
     ${INC}/mateval/internal/mat_reduce_internal.h
+    ${INC}/mateval/internal/mat_allany_internal.h
     ${INC}/mateval/mat_fold.h
     ${INC}/mateval/mat_reduce.h
     ${INC}/mateval/mat_enorms.h
