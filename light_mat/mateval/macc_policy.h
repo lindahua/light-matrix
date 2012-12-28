@@ -84,9 +84,6 @@ namespace lmat
 
 		template<typename T>
 		struct are_simd_compatible_types<mask_t<T>, T> { static const bool value = true; };
-
-		template<typename T>
-		struct are_simd_compatible_types<T, mask_t<T> > { static const bool value = true; };
 	}
 
 	template<typename Mat, typename T, typename Kind, bool IsLinear>
