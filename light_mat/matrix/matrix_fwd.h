@@ -88,6 +88,10 @@ namespace lmat
 
 	template<class Mat> class dense_mutable_view;
 
+	template<typename T, int M, int N> class inds_expr;
+	template<typename T, int M, int N> class subs_i_expr;
+	template<typename T, int M, int N> class subs_j_expr;
+
 	// continuous levels
 
 	namespace cont_level
