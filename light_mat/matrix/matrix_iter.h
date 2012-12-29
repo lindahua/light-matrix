@@ -17,6 +17,16 @@
 
 namespace lmat
 {
+	namespace meta
+	{
+		template<class Mat>
+		struct supports_random_access
+		{
+			static const bool value = matrix_iter<Mat>::supports_random_access;
+		};
+	}
+
+
 	template<class Mat>
 	struct matrix_iter
 	{
@@ -25,6 +35,8 @@ namespace lmat
 
 		typedef internal::matrix_coliter_helper<Mat,
 				typename internal::coliter_tag<Mat>::type> coliter_helper;
+
+		static const bool supports_random_access = iter_helper::supp_random_access;
 
 		typedef typename iter_helper::const_iterator const_iterator;
 		typedef typename iter_helper::iterator iterator;

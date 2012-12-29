@@ -66,6 +66,8 @@ namespace lmat { namespace internal {
 		typedef typename meta::if_<meta::is_readonly<Mat>,
 				const T*, T*>::type iterator;
 
+		static const bool supp_random_access = true;
+
 		LMAT_ENSURE_INLINE
 		static const_iterator begin(const Mat& a)
 		{
@@ -99,6 +101,8 @@ namespace lmat { namespace internal {
 		typedef step_ptr_t<const T> const_iterator;
 		typedef typename meta::if_<meta::is_readonly<Mat>,
 				step_ptr_t<const T>, step_ptr_t<T> >::type iterator;
+
+		static const bool supp_random_access = true;
 
 		LMAT_ENSURE_INLINE
 		static const_iterator begin(const Mat& a)
@@ -137,6 +141,8 @@ namespace lmat { namespace internal {
 		typedef step_ptr_t<const T> const_iterator;
 		typedef typename meta::if_<meta::is_readonly<Mat>,
 				step_ptr_t<const T>, step_ptr_t<T> >::type iterator;
+
+		static const bool supp_random_access = true;
 
 		LMAT_ENSURE_INLINE
 		static const_iterator begin(const Mat& a)
@@ -253,6 +259,8 @@ namespace lmat { namespace internal {
 		typedef typename meta::if_<meta::is_readonly<Mat>,
 				pcc_iterator_t<const T>, pcc_iterator_t<T> >::type iterator;
 
+		static const bool supp_random_access = false;
+
 		LMAT_ENSURE_INLINE
 		static const_iterator begin(const Mat& a)
 		{
@@ -366,6 +374,8 @@ namespace lmat { namespace internal {
 		typedef gen_iterator_t<const T> const_iterator;
 		typedef typename meta::if_<meta::is_readonly<Mat>,
 				gen_iterator_t<const T>, gen_iterator_t<T> >::type iterator;
+
+		static const bool supp_random_access = false;
 
 		LMAT_ENSURE_INLINE
 		static const_iterator begin(const Mat& a)
