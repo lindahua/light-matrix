@@ -15,7 +15,6 @@
 
 #include <light_mat/matrix/matrix_meta.h>
 
-
 #ifdef LMAT_ENABLE_INDEX_CHECKING
 #define LMAT_CHECK_IDX(i, n) check_arg(i >= 0 && i < (n), "Index out of range.");
 #define LMAT_CHECK_SUBS(a, i, j) \
@@ -230,6 +229,59 @@ namespace lmat
 
 	public:
 
+		// iteration
+
+		LMAT_ENSURE_INLINE
+		typename matrix_iter<Derived>::const_iterator begin() const
+		{
+			return matrix_iter<Derived>::begin(derived());
+		}
+
+		LMAT_ENSURE_INLINE
+		typename matrix_iter<Derived>::const_iterator end() const
+		{
+			return matrix_iter<Derived>::end(derived());
+		}
+
+		LMAT_ENSURE_INLINE
+		typename matrix_iter<Derived>::iterator begin()
+		{
+			return matrix_iter<Derived>::begin(derived());
+		}
+
+		LMAT_ENSURE_INLINE
+		typename matrix_iter<Derived>::iterator end()
+		{
+			return matrix_iter<Derived>::end(derived());
+		}
+
+		LMAT_ENSURE_INLINE
+		typename matrix_iter<Derived>::col_const_iterator col_begin(index_t j) const
+		{
+			return matrix_iter<Derived>::col_begin(derived(), j);
+		}
+
+		LMAT_ENSURE_INLINE
+		typename matrix_iter<Derived>::col_const_iterator col_end(index_t j) const
+		{
+			return matrix_iter<Derived>::col_end(derived(), j);
+		}
+
+		LMAT_ENSURE_INLINE
+		typename matrix_iter<Derived>::col_iterator col_begin(index_t j)
+		{
+			return matrix_iter<Derived>::col_begin(derived(), j);
+		}
+
+		LMAT_ENSURE_INLINE
+		typename matrix_iter<Derived>::col_iterator col_end(index_t j)
+		{
+			return matrix_iter<Derived>::col_end(derived(), j);
+		}
+
+
+	public:
+
 		// sub-vector views (only apply to compile-time vectors)
 
 		template<class Range>
@@ -356,6 +408,39 @@ namespace lmat
 		}
 
 	}; // end class IRegularMatrix
+
+
+	template<class Mat, typename T>
+	LMAT_ENSURE_INLINE
+	inline typename matrix_iter<Mat>::const_iterator
+	begin(const IRegularMatrix<Mat, T>& mat)
+	{
+		return mat.begin();
+	}
+
+	template<class Mat, typename T>
+	LMAT_ENSURE_INLINE
+	inline typename matrix_iter<Mat>::const_iterator
+	end(const IRegularMatrix<Mat, T>& mat)
+	{
+		return mat.end();
+	}
+
+	template<class Mat, typename T>
+	LMAT_ENSURE_INLINE
+	inline typename matrix_iter<Mat>::iterator
+	begin(IRegularMatrix<Mat, T>& mat)
+	{
+		return mat.begin();
+	}
+
+	template<class Mat, typename T>
+	LMAT_ENSURE_INLINE
+	inline typename matrix_iter<Mat>::iterator
+	end(IRegularMatrix<Mat, T>& mat)
+	{
+		return mat.end();
+	}
 
 
 }

@@ -36,8 +36,8 @@ namespace lmat
 	 *   - ct_num_cols:		compile-time number of columns
 	 *   - is_readonly:		whether the contents can be modified
 	 *
-	 *	 - value_type:			the type of element value
-	 *	 - domain:				the domain (e.g. cpu_domain, cuda_domain)
+	 *	 - value_type:	    the type of element value
+	 *	 - domain:			the domain (e.g. cpu_domain, cuda_domain)
 	 *
 	 ****************************************************************/
 
@@ -96,6 +96,10 @@ namespace lmat
 		struct percol { };
 		struct none { };
 	}
+
+	// iterations
+
+	template<class Mat> struct matrix_iter;
 
 	// subviews
 

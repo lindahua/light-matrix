@@ -20,5 +20,6 @@
 #include <light_mat/matrix/matrix_print.h>
 
 #include <light_mat/matrix/matrix_subviews.h>
+#include <light_mat/matrix/matrix_iter.h>
 
 #endif 

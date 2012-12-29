@@ -198,6 +198,7 @@ set(MATH_HS_EX
         
 set(MATRIX_BASE_HS_
     ${INC}/matrix/internal/matrix_layout_internal.h
+    ${INC}/matrix/internal/matrix_iter_internal.h
     ${INC}/matrix/matrix_shape.h
     ${INC}/matrix/matrix_layout.h
     ${INC}/matrix/matrix_fwd.h 
@@ -205,6 +206,7 @@ set(MATRIX_BASE_HS_
     ${INC}/matrix/matrix_shape.h
     ${INC}/matrix/matrix_concepts.h
     ${INC}/matrix/matrix_properties.h
+    ${INC}/matrix/matrix_iter.h
     ${INC}/matrix/matrix_base.h)
     
 set(MATRIX_OPS_HS_
@@ -440,6 +442,7 @@ set(MATOPS_TEST_HS
     ${MATRIX_OPS_HS_})
 
 add_executable(test_mat_props  ${MATOPS_TEST_HS} matrix/test_mat_props.cpp)
+add_executable(test_mat_iter   ${MATOPS_TEST_HS} matrix/test_mat_iter.cpp)
 add_executable(test_mat_fill   ${MATOPS_TEST_HS} matrix/test_mat_fill.cpp)
 add_executable(test_mat_copy   ${MATOPS_TEST_HS} matrix/test_mat_copy.cpp)
 add_executable(test_dense_eval ${MATOPS_TEST_HS}  matrix/test_dense_eval.cpp)
@@ -472,6 +475,7 @@ set(LMAT_MATRIX_TESTS
 	test_ref_grid
 	test_step_vec
 	test_mat_props
+	test_mat_iter
 	test_mat_fill
 	test_mat_copy
 	test_dense_eval

@@ -15,6 +15,7 @@
 
 #include <light_mat/common/basic_defs.h>
 #include <cstring>
+#include <iterator>
 
 namespace lmat
 {
@@ -28,6 +29,15 @@ namespace lmat
 	class step_ptr_t
 	{
 	public:
+		typedef T value_type;
+		typedef ptrdiff_t difference_type;
+		typedef T* pointer;
+		typedef T& reference;
+		typedef std::random_access_iterator_tag iterator_category;
+
+		LMAT_ENSURE_INLINE
+		step_ptr_t() : _p(nullptr), _step(0) { }
+
 		LMAT_ENSURE_INLINE
 		step_ptr_t(T *p, const index_t& step)
 		: _p(p), _step(step)
@@ -88,35 +98,35 @@ namespace lmat
 		}
 
 		LMAT_ENSURE_INLINE
-		step_ptr_t& operator += (index_t n)
+		step_ptr_t& operator += (ptrdiff_t n)
 		{
 			_p += _step * n;
 			return *this;
 		}
 
 		LMAT_ENSURE_INLINE
-		step_ptr_t& operator -= (index_t n)
+		step_ptr_t& operator -= (ptrdiff_t n)
 		{
 			_p -= _step * n;
 			return *this;
 		}
 
 		LMAT_ENSURE_INLINE
-		step_ptr_t operator + (index_t n) const
+		step_ptr_t operator + (ptrdiff_t n) const
 		{
 			return step_ptr_t(_p + _step * n, _step);
 		}
 
 		LMAT_ENSURE_INLINE
-		step_ptr_t operator - (index_t n) const
+		step_ptr_t operator - (ptrdiff_t n) const
 		{
 			return step_ptr_t(_p - _step * n, _step);
 		}
 
 		LMAT_ENSURE_INLINE
-		index_t operator - (const step_ptr_t& r) const
+		ptrdiff_t operator - (const step_ptr_t& r) const
 		{
-			return (r._p - _p) / _step;
+			return (_p - r._p) / _step;
 		}
 
 		LMAT_ENSURE_INLINE
