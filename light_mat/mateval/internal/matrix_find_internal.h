@@ -1,16 +1,15 @@
 /**
- * @file matrix_algs_internal.h
+ * @file matrix_find_internal.h
  *
- * @brief Internal implementation of some matrix algorithms
+ * @brief Internal implementation of matrix-find algorithms
  *
  * @author Dahua Lin
  */
 
-#ifndef LIGHTMAT_MATRIX_ALGS_INTERNAL_H_
-#define LIGHTMAT_MATRIX_ALGS_INTERNAL_H_
+#ifndef LIGHTMAT_MATRIX_FIND_INTERNAL_H_
+#define LIGHTMAT_MATRIX_FIND_INTERNAL_H_
 
 #include <light_mat/mateval/ewise_eval.h>
-#include <tuple>
 
 namespace lmat { namespace internal {
 
@@ -60,39 +59,6 @@ namespace lmat { namespace internal {
 			return cnt;
 		}
 	};
-
-
-	// fill index
-
-	template<typename A>
-	LMAT_ENSURE_INLINE
-	inline void _fill_inds(const A& a)
-	{
-		typedef typename matrix_traits<A>::value_type T;
-		index_t n = a.nelems();
-		auto p = begin(a);
-
-		for(index_t i = 0; i < n; ++i, ++p)
-			*p = static_cast<T>(i);
-	}
-
-	template<typename A>
-	LMAT_ENSURE_INLINE
-	inline void _fill_subs_i(const A& a)
-	{
-		typedef typename matrix_traits<A>::value_type T;
-		index_t m = a.nrows();
-		index_t n = a.ncolumns();
-
-		for (index_t j = 0; j < n; ++j)
-		{
-			auto p = a.col_begin(j);
-			for (index_t i = 0; i < m; ++i, ++p)
-				*p = static_cast<T>(i);
-		}
-	}
-
-
 
 } }
 

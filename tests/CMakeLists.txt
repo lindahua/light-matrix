@@ -288,8 +288,8 @@ set(MATRIX_REDUC_HS_
     ${INC}/mateval/mat_compare.h)   
     
 set(MATRIX_ALG_HS_
-    ${INC}/mateval/internal/matrix_algs_internal.h
-    ${INC}/mateval/matrix_algs.h
+    ${INC}/mateval/internal/matrix_find_internal.h
+    ${INC}/mateval/matrix_find.h
     ${INC}/mateval/matrix_sort.h)  
     
 set(MATEVAL_HS
@@ -543,6 +543,7 @@ set(MATALG_TEST_HS
     ${OTHER_EXPR_HS_}
     ${MATRIX_ALG_HS_})
     
+add_executable(test_mat_find ${MATALG_TEST_HS} mateval/test_mat_find.cpp)
 add_executable(test_mat_sort ${MATALG_TEST_HS} mateval/test_mat_sort.cpp)
 
 set(MATEVAL_ALL_TEST_HS
@@ -568,6 +569,7 @@ set(LMAT_MATEVAL_TESTS
 	test_more_reduce
 	test_mat_allany
 	test_mat_compare
+	test_mat_find
 	test_mat_sort
 	test_cpd_ewise)
 
