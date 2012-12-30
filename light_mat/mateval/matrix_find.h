@@ -82,14 +82,14 @@ namespace lmat
 
 
 	template<class A, typename T, class VecI>
-	inline void findl_to(const IEWiseMatrix<A, T>& a, const VecI& veci)
+	inline void findl_to(const IEWiseMatrix<A, T>& a, VecI& veci)
 	{
 		findl_f(a, [&veci](const index_t& i, const T& ) {
 			veci.push_back(i); } );
 	}
 
 	template<class A, typename T, class VecI, class VecV>
-	inline void findl_to(const IEWiseMatrix<A, T>& a, const VecI& veci, const VecV& vecv)
+	inline void findl_to(const IEWiseMatrix<A, T>& a, VecI& veci, VecV& vecv)
 	{
 		findl_f(a, [&veci, &vecv](const index_t& i, const T& v) {
 			veci.push_back(i);
@@ -97,7 +97,7 @@ namespace lmat
 	}
 
 	template<class A, typename T, class VecI, class VecJ>
-	inline void find_to(const IEWiseMatrix<A, T>& a, const VecI& veci, const VecJ& vecj)
+	inline void find_to(const IEWiseMatrix<A, T>& a, VecI& veci, VecJ& vecj)
 	{
 		find_f(a, [&veci, &vecj](const index_t& i, const index_t& j, const T& ) {
 			veci.push_back(i);
@@ -105,7 +105,7 @@ namespace lmat
 	}
 
 	template<class A, typename T, class VecI, class VecJ, class VecV>
-	inline void find_to(const IEWiseMatrix<A, T>& a, const VecI& veci, const VecJ& vecj, const VecV& vecv)
+	inline void find_to(const IEWiseMatrix<A, T>& a, VecI& veci, VecJ& vecj, VecV& vecv)
 	{
 		find_f(a, [&veci, &vecj, &vecv](const index_t& i, const index_t& j, const T& v) {
 			veci.push_back(i);

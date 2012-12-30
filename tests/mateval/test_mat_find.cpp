@@ -10,6 +10,8 @@
 #include <light_mat/matrix/matrix_classes.h>
 #include <light_mat/mateval/mat_pred.h>
 #include <light_mat/mateval/matrix_find.h>
+#include <vector>
+#include <algorithm>
 
 using namespace lmat;
 using namespace lmat::test;
@@ -124,6 +126,65 @@ MN_CASE( mat_count, colwise_count_ex )
 }
 
 
+SIMPLE_CASE( mat_find, findl )
+{
+	const index_t m = DM;
+	const index_t n = DN;
+
+	dense_matrix<double> a(m, n);
+	fill_ran(a);
+
+	double t = 0.4;
+
+	std::vector<index_t> vecl;
+	findl_to(a > t, vecl);
+
+	std::vector<index_t> vecl0;
+	for (index_t i = 0; i < m * n; ++i)
+	{
+		if (a[i] > t) vecl0.push_back(i);
+	}
+
+	ASSERT_EQ( vecl.size(), vecl0.size() );
+	ASSERT_TRUE( std::equal(vecl.begin(), vecl.end(), vecl0.begin()) );
+}
+
+
+SIMPLE_CASE( mat_find, findij )
+{
+	const index_t m = DM;
+	const index_t n = DN;
+
+	dense_matrix<double> a(m, n);
+	fill_ran(a);
+
+	double t = 0.4;
+
+	std::vector<index_t> veci;
+	std::vector<index_t> vecj;
+	find_to(a > t, veci, vecj);
+
+	std::vector<index_t> veci0;
+	std::vector<index_t> vecj0;
+
+	for (index_t j = 0; j < n; ++j)
+	{
+		for (index_t i = 0; i < m; ++i)
+		{
+			if (a(i, j) > t)
+			{
+				veci0.push_back(i);
+				vecj0.push_back(j);
+			}
+		}
+	}
+
+	ASSERT_EQ( veci.size(), veci0.size() );
+	ASSERT_EQ( vecj.size(), vecj0.size() );
+	ASSERT_TRUE( std::equal(veci.begin(), veci.end(), veci0.begin()) );
+	ASSERT_TRUE( std::equal(vecj.begin(), vecj.end(), vecj0.begin()) );
+}
+
 
 
 BEGIN_TPACK( mat_count )
@@ -142,12 +203,18 @@ BEGIN_TPACK( mat_colwise_count_ex )
 	ADD_MN_CASE_3X3( mat_count, colwise_count_ex, DM, DN )
 END_TPACK
 
+BEGIN_TPACK( mat_find )
+	ADD_SIMPLE_CASE( mat_find, findl )
+	ADD_SIMPLE_CASE( mat_find, findij )
+END_TPACK
+
 
 BEGIN_MAIN_SUITE
 	ADD_TPACK( mat_count )
 	ADD_TPACK( mat_count_ex )
 	ADD_TPACK( mat_colwise_count )
 	ADD_TPACK( mat_colwise_count_ex )
+	ADD_TPACK( mat_find )
 END_MAIN_SUITE
 
 
