@@ -21,5 +21,6 @@
 
 #include <light_mat/matrix/matrix_subviews.h>
 #include <light_mat/matrix/matrix_iter.h>
+#include <light_mat/matrix/matrix_select.h>
 
 #endif 

@@ -236,7 +236,8 @@ set(MATRIX_CLASS_HS_
     
 set(MATRIX_MANIP_HS_
     ${INC}/matrix/internal/matrix_transpose_internal.h
-    ${INC}/matrix/matrix_transpose.h)
+    ${INC}/matrix/matrix_transpose.h
+    ${INC}/matrix/matrix_select.h)
     
 set(MATRIX_HS
     ${MATRIX_BASE_HS_}
@@ -471,6 +472,7 @@ set(MATMANIP_TEST_HS
     ${MATRIX_CLASS_HS_}
     ${MATRIX_MANIP_HS_})
      
+add_executable(test_mat_select ${MATMANIP_TEST_HS} matrix/test_mat_select.cpp)
 add_executable(test_direct_trans ${MATMANIP_TEST_HS} matrix/test_direct_trans.cpp)    
 add_executable(test_transpose_expr ${MATMANIP_TEST_HS} matrix/test_transpose_expr.cpp) 
 
@@ -490,6 +492,7 @@ set(LMAT_MATRIX_TESTS
 	test_mat_vecviews
 	test_mat_matviews
 	test_mat_asvec
+	test_mat_select
 	test_direct_trans
 	test_transpose_expr)
 
