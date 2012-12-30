@@ -18,7 +18,7 @@ if (MSVC)
 	set(WARNING_FLAGS "/W4")
 else (MSVC)
 	set(LANG_FLAGS "-std=c++0x -pedantic -mavx -DLMAT_DIAGNOSIS_LEVEL=0")
-	set(WARNING_FLAGS "-Wall -Wextra -Wconversion -Wformat -Wno-unused-parameter ")
+	set(WARNING_FLAGS "-Wall -Wextra -Wconversion -Wformat -Wno-unused-parameter -Wno-unused-variable")
 endif (MSVC)
 
 if (${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
