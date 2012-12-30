@@ -117,6 +117,49 @@ void test_asrow_view()
 }
 
 
+SIMPLE_CASE( vector_adapter, as_col )
+{
+	std::vector<double> x;
+	const index_t n = 10;
+	dense_col<double> r(n);
+
+	for (index_t i = 0; i < 10; ++i)
+	{
+		r[i] = double(i+1);
+		x.push_back(r[i]);
+	}
+
+	auto xv = as_col(x);
+
+	ASSERT_EQ( xv.nrows(), n );
+	ASSERT_EQ( xv.ncolumns(), 1 );
+	ASSERT_EQ( xv.nelems(), n );
+
+	ASSERT_VEC_EQ( n, xv, r );
+}
+
+SIMPLE_CASE( vector_adapter, as_row )
+{
+	std::vector<double> x;
+	const index_t n = 10;
+	dense_row<double> r(n);
+
+	for (index_t i = 0; i < 10; ++i)
+	{
+		r[i] = double(i+1);
+		x.push_back(r[i]);
+	}
+
+	auto xv = as_row(x);
+
+	ASSERT_EQ( xv.nrows(), 1 );
+	ASSERT_EQ( xv.ncolumns(), n );
+	ASSERT_EQ( xv.nelems(), n );
+
+	ASSERT_VEC_EQ( n, xv, r );
+}
+
+
 
 #define DEF_ASVEC_TESTS( V, STag ) \
 	MN_CASE( mat_as_##V, STag##_as_##V ) { test_as##V##_view<STag, M, N>(); }
@@ -169,6 +212,10 @@ BEGIN_TPACK( mat_as_row_grid )
 	ADD_MN_CASE( mat_as_row, grid_as_row, 1, DN )
 END_TPACK
 
+BEGIN_TPACK( vector_adapter )
+	ADD_SIMPLE_CASE( vector_adapter, as_col )
+	ADD_SIMPLE_CASE( vector_adapter, as_row )
+END_TPACK
 
 BEGIN_MAIN_SUITE
 	ADD_TPACK( mat_as_col_cont )
@@ -178,6 +225,8 @@ BEGIN_MAIN_SUITE
 	ADD_TPACK( mat_as_row_cont )
 	ADD_TPACK( mat_as_row_bloc )
 	ADD_TPACK( mat_as_row_grid )
+
+	ADD_TPACK( vector_adapter )
 END_MAIN_SUITE
 
 
