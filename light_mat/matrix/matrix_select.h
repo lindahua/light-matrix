@@ -10,6 +10,7 @@
 #define LIGHTMAT_MATRIX_SELECT_H_
 
 #include <light_mat/matrix/matrix_properties.h>
+#include <light_mat/matrix/matrix_copy.h>
 
 namespace lmat
 {
@@ -18,6 +19,8 @@ namespace lmat
 	template<class Mat, class L> class selectl_expr;
 	template<class Mat, class I, class J> class selectl2_expr;
 	template<class Mat, class I, class J> class select_expr;
+	template<class Mat, class I> class select_rows_expr;
+	template<class Mat, class J> class select_cols_expr;
 
 	template<class Mat, class L>
 	struct matrix_traits<selectl_expr<Mat, L> >
@@ -59,6 +62,34 @@ namespace lmat
 		typedef matrix_shape<ct_num_rows, ct_num_cols> shape_type;
 		typedef typename matrix_traits<Mat>::value_type value_type;
 		typedef typename meta::common_domain<Mat, I, J>::type domain;
+	};
+
+	template<class Mat, class I>
+	struct matrix_traits<select_rows_expr<Mat, I> >
+	{
+		static const int num_dimensions = 2;
+		static const int ct_num_rows = meta::nelems<I>::value;
+		static const int ct_num_cols = meta::ncols<Mat>::value;
+
+		static const bool is_readonly = true;
+
+		typedef matrix_shape<ct_num_rows, ct_num_cols> shape_type;
+		typedef typename matrix_traits<Mat>::value_type value_type;
+		typedef typename meta::common_domain<Mat, I>::type domain;
+	};
+
+	template<class Mat, class J>
+	struct matrix_traits<select_cols_expr<Mat, J> >
+	{
+		static const int num_dimensions = 2;
+		static const int ct_num_rows = meta::nrows<Mat>::value;
+		static const int ct_num_cols = meta::nelems<J>::value;
+
+		static const bool is_readonly = true;
+
+		typedef matrix_shape<ct_num_rows, ct_num_cols> shape_type;
+		typedef typename matrix_traits<Mat>::value_type value_type;
+		typedef typename meta::common_domain<Mat, J>::type domain;
 	};
 
 
@@ -318,12 +349,12 @@ namespace lmat
 			return m_src;
 		}
 
-		LMAT_ENSURE_INLINE const Mat& i_subs() const
+		LMAT_ENSURE_INLINE const I& i_subs() const
 		{
 			return m_si;
 		}
 
-		LMAT_ENSURE_INLINE const Mat& j_subs() const
+		LMAT_ENSURE_INLINE const J& j_subs() const
 		{
 			return m_sj;
 		}
@@ -363,7 +394,7 @@ namespace lmat
 	select_expr<S, I, J> >::type
 	select(const IRegularMatrix<S, T>& s, const IRegularMatrix<I, TI>& si, const IRegularMatrix<J, TJ>& sj)
 	{
-		return select_expr<S, I, J>(s, si, sj);
+		return select_expr<S, I, J>(s.derived(), si.derived(), sj.derived());
 	}
 
 
@@ -389,6 +420,167 @@ namespace lmat
 	}
 
 
+	/********************************************
+	 *
+	 *  row/column selection
+	 *
+	 ********************************************/
+
+	template<class Mat, class I>
+	class select_rows_expr
+	: public IMatrixXpr<select_rows_expr<Mat, I>, typename matrix_traits<Mat>::value_type>
+	{
+		typedef matrix_shape<meta::nelems<I>::value, meta::ncols<Mat>::value> shape_type;
+
+		static_assert( meta::supports_linear_index<I>::value, "I should support linear indexing" );
+
+	public:
+		LMAT_ENSURE_INLINE
+		select_rows_expr(const Mat& src, const I& si)
+		: m_src(src), m_si(si) { }
+
+		LMAT_ENSURE_INLINE const Mat& source() const
+		{
+			return m_src;
+		}
+
+		LMAT_ENSURE_INLINE const I& i_subs() const
+		{
+			return m_si;
+		}
+
+		LMAT_ENSURE_INLINE index_t nrows() const
+		{
+			return m_si.nelems();
+		}
+
+		LMAT_ENSURE_INLINE index_t ncolumns() const
+		{
+			return m_src.ncolumns();
+		}
+
+		LMAT_ENSURE_INLINE index_t nelems() const
+		{
+			return nrows() * ncolumns();
+		}
+
+		LMAT_ENSURE_INLINE
+		shape_type shape() const
+		{
+			return shape_type(nrows(), ncolumns());
+		}
+
+	private:
+		const Mat& m_src;
+		const I& m_si;
+	};
+
+	template<class S, typename T, class I, typename TI>
+	LMAT_ENSURE_INLINE
+	inline typename meta::enable_if<meta::supports_linear_index<I>,
+	select_rows_expr<S, I> >::type
+	select_rows(const IRegularMatrix<S, T>& s, const IRegularMatrix<I, TI>& si)
+	{
+		return select_rows_expr<S, I>(s.derived(), si.derived());
+	}
+
+	template<typename T, class S, class I, class D>
+	LMAT_ENSURE_INLINE
+	inline void evaluate(const select_rows_expr<S, I>& expr, IRegularMatrix<D, T>& dst)
+	{
+		const S& s = expr.source();
+		const I& si = expr.i_subs();
+		D& d = dst.derived();
+
+		const index_t m = dst.nrows();
+		const index_t n = dst.ncolumns();
+
+		for (index_t j = 0; j < n; ++j)
+		{
+			for (index_t i = 0; i < m; ++i)
+			{
+				d.elem(i, j) = s.elem((index_t)si[i], j);
+			}
+		}
+	}
+
+
+	template<class Mat, class J>
+	class select_cols_expr
+	: public IMatrixXpr<select_cols_expr<Mat, J>, typename matrix_traits<Mat>::value_type>
+	{
+		typedef matrix_shape<meta::nrows<Mat>::value, meta::nelems<J>::value> shape_type;
+
+		static_assert( meta::supports_linear_index<J>::value, "J should support linear indexing" );
+
+	public:
+		LMAT_ENSURE_INLINE
+		select_cols_expr(const Mat& src, const J& sj)
+		: m_src(src), m_sj(sj) { }
+
+		LMAT_ENSURE_INLINE const Mat& source() const
+		{
+			return m_src;
+		}
+
+		LMAT_ENSURE_INLINE const J& j_subs() const
+		{
+			return m_sj;
+		}
+
+		LMAT_ENSURE_INLINE index_t nrows() const
+		{
+			return m_src.nrows();
+		}
+
+		LMAT_ENSURE_INLINE index_t ncolumns() const
+		{
+			return m_sj.nelems();
+		}
+
+		LMAT_ENSURE_INLINE index_t nelems() const
+		{
+			return nrows() * ncolumns();
+		}
+
+		LMAT_ENSURE_INLINE
+		shape_type shape() const
+		{
+			return shape_type(nrows(), ncolumns());
+		}
+
+	private:
+		const Mat& m_src;
+		const J& m_sj;
+	};
+
+
+	template<class S, typename T, class J, typename TJ>
+	LMAT_ENSURE_INLINE
+	inline typename meta::enable_if<meta::supports_linear_index<J>,
+	select_cols_expr<S, J> >::type
+	select_cols(const IRegularMatrix<S, T>& s, const IRegularMatrix<J, TJ>& sj)
+	{
+		return select_cols_expr<S, J>(s.derived(), sj.derived());
+	}
+
+	template<typename T, class S, class J, class D>
+	LMAT_ENSURE_INLINE
+	inline void evaluate(const select_cols_expr<S, J>& expr, IRegularMatrix<D, T>& dst)
+	{
+		const S& s = expr.source();
+		const J& sj = expr.j_subs();
+		D& d = dst.derived();
+
+		const index_t n = dst.ncolumns();
+
+		for (index_t j = 0; j < n; ++j)
+		{
+			auto scol = s.column(sj[j]);
+			auto dcol = d.column(j);
+			copy(scol, dcol);
+		}
+	}
 
 }
 

@@ -148,6 +148,85 @@ MN_CASE( mat_select, selectl2_ex )
 	ASSERT_MAT_EQ( m, n, r, r0 );
 }
 
+MN_CASE( mat_select, select )
+{
+	dense_matrix<double> s(M0, N0);
+	fill_ran(s);
+
+	index_t m = M == 0 ? DM : M;
+	index_t n = N == 0 ? DN : N;
+
+	dense_row<index_t, M> I(m);
+	dense_col<index_t, N> J(n);
+	fill_randi(I, M0);
+	fill_randi(J, N0);
+
+	dense_matrix<double, M, N> r = select(s, I, J);
+
+	ASSERT_EQ( r.nrows(), m );
+	ASSERT_EQ( r.ncolumns(), n );
+
+	dense_matrix<double> r0(m, n);
+	for (index_t j = 0; j < n; ++j)
+	{
+		for (index_t i = 0; i < m; ++i) r0(i, j) = s(I[i], J[j]);
+	}
+
+	ASSERT_MAT_EQ( m, n, r, r0 );
+}
+
+
+MN_CASE( mat_select, select_rows )
+{
+	index_t m = M == 0 ? DM : M;
+	index_t n = N == 0 ? DN : N;
+
+	dense_matrix<double, 0, N> s(M0, n);
+	fill_ran(s);
+
+	dense_row<index_t, M> I(m);
+	fill_randi(I, M0);
+
+	dense_matrix<double, M, N> r = select_rows(s, I);
+
+	ASSERT_EQ( r.nrows(), m );
+	ASSERT_EQ( r.ncolumns(), n );
+
+	dense_matrix<double> r0(m, n);
+	for (index_t j = 0; j < n; ++j)
+	{
+		for (index_t i = 0; i < m; ++i) r0(i, j) = s(I[i], j);
+	}
+
+	ASSERT_MAT_EQ( m, n, r, r0 );
+}
+
+
+MN_CASE( mat_select, select_cols )
+{
+	index_t m = M == 0 ? DM : M;
+	index_t n = N == 0 ? DN : N;
+
+	dense_matrix<double, M, 0> s(m, N0);
+	fill_ran(s);
+
+	dense_col<index_t, N> J(n);
+	fill_randi(J, N0);
+
+	dense_matrix<double, M, N> r = select_cols(s, J);
+
+	ASSERT_EQ( r.nrows(), m );
+	ASSERT_EQ( r.ncolumns(), n );
+
+	dense_matrix<double> r0(m, n);
+	for (index_t j = 0; j < n; ++j)
+	{
+		for (index_t i = 0; i < m; ++i) r0(i, j) = s(i, J[j]);
+	}
+
+	ASSERT_MAT_EQ( m, n, r, r0 );
+}
+
 
 
 BEGIN_TPACK( mat_selectl )
@@ -166,12 +245,28 @@ BEGIN_TPACK( mat_selectl2_ex )
 	ADD_MN_CASE_3X3( mat_select, selectl2, DM, DN )
 END_TPACK
 
+BEGIN_TPACK( mat_select )
+	ADD_MN_CASE_3X3( mat_select, select, DM, DN )
+END_TPACK
+
+BEGIN_TPACK( mat_select_rows )
+	ADD_MN_CASE_3X3( mat_select, select_rows, DM, DN )
+END_TPACK
+
+BEGIN_TPACK( mat_select_cols )
+	ADD_MN_CASE_3X3( mat_select, select_cols, DM, DN )
+END_TPACK
+
 
 BEGIN_MAIN_SUITE
 	ADD_TPACK( mat_selectl )
 	ADD_TPACK( mat_selectl_ex )
 	ADD_TPACK( mat_selectl2 )
 	ADD_TPACK( mat_selectl2_ex )
+
+	ADD_TPACK( mat_select )
+	ADD_TPACK( mat_select_rows )
+	ADD_TPACK( mat_select_cols )
 END_MAIN_SUITE
 
 
