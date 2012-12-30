@@ -274,7 +274,7 @@ set(MAP_EXPR_HS_
 set(OTHER_EXPR_HS_
     ${INC}/mateval/repvec_expr.h
     ${INC}/mateval/subs_expr.h
-    ${INC}/mateval/mat_zip.h)
+    ${INC}/mateval/mat_zip.h)  
     
 set(MATRIX_REDUC_HS_
     ${INC}/mateval/internal/mat_fold_internal.h
@@ -287,11 +287,17 @@ set(MATRIX_REDUC_HS_
     ${INC}/mateval/mat_allany.h
     ${INC}/mateval/mat_compare.h)   
     
+set(MATRIX_ALG_HS_
+    ${INC}/mateval/internal/matrix_algs_internal.h
+    ${INC}/mateval/matrix_algs.h
+    ${INC}/mateval/matrix_sort.h)  
+    
 set(MATEVAL_HS
     ${MATRIX_EVAL_HS_}
     ${MAP_EXPR_HS_}
     ${OTHER_EXPR_HS_}
     ${MATRIX_REDUC_HS_}
+    ${MATRIX_ALG_HS_}
     ${INC}/mateval/mateval.h)
     
 set(MATEVAL_HS_EX
@@ -530,6 +536,15 @@ add_executable(test_more_reduce ${MATREDUC_TEST_HS} mateval/test_more_reduce.cpp
 add_executable(test_mat_allany ${MATREDUC_TEST_HS} mateval/test_mat_allany.cpp)
 add_executable(test_mat_compare ${MATREDUC_TEST_HS} mateval/test_mat_compare.cpp)
 
+set(MATALG_TEST_HS
+    ${MATRIX_HS}
+    ${MATRIX_EVAL_HS_}
+    ${MAP_EXPR_HS_}
+    ${OTHER_EXPR_HS_}
+    ${MATRIX_ALG_HS_})
+    
+add_executable(test_mat_sort ${MATALG_TEST_HS} mateval/test_mat_sort.cpp)
+
 set(MATEVAL_ALL_TEST_HS
     ${MATEVAL_HS_EX})
 
@@ -553,6 +568,7 @@ set(LMAT_MATEVAL_TESTS
 	test_more_reduce
 	test_mat_allany
 	test_mat_compare
+	test_mat_sort
 	test_cpd_ewise)
 
 
