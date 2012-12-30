@@ -273,7 +273,8 @@ set(MAP_EXPR_HS_
     
 set(OTHER_EXPR_HS_
     ${INC}/mateval/repvec_expr.h
-    ${INC}/mateval/subs_expr.h)
+    ${INC}/mateval/subs_expr.h
+    ${INC}/mateval/mat_zip.h)
     
 set(MATRIX_REDUC_HS_
     ${INC}/mateval/internal/mat_fold_internal.h
@@ -514,6 +515,7 @@ set(OTHEREXPR_TEST_HS
 
 add_executable(test_repvecs ${OTHEREXPR_TEST_HS} mateval/test_repvecs.cpp)
 add_executable(test_subs_expr ${OTHEREXPR_TEST_HS} mateval/test_subs_expr.cpp)
+add_executable(test_mat_zip ${OTHEREXPR_TEST_HS} mateval/test_mat_zip.cpp)
 
 set(MATREDUC_TEST_HS
     ${MATRIX_HS}
@@ -544,6 +546,7 @@ set(LMAT_MATEVAL_TESTS
 	test_mat_pred
 	test_repvecs
 	test_subs_expr
+	test_mat_zip
 	test_full_reduce
 	test_colwise_reduce
 	test_rowwise_reduce

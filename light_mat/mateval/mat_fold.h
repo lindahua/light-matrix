@@ -180,7 +180,7 @@ namespace lmat
 		static_assert(folder_supports_simd<Folder>::value, "Folder should supports SIMD");
 
 	public:
-		typedef typename meta::fun_value_type<Folder>::type value_type;
+		typedef typename Folder::value_type value_type;
 
 		LMAT_ENSURE_INLINE
 		vecfold_kernel(const Folder& folder)

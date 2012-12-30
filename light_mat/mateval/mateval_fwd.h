@@ -19,24 +19,6 @@
 namespace lmat
 {
 
-	// type inference devices
-
-	namespace meta
-	{
-		template<class Kernel>
-		struct kernel_value_type
-		{
-			typedef typename Kernel::value_type type;
-		};
-
-		template<class Fun>
-		struct fun_value_type
-		{
-			typedef typename Fun::value_type type;
-		};
-	}
-
-
 	// access tags
 
 	namespace atags

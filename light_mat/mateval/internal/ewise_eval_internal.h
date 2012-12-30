@@ -40,7 +40,7 @@ namespace lmat { namespace internal {
 	inline void linear_ewise_eval(const dimension<N>& dim, atags::simd<SKind>,
 			const Kernel& kernel, const Accessors&... accessors)
 	{
-		typedef typename meta::kernel_value_type<Kernel>::type T;
+		typedef typename Kernel::value_type T;
 		const unsigned int W = math::simd_traits<T, SKind>::pack_width;
 
 		const index_t len = dim.value();

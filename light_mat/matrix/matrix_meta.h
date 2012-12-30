@@ -27,7 +27,7 @@ namespace lmat { namespace meta {
 	template<class T>
 	struct is_supported_matrix_value_type
 	{
-		static const bool value = std::is_pod<T>::value;
+		static const bool value = std::is_standard_layout<T>::value;
 	};
 
 	template<class T>

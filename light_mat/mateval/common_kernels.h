@@ -40,7 +40,7 @@ namespace lmat
 	template<typename Fun>
 	struct map_kernel
 	{
-		typedef typename meta::fun_value_type<Fun>::type value_type;
+		typedef typename Fun::value_type value_type;
 		Fun fun;
 
 		LMAT_ENSURE_INLINE
@@ -104,7 +104,7 @@ namespace lmat
 	template<typename Fun>
 	struct accumf_kernel
 	{
-		typedef typename meta::fun_value_type<Fun>::type value_type;
+		typedef typename Fun::value_type value_type;
 		Fun fun;
 
 		LMAT_ENSURE_INLINE
@@ -128,7 +128,7 @@ namespace lmat
 	template<typename Fun>
 	struct accumfx_kernel
 	{
-		typedef typename meta::fun_value_type<Fun>::type value_type;
+		typedef typename Fun::value_type value_type;
 		Fun fun;
 
 		LMAT_ENSURE_INLINE

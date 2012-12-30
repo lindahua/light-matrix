@@ -27,7 +27,6 @@ namespace lmat
 	{
 	public:
 		typedef Kernel kernel_type;
-		typedef typename meta::kernel_value_type<Kernel>::type value_type;
 		typedef U unit_type;
 
 		LMAT_ENSURE_INLINE
