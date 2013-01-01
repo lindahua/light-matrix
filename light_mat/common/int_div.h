@@ -15,11 +15,11 @@
 #define LMAT_DEFINE_INT_DIV_C( L, D ) \
 	template<> struct int_div<D> { \
 		LMAT_ENSURE_INLINE \
-		static index_t quo(index_t n) { return n >> L; } \
+		static size_t quo(size_t n) { return n >> L; } \
 		LMAT_ENSURE_INLINE \
-		static index_t rem(index_t n) { return n & (D-1); } \
+		static size_t rem(size_t n) { return n & (D-1); } \
 		LMAT_ENSURE_INLINE \
-		static index_t maj(index_t n) { return (n >> L) << L; } \
+		static size_t maj(size_t n) { return (n >> L) << L; } \
 	};
 
 
@@ -32,13 +32,13 @@ namespace lmat
 	struct int_div<1>
 	{
 		LMAT_ENSURE_INLINE
-		static index_t quo(index_t n) { return n; }
+		static size_t quo(size_t n) { return n; }
 
 		LMAT_ENSURE_INLINE
-		static index_t rem(index_t n) { return 0; }
+		static size_t rem(size_t n) { return 0; }
 
 		LMAT_ENSURE_INLINE
-		static index_t maj(index_t n) { return n; }
+		static size_t maj(size_t n) { return n; }
 	};
 
 	LMAT_DEFINE_INT_DIV_C(1, 2)
@@ -52,6 +52,15 @@ namespace lmat
 	LMAT_DEFINE_INT_DIV_C(9, 512)
 
 	LMAT_DEFINE_INT_DIV_C(10, 1024)
+
+
+	namespace bdtags
+	{
+		struct dbl { };
+		struct quad { };
+		struct oct { };
+		struct hex { };
+	}
 }
 
 #endif /* INT_DIV_H_ */

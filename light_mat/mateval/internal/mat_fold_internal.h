@@ -50,7 +50,7 @@ namespace lmat {
 		const index_t pw = (index_t)pack_t::pack_width;
 
 		const index_t len = dim.value();
-		const index_t npacks = int_div<pack_t::pack_width>::quo(len);
+		const index_t npacks = (index_t)int_div<pack_t::pack_width>::quo((size_t)len);
 		index_t i;
 		T r;
 
