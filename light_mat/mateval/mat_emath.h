@@ -6,6 +6,10 @@
  * @author Dahua Lin
  */
 
+#ifdef _MSC_VER
+#pragma once
+#endif
+
 #ifndef LIGHTMAT_MAT_EMATH_H_
 #define LIGHTMAT_MAT_EMATH_H_
 

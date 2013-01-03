@@ -10,8 +10,8 @@
 #pragma once
 #endif
 
-#ifndef LIGHTMAT_REF_MATRIX_EX_H_
-#define LIGHTMAT_REF_MATRIX_EX_H_
+#ifndef LIGHTMAT_REF_BLOCK_H_
+#define LIGHTMAT_REF_BLOCK_H_
 
 #include <light_mat/matrix/regular_mat_base.h>
 

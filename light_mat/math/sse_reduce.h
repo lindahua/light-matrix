@@ -6,6 +6,10 @@
  * @author Dahua Lin
  */
 
+#ifdef _MSC_VER
+#pragma once
+#endif
+
 #ifndef LIGHTMAT_SSE_REDUCE_H_
 #define LIGHTMAT_SSE_REDUCE_H_
 

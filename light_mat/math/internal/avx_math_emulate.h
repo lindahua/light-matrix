@@ -6,8 +6,12 @@
  * @author Dahua Lin
  */
 
-#ifndef AVX_MATH_EMULATE_H_
-#define AVX_MATH_EMULATE_H_
+#ifdef _MSC_VER
+#pragma once
+#endif
+
+#ifndef LIGHTMAT_AVX_MATH_EMULATE_H_
+#define LIGHTMAT_AVX_MATH_EMULATE_H_
 
 #include <light_mat/math/math_base.h>
 #include <light_mat/math/avx_packs.h>

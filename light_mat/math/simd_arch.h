@@ -6,6 +6,10 @@
  * @author Dahua Lin
  */
 
+#ifdef _MSC_VER
+#pragma once
+#endif
+
 #ifndef LIGHTMAT_SIMD_ARCH_H_
 #define LIGHTMAT_SIMD_ARCH_H_
 

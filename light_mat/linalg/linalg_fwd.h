@@ -6,6 +6,10 @@
  * @author Dahua Lin
  */
 
+#ifdef _MSC_VER
+#pragma once
+#endif
+
 #ifndef LIGHTMAT_LINALG_FWD_H_
 #define LIGHTMAT_LINALG_FWD_H_
 

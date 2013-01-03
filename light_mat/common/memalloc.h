@@ -10,8 +10,8 @@
 #pragma once
 #endif
 
-#ifndef MEMALLOC_H_
-#define MEMALLOC_H_
+#ifndef LIGHTMAT_MEMALLOC_H_
+#define LIGHTMAT_MEMALLOC_H_
 
 #include <light_mat/common/basic_defs.h>
 #include "internal/align_alloc.h"

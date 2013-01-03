@@ -1,5 +1,5 @@
 /**
- * @file dense_wref.h
+ * @file dense_mutable_view.h
  *
  * The dense_mutable_view classes
  *

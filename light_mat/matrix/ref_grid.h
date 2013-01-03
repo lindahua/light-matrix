@@ -6,6 +6,10 @@
  * @author Dahua Lin
  */
 
+#ifdef _MSC_VER
+#pragma once
+#endif
+
 #ifndef LIGHTMAT_REF_GRID_H_
 #define LIGHTMAT_REF_GRID_H_
 

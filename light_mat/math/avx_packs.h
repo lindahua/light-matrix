@@ -1,10 +1,14 @@
 /**
- * @file avx_base.h
+ * @file avx_packs.h
  *
  * @brief The AVX pack classes
  *
  * @author Dahua Lin
  */
+
+#ifdef _MSC_VER
+#pragma once
+#endif
 
 #ifndef LIGHTMAT_AVX_PACKS_H_
 #define LIGHTMAT_AVX_PACKS_H_
