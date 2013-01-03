@@ -6,8 +6,12 @@
  * @author Dahua Lin
  */
 
-#ifndef RAND_STREAM_INTERNAL_H_
-#define RAND_STREAM_INTERNAL_H_
+#ifdef _MSC_VER
+#pragma once
+#endif
+
+#ifndef LIGHTMAT_RAND_STREAM_INTERNAL_H_
+#define LIGHTMAT_RAND_STREAM_INTERNAL_H_
 
 #include <light_mat/random/rand_stream.h>
 #include <cstring>
