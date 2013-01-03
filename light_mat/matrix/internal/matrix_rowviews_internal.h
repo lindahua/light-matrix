@@ -6,6 +6,10 @@
  * @author Dahua Lin
  */
 
+#ifdef _MSC_VER
+#pragma once
+#endif
+
 #ifndef LIGHTMAT_MATRIX_ROWVIEWS_INTERNAL_H_
 #define LIGHTMAT_MATRIX_ROWVIEWS_INTERNAL_H_
 

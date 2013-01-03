@@ -6,6 +6,10 @@
  * @author Dahua Lin
  */
 
+#ifdef _MSC_VER
+#pragma once
+#endif
+
 #ifndef LIGHTMAT_MULTICOL_ACCESSORS_H_
 #define LIGHTMAT_MULTICOL_ACCESSORS_H_
 

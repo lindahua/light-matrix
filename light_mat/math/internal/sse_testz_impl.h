@@ -1,13 +1,17 @@
 /**
- * @file sse_allany_impl.h
+ * @file sse_testz_impl.h
  *
  * @brief SSE implementation of testing whether all bits are zeros/ones
  *
  * @author Dahua Lin
  */
 
-#ifndef LIGHTMAT_SSE_ALLANY_IMPL_H_
-#define LIGHTMAT_SSE_ALLANY_IMPL_H_
+#ifdef _MSC_VER
+#pragma once
+#endif
+
+#ifndef LIGHTMAT_SSE_TESTZ_IMPL_H_
+#define LIGHTMAT_SSE_TESTZ_IMPL_H_
 
 #include <light_mat/math/simd_base.h>
 

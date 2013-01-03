@@ -1,13 +1,17 @@
 /**
- * @file zip_expr.h
+ * @file mat_zip.h
  *
  * @brief Matrix zip and unzip
  *
  * @author Dahua Lin
  */
 
-#ifndef LIGHTMAT_ZIP_EXPR_H_
-#define LIGHTMAT_ZIP_EXPR_H_
+#ifdef _MSC_VER
+#pragma once
+#endif
+
+#ifndef LIGHTMAT_MAT_ZIP_H_
+#define LIGHTMAT_MAT_ZIP_H_
 
 #include <light_mat/mateval/map_expr.h>
 #include <tuple>

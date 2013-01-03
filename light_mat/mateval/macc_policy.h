@@ -6,6 +6,10 @@
  * @author Dahua Lin
  */
 
+#ifdef _MSC_VER
+#pragma once
+#endif
+
 #ifndef LIGHTMAT_MACC_POLICY_H_
 #define LIGHTMAT_MACC_POLICY_H_
 

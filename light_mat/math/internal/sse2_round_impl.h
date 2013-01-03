@@ -1,13 +1,17 @@
 /**
- * @file sse_round_impl.h
+ * @file sse2_round_impl.h
  *
  * @brief Internal implementation of SSE rounding
  *
  * @author Dahua Lin
  */
 
-#ifndef LIGHTMAT_SSE_ROUND_IMPL_H_
-#define LIGHTMAT_SSE_ROUND_IMPL_H_
+#ifdef _MSC_VER
+#pragma once
+#endif
+
+#ifndef LIGHTMAT_SSE2_ROUND_IMPL_H_
+#define LIGHTMAT_SSE2_ROUND_IMPL_H_
 
 #include <light_mat/math/simd_base.h>
 

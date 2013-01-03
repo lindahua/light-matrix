@@ -23,7 +23,8 @@ def run_library_scan():
 		md = scan_module(cfg, mname, verbose)
 		stats.add_stats(md.stats)
 
-	print "overall stats: total {0} lines".format(stats.total_lines)
+	print "overall stats: total {0} lines | {1} non-empty".format(
+		stats.total_lines, stats.total_nonempty_lines)
 	print "Done!\n"
 
 

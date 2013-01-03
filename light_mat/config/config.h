@@ -10,8 +10,8 @@
 #pragma once
 #endif
 
-#ifndef LIGHTMAT_CONFIG_H
-#define LIGHTMAT_CONFIG_H
+#ifndef LIGHTMAT_CONFIG_H_
+#define LIGHTMAT_CONFIG_H_
 
 #include <light_mat/config/user_config.h>
 #include <light_mat/config/platform_config.h>

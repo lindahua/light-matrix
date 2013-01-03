@@ -10,6 +10,10 @@
 #pragma once
 #endif
 
+#ifdef _MSC_VER
+#pragma once
+#endif
+
 #ifndef LIGHTMAT_MAT_FOLD_H_
 #define LIGHTMAT_MAT_FOLD_H_
 

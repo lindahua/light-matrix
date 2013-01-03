@@ -6,6 +6,10 @@
  * @author Dahua Lin
  */
 
+#ifdef _MSC_VER
+#pragma once
+#endif
+
 #ifndef LIGHTMAT_COMMON_KERNELS_H_
 #define LIGHTMAT_COMMON_KERNELS_H_
 

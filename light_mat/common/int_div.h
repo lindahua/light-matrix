@@ -6,11 +6,14 @@
  * @author Dahua Lin
  */
 
+#ifdef _MSC_VER
+#pragma once
+#endif
+
 #ifndef LIGHTMAT_INT_DIV_H_
 #define LIGHTMAT_INT_DIV_H_
 
 #include <light_mat/common/prim_types.h>
-
 
 #define LMAT_DEFINE_INT_DIV_C( L, D ) \
 	template<> struct int_div<D> { \
