@@ -385,49 +385,49 @@ namespace lmat
 
 	template<typename T, class Mat, class Alg, class Compare>
 	LMAT_ENSURE_INLINE
-	sort_expr<Mat, Alg, Compare> gsorted(const IMatrixXpr<Mat, T>& a, const Alg& alg, const Compare& cmp)
+	inline sort_expr<Mat, Alg, Compare> gsorted(const IMatrixXpr<Mat, T>& a, const Alg& alg, const Compare& cmp)
 	{
 		return sort_expr<Mat, Alg, Compare>(a.derived(), alg, cmp);
 	}
 
 	template<typename T, class Mat, class Alg>
 	LMAT_ENSURE_INLINE
-	sort_expr<Mat, Alg, std::less<T> > gsorted(const IMatrixXpr<Mat, T>& a, const Alg& alg, asc_)
+	inline sort_expr<Mat, Alg, std::less<T> > gsorted(const IMatrixXpr<Mat, T>& a, const Alg& alg, asc_)
 	{
 		return sort_expr<Mat, Alg, std::less<T> >(a.derived(), alg, std::less<T>());
 	}
 
 	template<typename T, class Mat, class Alg>
 	LMAT_ENSURE_INLINE
-	sort_expr<Mat, Alg, std::greater<T> > gsorted(const IMatrixXpr<Mat, T>& a, const Alg& alg, desc_)
+	inline sort_expr<Mat, Alg, std::greater<T> > gsorted(const IMatrixXpr<Mat, T>& a, const Alg& alg, desc_)
 	{
 		return sort_expr<Mat, Alg, std::greater<T> >(a.derived(), alg, std::greater<T>());
 	}
 
 	template<typename T, class Mat, class Compare>
 	LMAT_ENSURE_INLINE
-	sort_expr<Mat, default_sort_alg, Compare> sorted(const IMatrixXpr<Mat, T>& a, const Compare& cmp)
+	inline sort_expr<Mat, default_sort_alg, Compare> sorted(const IMatrixXpr<Mat, T>& a, const Compare& cmp)
 	{
 		return gsorted(a, default_sort_alg(), cmp);
 	}
 
 	template<typename T, class Mat>
 	LMAT_ENSURE_INLINE
-	sort_expr<Mat, default_sort_alg, std::less<T> > sorted(const IMatrixXpr<Mat, T>& a, asc_)
+	inline sort_expr<Mat, default_sort_alg, std::less<T> > sorted(const IMatrixXpr<Mat, T>& a, asc_)
 	{
 		return gsorted(a, default_sort_alg(), asc_());
 	}
 
 	template<typename T, class Mat>
 	LMAT_ENSURE_INLINE
-	sort_expr<Mat, default_sort_alg, std::greater<T> > sorted(const IMatrixXpr<Mat, T>& a, desc_)
+	inline sort_expr<Mat, default_sort_alg, std::greater<T> > sorted(const IMatrixXpr<Mat, T>& a, desc_)
 	{
 		return gsorted(a, default_sort_alg(), desc_());
 	}
 
 	template<typename T, class Mat>
 	LMAT_ENSURE_INLINE
-	sort_expr<Mat, default_sort_alg, std::less<T> > sorted(const IMatrixXpr<Mat, T>& a)
+	inline sort_expr<Mat, default_sort_alg, std::less<T> > sorted(const IMatrixXpr<Mat, T>& a)
 	{
 		return gsorted(a, default_sort_alg(), asc_());
 	}
@@ -435,49 +435,49 @@ namespace lmat
 
 	template<typename T, class Mat, class Alg, class Compare>
 	LMAT_ENSURE_INLINE
-	colwise_sort_expr<Mat, Alg, Compare> colwise_gsorted(const IMatrixXpr<Mat, T>& a, const Alg& alg, const Compare& cmp)
+	inline colwise_sort_expr<Mat, Alg, Compare> colwise_gsorted(const IMatrixXpr<Mat, T>& a, const Alg& alg, const Compare& cmp)
 	{
 		return colwise_sort_expr<Mat, Alg, Compare>(a.derived(), alg, cmp);
 	}
 
 	template<typename T, class Mat, class Alg>
 	LMAT_ENSURE_INLINE
-	colwise_sort_expr<Mat, Alg, std::less<T> > colwise_gsorted(const IMatrixXpr<Mat, T>& a, const Alg& alg, asc_)
+	inline colwise_sort_expr<Mat, Alg, std::less<T> > colwise_gsorted(const IMatrixXpr<Mat, T>& a, const Alg& alg, asc_)
 	{
 		return colwise_sort_expr<Mat, Alg, std::less<T> >(a.derived(), alg, std::less<T>());
 	}
 
 	template<typename T, class Mat, class Alg>
 	LMAT_ENSURE_INLINE
-	colwise_sort_expr<Mat, Alg, std::greater<T> > colwise_gsorted(const IMatrixXpr<Mat, T>& a, const Alg& alg, desc_)
+	inline colwise_sort_expr<Mat, Alg, std::greater<T> > colwise_gsorted(const IMatrixXpr<Mat, T>& a, const Alg& alg, desc_)
 	{
 		return colwise_sort_expr<Mat, Alg, std::greater<T> >(a.derived(), alg, std::greater<T>());
 	}
 
 	template<typename T, class Mat, class Compare>
 	LMAT_ENSURE_INLINE
-	colwise_sort_expr<Mat, default_sort_alg, Compare> colwise_sorted(const IMatrixXpr<Mat, T>& a, const Compare& cmp)
+	inline colwise_sort_expr<Mat, default_sort_alg, Compare> colwise_sorted(const IMatrixXpr<Mat, T>& a, const Compare& cmp)
 	{
 		return colwise_gsorted(a, default_sort_alg(), cmp);
 	}
 
 	template<typename T, class Mat>
 	LMAT_ENSURE_INLINE
-	colwise_sort_expr<Mat, default_sort_alg, std::less<T> > colwise_sorted(const IMatrixXpr<Mat, T>& a, asc_)
+	inline colwise_sort_expr<Mat, default_sort_alg, std::less<T> > colwise_sorted(const IMatrixXpr<Mat, T>& a, asc_)
 	{
 		return colwise_gsorted(a, default_sort_alg(), asc_());
 	}
 
 	template<typename T, class Mat>
 	LMAT_ENSURE_INLINE
-	colwise_sort_expr<Mat, default_sort_alg, std::greater<T> > colwise_sorted(const IMatrixXpr<Mat, T>& a, desc_)
+	inline colwise_sort_expr<Mat, default_sort_alg, std::greater<T> > colwise_sorted(const IMatrixXpr<Mat, T>& a, desc_)
 	{
 		return colwise_gsorted(a, default_sort_alg(), desc_());
 	}
 
 	template<typename T, class Mat>
 	LMAT_ENSURE_INLINE
-	colwise_sort_expr<Mat, default_sort_alg, std::less<T> > colwise_sorted(const IMatrixXpr<Mat, T>& a)
+	inline colwise_sort_expr<Mat, default_sort_alg, std::less<T> > colwise_sorted(const IMatrixXpr<Mat, T>& a)
 	{
 		return colwise_gsorted(a, default_sort_alg(), asc_());
 	}
@@ -663,49 +663,49 @@ namespace lmat
 
 	template<typename T, class Mat, class Alg, class Compare>
 	LMAT_ENSURE_INLINE
-	sort_idx_expr<Mat, Alg, Compare> gsorted_idx(const IRegularMatrix<Mat, T>& a, const Alg& alg, const Compare& cmp)
+	inline sort_idx_expr<Mat, Alg, Compare> gsorted_idx(const IRegularMatrix<Mat, T>& a, const Alg& alg, const Compare& cmp)
 	{
 		return sort_idx_expr<Mat, Alg, Compare>(a.derived(), alg, cmp);
 	}
 
 	template<typename T, class Mat, class Alg>
 	LMAT_ENSURE_INLINE
-	sort_idx_expr<Mat, Alg, std::less<T> > gsorted_idx(const IRegularMatrix<Mat, T>& a, const Alg& alg, asc_)
+	inline sort_idx_expr<Mat, Alg, std::less<T> > gsorted_idx(const IRegularMatrix<Mat, T>& a, const Alg& alg, asc_)
 	{
 		return sort_idx_expr<Mat, Alg, std::less<T> >(a.derived(), alg, std::less<T>());
 	}
 
 	template<typename T, class Mat, class Alg>
 	LMAT_ENSURE_INLINE
-	sort_idx_expr<Mat, Alg, std::greater<T> > gsorted_idx(const IRegularMatrix<Mat, T>& a, const Alg& alg, desc_)
+	inline sort_idx_expr<Mat, Alg, std::greater<T> > gsorted_idx(const IRegularMatrix<Mat, T>& a, const Alg& alg, desc_)
 	{
 		return sort_idx_expr<Mat, Alg, std::greater<T> >(a.derived(), alg, std::greater<T>());
 	}
 
 	template<typename T, class Mat, class Compare>
 	LMAT_ENSURE_INLINE
-	sort_idx_expr<Mat, default_sort_alg, Compare> sorted_idx(const IRegularMatrix<Mat, T>& a, const Compare& cmp)
+	inline sort_idx_expr<Mat, default_sort_alg, Compare> sorted_idx(const IRegularMatrix<Mat, T>& a, const Compare& cmp)
 	{
 		return gsorted_idx(a, default_sort_alg(), cmp);
 	}
 
 	template<typename T, class Mat>
 	LMAT_ENSURE_INLINE
-	sort_idx_expr<Mat, default_sort_alg, std::less<T> > sorted_idx(const IRegularMatrix<Mat, T>& a, asc_)
+	inline sort_idx_expr<Mat, default_sort_alg, std::less<T> > sorted_idx(const IRegularMatrix<Mat, T>& a, asc_)
 	{
 		return gsorted_idx(a, default_sort_alg(), asc_());
 	}
 
 	template<typename T, class Mat>
 	LMAT_ENSURE_INLINE
-	sort_idx_expr<Mat, default_sort_alg, std::greater<T> > sorted_idx(const IRegularMatrix<Mat, T>& a, desc_)
+	inline sort_idx_expr<Mat, default_sort_alg, std::greater<T> > sorted_idx(const IRegularMatrix<Mat, T>& a, desc_)
 	{
 		return gsorted_idx(a, default_sort_alg(), desc_());
 	}
 
 	template<typename T, class Mat>
 	LMAT_ENSURE_INLINE
-	sort_idx_expr<Mat, default_sort_alg, std::less<T> > sorted_idx(const IRegularMatrix<Mat, T>& a)
+	inline sort_idx_expr<Mat, default_sort_alg, std::less<T> > sorted_idx(const IRegularMatrix<Mat, T>& a)
 	{
 		return gsorted_idx(a, default_sort_alg(), asc_());
 	}
@@ -713,49 +713,49 @@ namespace lmat
 
 	template<typename T, class Mat, class Alg, class Compare>
 	LMAT_ENSURE_INLINE
-	colwise_sort_idx_expr<Mat, Alg, Compare> colwise_gsorted_idx(const IRegularMatrix<Mat, T>& a, const Alg& alg, const Compare& cmp)
+	inline colwise_sort_idx_expr<Mat, Alg, Compare> colwise_gsorted_idx(const IRegularMatrix<Mat, T>& a, const Alg& alg, const Compare& cmp)
 	{
 		return colwise_sort_idx_expr<Mat, Alg, Compare>(a.derived(), alg, cmp);
 	}
 
 	template<typename T, class Mat, class Alg>
 	LMAT_ENSURE_INLINE
-	colwise_sort_idx_expr<Mat, Alg, std::less<T> > colwise_gsorted_idx(const IRegularMatrix<Mat, T>& a, const Alg& alg, asc_)
+	inline colwise_sort_idx_expr<Mat, Alg, std::less<T> > colwise_gsorted_idx(const IRegularMatrix<Mat, T>& a, const Alg& alg, asc_)
 	{
 		return colwise_sort_idx_expr<Mat, Alg, std::less<T> >(a.derived(), alg, std::less<T>());
 	}
 
 	template<typename T, class Mat, class Alg>
 	LMAT_ENSURE_INLINE
-	colwise_sort_idx_expr<Mat, Alg, std::greater<T> > colwise_gsorted_idx(const IRegularMatrix<Mat, T>& a, const Alg& alg, desc_)
+	inline colwise_sort_idx_expr<Mat, Alg, std::greater<T> > colwise_gsorted_idx(const IRegularMatrix<Mat, T>& a, const Alg& alg, desc_)
 	{
 		return colwise_sort_idx_expr<Mat, Alg, std::greater<T> >(a.derived(), alg, std::greater<T>());
 	}
 
 	template<typename T, class Mat, class Compare>
 	LMAT_ENSURE_INLINE
-	colwise_sort_idx_expr<Mat, default_sort_alg, Compare> colwise_sorted_idx(const IRegularMatrix<Mat, T>& a, const Compare& cmp)
+	inline colwise_sort_idx_expr<Mat, default_sort_alg, Compare> colwise_sorted_idx(const IRegularMatrix<Mat, T>& a, const Compare& cmp)
 	{
 		return colwise_gsorted_idx(a, default_sort_alg(), cmp);
 	}
 
 	template<typename T, class Mat>
 	LMAT_ENSURE_INLINE
-	colwise_sort_idx_expr<Mat, default_sort_alg, std::less<T> > colwise_sorted_idx(const IRegularMatrix<Mat, T>& a, asc_)
+	inline colwise_sort_idx_expr<Mat, default_sort_alg, std::less<T> > colwise_sorted_idx(const IRegularMatrix<Mat, T>& a, asc_)
 	{
 		return colwise_gsorted_idx(a, default_sort_alg(), asc_());
 	}
 
 	template<typename T, class Mat>
 	LMAT_ENSURE_INLINE
-	colwise_sort_idx_expr<Mat, default_sort_alg, std::greater<T> > colwise_sorted_idx(const IRegularMatrix<Mat, T>& a, desc_)
+	inline colwise_sort_idx_expr<Mat, default_sort_alg, std::greater<T> > colwise_sorted_idx(const IRegularMatrix<Mat, T>& a, desc_)
 	{
 		return colwise_gsorted_idx(a, default_sort_alg(), desc_());
 	}
 
 	template<typename T, class Mat>
 	LMAT_ENSURE_INLINE
-	colwise_sort_idx_expr<Mat, default_sort_alg, std::less<T> > colwise_sorted_idx(const IRegularMatrix<Mat, T>& a)
+	inline colwise_sort_idx_expr<Mat, default_sort_alg, std::less<T> > colwise_sorted_idx(const IRegularMatrix<Mat, T>& a)
 	{
 		return colwise_gsorted_idx(a, default_sort_alg(), asc_());
 	}
@@ -928,49 +928,49 @@ namespace lmat
 
 	template<typename T, class Mat, class Alg, class Compare>
 	LMAT_ENSURE_INLINE
-	sortx_expr<Mat, Alg, Compare> gsorted_ex(const IEWiseMatrix<Mat, T>& a, const Alg& alg, const Compare& cmp)
+	inline sortx_expr<Mat, Alg, Compare> gsorted_ex(const IEWiseMatrix<Mat, T>& a, const Alg& alg, const Compare& cmp)
 	{
 		return sortx_expr<Mat, Alg, Compare>(a.derived(), alg, cmp);
 	}
 
 	template<typename T, class Mat, class Alg>
 	LMAT_ENSURE_INLINE
-	sortx_expr<Mat, Alg, std::less<T> > gsorted_ex(const IEWiseMatrix<Mat, T>& a, const Alg& alg, asc_)
+	inline sortx_expr<Mat, Alg, std::less<T> > gsorted_ex(const IEWiseMatrix<Mat, T>& a, const Alg& alg, asc_)
 	{
 		return sortx_expr<Mat, Alg, std::less<T> >(a.derived(), alg, std::less<T>());
 	}
 
 	template<typename T, class Mat, class Alg>
 	LMAT_ENSURE_INLINE
-	sortx_expr<Mat, Alg, std::greater<T> > gsorted_ex(const IEWiseMatrix<Mat, T>& a, const Alg& alg, desc_)
+	inline sortx_expr<Mat, Alg, std::greater<T> > gsorted_ex(const IEWiseMatrix<Mat, T>& a, const Alg& alg, desc_)
 	{
 		return sortx_expr<Mat, Alg, std::greater<T> >(a.derived(), alg, std::greater<T>());
 	}
 
 	template<typename T, class Mat, class Compare>
 	LMAT_ENSURE_INLINE
-	sortx_expr<Mat, default_sort_alg, Compare> sorted_ex(const IEWiseMatrix<Mat, T>& a, const Compare& cmp)
+	inline sortx_expr<Mat, default_sort_alg, Compare> sorted_ex(const IEWiseMatrix<Mat, T>& a, const Compare& cmp)
 	{
 		return gsorted_ex(a, default_sort_alg(), cmp);
 	}
 
 	template<typename T, class Mat>
 	LMAT_ENSURE_INLINE
-	sortx_expr<Mat, default_sort_alg, std::less<T> > sorted_ex(const IEWiseMatrix<Mat, T>& a, asc_)
+	inline sortx_expr<Mat, default_sort_alg, std::less<T> > sorted_ex(const IEWiseMatrix<Mat, T>& a, asc_)
 	{
 		return gsorted_ex(a, default_sort_alg(), asc_());
 	}
 
 	template<typename T, class Mat>
 	LMAT_ENSURE_INLINE
-	sortx_expr<Mat, default_sort_alg, std::greater<T> > sorted_ex(const IEWiseMatrix<Mat, T>& a, desc_)
+	inline sortx_expr<Mat, default_sort_alg, std::greater<T> > sorted_ex(const IEWiseMatrix<Mat, T>& a, desc_)
 	{
 		return gsorted_ex(a, default_sort_alg(), desc_());
 	}
 
 	template<typename T, class Mat>
 	LMAT_ENSURE_INLINE
-	sortx_expr<Mat, default_sort_alg, std::less<T> > sorted_ex(const IEWiseMatrix<Mat, T>& a)
+	inline sortx_expr<Mat, default_sort_alg, std::less<T> > sorted_ex(const IEWiseMatrix<Mat, T>& a)
 	{
 		return gsorted_ex(a, default_sort_alg(), asc_());
 	}
@@ -978,49 +978,49 @@ namespace lmat
 
 	template<typename T, class Mat, class Alg, class Compare>
 	LMAT_ENSURE_INLINE
-	colwise_sortx_expr<Mat, Alg, Compare> colwise_gsorted_ex(const IEWiseMatrix<Mat, T>& a, const Alg& alg, const Compare& cmp)
+	inline colwise_sortx_expr<Mat, Alg, Compare> colwise_gsorted_ex(const IEWiseMatrix<Mat, T>& a, const Alg& alg, const Compare& cmp)
 	{
 		return colwise_sortx_expr<Mat, Alg, Compare>(a.derived(), alg, cmp);
 	}
 
 	template<typename T, class Mat, class Alg>
 	LMAT_ENSURE_INLINE
-	colwise_sortx_expr<Mat, Alg, std::less<T> > colwise_gsorted_ex(const IEWiseMatrix<Mat, T>& a, const Alg& alg, asc_)
+	inline colwise_sortx_expr<Mat, Alg, std::less<T> > colwise_gsorted_ex(const IEWiseMatrix<Mat, T>& a, const Alg& alg, asc_)
 	{
 		return colwise_sortx_expr<Mat, Alg, std::less<T> >(a.derived(), alg, std::less<T>());
 	}
 
 	template<typename T, class Mat, class Alg>
 	LMAT_ENSURE_INLINE
-	colwise_sortx_expr<Mat, Alg, std::greater<T> > colwise_gsorted_ex(const IEWiseMatrix<Mat, T>& a, const Alg& alg, desc_)
+	inline colwise_sortx_expr<Mat, Alg, std::greater<T> > colwise_gsorted_ex(const IEWiseMatrix<Mat, T>& a, const Alg& alg, desc_)
 	{
 		return colwise_sortx_expr<Mat, Alg, std::greater<T> >(a.derived(), alg, std::greater<T>());
 	}
 
 	template<typename T, class Mat, class Compare>
 	LMAT_ENSURE_INLINE
-	colwise_sortx_expr<Mat, default_sort_alg, Compare> colwise_sorted_ex(const IEWiseMatrix<Mat, T>& a, const Compare& cmp)
+	inline colwise_sortx_expr<Mat, default_sort_alg, Compare> colwise_sorted_ex(const IEWiseMatrix<Mat, T>& a, const Compare& cmp)
 	{
 		return colwise_gsorted_ex(a, default_sort_alg(), cmp);
 	}
 
 	template<typename T, class Mat>
 	LMAT_ENSURE_INLINE
-	colwise_sortx_expr<Mat, default_sort_alg, std::less<T> > colwise_sorted_ex(const IEWiseMatrix<Mat, T>& a, asc_)
+	inline colwise_sortx_expr<Mat, default_sort_alg, std::less<T> > colwise_sorted_ex(const IEWiseMatrix<Mat, T>& a, asc_)
 	{
 		return colwise_gsorted_ex(a, default_sort_alg(), asc_());
 	}
 
 	template<typename T, class Mat>
 	LMAT_ENSURE_INLINE
-	colwise_sortx_expr<Mat, default_sort_alg, std::greater<T> > colwise_sorted_ex(const IEWiseMatrix<Mat, T>& a, desc_)
+	inline colwise_sortx_expr<Mat, default_sort_alg, std::greater<T> > colwise_sorted_ex(const IEWiseMatrix<Mat, T>& a, desc_)
 	{
 		return colwise_gsorted_ex(a, default_sort_alg(), desc_());
 	}
 
 	template<typename T, class Mat>
 	LMAT_ENSURE_INLINE
-	colwise_sortx_expr<Mat, default_sort_alg, std::less<T> > colwise_sorted_ex(const IEWiseMatrix<Mat, T>& a)
+	inline colwise_sortx_expr<Mat, default_sort_alg, std::less<T> > colwise_sorted_ex(const IEWiseMatrix<Mat, T>& a)
 	{
 		return colwise_gsorted_ex(a, default_sort_alg(), asc_());
 	}
