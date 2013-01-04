@@ -1,13 +1,5 @@
-light-matrix
-============
+Welcome to LightMatrix
+=========================
 
-A light-weight and efficient matrix template Library. 
-
-Main features
----------------
- - variety of ways of matrix indexing and sub-view generation.
- - consistent and friendly interfaces as a thin layer between high level representation and 
-   low-level optimized codes (SSE/AVX intrinsics, Intel MKL, etc).
- - provides various support for writing machine learning and data analysis algorithms.
- - Nice interface for writing MATLAB mex functions.
- - flexible and extensible
+**LightMatrix** is a C++ template library for matrix computation, which provides a unique combination of *design-time productivity* and *run-time performance*.
+With this library, user can write codes using a set of friendly APIs (just like in MATLAB). These codes will then be transparently translated to highly optimized routines (at compile-time), through a meta-programming engine. 
