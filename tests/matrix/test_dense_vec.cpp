@@ -76,6 +76,17 @@ N_CASE( dense_col, constructs )
 }
 
 
+SIMPLE_CASE( dense_col, initializes )
+{
+	dense_col<double> a {1.0, 2.0, 3.0, 4.0, 5.0};
+	double s[5] = {1.0, 2.0, 3.0, 4.0, 5.0};
+
+	ASSERT_EQ( a.nrows(), 5 );
+	ASSERT_EQ( a.ncolumns(), 1 );
+	ASSERT_VEC_EQ( 5, a, s );
+}
+
+
 N_CASE( dense_col, generates )
 {
 	const index_t n = N == 0 ? 4 : N;
@@ -293,6 +304,17 @@ N_CASE( dense_row, constructs )
 	ASSERT_TRUE(a1.ptr_data() != 0);
 }
 
+SIMPLE_CASE( dense_row, initializes )
+{
+	dense_row<double> a {1.0, 2.0, 3.0, 4.0, 5.0};
+	double s[5] = {1.0, 2.0, 3.0, 4.0, 5.0};
+
+	ASSERT_EQ( a.nrows(), 1 );
+	ASSERT_EQ( a.ncolumns(), 5 );
+	ASSERT_VEC_EQ( 5, a, s );
+}
+
+
 
 N_CASE( dense_row, generates )
 {
@@ -488,6 +510,7 @@ BEGIN_TPACK( dense_col_constructs )
 	ADD_N_CASE( dense_col, constructs, 0 )
 	ADD_N_CASE( dense_col, constructs, 1 )
 	ADD_N_CASE( dense_col, constructs, 4 )
+	ADD_SIMPLE_CASE( dense_col, initializes )
 END_TPACK
 
 BEGIN_TPACK( dense_col_generates )
@@ -531,6 +554,7 @@ BEGIN_TPACK( dense_row_constructs )
 	ADD_N_CASE( dense_row, constructs, 0 )
 	ADD_N_CASE( dense_row, constructs, 1 )
 	ADD_N_CASE( dense_row, constructs, 4 )
+	ADD_SIMPLE_CASE( dense_row, initializes )
 END_TPACK
 
 BEGIN_TPACK( dense_row_generates )
