@@ -25,15 +25,15 @@ Relying a carefully designed core framework, LightMatrix has a series of nice pr
 You can easily make matrices and perform computation using matrix expressions.
 
 ```c++	
-	using namespace lmat;
+using namespace lmat;
 
-	// generate a 2-by-3 matrix by inserting elements in row-major order
-	dense_matrix<double> a(2, 4, rm_({1., 2., 3., 4., 5., 6., 7., 8.}));
-		
-	// generate a matrix by copying elements from a memory source 
-	double src[] = {1., 2., 3., 4., 5., 6., 7., 8.};
-	dense_matrix<double> b(2, 4, copy_from(src));
-		
-	// do some computation
-	a += exp(b) * log(a + 1.0);
+// generate a 2-by-3 matrix by inserting elements in row-major order
+dense_matrix<double> a(2, 4, rm_({1., 2., 3., 4., 5., 6., 7., 8.}));
+	
+// generate a matrix by copying elements from a memory source 
+double src[] = {1., 2., 3., 4., 5., 6., 7., 8.};
+dense_matrix<double> b(2, 4, copy_from(src));
+	
+// do some computation
+a += exp(b) * log(a + 1.0);
 ```
