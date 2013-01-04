@@ -7,7 +7,7 @@ With this library, user can write codes using a set of friendly APIs (just like 
 
 Relying a carefully designed core framework, LightMatrix has a series of nice properties. Here is a brief summary:
 
- - [easy-to-use] one can perform computation easily using natural expressions
+ - [LightMatrix is easy to use](#easy_to_use): one can perform computation easily using natural expressions
  - *LightMatrix is efficient:* high level codes will be mapped to tight loops of highly optimized SIMD instructions through meta-programming. No temporary matrices will be created in most cases.
  - *LightMatrix is convenient:* it supports various ways to access elements and sub parts of a matrix.
  - *LightMatrix is versatile:* it offers a broad range of functions out of box, which range from elementary functions, matrix reduction, to linear algebra.
@@ -19,8 +19,9 @@ Relying a carefully designed core framework, LightMatrix has a series of nice pr
 	
 **Below are some specific examples/explanations to illustrate these features.**
 
-[easy-to-use]:
+<a id="easy_to_use">
 ### *LightMatrix* is easy to use
+</a>
 
 You can easily make matrices and perform computation using matrix expressions.
 
