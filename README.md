@@ -166,8 +166,8 @@ void my_fun(const T& a, const T& b, T& u, T& v) {
 	v = t1 + t2;
 }
 
-// wrap it into a kernel
-LMAT_DEF_KERNEL_2in_2out( my_kernel, my_fun )
+// wrap it into a kernel with two inputs and two outputs
+LMAT_DEF_GKERNEL( my_kernel, my_fun, 2, 2 )
 
 // apply the kernel in an element-wise way to matrices
 ewise(my_kernel())(in_(a), in_(b), out_(u), out_(v));
