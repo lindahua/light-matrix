@@ -23,7 +23,7 @@ namespace lmat
 
 	template<typename T, class Mat>
 	LMAT_ENSURE_INLINE
-	typename meta::enable_if<meta::supports_linear_index<Mat>, void>::type
+	inline typename meta::enable_if<meta::supports_linear_index<Mat>, void>::type
 	vec_initialize(IRegularMatrix<Mat, T>& mat, const std::initializer_list<T>& lst)
 	{
 		LMAT_CHECK_DIMS( static_cast<index_t>(lst.size()) == mat.nelems() );
@@ -41,7 +41,7 @@ namespace lmat
 
 	template<typename T, class Mat>
 	LMAT_ENSURE_INLINE
-	typename meta::enable_if<meta::is_percol_continuous<Mat>, void>::type
+	inline typename meta::enable_if<meta::is_percol_continuous<Mat>, void>::type
 	row_major_initialize(IRegularMatrix<Mat, T>& mat, const std::initializer_list<T>& lst)
 	{
 		LMAT_CHECK_DIMS( static_cast<index_t>(lst.size()) == mat.nelems() );
@@ -62,7 +62,7 @@ namespace lmat
 
 	template<typename T, class Mat>
 	LMAT_ENSURE_INLINE
-	typename meta::enable_if<meta::is_percol_continuous<Mat>, void>::type
+	inline typename meta::enable_if<meta::is_percol_continuous<Mat>, void>::type
 	col_major_initialize(IRegularMatrix<Mat, T>& mat, const std::initializer_list<T>& lst)
 	{
 		LMAT_CHECK_DIMS( static_cast<index_t>(lst.size()) == mat.nelems() );
