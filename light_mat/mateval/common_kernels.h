@@ -14,11 +14,7 @@
 #define LIGHTMAT_COMMON_KERNELS_H_
 
 #include <light_mat/mateval/mateval_fwd.h>
-
-#include <light_mat/math/sse_ops.h>
-#ifdef LMAT_HAS_AVX
-#include <light_mat/math/avx_ops.h>
-#endif
+#include <light_mat/math/simd_ops.h>
 
 /************************************************
  *

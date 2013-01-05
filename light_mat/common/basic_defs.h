@@ -17,6 +17,7 @@
 
 #include <light_mat/common/prim_types.h>
 #include <light_mat/common/mask_type.h>
+#include <light_mat/common/preprocess_base.h>
 #include <light_mat/common/meta_base.h>
 #include <light_mat/common/int_div.h>
 #include <light_mat/common/range.h>

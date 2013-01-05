@@ -15,13 +15,7 @@
 
 #include <light_mat/math/math_base.h>
 #include <light_mat/math/fun_tags.h>
-
-#include <light_mat/math/sse_ops.h>
-#include <light_mat/math/sse_math.h>
-#ifdef LMAT_HAS_AVX
-#include <light_mat/math/avx_ops.h>
-#include <light_mat/math/avx_math.h>
-#endif
+#include <light_mat/math/simd.h>
 
 
 #define LMAT_DEFINE_GENERIC_MATH_FUNCTOR_1( Name, Expr ) \

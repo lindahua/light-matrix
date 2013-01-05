@@ -471,7 +471,7 @@ namespace lmat
 	struct supports_simd<map_expr<FTag, Arg1>, T, Kind, IsLinear>
 	{
 		static const bool value =
-				has_simd_support<FTag, T, Kind>::value &&
+				meta::has_simd_support<FTag, T, Kind>::value &&
 				internal::arg_supp_simd<Arg1, T, Kind, IsLinear>::value;
 	};
 
@@ -480,7 +480,7 @@ namespace lmat
 	struct supports_simd<map_expr<FTag, Arg1, Arg2>, T, Kind, IsLinear>
 	{
 		static const bool value =
-				has_simd_support<FTag, T, Kind>::value &&
+				meta::has_simd_support<FTag, T, Kind>::value &&
 				internal::arg_supp_simd<Arg1, T, Kind, IsLinear>::value &&
 				internal::arg_supp_simd<Arg2, T, Kind, IsLinear>::value;
 	};
@@ -490,7 +490,7 @@ namespace lmat
 	struct supports_simd<map_expr<FTag, Arg1, Arg2, Arg3>, T, Kind, IsLinear>
 	{
 		static const bool value =
-				has_simd_support<FTag, T, Kind>::value &&
+				meta::has_simd_support<FTag, T, Kind>::value &&
 				internal::arg_supp_simd<Arg1, T, Kind, IsLinear>::value &&
 				internal::arg_supp_simd<Arg2, T, Kind, IsLinear>::value &&
 				internal::arg_supp_simd<Arg3, T, Kind, IsLinear>::value;

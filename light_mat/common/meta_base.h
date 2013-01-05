@@ -224,6 +224,53 @@ namespace lmat {  namespace meta {
 	};
 
 
+	/********************************************
+	 *
+	 *  all / any
+	 *
+	 ********************************************/
+
+	template<typename... Cond> struct all_;
+	template<typename... Cond> struct any_;
+
+	template<>
+	struct all_<>
+	{
+		static const bool value = true;
+	};
+
+	template<typename C>
+	struct all_<C>
+	{
+		static const bool value = C::value;
+	};
+
+	template<typename C, typename... R>
+	struct all_<C, R...>
+	{
+		static const bool value = C::value && all_<R...>::value;
+	};
+
+
+	template<>
+	struct any_<>
+	{
+		static const bool value = false;
+	};
+
+	template<typename C>
+	struct any_<C>
+	{
+		static const bool value = C::value;
+	};
+
+	template<typename C, typename... R>
+	struct any_<C, R...>
+	{
+		static const bool value = C::value || any_<R...>::value;
+	};
+
+
 
 } } // lmat::meta
 
