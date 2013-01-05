@@ -207,6 +207,7 @@ set(MATRIX_BASE_HS_
     ${INC}/matrix/matrix_concepts.h
     ${INC}/matrix/matrix_properties.h
     ${INC}/matrix/matrix_iter.h
+    ${INC}/matrix/matrix_init.h
     ${INC}/matrix/matrix_base.h)
     
 set(MATRIX_OPS_HS_

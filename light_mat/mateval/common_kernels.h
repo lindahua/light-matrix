@@ -20,8 +20,48 @@
 #include <light_mat/math/avx_ops.h>
 #endif
 
+/************************************************
+ *
+ *  Macros to define common kernels
+ *
+ ************************************************/
+
+#define LMAT_pkargt ::lmat::math::simd_pack<T, Kind>&
+
+#define LMAT_kerarg1(P) P##1
+#define LMAT_kerarg2(P) P##1, P##2
+#define LMAT_kerarg3(P) P##1, P##2, P##3
+#define LMAT_kerarg4(P) P##1, P##2, P##3, P##4
+#define LMAT_kerarg5(P) P##1, P##2, P##3, P##4, P##5
+#define LMAT_kerarg6(P) P##1, P##2, P##3, P##4, P##5, P##6
+#define LMAT_kerarg7(P) P##1, P##2, P##3, P##4, P##5, P##6, P##7
+#define LMAT_kerarg8(P) P##1, P##2, P##3, P##4, P##5, P##6, P##7, P##8
+#define LMAT_kerarg9(P) P##1, P##2, P##3, P##4, P##5, P##6, P##7, P##8, P##9
+
+#define LMAT_simd_pkt lmat::math::simd_pack<T, Kind>
+
+#define LMAT_DEF_GKERNEL(Kernel, Fun, NIn, NOut) \
+	template<typename T> \
+	struct Kernel { \
+		typedef T value_type; \
+		LMAT_ENSURE_INLINE \
+		void operator() (LMAT_kerarg##NIn(const T& i), LMAT_kerarg##NOut(T& o)) const \
+		{ Fun(LMAT_kerarg##NIn(i), LMAT_kerarg##NOut(o)); } \
+		template<typename Kind> \
+		LMAT_ENSURE_INLINE \
+		void operator() (LMAT_kerarg##NIn(const LMAT_simd_pkt& i), LMAT_kerarg##NOut(LMAT_simd_pkt& o)) const \
+		{ Fun(LMAT_kerarg##NIn(i), LMAT_kerarg##NOut(o)); } };
+
+
 namespace lmat
 {
+
+	/************************************************
+	 *
+	 *  specific kernels
+	 *
+	 ************************************************/
+
 	template<typename T>
 	struct copy_kernel
 	{

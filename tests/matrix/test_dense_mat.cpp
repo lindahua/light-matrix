@@ -65,6 +65,32 @@ MN_CASE( dense_mat, constructs )
 }
 
 
+SIMPLE_CASE( dense_mat, initializes )
+{
+	const index_t m = 2;
+	const index_t n = 3;
+
+	dense_matrix<double> a(m, n, rm_({1.0, 2.0, 3.0, 4.0, 5.0, 6.0}));
+
+	double a0_src[m * n] = {1.0, 4.0, 2.0, 5.0, 3.0, 6.0};
+	dense_matrix<double> a0(m, n, copy_from(a0_src));
+
+	ASSERT_EQ( a.nrows(), m );
+	ASSERT_EQ( a.ncolumns(), n );
+	ASSERT_MAT_EQ( m, n, a, a0 );
+
+
+	dense_matrix<double> b(m, n, cm_({1.0, 2.0, 3.0, 4.0, 5.0, 6.0}));
+
+	double b0_src[m * n] = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0};
+	dense_matrix<double> b0(m, n, copy_from(b0_src));
+
+	ASSERT_EQ( b.nrows(), m );
+	ASSERT_EQ( b.ncolumns(), n );
+	ASSERT_MAT_EQ( m, n, b, b0 );
+}
+
+
 MN_CASE( dense_mat, generates )
 {
 	const index_t m = M == 0 ? 3 : M;
@@ -389,6 +415,7 @@ MN_CASE( dense_mat, swap )
 
 BEGIN_TPACK( dense_mat_constructs )
 	ADD_MN_CASE_3X3( dense_mat, constructs, 3, 4 )
+	ADD_SIMPLE_CASE( dense_mat, initializes )
 END_TPACK
 
 BEGIN_TPACK( dense_mat_generates )

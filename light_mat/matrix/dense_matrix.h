@@ -207,6 +207,20 @@ namespace lmat
 			evaluate(r.derived(), *this);
 		}
 
+		LMAT_ENSURE_INLINE dense_matrix(index_t m, index_t n, const row_major_initializer<T>& in)
+		: m_layout(m, n)
+		, m_store(m_layout.nelems())
+		{
+			row_major_initialize(*this, in._list);
+		}
+
+		LMAT_ENSURE_INLINE dense_matrix(index_t m, index_t n, const col_major_initializer<T>& in)
+		: m_layout(m, n)
+		, m_store(m_layout.nelems())
+		{
+			col_major_initialize(*this, in._list);
+		}
+
 		LMAT_ENSURE_INLINE void swap(dense_matrix& s)
 		{
 			using std::swap;
@@ -323,6 +337,12 @@ namespace lmat
 		template<class Expr>
 		LMAT_ENSURE_INLINE dense_col(const IMatrixXpr<Expr, T>& r) : base_mat_t(r) { }
 
+		LMAT_ENSURE_INLINE dense_col(const std::initializer_list<T>& in)
+		: base_mat_t(static_cast<index_t>(in.size()), 1)
+		{
+			vec_initialize(*this, in);
+		}
+
 	public:
 
 		LMAT_ENSURE_INLINE dense_col& operator = (const base_mat_t& r)
@@ -363,6 +383,12 @@ namespace lmat
 
 		template<class Expr>
 		LMAT_ENSURE_INLINE dense_row(const IMatrixXpr<Expr, T>& r) : base_mat_t(r) { }
+
+		LMAT_ENSURE_INLINE dense_row(const std::initializer_list<T>& in)
+		: base_mat_t(1, static_cast<index_t>(in.size()))
+		{
+			vec_initialize(*this, in);
+		}
 
 	public:
 		LMAT_ENSURE_INLINE dense_row& operator = (const base_mat_t& r)
