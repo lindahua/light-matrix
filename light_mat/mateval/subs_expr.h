@@ -14,7 +14,7 @@
 #define LIGHTMAT_SUBS_EXPR_H_
 
 #include <light_mat/matrix/matrix_base.h>
-#include <light_mat/mateval/map_expr.h>
+#include <light_mat/mateval/ewise_eval.h>
 
 namespace lmat
 {

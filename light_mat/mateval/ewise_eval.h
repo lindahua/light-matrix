@@ -202,6 +202,42 @@ namespace lmat
 	}
 
 
+	/********************************************
+	 *
+	 *  Generic by-map evaluation
+	 *
+	 ********************************************/
+
+	template<typename T, typename U, class Expr, class DMat>
+	LMAT_ENSURE_INLINE
+	inline void evaluate(const IEWiseMatrix<Expr, T>& expr, IRegularMatrix<DMat, T>& dmat, linear_macc<U>)
+	{
+		const Expr& s = expr.derived();
+		DMat& d = dmat.derived();
+
+		ewise(copy_kernel<T>(), U())(common_shape(s, d), in_(s), out_(d));
+	}
+
+
+	template<typename T, typename U, class Expr, class DMat>
+	LMAT_ENSURE_INLINE
+	inline void evaluate(const IEWiseMatrix<Expr, T>& expr, IRegularMatrix<DMat, T>& dmat, percol_macc<U>)
+	{
+		const Expr& s = expr.derived();
+		DMat& d = dmat.derived();
+
+		percol(ewise(copy_kernel<T>(), U()), common_shape(s, d), in_(s), out_(d));
+	}
+
+
+	template<typename T, class SExpr, class DMat>
+	LMAT_ENSURE_INLINE
+	inline void evaluate_by_map(const IEWiseMatrix<SExpr, T>& sexpr, IRegularMatrix<DMat, T>& dmat)
+	{
+		typedef typename preferred_macc_policy_2<SExpr, DMat>::type policy_t;
+		evaluate(sexpr, dmat, policy_t());
+	}
+
 }
 
 #endif /* EWISE_EVAL_H_ */

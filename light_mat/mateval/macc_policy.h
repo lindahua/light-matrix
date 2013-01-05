@@ -23,60 +23,29 @@ namespace lmat
 	template<typename ATag> struct linear_macc { };
 	template<typename ATag> struct percol_macc { };
 
-	// Policy resolution
+	/********************************************
+	 *
+	 *  Linear MACC support
+	 *
+	 ********************************************/
 
 	template<typename Mat>
 	struct supports_linear_macc
 	{
-		static const bool value = meta::supports_linear_index<Mat>::value;
+		static const bool value =
+				meta::is_regular_mat<Mat>::value &&
+				meta::supports_linear_index<Mat>::value;
 	};
 
 
+	/********************************************
+	 *
+	 *  SIMD support
+	 *
+	 ********************************************/
+
 	namespace internal
 	{
-
-		template<typename Mat, typename T, typename Kind, bool IsLinear>
-		struct _supports_simd
-		{
-			static const bool value = false;
-		};
-
-		template<typename Mat, typename Kind>
-		struct _supports_simd<Mat, float, Kind, true>
-		{
-			static const int pw = math::simd_traits<float, Kind>::pack_width;
-			static const int mod_ = meta::nelems<Mat>::value % pw;
-
-			static const bool value = meta::is_continuous<Mat>::value && (mod_ == 0);
-		};
-
-		template<typename Mat, typename Kind>
-		struct _supports_simd<Mat, double, Kind, true>
-		{
-			static const int pw = math::simd_traits<float, Kind>::pack_width;
-			static const int mod_ = meta::nelems<Mat>::value % pw;
-
-			static const bool value = meta::is_continuous<Mat>::value && (mod_ == 0);
-		};
-
-		template<typename Mat, typename Kind>
-		struct _supports_simd<Mat, float, Kind, false>
-		{
-			static const int pw = math::simd_traits<float, Kind>::pack_width;
-			static const int mod_ = meta::nrows<Mat>::value % pw;
-
-			static const bool value = meta::is_percol_continuous<Mat>::value && (mod_ == 0);
-		};
-
-		template<typename Mat, typename Kind>
-		struct _supports_simd<Mat, double, Kind, false>
-		{
-			static const int pw = math::simd_traits<float, Kind>::pack_width;
-			static const int mod_ = meta::nrows<Mat>::value % pw;
-
-			static const bool value = meta::is_percol_continuous<Mat>::value && (mod_ == 0);
-		};
-
 		template<typename T1, typename T2>
 		struct are_simd_compatible_types
 		{
@@ -88,16 +57,58 @@ namespace lmat
 
 		template<typename T>
 		struct are_simd_compatible_types<mask_t<T>, T> { static const bool value = true; };
+
+		template<typename Mat, typename RT, typename Kind, bool IsLinear>
+		struct _supports_simd_prim
+		{
+			typedef typename matrix_traits<Mat>::value_type VT;
+
+			static const int pw = math::simd_traits<RT, Kind>::pack_width;
+
+			static const bool scont = IsLinear ?
+					meta::is_continuous<Mat>::value :
+					meta::is_percol_continuous<Mat>::value;
+
+			static const unsigned int slen = IsLinear ?
+					(unsigned)meta::nelems<Mat>::value :
+					(unsigned)meta::nrows<Mat>::value;
+
+			static const bool value =
+					are_simd_compatible_types<VT, RT>::value &&
+					scont && (slen % pw == 0);
+		};
+
+		template<typename Mat, typename RT, typename Kind, bool IsLinear>
+		struct _supports_simd
+		{
+			static const bool value = false;
+		};
+
+		template<typename Mat, typename Kind, bool IsLinear>
+		struct _supports_simd<Mat, float, Kind, IsLinear>
+		{
+			static const bool value = _supports_simd_prim<Mat, float, Kind, IsLinear>::value;
+		};
+
+		template<typename Mat, typename Kind, bool IsLinear>
+		struct _supports_simd<Mat, double, Kind, IsLinear>
+		{
+			static const bool value = _supports_simd_prim<Mat, double, Kind, IsLinear>::value;
+		};
 	}
 
-	template<typename Mat, typename T, typename Kind, bool IsLinear>
+	template<typename Mat, typename RT, typename Kind, bool IsLinear>
 	struct supports_simd
 	{
-		typedef typename matrix_traits<Mat>::value_type VT;
-		static const bool value = internal::are_simd_compatible_types<VT, T>::value
-				&& internal::_supports_simd<Mat, T, Kind, IsLinear>::value;
+		static const bool value = internal::_supports_simd<Mat, RT, Kind, IsLinear>::value;
 	};
 
+
+	/********************************************
+	 *
+	 *  preferred policy
+	 *
+	 ********************************************/
 
 	template<class S>
 	struct preferred_macc_policy
