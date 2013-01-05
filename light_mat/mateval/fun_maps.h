@@ -17,32 +17,15 @@
 #include <light_mat/math/math_functors.h>
 
 
-#define LMAT_DEFINE_GENERIC_FUNMAP_1( Name ) \
+#define LMAT_DEFINE_GENERIC_FUNMAP( Name, NA ) \
 	template<typename T> \
-	struct fun_map<Name##_, T> { \
+	struct fun_map<Name##_, LMAT_REPEAT_ARGS_##NA(T)> { \
 		typedef math::Name##_fun<T> type; };
 
-#define LMAT_DEFINE_GENERIC_FUNMAP_2( Name ) \
-	template<typename T> \
-	struct fun_map<Name##_, T, T> { \
-		typedef math::Name##_fun<T> type; };
-
-#define LMAT_DEFINE_REAL_FUNMAP_1( Name ) \
-	template<> struct fun_map<Name##_, float> { \
+#define LMAT_DEFINE_REAL_FUNMAP( Name, NA ) \
+	template<> struct fun_map<Name##_, LMAT_REPEAT_ARGS_##NA(float)> { \
 		typedef math::Name##_fun<float> type; }; \
-	template<> struct fun_map<Name##_, double> { \
-		typedef math::Name##_fun<double> type; };
-
-#define LMAT_DEFINE_REAL_FUNMAP_2( Name ) \
-	template<> struct fun_map<Name##_, float, float> { \
-		typedef math::Name##_fun<float> type; }; \
-	template<> struct fun_map<Name##_, double, double> { \
-		typedef math::Name##_fun<double> type; };
-
-#define LMAT_DEFINE_REAL_FUNMAP_3( Name ) \
-	template<> struct fun_map<Name##_, float, float, float> { \
-		typedef math::Name##_fun<float> type; }; \
-	template<> struct fun_map<Name##_, double, double, double> { \
+	template<> struct fun_map<Name##_, LMAT_REPEAT_ARGS_##NA(double)> { \
 		typedef math::Name##_fun<double> type; };
 
 #define LMAT_DEFINE_LOGICAL_FUNMAP_1( Name ) \
@@ -77,27 +60,27 @@ namespace lmat
 
 	// arithmetics
 
-	LMAT_DEFINE_GENERIC_FUNMAP_2( add )
-	LMAT_DEFINE_GENERIC_FUNMAP_2( sub )
-	LMAT_DEFINE_GENERIC_FUNMAP_2( mul )
-	LMAT_DEFINE_GENERIC_FUNMAP_2( div )
-	LMAT_DEFINE_GENERIC_FUNMAP_1( neg )
+	LMAT_DEFINE_GENERIC_FUNMAP( add, 2 )
+	LMAT_DEFINE_GENERIC_FUNMAP( sub, 2 )
+	LMAT_DEFINE_GENERIC_FUNMAP( mul, 2 )
+	LMAT_DEFINE_GENERIC_FUNMAP( div, 2 )
+	LMAT_DEFINE_GENERIC_FUNMAP( neg, 1 )
 
-	LMAT_DEFINE_GENERIC_FUNMAP_1( abs )
-	LMAT_DEFINE_GENERIC_FUNMAP_1( sqr )
-	LMAT_DEFINE_GENERIC_FUNMAP_1( cube )
+	LMAT_DEFINE_GENERIC_FUNMAP( abs, 1 )
+	LMAT_DEFINE_GENERIC_FUNMAP( sqr, 1 )
+	LMAT_DEFINE_GENERIC_FUNMAP( cube, 1 )
 
-	LMAT_DEFINE_GENERIC_FUNMAP_2( max )
-	LMAT_DEFINE_GENERIC_FUNMAP_2( min )
+	LMAT_DEFINE_GENERIC_FUNMAP( max, 2 )
+	LMAT_DEFINE_GENERIC_FUNMAP( min, 2 )
 
 	// comparison
 
-	LMAT_DEFINE_GENERIC_FUNMAP_2( eq )
-	LMAT_DEFINE_GENERIC_FUNMAP_2( ne )
-	LMAT_DEFINE_GENERIC_FUNMAP_2( ge )
-	LMAT_DEFINE_GENERIC_FUNMAP_2( gt )
-	LMAT_DEFINE_GENERIC_FUNMAP_2( le )
-	LMAT_DEFINE_GENERIC_FUNMAP_2( lt )
+	LMAT_DEFINE_GENERIC_FUNMAP( eq, 2 )
+	LMAT_DEFINE_GENERIC_FUNMAP( ne, 2 )
+	LMAT_DEFINE_GENERIC_FUNMAP( ge, 2 )
+	LMAT_DEFINE_GENERIC_FUNMAP( gt, 2 )
+	LMAT_DEFINE_GENERIC_FUNMAP( le, 2 )
+	LMAT_DEFINE_GENERIC_FUNMAP( lt, 2 )
 
 	// logical
 
@@ -109,65 +92,65 @@ namespace lmat
 
 	// real math
 
-	LMAT_DEFINE_REAL_FUNMAP_3( clamp )
-	LMAT_DEFINE_REAL_FUNMAP_3( fma )
+	LMAT_DEFINE_REAL_FUNMAP( clamp, 3 )
+	LMAT_DEFINE_REAL_FUNMAP( fma, 3 )
 
-	LMAT_DEFINE_REAL_FUNMAP_1( rcp )
-	LMAT_DEFINE_REAL_FUNMAP_1( sqrt )
-	LMAT_DEFINE_REAL_FUNMAP_1( rsqrt )
-	LMAT_DEFINE_REAL_FUNMAP_2( pow )
+	LMAT_DEFINE_REAL_FUNMAP( rcp, 1 )
+	LMAT_DEFINE_REAL_FUNMAP( sqrt, 1 )
+	LMAT_DEFINE_REAL_FUNMAP( rsqrt, 1 )
+	LMAT_DEFINE_REAL_FUNMAP( pow, 2 )
 
-	LMAT_DEFINE_REAL_FUNMAP_1( floor )
-	LMAT_DEFINE_REAL_FUNMAP_1( ceil )
+	LMAT_DEFINE_REAL_FUNMAP( floor, 1 )
+	LMAT_DEFINE_REAL_FUNMAP( ceil, 1 )
 
-	LMAT_DEFINE_REAL_FUNMAP_1( exp )
-	LMAT_DEFINE_REAL_FUNMAP_1( log )
-	LMAT_DEFINE_REAL_FUNMAP_1( log10 )
-	LMAT_DEFINE_REAL_FUNMAP_2( xlogy )
-	LMAT_DEFINE_REAL_FUNMAP_1( xlogx )
+	LMAT_DEFINE_REAL_FUNMAP( exp, 1 )
+	LMAT_DEFINE_REAL_FUNMAP( log, 1 )
+	LMAT_DEFINE_REAL_FUNMAP( log10, 1 )
+	LMAT_DEFINE_REAL_FUNMAP( xlogy, 2 )
+	LMAT_DEFINE_REAL_FUNMAP( xlogx, 1 )
 
-	LMAT_DEFINE_REAL_FUNMAP_1( sin )
-	LMAT_DEFINE_REAL_FUNMAP_1( cos )
-	LMAT_DEFINE_REAL_FUNMAP_1( tan )
+	LMAT_DEFINE_REAL_FUNMAP( sin, 1 )
+	LMAT_DEFINE_REAL_FUNMAP( cos, 1 )
+	LMAT_DEFINE_REAL_FUNMAP( tan, 1 )
 
-	LMAT_DEFINE_REAL_FUNMAP_1( asin )
-	LMAT_DEFINE_REAL_FUNMAP_1( acos )
-	LMAT_DEFINE_REAL_FUNMAP_1( atan )
-	LMAT_DEFINE_REAL_FUNMAP_2( atan2 )
+	LMAT_DEFINE_REAL_FUNMAP( asin, 1 )
+	LMAT_DEFINE_REAL_FUNMAP( acos, 1 )
+	LMAT_DEFINE_REAL_FUNMAP( atan, 1 )
+	LMAT_DEFINE_REAL_FUNMAP( atan2, 2 )
 
-	LMAT_DEFINE_REAL_FUNMAP_1( sinh )
-	LMAT_DEFINE_REAL_FUNMAP_1( cosh )
-	LMAT_DEFINE_REAL_FUNMAP_1( tanh )
+	LMAT_DEFINE_REAL_FUNMAP( sinh, 1 )
+	LMAT_DEFINE_REAL_FUNMAP( cosh, 1 )
+	LMAT_DEFINE_REAL_FUNMAP( tanh, 1 )
 
 	// C++11 real math
 
 #ifdef LMAT_HAS_CXX11_MATH
 
-	LMAT_DEFINE_REAL_FUNMAP_1( cbrt )
-	LMAT_DEFINE_REAL_FUNMAP_2( hypot )
+	LMAT_DEFINE_REAL_FUNMAP( cbrt, 1 )
+	LMAT_DEFINE_REAL_FUNMAP( hypot, 2 )
 
-	LMAT_DEFINE_REAL_FUNMAP_1( round )
-	LMAT_DEFINE_REAL_FUNMAP_1( trunc )
+	LMAT_DEFINE_REAL_FUNMAP( round, 1 )
+	LMAT_DEFINE_REAL_FUNMAP( trunc, 1 )
 
-	LMAT_DEFINE_REAL_FUNMAP_1( exp2 )
-	LMAT_DEFINE_REAL_FUNMAP_1( log2 )
-	LMAT_DEFINE_REAL_FUNMAP_1( expm1 )
-	LMAT_DEFINE_REAL_FUNMAP_1( log1p )
+	LMAT_DEFINE_REAL_FUNMAP( exp2, 1 )
+	LMAT_DEFINE_REAL_FUNMAP( log2, 1 )
+	LMAT_DEFINE_REAL_FUNMAP( expm1, 1 )
+	LMAT_DEFINE_REAL_FUNMAP( log1p, 1 )
 
-	LMAT_DEFINE_REAL_FUNMAP_1( asinh )
-	LMAT_DEFINE_REAL_FUNMAP_1( acosh )
-	LMAT_DEFINE_REAL_FUNMAP_1( atanh )
+	LMAT_DEFINE_REAL_FUNMAP( asinh, 1 )
+	LMAT_DEFINE_REAL_FUNMAP( acosh, 1 )
+	LMAT_DEFINE_REAL_FUNMAP( atanh, 1 )
 
-	LMAT_DEFINE_REAL_FUNMAP_1( erf )
-	LMAT_DEFINE_REAL_FUNMAP_1( erfc )
+	LMAT_DEFINE_REAL_FUNMAP( erf, 1 )
+	LMAT_DEFINE_REAL_FUNMAP( erfc, 1 )
 
-	LMAT_DEFINE_REAL_FUNMAP_1( lgamma )
-	LMAT_DEFINE_REAL_FUNMAP_1( tgamma )
+	LMAT_DEFINE_REAL_FUNMAP( lgamma, 1 )
+	LMAT_DEFINE_REAL_FUNMAP( tgamma, 1 )
 
-	LMAT_DEFINE_REAL_FUNMAP_1( signbit )
-	LMAT_DEFINE_REAL_FUNMAP_1( isfinite )
-	LMAT_DEFINE_REAL_FUNMAP_1( isinf )
-	LMAT_DEFINE_REAL_FUNMAP_1( isnan )
+	LMAT_DEFINE_REAL_FUNMAP( signbit, 1 )
+	LMAT_DEFINE_REAL_FUNMAP( isfinite, 1 )
+	LMAT_DEFINE_REAL_FUNMAP( isinf, 1 )
+	LMAT_DEFINE_REAL_FUNMAP( isnan, 1 )
 
 #endif
 
