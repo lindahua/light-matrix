@@ -126,7 +126,7 @@ void verify_sfmt_m128()
 
 	for (index_t i = 0; i < n; ++i)
 	{
-		__m128i p = rs.rand_pack();
+		__m128i p = rs.rand_pack(sse_t());
 		_mm_store_si128(reinterpret_cast<__m128i*>(x), p);
 
 		const uint32_t *x0 = &v32[i * 4];
@@ -141,7 +141,7 @@ void verify_sfmt_m128()
 
 		for (index_t i = 0; i < n-1; ++i)
 		{
-			__m128i p = rs.rand_pack();
+			__m128i p = rs.rand_pack(sse_t());
 			_mm_store_si128(reinterpret_cast<__m128i*>(x), p);
 
 			const uint32_t *x0 = &v32[(i+1) * 4];
@@ -173,7 +173,7 @@ void verify_sfmt_m256()
 
 	for (index_t i = 0; i < n; ++i)
 	{
-		__m256i p = rs.rand_avx_pack();
+		__m256i p = rs.rand_pack(avx_t());
 		_mm256_store_si256(reinterpret_cast<__m256i*>(x), p);
 
 		const uint32_t *x0 = &v32[i * 8];
@@ -188,7 +188,7 @@ void verify_sfmt_m256()
 
 		for (index_t i = 0; i < n-1; ++i)
 		{
-			__m256i p = rs.rand_avx_pack();
+			__m256i p = rs.rand_pack(avx_t());
 			_mm256_store_si256(reinterpret_cast<__m256i*>(x), p);
 
 			const uint32_t *x0 = &v32[(i+1) * 8];

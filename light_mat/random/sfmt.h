@@ -257,7 +257,7 @@ namespace lmat { namespace random {
 			return x;
 		}
 
-		LMAT_ENSURE_INLINE __m128i rand_pack()
+		LMAT_ENSURE_INLINE __m128i rand_pack(sse_t)
 		{
 			m_tracker.to_boundary(bdtags::quad());
 
@@ -268,7 +268,7 @@ namespace lmat { namespace random {
 		}
 
 #ifdef LMAT_HAS_AVX
-		LMAT_ENSURE_INLINE __m256i rand_avx_pack()
+		LMAT_ENSURE_INLINE __m256i rand_pack(avx_t)
 		{
 			m_tracker.to_boundary(bdtags::oct());
 
