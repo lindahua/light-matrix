@@ -205,23 +205,28 @@ template<unsigned int MEXP>
 void test_sfmt_randseq(sfmt_rand_stream<MEXP>& rs, index_t ignore, index_t n)  // n units
 {
 	dense_row<uint32_t> r(n);
-	dense_row<uint32_t> x(n);
+	dense_row<uint32_t> x(n, zero());
+	dense_row<uint32_t> r2(n);
+	dense_row<uint32_t> x2(n, zero());
 
 	// generate one by one
 
 	rs.set_seed(seed0);
 	for (index_t i = 0; i < ignore; ++i) rs.rand_u32();
 	for (index_t i = 0; i < n; ++i) r[i] = rs.rand_u32();
+	for (index_t i = 0; i < n; ++i) r2[i] = rs.rand_u32();
 
 	// generate in batch
 
 	rs.set_seed(seed0);
 	for (index_t i = 0; i < ignore; ++i) rs.rand_u32();
 	rs.rand_seq((size_t)n * sizeof(uint32_t), x.ptr_data());
+	rs.rand_seq((size_t)n * sizeof(uint32_t), x2.ptr_data());
 
 	// compare
 
 	ASSERT_VEC_EQ(n, x, r);
+	ASSERT_VEC_EQ(n, x2, r2);
 }
 
 
