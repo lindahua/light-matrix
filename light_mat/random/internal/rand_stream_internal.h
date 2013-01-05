@@ -18,8 +18,8 @@
 
 namespace lmat { namespace random { namespace internal {
 
-	template<class State, typename T, typename BDTag>
-	void gen_rand_seq(State& s, stream_tracker<T>& trk, BDTag bd_tag, void *buf, size_t nbytes)
+	template<class State, typename T>
+	void gen_rand_seq(State& s, stream_tracker<T>& trk, void *buf, size_t nbytes)
 	{
 		// pre-condition: nbytes > 0
 
@@ -28,21 +28,19 @@ namespace lmat { namespace random { namespace internal {
 
 		const size_t sbytes = trk.length() * sizeof(T);
 
-		trk.to_boundary(bd_tag);
-
 		if (!trk.is_end()) // copy from remaining stream
 		{
 			const size_t rbytes = trk.remain() * sizeof(T);
 
 			if (nbytes <= rbytes)
 			{
-				std::memcpy(pd, ps, nbytes);
-				nbytes = 0;
+				std::memcpy(pd, ps + trk.offset() * sizeof(T), nbytes);
 				trk.forward_bytes(nbytes);
+				nbytes = 0;
 			}
 			else
 			{
-				std::memcpy(pd, ps, rbytes);
+				std::memcpy(pd, ps + trk.offset() * sizeof(T), rbytes);
 				nbytes -= rbytes;
 				pd += rbytes;
 				trk.set_end();
@@ -58,17 +56,15 @@ namespace lmat { namespace random { namespace internal {
 			{
 				s.next();
 				std::memcpy(pd, ps, sbytes);
+				pd += sbytes;
+				nbytes -= sbytes;
 			}
-
-			size_t l = m * sbytes;
-			nbytes -= l;
-			pd += l;
 		}
 
 		if (nbytes)  // process remaining
 		{
 			s.next();
-			s.rewind();
+			trk.rewind();
 
 			std::memcpy(pd, ps, nbytes);
 			trk.forward_bytes(nbytes);

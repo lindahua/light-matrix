@@ -281,8 +281,7 @@ namespace lmat { namespace random {
 
 		LMAT_ENSURE_INLINE void rand_seq(size_t nbytes, void *buf)
 		{
-			internal::gen_rand_seq(m_intern, m_tracker,
-					bdtags::quad(), buf, nbytes);
+			internal::gen_rand_seq(m_intern, m_tracker, buf, nbytes);
 		}
 
 	private:

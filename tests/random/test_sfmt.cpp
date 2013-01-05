@@ -201,6 +201,55 @@ void verify_sfmt_m256()
 #endif
 
 
+template<unsigned int MEXP>
+void test_sfmt_randseq(sfmt_rand_stream<MEXP>& rs, index_t ignore, index_t n)  // n units
+{
+	dense_row<uint32_t> r(n);
+	dense_row<uint32_t> x(n);
+
+	// generate one by one
+
+	rs.set_seed(seed0);
+	for (index_t i = 0; i < ignore; ++i) rs.rand_u32();
+	for (index_t i = 0; i < n; ++i) r[i] = rs.rand_u32();
+
+	// generate in batch
+
+	rs.set_seed(seed0);
+	for (index_t i = 0; i < ignore; ++i) rs.rand_u32();
+	rs.rand_seq((size_t)n * sizeof(uint32_t), x.ptr_data());
+
+	// compare
+
+	ASSERT_VEC_EQ(n, x, r);
+}
+
+
+template<unsigned int MEXP>
+void verify_sfmt_seq()
+{
+	sfmt_rand_stream<MEXP> rs;
+	index_t nu = (index_t)rs.internal_nunits();
+
+	const int nstarts = 4;
+	index_t starts[nstarts] = {0, 3, nu / 4, nu / 2};
+
+	const int nlens = 6;
+	index_t lens[nlens] = {3, nu / 4, nu / 2, nu, (nu * 2 + nu / 2), (nu * 3 + nu / 4) };
+
+	for (int i = 0; i < nstarts; ++i)
+	{
+		for (int j = 0; j < nlens; ++j)
+		{
+			index_t start = starts[i];
+			index_t len = lens[j];
+
+			test_sfmt_randseq(rs, start, len);
+		}
+	}
+}
+
+
 
 #define DEF_SFMT_TESTS( packname, tfunname ) \
 		SIMPLE_CASE( packname, 1279 ) { tfunname<1279>(); } \
@@ -230,6 +279,8 @@ DEF_SFMT_TESTS( sfmt_verify_m128, verify_sfmt_m128 )
 DEF_SFMT_TESTS( sfmt_verify_m256, verify_sfmt_m256 )
 #endif
 
+DEF_SFMT_TESTS( sfmt_verify_seq, verify_sfmt_seq )
+
 BEGIN_MAIN_SUITE
 	ADD_TPACK( sfmt_verify )
 	ADD_TPACK( sfmt_verify_u64 )
@@ -237,5 +288,6 @@ BEGIN_MAIN_SUITE
 #ifdef LMAT_HAS_AVX
 	ADD_TPACK( sfmt_verify_m256 )
 #endif
+	ADD_TPACK( sfmt_verify_seq )
 END_MAIN_SUITE
 
