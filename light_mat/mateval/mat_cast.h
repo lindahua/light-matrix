@@ -42,7 +42,7 @@ namespace lmat
 	template<typename S, typename T>
 	struct cast_fun
 	{
-		typedef T value_type;
+		typedef T result_type;
 
 		LMAT_ENSURE_INLINE
 		T operator() (const S& s) const

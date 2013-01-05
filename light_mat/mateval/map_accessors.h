@@ -34,7 +34,7 @@ namespace lmat
 	class map_vec_reader<Fun, atags::scalar, Rd1> : public scalar_vec_accessor_base
 	{
 		typedef atags::scalar atag;
-		typedef typename Fun::value_type value_t;
+		typedef typename Fun::result_type result_t;
 
 	public:
 		LMAT_ENSURE_INLINE
@@ -43,7 +43,7 @@ namespace lmat
 		{ }
 
 		LMAT_ENSURE_INLINE
-		value_t scalar(index_t i) const
+		result_t scalar(index_t i) const
 		{
 			return m_fun(m_rd1.scalar(i));
 		}
@@ -57,7 +57,7 @@ namespace lmat
 	class map_vec_reader<Fun, atags::simd<Kind>, Rd1> : public simd_vec_accessor_base
 	{
 		typedef atags::simd<Kind> atag;
-		typedef typename Fun::value_type value_t;
+		typedef typename Fun::result_type result_t;
 		typedef typename math::fun_simd_pack<Fun, Kind>::type pack_t;
 
 	public:
@@ -67,7 +67,7 @@ namespace lmat
 		{ }
 
 		LMAT_ENSURE_INLINE
-		value_t scalar(index_t i) const
+		result_t scalar(index_t i) const
 		{
 			return m_fun(m_rd1.scalar(i));
 		}
@@ -88,7 +88,7 @@ namespace lmat
 	class map_vec_reader<Fun, atags::scalar, Rd1, Rd2> : public scalar_vec_accessor_base
 	{
 		typedef atags::scalar atag;
-		typedef typename Fun::value_type value_t;
+		typedef typename Fun::result_type result_t;
 
 	public:
 		LMAT_ENSURE_INLINE
@@ -97,7 +97,7 @@ namespace lmat
 		{ }
 
 		LMAT_ENSURE_INLINE
-		value_t scalar(index_t i) const
+		result_t scalar(index_t i) const
 		{
 			return m_fun(m_rd1.scalar(i), m_rd2.scalar(i));
 		}
@@ -113,7 +113,7 @@ namespace lmat
 	{
 		typedef atags::simd<Kind> atag;
 
-		typedef typename Fun::value_type value_t;
+		typedef typename Fun::result_type result_t;
 		typedef typename math::fun_simd_pack<Fun, Kind>::type pack_t;
 
 	public:
@@ -123,7 +123,7 @@ namespace lmat
 		{ }
 
 		LMAT_ENSURE_INLINE
-		value_t scalar(index_t i) const
+		result_t scalar(index_t i) const
 		{
 			return m_fun(m_rd1.scalar(i), m_rd2.scalar(i));
 		}
@@ -145,7 +145,7 @@ namespace lmat
 	class map_vec_reader<Fun, atags::scalar, Rd1, Rd2, Rd3> : public scalar_vec_accessor_base
 	{
 		typedef atags::scalar atag;
-		typedef typename Fun::value_type value_t;
+		typedef typename Fun::result_type result_t;
 
 	public:
 		LMAT_ENSURE_INLINE
@@ -155,7 +155,7 @@ namespace lmat
 		{ }
 
 		LMAT_ENSURE_INLINE
-		value_t scalar(index_t i) const
+		result_t scalar(index_t i) const
 		{
 			return m_fun(m_rd1.scalar(i), m_rd2.scalar(i), m_rd3.scalar(i));
 		}
@@ -172,7 +172,7 @@ namespace lmat
 	{
 		typedef atags::simd<Kind> atag;
 
-		typedef typename Fun::value_type value_t;
+		typedef typename Fun::result_type result_t;
 		typedef typename math::fun_simd_pack<Fun, Kind>::type pack_t;
 
 	public:
@@ -183,7 +183,7 @@ namespace lmat
 		{ }
 
 		LMAT_ENSURE_INLINE
-		value_t scalar(index_t i) const
+		result_t scalar(index_t i) const
 		{
 			return m_fun(m_rd1.scalar(i), m_rd2.scalar(i), m_rd3.scalar(i));
 		}

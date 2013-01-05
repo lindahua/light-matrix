@@ -21,7 +21,7 @@
 #define LMAT_DEFINE_GENERIC_MATH_FUNCTOR_1( Name, Expr ) \
 	template<typename T> \
 	struct Name##_fun { \
-		typedef T value_type; \
+		typedef T result_type; \
 		LMAT_ENSURE_INLINE \
 		T operator()(const T& x) const { return Expr; } \
 		template<typename Kind> \
@@ -37,7 +37,7 @@
 #define LMAT_DEFINE_GENERIC_MATH_FUNCTOR_2( Name, Expr ) \
 	template<typename T> \
 	struct Name##_fun { \
-		typedef T value_type; \
+		typedef T result_type; \
 		LMAT_ENSURE_INLINE \
 		T operator()(const T& x, const T& y) const { return Expr; } \
 		template<typename Kind> \
@@ -53,7 +53,7 @@
 #define LMAT_DEFINE_GENERIC_MATH_FUNCTOR_3( Name, Expr ) \
 	template<typename T> \
 	struct Name##_fun { \
-		typedef T value_type; \
+		typedef T result_type; \
 		LMAT_ENSURE_INLINE \
 		T operator()(const T& x, const T& y, const T& z) const { return Expr; } \
 		template<typename Kind> \
@@ -69,7 +69,7 @@
 #define LMAT_DEFINE_NUMPRED_FUNCTOR( Name, Expr ) \
 	template<typename T> \
 	struct Name##_fun { \
-		typedef mask_t<T> value_type; \
+		typedef mask_t<T> result_type; \
 		LMAT_ENSURE_INLINE \
 		mask_t<T> operator()(const T& x) const { return Expr; } \
 		template<typename Kind> \
@@ -85,7 +85,7 @@
 #define LMAT_DEFINE_COMPARISON_FUNCTOR( Name, Expr ) \
 	template<typename T> \
 	struct Name##_fun { \
-		typedef mask_t<T> value_type; \
+		typedef mask_t<T> result_type; \
 		LMAT_ENSURE_INLINE \
 		mask_t<T> operator()(const T& x, const T& y) const { return Expr; } \
 		template<typename Kind> \
@@ -101,7 +101,7 @@
 #define LMAT_DEFINE_LOGICAL_FUNCTOR_1( Name, MExpr, BExpr ) \
 	template<typename T> \
 	struct Name##_fun { \
-		typedef mask_t<T> value_type; \
+		typedef mask_t<T> result_type; \
 		LMAT_ENSURE_INLINE \
 		mask_t<T> operator()(const mask_t<T>& x) const { return MExpr; } \
 		template<typename Kind> \
@@ -111,7 +111,7 @@
 	}; \
 	template<> \
 	struct Name##_fun<bool> { \
-		typedef bool value_type; \
+		typedef bool result_type; \
 		LMAT_ENSURE_INLINE \
 		bool operator()(const bool& x) const { return BExpr; } \
 	}; \
@@ -124,7 +124,7 @@
 #define LMAT_DEFINE_LOGICAL_FUNCTOR_2( Name, MExpr, BExpr ) \
 	template<typename T> \
 	struct Name##_fun { \
-		typedef mask_t<T> value_type; \
+		typedef mask_t<T> result_type; \
 		LMAT_ENSURE_INLINE \
 		mask_t<T> operator()(const mask_t<T>& x, const mask_t<T>& y) const { return MExpr; } \
 		template<typename Kind> \
@@ -134,7 +134,7 @@
 	}; \
 	template<> \
 	struct Name##_fun<bool> { \
-		typedef bool value_type; \
+		typedef bool result_type; \
 		LMAT_ENSURE_INLINE \
 		bool operator()(const bool& x, const bool& y) const { return BExpr; } \
 	}; \
@@ -283,7 +283,7 @@ namespace lmat { namespace math {
 	template<typename T>
 	struct cond_fun
 	{
-		typedef T value_type;
+		typedef T result_type;
 
 		LMAT_ENSURE_INLINE
 		T operator() (bool b, const T& x, const T& y) const { return cond(b, x, y); }
@@ -294,7 +294,7 @@ namespace lmat { namespace math {
 
 	template<> struct cond_fun<float>
 	{
-		typedef float value_type;
+		typedef float result_type;
 
 		LMAT_ENSURE_INLINE
 		float operator() (bool b, const float& x, const float& y) const
@@ -313,7 +313,7 @@ namespace lmat { namespace math {
 
 	template<> struct cond_fun<double>
 	{
-		typedef double value_type;
+		typedef double result_type;
 
 		LMAT_ENSURE_INLINE
 		double operator() (bool b, const double& x, const double& y) const
