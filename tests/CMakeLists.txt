@@ -629,9 +629,23 @@ set(PRNG_TEST_HS
     ${PRNG_HS_})
     
 add_executable(test_stracker ${PRNG_TEST_HS} random/test_stracker.cpp)
+add_executable(test_sfmt ${PRNG_TEST_HS} random/test_sfmt.cpp)
+    
+# SFMT verification files
+configure_file(random/data/sfmt/sfmt.000607.txt ${CMAKE_CURRENT_BINARY_DIR}/data/sfmt/sfmt.000607.txt COPYONLY)
+configure_file(random/data/sfmt/sfmt.001279.txt ${CMAKE_CURRENT_BINARY_DIR}/data/sfmt/sfmt.001279.txt COPYONLY)
+configure_file(random/data/sfmt/sfmt.002281.txt ${CMAKE_CURRENT_BINARY_DIR}/data/sfmt/sfmt.002281.txt COPYONLY)
+configure_file(random/data/sfmt/sfmt.004253.txt ${CMAKE_CURRENT_BINARY_DIR}/data/sfmt/sfmt.004253.txt COPYONLY)
+configure_file(random/data/sfmt/sfmt.011213.txt ${CMAKE_CURRENT_BINARY_DIR}/data/sfmt/sfmt.011213.txt COPYONLY)
+configure_file(random/data/sfmt/sfmt.019937.txt ${CMAKE_CURRENT_BINARY_DIR}/data/sfmt/sfmt.019937.txt COPYONLY)
+configure_file(random/data/sfmt/sfmt.044497.txt ${CMAKE_CURRENT_BINARY_DIR}/data/sfmt/sfmt.044497.txt COPYONLY)
+configure_file(random/data/sfmt/sfmt.086243.txt ${CMAKE_CURRENT_BINARY_DIR}/data/sfmt/sfmt.086243.txt COPYONLY)
+configure_file(random/data/sfmt/sfmt.132049.txt ${CMAKE_CURRENT_BINARY_DIR}/data/sfmt/sfmt.132049.txt COPYONLY)
+configure_file(random/data/sfmt/sfmt.216091.txt ${CMAKE_CURRENT_BINARY_DIR}/data/sfmt/sfmt.216091.txt COPYONLY)
     
 set(LMAT_RANDOM_TESTS
-    test_stracker)
+    test_stracker
+    test_sfmt)
     
 # all
 

@@ -46,6 +46,12 @@ namespace lmat { namespace random {
 		}
 
 		LMAT_ENSURE_INLINE
+		bool remain_atleast(size_t c) const // in terms of units
+		{
+			return m_i + c <= m_len;
+		}
+
+		LMAT_ENSURE_INLINE
 		bool is_end() const
 		{
 			return m_i >= m_len;

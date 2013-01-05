@@ -47,6 +47,7 @@ namespace lmat { namespace random {
 		{
 			init_states(seed);
 			param_mask = internal::sfmt_init_param_mask<MEXP>();
+			pbase = state[0].u;
 		}
 
 		void init_states(uint32_t seed);
@@ -99,7 +100,7 @@ namespace lmat { namespace random {
 
 		uint32_t u32(size_t offset) const
 		{
-			return *(reinterpret_cast<const uint32_t*>(pbase + offset));
+			return pbase[offset];
 		}
 
 	private:
@@ -200,6 +201,7 @@ namespace lmat { namespace random {
 		typedef internal::sfmt_params<MEXP> param_t;
 
 	public:
+		typedef uint32_t seed_type;
 
 		LMAT_ENSURE_INLINE
 		sfmt_rand_stream(uint32_t seed=1234)
@@ -217,13 +219,18 @@ namespace lmat { namespace random {
 			return param_t::N;
 		}
 
-
+		LMAT_ENSURE_INLINE
+		unsigned int internal_nunits() const
+		{
+			return (unsigned int)m_tracker.length();
+		}
 
 	public:
 		LMAT_ENSURE_INLINE
 		void set_seed(const seed_type& seed)
 		{
 			m_intern.init_states(seed);
+			m_tracker.set_end();
 		}
 
 		LMAT_ENSURE_INLINE
@@ -265,13 +272,8 @@ namespace lmat { namespace random {
 		{
 			m_tracker.to_boundary(bdtags::oct());
 
-			if (m_tracker.remain() < 8)
-			{
-				m_intern.next();
-				m_tracker.rewind();
-			}
-
-			__m128i u = m_intern.avx_pack(m_tracker.offset());
+			check_end();  // note: it was assured that the state has even number of 128-bit packs
+			__m256i u = m_intern.avx_pack(m_tracker.offset());
 			m_tracker.forward(8);
 			return u;
 		}
@@ -300,6 +302,18 @@ namespace lmat { namespace random {
 	};
 
 
+	// Typdefs
+
+	typedef sfmt_rand_stream<607>    sfmt607_t;
+	typedef sfmt_rand_stream<1279>   sfmt1279_t;
+	typedef sfmt_rand_stream<2281>   sfmt2281_t;
+	typedef sfmt_rand_stream<4253>   sfmt4253_t;
+	typedef sfmt_rand_stream<11213>  sfmt11213_t;
+	typedef sfmt_rand_stream<19937>  sfmt19937_t;
+	typedef sfmt_rand_stream<44497>  sfmt44497_t;
+	typedef sfmt_rand_stream<86243>  sfmt86243_t;
+	typedef sfmt_rand_stream<132049> sfmt132049_t;
+	typedef sfmt_rand_stream<216091> sfmt216091_t;
 
 } }
 
