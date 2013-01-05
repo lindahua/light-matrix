@@ -340,6 +340,17 @@ set(LINALG_HS_EX
     ${MATRIX_HS}
     ${LINALG_HS})
     
+    
+# random 
+
+set(PRNG_HS_
+    ${INC}/random/internal/rand_stream_internal.h
+    ${INC}/random/internal/sfmt_params.h
+    ${INC}/random/rand_stream.h
+    ${INC}/random/stream_tracker.h
+    ${INC}/random/sfmt.h)
+        
+    
 #==========================================================
 #
 #    Unit testing targets
@@ -608,6 +619,19 @@ set(LMAT_LINALG_TESTS
     test_lapack_qr
     test_lapack_syev
     test_lapack_svd)
+
+    
+# random module
+
+set(PRNG_TEST_HS
+    ${COMMON_HS}
+    ${MATH_HS_EX}
+    ${PRNG_HS_})
+    
+add_executable(test_stracker ${PRNG_TEST_HS} random/test_stracker.cpp)
+    
+set(LMAT_RANDOM_TESTS
+    test_stracker)
     
 # all
 
@@ -617,6 +641,7 @@ set(LMAT_ALL_TESTS
     ${LMAT_MATRIX_TESTS}
     ${LMAT_MATEVAL_TESTS}
     ${LMAT_LINALG_TESTS}
+    ${LMAT_RANDOM_TESTS}
 )
 
 

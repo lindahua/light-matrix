@@ -14,7 +14,7 @@
 #define LIGHTMAT_SFMT_H_
 
 #include <light_mat/random/rand_stream.h>
-#include <cstring>
+#include <light_mat/random/stream_tracker.h>
 
 #include "internal/sfmt_params.h"
 #include "internal/rand_stream_internal.h"
