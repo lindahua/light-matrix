@@ -169,10 +169,10 @@ void test_linear_ewise_map()
 
 	matrix_shape<M, N> shape(m, n);
 
-	map(math::sqr_fun<double>(), U())(shape, out_(dst), in_(sa));
+	map(sqr_fun<double>(), U())(shape, out_(dst), in_(sa));
 	ASSERT_MAT_EQ( m, n, dst, r1 );
 
-	map(math::add_fun<double>(), U())(shape, out_(dst), in_(sa), in_(sb));
+	map(add_fun<double>(), U())(shape, out_(dst), in_(sa), in_(sb));
 	ASSERT_MAT_EQ( m, n, dst, r2 );
 }
 
@@ -289,7 +289,7 @@ MN_CASE( linear_ewise, map_to )
 
 	for (index_t i = 0; i < m * n; ++i) r[i] = s1[i] + s2[i];
 
-	map_to(a, math::add_fun<double>(), in_(s1), in_(s2));
+	map_to(a, add_fun<double>(), in_(s1), in_(s2));
 
 	ASSERT_MAT_EQ(m, n, a, r);
 }
@@ -329,38 +329,6 @@ MN_CASE( linear_ewise, accum_to )
 	ASSERT_MAT_EQ(m, n, a, r );
 }
 
-
-MN_CASE( linear_ewise, accumf_to )
-{
-	const index_t m = M == 0 ? DM : M;
-	const index_t n = N == 0 ? DN : N;
-
-	dense_matrix<double, M, N> a(m, n);
-	dense_matrix<double, M, N> s(m, n);
-	dense_matrix<double, M, N> c(m, n);
-
-	do_fill_rand( a.ptr_data(), m * n );
-	do_fill_rand( s.ptr_data(), m * n );
-	do_fill_rand( c.ptr_data(), m * n );
-
-	double cv = c[0] * 2.0;
-
-	matrix_shape<M, N> shape(m, n);
-	dense_matrix<double, M, N> r(m, n);
-
-	math::sqr_fun<double> f;
-
-	for (index_t i = 0; i < m * n; ++i) r[i] = a[i] + f(s[i]);
-	accumf_to(a, f, in_(s));
-
-	ASSERT_MAT_APPROX( m, n, a, r, 1.0e-12 );
-
-	for (index_t i = 0; i < m * n; ++i) r[i] = a[i] + cv * f(s[i]);
-	accumf_to(a, cv, f, in_(s));
-
-	ASSERT_MAT_APPROX( m, n, a, r, 1.0e-12 );
-
-}
 
 
 // Test packs
@@ -447,11 +415,6 @@ BEGIN_TPACK( linear_ewise_accum_to )
 	ADD_MN_CASE_3X3( linear_ewise, accum_to, DM, DN )
 END_TPACK
 
-BEGIN_TPACK( linear_ewise_accumf_to )
-	ADD_MN_CASE_3X3( linear_ewise, accumf_to , DM, DN )
-END_TPACK
-
-
 
 BEGIN_MAIN_SUITE
 	ADD_TPACK( linear_ewise_scalar_cont_cont )
@@ -481,7 +444,6 @@ BEGIN_MAIN_SUITE
 
 	ADD_TPACK( linear_ewise_map_to )
 	ADD_TPACK( linear_ewise_accum_to )
-	ADD_TPACK( linear_ewise_accumf_to )
 END_MAIN_SUITE
 
 

@@ -179,17 +179,21 @@ But then ``sqr(a + b)`` and ``sqr(a - b)`` are respectively calculated twice. Wh
 	
 	.. code-block:: c++
 	
-		// define a kernel function
+		// define a kernel (as a generic functor)
 		template<typename T>
-		void my_fun(const T& a, const T& b, T& u, T& v) {
-			T t1 = sqr(a + b);
-			T t2 = sqr(a - b);
-			u = t1 - t2;
-			v = t1 + t2;
-		}
+		struct my_kernel
+		{
+			void operator() (const T& a, const T& b, T& u, T& v) const 
+			{
+				T t1 = sqr(a + b);
+				T t2 = sqr(a - b);
+				u = t1 - t2;
+				v = t1 + t2;
+			}
+		};
 		
-		// wrap it into a kernel with two inputs and two outputs
-		LMAT_DEF_GKERNEL( my_kernel, my_fun, 2, 2 )
+		// introduce SIMD support
+		LMAT_DEF_SIMD_SUPPORT( my_kernel )
 		
 		// apply the kernel in an element-wise way to matrices
 		ewise(my_kernel())(in_(a), in_(b), out_(u), out_(v));

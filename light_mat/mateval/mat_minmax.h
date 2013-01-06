@@ -94,13 +94,6 @@ namespace lmat
 			return value_type({x, x});
 		}
 
-		template<typename Kind>
-		LMAT_ENSURE_INLINE
-		minmax_stat_pack<T, Kind> init(const math::simd_pack<T, Kind>& x) const
-		{
-			return minmax_stat_pack<T, Kind>({x, x});
-		}
-
 		LMAT_ENSURE_INLINE
 		void fold(value_type& a, const T& x) const
 		{
@@ -112,44 +105,54 @@ namespace lmat
 		{
 			a.update(x);
 		}
+	};
 
-		template<typename Kind>
+
+	template<typename T, typename Kind>
+	struct minmax_pack_folder
+	{
+		typedef minmax_stat_pack<T, Kind> value_type;
+		typedef math::simd_pack<T, Kind> pack_t;
+
 		LMAT_ENSURE_INLINE
-		void fold(minmax_stat_pack<T, Kind>& a,
-				const math::simd_pack<T, Kind>& x) const
+		value_type init(const math::simd_pack<T, Kind>& x) const
+		{
+			return value_type({x, x});
+		}
+
+		LMAT_ENSURE_INLINE
+		void fold(value_type& a, const pack_t& x) const
 		{
 			a.update(x);
 		}
 
-		template<typename Kind>
 		LMAT_ENSURE_INLINE
-		void fold(minmax_stat_pack<T, Kind>& a,
-				const minmax_stat_pack<T, Kind>& x) const
+		void fold(value_type& a, const value_type& x) const
 		{
 			a.update(x);
 		}
 
-		template<typename Kind>
 		LMAT_ENSURE_INLINE
-		value_type reduce(const minmax_stat_pack<T, Kind>& a) const
+		minmax_stat<T> reduce(const value_type& a) const
 		{
 			T v0 = math::minimum(a.min_pack);
 			T v1 = math::maximum(a.max_pack);
-			return value_type({v0, v1});
+			return minmax_stat<T>({v0, v1});
 		}
 	};
 
-	template<typename T>
-	struct folder_supports_simd<minmax_folder<T> >
-	{
-		static const bool value =
-				std::is_same<T, float>::value || std::is_same<T, double>::value;
-	};
+	LMAT_DECL_SIMDIZABLE_ON_REAL( minmax_folder )
 
 	template<typename T, typename Kind>
-	struct folder_simd_pack<minmax_folder<T>, Kind>
+	struct simdize_map<minmax_folder<T>, Kind>
 	{
-		typedef minmax_stat_pack<T, Kind> type;
+		typedef minmax_pack_folder<T, Kind> type;
+
+		LMAT_ENSURE_INLINE
+		static type get(const minmax_folder<T>& )
+		{
+			return type();
+		}
 	};
 
 

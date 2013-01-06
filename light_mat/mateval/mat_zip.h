@@ -35,10 +35,10 @@ namespace lmat
 	template<typename T1, typename T2>
 	struct zip_fun
 	{
-		typedef std::pair<T1, T2> value_type;
+		typedef std::pair<T1, T2> result_type;
 
 		LMAT_ENSURE_INLINE
-		value_type operator() (const T1& e1, const T2& e2) const
+		result_type operator() (const T1& e1, const T2& e2) const
 		{
 			return std::make_pair(e1, e2);
 		}
@@ -92,10 +92,10 @@ namespace lmat
 	template<int I, typename T>
 	struct zip_e_fun
 	{
-		typedef typename std::tuple_element<(size_t)I, T>::type value_type;
+		typedef typename std::tuple_element<(size_t)I, T>::type result_type;
 
 		LMAT_ENSURE_INLINE
-		value_type operator() (const T& t) const
+		result_type operator() (const T& t) const
 		{
 			return std::get<(size_t)I>(t);
 		}

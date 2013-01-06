@@ -42,22 +42,48 @@
 #include <xmmintrin.h>	// SSE
 #endif
 
+
+#define LMAT_SIMD_PACK_(T, K) simd_pack<T, K>
+#define LMAT_SIMD_PACK_M(T, K) math::simd_pack<T, K>
+#define LMAT_SIMD_BPACK_(T, K) simd_bpack<T, K>
+#define LMAT_SIMD_BPACK_M(T, K) math::simd_bpack<T, K>
+
 namespace lmat {
 
 	struct sse_t { };
 	struct avx_t { };
+
+	namespace meta
+	{
+		template<typename A>
+		struct is_simd_kind
+		{
+			static const bool value = false;
+		};
+
+		template<> struct is_simd_kind<sse_t>
+		{
+			static const bool value = true;
+		};
+
+		template<> struct is_simd_kind<avx_t>
+		{
+			static const bool value = true;
+		};
+
+		template<typename FTag, typename T, typename Kind>
+		struct has_simd_support
+		{
+			static const bool value = false;
+		};
+	}
+
 
 #if (defined(LMAT_HAS_AVX))
 	typedef avx_t default_simd_kind;
 #else
 	typedef sse_t default_simd_kind;
 #endif
-
-	template<typename FTag, typename T, typename Kind>
-	struct has_simd_support
-	{
-		static const bool value = false;
-	};
 
 
 namespace math {

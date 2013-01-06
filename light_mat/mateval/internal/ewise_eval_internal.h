@@ -16,6 +16,7 @@
 #include <light_mat/matrix/matrix_properties.h>
 #include <light_mat/mateval/vec_accessors.h>
 #include <light_mat/mateval/multicol_accessors.h>
+#include <light_mat/math/functor_base.h>
 
 namespace lmat { namespace internal {
 
@@ -44,6 +45,8 @@ namespace lmat { namespace internal {
 	inline void linear_ewise_eval(const dimension<N>& dim, atags::simd<SKind>,
 			const Kernel& kernel, const Accessors&... accessors)
 	{
+		static_assert(is_simdizable<Kernel>::value, "kernel must be simdizable.");
+
 		typedef typename Kernel::value_type T;
 		const unsigned int W = math::simd_traits<T, SKind>::pack_width;
 
@@ -52,11 +55,13 @@ namespace lmat { namespace internal {
 
 		if (maj_len)
 		{
+			auto pk_kernel = lmat::simdize_map<Kernel, SKind>::get(kernel);
+
 			pass(accessors.begin_packs()...);
 
 			for (index_t i = 0; i < maj_len; i += W)
 			{
-				kernel(accessors.pack(i)...);
+				pk_kernel(accessors.pack(i)...);
 				pass(accessors.done_pack(i)...);
 			}
 
@@ -71,7 +76,6 @@ namespace lmat { namespace internal {
 
 		pass(accessors.finalize()...);
 	}
-
 
 
 	/********************************************

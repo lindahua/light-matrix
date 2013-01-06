@@ -19,8 +19,8 @@
 
 
 #define LMAT_DEFINE_HAS_AVX_SUPPORT( FTag ) \
-	template<> struct has_simd_support<FTag, float, avx_t> { static const bool value = true; }; \
-	template<> struct has_simd_support<FTag, double, avx_t> { static const bool value = true; };
+	template<> struct meta::has_simd_support<FTag, float, avx_t> { static const bool value = true; }; \
+	template<> struct meta::has_simd_support<FTag, double, avx_t> { static const bool value = true; };
 
 namespace lmat
 {

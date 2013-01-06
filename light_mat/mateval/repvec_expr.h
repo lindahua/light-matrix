@@ -13,7 +13,7 @@
 #ifndef LIGHTMAT_REPVEC_EXPR_H_
 #define LIGHTMAT_REPVEC_EXPR_H_
 
-#include "internal/map_expr_internal.h"
+#include <light_mat/mateval/ewise_eval.h>
 
 namespace lmat
 {

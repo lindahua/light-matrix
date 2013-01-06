@@ -34,15 +34,7 @@ struct my_sum_kernel
 	{
 		s += x;
 	}
-
-	template<typename Kind>
-	LMAT_ENSURE_INLINE
-	void operator() (const math::simd_pack<T, Kind>& x, math::simd_pack<T, Kind>& s) const
-	{
-		s += x;
-	}
 };
-
 
 template<typename T>
 struct my_max_kernel
@@ -51,13 +43,6 @@ struct my_max_kernel
 
 	LMAT_ENSURE_INLINE
 	void operator() (const T& x, T& s) const
-	{
-		s = math::max(s, x);
-	}
-
-	template<typename Kind>
-	LMAT_ENSURE_INLINE
-	void operator() (const math::simd_pack<T, Kind>& x, math::simd_pack<T, Kind>& s) const
 	{
 		s = math::max(s, x);
 	}
@@ -74,14 +59,20 @@ struct my_min_kernel
 	{
 		s = math::min(s, x);
 	}
-
-	template<typename Kind>
-	LMAT_ENSURE_INLINE
-	void operator() (const math::simd_pack<T, Kind>& x, math::simd_pack<T, Kind>& s) const
-	{
-		s = math::min(s, x);
-	}
 };
+
+
+namespace lmat {
+
+	LMAT_DECL_SIMDIZABLE_ON_REAL( my_sum_kernel )
+	LMAT_DEF_TRIVIAL_SIMDIZE_MAP( my_sum_kernel )
+
+	LMAT_DECL_SIMDIZABLE_ON_REAL( my_min_kernel )
+	LMAT_DEF_TRIVIAL_SIMDIZE_MAP( my_min_kernel )
+
+	LMAT_DECL_SIMDIZABLE_ON_REAL( my_max_kernel )
+	LMAT_DEF_TRIVIAL_SIMDIZE_MAP( my_max_kernel )
+}
 
 
 

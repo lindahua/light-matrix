@@ -125,6 +125,7 @@ set(CONFIG_HS
 set(BASIC_DEFS_HS_
     ${INC}/common/prim_types.h
     ${INC}/common/mask_type.h
+    ${INC}/common/preprocess_base.h
     ${INC}/common/meta_base.h
     ${INC}/common/int_div.h
     ${INC}/common/range.h
@@ -152,6 +153,7 @@ set(MATH_FUNBASE_HS_
     ${INC}/math/math_base.h
     ${INC}/math/math_constants.h
     ${INC}/math/fun_tags.h
+    ${INC}/math/functor_base.h
     ${INC}/math/math_functors.h)
     
 set(SIMD_BASE_HS_

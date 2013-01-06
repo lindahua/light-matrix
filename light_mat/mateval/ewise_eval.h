@@ -166,21 +166,6 @@ namespace lmat
 	}
 
 
-	template<typename T, class DMat, typename Fun, typename... Wraps>
-	LMAT_ENSURE_INLINE
-	inline void accumf_to(IRegularMatrix<DMat, T>& dmat, const Fun& fun, const Wraps&... wraps)
-	{
-		return ewise(accumf_kernel<Fun>(fun))(dmat.shape(), in_out_(dmat.derived()), wraps...);
-	}
-
-	template<typename T, class DMat, typename Fun, typename... Wraps>
-	LMAT_ENSURE_INLINE
-	inline void accumf_to(IRegularMatrix<DMat, T>& dmat, const T& c, const Fun& fun, const Wraps&... wraps)
-	{
-		return ewise(accumfx_kernel<Fun>(fun))(dmat.shape(), in_out_(dmat.derived()), in_(c, atags::single()), wraps...);
-	}
-
-
 	// percol
 
 	template<class VecKernel, typename... Wraps>
@@ -201,6 +186,42 @@ namespace lmat
 		internal::percol_eval_a(coldim, shape.ncolumns(), veckernel, make_multicol_accessor(U(), wraps)...);
 	}
 
+
+	/********************************************
+	 *
+	 *  Generic by-map evaluation
+	 *
+	 ********************************************/
+
+	template<typename T, typename U, class Expr, class DMat>
+	LMAT_ENSURE_INLINE
+	inline void evaluate(const IEWiseMatrix<Expr, T>& expr, IRegularMatrix<DMat, T>& dmat, linear_macc<U>)
+	{
+		const Expr& s = expr.derived();
+		DMat& d = dmat.derived();
+
+		ewise(copy_kernel<T>(), U())(common_shape(s, d), in_(s), out_(d));
+	}
+
+
+	template<typename T, typename U, class Expr, class DMat>
+	LMAT_ENSURE_INLINE
+	inline void evaluate(const IEWiseMatrix<Expr, T>& expr, IRegularMatrix<DMat, T>& dmat, percol_macc<U>)
+	{
+		const Expr& s = expr.derived();
+		DMat& d = dmat.derived();
+
+		percol(ewise(copy_kernel<T>(), U()), common_shape(s, d), in_(s), out_(d));
+	}
+
+
+	template<typename T, class SExpr, class DMat>
+	LMAT_ENSURE_INLINE
+	inline void evaluate_by_map(const IEWiseMatrix<SExpr, T>& sexpr, IRegularMatrix<DMat, T>& dmat)
+	{
+		typedef typename preferred_macc_policy_2<SExpr, DMat>::type policy_t;
+		evaluate(sexpr, dmat, policy_t());
+	}
 
 }
 
