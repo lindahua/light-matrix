@@ -18,15 +18,15 @@
 #include <light_mat/math/simd.h>
 
 
-#define LMAT_DEFINE_GENERIC_MATH_FUNCTOR_1( Name, Expr ) \
+#define LMAT_DEFINE_GENERIC_MATH_FUNCTOR( Name, NA, Expr ) \
 	template<typename T> \
 	struct Name##_fun { \
 		typedef T result_type; \
 		LMAT_ENSURE_INLINE \
-		T operator()(const T& x) const { return Expr; } \
+		T operator()(LMAT_REPEAT_ARGS_P##NA(const T& x)) const { return Expr; } \
 		template<typename Kind> \
 		LMAT_ENSURE_INLINE \
-		simd_pack<T, Kind> operator()(const simd_pack<T, Kind>& x) const \
+		simd_pack<T, Kind> operator()(LMAT_REPEAT_ARGS_P##NA(const LMAT_SIMD_PACK_(T, Kind)& x)) const \
 		{ return Expr; } \
 	}; \
 	template<typename T, typename Kind> \
@@ -34,47 +34,15 @@
 		typedef simd_pack<T, Kind> type; \
 	};
 
-#define LMAT_DEFINE_GENERIC_MATH_FUNCTOR_2( Name, Expr ) \
-	template<typename T> \
-	struct Name##_fun { \
-		typedef T result_type; \
-		LMAT_ENSURE_INLINE \
-		T operator()(const T& x, const T& y) const { return Expr; } \
-		template<typename Kind> \
-		LMAT_ENSURE_INLINE \
-		simd_pack<T, Kind> operator()(const simd_pack<T, Kind>& x, const simd_pack<T, Kind>& y) const \
-		{ return Expr; } \
-	}; \
-	template<typename T, typename Kind> \
-	struct fun_simd_pack<Name##_fun<T>, Kind> { \
-		typedef simd_pack<T, Kind> type; \
-	};
-
-#define LMAT_DEFINE_GENERIC_MATH_FUNCTOR_3( Name, Expr ) \
-	template<typename T> \
-	struct Name##_fun { \
-		typedef T result_type; \
-		LMAT_ENSURE_INLINE \
-		T operator()(const T& x, const T& y, const T& z) const { return Expr; } \
-		template<typename Kind> \
-		LMAT_ENSURE_INLINE \
-		simd_pack<T, Kind> operator()(const simd_pack<T, Kind>& x, const simd_pack<T, Kind>& y, const simd_pack<T, Kind>& z) const \
-		{ return Expr; } \
-	}; \
-	template<typename T, typename Kind> \
-	struct fun_simd_pack<Name##_fun<T>, Kind> { \
-		typedef simd_pack<T, Kind> type; \
-	};
-
-#define LMAT_DEFINE_NUMPRED_FUNCTOR( Name, Expr ) \
+#define LMAT_DEFINE_GENERIC_NUMPRED_FUNCTOR( Name, NA, Expr ) \
 	template<typename T> \
 	struct Name##_fun { \
 		typedef mask_t<T> result_type; \
 		LMAT_ENSURE_INLINE \
-		mask_t<T> operator()(const T& x) const { return Expr; } \
+		mask_t<T> operator()(LMAT_REPEAT_ARGS_P##NA(const T& x)) const { return Expr; } \
 		template<typename Kind> \
 		LMAT_ENSURE_INLINE \
-		simd_bpack<T, Kind> operator()(const simd_pack<T, Kind>& x) const \
+		simd_bpack<T, Kind> operator()(LMAT_REPEAT_ARGS_P##NA(const LMAT_SIMD_PACK_(T, Kind)& x)) const \
 		{ return Expr; } \
 	}; \
 	template<typename T, typename Kind> \
@@ -144,18 +112,11 @@
 	struct fun_simd_pack<Name##_fun<double>, Kind> { typedef simd_bpack<double, Kind> type; };
 
 
-#define LMAT_DEFINE_MATH_FUNCTOR_1( Name ) \
-	LMAT_DEFINE_GENERIC_MATH_FUNCTOR_1( Name, Name(x) )
+#define LMAT_DEFINE_MATH_FUNCTOR( Name, NA ) \
+	LMAT_DEFINE_GENERIC_MATH_FUNCTOR( Name, NA, Name(LMAT_REPEAT_ARGS_P##NA(x)) )
 
-#define LMAT_DEFINE_MATH_FUNCTOR_2( Name ) \
-	LMAT_DEFINE_GENERIC_MATH_FUNCTOR_2( Name, Name(x, y) )
-
-#define LMAT_DEFINE_MATH_FUNCTOR_3( Name ) \
-	LMAT_DEFINE_GENERIC_MATH_FUNCTOR_3( Name, Name(x, y, z) )
-
-
-#define LMAT_DEFINE_NUMPRED_FUNCTOR_1( Name ) \
-	LMAT_DEFINE_NUMPRED_FUNCTOR( Name, Name(x) )
+#define LMAT_DEFINE_NUMPRED_FUNCTOR( Name, NA ) \
+	LMAT_DEFINE_GENERIC_NUMPRED_FUNCTOR( Name, NA, Name(LMAT_REPEAT_ARGS_P##NA(x)) )
 
 
 namespace lmat { namespace math {
@@ -164,24 +125,21 @@ namespace lmat { namespace math {
 
 	// Arithmetic functors
 
-	LMAT_DEFINE_GENERIC_MATH_FUNCTOR_2( add, x + y )
-	LMAT_DEFINE_GENERIC_MATH_FUNCTOR_2( sub, x - y )
-	LMAT_DEFINE_GENERIC_MATH_FUNCTOR_2( mul, x * y )
-	LMAT_DEFINE_GENERIC_MATH_FUNCTOR_2( div, x / y )
-	LMAT_DEFINE_GENERIC_MATH_FUNCTOR_1( neg, -x )
+	LMAT_DEFINE_GENERIC_MATH_FUNCTOR( add, 2, x1 + x2 )
+	LMAT_DEFINE_GENERIC_MATH_FUNCTOR( sub, 2, x1 - x2 )
+	LMAT_DEFINE_GENERIC_MATH_FUNCTOR( mul, 2, x1 * x2 )
+	LMAT_DEFINE_GENERIC_MATH_FUNCTOR( div, 2, x1 / x2 )
+	LMAT_DEFINE_GENERIC_MATH_FUNCTOR( neg, 1, -x1 )
 
-	LMAT_DEFINE_MATH_FUNCTOR_1( abs )
-	LMAT_DEFINE_MATH_FUNCTOR_1( sqr )
-	LMAT_DEFINE_MATH_FUNCTOR_1( cube )
-	LMAT_DEFINE_MATH_FUNCTOR_1( rcp )
-	LMAT_DEFINE_MATH_FUNCTOR_3( fma )
+	LMAT_DEFINE_MATH_FUNCTOR( abs, 1 )
+	LMAT_DEFINE_MATH_FUNCTOR( sqr, 1 )
+	LMAT_DEFINE_MATH_FUNCTOR( cube, 1 )
+	LMAT_DEFINE_MATH_FUNCTOR( rcp, 1 )
+	LMAT_DEFINE_MATH_FUNCTOR( fma, 3 )
 
-	LMAT_DEFINE_MATH_FUNCTOR_2( diff_abs )
-	LMAT_DEFINE_MATH_FUNCTOR_2( diff_sqr )
-
-	LMAT_DEFINE_MATH_FUNCTOR_2( max )
-	LMAT_DEFINE_MATH_FUNCTOR_2( min )
-	LMAT_DEFINE_MATH_FUNCTOR_3( clamp )
+	LMAT_DEFINE_MATH_FUNCTOR( max, 2 )
+	LMAT_DEFINE_MATH_FUNCTOR( min, 2 )
+	LMAT_DEFINE_MATH_FUNCTOR( clamp, 3 )
 
 	// Comparison functors
 
@@ -202,78 +160,78 @@ namespace lmat { namespace math {
 
 	// power
 
-	LMAT_DEFINE_MATH_FUNCTOR_1( sqrt )
-	LMAT_DEFINE_MATH_FUNCTOR_1( rsqrt )
-	LMAT_DEFINE_MATH_FUNCTOR_2( pow )
+	LMAT_DEFINE_MATH_FUNCTOR( sqrt, 1 )
+	LMAT_DEFINE_MATH_FUNCTOR( rsqrt, 1 )
+	LMAT_DEFINE_MATH_FUNCTOR( pow, 2 )
 
 	// floor & ceil
 
-	LMAT_DEFINE_MATH_FUNCTOR_1( floor )
-	LMAT_DEFINE_MATH_FUNCTOR_1( ceil )
+	LMAT_DEFINE_MATH_FUNCTOR( floor, 1 )
+	LMAT_DEFINE_MATH_FUNCTOR( ceil, 1 )
 
 	// exp & log
 
-	LMAT_DEFINE_MATH_FUNCTOR_1( exp )
-	LMAT_DEFINE_MATH_FUNCTOR_1( log )
-	LMAT_DEFINE_MATH_FUNCTOR_1( log10 )
-	LMAT_DEFINE_MATH_FUNCTOR_2( xlogy )
-	LMAT_DEFINE_MATH_FUNCTOR_1( xlogx )
+	LMAT_DEFINE_MATH_FUNCTOR( exp, 1 )
+	LMAT_DEFINE_MATH_FUNCTOR( log, 1 )
+	LMAT_DEFINE_MATH_FUNCTOR( log10, 1 )
+	LMAT_DEFINE_MATH_FUNCTOR( xlogy, 2 )
+	LMAT_DEFINE_MATH_FUNCTOR( xlogx, 1 )
 
 	// trigonometry
 
-	LMAT_DEFINE_MATH_FUNCTOR_1( sin )
-	LMAT_DEFINE_MATH_FUNCTOR_1( cos )
-	LMAT_DEFINE_MATH_FUNCTOR_1( tan )
+	LMAT_DEFINE_MATH_FUNCTOR( sin, 1 )
+	LMAT_DEFINE_MATH_FUNCTOR( cos, 1 )
+	LMAT_DEFINE_MATH_FUNCTOR( tan, 1 )
 
-	LMAT_DEFINE_MATH_FUNCTOR_1( asin )
-	LMAT_DEFINE_MATH_FUNCTOR_1( acos )
-	LMAT_DEFINE_MATH_FUNCTOR_1( atan )
-	LMAT_DEFINE_MATH_FUNCTOR_2( atan2 )
+	LMAT_DEFINE_MATH_FUNCTOR( asin, 1 )
+	LMAT_DEFINE_MATH_FUNCTOR( acos, 1 )
+	LMAT_DEFINE_MATH_FUNCTOR( atan, 1 )
+	LMAT_DEFINE_MATH_FUNCTOR( atan2, 2 )
 
 	// hyperbolic
 
-	LMAT_DEFINE_MATH_FUNCTOR_1( sinh )
-	LMAT_DEFINE_MATH_FUNCTOR_1( cosh )
-	LMAT_DEFINE_MATH_FUNCTOR_1( tanh )
+	LMAT_DEFINE_MATH_FUNCTOR( sinh, 1 )
+	LMAT_DEFINE_MATH_FUNCTOR( cosh, 1 )
+	LMAT_DEFINE_MATH_FUNCTOR( tanh, 1 )
 
 #ifdef LMAT_HAS_CXX11_MATH
 
 	// cbrt and hypot
 
-	LMAT_DEFINE_MATH_FUNCTOR_1( cbrt )
-	LMAT_DEFINE_MATH_FUNCTOR_2( hypot )
+	LMAT_DEFINE_MATH_FUNCTOR( cbrt, 1 )
+	LMAT_DEFINE_MATH_FUNCTOR( hypot, 2 )
 
 	// rounding
 
-	LMAT_DEFINE_MATH_FUNCTOR_1( round )
-	LMAT_DEFINE_MATH_FUNCTOR_1( trunc )
+	LMAT_DEFINE_MATH_FUNCTOR( round, 1 )
+	LMAT_DEFINE_MATH_FUNCTOR( trunc, 1 )
 
 	// exp & log
 
-	LMAT_DEFINE_MATH_FUNCTOR_1( exp2 )
-	LMAT_DEFINE_MATH_FUNCTOR_1( log2 )
-	LMAT_DEFINE_MATH_FUNCTOR_1( expm1 )
-	LMAT_DEFINE_MATH_FUNCTOR_1( log1p )
+	LMAT_DEFINE_MATH_FUNCTOR( exp2, 1 )
+	LMAT_DEFINE_MATH_FUNCTOR( log2, 1 )
+	LMAT_DEFINE_MATH_FUNCTOR( expm1, 1 )
+	LMAT_DEFINE_MATH_FUNCTOR( log1p, 1 )
 
 	// inverse hyperbolic
 
-	LMAT_DEFINE_MATH_FUNCTOR_1( asinh )
-	LMAT_DEFINE_MATH_FUNCTOR_1( acosh )
-	LMAT_DEFINE_MATH_FUNCTOR_1( atanh )
+	LMAT_DEFINE_MATH_FUNCTOR( asinh, 1 )
+	LMAT_DEFINE_MATH_FUNCTOR( acosh, 1 )
+	LMAT_DEFINE_MATH_FUNCTOR( atanh, 1 )
 
 	// error and gamma
 
-	LMAT_DEFINE_MATH_FUNCTOR_1( erf )
-	LMAT_DEFINE_MATH_FUNCTOR_1( erfc )
-	LMAT_DEFINE_MATH_FUNCTOR_1( lgamma )
-	LMAT_DEFINE_MATH_FUNCTOR_1( tgamma )
+	LMAT_DEFINE_MATH_FUNCTOR( erf, 1 )
+	LMAT_DEFINE_MATH_FUNCTOR( erfc, 1 )
+	LMAT_DEFINE_MATH_FUNCTOR( lgamma, 1 )
+	LMAT_DEFINE_MATH_FUNCTOR( tgamma, 1 )
 
 	// numeric predicates
 
-	LMAT_DEFINE_NUMPRED_FUNCTOR_1( signbit )
-	LMAT_DEFINE_NUMPRED_FUNCTOR_1( isfinite )
-	LMAT_DEFINE_NUMPRED_FUNCTOR_1( isinf )
-	LMAT_DEFINE_NUMPRED_FUNCTOR_1( isnan )
+	LMAT_DEFINE_NUMPRED_FUNCTOR( signbit, 1 )
+	LMAT_DEFINE_NUMPRED_FUNCTOR( isfinite, 1 )
+	LMAT_DEFINE_NUMPRED_FUNCTOR( isinf, 1 )
+	LMAT_DEFINE_NUMPRED_FUNCTOR( isnan, 1 )
 
 #endif
 

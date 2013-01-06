@@ -42,6 +42,10 @@
 #include <xmmintrin.h>	// SSE
 #endif
 
+
+#define LMAT_SIMD_PACK_(T, K) simd_pack<T, K>
+#define LMAT_SIMD_PACK_M(T, K) math::simd_pack<T, K>
+
 namespace lmat {
 
 	struct sse_t { };
