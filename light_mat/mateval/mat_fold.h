@@ -22,19 +22,32 @@
 
 #include <utility>
 
+
+#define LMAT_DEFINE_SIMPLE_FOLDER( Name, InitExpr, FoldExpr, ReducExpr ) \
+	template<typename T> \
+	struct Name##_folder { \
+		typedef T value_type; \
+		LMAT_ENSURE_INLINE \
+		T init(const T& x) const { return InitExpr; } \
+		LMAT_ENSURE_INLINE \
+		void fold(T& a, const T& x) const { FoldExpr; } \
+	}; \
+	template<typename T, typename Kind> \
+	struct Name##_folder<math::simd_pack<T, Kind> > { \
+		typedef math::simd_pack<T, Kind> value_type; \
+		LMAT_ENSURE_INLINE \
+		value_type init(const value_type& x) const { return InitExpr; } \
+		LMAT_ENSURE_INLINE \
+		void fold(value_type& a, const value_type& x) const { FoldExpr; } \
+		LMAT_ENSURE_INLINE \
+		T reduce(const value_type& a) const { return ReducExpr; } \
+	}; \
+	LMAT_DECL_SIMDIZABLE_ON_REAL( Name##_folder ) \
+	LMAT_DEF_TRIVIAL_SIMDIZE_MAP( Name##_folder )
+
+
 namespace lmat
 {
-	// folder interface
-
-	template<class Folder>
-	struct folder_supports_simd
-	{
-		static const bool value = false;
-	};
-
-	template<class Folder, typename Kind>
-	struct folder_simd_pack;
-
 
 	/********************************************
 	 *
@@ -42,134 +55,12 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	// sum
+	LMAT_DEFINE_SIMPLE_FOLDER( sum, x, a += x, math::sum(a) )
 
-	template<typename T>
-	struct sum_folder
-	{
-		typedef T value_type;
+	LMAT_DEFINE_SIMPLE_FOLDER( maximum, x, a = math::max(a, x), math::maximum(a) )
 
-		LMAT_ENSURE_INLINE
-		T init(const T& x) const { return x; }
+	LMAT_DEFINE_SIMPLE_FOLDER( minimum, x, a = math::min(a, x), math::minimum(a) )
 
-		template<typename Kind>
-		LMAT_ENSURE_INLINE
-		math::simd_pack<T, Kind> init(const math::simd_pack<T, Kind>& x) const
-		{
-			return x;
-		}
-
-		LMAT_ENSURE_INLINE
-		void fold(T& a, const T& x) const { a += x; }
-
-		template<typename Kind>
-		LMAT_ENSURE_INLINE
-		void fold(math::simd_pack<T, Kind>& a,
-				const math::simd_pack<T, Kind>& x) const { a += x; }
-
-		template<typename Kind>
-		LMAT_ENSURE_INLINE
-		T reduce(const math::simd_pack<T, Kind>& a) const { return math::sum(a); }
-	};
-
-	template<typename T>
-	struct folder_supports_simd<sum_folder<T> >
-	{
-		static const bool value =
-				std::is_same<T, float>::value || std::is_same<T, double>::value;
-	};
-
-	template<typename T, typename Kind>
-	struct folder_simd_pack<sum_folder<T>, Kind>
-	{
-		typedef math::simd_pack<T, Kind> type;
-	};
-
-	// maximum
-
-	template<typename T>
-	struct maximum_folder
-	{
-		typedef T value_type;
-
-		LMAT_ENSURE_INLINE
-		T init(const T& x) const { return x; }
-
-		template<typename Kind>
-		LMAT_ENSURE_INLINE
-		math::simd_pack<T, Kind> init(const math::simd_pack<T, Kind>& x) const
-		{
-			return x;
-		}
-
-		LMAT_ENSURE_INLINE
-		void fold(T& a, const T& x) const { a = math::max(a, x); }
-
-		template<typename Kind>
-		LMAT_ENSURE_INLINE
-		void fold(math::simd_pack<T, Kind>& a,
-				const math::simd_pack<T, Kind>& x) const { a = math::max(a, x); }
-
-		template<typename Kind>
-		LMAT_ENSURE_INLINE
-		T reduce(const math::simd_pack<T, Kind>& a) const { return math::maximum(a); }
-	};
-
-	template<typename T>
-	struct folder_supports_simd<maximum_folder<T> >
-	{
-		static const bool value =
-				std::is_same<T, float>::value || std::is_same<T, double>::value;
-	};
-
-	template<typename T, typename Kind>
-	struct folder_simd_pack<maximum_folder<T>, Kind>
-	{
-		typedef math::simd_pack<T, Kind> type;
-	};
-
-	// minimum
-
-	template<typename T>
-	struct minimum_folder
-	{
-		typedef T value_type;
-
-		LMAT_ENSURE_INLINE
-		T init(const T& x) const { return x; }
-
-		template<typename Kind>
-		LMAT_ENSURE_INLINE
-		math::simd_pack<T, Kind> init(const math::simd_pack<T, Kind>& x) const
-		{
-			return x;
-		}
-
-		LMAT_ENSURE_INLINE
-		void fold(T& a, const T& x) const { a = math::min(a, x); }
-
-		template<typename Kind>
-		LMAT_ENSURE_INLINE
-		void fold(math::simd_pack<T, Kind>& a,
-				const math::simd_pack<T, Kind>& x) const { a = math::min(a, x); }
-
-		template<typename Kind>
-		LMAT_ENSURE_INLINE
-		T reduce(const math::simd_pack<T, Kind>& a) const { return math::minimum(a); }
-	};
-
-	template<typename T>
-	struct folder_supports_simd<minimum_folder<T> >
-	{
-		static const bool value =
-				std::is_same<T, float>::value || std::is_same<T, double>::value;
-	};
-
-	template<typename T, typename Kind>
-	struct folder_simd_pack<minimum_folder<T>, Kind>
-	{
-		typedef math::simd_pack<T, Kind> type;
-	};
 
 
 	/********************************************
@@ -181,7 +72,7 @@ namespace lmat
 	template<class Folder, typename U>
 	class vecfold_kernel
 	{
-		static_assert(folder_supports_simd<Folder>::value, "Folder should supports SIMD");
+		static_assert(is_simdizable<Folder>::value, "Folder should supports SIMD");
 
 	public:
 		typedef typename Folder::value_type value_type;

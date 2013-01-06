@@ -57,13 +57,17 @@ namespace lmat
 	class map_vec_reader<Fun, atags::simd<Kind>, Rd1> : public simd_vec_accessor_base
 	{
 		typedef atags::simd<Kind> atag;
+
 		typedef typename Fun::result_type result_t;
-		typedef typename math::fun_simd_pack<Fun, Kind>::type pack_t;
+		typedef typename simdize_map<Fun, Kind>::type simd_fun_t;
+		typedef typename simd_fun_t::result_type pack_t;
 
 	public:
 		LMAT_ENSURE_INLINE
 		map_vec_reader(const Fun& fun, atag u, const Rd1& rd1)
-		: m_fun(fun), m_rd1(rd1)
+		: m_fun(fun)
+		, m_pkfun(simdize_map<Fun, Kind>::get(fun))
+		, m_rd1(rd1)
 		{ }
 
 		LMAT_ENSURE_INLINE
@@ -75,11 +79,12 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		pack_t pack(index_t i) const
 		{
-			return m_fun(m_rd1.pack(i));
+			return m_pkfun(m_rd1.pack(i));
 		}
 
 	private:
 		Fun m_fun;
+		simd_fun_t m_pkfun;
 		Rd1 m_rd1;
 	};
 
@@ -114,12 +119,15 @@ namespace lmat
 		typedef atags::simd<Kind> atag;
 
 		typedef typename Fun::result_type result_t;
-		typedef typename math::fun_simd_pack<Fun, Kind>::type pack_t;
+		typedef typename simdize_map<Fun, Kind>::type simd_fun_t;
+		typedef typename simd_fun_t::result_type pack_t;
 
 	public:
 		LMAT_ENSURE_INLINE
 		map_vec_reader(const Fun& fun, atag u, const Rd1& rd1, const Rd2& rd2)
-		: m_fun(fun), m_rd1(rd1), m_rd2(rd2)
+		: m_fun(fun)
+		, m_pkfun(simdize_map<Fun, Kind>::get(fun))
+		, m_rd1(rd1), m_rd2(rd2)
 		{ }
 
 		LMAT_ENSURE_INLINE
@@ -131,11 +139,12 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		pack_t pack(index_t i) const
 		{
-			return m_fun(m_rd1.pack(i), m_rd2.pack(i));
+			return m_pkfun(m_rd1.pack(i), m_rd2.pack(i));
 		}
 
 	private:
 		Fun m_fun;
+		simd_fun_t m_pkfun;
 		Rd1 m_rd1;
 		Rd2 m_rd2;
 	};
@@ -173,13 +182,16 @@ namespace lmat
 		typedef atags::simd<Kind> atag;
 
 		typedef typename Fun::result_type result_t;
-		typedef typename math::fun_simd_pack<Fun, Kind>::type pack_t;
+		typedef typename simdize_map<Fun, Kind>::type simd_fun_t;
+		typedef typename simd_fun_t::result_type pack_t;
 
 	public:
 		LMAT_ENSURE_INLINE
 		map_vec_reader(const Fun& fun, atag u,
 				const Rd1& rd1, const Rd2& rd2, const Rd3& rd3)
-		: m_fun(fun), m_rd1(rd1), m_rd2(rd2), m_rd3(rd3)
+		: m_fun(fun)
+		, m_pkfun(simdize_map<Fun, Kind>::get(fun))
+		, m_rd1(rd1), m_rd2(rd2), m_rd3(rd3)
 		{ }
 
 		LMAT_ENSURE_INLINE
@@ -191,11 +203,12 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		pack_t pack(index_t i) const
 		{
-			return m_fun(m_rd1.pack(i), m_rd2.pack(i), m_rd3.pack(i));
+			return m_pkfun(m_rd1.pack(i), m_rd2.pack(i), m_rd3.pack(i));
 		}
 
 	private:
 		Fun m_fun;
+		simd_fun_t m_pkfun;
 		Rd1 m_rd1;
 		Rd2 m_rd2;
 		Rd3 m_rd3;

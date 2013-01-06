@@ -18,33 +18,46 @@
 #include <light_mat/math/math_functors.h>
 #include <light_mat/mateval/mat_arith.h>
 
-namespace lmat { namespace internal {
+namespace lmat {
 
 
-	template<class RFun>
-	struct _fold_kernel
+	template<class Folder>
+	struct _parfold_kernel
 	{
-		typedef typename RFun::value_type value_type;
-		RFun rfun;
+		typedef typename Folder::value_type value_type;
+		Folder folder;
 
 		LMAT_ENSURE_INLINE
-		_fold_kernel(const RFun& rf) : rfun(rf) { }
+		explicit _parfold_kernel(const Folder& rf) : folder(rf) { }
 
 		LMAT_ENSURE_INLINE
 		void operator() (value_type& a, const value_type& x) const
 		{
-			rfun.fold(a, x);
-		}
-
-		template<typename Kind>
-		LMAT_ENSURE_INLINE
-		void operator() (math::simd_pack<value_type, Kind>& a,
-				const math::simd_pack<value_type, Kind>& x) const
-		{
-			rfun.fold(a, x);
+			folder.fold(a, x);
 		}
 	};
 
+	template<class Folder>
+	struct is_simdizable<_parfold_kernel<Folder> >
+	{
+		static const bool value = is_simdizable<Folder>::value;
+	};
+
+	template<class Folder, typename Kind>
+	struct simdize_map<_parfold_kernel<Folder>, Kind>
+	{
+		typedef typename simdize_map<Folder, Kind>::type simd_folder_t;
+		typedef _parfold_kernel<simd_folder_t> type;
+
+		LMAT_ENSURE_INLINE
+		static type get(const _parfold_kernel<Folder>& k)
+		{
+			return type(simdize_map<Folder, Kind>::get(k.folder));
+		}
+	};
+
+
+namespace internal {
 
 	/********************************************
 	 *
@@ -61,7 +74,7 @@ namespace lmat { namespace internal {
 		typedef default_simd_kind simd_kind;
 
 		static const bool use_simd =
-				folder_supports_simd<Folder>::value &&
+				is_simdizable<Folder>::value &&
 				supports_simd<TExpr, vtype, simd_kind, use_linear>::value;
 
 		typedef typename meta::if_c<use_simd,
@@ -83,7 +96,7 @@ namespace lmat { namespace internal {
 		typedef typename matrix_traits<TExpr>::value_type vtype;
 		typedef default_simd_kind simd_kind;
 
-		static const bool use_simd = folder_supports_simd<Folder>::value &&
+		static const bool use_simd = is_simdizable<Folder>::value &&
 			supports_simd<TExpr, vtype, simd_kind, false>::value;
 
 		typedef typename meta::if_c<use_simd,
@@ -101,7 +114,7 @@ namespace lmat { namespace internal {
 		typedef typename matrix_traits<TExpr>::value_type vtype;
 		typedef default_simd_kind simd_kind;
 
-		static const bool use_simd = folder_supports_simd<Folder>::value &&
+		static const bool use_simd = is_simdizable<Folder>::value &&
 			supports_simd<TExpr, vtype, simd_kind, false>::value;
 
 		typedef typename meta::if_c<use_simd,
@@ -240,9 +253,9 @@ namespace lmat { namespace internal {
 
 	// row wise reduction
 
-	template<int M, int N, typename U, class RFun, class DMat, class MultiColReader>
+	template<int M, int N, typename U, class Folder, class DMat, class MultiColReader>
 	inline void rowwise_fold_impl(const matrix_shape<M, N>& shape, U u,
-			RFun rfun, DMat& dmat, const MultiColReader& rd)
+			const Folder& folder, DMat& dmat, const MultiColReader& rd)
 	{
 		typedef typename matrix_traits<DMat>::value_type T;
 
@@ -255,10 +268,10 @@ namespace lmat { namespace internal {
 
 		internal::linear_ewise_eval(col_dim, u, copy_kernel<T>(), rd.col(0), a);
 
-		_fold_kernel<RFun> fker(rfun);
+		_parfold_kernel<Folder> pfker(folder);
 		for (index_t j = 1; j < n; ++j)
 		{
-			internal::linear_ewise_eval(col_dim, u, fker, a, rd.col(j));
+			internal::linear_ewise_eval(col_dim, u, pfker, a, rd.col(j));
 		}
 	}
 

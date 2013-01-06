@@ -15,6 +15,7 @@
 
 #include <light_mat/math/math_base.h>
 #include <light_mat/math/fun_tags.h>
+#include <light_mat/math/functor_base.h>
 #include <light_mat/math/simd.h>
 
 
@@ -23,105 +24,67 @@
 	struct Name##_fun { \
 		typedef T result_type; \
 		LMAT_ENSURE_INLINE \
-		T operator()(LMAT_REPEAT_ARGS_P##NA(const T& x)) const { return Expr; } \
-		template<typename Kind> \
-		LMAT_ENSURE_INLINE \
-		simd_pack<T, Kind> operator()(LMAT_REPEAT_ARGS_P##NA(const LMAT_SIMD_PACK_(T, Kind)& x)) const \
-		{ return Expr; } \
-	}; \
-	template<typename T, typename Kind> \
-	struct fun_simd_pack<Name##_fun<T>, Kind> { \
-		typedef simd_pack<T, Kind> type; \
-	};
+		T operator()(LMAT_REPEAT_ARGS_P##NA(const T& x)) const \
+		{ return Expr; } }; \
+	LMAT_DEF_SIMD_SUPPORT( Name##_fun )
 
 #define LMAT_DEFINE_GENERIC_NUMPRED_FUNCTOR( Name, NA, Expr ) \
 	template<typename T> \
 	struct Name##_fun { \
-		typedef mask_t<T> result_type; \
+		typedef bool result_type; \
 		LMAT_ENSURE_INLINE \
-		mask_t<T> operator()(LMAT_REPEAT_ARGS_P##NA(const T& x)) const { return Expr; } \
-		template<typename Kind> \
-		LMAT_ENSURE_INLINE \
-		simd_bpack<T, Kind> operator()(LMAT_REPEAT_ARGS_P##NA(const LMAT_SIMD_PACK_(T, Kind)& x)) const \
-		{ return Expr; } \
-	}; \
+		bool operator()(LMAT_REPEAT_ARGS_P##NA(const T& x)) const \
+		{ return Expr; } }; \
 	template<typename T, typename Kind> \
-	struct fun_simd_pack<Name##_fun<T>, Kind> { \
-		typedef simd_bpack<T, Kind> type; \
-	};
+	struct Name##_fun<math::simd_pack<T, Kind> > { \
+		typedef math::simd_bpack<T, Kind> result_type; \
+		LMAT_ENSURE_INLINE \
+		result_type operator()(LMAT_REPEAT_ARGS_P##NA(const LMAT_SIMD_PACK_M(T, Kind)& x)) const \
+		{ return Expr; } }; \
+	LMAT_DEF_SIMD_SUPPORT( Name##_fun )
 
 #define LMAT_DEFINE_COMPARISON_FUNCTOR( Name, Expr ) \
+	LMAT_DEFINE_GENERIC_NUMPRED_FUNCTOR( Name, 2, Expr )
+
+#define LMAT_DEFINE_LOGICAL_FUNCTOR( Name, NA, MExpr, BExpr ) \
 	template<typename T> \
 	struct Name##_fun { \
 		typedef mask_t<T> result_type; \
 		LMAT_ENSURE_INLINE \
-		mask_t<T> operator()(const T& x, const T& y) const { return Expr; } \
-		template<typename Kind> \
-		LMAT_ENSURE_INLINE \
-		simd_bpack<T, Kind> operator()(const simd_pack<T, Kind>& x, const simd_pack<T, Kind>& y) const \
-		{ return Expr; } \
-	}; \
+		mask_t<T> operator()(LMAT_REPEAT_ARGS_P##NA(const mask_t<T>& x)) const { return MExpr; } }; \
 	template<typename T, typename Kind> \
-	struct fun_simd_pack<Name##_fun<T>, Kind> { \
-		typedef simd_bpack<T, Kind> type; \
+	struct Name##_fun<math::simd_bpack<T, Kind> > { \
+		typedef math::simd_bpack<T, Kind> result_type; \
+		LMAT_ENSURE_INLINE \
+		math::simd_bpack<T, Kind> operator()(LMAT_REPEAT_ARGS_P##NA(const LMAT_SIMD_BPACK_M(T, Kind)& x)) const { return MExpr; } }; \
+	template<> \
+	struct Name##_fun<bool> { \
+		typedef bool result_type; \
+		LMAT_ENSURE_INLINE \
+		bool operator()(LMAT_REPEAT_ARGS_P##NA(bool x)) const { return BExpr; } }; \
+	LMAT_DECL_SIMDIZABLE_ON_REAL( Name##_fun ) \
+	template<typename Kind> \
+	struct simdize_map<Name##_fun<float>, Kind> { \
+		typedef Name##_fun<math::simd_bpack<float, Kind> > type; \
+		LMAT_ENSURE_INLINE \
+		static type get() { return type(); } \
+	}; \
+	template<typename Kind> \
+	struct simdize_map<Name##_fun<double>, Kind> { \
+		typedef Name##_fun<math::simd_bpack<double, Kind> > type; \
+		LMAT_ENSURE_INLINE \
+		static type get() { return type(); } \
 	};
-
-#define LMAT_DEFINE_LOGICAL_FUNCTOR_1( Name, MExpr, BExpr ) \
-	template<typename T> \
-	struct Name##_fun { \
-		typedef mask_t<T> result_type; \
-		LMAT_ENSURE_INLINE \
-		mask_t<T> operator()(const mask_t<T>& x) const { return MExpr; } \
-		template<typename Kind> \
-		LMAT_ENSURE_INLINE \
-		simd_bpack<T, Kind> operator()(const simd_bpack<T, Kind>& x) const \
-		{ return MExpr; } \
-	}; \
-	template<> \
-	struct Name##_fun<bool> { \
-		typedef bool result_type; \
-		LMAT_ENSURE_INLINE \
-		bool operator()(const bool& x) const { return BExpr; } \
-	}; \
-	template<typename Kind> \
-	struct fun_simd_pack<Name##_fun<float>, Kind> { typedef simd_bpack<float, Kind> type; }; \
-	template<typename Kind> \
-	struct fun_simd_pack<Name##_fun<double>, Kind> { typedef simd_bpack<double, Kind> type; };
-
-
-#define LMAT_DEFINE_LOGICAL_FUNCTOR_2( Name, MExpr, BExpr ) \
-	template<typename T> \
-	struct Name##_fun { \
-		typedef mask_t<T> result_type; \
-		LMAT_ENSURE_INLINE \
-		mask_t<T> operator()(const mask_t<T>& x, const mask_t<T>& y) const { return MExpr; } \
-		template<typename Kind> \
-		LMAT_ENSURE_INLINE \
-		simd_bpack<T, Kind> operator()(const simd_bpack<T, Kind>& x, const simd_bpack<T, Kind>& y) const \
-		{ return MExpr; } \
-	}; \
-	template<> \
-	struct Name##_fun<bool> { \
-		typedef bool result_type; \
-		LMAT_ENSURE_INLINE \
-		bool operator()(const bool& x, const bool& y) const { return BExpr; } \
-	}; \
-	template<typename Kind> \
-	struct fun_simd_pack<Name##_fun<float>, Kind> { typedef simd_bpack<float, Kind> type; }; \
-	template<typename Kind> \
-	struct fun_simd_pack<Name##_fun<double>, Kind> { typedef simd_bpack<double, Kind> type; };
 
 
 #define LMAT_DEFINE_MATH_FUNCTOR( Name, NA ) \
-	LMAT_DEFINE_GENERIC_MATH_FUNCTOR( Name, NA, Name(LMAT_REPEAT_ARGS_P##NA(x)) )
+	LMAT_DEFINE_GENERIC_MATH_FUNCTOR( Name, NA, math::Name(LMAT_REPEAT_ARGS_P##NA(x)) )
 
 #define LMAT_DEFINE_NUMPRED_FUNCTOR( Name, NA ) \
-	LMAT_DEFINE_GENERIC_NUMPRED_FUNCTOR( Name, NA, Name(LMAT_REPEAT_ARGS_P##NA(x)) )
+	LMAT_DEFINE_GENERIC_NUMPRED_FUNCTOR( Name, NA, math::Name(LMAT_REPEAT_ARGS_P##NA(x)) )
 
 
-namespace lmat { namespace math {
-
-	template<class Fun, typename Kind> struct fun_simd_pack;
+namespace lmat {
 
 	// Arithmetic functors
 
@@ -143,20 +106,20 @@ namespace lmat { namespace math {
 
 	// Comparison functors
 
-	LMAT_DEFINE_COMPARISON_FUNCTOR( eq, x == y )
-	LMAT_DEFINE_COMPARISON_FUNCTOR( ne, x != y )
-	LMAT_DEFINE_COMPARISON_FUNCTOR( ge, x >= y )
-	LMAT_DEFINE_COMPARISON_FUNCTOR( gt, x > y )
-	LMAT_DEFINE_COMPARISON_FUNCTOR( le, x <= y )
-	LMAT_DEFINE_COMPARISON_FUNCTOR( lt, x < y )
+	LMAT_DEFINE_COMPARISON_FUNCTOR( eq, x1 == x2 )
+	LMAT_DEFINE_COMPARISON_FUNCTOR( ne, x1 != x2 )
+	LMAT_DEFINE_COMPARISON_FUNCTOR( ge, x1 >= x2 )
+	LMAT_DEFINE_COMPARISON_FUNCTOR( gt, x1 >  x2 )
+	LMAT_DEFINE_COMPARISON_FUNCTOR( le, x1 <= x2 )
+	LMAT_DEFINE_COMPARISON_FUNCTOR( lt, x1 <  x2 )
 
 	// logical functors
 
-	LMAT_DEFINE_LOGICAL_FUNCTOR_1( logical_not, ~x, !x )
-	LMAT_DEFINE_LOGICAL_FUNCTOR_2( logical_eq,  x == y, x == y )
-	LMAT_DEFINE_LOGICAL_FUNCTOR_2( logical_ne,  x != y, x != y )
-	LMAT_DEFINE_LOGICAL_FUNCTOR_2( logical_or,  x | y,  x || y )
-	LMAT_DEFINE_LOGICAL_FUNCTOR_2( logical_and, x & y,  x && y )
+	LMAT_DEFINE_LOGICAL_FUNCTOR( logical_not, 1, ~x1, !x1 )
+	LMAT_DEFINE_LOGICAL_FUNCTOR( logical_eq,  2, x1 == x2, x1 == x2 )
+	LMAT_DEFINE_LOGICAL_FUNCTOR( logical_ne,  2, x1 != x2, x1 != x2 )
+	LMAT_DEFINE_LOGICAL_FUNCTOR( logical_or,  2, x1 | x2,  x1 || x2 )
+	LMAT_DEFINE_LOGICAL_FUNCTOR( logical_and, 2, x1 & x2,  x1 && x2 )
 
 	// power
 
@@ -244,57 +207,26 @@ namespace lmat { namespace math {
 		typedef T result_type;
 
 		LMAT_ENSURE_INLINE
-		T operator() (bool b, const T& x, const T& y) const { return cond(b, x, y); }
+		T operator() (bool b, const T& x, const T& y) const { return math::cond(b, x, y); }
 
 		LMAT_ENSURE_INLINE
-		T operator() (mask_t<T> m, const T& x, const T& y) const { return cond(m.bvalue, x, y); }
+		T operator() (mask_t<T> m, const T& x, const T& y) const { return math::cond(m.bvalue, x, y); }
 	};
 
-	template<> struct cond_fun<float>
+	template<typename T, typename Kind>
+	struct cond_fun<math::simd_pack<T, Kind> >
 	{
-		typedef float result_type;
+		typedef math::simd_pack<T, Kind> result_type;
 
 		LMAT_ENSURE_INLINE
-		float operator() (bool b, const float& x, const float& y) const
-		{ return cond(b, x, y); }
-
-		LMAT_ENSURE_INLINE
-		float operator() (mask_t<float> b, const float& x, const float& y) const
-		{ return cond(b, x, y); }
-
-		template<typename Kind>
-		LMAT_ENSURE_INLINE
-		simd_pack<float, Kind> operator() (const simd_bpack<float, Kind>& b,
-				const simd_pack<float, Kind>& x, const simd_pack<float, Kind>& y) const
+		math::simd_pack<T, Kind> operator() (const math::simd_bpack<T, Kind>& b,
+				const math::simd_pack<T, Kind>& x, const math::simd_pack<T, Kind>& y) const
 		{ return cond(b, x, y); }
 	};
 
-	template<> struct cond_fun<double>
-	{
-		typedef double result_type;
+	LMAT_DEF_SIMD_SUPPORT( cond_fun )
 
-		LMAT_ENSURE_INLINE
-		double operator() (bool b, const double& x, const double& y) const
-		{ return cond(b, x, y); }
-
-		LMAT_ENSURE_INLINE
-		double operator() (mask_t<double> b, const double& x, const double& y) const
-		{ return cond(b, x, y); }
-
-		template<typename Kind>
-		LMAT_ENSURE_INLINE
-		simd_pack<double, Kind> operator() (const simd_bpack<double, Kind>& b,
-				const simd_pack<double, Kind>& x, const simd_pack<double, Kind>& y) const
-		{ return cond(b, x, y); }
-	};
-
-	template<typename Kind>
-	struct fun_simd_pack<cond_fun<float>, Kind> { typedef simd_pack<float, Kind> type; };
-
-	template<typename Kind>
-	struct fun_simd_pack<cond_fun<double>, Kind> { typedef simd_pack<double, Kind> type; };
-
-} }
+}
 
 
 #endif 

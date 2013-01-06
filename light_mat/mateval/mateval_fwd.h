@@ -15,6 +15,7 @@
 
 #include <light_mat/math/simd_packs.h>
 #include <light_mat/matrix/matrix_concepts.h>
+#include <light_mat/math/functor_base.h>
 
 namespace lmat
 {

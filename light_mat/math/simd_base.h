@@ -45,6 +45,8 @@
 
 #define LMAT_SIMD_PACK_(T, K) simd_pack<T, K>
 #define LMAT_SIMD_PACK_M(T, K) math::simd_pack<T, K>
+#define LMAT_SIMD_BPACK_(T, K) simd_bpack<T, K>
+#define LMAT_SIMD_BPACK_M(T, K) math::simd_bpack<T, K>
 
 namespace lmat {
 

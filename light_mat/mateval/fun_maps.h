@@ -20,37 +20,37 @@
 #define LMAT_DEFINE_GENERIC_FUNMAP( Name, NA ) \
 	template<typename T> \
 	struct fun_map<Name##_, LMAT_REPEAT_ARGS_##NA(T)> { \
-		typedef math::Name##_fun<T> type; };
+		typedef Name##_fun<T> type; };
 
 #define LMAT_DEFINE_REAL_FUNMAP( Name, NA ) \
 	template<> struct fun_map<Name##_, LMAT_REPEAT_ARGS_##NA(float)> { \
-		typedef math::Name##_fun<float> type; }; \
+		typedef Name##_fun<float> type; }; \
 	template<> struct fun_map<Name##_, LMAT_REPEAT_ARGS_##NA(double)> { \
-		typedef math::Name##_fun<double> type; };
+		typedef Name##_fun<double> type; };
 
 #define LMAT_DEFINE_LOGICAL_FUNMAP_1( Name ) \
 	template<> struct fun_map<Name##_, bool> { \
-		typedef math::Name##_fun<bool> type; }; \
+		typedef Name##_fun<bool> type; }; \
 	template<> struct fun_map<Name##_, mask_t<float> > { \
-		typedef math::Name##_fun<float> type; }; \
+		typedef Name##_fun<float> type; }; \
 	template<> struct fun_map<Name##_, mask_t<double> > { \
-		typedef math::Name##_fun<double> type; };
+		typedef Name##_fun<double> type; };
 
 #define LMAT_DEFINE_LOGICAL_FUNMAP_2( Name ) \
 	template<> struct fun_map<Name##_, bool, bool> { \
-		typedef math::Name##_fun<bool> type; }; \
+		typedef Name##_fun<bool> type; }; \
 	template<> struct fun_map<Name##_, bool, mask_t<float> > { \
-		typedef math::Name##_fun<bool> type; }; \
+		typedef Name##_fun<bool> type; }; \
 	template<> struct fun_map<Name##_, mask_t<float>, bool > { \
-		typedef math::Name##_fun<bool> type; }; \
+		typedef Name##_fun<bool> type; }; \
 	template<> struct fun_map<Name##_, bool, mask_t<double> > { \
-		typedef math::Name##_fun<bool> type; }; \
+		typedef Name##_fun<bool> type; }; \
 	template<> struct fun_map<Name##_, mask_t<double>, bool > { \
-		typedef math::Name##_fun<bool> type; }; \
+		typedef Name##_fun<bool> type; }; \
 	template<> struct fun_map<Name##_, mask_t<float>, mask_t<float> > { \
-		typedef math::Name##_fun<float> type; }; \
+		typedef Name##_fun<float> type; }; \
 	template<> struct fun_map<Name##_, mask_t<double>, mask_t<double> > { \
-		typedef math::Name##_fun<double> type; };
+		typedef Name##_fun<double> type; };
 
 
 namespace lmat
@@ -159,13 +159,13 @@ namespace lmat
 	template<typename T>
 	struct fun_map<cond_, bool, T, T>
 	{
-		typedef math::cond_fun<T> type;
+		typedef cond_fun<T> type;
 	};
 
 	template<typename T>
 	struct fun_map<cond_, mask_t<T>, T, T>
 	{
-		typedef math::cond_fun<T> type;
+		typedef cond_fun<T> type;
 	};
 
 
