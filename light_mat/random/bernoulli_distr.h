@@ -26,6 +26,12 @@ namespace lmat { namespace random {
 		LMAT_ENSURE_INLINE
 		double p() const { return 0.5; }
 
+		LMAT_ENSURE_INLINE
+		double mean() const { return 0.5; }
+
+		LMAT_ENSURE_INLINE
+		double var() const { return 0.25; }
+
 		template<class RStream>
 		LMAT_ENSURE_INLINE
 		bool operator() (RStream& rs) const
@@ -49,6 +55,12 @@ namespace lmat { namespace random {
 
 		LMAT_ENSURE_INLINE
 		double p() const { return m_p; }
+
+		LMAT_ENSURE_INLINE
+		double mean() const { return m_p; }
+
+		LMAT_ENSURE_INLINE
+		double var() const { return m_p * (1.0 - m_p); }
 
 		template<class RStream>
 		LMAT_ENSURE_INLINE

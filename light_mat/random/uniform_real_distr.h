@@ -36,55 +36,6 @@ namespace lmat { namespace random {
 	};
 
 
-	// SIMD generator
-
-	template<typename T, typename Kind>
-	class std_uniform_simd_rng
-	{
-	public:
-		typedef math::simd_pack<T, Kind> pack_type;
-
-		LMAT_ENSURE_INLINE
-		explicit std_uniform_simd_rng()
-		: m_one(T(1)) { }
-
-		template<class RStream>
-		LMAT_ENSURE_INLINE
-		pack_type operator() (RStream& rs) const
-		{
-			pack_type pk = internal::randbits_to_c1o2(rs.rand_pack(Kind()));
-			return pk - m_one;
-		}
-
-	private:
-		pack_type m_one;
-	};
-
-
-	template<typename T, typename Kind>
-	class uniform_simd_rng
-	{
-		typedef math::simd_pack<T, Kind> pack_type;
-
-		LMAT_ENSURE_INLINE
-		explicit uniform_simd_rng(T base, T span)
-		: m_base(base), m_span(span) { }
-
-		template<class RStream>
-		LMAT_ENSURE_INLINE
-		pack_type operator() (RStream& rs) const
-		{
-			pack_type pk = internal::randbits_to_c1o2(rs.rand_pack(Kind()));
-			return m_base + pk * m_span;
-		}
-
-	private:
-		pack_type m_base;
-		pack_type m_span;
-	};
-
-
-
 	// classes
 
 	template<typename T>
@@ -96,6 +47,21 @@ namespace lmat { namespace random {
 
 		LMAT_ENSURE_INLINE
 		T b() const { return T(1); }
+
+		LMAT_ENSURE_INLINE
+		T span() const { return T(1); }
+
+		LMAT_ENSURE_INLINE
+		T mean() const
+		{
+			return T(0.5);
+		}
+
+		LMAT_ENSURE_INLINE
+		T var() const
+		{
+			return T(1.0/12);
+		}
 
 		template<class RStream>
 		LMAT_ENSURE_INLINE
@@ -123,12 +89,30 @@ namespace lmat { namespace random {
 		LMAT_ENSURE_INLINE
 		T b() const { return m_b; }
 
+		LMAT_ENSURE_INLINE
+		T span() const { return m_span; }
+
+		LMAT_ENSURE_INLINE
+		T mean() const
+		{
+			return (m_a + m_b) * T(0.5);
+		}
+
+		LMAT_ENSURE_INLINE
+		T var() const
+		{
+			return math::sqr(m_span) * T(1.0/12);
+		}
+
 		template<class RStream>
 		LMAT_ENSURE_INLINE
 		T operator() (const RStream& rs)
 		{
 			return m_base + internal::randbits_to_c1o2(rs.rand_u64()) * m_span;
 		}
+
+		LMAT_ENSURE_INLINE
+		T _base() const { return m_base; }
 
 	private:
 		T m_a;
@@ -138,6 +122,87 @@ namespace lmat { namespace random {
 	};
 
 
+	// SIMD generator
+
+	template<typename T, typename Kind>
+	class std_uniform_real_simd
+	{
+	public:
+		typedef math::simd_pack<T, Kind> pack_type;
+
+		LMAT_ENSURE_INLINE
+		explicit std_uniform_real_simd()
+		: m_one(T(1)) { }
+
+		template<class RStream>
+		LMAT_ENSURE_INLINE
+		pack_type operator() (RStream& rs) const
+		{
+			pack_type pk = internal::randbits_to_c1o2(rs.rand_pack(Kind()));
+			return pk - m_one;
+		}
+
+	private:
+		pack_type m_one;
+	};
+
+
+	template<typename T, typename Kind>
+	class uniform_real_simd
+	{
+		typedef math::simd_pack<T, Kind> pack_type;
+
+		LMAT_ENSURE_INLINE
+		explicit uniform_real_simd(T base, T span)
+		: m_base(base), m_span(span) { }
+
+		template<class RStream>
+		LMAT_ENSURE_INLINE
+		pack_type operator() (RStream& rs) const
+		{
+			pack_type pk = internal::randbits_to_c1o2(rs.rand_pack(Kind()));
+			return m_base + pk * m_span;
+		}
+
+	private:
+		pack_type m_base;
+		pack_type m_span;
+	};
+
 } }
+
+
+namespace lmat
+{
+
+	LMAT_DECL_SIMDIZABLE_ON_REAL( random::std_uniform_real_distr )
+	LMAT_DECL_SIMDIZABLE_ON_REAL( random::uniform_real_distr )
+
+	template<typename T, typename Kind>
+	struct simdize_map< random::std_uniform_real_distr<T>, Kind >
+	{
+		typedef random::std_uniform_real_simd<T, Kind> type;
+
+		LMAT_ENSURE_INLINE
+		static type get(const random::std_uniform_real_distr<T>& s)
+		{
+			return type();
+		}
+	};
+
+	template<typename T, typename Kind>
+	struct simdize_map< random::uniform_real_distr<T>, Kind >
+	{
+		typedef random::uniform_real_simd<T, Kind> type;
+
+		LMAT_ENSURE_INLINE
+		static type get(const random::uniform_real_distr<T>& s)
+		{
+			return type(s._base(), s.span());
+		}
+	};
+
+}
+
 
 #endif

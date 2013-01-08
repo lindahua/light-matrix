@@ -14,16 +14,19 @@
 #define LIGHTMAT_PRNG_FWD_H_
 
 #include <light_mat/random/sfmt.h>
+#include <light_mat/math/math_base.h>
+#include <light_mat/math/functor_base.h>
 
 namespace lmat { namespace random {
 
-	// forward declaration of distribution classes
+	// tags to indicate PRNG methods
 
-	template<class Distr, typename Kind>
-	struct distr_supp_simd
-	{
-		static const bool value = false;
-	};
+	struct icdf_ { };
+	struct std_ { };
+	struct box_muller_ { };
+	struct marsaglia_ { };
+	struct ziggurat_ { };
+	struct huffman_ { };
 
 	// discrete distributions
 
@@ -33,30 +36,29 @@ namespace lmat { namespace random {
 	class std_bernoulli_distr;
 	class bernoulli_distr;
 
-	template<typename TI=uint32_t> class binomial_distr;
-	template<typename TI=uint32_t> class negative_binomial_distr;
-	template<typename TI=uint32_t> class geometric_distr;
-	template<typename TI=uint32_t> class poisson_distr;
+	template<typename TI=uint32_t, typename Method=std_> class binomial_distr;
+	template<typename TI=uint32_t, typename Method=std_> class negative_binomial_distr;
+	template<typename TI=uint32_t, typename Method=std_> class geometric_distr;
+	template<typename TI=uint32_t, typename Method=std_> class poisson_distr;
 
-	template<typename TI=uint32_t> class discrete_distr;
-	template<typename TI=uint32_t> class huffman_discrete_distr;
+	template<typename TI=uint32_t, typename Method=std_> class discrete_distr;
 
 	// real-value distributions
 
 	template<typename T=double> class std_uniform_real_distr;
 	template<typename T=double> class uniform_real_distr;
 
-	template<typename T=double> class std_normal_distr;
-	template<typename T=double> class normal_distr;
+	template<typename T=double, typename Method=icdf_> class std_normal_distr;
+	template<typename T=double, typename Method=icdf_> class normal_distr;
 
 	template<typename T=double> class std_exponential_distr;
 	template<typename T=double> class exponential_distr;
 
-	template<typename T=double> class std_gamma_distr;
-	template<typename T=double> class gamma_distr;
+	template<typename T=double, typename Method=std_> class std_gamma_distr;
+	template<typename T=double, typename Method=std_> class gamma_distr;
 
-	template<typename T=double> class std_lognormal_distr;
-	template<typename T=double> class lognormal_distr;
+	template<typename T=double, typename Method=icdf_> class std_lognormal_distr;
+	template<typename T=double, typename Method=icdf_> class lognormal_distr;
 
 
 } }

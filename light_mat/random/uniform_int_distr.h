@@ -110,6 +110,18 @@ namespace lmat { namespace random {
 		LMAT_ENSURE_INLINE
 		TI span() const { return m_span; }
 
+		LMAT_ENSURE_INLINE
+		double mean() const
+		{
+			return double(b()) * 0.5;
+		}
+
+		LMAT_ENSURE_INLINE
+		double var() const
+		{
+			return (math::sqr(double(m_span)) - 1.0) * (1.0/12);
+		}
+
 		template<class RStream>
 		LMAT_ENSURE_INLINE
 		TI operator() (RStream& rs) const
@@ -137,6 +149,18 @@ namespace lmat { namespace random {
 
 		LMAT_ENSURE_INLINE
 		TI b() const { return m_b; }
+
+		LMAT_ENSURE_INLINE
+		double mean() const
+		{
+			return (double(m_a) + double(m_b)) * 0.5;
+		}
+
+		LMAT_ENSURE_INLINE
+		double var() const
+		{
+			return (math::sqr(double(m_span)) - 1.0) * (1.0/12);
+		}
 
 		LMAT_ENSURE_INLINE
 		TI span() const { return m_span; }
