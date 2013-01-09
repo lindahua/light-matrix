@@ -92,7 +92,7 @@ namespace lmat
 	template<typename T, int M, int N> class subs_i_expr;
 	template<typename T, int M, int N> class subs_j_expr;
 
-	// continuous levels
+	// contiguous levels
 
 	namespace cont_level
 	{

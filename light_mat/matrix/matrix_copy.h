@@ -49,7 +49,7 @@ namespace lmat
 
 	template<typename T, class SExpr, class DMat>
 	LMAT_ENSURE_INLINE
-	inline typename meta::enable_if< meta::is_mat_assignable<SExpr, DMat>, void>::type
+	inline typename meta::enable_if_< meta::is_mat_assignable<SExpr, DMat>, void>::type
 	evaluate(const IRegularMatrix<SExpr, T>& sexpr, IRegularMatrix<DMat, T>& dmat)
 	{
 		copy(sexpr.derived(), dmat.derived());
@@ -68,8 +68,8 @@ namespace lmat
 	template<typename T, class SMat, class DMat>
 	inline void copy_triu(const IRegularMatrix<SMat, T>& smat, IRegularMatrix<DMat, T>& dmat, index_t k=0)
 	{
-		static_assert(meta::is_percol_continuous<SMat>::value, "smat should be percol continuous");
-		static_assert(meta::is_percol_continuous<DMat>::value, "dmat should be percol continuous");
+		static_assert(meta::is_percol_contiguous<SMat>::value, "smat should be percol contiguous");
+		static_assert(meta::is_percol_contiguous<DMat>::value, "dmat should be percol contiguous");
 
 		index_t m = smat.nrows();
 		index_t n = smat.ncolumns();
@@ -113,8 +113,8 @@ namespace lmat
 	template<typename T, class SMat, class DMat>
 	inline void copy_tril(const IRegularMatrix<SMat, T>& smat, IRegularMatrix<DMat, T>& dmat, index_t k=0)
 	{
-		static_assert(meta::is_percol_continuous<SMat>::value, "smat should be percol continuous");
-		static_assert(meta::is_percol_continuous<DMat>::value, "dmat should be percol continuous");
+		static_assert(meta::is_percol_contiguous<SMat>::value, "smat should be percol contiguous");
+		static_assert(meta::is_percol_contiguous<DMat>::value, "dmat should be percol contiguous");
 
 		index_t m = smat.nrows();
 		index_t n = smat.ncolumns();

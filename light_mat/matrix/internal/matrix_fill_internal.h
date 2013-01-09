@@ -40,14 +40,14 @@ namespace lmat { namespace internal {
 	matrix_fill_scheme<
 		meta::nrows< DMat >::value,
 		meta::ncols< DMat >::value,
-		typename meta::continuous_level< DMat>::type >
+		typename meta::contiguousness< DMat>::type >
 	LMAT_ENSURE_INLINE
 	inline get_fill_scheme(const IRegularMatrix<DMat, T>& dmat)
 	{
 		typedef matrix_fill_scheme<
 			meta::nrows< DMat >::value,
 			meta::ncols< DMat >::value,
-			typename meta::continuous_level<DMat>::type > scheme_t;
+			typename meta::contiguousness<DMat>::type > scheme_t;
 
 		return scheme_t(dmat.nrows(), dmat.ncolumns());
 	}

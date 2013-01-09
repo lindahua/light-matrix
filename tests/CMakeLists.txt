@@ -497,7 +497,8 @@ set(LMAT_MATRIX_TESTS
 	test_mat_asvec
 	test_mat_select
 	test_direct_trans
-	test_transpose_expr)
+	test_transpose_expr
+	)
 
 # matrix evaluation module
 
@@ -577,7 +578,8 @@ set(LMAT_MATEVAL_TESTS
 	test_mat_compare
 	test_mat_find
 	test_mat_sort
-	test_cpd_ewise)
+	test_cpd_ewise
+)
 
 
 # linear algebra module
@@ -609,7 +611,8 @@ set(LMAT_LINALG_TESTS
     test_lapack_chol
     test_lapack_qr
     test_lapack_syev
-    test_lapack_svd)
+    test_lapack_svd
+)
     
 # all
 
@@ -641,7 +644,8 @@ if (SVML_PATH)
 set(TESTS_USING_SVML
     test_sse_math_svml
     test_mat_emath
-    test_cpd_ewise)
+    test_cpd_ewise
+    )
     
 if (ALLOW_AVX)
 set(TESTS_USING_SVML

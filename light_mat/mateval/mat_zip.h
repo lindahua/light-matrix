@@ -110,7 +110,7 @@ namespace lmat
 	template<typename A, typename T, int I>
 	LMAT_ENSURE_INLINE
 	inline map_expr<zip_e_<I>, A>
-	zip_e(const IEWiseMatrix<A, T>& a, fix_int<I>)
+	zip_e(const IEWiseMatrix<A, T>& a, int_<I>)
 	{
 		return make_map_expr(zip_e_<I>(), a);
 	}

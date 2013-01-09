@@ -23,26 +23,14 @@ typedef int blas_int;
 #endif
 
 
-
 #define LMAT_BLAS_NAME(name) name
 #define LMAT_LAPACK_NAME(name) LMAT_BLAS_NAME(name)
 
-#define LMAT_CHECK_WHOLE_CONT(Ty) static_assert( meta::is_continuous<Ty>::value, #Ty " must be continuous.");
-#define LMAT_CHECK_PERCOL_CONT(Ty) static_assert( meta::is_percol_continuous<Ty>::value, #Ty " must be percol continuous.");
+#define LMAT_CHECK_WHOLE_CONT(Ty) static_assert( meta::is_contiguous<Ty>::value, #Ty " must be contiguous.");
+#define LMAT_CHECK_PERCOL_CONT(Ty) static_assert( meta::is_percol_contiguous<Ty>::value, #Ty " must be percol contiguous.");
 
 namespace lmat
 {
-
-	namespace meta
-	{
-		template<class Mat>
-		struct sq_dim
-		{
-			static const int value = meta::common_dim<
-					meta::nrows<Mat>::value, meta::ncols<Mat>::value>::value;
-		};
-	}
-
 
 	namespace blas
 	{

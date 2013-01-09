@@ -66,8 +66,8 @@ namespace lmat
 			static const int pw = math::simd_traits<RT, Kind>::pack_width;
 
 			static const bool scont = IsLinear ?
-					meta::is_continuous<Mat>::value :
-					meta::is_percol_continuous<Mat>::value;
+					meta::is_contiguous<Mat>::value :
+					meta::is_percol_contiguous<Mat>::value;
 
 			static const unsigned int slen = IsLinear ?
 					(unsigned)meta::nelems<Mat>::value :
@@ -120,11 +120,11 @@ namespace lmat
 		static const bool prefer_simd =
 				supports_simd<S, vtype, default_simd_kind, prefer_linear>::value;
 
-		typedef typename meta::if_c<prefer_simd,
+		typedef typename std::conditional<prefer_simd,
 				atags::simd<default_simd_kind>,
 				atags::scalar >::type atag;
 
-		typedef typename meta::if_c<prefer_linear,
+		typedef typename std::conditional<prefer_linear,
 				linear_macc<atag>,
 				percol_macc<atag> >::type type;
 	};
@@ -142,11 +142,11 @@ namespace lmat
 				supports_simd<S, vtype, default_simd_kind, prefer_linear>::value &&
 				supports_simd<D, vtype, default_simd_kind, prefer_linear>::value;
 
-		typedef typename meta::if_c<prefer_simd,
+		typedef typename std::conditional<prefer_simd,
 				atags::simd<default_simd_kind>,
 				atags::scalar >::type atag;
 
-		typedef typename meta::if_c<prefer_linear,
+		typedef typename std::conditional<prefer_linear,
 				linear_macc<atag>,
 				percol_macc<atag> >::type type;
 	};

@@ -18,9 +18,9 @@
 namespace lmat {  namespace internal {
 
 	// ContLevel
-	// 0 : non continuous at each column
-	// 1 : continuous per-column
-	// 2 : continuous as whole
+	// 0 : non contiguous at each column
+	// 1 : contiguous per-column
+	// 2 : contiguous as whole
 
 	template<class Mat, class ColRange, class RowRange, int ContLevel, bool IsReadOnly> struct matview_helper;
 
@@ -28,13 +28,13 @@ namespace lmat {  namespace internal {
 	struct matview_cont_level
 	{
 		static const int value =
-				meta::is_continuous<Mat>::value ? 2 : (meta::is_percol_continuous<Mat>::value ? 1 : 0);
+				meta::is_contiguous<Mat>::value ? 2 : (meta::is_percol_contiguous<Mat>::value ? 1 : 0);
 	};
 
 
 	/********************************************
 	 *
-	 *  continuous matrix
+	 *  contiguous matrix
 	 *
 	 ********************************************/
 
@@ -366,7 +366,7 @@ namespace lmat {  namespace internal {
 
 	/********************************************
 	 *
-	 *  per-col continuous matrix (specialize)
+	 *  per-col contiguous matrix (specialize)
 	 *
 	 ********************************************/
 
@@ -477,7 +477,7 @@ namespace lmat {  namespace internal {
 
 	/********************************************
 	 *
-	 *  non-continuous matrix
+	 *  non-contiguous matrix
 	 *
 	 ********************************************/
 

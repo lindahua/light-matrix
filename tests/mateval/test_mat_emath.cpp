@@ -49,7 +49,6 @@ bool my_is_approx(const A& a, const B& b, const T& tol)
 template<typename T, int M, int N>
 struct tspec{ };
 
-
 #define TEST_UNARY_EMATH(matfun, scafun, al, ah, tol) \
 	MN_CASE( mat_emath, matfun ) { \
 	typedef dense_matrix<double, M, N> mat_t; \

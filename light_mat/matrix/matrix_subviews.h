@@ -24,7 +24,7 @@ namespace lmat
 	template<class Mat, class Rgn>
 	struct colview_map
 	{
-		static const bool is_percol_cont = meta::is_percol_continuous<Mat>::value;
+		static const bool is_percol_cont = meta::is_percol_contiguous<Mat>::value;
 		static const bool is_readonly = meta::is_readonly<Mat>::value;
 
 		typedef internal::colview_helper<Mat, Rgn, is_percol_cont, true> chelper_t;
@@ -58,7 +58,7 @@ namespace lmat
 	template<class Mat, class Rgn>
 	struct rowview_map
 	{
-		static const bool is_perrow_cont = meta::is_continuous<Mat>::value && meta::is_row<Mat>::value;
+		static const bool is_perrow_cont = meta::is_contiguous<Mat>::value && meta::is_row<Mat>::value;
 		static const bool is_readonly = meta::is_readonly<Mat>::value;
 
 		typedef internal::rowview_helper<Mat, Rgn, is_perrow_cont, true> chelper_t;

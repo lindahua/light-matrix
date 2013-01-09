@@ -77,11 +77,11 @@ namespace internal {
 				is_simdizable<Folder>::value &&
 				supports_simd<TExpr, vtype, simd_kind, use_linear>::value;
 
-		typedef typename meta::if_c<use_simd,
+		typedef typename std::conditional<use_simd,
 				atags::simd<simd_kind>,
 				atags::scalar>::type atag;
 
-		typedef typename meta::if_c<use_linear,
+		typedef typename std::conditional<use_linear,
 				linear_macc<atag>,
 				percol_macc<atag> >::type type;
 	};
@@ -99,7 +99,7 @@ namespace internal {
 		static const bool use_simd = is_simdizable<Folder>::value &&
 			supports_simd<TExpr, vtype, simd_kind, false>::value;
 
-		typedef typename meta::if_c<use_simd,
+		typedef typename std::conditional<use_simd,
 				atags::simd<simd_kind>,
 				atags::scalar>::type atag;
 	};
@@ -117,7 +117,7 @@ namespace internal {
 		static const bool use_simd = is_simdizable<Folder>::value &&
 			supports_simd<TExpr, vtype, simd_kind, false>::value;
 
-		typedef typename meta::if_c<use_simd,
+		typedef typename std::conditional<use_simd,
 				atags::simd<simd_kind>,
 				atags::scalar>::type atag;
 	};

@@ -26,15 +26,14 @@ namespace lmat { namespace meta {
 
 	template<class T>
 	struct is_supported_matrix_value_type
-	{
-		static const bool value = std::is_standard_layout<T>::value;
-	};
+	: public all_<
+	  	  std::is_standard_layout<T>,
+	  	  meta::not_<std::is_const<T> >,
+	  	  meta::not_<std::is_volatile<T> >
+	> { };
 
 	template<class T>
-	struct is_supported_matrix_value_type<mask_t<T> >
-	{
-		static const bool value = true;
-	};
+	struct is_supported_matrix_value_type<mask_t<T> > : public true_ { };
 
 	template<class Derived, template<class D, typename T> class Interface>
 	struct has_matrix_interface
@@ -44,22 +43,13 @@ namespace lmat { namespace meta {
 	};
 
 	template<class Mat>
-	struct is_mat_xpr
-	{
-		static const bool value = has_matrix_interface<Mat, IMatrixXpr>::value;
-	};
+	struct is_mat_xpr : public has_matrix_interface<Mat, IMatrixXpr> { };
 
 	template<class Mat>
-	struct is_ewise_mat
-	{
-		static const bool value = has_matrix_interface<Mat, IEWiseMatrix>::value;
-	};
+	struct is_ewise_mat : public has_matrix_interface<Mat, IEWiseMatrix> { };
 
 	template<class Mat>
-	struct is_regular_mat
-	{
-		static const bool value = has_matrix_interface<Mat, IRegularMatrix>::value;
-	};
+	struct is_regular_mat : public has_matrix_interface<Mat, IRegularMatrix> { };
 
 
 	/********************************************
@@ -76,25 +66,20 @@ namespace lmat { namespace meta {
 
 	template<class LMat, class RMat>
 	struct in_same_domain
-	{
-		static const bool value = std::is_same<
-				typename matrix_traits<LMat>::domain,
-				typename matrix_traits<RMat>::domain>::value;
-	};
-
+	: public std::is_same<
+	  	  typename matrix_traits<LMat>::domain,
+	  	  typename matrix_traits<RMat>::domain> { };
 
 	template<class Mat>
 	struct in_cpu_domain
-	{
-		static const bool value = std::is_same<
-				typename matrix_traits<Mat>::domain,
-				cpu_domain>::value;
-	};
+	: public std::is_same<
+	  	  typename matrix_traits<Mat>::domain,
+	  	  cpu_domain> { };
 
 	template<typename... Mat>
 	struct common_domain
 	{
-		typedef typename common_type<typename domain_of<Mat>::type...>::type type;
+		typedef typename common_<typename domain_of<Mat>::type...>::type type;
 	};
 
 	/********************************************
@@ -120,7 +105,7 @@ namespace lmat { namespace meta {
 	template<typename... Mat>
 	struct common_value_type
 	{
-		typedef typename common_type<typename value_type_of<Mat>::type...>::type type;
+		typedef typename common_<typename value_type_of<Mat>::type...>::type type;
 	};
 
 	/********************************************
@@ -130,22 +115,13 @@ namespace lmat { namespace meta {
 	 ********************************************/
 
 	template<class Mat>
-	struct nrows
-	{
-		static const int value = matrix_traits<Mat>::ct_num_rows;
-	};
+	struct nrows : public int_<matrix_traits<Mat>::ct_num_rows> { };
 
 	template<class Mat>
-	struct ncols
-	{
-		static const int value = matrix_traits<Mat>::ct_num_cols;
-	};
+	struct ncols : public int_<matrix_traits<Mat>::ct_num_cols> { };
 
 	template<class Mat>
-	struct nelems
-	{
-		static const int value = nrows<Mat>::value * ncols<Mat>::value;
-	};
+	struct nelems : public mul_<nrows<Mat>, ncols<Mat> > { };
 
 	template<class Mat>
 	struct shape
@@ -154,59 +130,32 @@ namespace lmat { namespace meta {
 	};
 
 	template<class Mat>
-	struct is_row
-	{
-		static const bool value = nrows<Mat>::value == 1;
-	};
+	struct is_row : public eq_<nrows<Mat>, int_<1> > { };
 
 	template<class Mat>
-	struct is_col
-	{
-		static const bool value = ncols<Mat>::value == 1;
-	};
+	struct is_col : public eq_<ncols<Mat>, int_<1> > { };
 
 	template<class Mat>
-	struct is_scalar
-	{
-		static const bool value = is_row<Mat>::value && is_col<Mat>::value;
-	};
+	struct is_scalar : public and_<is_row<Mat>, is_col<Mat> > { };
 
 	template<class Mat>
-	struct is_vector
-	{
-		static const bool value = is_row<Mat>::value || is_col<Mat>::value;
-	};
+	struct is_vector : public or_<is_row<Mat>, is_col<Mat> > { };
 
 	template<class Mat>
-	struct has_static_nrows
-	{
-		static const bool value = nrows<Mat>::value > 0;
-	};
+	struct has_dynamic_nrows : public eq_<nrows<Mat>, int_<0> > { };
 
 	template<class Mat>
-	struct has_static_ncols
-	{
-		static const bool value = ncols<Mat>::value > 0;
-	};
+	struct has_dynamic_ncols : public eq_<ncols<Mat>, int_<0> > { };
 
 	template<class Mat>
-	struct has_dynamic_nrows
-	{
-		static const bool value = nrows<Mat>::value == 0;
-	};
+	struct has_static_nrows : public not_<has_dynamic_nrows<Mat> > { };
 
 	template<class Mat>
-	struct has_dynamic_ncols
-	{
-		static const bool value = ncols<Mat>::value == 0;
-	};
-
+	struct has_static_ncols : public not_<has_dynamic_ncols<Mat> > { };
 
 	template<class Mat>
 	struct has_static_size
-	{
-		static const bool value = has_static_nrows<Mat>::value && has_static_ncols<Mat>::value;
-	};
+	: public and_<has_static_nrows<Mat>, has_static_ncols<Mat> > { };
 
 
 	/********************************************
@@ -215,73 +164,58 @@ namespace lmat { namespace meta {
 	 *
 	 ********************************************/
 
-	// compatible ct_dim
-
 	namespace internal
 	{
-		template<int M, int N>
-		struct are_compatible_dims_c
-		{
-			static const bool value = M >= 0 && N >= 0 && (M == N || M == 0 || N == 0);
-		};
+		template<int D1, int D2> struct _common_dim;
 
-		template<int M, int N>
-		struct common_dim_c
-		{
-			static const int value =
-					are_compatible_dims_c<M, N>::value ? (M == 0 ? N : M) : -1;
-		};
+		template<int D>
+		struct _common_dim<D, 0> : public int_<D> { };
 
-		template<template<class X> class Fun, class... Mats>
-		struct common_dim_reduce;
+		template<int D>
+		struct _common_dim<0, D> : public int_<D> { };
 
-		template<template<class X> class Fun, class Mat>
-		struct common_dim_reduce<Fun, Mat>
-		{
-			static const int value = Fun<Mat>::value;
-		};
+		template<int D>
+		struct _common_dim<D, D> : public int_<D> { };
 
-		template<template<class X> class Fun, class M0, class... Mats>
-		struct common_dim_reduce<Fun, M0, Mats...>
-		{
-			static const int value = common_dim_c<
-					Fun<M0>::value,
-					common_dim_reduce<Fun, Mats...>::value>::value;
-		};
+		template<>
+		struct _common_dim<0, 0> : public int_<0> { };
 	}
 
-	template<int M, int N>
-	struct common_dim
-	{
-		static const int _maybe_value = internal::common_dim_c<M, N>::value;
-		static const int value = enable_int_if_c<(_maybe_value >= 0), _maybe_value>::value;
-	};
+	// dimension compatibility
 
+	template<typename W1, typename... WR> struct are_compatible_dims;
 
-	// common_ctdim
+	template<typename W1, typename W2>
+	struct are_compatible_dims<W1, W2>
+	: public bool_<(W1::value == W2::value || W1::value == 0 || W2::value == 0)> { };
 
+	template<typename W1, typename W2, typename... WR>
+	struct are_compatible_dims<W1, W2, WR...>
+	: and_<are_compatible_dims<W2, WR...>, are_compatible_dims<W1, maximum_<W2, WR...> > > { };
 
-	// common rows
+	// common dimension
+
+	template<typename... W> struct common_dim;
+
+	template<typename W>
+	struct common_dim<W> : public W { };
+
+	template<typename W1, typename W2>
+	struct common_dim<W1, W2> : public internal::_common_dim<W1::value, W2::value> { };
+
+	template<typename W1, typename W2, typename... WR>
+	struct common_dim<W1, W2, WR...>
+	: public common_dim< common_dim<W1, W2>, common_dim<WR...> > { };
+
 
 	template<typename... Mats>
-	struct common_nrows
-	{
-		static const int _maybe_value = internal::common_dim_reduce<nrows, Mats...>::value;
-		static const int value = enable_int_if_c<(_maybe_value >= 0), _maybe_value>::value;
-	};
+	struct common_nrows : public common_dim<nrows<Mats>...> { };
 
 	template<typename... Mats>
-	struct common_ncols
-	{
-		static const int _maybe_value = internal::common_dim_reduce<ncols, Mats...>::value;
-		static const int value = enable_int_if_c<(_maybe_value >= 0), _maybe_value>::value;
-	};
+	struct common_ncols : public common_dim<ncols<Mats>...> { };
 
 	template<typename... Mats>
-	struct common_nelems
-	{
-		static const int value = common_nrows<Mats...>::value * common_ncols<Mats...>::value;
-	};
+	struct common_nelems : public mul_<common_nrows<Mats...>, common_ncols<Mats...> > { };
 
 	template<typename... Mats>
 	struct common_shape
@@ -290,31 +224,25 @@ namespace lmat { namespace meta {
 	};
 
 
-
 	// has compatible size
 
 	template<typename... Mats>
-	struct have_compatible_nrows
-	{
-		static const int _maybe_value = internal::common_dim_reduce<nrows, Mats...>::value;
-		static const bool value = _maybe_value >= 0;
-	};
-
+	struct have_compatible_nrows : public are_compatible_dims<nrows<Mats>...> { };
 
 	template<typename... Mats>
-	struct have_compatible_ncols
-	{
-		static const int _maybe_value = internal::common_dim_reduce<ncols, Mats...>::value;
-		static const bool value = _maybe_value >= 0;
-	};
+	struct have_compatible_ncols : public are_compatible_dims<ncols<Mats>...> { };
+
 
 	template<typename... Mats>
 	struct have_compatible_shapes
-	{
-		static const bool value =
-				have_compatible_nrows<Mats...>::value &&
-				have_compatible_ncols<Mats...>::value;
-	};
+	: public and_<
+	  have_compatible_nrows<Mats...>,
+	  have_compatible_ncols<Mats...> > { };
+
+
+	template<class Mat>
+	struct sq_dim
+	: public common_dim<nrows<Mat>, ncols<Mat> > { };
 
 
 	/********************************************
@@ -324,10 +252,7 @@ namespace lmat { namespace meta {
 	 ********************************************/
 
 	template<class Mat>
-	struct is_readonly
-	{
-		static const bool value = matrix_traits<Mat>::is_readonly;
-	};
+	struct is_readonly : public bool_<matrix_traits<Mat>::is_readonly> { };
 
 
 	/********************************************
@@ -337,106 +262,41 @@ namespace lmat { namespace meta {
 	 ********************************************/
 
 	template<class Mat>
-	struct is_continuous
+	struct is_contiguous
 	{
 		typedef typename matrix_traits<Mat>::layout_type layout_type;
-		static const bool value = layout_traits<layout_type>::ct_is_continuous;
+		static const bool value = layout_traits<layout_type>::ct_is_contiguous;
 	};
 
 	template<class Mat>
-	struct is_percol_continuous
+	struct is_percol_contiguous
 	{
 		typedef typename matrix_traits<Mat>::layout_type layout_type;
-		static const bool value = layout_traits<layout_type>::ct_is_percol_continuous;
+		static const bool value = layout_traits<layout_type>::ct_is_percol_contiguous;
 	};
 
-	template<class Mat>
-	struct continuous_level
-	{
-		typedef typename if_<is_continuous<Mat>, 		cont_level::whole,
-				typename if_<is_percol_continuous<Mat>, cont_level::percol,
-														cont_level::none
-				>::type >::type type;
-	};
 
-	template<class LMat, class RMat>
-	struct binary_continuous_level
-	{
-		static const bool is_cont = is_continuous<LMat>::value && is_continuous<RMat>::value;
-		static const bool is_pc_cont =
-				is_percol_continuous<LMat>::value && is_percol_continuous<RMat>::value;
+	template<typename... Mat> struct contiguousness;
 
-		typedef typename if_c<is_cont, cont_level::whole,
-				typename if_c<is_pc_cont, cont_level::percol, cont_level::none
-				>::type >::type type;
-	};
+	template<class A>
+	struct contiguousness<A>
+	: public select_<
+	  	  is_contiguous<A>, cont_level::whole,
+	  	  is_percol_contiguous<A>, cont_level::percol,
+	  	  otherwise_, cont_level::none> { };
+
+
+	template<class A, class B>
+	struct contiguousness<A, B>
+	: public select_<
+	  	  and_<is_contiguous<A>, is_contiguous<B> >, cont_level::whole,
+	  	  and_<is_percol_contiguous<A>, is_percol_contiguous<B> >, cont_level::percol,
+	  	  otherwise_, cont_level::none> { };
+
 
 	template<class Mat>
 	struct supports_linear_index
-	{
-		static const bool value = is_continuous<Mat>::value || is_vector<Mat>::value;
-	};
-
-
-	namespace internal
-	{
-		template<class Mat, bool IsDense>
-		struct _is_continuous_ex_
-		{
-			static const bool value = is_continuous<Mat>::value;
-		};
-
-		template<class Mat, bool IsDense>
-		struct _is_percol_continuous_ex_
-		{
-			static const bool value = is_percol_continuous<Mat>::value;
-		};
-
-		template<class Mat, bool IsDense>
-		struct _supports_linear_index_ex_
-		{
-			static const bool value = supports_linear_index<Mat>::value;
-		};
-
-		template<class Mat>
-		struct _is_continuous_ex_<Mat, false>
-		{
-			static const bool value = false;
-		};
-
-		template<class Mat>
-		struct _is_percol_continuous_ex_<Mat, false>
-		{
-			static const bool value = false;
-		};
-
-		template<class Mat>
-		struct _supports_linear_index_ex_<Mat, false>
-		{
-			static const bool value = false;
-		};
-	}
-
-	template<class Mat>
-	struct is_continuous_ex
-	{
-		static const bool value =
-				internal::_is_continuous_ex_<Mat, is_regular_mat<Mat>::value>::value;
-	};
-
-	template<class Mat>
-	struct is_percol_continuous_ex
-	{
-		static const bool value =
-				internal::_is_percol_continuous_ex_<Mat, is_regular_mat<Mat>::value>::value;
-	};
-
-	template<class Mat>
-	struct supports_linear_index_ex
-	{
-		static const bool value =
-				internal::_supports_linear_index_ex_<Mat, is_regular_mat<Mat>::value>::value;
-	};
+	: public or_<is_contiguous<Mat>, is_vector<Mat> > { };
 
 
 

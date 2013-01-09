@@ -109,11 +109,11 @@ namespace lmat { namespace internal {
 	template<typename T, class SMat, class DMat>
 	inline void direct_transpose(index_t m, index_t n, const IRegularMatrix<SMat, T>& smat, IRegularMatrix<DMat, T>& dmat)
 	{
-		if (meta::is_continuous<SMat>::value && meta::is_continuous<DMat>::value)
+		if (meta::is_contiguous<SMat>::value && meta::is_contiguous<DMat>::value)
 		{
 			naive_transpose(m, n, smat.ptr_data(), dmat.ptr_data());
 		}
-		else if (meta::is_percol_continuous<SMat>::value && meta::is_percol_continuous<DMat>::value)
+		else if (meta::is_percol_contiguous<SMat>::value && meta::is_percol_contiguous<DMat>::value)
 		{
 			naive_transpose(m, n, smat.ptr_data(), smat.col_stride(), dmat.ptr_data(), dmat.col_stride());
 		}

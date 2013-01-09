@@ -254,12 +254,11 @@ namespace lmat
 		template<class Mat, typename U>
 		struct vec_reader_map
 		{
-			typedef
-			typename meta::if_<meta::is_continuous<Mat>,	contvec_reader_map<Mat, U>,
-			typename meta::if_<meta::is_col<Mat>, 			stepcol_reader_map<Mat, U>,
-			typename meta::if_<meta::is_row<Mat>, 			steprow_reader_map<Mat, U>,
-															invalid_reader_map
-			>::type >::type >::type internal_map_;
+			typedef typename meta::select_<
+					meta::is_contiguous<Mat>, contvec_reader_map<Mat, U>,
+					meta::is_col<Mat>, stepcol_reader_map<Mat, U>,
+					meta::is_row<Mat>, steprow_reader_map<Mat, U>,
+					meta::otherwise_, invalid_reader_map>::type internal_map_;
 
 			typedef typename meta::if_<meta::is_regular_mat<Mat>,
 					internal_map_, invalid_reader_map>::type internal_map;
@@ -455,12 +454,11 @@ namespace lmat
 		template<class Mat, typename U>
 		struct vec_writer_map
 		{
-			typedef
-			typename meta::if_<meta::is_continuous<Mat>,	contvec_writer_map<Mat, U>,
-			typename meta::if_<meta::is_col<Mat>, 			stepcol_writer_map<Mat, U>,
-			typename meta::if_<meta::is_row<Mat>, 			steprow_writer_map<Mat, U>,
-															invalid_writer_map
-			>::type >::type >::type internal_map;
+			typedef typename meta::select_<
+					meta::is_contiguous<Mat>, contvec_writer_map<Mat, U>,
+					meta::is_col<Mat>, stepcol_writer_map<Mat, U>,
+					meta::is_row<Mat>, steprow_writer_map<Mat, U>,
+					meta::otherwise_, invalid_writer_map>::type internal_map;
 
 			typedef typename internal_map::type type;
 
@@ -646,12 +644,11 @@ namespace lmat
 		template<class Mat, typename U>
 		struct vec_updater_map
 		{
-			typedef
-			typename meta::if_<meta::is_continuous<Mat>,	contvec_updater_map<Mat, U>,
-			typename meta::if_<meta::is_col<Mat>, 			stepcol_updater_map<Mat, U>,
-			typename meta::if_<meta::is_row<Mat>, 			steprow_updater_map<Mat, U>,
-															invalid_updater_map
-			>::type >::type >::type internal_map;
+			typedef typename meta::select_<
+					meta::is_contiguous<Mat>, contvec_updater_map<Mat, U>,
+					meta::is_col<Mat>, stepcol_updater_map<Mat, U>,
+					meta::is_row<Mat>, steprow_updater_map<Mat, U>,
+					meta::otherwise_, invalid_updater_map>::type internal_map;
 
 			typedef typename internal_map::type type;
 

@@ -28,17 +28,6 @@
 namespace lmat
 {
 
-	template<class Mat>
-	struct matrix_access_types
-	{
-		typedef typename matrix_traits<Mat>::value_type value_type;
-		typedef typename meta::if_<meta::is_readonly<Mat>,
-				const value_type*, value_type*>::type pointer;
-		typedef typename meta::if_<meta::is_readonly<Mat>,
-				const value_type&, value_type&>::type reference;
-	};
-
-
 	/********************************************
 	 *
 	 *  IMatrixXpr
@@ -125,13 +114,13 @@ namespace lmat
 	class IRegularMatrix : public IEWiseMatrix<Derived, T>
 	{
 	public:
-		typedef typename matrix_access_types<Derived>::value_type value_type;
+		typedef typename matrix_traits<Derived>::value_type value_type;
+		typedef typename matrix_traits<Derived>::pointer pointer;
+		typedef typename matrix_traits<Derived>::reference reference;
 		typedef const value_type* const_pointer;
 		typedef const value_type& const_reference;
-		typedef typename matrix_access_types<Derived>::pointer pointer;
-		typedef typename matrix_access_types<Derived>::reference reference;
 
-		typedef matrix_shape< meta::nrows<Derived>::value, meta::ncols<Derived>::value > shape_type;
+		typedef typename meta::shape<Derived>::type shape_type;
 
 	public:
 		LMAT_CRTP_REF

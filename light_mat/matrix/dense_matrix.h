@@ -37,7 +37,10 @@ namespace lmat
 		static const bool is_readonly = false;
 
 		typedef T value_type;
-		typedef continuous_layout_cm<CTRows, CTCols> layout_type;
+		typedef T* pointer;
+		typedef T& reference;
+
+		typedef cont_layout_cm<CTRows, CTCols> layout_type;
 		typedef cpu_domain domain;
 	};
 
@@ -156,15 +159,9 @@ namespace lmat
 	template<typename T, int CTRows, int CTCols>
 	class dense_matrix : public regular_mat_base<dense_matrix<T, CTRows, CTCols>, T>
 	{
-		static_assert(meta::is_supported_matrix_value_type<T>::value,
-				"T must be a supported matrix value type.");
-
-		static_assert(CTRows >= 0 && CTCols >= 0,
-				"CTRows and CTCols must be non-negative numbers.");
-
 	public:
 		LMAT_DEFINE_REGMAT_TYPES(T)
-		typedef continuous_layout_cm<CTRows, CTCols> layout_type;
+		typedef cont_layout_cm<CTRows, CTCols> layout_type;
 
 	public:
 		LMAT_ENSURE_INLINE dense_matrix()

@@ -231,7 +231,7 @@ namespace lmat
 
 			typedef typename meta::if_<
 					meta::is_regular_mat<Mat>,
-					typename meta::if_<meta::is_percol_continuous<Mat>,
+					typename meta::if_<meta::is_percol_contiguous<Mat>,
 						multi_contcol_reader<T, U>,
 						multi_stepcol_reader<T, U> >::type,
 					invalid_multicol_reader
@@ -251,7 +251,7 @@ namespace lmat
 
 			typedef typename meta::if_<
 					meta::is_regular_mat<Mat>,
-						typename meta::if_<meta::is_percol_continuous<Mat>,
+						typename meta::if_<meta::is_percol_contiguous<Mat>,
 						repeat_contcol_reader<T, U>,
 						repeat_stepcol_reader<T, U> >::type,
 					invalid_multicol_reader
@@ -265,7 +265,7 @@ namespace lmat
 
 			typedef typename meta::if_<
 					meta::is_regular_mat<Mat>,
-						typename meta::if_<meta::is_continuous<Mat>,
+						typename meta::if_<meta::is_contiguous<Mat>,
 						repeat_controw_reader<T, U>,
 						repeat_steprow_reader<T, U> >::type,
 					invalid_multicol_reader
@@ -379,7 +379,7 @@ namespace lmat
 			typedef typename matrix_traits<Mat>::value_type T;
 
 			typedef typename meta::if_<
-					meta::is_percol_continuous<Mat>,
+					meta::is_percol_contiguous<Mat>,
 					multi_contcol_writer<T, U>,
 					multi_stepcol_writer<T, U>
 			>::type type;
@@ -467,7 +467,7 @@ namespace lmat
 			typedef typename matrix_traits<Mat>::value_type T;
 
 			typedef typename meta::if_<
-					meta::is_percol_continuous<Mat>,
+					meta::is_percol_contiguous<Mat>,
 					multi_contcol_updater<T, U>,
 					multi_stepcol_updater<T, U>
 			>::type type;
@@ -725,19 +725,19 @@ namespace lmat
 			typedef typename matrix_traits<Mat>::value_type T;
 
 			typedef typename meta::if_<
-					meta::is_continuous<Mat>,
+					meta::is_contiguous<Mat>,
 					colwise_sum_accumulator<T, U>,
 					colwise_sum_accumulator_x<T, U>
 			>::type sum_type;
 
 			typedef typename meta::if_<
-					meta::is_continuous<Mat>,
+					meta::is_contiguous<Mat>,
 					colwise_max_accumulator<T, U>,
 					colwise_max_accumulator_x<T, U>
 			>::type max_type;
 
 			typedef typename meta::if_<
-					meta::is_continuous<Mat>,
+					meta::is_contiguous<Mat>,
 					colwise_min_accumulator<T, U>,
 					colwise_min_accumulator_x<T, U>
 			>::type min_type;

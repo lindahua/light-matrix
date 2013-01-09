@@ -21,7 +21,7 @@ namespace lmat { namespace internal {
 	struct as_vec_indicator
 	{
 		static const int value =
-				meta::is_continuous<Mat>::value ? 1 :
+				meta::is_contiguous<Mat>::value ? 1 :
 				(meta::is_col<Mat>::value ? 2 :
 				(meta::is_row<Mat>::value ? 3 : 0));
 	};
@@ -36,7 +36,7 @@ namespace lmat { namespace internal {
 	template<class Mat, int I, bool IsReadOnly>
 	struct _as_col_map;
 
-	// continuous
+	// contiguous
 
 	template<class Mat>
 	struct _as_col_map<Mat, 1, true>
@@ -157,7 +157,7 @@ namespace lmat { namespace internal {
 	template<class Mat, int I, bool IsReadOnly>
 	struct _as_row_map;
 
-	// continuous
+	// contiguous
 
 	template<class Mat>
 	struct _as_row_map<Mat, 1, true>

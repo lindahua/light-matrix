@@ -39,12 +39,15 @@ namespace lmat
 	template<class Derived, typename T>
 	class regular_mat_base : public IRegularMatrix<Derived, T>
 	{
+		static_assert( meta::is_supported_matrix_value_type<T>::value,
+				"T must be a supported matrix value type");
+
 	public:
 		typedef T value_type;
-		typedef const T* const_pointer;
-		typedef const T& const_reference;
-		typedef typename matrix_access_types<Derived>::pointer pointer;
-		typedef typename matrix_access_types<Derived>::reference reference;
+		typedef typename matrix_traits<Derived>::pointer pointer;
+		typedef typename matrix_traits<Derived>::reference reference;
+		typedef const value_type* const_pointer;
+		typedef const value_type& const_reference;
 
 		typedef typename meta::shape<Derived>::type shape_type;
 		typedef typename matrix_traits<Derived>::layout_type layout_type;

@@ -34,7 +34,10 @@ namespace lmat
 		static const bool is_readonly = true;
 
 		typedef T value_type;
-		typedef continuous_layout_cm<CTRows, CTCols> layout_type;
+		typedef const T* pointer;
+		typedef const T& reference;
+
+		typedef cont_layout_cm<CTRows, CTCols> layout_type;
 		typedef cpu_domain domain;
 	};
 
@@ -42,12 +45,9 @@ namespace lmat
 	template<typename T, int CTRows, int CTCols>
 	class cref_matrix : public regular_mat_base<cref_matrix<T, CTRows, CTCols>, T>
 	{
-		static_assert( meta::is_supported_matrix_value_type<T>::value,
-				"T must be a supported matrix value type");
-
 	public:
 		LMAT_DEFINE_REGMAT_CTYPES(T)
-		typedef continuous_layout_cm<CTRows, CTCols> layout_type;
+		typedef cont_layout_cm<CTRows, CTCols> layout_type;
 
 	public:
 		LMAT_ENSURE_INLINE
@@ -96,7 +96,10 @@ namespace lmat
 		static const bool is_readonly = false;
 
 		typedef T value_type;
-		typedef continuous_layout_cm<CTRows, CTCols> layout_type;
+		typedef T* pointer;
+		typedef T& reference;
+
+		typedef cont_layout_cm<CTRows, CTCols> layout_type;
 		typedef cpu_domain domain;
 	};
 
@@ -104,12 +107,9 @@ namespace lmat
 	template<typename T, int CTRows, int CTCols>
 	class ref_matrix : public regular_mat_base<ref_matrix<T, CTRows, CTCols>, T>
 	{
-		static_assert( meta::is_supported_matrix_value_type<T>::value,
-				"T must be a supported matrix value type");
-
 	public:
 		LMAT_DEFINE_REGMAT_TYPES(T)
-		typedef continuous_layout_cm<CTRows, CTCols> layout_type;
+		typedef cont_layout_cm<CTRows, CTCols> layout_type;
 
 	public:
 		LMAT_ENSURE_INLINE

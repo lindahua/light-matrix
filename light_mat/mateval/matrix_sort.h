@@ -157,7 +157,7 @@ namespace lmat
 	 ********************************************/
 
 	template<class A, typename T, typename Alg, typename Compare>
-	inline typename meta::enable_if<meta::supports_random_access<A>,
+	inline typename meta::enable_if_<meta::supports_random_access<A>,
 	void>::type
 	gsort(IRegularMatrix<A, T>& a, const Alg& alg, const Compare& comp)
 	{

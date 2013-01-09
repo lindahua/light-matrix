@@ -29,7 +29,7 @@ bool my_use_linear(const map_expr<FTag, A>& expr)
 	const int M = meta::nrows<A>::value;
 	const int N = meta::ncols<A>::value;
 
-	const bool is_cont = meta::is_continuous<A>::value;
+	const bool is_cont = meta::is_contiguous<A>::value;
 
 	return is_cont || M == 1 || N == 1;
 }
@@ -42,8 +42,8 @@ bool my_use_linear(const map_expr<FTag, A, B>& expr)
 	const int N = meta::common_ncols<A, B>::value;
 
 	const bool is_cont =
-			meta::is_continuous<A>::value &&
-			meta::is_continuous<B>::value;
+			meta::is_contiguous<A>::value &&
+			meta::is_contiguous<B>::value;
 
 	return is_cont || M == 1 || N == 1;
 }
@@ -59,14 +59,14 @@ bool my_use_simd(const map_expr<FTag, A>& expr)
 	if (use_linear)
 	{
 		const int L = meta::nelems<A>::value;
-		const bool is_cont = meta::is_continuous<A>::value;
+		const bool is_cont = meta::is_contiguous<A>::value;
 
 		return is_cont && (L % pw == 0);
 	}
 	else
 	{
 		const int M = meta::nrows<A>::value;
-		const bool is_cont_pc = meta::is_percol_continuous<A>::value;
+		const bool is_cont_pc = meta::is_percol_contiguous<A>::value;
 
 		return is_cont_pc && (M % pw == 0);
 	}
@@ -83,8 +83,8 @@ bool my_use_simd(const map_expr<FTag, A, B>& expr)
 	{
 		const int L = meta::common_nelems<A, B>::value;
 		const bool is_cont =
-				meta::is_continuous<A>::value &&
-				meta::is_continuous<B>::value;
+				meta::is_contiguous<A>::value &&
+				meta::is_contiguous<B>::value;
 
 		return is_cont && (L % pw == 0);
 	}
@@ -92,8 +92,8 @@ bool my_use_simd(const map_expr<FTag, A, B>& expr)
 	{
 		const int M = meta::common_nrows<A, B>::value;
 		const bool is_cont_pc =
-				meta::is_percol_continuous<A>::value &&
-				meta::is_percol_continuous<B>::value;
+				meta::is_percol_contiguous<A>::value &&
+				meta::is_percol_contiguous<B>::value;
 
 		return is_cont_pc && (M % pw == 0);
 	}

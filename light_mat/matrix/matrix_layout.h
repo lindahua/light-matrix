@@ -20,7 +20,7 @@ namespace lmat
 
 	// forward declaration
 
-	template<int M, int N> class continuous_layout_cm;
+	template<int M, int N> class cont_layout_cm;
 	template<int M, int N> class block_layout_cm;
 	template<int M, int N> class grid_layout;
 
@@ -33,13 +33,13 @@ namespace lmat
 	template<class Layout> struct layout_traits;
 
 	template<int M, int N>
-	struct layout_traits<continuous_layout_cm<M, N> >
+	struct layout_traits<cont_layout_cm<M, N> >
 	{
 		static const int ct_num_rows = M;
 		static const int ct_num_cols = N;
 
-		static const bool ct_is_continuous = true;
-		static const bool ct_is_percol_continuous = true;
+		static const bool ct_is_contiguous = true;
+		static const bool ct_is_percol_contiguous = true;
 
 		typedef matrix_shape<M, N> shape_type;
 	};
@@ -50,8 +50,8 @@ namespace lmat
 		static const int ct_num_rows = M;
 		static const int ct_num_cols = N;
 
-		static const bool ct_is_continuous = (N == 1);
-		static const bool ct_is_percol_continuous = true;
+		static const bool ct_is_contiguous = (N == 1);
+		static const bool ct_is_percol_contiguous = true;
 
 		typedef matrix_shape<M, N> shape_type;
 	};
@@ -62,8 +62,8 @@ namespace lmat
 		static const int ct_num_rows = M;
 		static const int ct_num_cols = N;
 
-		static const bool ct_is_continuous = (M == 1 && N == 1);
-		static const bool ct_is_percol_continuous = M == 1;
+		static const bool ct_is_contiguous = (M == 1 && N == 1);
+		static const bool ct_is_percol_contiguous = M == 1;
 
 		typedef matrix_shape<M, N> shape_type;
 	};
@@ -121,15 +121,15 @@ namespace lmat
 		}
 
 		LMAT_ENSURE_INLINE
-		bool is_continuous() const
+		bool is_contiguous() const
 		{
-			return derived().is_continuous();
+			return derived().is_contiguous();
 		}
 
 		LMAT_ENSURE_INLINE
-		bool is_percol_continuous() const
+		bool is_percol_contiguous() const
 		{
-			return derived().is_percol_continuous();
+			return derived().is_percol_contiguous();
 		}
 
 		LMAT_ENSURE_INLINE
@@ -163,14 +163,14 @@ namespace lmat
 	 ********************************************/
 
 	template<int M, int N>
-	class continuous_layout_cm : public IMatrixLayout<continuous_layout_cm<M, N> >
+	class cont_layout_cm : public IMatrixLayout<cont_layout_cm<M, N> >
 	{
 	public:
 		LMAT_ENSURE_INLINE
-		continuous_layout_cm() : m_shape() { }
+		cont_layout_cm() : m_shape() { }
 
 		LMAT_ENSURE_INLINE
-		continuous_layout_cm(index_t m, index_t n) : m_shape(m, n) { };
+		cont_layout_cm(index_t m, index_t n) : m_shape(m, n) { };
 
 	public:
 		LMAT_ENSURE_INLINE
@@ -210,13 +210,13 @@ namespace lmat
 		}
 
 		LMAT_ENSURE_INLINE
-		bool is_continuous() const
+		bool is_contiguous() const
 		{
 			return true;
 		}
 
 		LMAT_ENSURE_INLINE
-		bool is_percol_continuous() const
+		bool is_percol_contiguous() const
 		{
 			return true;
 		}
@@ -295,13 +295,13 @@ namespace lmat
 		}
 
 		LMAT_ENSURE_INLINE
-		bool is_continuous() const
+		bool is_contiguous() const
 		{
 			return m_leaddim == nrows();
 		}
 
 		LMAT_ENSURE_INLINE
-		bool is_percol_continuous() const
+		bool is_percol_contiguous() const
 		{
 			return true;
 		}
@@ -381,13 +381,13 @@ namespace lmat
 		}
 
 		LMAT_ENSURE_INLINE
-		bool is_continuous() const
+		bool is_contiguous() const
 		{
 			return m_rowstride == 1 && m_colstride == nrows();
 		}
 
 		LMAT_ENSURE_INLINE
-		bool is_percol_continuous() const
+		bool is_percol_contiguous() const
 		{
 			return true;
 		}

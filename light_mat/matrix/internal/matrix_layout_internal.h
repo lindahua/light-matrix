@@ -22,7 +22,7 @@ namespace lmat { namespace internal {
 		throw invalid_operation("Linear offset is only supported for compile-time vectors");
 	}
 
-	// continuous layout
+	// contiguous layout
 
 	template<int M, int N>
 	LMAT_ENSURE_INLINE
