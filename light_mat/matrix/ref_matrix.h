@@ -41,7 +41,6 @@ namespace lmat
 		typedef cpu_domain domain;
 	};
 
-
 	template<typename T, int CTRows, int CTCols>
 	class cref_matrix : public regular_mat_base<cref_matrix<T, CTRows, CTCols>, T>
 	{

@@ -46,6 +46,24 @@ bool my_is_approx(const A& a, const B& b, const T& tol)
 	}
 }
 
+template<typename FTag, typename... Args>
+inline void check_policy(const map_expr<FTag, Args...>& )
+{
+	typedef map_expr<FTag, Args...> Expr;
+	typedef preferred_macc_policy<Expr> pmap;
+
+	typedef typename matrix_traits<Expr>::value_type T;
+	const int pw = (int)math::simd_traits<T, default_simd_kind>::pack_width;
+	ASSERT_TRUE( pmap::prefer_linear );
+
+	int M = meta::nrows<Expr>::value;
+	int N = meta::ncols<Expr>::value;
+
+	bool use_simd = ((M * N) % pw == 0) &&
+			meta::has_simd_support<FTag, T, default_simd_kind>::value;
+	ASSERT_EQ( pmap::prefer_simd, use_simd );
+}
+
 template<typename T, int M, int N>
 struct tspec{ };
 
@@ -55,6 +73,7 @@ struct tspec{ };
 	const index_t m = M == 0 ? DM : M; \
 	const index_t n = N == 0 ? DN : N; \
 	mat_t A(m, n); fill_ran(A, al, ah); \
+	check_policy( matfun(A) ); \
 	mat_t R_r(m, n); \
 	for (index_t i = 0; i < m * n; ++i) R_r[i] = scafun(A[i]); \
 	mat_t R = matfun(A); \
@@ -71,6 +90,7 @@ struct tspec{ };
 	const index_t n = N == 0 ? DN : N; \
 	mat_t A(m, n); fill_ran(A, al, ah); \
 	mat_t B(m, n); fill_ran(B, bl, bh); \
+	check_policy( matfun(A, B) ); \
 	mat_t R1_r(m, n); \
 	for (index_t i = 0; i < m * n; ++i) R1_r[i] = scafun(A[i], B[i]); \
 	mat_t R1 = matfun(A, B); \
@@ -96,6 +116,7 @@ struct tspec{ };
 	mat_t A(m, n); fill_ran(A, al, ah); \
 	mat_t B(m, n); fill_ran(B, bl, bh); \
 	mat_t C(m, n); fill_ran(C, cl, ch); \
+	check_policy( matfun(A, B, C) ); \
 	mat_t R1_r(m, n); \
 	for (index_t i = 0; i < m * n; ++i) R1_r[i] = scafun(A[i], B[i], C[i]); \
 	mat_t R1 = matfun(A, B, C); \

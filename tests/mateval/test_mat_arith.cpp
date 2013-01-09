@@ -43,6 +43,24 @@ bool my_is_equal(const A& a, const B& b)
 	}
 }
 
+
+template<class Expr>
+inline void check_policy(const Expr& )
+{
+	typedef preferred_macc_policy<Expr> pmap;
+
+	typedef typename matrix_traits<Expr>::value_type T;
+	const int pw = (int)math::simd_traits<T, default_simd_kind>::pack_width;
+	ASSERT_TRUE( pmap::prefer_linear );
+
+	int M = meta::nrows<Expr>::value;
+	int N = meta::ncols<Expr>::value;
+
+	bool use_simd = ((M * N) % pw == 0);
+	ASSERT_EQ( pmap::prefer_simd, use_simd );
+}
+
+
 MN_CASE( mat_arith, add )
 {
 	typedef dense_matrix<double, M, N> mat_t;
@@ -56,6 +74,12 @@ MN_CASE( mat_arith, add )
 
 	for (index_t i = 0; i < m * n; ++i) A[i] = double(i + 1);
 	for (index_t i = 0; i < m * n; ++i) B[i] = double(2 * i + 3);
+
+	// check policy
+
+	check_policy(A + B);
+	check_policy(A + c);
+	check_policy(c + B);
 
 	// prepare ground-truth
 
@@ -131,6 +155,12 @@ MN_CASE( mat_arith, sub )
 	for (index_t i = 0; i < m * n; ++i) A[i] = double(i + 1);
 	for (index_t i = 0; i < m * n; ++i) B[i] = double(2 * i + 3);
 
+	// check policy
+
+	check_policy(A - B);
+	check_policy(A - c);
+	check_policy(c - B);
+
 	// prepare ground-truth
 
 	mat_t AB_r(m, n);
@@ -203,6 +233,12 @@ MN_CASE( mat_arith, mul )
 	for (index_t i = 0; i < m * n; ++i) A[i] = double(i + 1);
 	for (index_t i = 0; i < m * n; ++i) B[i] = double(2 * i + 3);
 
+	// check policy
+
+	check_policy(A * B);
+	check_policy(A * c);
+	check_policy(c * B);
+
 	// prepare ground-truth
 
 	mat_t AB_r(m, n);
@@ -274,6 +310,12 @@ MN_CASE( mat_arith, div )
 	for (index_t i = 0; i < m * n; ++i) A[i] = double(i + 1);
 	for (index_t i = 0; i < m * n; ++i) B[i] = double(1 << (i % 5));
 
+	// check policy
+
+	check_policy(A / B);
+	check_policy(A / c);
+	check_policy(c / B);
+
 	// prepare ground-truth
 
 	mat_t AB_r(m, n);
@@ -342,6 +384,10 @@ MN_CASE( mat_arith, neg )
 	mat_t A(m, n);
 	for (index_t i = 0; i < m * n; ++i) A[i] = double((i+1) * (i % 3 - 1));
 
+	// check policy
+
+	check_policy(-A);
+
 	// prepare ground-truth
 
 	mat_t R_r(m, n);
@@ -363,6 +409,8 @@ MN_CASE( mat_arith, abs )
 
 	mat_t A(m, n);
 	for (index_t i = 0; i < m * n; ++i) A[i] = double((i+1) * (i % 3 - 1));
+
+	check_policy(abs(A));
 
 	// prepare ground-truth
 
@@ -389,6 +437,8 @@ MN_CASE( mat_arith, sqr )
 	mat_t R_r(m, n);
 	for (index_t i = 0; i < m * n; ++i) R_r[i] = A[i] * A[i];
 
+	check_policy(sqr(A));
+
 	mat_t R = sqr(A);
 	ASSERT_TRUE( my_is_equal(R, R_r) );
 }
@@ -407,6 +457,8 @@ MN_CASE( mat_arith, cube )
 	mat_t R_r(m, n);
 	for (index_t i = 0; i < m * n; ++i) R_r[i] = A[i] * A[i] * A[i];
 
+	check_policy(cube(A));
+
 	mat_t R = cube(A);
 	ASSERT_TRUE( my_is_equal(R, R_r) );
 }
@@ -422,6 +474,12 @@ MN_CASE( mat_arith, max )
 	mat_t A(m, n); fill_ran(A, 0.0, 10.0);
 	mat_t B(m, n); fill_ran(B, 0.0, 10.0);
 	double c = 5.0;
+
+	// check policy
+
+	check_policy(max(A, B));
+	check_policy(max(A, c));
+	check_policy(max(c, B));
 
 	mat_t AB_r(m, n);
 	for (index_t i = 0; i < m * n; ++i) AB_r[i] = A[i] > B[i] ? A[i] : B[i];
@@ -452,6 +510,10 @@ MN_CASE( mat_arith, min )
 	mat_t A(m, n); fill_ran(A, 0.0, 10.0);
 	mat_t B(m, n); fill_ran(B, 0.0, 10.0);
 	double c = 5.0;
+
+	check_policy(min(A, B));
+	check_policy(min(A, c));
+	check_policy(min(c, B));
 
 	mat_t AB_r(m, n);
 	for (index_t i = 0; i < m * n; ++i) AB_r[i] = A[i] < B[i] ? A[i] : B[i];

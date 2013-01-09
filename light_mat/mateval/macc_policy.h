@@ -44,63 +44,55 @@ namespace lmat
 	 *
 	 ********************************************/
 
+	template<typename T, typename Kind>
+	struct supports_simd_access : public meta::false_ { };
+
+	template<>
+	struct supports_simd_access<float, sse_t> : public meta::true_ { };
+
+	template<>
+	struct supports_simd_access<double, sse_t> : public meta::true_ { };
+
+	template<>
+	struct supports_simd_access<float, avx_t> : public meta::true_ { };
+
+	template<>
+	struct supports_simd_access<double, avx_t> : public meta::true_ { };
+
 	namespace internal
 	{
-		template<typename T1, typename T2>
-		struct are_simd_compatible_types
+		template<class Mat, typename Kind, bool IsLinear, bool ESimd>
+		struct regular_mat_supports_simd : public meta::false_ { };
+
+		template<class Mat, typename Kind>
+		struct regular_mat_supports_simd<Mat, Kind, true, true>
 		{
-			static const bool value = false;
+			typedef typename matrix_traits<Mat>::value_type T;
+			static const unsigned int L = (unsigned int)meta::nelems<Mat>::value;
+			static const unsigned int W = math::simd_traits<T, Kind>::pack_width;
+
+			static const bool value = meta::is_contiguous<Mat>::value && (L % W == 0);
 		};
 
-		template<typename T>
-		struct are_simd_compatible_types<T, T> { static const bool value = true; };
-
-		template<typename T>
-		struct are_simd_compatible_types<mask_t<T>, T> { static const bool value = true; };
-
-		template<typename Mat, typename RT, typename Kind, bool IsLinear>
-		struct _supports_simd_prim
+		template<class Mat, typename Kind>
+		struct regular_mat_supports_simd<Mat, Kind, false, true>
 		{
-			typedef typename matrix_traits<Mat>::value_type VT;
+			typedef typename matrix_traits<Mat>::value_type T;
+			static const unsigned int L = (unsigned int)meta::nrows<Mat>::value;
+			static const unsigned int W = math::simd_traits<T, Kind>::pack_width;
 
-			static const int pw = math::simd_traits<RT, Kind>::pack_width;
-
-			static const bool scont = IsLinear ?
-					meta::is_contiguous<Mat>::value :
-					meta::is_percol_contiguous<Mat>::value;
-
-			static const unsigned int slen = IsLinear ?
-					(unsigned)meta::nelems<Mat>::value :
-					(unsigned)meta::nrows<Mat>::value;
-
-			static const bool value =
-					are_simd_compatible_types<VT, RT>::value &&
-					scont && (slen % pw == 0);
-		};
-
-		template<typename Mat, typename RT, typename Kind, bool IsLinear>
-		struct _supports_simd
-		{
-			static const bool value = false;
-		};
-
-		template<typename Mat, typename Kind, bool IsLinear>
-		struct _supports_simd<Mat, float, Kind, IsLinear>
-		{
-			static const bool value = _supports_simd_prim<Mat, float, Kind, IsLinear>::value;
-		};
-
-		template<typename Mat, typename Kind, bool IsLinear>
-		struct _supports_simd<Mat, double, Kind, IsLinear>
-		{
-			static const bool value = _supports_simd_prim<Mat, double, Kind, IsLinear>::value;
+			static const bool value = meta::is_percol_contiguous<Mat>::value && (L % W == 0);
 		};
 	}
 
-	template<typename Mat, typename RT, typename Kind, bool IsLinear>
+	template<typename Mat, typename Kind, bool IsLinear>
 	struct supports_simd
 	{
-		static const bool value = internal::_supports_simd<Mat, RT, Kind, IsLinear>::value;
+		static_assert(meta::is_regular_mat<Mat>::value, "Mat here should be a regular matrix.");
+
+		typedef typename matrix_traits<Mat>::value_type T;
+		static const bool value = internal::regular_mat_supports_simd<
+				Mat, Kind, IsLinear, supports_simd_access<T, Kind>::value>::value;
 	};
 
 
@@ -118,7 +110,7 @@ namespace lmat
 		static const bool prefer_linear = supports_linear_macc<S>::value;
 
 		static const bool prefer_simd =
-				supports_simd<S, vtype, default_simd_kind, prefer_linear>::value;
+				supports_simd<S, default_simd_kind, prefer_linear>::value;
 
 		typedef typename std::conditional<prefer_simd,
 				atags::simd<default_simd_kind>,
@@ -139,8 +131,8 @@ namespace lmat
 				supports_linear_macc<D>::value;
 
 		static const bool prefer_simd =
-				supports_simd<S, vtype, default_simd_kind, prefer_linear>::value &&
-				supports_simd<D, vtype, default_simd_kind, prefer_linear>::value;
+				supports_simd<S, default_simd_kind, prefer_linear>::value &&
+				supports_simd<D, default_simd_kind, prefer_linear>::value;
 
 		typedef typename std::conditional<prefer_simd,
 				atags::simd<default_simd_kind>,

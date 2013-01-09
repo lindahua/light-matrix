@@ -70,12 +70,11 @@ namespace internal {
 	{
 		static const bool use_linear = supports_linear_macc<TExpr>::value;
 
-		typedef typename matrix_traits<TExpr>::value_type vtype;
 		typedef default_simd_kind simd_kind;
 
 		static const bool use_simd =
 				is_simdizable<Folder, simd_kind>::value &&
-				supports_simd<TExpr, vtype, simd_kind, use_linear>::value;
+				supports_simd<TExpr, simd_kind, use_linear>::value;
 
 		typedef typename std::conditional<use_simd,
 				atags::simd<simd_kind>,
@@ -93,11 +92,10 @@ namespace internal {
 		static_assert(meta::supports_linear_index<DMat>::value,
 				"DMat should support linear indexing.");
 
-		typedef typename matrix_traits<TExpr>::value_type vtype;
 		typedef default_simd_kind simd_kind;
 
 		static const bool use_simd = is_simdizable<Folder, simd_kind>::value &&
-			supports_simd<TExpr, vtype, simd_kind, false>::value;
+			supports_simd<TExpr, simd_kind, false>::value;
 
 		typedef typename std::conditional<use_simd,
 				atags::simd<simd_kind>,
@@ -111,11 +109,10 @@ namespace internal {
 		static_assert(supports_linear_macc<DMat>::value,
 				"DMat should support linear access.");
 
-		typedef typename matrix_traits<TExpr>::value_type vtype;
 		typedef default_simd_kind simd_kind;
 
 		static const bool use_simd = is_simdizable<Folder, simd_kind>::value &&
-			supports_simd<TExpr, vtype, simd_kind, false>::value;
+			supports_simd<TExpr, simd_kind, false>::value;
 
 		typedef typename std::conditional<use_simd,
 				atags::simd<simd_kind>,

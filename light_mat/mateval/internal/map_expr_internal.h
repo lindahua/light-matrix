@@ -384,16 +384,16 @@ namespace lmat { namespace internal {
 		static const bool value = supports_linear_macc<Arg>::value;
 	};
 
-	template<typename Arg, bool IsXpr, typename T, typename Kind, bool IsLinear>
+	template<typename Arg, typename Kind, bool IsLinear, bool IsXpr>
 	struct _arg_supp_simd
 	{
-		static const bool value = are_simd_compatible_types<Arg, T>::value;
+		static const bool value = supports_simd_access<Arg, Kind>::value;
 	};
 
-	template<typename Arg, typename T, typename Kind, bool IsLinear>
-	struct _arg_supp_simd<Arg, true, T, Kind, IsLinear>
+	template<typename Arg, typename Kind, bool IsLinear>
+	struct _arg_supp_simd<Arg, Kind, IsLinear, true>
 	{
-		static const bool value = supports_simd<Arg, T, Kind, IsLinear>::value;
+		static const bool value = supports_simd<Arg, Kind, IsLinear>::value;
 	};
 
 
@@ -403,11 +403,11 @@ namespace lmat { namespace internal {
 		static const bool value = _arg_supp_linear<Arg, meta::is_mat_xpr<Arg>::value>::value;
 	};
 
-	template<typename Arg, typename T, typename Kind, bool IsLinear>
+	template<typename Arg, typename Kind, bool IsLinear>
 	struct arg_supp_simd
 	{
 		static const bool value =
-				_arg_supp_simd<Arg, meta::is_mat_xpr<Arg>::value, T, Kind, IsLinear>::value;
+				_arg_supp_simd<Arg, Kind, IsLinear, meta::is_mat_xpr<Arg>::value>::value;
 	};
 
 

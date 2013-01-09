@@ -235,7 +235,8 @@ set(MATRIX_CLASS_HS_
     ${INC}/matrix/ref_grid.h
     ${INC}/matrix/step_vecs.h
     ${INC}/matrix/dense_mutable_view.h
-    ${INC}/matrix/matrix_classes.h)
+    ${INC}/matrix/matrix_classes.h
+    ${INC}/matrix/matrix_inspect.h)
     
 set(MATRIX_MANIP_HS_
     ${INC}/matrix/internal/matrix_transpose_internal.h
@@ -270,6 +271,7 @@ set(MAP_EXPR_HS_
     ${INC}/mateval/internal/map_expr_internal.h
     ${INC}/mateval/map_accessors.h
     ${INC}/mateval/map_expr.h
+    ${INC}/mateval/map_expr_inspect.h
     ${INC}/mateval/mat_arith.h
     ${INC}/mateval/mat_emath.h
     ${INC}/mateval/mat_cast.h

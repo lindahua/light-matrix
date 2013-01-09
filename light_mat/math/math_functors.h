@@ -214,6 +214,7 @@ namespace lmat {
 		{ return cond(b, x, y); }
 	};
 
+	_LMAT_DECL_SIMDIZABLE_S( ftags::cond_, cond_fun )
 	LMAT_DEF_TRIVIAL_SIMDIZE_MAP( cond_fun )
 }
 

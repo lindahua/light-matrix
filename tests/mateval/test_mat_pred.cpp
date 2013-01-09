@@ -12,6 +12,8 @@
 #include <light_mat/mateval/mat_pred.h>
 #include <limits>
 
+#include <light_mat/mateval/map_expr_inspect.h>
+
 using namespace lmat;
 using namespace lmat::test;
 
@@ -155,10 +157,8 @@ void fill_ran(dense_matrix<double, M, N>& X)
 			bmat_t R1 = A op B; \
 			mmat_t Rm2 = Am op Bm; \
 			bmat_t R2 = to_bool(Rm2); \
-			mmat_t Rm3 = Am op B; \
-			bmat_t R3 = to_bool(Rm3); \
-			mmat_t Rm4 = A op Bm; \
-			bmat_t R4 = to_bool(Rm4); \
+			bmat_t R3 = Am op B; \
+			bmat_t R4 = A op Bm; \
 			ASSERT_TRUE( my_is_equal(R1, R_r) ); \
 			ASSERT_TRUE( my_is_equal(R2, R_r) ); \
 			ASSERT_TRUE( my_is_equal(R3, R_r) ); \
@@ -254,6 +254,7 @@ MN_CASE( mat_cond, cond_m )
 	const int pw = math::simd_traits<double, default_simd_kind>::pack_width;
 	ASSERT_TRUE( pmap::prefer_linear );
 	bool use_simd = ((M * N) % pw == 0);
+
 	ASSERT_EQ( pmap::prefer_simd, use_simd );
 
 	mat_t R1 = cond(A == B, X, Y);

@@ -251,20 +251,13 @@ namespace lmat
 		static const bool value = false;
 	};
 
-	template<typename Arg, int N,
-		typename T, typename Kind, bool IsLinear>
-	struct supports_simd<repcol_expr<Arg, N>, T, Kind, IsLinear>
-	{
-		static const bool value = supports_simd<Arg, T, Kind, true>::value;
-	};
+	template<typename Arg, int N, typename Kind, bool IsLinear>
+	struct supports_simd<repcol_expr<Arg, N>, Kind, IsLinear>
+	: public supports_simd<Arg, Kind, true> { };
 
-	template<typename Arg, int M,
-		typename T, typename Kind, bool IsLinear>
-	struct supports_simd<reprow_expr<Arg, M>, T, Kind, IsLinear>
-	{
-		static const bool value =
-				internal::are_simd_compatible_types<typename matrix_traits<Arg>::value_type, T>::value;
-	};
+	template<typename Arg, int M, typename Kind, bool IsLinear>
+	struct supports_simd<reprow_expr<Arg, M>, Kind, IsLinear>
+	: public supports_simd_access<typename matrix_traits<Arg>::value_type, Kind> { };
 
 
 	template<typename Arg, int N, class DMat>

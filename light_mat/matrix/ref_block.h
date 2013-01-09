@@ -35,7 +35,6 @@ namespace lmat
 		typedef cpu_domain domain;
 	};
 
-
 	template<typename T, int CTRows, int CTCols>
 	class cref_block : public regular_mat_base<cref_block<T, CTRows, CTCols>, T>
 	{
@@ -90,7 +89,6 @@ namespace lmat
 		typedef block_layout_cm<CTRows, CTCols> layout_type;
 		typedef cpu_domain domain;
 	};
-
 
 	template<typename T, int CTRows, int CTCols>
 	class ref_block : public regular_mat_base<ref_block<T, CTRows, CTCols>, T>
