@@ -122,8 +122,8 @@ void test_mapexpr_1()
 	smat1_t s1 = s1_h.get_cmat();
 	dmat_t d = d_h.get_mat();
 
-	typedef map_expr<sqr_, smat1_t> expr_t;
-	expr_t e = make_map_expr(sqr_(), s1);
+	typedef map_expr<ftags::sqr_, smat1_t> expr_t;
+	expr_t e = make_map_expr(ftags::sqr_(), s1);
 
 	ASSERT_EQ( e.nrows(), m );
 	ASSERT_EQ( e.ncolumns(), n );
@@ -176,8 +176,8 @@ void test_mapexpr_2()
 	smat2_t s2 = s2_h.get_cmat();
 	dmat_t d = d_h.get_mat();
 
-	typedef map_expr<sub_, smat1_t, smat2_t> expr_t;
-	expr_t e = make_map_expr(sub_(), s1, s2);
+	typedef map_expr<ftags::sub_, smat1_t, smat2_t> expr_t;
+	expr_t e = make_map_expr(ftags::sub_(), s1, s2);
 
 	ASSERT_EQ( e.nrows(), m );
 	ASSERT_EQ( e.ncolumns(), n );
@@ -207,7 +207,7 @@ void test_mapexpr_2()
 
 	double cv = 2.5;
 
-	d = make_map_expr_fix2(sub_(), s1, cv);
+	d = make_map_expr_fix2(ftags::sub_(), s1, cv);
 	for (index_t j = 0; j < n; ++j)
 	{
 		for (index_t i = 0; i < m; ++i)
@@ -215,7 +215,7 @@ void test_mapexpr_2()
 	}
 	ASSERT_MAT_APPROX(m, n, d, r, tol);
 
-	d = make_map_expr_fix1(sub_(), cv, s2);
+	d = make_map_expr_fix1(ftags::sub_(), cv, s2);
 	for (index_t j = 0; j < n; ++j)
 	{
 		for (index_t i = 0; i < m; ++i)
@@ -256,8 +256,8 @@ void test_mapexpr_3()
 	smat3_t s3 = s3_h.get_cmat();
 	dmat_t d = d_h.get_mat();
 
-	typedef map_expr<fma_, smat1_t, smat2_t, smat3_t> expr_t;
-	expr_t e = make_map_expr(fma_(), s1, s2, s3);
+	typedef map_expr<ftags::fma_, smat1_t, smat2_t, smat3_t> expr_t;
+	expr_t e = make_map_expr(ftags::fma_(), s1, s2, s3);
 
 	ASSERT_EQ( e.nrows(), m );
 	ASSERT_EQ( e.ncolumns(), n );
@@ -281,7 +281,7 @@ void test_mapexpr_3()
 	double v2 = 3.2;
 	double v3 = -1.8;
 
-	d = make_map_expr_fix1(fma_(), v1, s2, s3);
+	d = make_map_expr_fix1(ftags::fma_(), v1, s2, s3);
 	for (index_t j = 0; j < n; ++j)
 	{
 		for (index_t i = 0; i < m; ++i)
@@ -289,7 +289,7 @@ void test_mapexpr_3()
 	}
 	ASSERT_MAT_APPROX(m, n, d, r, tol);
 
-	d = make_map_expr_fix2(fma_(), s1, v2, s3);
+	d = make_map_expr_fix2(ftags::fma_(), s1, v2, s3);
 	for (index_t j = 0; j < n; ++j)
 	{
 		for (index_t i = 0; i < m; ++i)
@@ -297,7 +297,7 @@ void test_mapexpr_3()
 	}
 	ASSERT_MAT_APPROX(m, n, d, r, tol);
 
-	d = make_map_expr_fix3(fma_(), s1, s2, v3);
+	d = make_map_expr_fix3(ftags::fma_(), s1, s2, v3);
 	for (index_t j = 0; j < n; ++j)
 	{
 		for (index_t i = 0; i < m; ++i)
@@ -305,7 +305,7 @@ void test_mapexpr_3()
 	}
 	ASSERT_MAT_APPROX(m, n, d, r, tol);
 
-	d = make_map_expr_fix12(fma_(), v1, v2, s3);
+	d = make_map_expr_fix12(ftags::fma_(), v1, v2, s3);
 	for (index_t j = 0; j < n; ++j)
 	{
 		for (index_t i = 0; i < m; ++i)
@@ -313,7 +313,7 @@ void test_mapexpr_3()
 	}
 	ASSERT_MAT_APPROX(m, n, d, r, tol);
 
-	d = make_map_expr_fix13(fma_(), v1, s2, v3);
+	d = make_map_expr_fix13(ftags::fma_(), v1, s2, v3);
 	for (index_t j = 0; j < n; ++j)
 	{
 		for (index_t i = 0; i < m; ++i)
@@ -321,7 +321,7 @@ void test_mapexpr_3()
 	}
 	ASSERT_MAT_APPROX(m, n, d, r, tol);
 
-	d = make_map_expr_fix23(fma_(), s1, v2, v3);
+	d = make_map_expr_fix23(ftags::fma_(), s1, v2, v3);
 	for (index_t j = 0; j < n; ++j)
 	{
 		for (index_t i = 0; i < m; ++i)
@@ -452,20 +452,20 @@ MN_CASE( map_expr, compound_expr )
 	double cv = 2.5;
 
 	auto e = make_map_expr(
-			fma_(),
+			ftags::fma_(),
 			s1,
-			make_map_expr_fix2(sub_(), s2, cv),
-			make_map_expr(sqr_(), s3) );
+			make_map_expr_fix2(ftags::sub_(), s2, cv),
+			make_map_expr(ftags::sqr_(), s3) );
 
 	ASSERT_EQ( e.nrows(), m );
 	ASSERT_EQ( e.ncolumns(), n );
 	ASSERT_EQ( e.nelems(), m * n);
 
 	d = make_map_expr(
-			fma_(),
+			ftags::fma_(),
 			s1,
-			make_map_expr_fix2(sub_(), s2, cv),
-			make_map_expr(sqr_(), s3) );
+			make_map_expr_fix2(ftags::sub_(), s2, cv),
+			make_map_expr(ftags::sqr_(), s3) );
 
 	dense_matrix<double> r(m, n);
 	for (index_t j = 0; j < n; ++j)

@@ -207,7 +207,7 @@ MN_CASE( mat_cond, cond_b )
 	mat_t Y(m, n); fill_ran(Y);
 	double cv = X[0] + Y[0];
 
-	typedef map_expr<cond_, bmat_t, mat_t, mat_t> expr_t;
+	typedef map_expr<ftags::cond_, bmat_t, mat_t, mat_t> expr_t;
 	typedef preferred_macc_policy<expr_t> pmap;
 
 	ASSERT_TRUE( pmap::prefer_linear );
@@ -248,7 +248,7 @@ MN_CASE( mat_cond, cond_m )
 	mat_t Y(m, n); fill_ran(Y);
 	double cv = X[0] + Y[0];
 
-	typedef map_expr<cond_, map_expr<eq_, mat_t, mat_t>, mat_t, mat_t> expr_t;
+	typedef map_expr<ftags::cond_, map_expr<ftags::eq_, mat_t, mat_t>, mat_t, mat_t> expr_t;
 	typedef preferred_macc_policy<expr_t> pmap;
 
 	const int pw = math::simd_traits<double, default_simd_kind>::pack_width;

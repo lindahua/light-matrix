@@ -70,9 +70,12 @@ namespace lmat
 	 ********************************************/
 
 	template<class Folder, typename U>
-	class vecfold_kernel
+	class vecfold_kernel;
+
+	template<class Folder, typename Kind>
+	class vecfold_kernel<Folder, atags::simd<Kind> >
 	{
-		static_assert(is_simdizable<Folder>::value, "Folder should supports SIMD");
+		static_assert(is_simdizable<Folder, Kind>::value, "Folder should supports SIMD");
 
 	public:
 		typedef typename Folder::value_type value_type;
@@ -85,7 +88,7 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		value_type apply(dimension<N> dim, const Accessor& acc)
 		{
-			return internal::fold_impl(dim, U(), m_folder, acc);
+			return internal::fold_impl(dim, atags::simd<Kind>(), m_folder, acc);
 		}
 
 		template<typename Accessor>
@@ -99,14 +102,14 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		value_type operator() (dimension<N> dim, const Wrap& wrap)
 		{
-			return apply(dim, make_vec_accessor(U(), wrap));
+			return apply(dim, make_vec_accessor(atags::simd<Kind>(), wrap));
 		}
 
 		template<int N, typename Wrap>
 		LMAT_ENSURE_INLINE
 		value_type operator() (index_t len, const Wrap& wrap)
 		{
-			return apply(dimension<0>(len), make_vec_accessor(U(), wrap));
+			return apply(dimension<0>(len), make_vec_accessor(atags::simd<Kind>(), wrap));
 		}
 
 	private:

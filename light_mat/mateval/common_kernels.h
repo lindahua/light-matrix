@@ -62,10 +62,10 @@ namespace lmat
 		}
 	};
 
-	template<typename Fun>
-	struct is_simdizable<map_kernel<Fun> >
+	template<typename Fun, typename Kind>
+	struct is_simdizable<map_kernel<Fun>, Kind>
 	{
-		static const bool value = is_simdizable<Fun>::value;
+		static const bool value = is_simdizable<Fun, Kind>::value;
 	};
 
 	template<typename Fun, typename Kind>

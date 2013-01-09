@@ -37,10 +37,10 @@ namespace lmat {
 		}
 	};
 
-	template<class Folder>
-	struct is_simdizable<_parfold_kernel<Folder> >
+	template<class Folder, typename Kind>
+	struct is_simdizable<_parfold_kernel<Folder>, Kind>
 	{
-		static const bool value = is_simdizable<Folder>::value;
+		static const bool value = is_simdizable<Folder, Kind>::value;
 	};
 
 	template<class Folder, typename Kind>
@@ -74,7 +74,7 @@ namespace internal {
 		typedef default_simd_kind simd_kind;
 
 		static const bool use_simd =
-				is_simdizable<Folder>::value &&
+				is_simdizable<Folder, simd_kind>::value &&
 				supports_simd<TExpr, vtype, simd_kind, use_linear>::value;
 
 		typedef typename std::conditional<use_simd,
@@ -96,7 +96,7 @@ namespace internal {
 		typedef typename matrix_traits<TExpr>::value_type vtype;
 		typedef default_simd_kind simd_kind;
 
-		static const bool use_simd = is_simdizable<Folder>::value &&
+		static const bool use_simd = is_simdizable<Folder, simd_kind>::value &&
 			supports_simd<TExpr, vtype, simd_kind, false>::value;
 
 		typedef typename std::conditional<use_simd,
@@ -114,7 +114,7 @@ namespace internal {
 		typedef typename matrix_traits<TExpr>::value_type vtype;
 		typedef default_simd_kind simd_kind;
 
-		static const bool use_simd = is_simdizable<Folder>::value &&
+		static const bool use_simd = is_simdizable<Folder, simd_kind>::value &&
 			supports_simd<TExpr, vtype, simd_kind, false>::value;
 
 		typedef typename std::conditional<use_simd,

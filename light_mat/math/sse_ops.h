@@ -19,11 +19,11 @@
 
 
 #define LMAT_DEFINE_HAS_SSE_SUPPORT( FTag ) \
-	template<> struct meta::has_simd_support<FTag, float, sse_t> { static const bool value = true; }; \
-	template<> struct meta::has_simd_support<FTag, double, sse_t> { static const bool value = true; };
+	template<> struct has_simd_support<ftags::FTag, float, sse_t> : public true_ { }; \
+	template<> struct has_simd_support<ftags::FTag, double, sse_t> : public true_ { };
 
-namespace lmat
-{
+namespace lmat { namespace meta {
+
 	LMAT_DEFINE_HAS_SSE_SUPPORT( add_ )
 	LMAT_DEFINE_HAS_SSE_SUPPORT( sub_ )
 	LMAT_DEFINE_HAS_SSE_SUPPORT( mul_ )
@@ -65,7 +65,8 @@ namespace lmat
 	LMAT_DEFINE_HAS_SSE_SUPPORT( isfinite_ )
 	LMAT_DEFINE_HAS_SSE_SUPPORT( isinf_ )
 	LMAT_DEFINE_HAS_SSE_SUPPORT( isnan_ )
-}
+
+} }
 
 namespace lmat { namespace math {
 
