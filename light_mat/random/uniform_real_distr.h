@@ -21,21 +21,6 @@
 
 namespace lmat { namespace random {
 
-	// traits
-
-	template<typename T, typename Kind>
-	struct distr_supp_simd<std_uniform_real_distr<T>, Kind>
-	{
-		static const bool value = true;
-	};
-
-	template<typename T, typename Kind>
-	struct distr_supp_simd<uniform_real_distr<T>, Kind>
-	{
-		static const bool value = true;
-	};
-
-
 	// classes
 
 	template<typename T>
@@ -65,7 +50,7 @@ namespace lmat { namespace random {
 
 		template<class RStream>
 		LMAT_ENSURE_INLINE
-		T operator() (const RStream& rs)
+		T operator() (const RStream& rs) const
 		{
 			return internal::randbits_to_c1o2(rs.rand_u32()) - T(1);
 		}
@@ -106,7 +91,7 @@ namespace lmat { namespace random {
 
 		template<class RStream>
 		LMAT_ENSURE_INLINE
-		T operator() (const RStream& rs)
+		T operator() (const RStream& rs) const
 		{
 			return m_base + internal::randbits_to_c1o2(rs.rand_u64()) * m_span;
 		}

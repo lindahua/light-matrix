@@ -13,7 +13,7 @@
 #ifndef LIGHTMAT_UNIFORM_INT_DISTR_H_
 #define LIGHTMAT_UNIFORM_INT_DISTR_H_
 
-#include <light_mat/random/prng_fwd.h>
+#include <light_mat/random/distr_fwd.h>
 
 namespace lmat { namespace random {
 
@@ -111,6 +111,12 @@ namespace lmat { namespace random {
 		TI span() const { return m_span; }
 
 		LMAT_ENSURE_INLINE
+		double p(TI x) const
+		{
+			return is_nonneg_int(x) && x < m_span ? 1.0 / double(m_span) : 0.0;
+		}
+
+		LMAT_ENSURE_INLINE
 		double mean() const
 		{
 			return double(b()) * 0.5;
@@ -149,6 +155,12 @@ namespace lmat { namespace random {
 
 		LMAT_ENSURE_INLINE
 		TI b() const { return m_b; }
+
+		LMAT_ENSURE_INLINE
+		double p(TI x) const
+		{
+			return x >= m_a && x <= m_b ? 1.0 / double(m_span) : 0.0;
+		}
 
 		LMAT_ENSURE_INLINE
 		double mean() const

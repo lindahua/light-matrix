@@ -1,7 +1,7 @@
 /**
  * @file prng_fwd.h
  *
- * @brief Forward header for all Pseudo RNGs
+ * @brief Forward header for all distributions
  *
  * @author Dahua Lin
  */
@@ -10,19 +10,22 @@
 #pragma once
 #endif
 
-#ifndef LIGHTMAT_PRNG_FWD_H_
-#define LIGHTMAT_PRNG_FWD_H_
+#ifndef LIGHTMAT_DISTR_FWD_H_
+#define LIGHTMAT_DISTR_FWD_H_
 
 #include <light_mat/random/sfmt.h>
 #include <light_mat/math/math_base.h>
 #include <light_mat/math/functor_base.h>
+#include "internal/rint_helper.h"
 
 namespace lmat { namespace random {
 
+	using lmat::internal::is_nonneg_int;
+
 	// tags to indicate PRNG methods
 
+	struct naive_ { };
 	struct icdf_ { };
-	struct std_ { };
 	struct box_muller_ { };
 	struct marsaglia_ { };
 	struct ziggurat_ { };
@@ -36,12 +39,12 @@ namespace lmat { namespace random {
 	class std_bernoulli_distr;
 	class bernoulli_distr;
 
-	template<typename TI=uint32_t, typename Method=std_> class binomial_distr;
-	template<typename TI=uint32_t, typename Method=std_> class negative_binomial_distr;
-	template<typename TI=uint32_t, typename Method=std_> class geometric_distr;
-	template<typename TI=uint32_t, typename Method=std_> class poisson_distr;
+	template<typename TI=uint32_t, typename Method=naive_> class binomial_distr;
+	template<typename TI=uint32_t, typename Method=naive_> class geometric_distr;
+	template<typename TI=uint32_t, typename Method=naive_> class negative_binomial_distr;
+	template<typename TI=uint32_t, typename Method=naive_> class poisson_distr;
 
-	template<typename TI=uint32_t, typename Method=std_> class discrete_distr;
+	template<typename TI=uint32_t, typename Method=naive_> class discrete_distr;
 
 	// real-value distributions
 
@@ -54,8 +57,8 @@ namespace lmat { namespace random {
 	template<typename T=double> class std_exponential_distr;
 	template<typename T=double> class exponential_distr;
 
-	template<typename T=double, typename Method=std_> class std_gamma_distr;
-	template<typename T=double, typename Method=std_> class gamma_distr;
+	template<typename T=double, typename Method=naive_> class std_gamma_distr;
+	template<typename T=double, typename Method=naive_> class gamma_distr;
 
 	template<typename T=double, typename Method=icdf_> class std_lognormal_distr;
 	template<typename T=double, typename Method=icdf_> class lognormal_distr;

@@ -353,6 +353,17 @@ set(PRNG_HS_
     ${INC}/random/rand_stream.h
     ${INC}/random/stream_tracker.h
     ${INC}/random/sfmt.h)
+    
+set(DISTR_HS_
+    ${INC}/random/distr_fwd.h
+    ${INC}/random/internal/uniform_real_internal.h
+    ${INC}/random/uniform_int_distr.h
+    ${INC}/random/bernoulli_distr.h
+    ${INC}/random/binomial_distr.h
+    ${INC}/random/geometric_distr.h
+    ${INC}/random/discrete_distr.h
+    ${INC}/random/uniform_real_distr.h
+)
         
     
 #==========================================================
@@ -648,10 +659,20 @@ configure_file(random/data/sfmt/sfmt.044497.txt ${CMAKE_CURRENT_BINARY_DIR}/data
 configure_file(random/data/sfmt/sfmt.086243.txt ${CMAKE_CURRENT_BINARY_DIR}/data/sfmt/sfmt.086243.txt COPYONLY)
 configure_file(random/data/sfmt/sfmt.132049.txt ${CMAKE_CURRENT_BINARY_DIR}/data/sfmt/sfmt.132049.txt COPYONLY)
 configure_file(random/data/sfmt/sfmt.216091.txt ${CMAKE_CURRENT_BINARY_DIR}/data/sfmt/sfmt.216091.txt COPYONLY)
-    
+
+set(DISTR_TEST_HS
+    ${COMMON_HS}
+    ${MATH_HS_EX}
+    ${PRNG_HS_}
+    ${DISTR_HS_})
+
+add_executable(test_discrete_distrs ${DISTR_TEST_HS} random/test_discrete_distrs.cpp)
+     
 set(LMAT_RANDOM_TESTS
     test_stracker
-    test_sfmt)
+    test_sfmt
+    test_discrete_distrs)        
+    
     
 # all
 

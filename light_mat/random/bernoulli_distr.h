@@ -13,7 +13,7 @@
 #ifndef LIGHTMAT_BERNOULLI_DISTR_H_
 #define LIGHTMAT_BERNOULLI_DISTR_H_
 
-#include <light_mat/random/prng_fwd.h>
+#include <light_mat/random/distr_fwd.h>
 
 namespace lmat { namespace random {
 
