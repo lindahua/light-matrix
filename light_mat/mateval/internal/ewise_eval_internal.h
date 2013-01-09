@@ -45,7 +45,7 @@ namespace lmat { namespace internal {
 	inline void linear_ewise_eval(const dimension<N>& dim, atags::simd<SKind>,
 			const Kernel& kernel, const Accessors&... accessors)
 	{
-		static_assert(is_simdizable<Kernel>::value, "kernel must be simdizable.");
+		static_assert(is_simdizable<Kernel, SKind>::value, "kernel must be simdizable.");
 
 		typedef typename Kernel::value_type T;
 		const unsigned int W = math::simd_traits<T, SKind>::pack_width;

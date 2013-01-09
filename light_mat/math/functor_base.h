@@ -18,24 +18,52 @@
 
 namespace lmat {
 
-	template<typename Fun>
-	struct is_simdizable
-	{
-		static const bool value = false;
-	};
+	template<typename Fun, typename Kind>
+	struct is_simdizable : public meta::false_ { };
 
 	template<typename Fun, typename Kind>
 	struct simdize_map;
 
+	// generic result of predicates
+
+	template<typename T>
+	struct pred_result
+	{
+		typedef mask_t<T> type;
+	};
+
+	template<typename T>
+	struct pred_result<mask_t<T> >
+	{
+		typedef mask_t<T> type;
+	};
+
+	template<>
+	struct pred_result<bool>
+	{
+		typedef bool type;
+	};
+
+	template<typename T, typename Kind>
+	struct pred_result<math::simd_pack<T, Kind> >
+	{
+		typedef math::simd_bpack<T, Kind> type;
+	};
+
+	template<typename T, typename Kind>
+	struct pred_result<math::simd_bpack<T, Kind> >
+	{
+		typedef math::simd_bpack<T, Kind> type;
+	};
+
+
 }
 
 #define LMAT_DECL_SIMDIZABLE_ON_REAL(FunT) \
-		template<> \
-		struct is_simdizable<FunT<float> > \
-		{ static const bool value = true; }; \
-		template<> \
-		struct is_simdizable<FunT<double> > \
-		{ static const bool value = true; };
+		template<typename Kind> \
+		struct is_simdizable<FunT<float>, Kind> : public std::true_type { }; \
+		template<typename Kind> \
+		struct is_simdizable<FunT<double>, Kind> : public std::true_type { };
 
 #define LMAT_DEF_TRIVIAL_SIMDIZE_MAP(FunT) \
 		template<typename Kind> \

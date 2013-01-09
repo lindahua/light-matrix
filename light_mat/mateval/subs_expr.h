@@ -429,40 +429,22 @@ namespace lmat
 	 ********************************************/
 
 	template<typename T, int M, int N>
-	struct supports_linear_macc<inds_expr<T, M, N> >
-	{
-		static const bool value = true;
-	};
+	struct supports_linear_macc<inds_expr<T, M, N> > : public meta::true_ { };
 
 	template<typename T, int M, int N>
-	struct supports_linear_macc<subs_i_expr<T, M, N> >
-	{
-		static const bool value = false;
-	};
+	struct supports_linear_macc<subs_i_expr<T, M, N> > : public meta::false_ { };
 
 	template<typename T, int M, int N>
-	struct supports_linear_macc<subs_j_expr<T, M, N> >
-	{
-		static const bool value = false;
-	};
+	struct supports_linear_macc<subs_j_expr<T, M, N> > : public meta::false_ { };
 
-	template<typename VT, int M, int N, typename T, typename Kind, bool IsLinear>
-	struct supports_simd<inds_expr<VT, M, N>, T, Kind, IsLinear>
-	{
-		static const bool value = false;
-	};
+	template<typename VT, int M, int N, typename Kind, bool IsLinear>
+	struct supports_simd<inds_expr<VT, M, N>, Kind, IsLinear> : public meta::false_ { };
 
-	template<typename VT, int M, int N, typename T, typename Kind, bool IsLinear>
-	struct supports_simd<subs_i_expr<VT, M, N>, T, Kind, IsLinear>
-	{
-		static const bool value = false;
-	};
+	template<typename VT, int M, int N, typename Kind, bool IsLinear>
+	struct supports_simd<subs_i_expr<VT, M, N>, Kind, IsLinear> : public meta::false_ { };
 
-	template<typename VT, int M, int N, typename T, typename Kind, bool IsLinear>
-	struct supports_simd<subs_j_expr<VT, M, N>, T, Kind, IsLinear>
-	{
-		static const bool value = false;
-	};
+	template<typename VT, int M, int N, typename Kind, bool IsLinear>
+	struct supports_simd<subs_j_expr<VT, M, N>, Kind, IsLinear> : public meta::false_ { };
 
 
 	template<typename T, int M, int N, class DMat>

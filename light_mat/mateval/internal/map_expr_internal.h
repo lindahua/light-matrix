@@ -41,37 +41,16 @@ namespace lmat { namespace internal {
 		typedef Arg type;
 	};
 
-
 	template<typename Arg>
 	struct arg_value_type
 	{
 		typedef typename _arg_value_type<Arg, meta::is_mat_xpr<Arg>::value>::type type;
 	};
 
-	template<typename FTag, typename... Args> struct map_expr_value;
-
-	template<typename FTag, typename Arg1>
-	struct map_expr_value<FTag, Arg1>
+	template<typename FTag, typename... Arg>
+	struct map_expr_value
 	{
-		typedef typename matrix_traits<Arg1>::value_type arg1_vtype;
-		typedef typename fun_traits<FTag, arg1_vtype>::result_type type;
-	};
-
-	template<typename FTag, typename Arg1, typename Arg2>
-	struct map_expr_value<FTag, Arg1, Arg2>
-	{
-		typedef typename arg_value_type<Arg1>::type arg1_vtype;
-		typedef typename arg_value_type<Arg2>::type arg2_vtype;
-		typedef typename fun_traits<FTag, arg1_vtype, arg2_vtype>::result_type type;
-	};
-
-	template<typename FTag, typename Arg1, typename Arg2, typename Arg3>
-	struct map_expr_value<FTag, Arg1, Arg2, Arg3>
-	{
-		typedef typename arg_value_type<Arg1>::type arg1_vtype;
-		typedef typename arg_value_type<Arg2>::type arg2_vtype;
-		typedef typename arg_value_type<Arg3>::type arg3_vtype;
-		typedef typename fun_traits<FTag, arg1_vtype, arg2_vtype, arg3_vtype>::result_type type;
+		typedef typename fun_result<FTag, typename arg_value_type<Arg>::type...>::type type;
 	};
 
 
@@ -405,16 +384,16 @@ namespace lmat { namespace internal {
 		static const bool value = supports_linear_macc<Arg>::value;
 	};
 
-	template<typename Arg, bool IsXpr, typename T, typename Kind, bool IsLinear>
+	template<typename Arg, typename Kind, bool IsLinear, bool IsXpr>
 	struct _arg_supp_simd
 	{
-		static const bool value = are_simd_compatible_types<Arg, T>::value;
+		static const bool value = supports_simd_access<Arg, Kind>::value;
 	};
 
-	template<typename Arg, typename T, typename Kind, bool IsLinear>
-	struct _arg_supp_simd<Arg, true, T, Kind, IsLinear>
+	template<typename Arg, typename Kind, bool IsLinear>
+	struct _arg_supp_simd<Arg, Kind, IsLinear, true>
 	{
-		static const bool value = supports_simd<Arg, T, Kind, IsLinear>::value;
+		static const bool value = supports_simd<Arg, Kind, IsLinear>::value;
 	};
 
 
@@ -424,11 +403,11 @@ namespace lmat { namespace internal {
 		static const bool value = _arg_supp_linear<Arg, meta::is_mat_xpr<Arg>::value>::value;
 	};
 
-	template<typename Arg, typename T, typename Kind, bool IsLinear>
+	template<typename Arg, typename Kind, bool IsLinear>
 	struct arg_supp_simd
 	{
 		static const bool value =
-				_arg_supp_simd<Arg, meta::is_mat_xpr<Arg>::value, T, Kind, IsLinear>::value;
+				_arg_supp_simd<Arg, Kind, IsLinear, meta::is_mat_xpr<Arg>::value>::value;
 	};
 
 

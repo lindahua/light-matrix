@@ -235,7 +235,8 @@ set(MATRIX_CLASS_HS_
     ${INC}/matrix/ref_grid.h
     ${INC}/matrix/step_vecs.h
     ${INC}/matrix/dense_mutable_view.h
-    ${INC}/matrix/matrix_classes.h)
+    ${INC}/matrix/matrix_classes.h
+    ${INC}/matrix/matrix_inspect.h)
     
 set(MATRIX_MANIP_HS_
     ${INC}/matrix/internal/matrix_transpose_internal.h
@@ -270,6 +271,7 @@ set(MAP_EXPR_HS_
     ${INC}/mateval/internal/map_expr_internal.h
     ${INC}/mateval/map_accessors.h
     ${INC}/mateval/map_expr.h
+    ${INC}/mateval/map_expr_inspect.h
     ${INC}/mateval/mat_arith.h
     ${INC}/mateval/mat_emath.h
     ${INC}/mateval/mat_cast.h
@@ -508,7 +510,8 @@ set(LMAT_MATRIX_TESTS
 	test_mat_asvec
 	test_mat_select
 	test_direct_trans
-	test_transpose_expr)
+	test_transpose_expr
+	)
 
 # matrix evaluation module
 
@@ -588,7 +591,8 @@ set(LMAT_MATEVAL_TESTS
 	test_mat_compare
 	test_mat_find
 	test_mat_sort
-	test_cpd_ewise)
+	test_cpd_ewise
+)
 
 
 # linear algebra module
@@ -680,7 +684,8 @@ if (SVML_PATH)
 set(TESTS_USING_SVML
     test_sse_math_svml
     test_mat_emath
-    test_cpd_ewise)
+    test_cpd_ewise
+    )
     
 if (ALLOW_AVX)
 set(TESTS_USING_SVML

@@ -142,7 +142,7 @@ namespace lmat { namespace random {
 	    for (unsigned int i = 1; i < param_t::N32; i++)
 		{
 			psfmt32[LMAT_SFMT_IDXOF(i)] =
-				1812433253UL * (psfmt32[LMAT_SFMT_IDXOF(i - 1)]
+				1812433253U * (psfmt32[LMAT_SFMT_IDXOF(i - 1)]
 				^ (psfmt32[LMAT_SFMT_IDXOF(i - 1)] >> 30)) + i;
 	    }
 

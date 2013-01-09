@@ -215,7 +215,7 @@ namespace lmat
 
 	template<class S, typename T, class L, typename TI>
 	LMAT_ENSURE_INLINE
-	inline typename meta::enable_if<meta::supports_linear_index<S>,
+	inline typename meta::enable_if_<meta::supports_linear_index<S>,
 	selectl_expr<S, L> >::type
 	selectl(const IRegularMatrix<S, T>& s, const IRegularMatrix<L, TI>& idx)
 	{
@@ -224,7 +224,7 @@ namespace lmat
 
 	template<class S, typename T, class I, typename TI, class J, typename TJ>
 	LMAT_ENSURE_INLINE
-	inline typename meta::enable_if<meta::supports_linear_index<S>,
+	inline typename meta::enable_if_<meta::supports_linear_index<S>,
 	selectl2_expr<S, I, J> >::type
 	selectl(const IRegularMatrix<S, T>& s, const IRegularMatrix<I, TI>& si, const IRegularMatrix<J, TJ>& sj)
 	{
@@ -393,7 +393,7 @@ namespace lmat
 
 	template<class S, typename T, class I, typename TI, class J, typename TJ>
 	LMAT_ENSURE_INLINE
-	inline typename meta::enable_if<
+	inline typename meta::enable_if_<
 		meta::and_<meta::supports_linear_index<I>, meta::supports_linear_index<J> >,
 	select_expr<S, I, J> >::type
 	select(const IRegularMatrix<S, T>& s, const IRegularMatrix<I, TI>& si, const IRegularMatrix<J, TJ>& sj)
@@ -481,7 +481,7 @@ namespace lmat
 
 	template<class S, typename T, class I, typename TI>
 	LMAT_ENSURE_INLINE
-	inline typename meta::enable_if<meta::supports_linear_index<I>,
+	inline typename meta::enable_if_<meta::supports_linear_index<I>,
 	select_rows_expr<S, I> >::type
 	select_rows(const IRegularMatrix<S, T>& s, const IRegularMatrix<I, TI>& si)
 	{
@@ -561,7 +561,7 @@ namespace lmat
 
 	template<class S, typename T, class J, typename TJ>
 	LMAT_ENSURE_INLINE
-	inline typename meta::enable_if<meta::supports_linear_index<J>,
+	inline typename meta::enable_if_<meta::supports_linear_index<J>,
 	select_cols_expr<S, J> >::type
 	select_cols(const IRegularMatrix<S, T>& s, const IRegularMatrix<J, TJ>& sj)
 	{

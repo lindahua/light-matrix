@@ -34,12 +34,6 @@ namespace lmat
 	struct cast_ { };
 
 	template<typename S, typename T>
-	struct fun_traits<cast_<T>, S>
-	{
-		typedef T result_type;
-	};
-
-	template<typename S, typename T>
 	struct cast_fun
 	{
 		typedef T result_type;

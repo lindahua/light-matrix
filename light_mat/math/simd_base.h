@@ -56,26 +56,14 @@ namespace lmat {
 	namespace meta
 	{
 		template<typename A>
-		struct is_simd_kind
-		{
-			static const bool value = false;
-		};
+		struct is_simd_kind : public false_ { };
 
-		template<> struct is_simd_kind<sse_t>
-		{
-			static const bool value = true;
-		};
+		template<> struct is_simd_kind<sse_t> : public true_ { };
 
-		template<> struct is_simd_kind<avx_t>
-		{
-			static const bool value = true;
-		};
+		template<> struct is_simd_kind<avx_t> : public true_ { };
 
 		template<typename FTag, typename T, typename Kind>
-		struct has_simd_support
-		{
-			static const bool value = false;
-		};
+		struct has_simd_support : public false_ { };
 	}
 
 

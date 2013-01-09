@@ -23,7 +23,7 @@ namespace lmat { namespace internal {
 	{
 		index_t intv;
 
-		if (meta::is_continuous<Mat>::value)
+		if (meta::is_contiguous<Mat>::value)
 		{
 			intv = 1;
 		}

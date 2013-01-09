@@ -43,27 +43,19 @@ MN_CASE( mat_ct_props, layout )
 	bool bloc_is_pc_continuous = true;
 	bool grid_is_pc_continuous = M == 1;
 
-	ASSERT_CT_VALUE( meta::is_continuous<dens_t>, cont_is_continuous );
-	ASSERT_CT_VALUE( meta::is_continuous<cont_t>, cont_is_continuous );
-	ASSERT_CT_VALUE( meta::is_continuous<bloc_t>, bloc_is_continuous );
-	ASSERT_CT_VALUE( meta::is_continuous<grid_t>, grid_is_continuous );
+	ASSERT_CT_VALUE( meta::is_contiguous<dens_t>, cont_is_continuous );
+	ASSERT_CT_VALUE( meta::is_contiguous<cont_t>, cont_is_continuous );
+	ASSERT_CT_VALUE( meta::is_contiguous<bloc_t>, bloc_is_continuous );
+	ASSERT_CT_VALUE( meta::is_contiguous<grid_t>, grid_is_continuous );
 
-	ASSERT_CT_VALUE( meta::is_percol_continuous<dens_t>, cont_is_pc_continuous );
-	ASSERT_CT_VALUE( meta::is_percol_continuous<cont_t>, cont_is_pc_continuous );
-	ASSERT_CT_VALUE( meta::is_percol_continuous<bloc_t>, bloc_is_pc_continuous );
-	ASSERT_CT_VALUE( meta::is_percol_continuous<grid_t>, grid_is_pc_continuous );
+	ASSERT_CT_VALUE( meta::is_percol_contiguous<dens_t>, cont_is_pc_continuous );
+	ASSERT_CT_VALUE( meta::is_percol_contiguous<cont_t>, cont_is_pc_continuous );
+	ASSERT_CT_VALUE( meta::is_percol_contiguous<bloc_t>, bloc_is_pc_continuous );
+	ASSERT_CT_VALUE( meta::is_percol_contiguous<grid_t>, grid_is_pc_continuous );
 }
 
 
 // compatible rows
-
-template<int M>
-struct unary_compatible_nrows
-{
-	typedef dense_matrix<double, M, 1> A1;
-
-	static const bool value = meta::have_compatible_nrows<A1>::value;
-};
 
 template<int M, int N>
 struct binary_compatible_nrows
@@ -115,12 +107,6 @@ struct ternary_common_nrows
 
 SIMPLE_CASE( mat_common_props, nrows_compat )
 {
-	typedef unary_compatible_nrows<0> t0;
-	ASSERT_CT_VALUE( t0, true );
-
-	typedef unary_compatible_nrows<3> t3;
-	ASSERT_CT_VALUE( t3, true );
-
 	typedef binary_compatible_nrows<0, 3> t00;
 	ASSERT_CT_VALUE( t00,  true );
 
@@ -219,14 +205,6 @@ SIMPLE_CASE( mat_common_props, nrows )
 
 // compatible cols
 
-template<int M>
-struct unary_compatible_ncols
-{
-	typedef dense_matrix<double, 1, M> A1;
-
-	static const bool value = meta::have_compatible_ncols<A1>::value;
-};
-
 template<int M, int N>
 struct binary_compatible_ncols
 {
@@ -278,12 +256,6 @@ struct ternary_common_ncols
 
 SIMPLE_CASE( mat_common_props, ncols_compat )
 {
-	typedef unary_compatible_ncols<0> t0;
-	ASSERT_CT_VALUE( t0, true );
-
-	typedef unary_compatible_ncols<3> t3;
-	ASSERT_CT_VALUE( t3, true );
-
 	typedef binary_compatible_ncols<0, 3> t00;
 	ASSERT_CT_VALUE( t00,  true );
 

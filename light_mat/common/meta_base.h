@@ -20,117 +20,103 @@ namespace lmat {  namespace meta {
 
 	/********************************************
 	 *
-	 *  Compile-time evaluation
+	 *  Meta functions
 	 *
 	 ********************************************/
 
-	// type function
+	// basic meta types
 
 	template<typename T>
-	struct id_
+	struct type_
 	{
 		typedef T type;
 	};
 
+	typedef std::true_type true_;
+	typedef std::false_type false_;
+
+	template<bool B>
+	struct bool_ : public std::integral_constant<bool, B> { };
+
+	template<int I>
+	struct int_ : public std::integral_constant<int, I> { };
+
+	template<typename W>
+	struct id_
+	{
+		typedef typename W::type type;
+	};
+
+	// integer arithmetics
+
+	template<typename W1, typename W2>
+	struct add_ : public int_<W1::value + W2::value> { };
+
+	template<typename W1, typename W2>
+	struct sub_ : public int_<W1::value - W2::value> { };
+
+	template<typename W1, typename W2>
+	struct mul_ : public int_<W1::value * W2::value> { };
+
+	template<typename W1, typename W2>
+	struct max_ : public int_<(W1::value > W2::value) ? W1::value : W2::value> { };
+
+	template<typename W1, typename W2>
+	struct min_ : public int_<(W1::value < W2::value) ? W1::value : W2::value> { };
+
 	// logical operations
 
-	template<typename CondT>
-	struct not_
+	// specific treatment to achieve short-circuit effect for and_ | or_
+
+	namespace internal
 	{
-		static const bool value = !CondT::value;
-	};
+		template<bool L, typename R> struct _and_;
 
-	template<typename CondT1, typename CondT2>
-	struct and_
-	{
-		static const bool value = CondT1::value && CondT2::value;
-	};
+		template<typename R>
+		struct _and_<true, R> : public R { };
 
-	template<typename CondT1, typename CondT2>
-	struct or_
-	{
-		static const bool value = CondT1::value || CondT2::value;
-	};
+		template<typename R>
+		struct _and_<false, R> : public false_ { };
 
-	template<typename CondT1, typename CondT2>
-	struct xor_
-	{
-		static const bool value =
-				(CondT1::value && !CondT2::value) ||
-				(CondT2::value && !CondT1::value);
-	};
+		template<bool L, typename R> struct _or_;
+
+		template<typename R>
+		struct _or_<true, R> : public true_ { };
+
+		template<typename R>
+		struct _or_<false, R> : public R { };
+	}
 
 
-	// arithmetic calculations on integer
+	template<typename W>
+	struct not_ : public bool_<!W::value> { };
 
-	template<typename ValT1, typename ValT2>
-	struct add_
-	{
-		static const int value = ValT1::value + ValT2::value;
-	};
+	template<typename W1, typename W2>
+	struct and_ : public internal::_and_<W1::value, W2> { };
 
-	template<typename ValT1, typename ValT2>
-	struct sub_
-	{
-		static const int value = ValT1::value - ValT2::value;
-	};
-
-	template<typename ValT1, typename ValT2>
-	struct mul_
-	{
-		static const int value = ValT1::value * ValT2::value;
-	};
-
-	template<typename ValT1, typename ValT2>
-	struct max_
-	{
-		static const int value = (ValT1::value > ValT2::value ? ValT1::value : ValT2::value);
-	};
-
-	template<typename ValT1, typename ValT2>
-	struct min_
-	{
-		static const int value = (ValT1::value < ValT2::value ? ValT1::value : ValT2::value);
-	};
+	template<typename W1, typename W2>
+	struct or_ : public internal::_or_<W1::value, W2> { };
 
 
 	// comparison operations
 
-	template<typename ValT1, typename ValT2>
-	struct eq_
-	{
-		static const bool value = ValT1::value == ValT2::value;
-	};
+	template<typename W1, typename W2>
+	struct eq_ : public bool_<W1::value == W2::value> { };
 
-	template<typename ValT1, typename ValT2>
-	struct ne_
-	{
-		static const bool value = ValT1::value != ValT2::value;
-	};
+	template<typename W1, typename W2>
+	struct ne_ : public bool_<W1::value != W2::value> { };
 
-	template<typename ValT1, typename ValT2>
-	struct gt_
-	{
-		static const bool value = ValT1::value > ValT2::value;
-	};
+	template<typename W1, typename W2>
+	struct ge_ : public bool_<(W1::value >= W2::value)> { };
 
-	template<typename ValT1, typename ValT2>
-	struct ge_
-	{
-		static const bool value = ValT1::value >= ValT2::value;
-	};
+	template<typename W1, typename W2>
+	struct gt_ : public bool_<(W1::value > W2::value)> { };
 
-	template<typename ValT1, typename ValT2>
-	struct lt_
-	{
-		static const bool value = ValT1::value < ValT2::value;
-	};
+	template<typename W1, typename W2>
+	struct le_ : public bool_<(W1::value <= W2::value)> { };
 
-	template<typename ValT1, typename ValT2>
-	struct le_
-	{
-		static const bool value = ValT1::value <= ValT2::value;
-	};
+	template<typename W1, typename W2>
+	struct lt_ : public bool_<(W1::value < W2::value)> { };
 
 
 	/********************************************
@@ -139,140 +125,109 @@ namespace lmat {  namespace meta {
 	 *
 	 ********************************************/
 
-	// meta if statement
+	template<typename Cond, typename T_true, typename T_false>
+	struct if_ : public std::conditional<Cond::value, T_true, T_false> { };
 
-	template<bool Cond, typename Ttrue, typename Tfalse>
-	struct if_c;
+	template<typename Cond, typename T=void>
+	struct enable_if_ : public std::enable_if<Cond::value, T> { };
 
-	template<typename Ttrue, typename Tfalse>
-	struct if_c<true, Ttrue, Tfalse>
+	typedef true_ otherwise_;
+
+	template<
+		typename C1, typename T1,
+		typename C2=otherwise_, typename T2=void,
+		typename C3=otherwise_, typename T3=void,
+		typename C4=otherwise_, typename T4=void,
+		typename C5=otherwise_, typename T5=void,
+		typename C6=otherwise_, typename T6=void>
+	struct select_
 	{
-		typedef Ttrue type;
+		typedef
+			typename std::conditional<C1::value, T1,
+			typename std::conditional<C2::value, T2,
+			typename std::conditional<C3::value, T3,
+			typename std::conditional<C4::value, T4,
+			typename std::conditional<C5::value, T5,
+			typename std::conditional<C6::value, T6, void
+			>::type >::type >::type >::type >::type >::type
+			type;
 	};
 
-	template<typename Ttrue, typename Tfalse>
-	struct if_c<false, Ttrue, Tfalse>
-	{
-		typedef Tfalse type;
-	};
-
-	template<typename CondT, typename Ttrue, typename Tfalse>
-	struct if_
-	{
-		typedef typename if_c<CondT::value, Ttrue, Tfalse>::type type;
-	};
-
-	// enable_if
-
-	template<bool Cond, typename T>
-	struct enable_if_c;
+	template<typename... T> struct common_;
 
 	template<typename T>
-	struct enable_if_c<true, T>
+	struct common_<T>
 	{
 		typedef T type;
 	};
 
 	template<typename T>
-	struct enable_if_c<false, T> { };
-
-	template<typename CondT, typename T>
-	struct enable_if
-	{
-		typedef typename enable_if_c<CondT::value, T>::type type;
-	};
-
-	template<bool Cond, int Val>
-	struct enable_int_if_c;
-
-	template<int Val>
-	struct enable_int_if_c<true, Val>
-	{
-		static const int value = Val;
-	};
-
-	template<int Val>
-	struct enable_int_if_c<false, Val> { };
-
-	template<typename CondT, int Val>
-	struct enable_int_if
-	{
-		static const int value = enable_int_if_c<CondT::value, Val>::value;
-	};
-
-
-	/********************************************
-	 *
-	 *  common type
-	 *
-	 ********************************************/
-
-	template<typename... T> struct common_type;
-
-	template<typename T>
-	struct common_type<T>
+	struct common_<T, T>
 	{
 		typedef T type;
+	};
+
+	template<typename T1, typename T2>
+	struct common_<T1, T2>
+	{
+		static_assert(std::is_same<T1, T2>::value,
+			"T1 and T2 must be the same type");
 	};
 
 	template<typename T0, typename... T>
-	struct common_type<T0, T ...>
+	struct common_<T0, T...>
 	{
 		typedef typename
-				enable_if<std::is_same<T0, typename common_type<T...>::type>,
-				T0>::type type;
+				common_<T0, typename common_<T...>::type >::type type;
 	};
 
 
 	/********************************************
 	 *
-	 *  all / any
+	 *  folding
 	 *
 	 ********************************************/
 
-	template<typename... Cond> struct all_;
-	template<typename... Cond> struct any_;
+	template<template<typename U1, typename U2> class BOp, typename... W> struct fold_;
 
-	template<>
-	struct all_<>
-	{
-		static const bool value = true;
-	};
+	template<template<typename U1, typename U2> class BOp, typename W>
+	struct fold_<BOp, W> : public W { };
 
-	template<typename C>
-	struct all_<C>
-	{
-		static const bool value = C::value;
-	};
+	template<template<typename U1, typename U2> class BOp, typename W1, typename W2>
+	struct fold_<BOp, W1, W2> : public BOp<W1, W2> { };
 
-	template<typename C, typename... R>
-	struct all_<C, R...>
-	{
-		static const bool value = C::value && all_<R...>::value;
-	};
+	template<template<typename U1, typename U2> class BOp, typename W1, typename W2, typename... WR>
+	struct fold_<BOp, W1, W2, WR...> : public BOp<BOp<W1, W2>, fold_<BOp, WR...> > { };
 
 
-	template<>
-	struct any_<>
-	{
-		static const bool value = false;
-	};
+	template<typename... W> struct all_ : public fold_<and_, W...> { };
 
-	template<typename C>
-	struct any_<C>
-	{
-		static const bool value = C::value;
-	};
+	template<typename... W> struct any_ : public fold_<or_, W...> { };
 
-	template<typename C, typename... R>
-	struct any_<C, R...>
-	{
-		static const bool value = C::value || any_<R...>::value;
-	};
+	template<typename... W> struct sum_ : public fold_<add_, W...> { };
 
+	template<typename... W> struct prod_ : public fold_<mul_, W...> { };
 
+	template<typename... W> struct maximum_ : public fold_<max_, W...> { };
+
+	template<typename... W> struct minimum_ : public fold_<min_, W...> { };
 
 } } // lmat::meta
+
+
+namespace lmat
+{
+	// import of some common meta types to lmat namespace
+
+	using meta::type_;
+
+	using meta::int_;
+
+	using meta::bool_;
+	using meta::true_;
+	using meta::false_;
+
+}
 
 
 #endif

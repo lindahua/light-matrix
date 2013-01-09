@@ -44,8 +44,8 @@ MN_CASE( mat_zip, zip_pair_aa )
 
 	ASSERT_MAT_EQ( m, n, t, r );
 
-	dense_matrix<double, M, N> e0  = zip_e(t, fix_int<0>());
-	dense_matrix<int32_t, M, N> e1 = zip_e(t, fix_int<1>());
+	dense_matrix<double, M, N> e0  = zip_e(t, int_<0>());
+	dense_matrix<int32_t, M, N> e1 = zip_e(t, int_<1>());
 
 	ASSERT_EQ( e0.nrows(), m );
 	ASSERT_EQ( e0.ncolumns(), n );

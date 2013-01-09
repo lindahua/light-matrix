@@ -42,14 +42,6 @@ namespace lmat
 {
 	struct nil_t { };
 
-	template<int I>
-	struct fix_int : std::integral_constant<int, I> { };
-
-	using std::true_type;
-	using std::false_type;
-
-	template<typename T> struct type_{ };
-
 	// primitive types
 
 	using std::int8_t;

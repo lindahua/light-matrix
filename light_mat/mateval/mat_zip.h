@@ -27,12 +27,6 @@ namespace lmat
 	struct zip_pair_ { };
 
 	template<typename T1, typename T2>
-	struct fun_traits<zip_pair_, T1, T2>
-	{
-		typedef std::pair<T1, T2> result_type;
-	};
-
-	template<typename T1, typename T2>
 	struct zip_fun
 	{
 		typedef std::pair<T1, T2> result_type;
@@ -84,12 +78,6 @@ namespace lmat
 	template<int I> struct zip_e_ { };
 
 	template<int I, typename T>
-	struct fun_traits<zip_e_<I>, T>
-	{
-		typedef typename std::tuple_element<(size_t)I, T>::type result_type;
-	};
-
-	template<int I, typename T>
 	struct zip_e_fun
 	{
 		typedef typename std::tuple_element<(size_t)I, T>::type result_type;
@@ -110,7 +98,7 @@ namespace lmat
 	template<typename A, typename T, int I>
 	LMAT_ENSURE_INLINE
 	inline map_expr<zip_e_<I>, A>
-	zip_e(const IEWiseMatrix<A, T>& a, fix_int<I>)
+	zip_e(const IEWiseMatrix<A, T>& a, int_<I>)
 	{
 		return make_map_expr(zip_e_<I>(), a);
 	}

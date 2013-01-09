@@ -449,12 +449,15 @@ namespace lmat
 				meta::all_<internal::arg_supp_linear<Args>...>::value;
 	};
 
-	template<typename FTag, typename T, typename Kind, bool IsLinear, typename... Args>
-	struct supports_simd<map_expr<FTag, Args...>, T, Kind, IsLinear>
+	template<typename FTag, typename Kind, bool IsLinear, typename... Args>
+	struct supports_simd<map_expr<FTag, Args...>, Kind, IsLinear>
 	{
+		typedef typename fun_map<FTag,
+				typename internal::arg_value_type<Args>::type...>::type fun_t;
+
 		static const bool value =
-				meta::has_simd_support<FTag, T, Kind>::value &&
-				meta::all_<internal::arg_supp_simd<Args, T, Kind, IsLinear>...>::value;
+				is_simdizable<fun_t, Kind>::value &&
+				meta::all_<internal::arg_supp_simd<Args, Kind, IsLinear>...>::value;
 	};
 
 	template<typename FTag, typename... Args, class DMat>

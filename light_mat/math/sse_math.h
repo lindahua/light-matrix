@@ -177,8 +177,7 @@ extern "C"
 		return LMAT_SSE_D(Name)(a, b); }
 
 
-namespace lmat
-{
+namespace lmat { namespace meta {
 #ifdef LMAT_HAS_EXTERN_SSE_POW
 	LMAT_DEFINE_HAS_SSE_SUPPORT( pow_ )
 #endif
@@ -247,7 +246,7 @@ namespace lmat
 #endif
 
 #endif // has C++ 11 math
-}
+} }
 
 
 namespace lmat { namespace math {

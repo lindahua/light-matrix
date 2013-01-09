@@ -18,169 +18,105 @@
 
 // macros to declare fun tags
 
-#define LMAT_DEFINE_GENERIC_FUNTAG_1( Tag ) \
-	struct Tag { }; \
-	template<typename T> \
-	struct fun_traits<Tag, T> { typedef T result_type; };
 
-#define LMAT_DEFINE_GENERIC_FUNTAG_2( Tag ) \
-	struct Tag { }; \
-	template<typename T> \
-	struct fun_traits<Tag, T, T> { typedef T result_type; };
+namespace lmat { namespace ftags {
 
-#define LMAT_DEFINE_GENERIC_FUNTAG_3( Tag ) \
-	struct Tag { }; \
-	template<typename T> \
-	struct fun_traits<Tag, T, T, T> { typedef T result_type; };
-
-#define LMAT_DEFINE_COMPARISON_FUNTAG( Tag ) \
-	struct Tag { }; \
-	template<typename T> \
-	struct fun_traits<Tag, T, T> { typedef mask_t<T> result_type; };
-
-#define LMAT_DEFINE_REAL_FUNTAG_1( Tag ) \
-	struct Tag { }; \
-	template<> struct fun_traits<Tag, float> { typedef float result_type; }; \
-	template<> struct fun_traits<Tag, double> { typedef double result_type; };
-
-#define LMAT_DEFINE_REAL_FUNTAG_2( Tag ) \
-	struct Tag { }; \
-	template<> struct fun_traits<Tag, float, float> { typedef float result_type; }; \
-	template<> struct fun_traits<Tag, double, double> { typedef double result_type; };
-
-#define LMAT_DEFINE_REAL_FUNTAG_3( Tag ) \
-	struct Tag { }; \
-	template<> struct fun_traits<Tag, float, float, float> { typedef float result_type; }; \
-	template<> struct fun_traits<Tag, double, double, double> { typedef double result_type; };
-
-#define LMAT_DEFINE_LOGICAL_FUNTAG_1( Tag ) \
-	struct Tag { }; \
-	template<typename T> \
-	struct fun_traits<Tag, mask_t<T> > { typedef mask_t<T> result_type; }; \
-	template<> \
-	struct fun_traits<Tag, bool > { typedef bool result_type; };
-
-#define LMAT_DEFINE_LOGICAL_FUNTAG_2( Tag ) \
-	struct Tag { }; \
-	template<typename T> \
-	struct fun_traits<Tag, mask_t<T>, mask_t<T> > { typedef mask_t<T> result_type; }; \
-	template<typename T> \
-	struct fun_traits<Tag, mask_t<T>, bool > { typedef mask_t<T> result_type; }; \
-	template<typename T> \
-	struct fun_traits<Tag, bool, mask_t<T> > { typedef mask_t<T> result_type; }; \
-	template<> \
-	struct fun_traits<Tag, bool, bool > { typedef bool result_type; };
-
-#define LMAT_DEFINE_REALPRED_FUNTAG_1( Tag ) \
-	struct Tag { }; \
-	template<> struct fun_traits<Tag, float> { typedef mask_t<float> result_type; }; \
-	template<> struct fun_traits<Tag, double> { typedef mask_t<double> result_type; };
-
-
-namespace lmat {
-
-	template<typename Tag, typename... T>
-	struct fun_traits;
 
 	// arithmetic
 
-	LMAT_DEFINE_GENERIC_FUNTAG_2( add_ )
-	LMAT_DEFINE_GENERIC_FUNTAG_2( sub_ )
-	LMAT_DEFINE_GENERIC_FUNTAG_2( mul_ )
-	LMAT_DEFINE_GENERIC_FUNTAG_2( div_ )
-	LMAT_DEFINE_GENERIC_FUNTAG_1( neg_ )
+	struct add_ { };
+	struct sub_ { };
+	struct mul_ { };
+	struct div_ { };
+	struct neg_ { };
 
-	LMAT_DEFINE_GENERIC_FUNTAG_1( abs_ )
-	LMAT_DEFINE_GENERIC_FUNTAG_1( sqr_ )
-	LMAT_DEFINE_GENERIC_FUNTAG_1( cube_ )
+	struct abs_ { };
+	struct sqr_ { };
+	struct cube_ { };
 
-	LMAT_DEFINE_GENERIC_FUNTAG_2( max_ )
-	LMAT_DEFINE_GENERIC_FUNTAG_2( min_ )
-	LMAT_DEFINE_GENERIC_FUNTAG_3( clamp_ )
+	struct max_ { };
+	struct min_ { };
+	struct clamp_ { };
 
 	// comparison
 
-	LMAT_DEFINE_COMPARISON_FUNTAG( eq_ )
-	LMAT_DEFINE_COMPARISON_FUNTAG( ne_ )
-	LMAT_DEFINE_COMPARISON_FUNTAG( ge_ )
-	LMAT_DEFINE_COMPARISON_FUNTAG( gt_ )
-	LMAT_DEFINE_COMPARISON_FUNTAG( le_ )
-	LMAT_DEFINE_COMPARISON_FUNTAG( lt_ )
+	struct eq_ { };
+	struct ne_ { };
+	struct ge_ { };
+	struct gt_ { };
+	struct le_ { };
+	struct lt_ { };
 
 	// logical
 
-	LMAT_DEFINE_LOGICAL_FUNTAG_1( logical_not_ )
-	LMAT_DEFINE_LOGICAL_FUNTAG_2( logical_and_ )
-	LMAT_DEFINE_LOGICAL_FUNTAG_2( logical_or_ )
-	LMAT_DEFINE_LOGICAL_FUNTAG_2( logical_eq_ )
-	LMAT_DEFINE_LOGICAL_FUNTAG_2( logical_ne_ )
+	struct logical_not_ { };
+	struct logical_and_ { };
+	struct logical_or_ { };
+	struct logical_eq_ { };
+	struct logical_ne_ { };
 
 
 	// real math
 
-	LMAT_DEFINE_REAL_FUNTAG_3( fma_ )
-	LMAT_DEFINE_REAL_FUNTAG_1( rcp_ )
-	LMAT_DEFINE_REAL_FUNTAG_1( sqrt_ )
-	LMAT_DEFINE_REAL_FUNTAG_1( rsqrt_ )
-	LMAT_DEFINE_REAL_FUNTAG_2( pow_ )
+	struct fma_ { };
+	struct rcp_ { };
+	struct sqrt_ { };
+	struct rsqrt_ { };
+	struct pow_ { };
 
-	LMAT_DEFINE_REAL_FUNTAG_1( floor_ )
-	LMAT_DEFINE_REAL_FUNTAG_1( ceil_ )
+	struct floor_ { };
+	struct ceil_ { };
 
-	LMAT_DEFINE_REAL_FUNTAG_1( exp_ )
-	LMAT_DEFINE_REAL_FUNTAG_1( log_ )
-	LMAT_DEFINE_REAL_FUNTAG_1( log10_ )
-	LMAT_DEFINE_REAL_FUNTAG_1( xlogx_ )
-	LMAT_DEFINE_REAL_FUNTAG_2( xlogy_ )
+	struct exp_ { };
+	struct log_ { };
+	struct log10_ { };
+	struct xlogx_ { };
+	struct xlogy_ { };
 
-	LMAT_DEFINE_REAL_FUNTAG_1( sin_ )
-	LMAT_DEFINE_REAL_FUNTAG_1( cos_ )
-	LMAT_DEFINE_REAL_FUNTAG_1( tan_ )
+	struct sin_ { };
+	struct cos_ { };
+	struct tan_ { };
 
-	LMAT_DEFINE_REAL_FUNTAG_1( asin_ )
-	LMAT_DEFINE_REAL_FUNTAG_1( acos_ )
-	LMAT_DEFINE_REAL_FUNTAG_1( atan_ )
-	LMAT_DEFINE_REAL_FUNTAG_2( atan2_ )
+	struct asin_ { };
+	struct acos_ { };
+	struct atan_ { };
+	struct atan2_ { };
 
-	LMAT_DEFINE_REAL_FUNTAG_1( sinh_ )
-	LMAT_DEFINE_REAL_FUNTAG_1( cosh_ )
-	LMAT_DEFINE_REAL_FUNTAG_1( tanh_ )
+	struct sinh_ { };
+	struct cosh_ { };
+	struct tanh_ { };
 
 	// C++11 real math
 
-	LMAT_DEFINE_REAL_FUNTAG_1( cbrt_ )
-	LMAT_DEFINE_REAL_FUNTAG_2( hypot_ )
+	struct cbrt_ { };
+	struct hypot_ { };
 
-	LMAT_DEFINE_REAL_FUNTAG_1( round_ )
-	LMAT_DEFINE_REAL_FUNTAG_1( trunc_ )
+	struct round_ { };
+	struct trunc_ { };
 
-	LMAT_DEFINE_REAL_FUNTAG_1( exp2_ )
-	LMAT_DEFINE_REAL_FUNTAG_1( log2_ )
-	LMAT_DEFINE_REAL_FUNTAG_1( expm1_ )
-	LMAT_DEFINE_REAL_FUNTAG_1( log1p_ )
+	struct exp2_ { };
+	struct log2_ { };
+	struct expm1_ { };
+	struct log1p_ { };
 
-	LMAT_DEFINE_REAL_FUNTAG_1( asinh_ )
-	LMAT_DEFINE_REAL_FUNTAG_1( acosh_ )
-	LMAT_DEFINE_REAL_FUNTAG_1( atanh_ )
+	struct asinh_ { };
+	struct acosh_ { };
+	struct atanh_ { };
 
-	LMAT_DEFINE_REAL_FUNTAG_1( erf_ )
-	LMAT_DEFINE_REAL_FUNTAG_1( erfc_ )
-	LMAT_DEFINE_REAL_FUNTAG_1( lgamma_ )
-	LMAT_DEFINE_REAL_FUNTAG_1( tgamma_ )
+	struct erf_ { };
+	struct erfc_ { };
+	struct lgamma_ { };
+	struct tgamma_ { };
 
 	// numeric predicates
 
-	LMAT_DEFINE_REALPRED_FUNTAG_1( signbit_ )
-	LMAT_DEFINE_REALPRED_FUNTAG_1( isfinite_ )
-	LMAT_DEFINE_REALPRED_FUNTAG_1( isinf_ )
-	LMAT_DEFINE_REALPRED_FUNTAG_1( isnan_ )
-
-	// conditional operation
+	struct signbit_ { };
+	struct isfinite_ { };
+	struct isinf_ { };
+	struct isnan_ { };
 
 	struct cond_ { };
-	template<typename T> struct fun_traits<cond_, bool,      T, T> { typedef T result_type; };
-	template<typename T> struct fun_traits<cond_, mask_t<T>, T, T> { typedef T result_type; };
 
-}
+} }
 
 #endif 

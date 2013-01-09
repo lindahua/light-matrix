@@ -30,25 +30,20 @@ namespace lmat { namespace internal {
 
 	template<class Mat>
 	struct iter_tag
-	{
-		typedef
-			typename meta::if_<meta::is_continuous<Mat>, 		cont_iter_tag,
-			typename meta::if_<meta::is_col<Mat>, 				step_col_iter_tag,
-			typename meta::if_<meta::is_row<Mat>, 				step_row_iter_tag,
-			typename meta::if_<meta::is_percol_continuous<Mat>, pcc_iter_tag,
-																gen_iter_tag
-			>::type >::type >::type >::type type;
-	};
+	: public meta::select_<
+	  meta::is_contiguous<Mat>, cont_iter_tag,
+	  meta::is_col<Mat>, step_col_iter_tag,
+	  meta::is_row<Mat>, step_row_iter_tag,
+	  meta::is_percol_contiguous<Mat>, pcc_iter_tag,
+	  meta::otherwise_, gen_iter_tag> { };
 
 	template<class Mat>
 	struct coliter_tag
-	{
-		typedef typename meta::if_<
-				meta::is_percol_continuous<Mat>,
-				cont_coliter_tag,
-				step_coliter_tag
-		>::type type;
-	};
+	: public meta::if_<
+	  meta::is_percol_contiguous<Mat>,
+	  cont_coliter_tag,
+	  step_coliter_tag> { };
+
 
 	// forward
 
