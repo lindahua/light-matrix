@@ -41,37 +41,16 @@ namespace lmat { namespace internal {
 		typedef Arg type;
 	};
 
-
 	template<typename Arg>
 	struct arg_value_type
 	{
 		typedef typename _arg_value_type<Arg, meta::is_mat_xpr<Arg>::value>::type type;
 	};
 
-	template<typename FTag, typename... Args> struct map_expr_value;
-
-	template<typename FTag, typename Arg1>
-	struct map_expr_value<FTag, Arg1>
+	template<typename FTag, typename... Arg>
+	struct map_expr_value
 	{
-		typedef typename matrix_traits<Arg1>::value_type arg1_vtype;
-		typedef typename fun_traits<FTag, arg1_vtype>::result_type type;
-	};
-
-	template<typename FTag, typename Arg1, typename Arg2>
-	struct map_expr_value<FTag, Arg1, Arg2>
-	{
-		typedef typename arg_value_type<Arg1>::type arg1_vtype;
-		typedef typename arg_value_type<Arg2>::type arg2_vtype;
-		typedef typename fun_traits<FTag, arg1_vtype, arg2_vtype>::result_type type;
-	};
-
-	template<typename FTag, typename Arg1, typename Arg2, typename Arg3>
-	struct map_expr_value<FTag, Arg1, Arg2, Arg3>
-	{
-		typedef typename arg_value_type<Arg1>::type arg1_vtype;
-		typedef typename arg_value_type<Arg2>::type arg2_vtype;
-		typedef typename arg_value_type<Arg3>::type arg3_vtype;
-		typedef typename fun_traits<FTag, arg1_vtype, arg2_vtype, arg3_vtype>::result_type type;
+		typedef typename fun_result<FTag, typename arg_value_type<Arg>::type...>::type type;
 	};
 
 

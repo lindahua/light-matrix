@@ -19,68 +19,38 @@
 // macros to declare fun tags
 
 #define LMAT_DEFINE_GENERIC_FUNTAG_1( Tag ) \
-	struct Tag { }; \
-	template<typename T> \
-	struct fun_traits<Tag, T> { typedef T result_type; };
+	struct Tag { };
 
 #define LMAT_DEFINE_GENERIC_FUNTAG_2( Tag ) \
-	struct Tag { }; \
-	template<typename T> \
-	struct fun_traits<Tag, T, T> { typedef T result_type; };
+	struct Tag { };
 
 #define LMAT_DEFINE_GENERIC_FUNTAG_3( Tag ) \
-	struct Tag { }; \
-	template<typename T> \
-	struct fun_traits<Tag, T, T, T> { typedef T result_type; };
+	struct Tag { };
 
 #define LMAT_DEFINE_COMPARISON_FUNTAG( Tag ) \
-	struct Tag { }; \
-	template<typename T> \
-	struct fun_traits<Tag, T, T> { typedef mask_t<T> result_type; };
+	struct Tag { };
 
 #define LMAT_DEFINE_REAL_FUNTAG_1( Tag ) \
-	struct Tag { }; \
-	template<> struct fun_traits<Tag, float> { typedef float result_type; }; \
-	template<> struct fun_traits<Tag, double> { typedef double result_type; };
+	struct Tag { };
 
 #define LMAT_DEFINE_REAL_FUNTAG_2( Tag ) \
-	struct Tag { }; \
-	template<> struct fun_traits<Tag, float, float> { typedef float result_type; }; \
-	template<> struct fun_traits<Tag, double, double> { typedef double result_type; };
+	struct Tag { };
 
 #define LMAT_DEFINE_REAL_FUNTAG_3( Tag ) \
-	struct Tag { }; \
-	template<> struct fun_traits<Tag, float, float, float> { typedef float result_type; }; \
-	template<> struct fun_traits<Tag, double, double, double> { typedef double result_type; };
+	struct Tag { };
 
 #define LMAT_DEFINE_LOGICAL_FUNTAG_1( Tag ) \
-	struct Tag { }; \
-	template<typename T> \
-	struct fun_traits<Tag, mask_t<T> > { typedef mask_t<T> result_type; }; \
-	template<> \
-	struct fun_traits<Tag, bool > { typedef bool result_type; };
+	struct Tag { };
 
 #define LMAT_DEFINE_LOGICAL_FUNTAG_2( Tag ) \
-	struct Tag { }; \
-	template<typename T> \
-	struct fun_traits<Tag, mask_t<T>, mask_t<T> > { typedef mask_t<T> result_type; }; \
-	template<typename T> \
-	struct fun_traits<Tag, mask_t<T>, bool > { typedef mask_t<T> result_type; }; \
-	template<typename T> \
-	struct fun_traits<Tag, bool, mask_t<T> > { typedef mask_t<T> result_type; }; \
-	template<> \
-	struct fun_traits<Tag, bool, bool > { typedef bool result_type; };
+	struct Tag { };
 
 #define LMAT_DEFINE_REALPRED_FUNTAG_1( Tag ) \
-	struct Tag { }; \
-	template<> struct fun_traits<Tag, float> { typedef mask_t<float> result_type; }; \
-	template<> struct fun_traits<Tag, double> { typedef mask_t<double> result_type; };
+	struct Tag { };
 
 
 namespace lmat {
 
-	template<typename Tag, typename... T>
-	struct fun_traits;
 
 	// arithmetic
 
@@ -175,11 +145,7 @@ namespace lmat {
 	LMAT_DEFINE_REALPRED_FUNTAG_1( isinf_ )
 	LMAT_DEFINE_REALPRED_FUNTAG_1( isnan_ )
 
-	// conditional operation
-
 	struct cond_ { };
-	template<typename T> struct fun_traits<cond_, bool,      T, T> { typedef T result_type; };
-	template<typename T> struct fun_traits<cond_, mask_t<T>, T, T> { typedef T result_type; };
 
 }
 

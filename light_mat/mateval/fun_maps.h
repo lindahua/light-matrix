@@ -40,13 +40,13 @@
 	template<> struct fun_map<Name##_, bool, bool> { \
 		typedef Name##_fun<bool> type; }; \
 	template<> struct fun_map<Name##_, bool, mask_t<float> > { \
-		typedef Name##_fun<bool> type; }; \
+		typedef Name##_fun<float> type; }; \
 	template<> struct fun_map<Name##_, mask_t<float>, bool > { \
-		typedef Name##_fun<bool> type; }; \
+		typedef Name##_fun<float> type; }; \
 	template<> struct fun_map<Name##_, bool, mask_t<double> > { \
-		typedef Name##_fun<bool> type; }; \
+		typedef Name##_fun<double> type; }; \
 	template<> struct fun_map<Name##_, mask_t<double>, bool > { \
-		typedef Name##_fun<bool> type; }; \
+		typedef Name##_fun<double> type; }; \
 	template<> struct fun_map<Name##_, mask_t<float>, mask_t<float> > { \
 		typedef Name##_fun<float> type; }; \
 	template<> struct fun_map<Name##_, mask_t<double>, mask_t<double> > { \
@@ -57,6 +57,12 @@ namespace lmat
 {
 	template<typename FTag, typename... T>
 	struct fun_map;
+
+	template<typename FTag, typename... T>
+	struct fun_result
+	{
+		typedef typename std::result_of<typename fun_map<FTag, T...>::type(T...)>::type type;
+	};
 
 	// arithmetics
 

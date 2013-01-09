@@ -31,9 +31,9 @@
 #define LMAT_DEFINE_GENERIC_NUMPRED_FUNCTOR( Name, NA, Expr ) \
 	template<typename T> \
 	struct Name##_fun { \
-		typedef bool result_type; \
+		typedef mask_t<T> result_type; \
 		LMAT_ENSURE_INLINE \
-		bool operator()(LMAT_REPEAT_ARGS_P##NA(const T& x)) const \
+		mask_t<T> operator()(LMAT_REPEAT_ARGS_P##NA(const T& x)) const \
 		{ return Expr; } }; \
 	template<typename T, typename Kind> \
 	struct Name##_fun<math::simd_pack<T, Kind> > { \
