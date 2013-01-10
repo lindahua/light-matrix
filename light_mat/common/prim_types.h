@@ -65,6 +65,37 @@ namespace lmat
 #error Invalid value for LMAT_INDEX_SIZE
 #endif
 
+	// integer signedness
+
+	namespace internal
+	{
+		template<typename Int, bool IsSigned>
+		struct integer_helper;
+
+		template<typename Int>
+		struct integer_helper<Int, true>
+		{
+			LMAT_ENSURE_INLINE
+			static bool is_nonneg(Int x) { return x >= 0; }
+		};
+
+		template<typename Int>
+		struct integer_helper<Int, false>
+		{
+			LMAT_ENSURE_INLINE
+			static bool is_nonneg(Int x) { return true; }
+		};
+	}
+
+	template<typename Int>
+	LMAT_ENSURE_INLINE
+	inline typename std::enable_if<std::is_integral<Int>::value, bool>::type
+	is_nonneg_int(Int x)
+	{
+		return internal::integer_helper<Int, std::is_signed<Int>::value>::is_nonneg(x);
+	}
+
+
 	// non-copyable
 
 	class noncopyable
