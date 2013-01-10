@@ -20,11 +20,16 @@ namespace lmat { namespace random {
 	class std_bernoulli_distr
 	{
 	public:
+		typedef bool result_type;
+
 		LMAT_ENSURE_INLINE
 		std_bernoulli_distr() { }
 
 		LMAT_ENSURE_INLINE
 		double p() const { return 0.5; }
+
+		LMAT_ENSURE_INLINE
+		double p(bool) const { return 0.5; }
 
 		LMAT_ENSURE_INLINE
 		double mean() const { return 0.5; }
@@ -44,6 +49,8 @@ namespace lmat { namespace random {
 	class bernoulli_distr
 	{
 	public:
+		typedef bool result_type;
+
 		LMAT_ENSURE_INLINE
 		explicit bernoulli_distr(double p=0.5)
 		: m_p(p)
@@ -55,6 +62,9 @@ namespace lmat { namespace random {
 
 		LMAT_ENSURE_INLINE
 		double p() const { return m_p; }
+
+		LMAT_ENSURE_INLINE
+		double p(bool x) const { return x ? m_p : 1.0 - m_p; }
 
 		LMAT_ENSURE_INLINE
 		double mean() const { return m_p; }

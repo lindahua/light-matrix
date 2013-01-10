@@ -27,6 +27,8 @@ namespace lmat { namespace random {
 	class std_uniform_real_distr  // U [0, 1)
 	{
 	public:
+		typedef T result_type;
+
 		LMAT_ENSURE_INLINE
 		T a() const { return T(0); }
 
@@ -50,9 +52,9 @@ namespace lmat { namespace random {
 
 		template<class RStream>
 		LMAT_ENSURE_INLINE
-		T operator() (const RStream& rs) const
+		T operator() (RStream& rs) const
 		{
-			return internal::randbits_to_c1o2(rs.rand_u32()) - T(1);
+			return internal::randreal_helper<T>::c1o2(rs) - T(1);
 		}
 	};
 
@@ -61,6 +63,8 @@ namespace lmat { namespace random {
 	class uniform_real_distr
 	{
 	public:
+		typedef T result_type;
+
 		LMAT_ENSURE_INLINE
 		explicit uniform_real_distr(T a_, T b_)
 		: m_a(a_), m_b(b_)
@@ -91,9 +95,9 @@ namespace lmat { namespace random {
 
 		template<class RStream>
 		LMAT_ENSURE_INLINE
-		T operator() (const RStream& rs) const
+		T operator() (RStream& rs) const
 		{
-			return m_base + internal::randbits_to_c1o2(rs.rand_u64()) * m_span;
+			return m_base + internal::randreal_helper<T>::c1o2(rs) * m_span;
 		}
 
 		LMAT_ENSURE_INLINE
@@ -113,7 +117,7 @@ namespace lmat { namespace random {
 	class std_uniform_real_simd
 	{
 	public:
-		typedef math::simd_pack<T, Kind> pack_type;
+		typedef math::simd_pack<T, Kind> result_type;
 
 		LMAT_ENSURE_INLINE
 		explicit std_uniform_real_simd()
@@ -121,21 +125,21 @@ namespace lmat { namespace random {
 
 		template<class RStream>
 		LMAT_ENSURE_INLINE
-		pack_type operator() (RStream& rs) const
+		result_type operator() (RStream& rs) const
 		{
-			pack_type pk = internal::randbits_to_c1o2(rs.rand_pack(Kind()));
+			result_type pk = internal::randreal_helper<T>::c1o2(Kind());
 			return pk - m_one;
 		}
 
 	private:
-		pack_type m_one;
+		result_type m_one;
 	};
 
 
 	template<typename T, typename Kind>
 	class uniform_real_simd
 	{
-		typedef math::simd_pack<T, Kind> pack_type;
+		typedef math::simd_pack<T, Kind> result_type;
 
 		LMAT_ENSURE_INLINE
 		explicit uniform_real_simd(T base, T span)
@@ -143,15 +147,15 @@ namespace lmat { namespace random {
 
 		template<class RStream>
 		LMAT_ENSURE_INLINE
-		pack_type operator() (RStream& rs) const
+		result_type operator() (RStream& rs) const
 		{
-			pack_type pk = internal::randbits_to_c1o2(rs.rand_pack(Kind()));
+			result_type pk = internal::randreal_helper<T>::c1o2(Kind());
 			return m_base + pk * m_span;
 		}
 
 	private:
-		pack_type m_base;
-		pack_type m_span;
+		result_type m_base;
+		result_type m_span;
 	};
 
 } }

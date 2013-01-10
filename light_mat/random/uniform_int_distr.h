@@ -97,7 +97,6 @@ namespace lmat { namespace random {
 	public:
 		typedef TI result_type;
 
-	public:
 		explicit std_uniform_int_distr(const TI& b)
 		: m_span(b+1) { }
 
@@ -146,7 +145,6 @@ namespace lmat { namespace random {
 	public:
 		typedef TI result_type;
 
-	public:
 		uniform_int_distr(const TI& a, const TI& b)
 		: m_a(a), m_b(b), m_span(b-a+1) { }
 

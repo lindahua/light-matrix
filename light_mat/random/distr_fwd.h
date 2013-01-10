@@ -16,11 +16,9 @@
 #include <light_mat/random/sfmt.h>
 #include <light_mat/math/math_base.h>
 #include <light_mat/math/functor_base.h>
-#include "internal/rint_helper.h"
 
 namespace lmat { namespace random {
 
-	using lmat::internal::is_nonneg_int;
 
 	// tags to indicate PRNG methods
 

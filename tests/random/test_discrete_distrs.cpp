@@ -21,10 +21,12 @@ using namespace lmat::test;
 template<class Distr, class RStream>
 void test_discrete_rng(const Distr& distr, RStream& rs, index_t n, index_t K, double ptol)
 {
+	typedef typename Distr::result_type RT;
+
 	dense_col<double> expect_p(K);
 	for (index_t k = 0; k < K; ++k)
 	{
-		expect_p[k] = distr.p(k);
+		expect_p[k] = distr.p((RT)k);
 	}
 
 	dense_col<uint32_t> counts(K, zero());
@@ -50,7 +52,7 @@ const index_t N = 200000;
 const double default_ptol = 5.0 / std::sqrt(double(N));
 
 
-SIMPLE_CASE( std_uniform_int, simple )
+SIMPLE_CASE( distrs, std_uniform_int )
 {
 	const index_t b = 5;
 	std_uniform_int_distr<> distr(b);
@@ -66,33 +68,123 @@ SIMPLE_CASE( std_uniform_int, simple )
 	test_discrete_rng(distr, rstream, N, b+1, default_ptol);
 }
 
-SIMPLE_CASE( uniform_int, simple )
+SIMPLE_CASE( distrs, uniform_int )
 {
 	const index_t a = 2;
 	const index_t b = 6;
-	std_uniform_int_distr<> distr(a, b);
+	uniform_int_distr<> distr(a, b);
 
 	const index_t s = b - a + 1;
 
-	ASSERT_EQ( distr.a(), 0 );
+	ASSERT_EQ( distr.a(), a );
 	ASSERT_EQ( distr.b(), b );
 	ASSERT_EQ( distr.span(), s );
-	ASSERT_EQ( distr.mean(), double(b) / 2 );
+	ASSERT_EQ( distr.mean(), double(a + b) / 2 );
 	ASSERT_EQ( distr.var(),  double((s * s - 1)) / 12 );
 
 	test_discrete_rng(distr, rstream, N, b+1, default_ptol);
 }
 
 
+SIMPLE_CASE( distrs, std_bernoulli )
+{
+	std_bernoulli_distr distr;
+
+	ASSERT_EQ( distr.p(), 0.5 );
+	ASSERT_EQ( distr.p(true), 0.5 );
+	ASSERT_EQ( distr.p(false), 0.5 );
+	ASSERT_EQ( distr.mean(), 0.5 );
+	ASSERT_EQ( distr.var(), 0.25 );
+
+	test_discrete_rng(distr, rstream, N, 2, default_ptol );
+}
+
+SIMPLE_CASE( distrs, bernoulli )
+{
+	const double p = 0.3;
+	bernoulli_distr distr(p);
+
+	ASSERT_EQ( distr.p(), p );
+	ASSERT_EQ( distr.p(true), p );
+	ASSERT_EQ( distr.p(false), 1.0 - p );
+	ASSERT_EQ( distr.mean(), p );
+	ASSERT_EQ( distr.var(), p * (1.0 - p) );
+
+	test_discrete_rng(distr, rstream, N, 2, default_ptol );
+}
+
+SIMPLE_CASE( distrs, binomial_naive )
+{
+	uint32_t t = 5;
+	const double p = 0.4;
+	binomial_distr<uint32_t, naive_> distr(t, p);
+
+	ASSERT_EQ( distr.t(), t );
+	ASSERT_EQ( distr.p(), p );
+	ASSERT_EQ( distr.mean(), double(t) * p );
+	ASSERT_APPROX( distr.var(), double(t) * p * (1-p), 1.0e-15 );
+
+	test_discrete_rng(distr, rstream, N, (index_t)t+1, default_ptol );
+}
+
+
+SIMPLE_CASE( distrs, geometric_naive )
+{
+	const double p = 0.4;
+	geometric_distr<uint32_t, naive_> distr(p);
+
+	ASSERT_EQ( distr.p(), p );
+	ASSERT_APPROX( distr.mean(), (1.0 - p) / p, 1.0e-15 );
+	ASSERT_APPROX( distr.var(), (1.0 - p) / (p * p), 1.0e-15 );
+
+	test_discrete_rng(distr, rstream, N, 5, default_ptol );
+}
+
+
+SIMPLE_CASE( distrs, discrete_naive )
+{
+	discrete_distr<uint32_t, naive_> distr { 0.3, 0.6, 0.1, 0.7, 0.3 };
+
+	ASSERT_EQ( distr.n(), 5 );
+	ASSERT_APPROX( distr.p(0), 0.15, 1.0e-15 );
+	ASSERT_APPROX( distr.p(1), 0.30, 1.0e-15 );
+	ASSERT_APPROX( distr.p(2), 0.05, 1.0e-15 );
+	ASSERT_APPROX( distr.p(3), 0.35, 1.0e-15 );
+	ASSERT_APPROX( distr.p(4), 0.15, 1.0e-15 );
+	ASSERT_EQ( distr.p(5), 0.00 );
+
+	test_discrete_rng(distr, rstream, N, 6, default_ptol );
+}
+
+
 BEGIN_TPACK( uniform_int )
-	ADD_SIMPLE_CASE( std_uniform_int, simple )
-	ADD_SIMPLE_CASE( uniform_int, simple )
+	ADD_SIMPLE_CASE( distrs, std_uniform_int )
+	ADD_SIMPLE_CASE( distrs, uniform_int )
 END_TPACK
 
+BEGIN_TPACK( bernoulli )
+	ADD_SIMPLE_CASE( distrs, std_bernoulli )
+	ADD_SIMPLE_CASE( distrs, bernoulli )
+END_TPACK
 
+BEGIN_TPACK( binomial )
+	ADD_SIMPLE_CASE( distrs, binomial_naive )
+END_TPACK
+
+BEGIN_TPACK( geometric )
+	ADD_SIMPLE_CASE( distrs, geometric_naive )
+END_TPACK
+
+BEGIN_TPACK( discrete )
+	ADD_SIMPLE_CASE( distrs, discrete_naive )
+END_TPACK
 
 BEGIN_MAIN_SUITE
 	ADD_TPACK( uniform_int )
+	ADD_TPACK( bernoulli )
+	ADD_TPACK( binomial )
+	ADD_TPACK( geometric )
+	ADD_TPACK( discrete )
 END_MAIN_SUITE
 
 

@@ -31,7 +31,7 @@ namespace lmat { namespace random {
 		struct geometric_distr_impl<TI, naive_>
 		{
 		public:
-			geometric_distr_impl(TI t, double p)
+			geometric_distr_impl(double p)
 			: m_bernoulli(p) { }
 
 			LMAT_ENSURE_INLINE
@@ -66,9 +66,11 @@ namespace lmat { namespace random {
 		typedef internal::geometric_distr_impl<TI, Method> impl_t;
 
 	public:
+		typedef TI result_type;
+
 		LMAT_ENSURE_INLINE
-		explicit geometric_distr(const double& p_ = 0.5)
-		: m_impl(p_)
+		explicit geometric_distr(double p = 0.5)
+		: m_impl(p)
 		{ }
 
 		LMAT_ENSURE_INLINE
@@ -81,6 +83,14 @@ namespace lmat { namespace random {
 		double p() const
 		{
 			return m_impl.p();
+		}
+
+		double p(TI x) const
+		{
+			double v = p();
+			double r = 1.0  - p();
+			for (TI i = 0; i < x; ++i) v *= r;
+			return v;
 		}
 
 		LMAT_ENSURE_INLINE

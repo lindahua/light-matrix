@@ -79,6 +79,67 @@ namespace lmat { namespace random { namespace internal {
 
 #endif
 
+
+	// helper classes
+
+	template<typename T> struct randreal_helper;
+
+	template<>
+	struct randreal_helper<float>
+	{
+		template<class RStream>
+		LMAT_ENSURE_INLINE
+		static float c1o2(RStream& rs)
+		{
+			return randbits_to_c1o2_f32(rs.rand_u32());
+		}
+
+		template<class RStream>
+		LMAT_ENSURE_INLINE
+		static __m128 c1o2(RStream& rs, sse_t)
+		{
+			return randbits_to_c1o2_f32(rs.rand_pack(sse_t()), sse_t());
+		}
+
+#ifdef LMAT_HAS_AVX
+		template<class RStream>
+		LMAT_ENSURE_INLINE
+		static __m256 c1o2(RStream& rs, avx_t)
+		{
+			return randbits_to_c1o2_f32(rs.rand_pack(avx_t()), avx_t());
+		}
+#endif
+	};
+
+
+	template<>
+	struct randreal_helper<double>
+	{
+		template<class RStream>
+		LMAT_ENSURE_INLINE
+		static double c1o2(RStream& rs)
+		{
+			return randbits_to_c1o2_f64(rs.rand_u64());
+		}
+
+		template<class RStream>
+		LMAT_ENSURE_INLINE
+		static __m128d c1o2(RStream& rs, sse_t)
+		{
+			return randbits_to_c1o2_f64(rs.rand_pack(sse_t()), sse_t());
+		}
+
+#ifdef LMAT_HAS_AVX
+		template<class RStream>
+		LMAT_ENSURE_INLINE
+		static __m256d c1o2(RStream& rs, avx_t)
+		{
+			return randbits_to_c1o2_f64(rs.rand_pack(avx_t()), avx_t());
+		}
+#endif
+	};
+
+
 } } }
 
 #endif

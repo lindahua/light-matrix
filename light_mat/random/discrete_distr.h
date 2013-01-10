@@ -98,7 +98,7 @@ namespace lmat { namespace random {
 			LMAT_ENSURE_INLINE
 			double p(TI x) const
 			{
-				return m_weights[x] * m_inv_total;
+				return m_weights[(index_t)x] * m_inv_total;
 			}
 
 		private:
@@ -123,6 +123,10 @@ namespace lmat { namespace random {
 		: m_impl(first, last) { }
 
 		LMAT_ENSURE_INLINE
+		explicit discrete_distr(const std::initializer_list<double>& lst)
+		: m_impl(lst.begin(), lst.end()) { }
+
+		LMAT_ENSURE_INLINE
 		TI n() const
 		{
 			return m_impl.n();
@@ -131,7 +135,7 @@ namespace lmat { namespace random {
 		LMAT_ENSURE_INLINE
 		double p(TI x) const
 		{
-			return m_impl.p(x);
+			return is_nonneg_int(x) && x < n() ? m_impl.p(x) : 0.0;
 		}
 
 		template<class RStream>
