@@ -363,6 +363,8 @@ set(DISTR_HS_
     ${INC}/random/geometric_distr.h
     ${INC}/random/discrete_distr.h
     ${INC}/random/uniform_real_distr.h
+    ${INC}/random/exponential_distr.h
+    ${INC}/random/normal_distr.h
 )
         
     
@@ -708,7 +710,7 @@ set(TESTS_USING_SVML
     test_sse_math_svml
     test_mat_emath
     test_cpd_ewise
-    )
+    test_real_distrs)
     
 if (ALLOW_AVX)
 set(TESTS_USING_SVML

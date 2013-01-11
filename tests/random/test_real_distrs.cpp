@@ -129,6 +129,12 @@ inline double get_var_tol(const Distr& distr, index_t n, double kappa, double ra
 }
 
 
+/************************************************
+ *
+ *  Uniform real
+ *
+ ************************************************/
+
 T_CASE( distrs, std_uniform_real )
 {
 	std_uniform_real_distr<T> distr;
@@ -150,6 +156,9 @@ T_CASE( distrs, std_uniform_real_sse )
 {
 	std_uniform_real_distr<T> distr;
 
+	static_assert(is_simdizable<std_uniform_real_distr<T>, sse_t>::value,
+			"std_uniform_real_distr should be simdizable with sse");
+
 	double tol_mean = get_mean_tol(distr, N);
 	double kappa = -1.2;
 	double tol_var = get_var_tol(distr, N, kappa);
@@ -161,6 +170,9 @@ T_CASE( distrs, std_uniform_real_sse )
 T_CASE( distrs, std_uniform_real_avx )
 {
 	std_uniform_real_distr<T> distr;
+
+	static_assert(is_simdizable<std_uniform_real_distr<T>, avx_t>::value,
+			"std_uniform_real_distr should be simdizable with avx");
 
 	double tol_mean = get_mean_tol(distr, N);
 	double kappa = -1.2;
@@ -194,6 +206,9 @@ T_CASE( distrs, uniform_real_sse )
 {
 	uniform_real_distr<T> distr(T(1.6), T(3.2));
 
+	static_assert(is_simdizable<uniform_real_distr<T>, sse_t>::value,
+			"uniform_real_distr should be simdizable with sse");
+
 	double tol_mean = get_mean_tol(distr, N);
 	double kappa = -1.2;
 	double tol_var = get_var_tol(distr, N, kappa);
@@ -206,6 +221,9 @@ T_CASE( distrs, uniform_real_avx )
 {
 	uniform_real_distr<T> distr(T(1.6), T(3.2));
 
+	static_assert(is_simdizable<uniform_real_distr<T>, avx_t>::value,
+			"uniform_real_distr should be simdizable with avx");
+
 	double tol_mean = get_mean_tol(distr, N);
 	double kappa = -1.2;
 	double tol_var = get_var_tol(distr, N, kappa);
@@ -213,7 +231,6 @@ T_CASE( distrs, uniform_real_avx )
 	test_real_rng_simd(distr, rstream, avx_t(), N, tol_mean, tol_var);
 }
 #endif
-
 
 
 BEGIN_TPACK( uniform_real )
@@ -237,11 +254,133 @@ BEGIN_TPACK( uniform_real )
 END_TPACK
 
 
+/************************************************
+ *
+ *  Exponential
+ *
+ ************************************************/
 
+T_CASE( distrs, std_exponential )
+{
+	std_exponential_distr<T> distr;
+
+	ASSERT_EQ( distr.lambda(), T(1) );
+	ASSERT_EQ( distr.beta(), T(1) );
+	ASSERT_EQ( distr.mean(), T(1) );
+	ASSERT_EQ( distr.var(), T(1) );
+
+	double tol_mean = get_mean_tol(distr, N);
+	double kappa = 6.0;
+	double tol_var = get_var_tol(distr, N, kappa);
+
+	test_real_rng(distr, rstream, N, tol_mean, tol_var);
+}
+
+T_CASE( distrs, std_exponential_sse )
+{
+	std_exponential_distr<T> distr;
+
+	static_assert(is_simdizable<std_exponential_distr<T>, sse_t>::value,
+			"std_exponential_distr should be simdizable with sse");
+
+	double tol_mean = get_mean_tol(distr, N);
+	double kappa = -1.2;
+	double tol_var = get_var_tol(distr, N, kappa);
+
+	test_real_rng_simd(distr, rstream, sse_t(), N, tol_mean, tol_var);
+}
+
+#ifdef LMAT_HAS_AVX
+T_CASE( distrs, std_exponential_avx )
+{
+	std_exponential_distr<T> distr;
+
+	static_assert(is_simdizable<std_exponential_distr<T>, avx_t>::value,
+			"std_exponential_distr should be simdizable with avx");
+
+	double tol_mean = get_mean_tol(distr, N);
+	double kappa = -1.2;
+	double tol_var = get_var_tol(distr, N, kappa);
+
+	test_real_rng_simd(distr, rstream, avx_t(), N, tol_mean, tol_var);
+}
+#endif
+
+T_CASE( distrs, exponential )
+{
+	T lambda = T(2);
+	exponential_distr<T> distr(lambda);
+
+	ASSERT_EQ( distr.lambda(), T(2) );
+	ASSERT_EQ( distr.beta(), T(0.5) );
+	ASSERT_EQ( distr.mean(), T(0.5) );
+	ASSERT_EQ( distr.var(), T(0.25) );
+
+	double tol_mean = get_mean_tol(distr, N);
+	double kappa = 6.0;
+	double tol_var = get_var_tol(distr, N, kappa);
+
+	test_real_rng(distr, rstream, N, tol_mean, tol_var);
+}
+
+
+T_CASE( distrs, exponential_sse )
+{
+	T lambda = T(2);
+	exponential_distr<T> distr(lambda);
+
+	static_assert(is_simdizable<exponential_distr<T>, sse_t>::value,
+			"exponential_distr should be simdizable with sse");
+
+	double tol_mean = get_mean_tol(distr, N);
+	double kappa = -1.2;
+	double tol_var = get_var_tol(distr, N, kappa);
+
+	test_real_rng_simd(distr, rstream, sse_t(), N, tol_mean, tol_var);
+}
+
+#ifdef LMAT_HAS_AVX
+T_CASE( distrs, exponential_avx )
+{
+	T lambda = T(2);
+	exponential_distr<T> distr(lambda);
+
+	static_assert(is_simdizable<exponential_distr<T>, avx_t>::value,
+			"exponential_distr should be simdizable with avx");
+
+	double tol_mean = get_mean_tol(distr, N);
+	double kappa = -1.2;
+	double tol_var = get_var_tol(distr, N, kappa);
+
+	test_real_rng_simd(distr, rstream, avx_t(), N, tol_mean, tol_var);
+}
+#endif
+
+
+BEGIN_TPACK( exponential )
+	ADD_T_CASE( distrs, std_exponential, double )
+	ADD_T_CASE( distrs, std_exponential, float )
+	ADD_T_CASE( distrs, std_exponential_sse, double )
+	ADD_T_CASE( distrs, std_exponential_sse, float )
+#ifdef LMAT_HAS_AVX
+	ADD_T_CASE( distrs, std_exponential_avx, double )
+	ADD_T_CASE( distrs, std_exponential_avx, float )
+#endif
+
+	ADD_T_CASE( distrs, exponential, double )
+	ADD_T_CASE( distrs, exponential, float )
+	ADD_T_CASE( distrs, exponential_sse, double )
+	ADD_T_CASE( distrs, exponential_sse, float )
+#ifdef LMAT_HAS_AVX
+	ADD_T_CASE( distrs, exponential_avx, double )
+	ADD_T_CASE( distrs, exponential_avx, float )
+#endif
+END_TPACK
 
 
 BEGIN_MAIN_SUITE
 	ADD_TPACK( uniform_real )
+	ADD_TPACK( exponential )
 END_MAIN_SUITE
 
 

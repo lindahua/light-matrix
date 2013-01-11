@@ -14,10 +14,7 @@
 #define LIGHTMAT_UNIFORM_REAL_DISTR_H_
 
 #include "internal/uniform_real_internal.h"
-#include <light_mat/math/sse_ops.h>
-#ifdef LMAT_HAS_AVX
-#include <light_mat/math/avx_ops.h>
-#endif
+#include <light_mat/math/simd_ops.h>
 
 namespace lmat { namespace random {
 
