@@ -15,7 +15,7 @@
 
 #include <light_mat/math/simd_arch.h>
 #include <light_mat/common/basic_defs.h>
-#include <light_mat/math/fun_tags.h>
+#include <light_mat/math/math_base.h>
 #include <limits>
 
 // system headers for SIMD intrinsics

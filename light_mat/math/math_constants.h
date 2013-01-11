@@ -13,7 +13,7 @@
 #ifndef LIGHTMAT_MATH_CONSTANTS_H_
 #define LIGHTMAT_MATH_CONSTANTS_H_
 
-#include <light_mat/common/basic_defs.h>
+#include <light_mat/common/prim_types.h>
 
 namespace lmat { namespace math {
 

@@ -24,11 +24,21 @@
 
 namespace lmat { namespace meta {
 
+	// arithmetics
+
 	LMAT_DEFINE_HAS_AVX_SUPPORT( add_ )
 	LMAT_DEFINE_HAS_AVX_SUPPORT( sub_ )
 	LMAT_DEFINE_HAS_AVX_SUPPORT( mul_ )
 	LMAT_DEFINE_HAS_AVX_SUPPORT( div_ )
 	LMAT_DEFINE_HAS_AVX_SUPPORT( neg_ )
+	LMAT_DEFINE_HAS_AVX_SUPPORT( fma_ )
+
+	LMAT_DEFINE_HAS_AVX_SUPPORT( min_ )
+	LMAT_DEFINE_HAS_AVX_SUPPORT( max_ )
+	LMAT_DEFINE_HAS_AVX_SUPPORT( clamp_ )
+	LMAT_DEFINE_HAS_AVX_SUPPORT( cond_ )
+
+	// comparison
 
 	LMAT_DEFINE_HAS_AVX_SUPPORT( eq_ )
 	LMAT_DEFINE_HAS_AVX_SUPPORT( ne_ )
@@ -37,13 +47,15 @@ namespace lmat { namespace meta {
 	LMAT_DEFINE_HAS_AVX_SUPPORT( lt_ )
 	LMAT_DEFINE_HAS_AVX_SUPPORT( le_ )
 
+	LMAT_DEFINE_HAS_AVX_SUPPORT( logical_not_ )
 	LMAT_DEFINE_HAS_AVX_SUPPORT( logical_and_ )
 	LMAT_DEFINE_HAS_AVX_SUPPORT( logical_or_ )
 	LMAT_DEFINE_HAS_AVX_SUPPORT( logical_eq_ )
 	LMAT_DEFINE_HAS_AVX_SUPPORT( logical_ne_ )
 
+	// simple power functions
+
 	LMAT_DEFINE_HAS_AVX_SUPPORT( abs_ )
-	LMAT_DEFINE_HAS_AVX_SUPPORT( fma_ )
 	LMAT_DEFINE_HAS_AVX_SUPPORT( sqr_ )
 	LMAT_DEFINE_HAS_AVX_SUPPORT( cube_ )
 
@@ -51,15 +63,14 @@ namespace lmat { namespace meta {
 	LMAT_DEFINE_HAS_AVX_SUPPORT( sqrt_ )
 	LMAT_DEFINE_HAS_AVX_SUPPORT( rsqrt_ )
 
-	LMAT_DEFINE_HAS_AVX_SUPPORT( min_ )
-	LMAT_DEFINE_HAS_AVX_SUPPORT( max_ )
-	LMAT_DEFINE_HAS_AVX_SUPPORT( clamp_ )
-	LMAT_DEFINE_HAS_AVX_SUPPORT( cond_ )
+	// rounding
 
 	LMAT_DEFINE_HAS_AVX_SUPPORT( floor_ )
 	LMAT_DEFINE_HAS_AVX_SUPPORT( ceil_ )
 	LMAT_DEFINE_HAS_AVX_SUPPORT( round_ )
 	LMAT_DEFINE_HAS_AVX_SUPPORT( trunc_ )
+
+	// numeric predicates
 
 	LMAT_DEFINE_HAS_AVX_SUPPORT( signbit_ )
 	LMAT_DEFINE_HAS_AVX_SUPPORT( isfinite_ )
