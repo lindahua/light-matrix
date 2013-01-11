@@ -21,5 +21,6 @@
 #include <light_mat/math/avx.h>
 #endif
 
+#include <light_mat/math/simd_special.h>
 
 #endif /* SIMD_H_ */

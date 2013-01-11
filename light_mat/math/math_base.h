@@ -191,14 +191,6 @@ namespace lmat { namespace math {
 	using std::acosh;
 	using std::atanh;
 
-	// error & gamma
-
-	using std::erf;
-	using std::erfc;
-
-	using std::lgamma;
-	using std::tgamma;
-
 	// classification
 
 	using std::signbit;

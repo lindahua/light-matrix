@@ -151,6 +151,7 @@ set(COMMON_HS_EX
     
 set(MATH_FUNBASE_HS_
     ${INC}/math/math_base.h
+    ${INC}/math/special.h
     ${INC}/math/math_constants.h
     ${INC}/math/fun_tags.h
     ${INC}/math/functor_base.h
@@ -189,6 +190,7 @@ set(MATH_HS
     ${SIMD_BASE_HS_}
     ${SSE_HS_}
     ${AVX_HS_}
+    ${INC}/math/simd_special.h
     ${INC}/math/simd.h)    
     
 set(MATH_HS_EX
@@ -398,6 +400,14 @@ add_executable(test_avx_math_svml ${AVX_TEST_HS} math/test_avx_math.cpp)
 endif (SVML_PATH)
 endif (ALLOW_AVX)
 
+set(SPECFUN_TEST_HS
+    ${COMMON_HS_EX}
+    ${MATH_HS})
+    
+if (SVML_PATH)
+add_executable(test_simd_special ${SPECFUN_TEST_HS} math/test_simd_special.cpp)
+endif (SVML_PATH)
+    
 set(LMAT_SSE_TESTS
     test_sse_packs
     test_sse_bpacks
@@ -425,13 +435,22 @@ set(LMAT_AVX_TESTS
 endif (ALLOW_AVX)
 endif (SVML_PATH)
 
+if (SVML_PATH)
+set(LMAT_SPECFUN_TESTS
+    test_simd_special)
+else (SVML_PATH)
+set(LMAT_SPECFUN_TESTS)
+endif (SVML_PATH)  
+
 if (ALLOW_AVX)
 set(LMAT_MATH_TESTS
     ${LMAT_SSE_TESTS}
-    ${LMAT_AVX_TESTS})
+    ${LMAT_AVX_TESTS}
+    ${LMAT_SPECFUN_TESTS})
 else (ALLOW_AVX)
 set(LMAT_MATH_TESTS
-    ${LMAT_SSE_TESTS})
+    ${LMAT_SSE_TESTS}
+    ${LMAT_SPECFUN_TESTS})
 endif (ALLOW_AVX) 
 
 # matrix module
@@ -645,6 +664,7 @@ if (SVML_PATH)
 
 set(TESTS_USING_SVML
     test_sse_math_svml
+    test_simd_special
     test_mat_emath
     test_cpd_ewise
     )

@@ -14,6 +14,8 @@
 #define LIGHTMAT_MATH_FUNCTORS_H_
 
 #include <light_mat/math/math_base.h>
+#include <light_mat/math/special.h>
+
 #include <light_mat/math/fun_tags.h>
 #include <light_mat/math/functor_base.h>
 #include <light_mat/math/simd.h>
@@ -172,19 +174,19 @@ namespace lmat {
 	_LMAT_DEFINE_MATH_FUNCTOR( acosh, 1 )
 	_LMAT_DEFINE_MATH_FUNCTOR( atanh, 1 )
 
-	// error and gamma
-
-	_LMAT_DEFINE_MATH_FUNCTOR( erf, 1 )
-	_LMAT_DEFINE_MATH_FUNCTOR( erfc, 1 )
-	_LMAT_DEFINE_MATH_FUNCTOR( lgamma, 1 )
-	_LMAT_DEFINE_MATH_FUNCTOR( tgamma, 1 )
-
 	// numeric predicates
 
 	_LMAT_DEFINE_NUMPRED_FUNCTOR( signbit, 1 )
 	_LMAT_DEFINE_NUMPRED_FUNCTOR( isfinite, 1 )
 	_LMAT_DEFINE_NUMPRED_FUNCTOR( isinf, 1 )
 	_LMAT_DEFINE_NUMPRED_FUNCTOR( isnan, 1 )
+
+	// special functions
+
+	_LMAT_DEFINE_MATH_FUNCTOR( erf, 1 )
+	_LMAT_DEFINE_MATH_FUNCTOR( erfc, 1 )
+	_LMAT_DEFINE_MATH_FUNCTOR( lgamma, 1 )
+	_LMAT_DEFINE_MATH_FUNCTOR( tgamma, 1 )
 
 #endif
 

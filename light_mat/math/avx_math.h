@@ -172,20 +172,10 @@ namespace lmat { namespace meta {
 	LMAT_DEFINE_HAS_AVX_SUPPORT( log1p_ )
 #endif
 
-#ifdef LMAT_HAS_EXTERN_AVX_ERF
-	LMAT_DEFINE_HAS_AVX_SUPPORT( erf_ )
-	LMAT_DEFINE_HAS_AVX_SUPPORT( erfc_ )
-#endif
-
 #ifdef LMAT_HAS_EXTERN_AVX_ARCHYPERB
 	LMAT_DEFINE_HAS_AVX_SUPPORT( asinh_ )
 	LMAT_DEFINE_HAS_AVX_SUPPORT( acosh_ )
 	LMAT_DEFINE_HAS_AVX_SUPPORT( atanh_ )
-#endif
-
-#ifdef LMAT_HAS_EXTERN_AVX_GAMMA
-	LMAT_DEFINE_HAS_AVX_SUPPORT( lgamma_ )
-	LMAT_DEFINE_HAS_AVX_SUPPORT( tgamma_ )
 #endif
 
 #endif // has C++ 11 math
@@ -322,22 +312,6 @@ namespace lmat { namespace math {
 	LMAT_ACTIVATE_AVX_MATH_EMULATE_1( atanh )
 #endif
 
-
-#ifdef LMAT_HAS_EXTERN_AVX_ERF
-	LMAT_ACTIVATE_AVX_EXTERN_1( erf )
-	LMAT_ACTIVATE_AVX_EXTERN_1( erfc )
-#elif (defined(LMAT_ENABLE_SIMD_EMULATE))
-	LMAT_ACTIVATE_AVX_MATH_EMULATE_1( erf )
-	LMAT_ACTIVATE_AVX_MATH_EMULATE_1( erfc )
-#endif
-
-#ifdef LMAT_HAS_EXTERN_AVX_GAMMA
-	LMAT_ACTIVATE_AVX_EXTERN_1( lgamma )
-	LMAT_ACTIVATE_AVX_EXTERN_1( tgamma )
-#elif (defined(LMAT_ENABLE_SIMD_EMULATE))
-	LMAT_ACTIVATE_AVX_MATH_EMULATE_1( lgamma )
-	LMAT_ACTIVATE_AVX_MATH_EMULATE_1( tgamma )
-#endif
 
 #endif // has C++11 math
 

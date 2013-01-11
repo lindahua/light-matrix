@@ -143,16 +143,6 @@ DEFINE_AVX_MATH_TEST_1( asinh, 4, -5.0, 5.0 )
 DEFINE_AVX_MATH_TEST_1( acosh, 4,  1.0, 4.0 )
 DEFINE_AVX_MATH_TEST_1( atanh, 4, -0.9, 0.9 )
 
-// error functions
-
-DEFINE_AVX_MATH_TEST_1( erf,  4, -2.0, 2.0 )
-DEFINE_AVX_MATH_TEST_1( erfc, 4, -2.0, 2.0 )
-
-// gamma functions
-
-DEFINE_AVX_MATH_TEST_1( lgamma, 4, 1.0, 5.0 )
-DEFINE_AVX_MATH_TEST_1( tgamma, 4, 1.0, 5.0 )
-
 #endif
 
 
@@ -190,12 +180,6 @@ BEGIN_MAIN_SUITE
 	ADD_MATH_TPACK( asinh )
 	ADD_MATH_TPACK( acosh )
 	ADD_MATH_TPACK( atanh )
-
-	ADD_MATH_TPACK( erf )
-	ADD_MATH_TPACK( erfc )
-
-	ADD_MATH_TPACK( lgamma )
-	ADD_MATH_TPACK( tgamma )
 
 #endif
 

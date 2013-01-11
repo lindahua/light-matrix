@@ -123,16 +123,6 @@ namespace lmat { namespace math { namespace internal {
 	LMAT_DEFINE_SSE_MATH_EMULATE_1( acosh )
 	LMAT_DEFINE_SSE_MATH_EMULATE_1( atanh )
 
-	// error functions
-
-	LMAT_DEFINE_SSE_MATH_EMULATE_1( erf )
-	LMAT_DEFINE_SSE_MATH_EMULATE_1( erfc )
-
-	// gamma
-
-	LMAT_DEFINE_SSE_MATH_EMULATE_1( lgamma )
-	LMAT_DEFINE_SSE_MATH_EMULATE_1( tgamma )
-
 #endif
 
 } } }

@@ -103,11 +103,6 @@ namespace lmat { namespace ftags {
 	struct acosh_ { };
 	struct atanh_ { };
 
-	struct erf_ { };
-	struct erfc_ { };
-	struct lgamma_ { };
-	struct tgamma_ { };
-
 	// numeric predicates
 
 	struct signbit_ { };
@@ -116,6 +111,16 @@ namespace lmat { namespace ftags {
 	struct isnan_ { };
 
 	struct cond_ { };
+
+	// special functions
+
+	struct erf_ { };
+	struct erfc_ { };
+	struct norminv_ { };
+
+	struct lgamma_ { };
+	struct tgamma_ { };
+	struct psi_ { };
 
 } }
 
