@@ -127,7 +127,7 @@ namespace lmat { namespace random {
 		LMAT_ENSURE_INLINE
 		result_type operator() (RStream& rs) const
 		{
-			result_type pk = internal::randreal_helper<T>::c1o2(Kind());
+			result_type pk = internal::randreal_helper<T>::c1o2(rs, Kind());
 			return pk - m_one;
 		}
 
@@ -139,6 +139,7 @@ namespace lmat { namespace random {
 	template<typename T, typename Kind>
 	class uniform_real_simd
 	{
+	public:
 		typedef math::simd_pack<T, Kind> result_type;
 
 		LMAT_ENSURE_INLINE
@@ -149,7 +150,7 @@ namespace lmat { namespace random {
 		LMAT_ENSURE_INLINE
 		result_type operator() (RStream& rs) const
 		{
-			result_type pk = internal::randreal_helper<T>::c1o2(Kind());
+			result_type pk = internal::randreal_helper<T>::c1o2(rs, Kind());
 			return m_base + pk * m_span;
 		}
 

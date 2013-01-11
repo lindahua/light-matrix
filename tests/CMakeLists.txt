@@ -667,11 +667,13 @@ set(DISTR_TEST_HS
     ${DISTR_HS_})
 
 add_executable(test_discrete_distrs ${DISTR_TEST_HS} random/test_discrete_distrs.cpp)
+add_executable(test_real_distrs ${DISTR_TEST_HS} random/test_real_distrs.cpp)
      
 set(LMAT_RANDOM_TESTS
     test_stracker
     test_sfmt
-    test_discrete_distrs)        
+    test_discrete_distrs
+    test_real_distrs)        
     
     
 # all
