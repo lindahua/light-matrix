@@ -160,6 +160,8 @@ namespace lmat
 
 #endif
 
+	_LMAT_DEFINE_REAL_FUNMAP( norminv, 1 )
+
 	// conditional selection
 
 	template<typename T>

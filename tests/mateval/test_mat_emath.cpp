@@ -230,6 +230,8 @@ TEST_UNARY_EMATH(tgamma, std::tgamma, 1.0, 3.0, 1.0e-12)
 
 #endif
 
+TEST_UNARY_EMATH(norminv, math::norminv, 0.0, 1.0, 1.0e-12)
+
 
 BEGIN_MAIN_SUITE
 
@@ -284,9 +286,9 @@ BEGIN_MAIN_SUITE
 	ADD_TPACK( mat_erfc )
 	ADD_TPACK( mat_lgamma )
 	ADD_TPACK( mat_tgamma )
-
 #endif
 
+	ADD_TPACK( mat_norminv )
 END_MAIN_SUITE
 
 

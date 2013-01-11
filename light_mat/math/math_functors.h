@@ -190,6 +190,7 @@ namespace lmat {
 
 #endif
 
+	_LMAT_DEFINE_MATH_FUNCTOR( norminv, 1 )
 
 	// conditional selection
 

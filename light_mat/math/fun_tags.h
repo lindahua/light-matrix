@@ -116,6 +116,8 @@ namespace lmat { namespace ftags {
 
 	struct erf_ { };
 	struct erfc_ { };
+	struct erfinv_ { };
+	struct erfcinv_ { };
 	struct norminv_ { };
 
 	struct lgamma_ { };

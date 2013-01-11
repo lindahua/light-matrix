@@ -145,6 +145,8 @@ namespace lmat
 	_LMAT_DEFINE_MAT_MATH_FUN_R1( tgamma )
 
 #endif
+
+	_LMAT_DEFINE_MAT_MATH_FUN_R1( norminv )
 }
 
 

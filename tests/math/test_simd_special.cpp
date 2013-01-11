@@ -55,7 +55,9 @@ inline double randunif(double LB, double UB)
 
 #ifdef LMAT_HAS_AVX
 
-#define DEFINE_MATH_TPACK( Name ) \
+#define DEFINE_MATH_TPACK( Name, ulp, LB, UB ) \
+	DEFINE_MATH_TEST_1( Name,  sse, ulp, LB, UB ) \
+	DEFINE_MATH_TEST_1( Name,  avx, ulp, LB, UB ) \
 	BEGIN_TPACK( simd_##Name ) \
 		ADD_T_CASE( sse_special, Name##_sse, float ) \
 		ADD_T_CASE( sse_special, Name##_sse, double ) \
@@ -80,23 +82,17 @@ inline double randunif(double LB, double UB)
 
 // error functions
 
-DEFINE_MATH_TEST_1( erf,  sse, 4, -2.0, 2.0 )
-DEFINE_MATH_TEST_1( erf,  avx, 4, -2.0, 2.0 )
-DEFINE_MATH_TPACK( erf )
-
-DEFINE_MATH_TEST_1( erfc, sse, 4, -2.0, 2.0 )
-DEFINE_MATH_TEST_1( erfc, avx, 4, -2.0, 2.0 )
-DEFINE_MATH_TPACK( erfc )
+DEFINE_MATH_TPACK( erf, 4, -2.0, 2.0 )
+DEFINE_MATH_TPACK( erfc, 4, -2.0, 2.0 )
 
 // gamma functions
 
-DEFINE_MATH_TEST_1( lgamma, sse, 4, 1.0, 5.0 )
-DEFINE_MATH_TEST_1( lgamma, avx, 4, 1.0, 5.0 )
-DEFINE_MATH_TPACK( lgamma )
+DEFINE_MATH_TPACK( lgamma, 4, 1.0, 5.0 )
+DEFINE_MATH_TPACK( tgamma, 4, 1.0, 5.0 )
 
-DEFINE_MATH_TEST_1( tgamma, sse, 4, 1.0, 5.0 )
-DEFINE_MATH_TEST_1( tgamma, avx, 4, 1.0, 5.0 )
-DEFINE_MATH_TPACK( tgamma )
+// norminv
+
+DEFINE_MATH_TPACK( norminv, 4, 0.0, 1.0 )
 
 #endif
 
@@ -106,6 +102,7 @@ BEGIN_MAIN_SUITE
 	ADD_TPACK( simd_erfc )
 	ADD_TPACK( simd_lgamma )
 	ADD_TPACK( simd_tgamma )
+	ADD_TPACK( simd_norminv )
 END_MAIN_SUITE
 
 

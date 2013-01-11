@@ -16,6 +16,8 @@
 #include <light_mat/math/math_base.h>
 #include <cmath>
 
+#include "internal/norminv_impl.h"
+
 namespace lmat { namespace math {
 
 #ifdef LMAT_HAS_CXX11_MATH
@@ -27,6 +29,19 @@ namespace lmat { namespace math {
 	using std::erfc;
 
 #endif
+
+	// norminv
+
+	inline float norminv(float x)
+	{
+		return internal::norminv_impl<float>::eval(x);
+	}
+
+	inline double norminv(double x)
+	{
+		return internal::norminv_impl<double>::eval(x);
+	}
+
 
 } }
 

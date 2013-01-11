@@ -48,6 +48,24 @@ namespace lmat { namespace meta {
 	LMAT_DEFINE_HAS_AVX_SUPPORT( tgamma_ )
 #endif
 
+#ifdef LMAT_HAS_EXTERN_SSE_ERFINV
+	LMAT_DEFINE_HAS_SSE_SUPPORT( erfinv_ )
+	LMAT_DEFINE_HAS_SSE_SUPPORT( erfcinv_ )
+#endif
+
+#ifdef LMAT_HAS_EXTERN_AVX_ERFINV
+	LMAT_DEFINE_HAS_AVX_SUPPORT( erfinv_ )
+	LMAT_DEFINE_HAS_AVX_SUPPORT( erfcinv_ )
+#endif
+
+#ifdef LMAT_HAS_EXTERN_SSE_NORMINV
+	LMAT_DEFINE_HAS_SSE_SUPPORT( norminv_ )
+#endif
+
+#ifdef LMAT_HAS_EXTERN_AVX_NORMINV
+	LMAT_DEFINE_HAS_AVX_SUPPORT( norminv_ )
+#endif
+
 } }
 
 namespace lmat { namespace math {
@@ -61,16 +79,17 @@ namespace lmat { namespace math {
 	namespace internal
 	{
 		LMAT_DEFINE_SSE_MATH_EMULATE_1( erf )
-		LMAT_DEFINE_SSE_MATH_EMULATE_1( erfc )
-
-		LMAT_DEFINE_SSE_MATH_EMULATE_1( lgamma )
-		LMAT_DEFINE_SSE_MATH_EMULATE_1( tgamma )
-
 		LMAT_DEFINE_AVX_MATH_EMULATE_1( erf )
+		LMAT_DEFINE_SSE_MATH_EMULATE_1( erfc )
 		LMAT_DEFINE_AVX_MATH_EMULATE_1( erfc )
 
+		LMAT_DEFINE_SSE_MATH_EMULATE_1( lgamma )
 		LMAT_DEFINE_AVX_MATH_EMULATE_1( lgamma )
+		LMAT_DEFINE_SSE_MATH_EMULATE_1( tgamma )
 		LMAT_DEFINE_AVX_MATH_EMULATE_1( tgamma )
+
+		LMAT_DEFINE_SSE_MATH_EMULATE_1( norminv )
+		LMAT_DEFINE_AVX_MATH_EMULATE_1( norminv )
 	}
 
 
@@ -80,20 +99,14 @@ namespace lmat { namespace math {
 	 *
 	 ***********************************************/
 
+	// erf & erfc
+
 #ifdef LMAT_HAS_EXTERN_SSE_ERF
 	LMAT_ACTIVATE_SSE_EXTERN_1( erf )
 	LMAT_ACTIVATE_SSE_EXTERN_1( erfc )
 #elif (defined(LMAT_ENABLE_SIMD_EMULATE))
 	LMAT_ACTIVATE_SSE_MATH_EMULATE_1( erf )
 	LMAT_ACTIVATE_SSE_MATH_EMULATE_1( erfc )
-#endif
-
-#ifdef LMAT_HAS_EXTERN_SSE_GAMMA
-	LMAT_ACTIVATE_SSE_EXTERN_1( lgamma )
-	LMAT_ACTIVATE_SSE_EXTERN_1( tgamma )
-#elif (defined(LMAT_ENABLE_SIMD_EMULATE))
-	LMAT_ACTIVATE_SSE_MATH_EMULATE_1( lgamma )
-	LMAT_ACTIVATE_SSE_MATH_EMULATE_1( tgamma )
 #endif
 
 #ifdef LMAT_HAS_EXTERN_AVX_ERF
@@ -104,6 +117,16 @@ namespace lmat { namespace math {
 	LMAT_ACTIVATE_AVX_MATH_EMULATE_1( erfc )
 #endif
 
+	// lgamma & tgamma
+
+#ifdef LMAT_HAS_EXTERN_SSE_GAMMA
+	LMAT_ACTIVATE_SSE_EXTERN_1( lgamma )
+	LMAT_ACTIVATE_SSE_EXTERN_1( tgamma )
+#elif (defined(LMAT_ENABLE_SIMD_EMULATE))
+	LMAT_ACTIVATE_SSE_MATH_EMULATE_1( lgamma )
+	LMAT_ACTIVATE_SSE_MATH_EMULATE_1( tgamma )
+#endif
+
 #ifdef LMAT_HAS_EXTERN_AVX_GAMMA
 	LMAT_ACTIVATE_AVX_EXTERN_1( lgamma )
 	LMAT_ACTIVATE_AVX_EXTERN_1( tgamma )
@@ -112,6 +135,35 @@ namespace lmat { namespace math {
 	LMAT_ACTIVATE_AVX_MATH_EMULATE_1( tgamma )
 #endif
 
+	// norminv
+
+#ifdef LMAT_HAS_EXTERN_SSE_NORMINV
+	LMAT_ENSURE_INLINE
+	inline sse_f32pk norminv(const sse_f32pk& a)
+	{
+		return LMAT_SSE_F(cdfnorminv)(a);
+	}
+
+	LMAT_ENSURE_INLINE
+	inline sse_f64pk norminv(const sse_f64pk& a)
+	{
+		return LMAT_SSE_D(cdfnorminv)(a);
+	}
+#endif
+
+#ifdef LMAT_HAS_EXTERN_AVX_NORMINV
+	LMAT_ENSURE_INLINE
+	inline avx_f32pk norminv(const avx_f32pk& a)
+	{
+		return LMAT_AVX_F(cdfnorminv)(a);
+	}
+
+	LMAT_ENSURE_INLINE
+	inline avx_f64pk norminv(const avx_f64pk& a)
+	{
+		return LMAT_AVX_D(cdfnorminv)(a);
+	}
+#endif
 
 } }
 
