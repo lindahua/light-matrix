@@ -66,7 +66,7 @@ inline void verify_layout(const ref_matrix<double, M, N>& a, index_t m, index_t 
 }
 
 
-N_CASE( cref_col, constructs )
+N_CASE( cref_col_constructs )
 {
 	const index_t n = N == 0 ? 4 : N;
 
@@ -85,7 +85,7 @@ N_CASE( cref_col, constructs )
 }
 
 
-N_CASE( ref_col, constructs )
+N_CASE( ref_col_constructs )
 {
 	const index_t n = N == 0 ? 4 : N;
 
@@ -104,7 +104,7 @@ N_CASE( ref_col, constructs )
 }
 
 
-N_CASE( ref_col, assign )
+N_CASE( ref_col_assign )
 {
 	const index_t n = N == 0 ? 4 : N;
 
@@ -133,7 +133,7 @@ N_CASE( ref_col, assign )
 }
 
 
-N_CASE( ref_col, import )
+N_CASE( ref_col_import )
 {
 	const index_t n = N == 0 ? 4 : N;
 
@@ -162,7 +162,7 @@ N_CASE( ref_col, import )
 }
 
 
-N_CASE( cref_row, constructs )
+N_CASE( cref_row_constructs )
 {
 	const index_t n = N == 0 ? 4 : N;
 
@@ -181,7 +181,7 @@ N_CASE( cref_row, constructs )
 }
 
 
-N_CASE( ref_row, constructs )
+N_CASE( ref_row_constructs )
 {
 	const index_t n = N == 0 ? 4 : N;
 
@@ -200,7 +200,7 @@ N_CASE( ref_row, constructs )
 }
 
 
-N_CASE( ref_row, assign )
+N_CASE( ref_row_assign )
 {
 	const index_t n = N == 0 ? 4 : N;
 
@@ -229,7 +229,7 @@ N_CASE( ref_row, assign )
 }
 
 
-N_CASE( ref_row, import )
+N_CASE( ref_row_import )
 {
 	const index_t n = N == 0 ? 4 : N;
 
@@ -259,67 +259,46 @@ N_CASE( ref_row, import )
 
 
 
-BEGIN_TPACK( cref_col_constructs )
-	ADD_N_CASE( cref_col, constructs, 0 )
-	ADD_N_CASE( cref_col, constructs, 1 )
-	ADD_N_CASE( cref_col, constructs, 4 )
-END_TPACK
+AUTO_TPACK( cref_col_constructs )
+{
+	ADD_N_CASE_3( cref_col_constructs, 4 )
+}
 
-BEGIN_TPACK( ref_col_constructs )
-	ADD_N_CASE( ref_col, constructs, 0 )
-	ADD_N_CASE( ref_col, constructs, 1 )
-	ADD_N_CASE( ref_col, constructs, 4 )
-END_TPACK
+AUTO_TPACK( ref_col_constructs )
+{
+	ADD_N_CASE_3( ref_col_constructs, 4 )
+}
 
-BEGIN_TPACK( ref_col_assign )
-	ADD_N_CASE( ref_col, assign, 0 )
-	ADD_N_CASE( ref_col, assign, 1 )
-	ADD_N_CASE( ref_col, assign, 4 )
-END_TPACK
+AUTO_TPACK( ref_col_assign )
+{
+	ADD_N_CASE_3( ref_col_assign, 4 )
+}
 
-BEGIN_TPACK( ref_col_import )
-	ADD_N_CASE( ref_col, import, 0 )
-	ADD_N_CASE( ref_col, import, 1 )
-	ADD_N_CASE( ref_col, import, 4 )
-END_TPACK
+AUTO_TPACK( ref_col_import )
+{
+	ADD_N_CASE_3( ref_col_import, 4 )
+}
 
 
-BEGIN_TPACK( cref_row_constructs )
-	ADD_N_CASE( cref_row, constructs, 0 )
-	ADD_N_CASE( cref_row, constructs, 1 )
-	ADD_N_CASE( cref_row, constructs, 4 )
-END_TPACK
+AUTO_TPACK( cref_row_constructs )
+{
+	ADD_N_CASE_3( cref_row_constructs, 4 )
+}
 
-BEGIN_TPACK( ref_row_constructs )
-	ADD_N_CASE( ref_row, constructs, 0 )
-	ADD_N_CASE( ref_row, constructs, 1 )
-	ADD_N_CASE( ref_row, constructs, 4 )
-END_TPACK
+AUTO_TPACK( ref_row_constructs )
+{
+	ADD_N_CASE_3( ref_row_constructs, 4 )
+}
 
-BEGIN_TPACK( ref_row_assign )
-	ADD_N_CASE( ref_row, assign, 0 )
-	ADD_N_CASE( ref_row, assign, 1 )
-	ADD_N_CASE( ref_row, assign, 4 )
-END_TPACK
+AUTO_TPACK( ref_row_assign )
+{
+	ADD_N_CASE_3( ref_row_assign, 4 )
+}
 
-BEGIN_TPACK( ref_row_import )
-	ADD_N_CASE( ref_row, import, 0 )
-	ADD_N_CASE( ref_row, import, 1 )
-	ADD_N_CASE( ref_row, import, 4 )
-END_TPACK
-
-
-BEGIN_MAIN_SUITE
-	ADD_TPACK( cref_col_constructs )
-	ADD_TPACK( ref_col_constructs )
-	ADD_TPACK( ref_col_assign )
-	ADD_TPACK( ref_col_import )
-
-	ADD_TPACK( cref_row_constructs )
-	ADD_TPACK( ref_row_constructs )
-	ADD_TPACK( ref_row_assign )
-	ADD_TPACK( ref_row_import )
-END_MAIN_SUITE
+AUTO_TPACK( ref_row_import )
+{
+	ADD_N_CASE_3( ref_row_import, 4 )
+}
 
 
 

@@ -60,7 +60,7 @@ inline void verify_layout(const ref_block<double, M, N>& mat,
 }
 
 
-MN_CASE( cref_block, constructs )
+MN_CASE( cref_block_constructs )
 {
 	const index_t ldim = 7;
 	const index_t m = M == 0 ? 3 : M;
@@ -80,7 +80,7 @@ MN_CASE( cref_block, constructs )
 	ASSERT_EQ(a2.ptr_data(), ps);
 }
 
-MN_CASE( ref_block, constructs )
+MN_CASE( ref_block_constructs )
 {
 	const index_t ldim = 7;
 	const index_t m = M == 0 ? 3 : M;
@@ -100,7 +100,7 @@ MN_CASE( ref_block, constructs )
 	ASSERT_EQ(a2.ptr_data(), ps);
 }
 
-MN_CASE( cref_block, access )
+MN_CASE( cref_block_access )
 {
 	const index_t ldim = 7;
 	const index_t m = M == 0 ? 3 : M;
@@ -147,7 +147,7 @@ MN_CASE( cref_block, access )
 }
 
 
-MN_CASE( ref_block, access )
+MN_CASE( ref_block_access )
 {
 	const index_t ldim = 7;
 	const index_t m = M == 0 ? 3 : M;
@@ -194,7 +194,7 @@ MN_CASE( ref_block, access )
 }
 
 
-MN_CASE( ref_block, assign )
+MN_CASE( ref_block_assign )
 {
 	const index_t ldim1 = 7;
 	const index_t ldim2 = 9;
@@ -238,7 +238,7 @@ MN_CASE( ref_block, assign )
 }
 
 
-MN_CASE( ref_block, import )
+MN_CASE( ref_block_import )
 {
 	const index_t ldim = 7;
 	const index_t m = M == 0 ? 3 : M;
@@ -291,39 +291,35 @@ MN_CASE( ref_block, import )
 
 
 
-BEGIN_TPACK( cref_block_constructs )
-	ADD_MN_CASE_3X3( cref_block, constructs, 3, 4 )
-END_TPACK
+AUTO_TPACK( cref_block_constructs )
+{
+	ADD_MN_CASE_3X3( cref_block_constructs, 3, 4 )
+}
 
-BEGIN_TPACK( ref_block_constructs )
-	ADD_MN_CASE_3X3( ref_block, constructs, 3, 4 )
-END_TPACK
+AUTO_TPACK( ref_block_constructs )
+{
+	ADD_MN_CASE_3X3( ref_block_constructs, 3, 4 )
+}
 
-BEGIN_TPACK( cref_block_access )
-	ADD_MN_CASE_3X3( cref_block, access, 3, 4 )
-END_TPACK
+AUTO_TPACK( cref_block_access )
+{
+	ADD_MN_CASE_3X3( cref_block_access, 3, 4 )
+}
 
-BEGIN_TPACK( ref_block_access )
-	ADD_MN_CASE_3X3( ref_block, access, 3, 4 )
-END_TPACK
+AUTO_TPACK( ref_block_access )
+{
+	ADD_MN_CASE_3X3( ref_block_access, 3, 4 )
+}
 
-BEGIN_TPACK( ref_block_assign )
-	ADD_MN_CASE_3X3( ref_block, assign, 3, 4 )
-END_TPACK
+AUTO_TPACK( ref_block_assign )
+{
+	ADD_MN_CASE_3X3( ref_block_assign, 3, 4 )
+}
 
-BEGIN_TPACK( ref_block_import )
-	ADD_MN_CASE_3X3( ref_block, import, 3, 4 )
-END_TPACK
+AUTO_TPACK( ref_block_import )
+{
+	ADD_MN_CASE_3X3( ref_block_import, 3, 4 )
+}
 
-
-BEGIN_MAIN_SUITE
-	ADD_TPACK( cref_block_constructs )
-	ADD_TPACK( cref_block_access )
-
-	ADD_TPACK( ref_block_constructs )
-	ADD_TPACK( ref_block_access )
-	ADD_TPACK( ref_block_assign )
-	ADD_TPACK( ref_block_import )
-END_MAIN_SUITE
 
 

@@ -439,26 +439,26 @@ endif (SVML_PATH)
 
 # matrix module
 
-#set(MATCLASS_TEST_HS
-#    ${COMMON_HS_EX}
-#    ${MATRIX_BASE_HS_}
-#    ${MATRIX_CLASS_HS_})
-#
-#add_executable(test_dense_mat ${MATCLASS_TEST_HS} matrix/test_dense_mat.cpp)
-#add_executable(test_dense_vec ${MATCLASS_TEST_HS} matrix/test_dense_vec.cpp)     
-#add_executable(test_ref_mat   ${MATCLASS_TEST_HS} matrix/test_ref_mat.cpp)
-#add_executable(test_ref_vec   ${MATCLASS_TEST_HS} matrix/test_ref_vec.cpp)
-#add_executable(test_ref_block ${MATCLASS_TEST_HS} matrix/test_ref_block.cpp)
-#add_executable(test_ref_grid  ${MATCLASS_TEST_HS} matrix/test_ref_grid.cpp)
-#add_executable(test_step_vec  ${MATCLASS_TEST_HS} matrix/test_step_vec.cpp)
-#
-#set(MATOPS_TEST_HS
-#    ${COMMON_HS_EX}
-#    ${MATRIX_BASE_HS_}
-#    ${MATRIX_CLASS_HS_}
-#    ${MATRIX_OPS_HS_})
-#
-#add_executable(test_mat_props  ${MATOPS_TEST_HS} matrix/test_mat_props.cpp)
+set(MATCLASS_TEST_HS
+    ${COMMON_HS_EX}
+    ${MATRIX_BASE_HS_}
+    ${MATRIX_CLASS_HS_})
+
+add_executable(test_dense_mat ${MATCLASS_TEST_HS} matrix/test_dense_mat.cpp)
+add_executable(test_dense_vec ${MATCLASS_TEST_HS} matrix/test_dense_vec.cpp)     
+add_executable(test_ref_mat   ${MATCLASS_TEST_HS} matrix/test_ref_mat.cpp)
+add_executable(test_ref_vec   ${MATCLASS_TEST_HS} matrix/test_ref_vec.cpp)
+add_executable(test_ref_block ${MATCLASS_TEST_HS} matrix/test_ref_block.cpp)
+add_executable(test_ref_grid  ${MATCLASS_TEST_HS} matrix/test_ref_grid.cpp)
+add_executable(test_step_vec  ${MATCLASS_TEST_HS} matrix/test_step_vec.cpp)
+
+set(MATOPS_TEST_HS
+    ${COMMON_HS_EX}
+    ${MATRIX_BASE_HS_}
+    ${MATRIX_CLASS_HS_}
+    ${MATRIX_OPS_HS_})
+
+add_executable(test_mat_props  ${MATOPS_TEST_HS} matrix/test_mat_props.cpp)
 #add_executable(test_mat_iter   ${MATOPS_TEST_HS} matrix/test_mat_iter.cpp)
 #add_executable(test_mat_fill   ${MATOPS_TEST_HS} matrix/test_mat_fill.cpp)
 #add_executable(test_mat_copy   ${MATOPS_TEST_HS} matrix/test_mat_copy.cpp)
@@ -483,16 +483,16 @@ endif (SVML_PATH)
 #add_executable(test_mat_select ${MATMANIP_TEST_HS} matrix/test_mat_select.cpp)
 #add_executable(test_direct_trans ${MATMANIP_TEST_HS} matrix/test_direct_trans.cpp)    
 #add_executable(test_transpose_expr ${MATMANIP_TEST_HS} matrix/test_transpose_expr.cpp) 
-#
-#set(LMAT_MATRIX_TESTS
-#    test_dense_mat
-#	test_dense_vec
-#	test_ref_mat
-#	test_ref_vec
-#	test_ref_block
-#	test_ref_grid
-#	test_step_vec
-#	test_mat_props
+
+set(LMAT_MATRIX_TESTS
+    test_dense_mat
+	test_dense_vec
+	test_ref_mat
+	test_ref_vec
+	test_ref_block
+	test_ref_grid
+	test_step_vec
+	test_mat_props
 #	test_mat_iter
 #	test_mat_fill
 #	test_mat_copy
@@ -503,7 +503,7 @@ endif (SVML_PATH)
 #	test_mat_select
 #	test_direct_trans
 #	test_transpose_expr
-#	)
+	)
 
 # matrix evaluation module
 
@@ -632,7 +632,7 @@ set(LMAT_ALL_TESTS
     ${LMAT_COMMON_TESTS}
     ${LMAT_SIMD_TESTS}
     ${LMAT_MATH_TESTS}
-    #${LMAT_MATRIX_TESTS}
+    ${LMAT_MATRIX_TESTS}
     #${LMAT_MATEVAL_TESTS}
     #${LMAT_MATEXPR_TESTS}
     # ${LMAT_LINALG_TESTS}
