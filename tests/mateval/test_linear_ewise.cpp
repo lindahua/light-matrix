@@ -15,13 +15,8 @@
 #include "../multimat_supp.h"
 
 #include <light_mat/matrix/matrix_classes.h>
-#include <light_mat/math/math_functors.h>
+#include <light_mat/math/basic_functors.h>
 #include <light_mat/mateval/ewise_eval.h>
-
-#include <light_mat/math/sse_ops.h>
-#ifdef LMAT_HAS_AVX
-#include <light_mat/math/avx_ops.h>
-#endif
 
 
 using namespace lmat;

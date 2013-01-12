@@ -17,7 +17,6 @@
 #include <light_mat/matrix/matrix_concepts.h>
 
 #include <light_mat/math/math_base.h>
-#include <light_mat/math/simd_packs.h>
 
 namespace lmat
 {
@@ -103,7 +102,7 @@ namespace lmat
 	public:
 		typedef T scalar_type;
 		typedef Kind simd_kind;
-		typedef math::simd_pack<T, Kind> pack_type;
+		typedef simd_pack<T, Kind> pack_type;
 
 		LMAT_ENSURE_INLINE
 		explicit contvec_reader(const T* p) : m_pdata(p) { }
@@ -178,7 +177,7 @@ namespace lmat
 	public:
 		typedef T scalar_type;
 		typedef Kind simd_kind;
-		typedef math::simd_pack<T, Kind> pack_type;
+		typedef simd_pack<T, Kind> pack_type;
 
 		LMAT_ENSURE_INLINE
 		explicit single_reader(const T& v)
@@ -332,7 +331,7 @@ namespace lmat
 	public:
 		typedef T scalar_type;
 		typedef Kind simd_kind;
-		typedef math::simd_pack<T, Kind> pack_type;
+		typedef simd_pack<T, Kind> pack_type;
 
 		LMAT_ENSURE_INLINE
 		explicit contvec_writer(T* p) : m_pdata(p) { }
@@ -522,7 +521,7 @@ namespace lmat
 	public:
 		typedef T scalar_type;
 		typedef Kind simd_kind;
-		typedef math::simd_pack<T, Kind> pack_type;
+		typedef simd_pack<T, Kind> pack_type;
 
 		LMAT_ENSURE_INLINE
 		explicit contvec_updater(T* p) : m_pdata(p) { }
@@ -705,7 +704,7 @@ namespace lmat
 	class sum_accumulator<T, atags::simd<Kind> > : public simd_vec_accessor_base
 	{
 	public:
-		typedef math::simd_pack<T, Kind> pack_type;
+		typedef simd_pack<T, Kind> pack_type;
 
 		LMAT_ENSURE_INLINE
 		sum_accumulator(T& a) : m_val(0), m_p(&a) { }
@@ -732,7 +731,7 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		nil_t end_packs() const
 		{
-			m_val += math::sum(m_pack);
+			m_val += sum(m_pack);
 			return nil_t();
 		}
 
@@ -780,7 +779,7 @@ namespace lmat
 	class max_accumulator<T, atags::simd<Kind> > : public simd_vec_accessor_base
 	{
 	public:
-		typedef math::simd_pack<T, Kind> pack_type;
+		typedef simd_pack<T, Kind> pack_type;
 
 		LMAT_ENSURE_INLINE
 		max_accumulator(T& a)
@@ -808,7 +807,7 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		nil_t end_packs() const
 		{
-			m_val = math::max(m_val, math::maximum(m_pack));
+			m_val = math::max(m_val, maximum(m_pack));
 			return nil_t();
 		}
 
@@ -856,7 +855,7 @@ namespace lmat
 	class min_accumulator<T, atags::simd<Kind> > : public simd_vec_accessor_base
 	{
 	public:
-		typedef math::simd_pack<T, Kind> pack_type;
+		typedef simd_pack<T, Kind> pack_type;
 
 		LMAT_ENSURE_INLINE
 		min_accumulator(T& a)
@@ -884,7 +883,7 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		nil_t end_packs() const
 		{
-			m_val = math::min(m_val, math::minimum(m_pack));
+			m_val = math::min(m_val, minimum(m_pack));
 			return nil_t();
 		}
 

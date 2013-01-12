@@ -166,13 +166,13 @@ set(MATH_BASE_HS_
     
 set(MATH_SPECIAL_HS_
     ${INC}/math/internal/norminv_impl.h
-    ${INC}/math/math_special.h
-    ${INC}/math/simd_special.h)
+    ${INC}/math/math_special.h)
     
 set(MATH_FUNCTOR_HS_
     ${INC}/math/fun_tags.h
     ${INC}/math/functor_base.h
-    ${INC}/math/functors.h) 
+    ${INC}/math/basic_functors.h
+    ) 
     
 set(MATH_HS
     ${MATH_BASE_HS_}
@@ -249,27 +249,11 @@ set(MATRIX_HS_EX
 set(MATRIX_EVAL_HS_
     ${INC}/mateval/internal/ewise_eval_internal.h
     ${INC}/mateval/mateval_fwd.h
-    ${INC}/mateval/fun_maps.h
     ${INC}/mateval/common_kernels.h
     ${INC}/mateval/vec_accessors.h
     ${INC}/mateval/multicol_accessors.h
     ${INC}/mateval/macc_policy.h
     ${INC}/mateval/ewise_eval.h)
-    
-set(MAP_EXPR_HS_
-    ${INC}/mateval/internal/map_expr_internal.h
-    ${INC}/mateval/map_accessors.h
-    ${INC}/mateval/map_expr.h
-    ${INC}/mateval/map_expr_inspect.h
-    ${INC}/mateval/mat_arith.h
-    ${INC}/mateval/mat_emath.h
-    ${INC}/mateval/mat_cast.h
-    ${INC}/mateval/mat_pred.h)
-    
-set(OTHER_EXPR_HS_
-    ${INC}/mateval/repvec_expr.h
-    ${INC}/mateval/subs_expr.h
-    ${INC}/mateval/mat_zip.h)  
     
 set(MATRIX_REDUC_HS_
     ${INC}/mateval/internal/mat_fold_internal.h
@@ -280,7 +264,7 @@ set(MATRIX_REDUC_HS_
     ${INC}/mateval/mat_enorms.h
     ${INC}/mateval/mat_minmax.h
     ${INC}/mateval/mat_allany.h
-    ${INC}/mateval/mat_compare.h)   
+    ${INC}/mateval/mat_compare.h)    
     
 set(MATRIX_ALG_HS_
     ${INC}/mateval/internal/matrix_find_internal.h
@@ -289,8 +273,6 @@ set(MATRIX_ALG_HS_
     
 set(MATEVAL_HS
     ${MATRIX_EVAL_HS_}
-    ${MAP_EXPR_HS_}
-    ${OTHER_EXPR_HS_}
     ${MATRIX_REDUC_HS_}
     ${MATRIX_ALG_HS_}
     ${INC}/mateval/mateval.h)
@@ -302,6 +284,32 @@ set(MATEVAL_HS_EX
     ${MATH_HS}
     ${MATRIX_HS}
     ${MATEVAL_HS})
+    
+# matrix expression 
+
+set(MAP_EXPR_HS_
+    ${INC}/matexpr/internal/map_expr_internal.h
+    ${INC}/matexpr/map_accessors.h
+    ${INC}/matexpr/map_expr.h
+    ${INC}/matexpr/map_expr_inspect.h
+    ${INC}/matexpr/mat_arith.h
+    ${INC}/matexpr/mat_emath.h
+    ${INC}/matexpr/mat_cast.h
+    ${INC}/matexpr/mat_pred.h)
+    
+set(OTHER_EXPR_HS_
+    ${INC}/matexpr/repvec_expr.h
+    ${INC}/matexpr/subs_expr.h
+    ${INC}/matexpr/mat_zip.h) 
+    
+set(MATEXPR_HS
+    ${MAP_EXPR_HS_}
+    ${OTHER_EXPR_HS_})
+
+set(MATEXPR_HS_EX
+    ${MATEVAL_HS_EX}
+    ${MATEXPR_HS})
+               
     
 # linear algebra
     
@@ -490,15 +498,56 @@ set(LMAT_MATRIX_TESTS
 
 # matrix evaluation module
 
-#set(MATEVAL_TEST_HS
+set(MATEVAL_TEST_HS
+    ${MATRIX_HS}
+    ${MATH_HS}
+    ${MATRIX_EVAL_HS_})
+    
+add_executable(test_linear_ewise ${MATEVAL_TEST_HS} mateval/test_linear_ewise.cpp)    
+add_executable(test_percol_ewise ${MATEVAL_TEST_HS} mateval/test_percol_ewise.cpp)
+add_executable(test_ewise_accum ${MATEVAL_TEST_HS}  mateval/test_ewise_accum.cpp)
+
+#set(MATREDUC_TEST_HS
 #    ${MATRIX_HS}
 #    ${MATH_HS}
-#    ${MATRIX_EVAL_HS_})
-#    
-#add_executable(test_linear_ewise ${MATEVAL_TEST_HS} mateval/test_linear_ewise.cpp)    
-#add_executable(test_percol_ewise ${MATEVAL_TEST_HS} mateval/test_percol_ewise.cpp)
-#add_executable(test_ewise_accum ${MATEVAL_TEST_HS}  mateval/test_ewise_accum.cpp)
+#    ${MATRIX_EVAL_HS_}
+#    ${MAP_EXPR_HS_}
+#    ${MATRIX_REDUC_HS_})
 #
+#add_executable(test_full_reduce    ${MATREDUC_TEST_HS} mateval/test_full_reduce.cpp)
+#add_executable(test_colwise_reduce ${MATREDUC_TEST_HS} mateval/test_colwise_reduce.cpp)
+#add_executable(test_rowwise_reduce ${MATREDUC_TEST_HS} mateval/test_rowwise_reduce.cpp)
+#add_executable(test_more_reduce ${MATREDUC_TEST_HS} mateval/test_more_reduce.cpp)
+#add_executable(test_mat_allany ${MATREDUC_TEST_HS} mateval/test_mat_allany.cpp)
+#add_executable(test_mat_compare ${MATREDUC_TEST_HS} mateval/test_mat_compare.cpp)
+
+#set(MATALG_TEST_HS
+#    ${MATRIX_HS}
+#    ${MATRIX_EVAL_HS_}
+#    ${MAP_EXPR_HS_}
+#    ${OTHER_EXPR_HS_}
+#    ${MATRIX_ALG_HS_})
+#    
+#add_executable(test_mat_find ${MATALG_TEST_HS} mateval/test_mat_find.cpp)
+#add_executable(test_mat_sort ${MATALG_TEST_HS} mateval/test_mat_sort.cpp)
+
+set(LMAT_MATEVAL_TESTS
+    test_linear_ewise
+	test_percol_ewise
+	test_ewise_accum
+#	test_full_reduce
+#	test_colwise_reduce
+#	test_rowwise_reduce
+#	test_more_reduce
+#	test_mat_allany
+#	test_mat_compare
+#	test_mat_find
+#	test_mat_sort
+	)
+
+
+# matrix expressions
+
 #set(MAPEXPR_TEST_HS
 #    ${MATRIX_HS}
 #    ${MATH_HS}
@@ -521,39 +570,9 @@ set(LMAT_MATRIX_TESTS
 #add_executable(test_subs_expr ${OTHEREXPR_TEST_HS} mateval/test_subs_expr.cpp)
 #add_executable(test_mat_zip ${OTHEREXPR_TEST_HS} mateval/test_mat_zip.cpp)
 #
-#set(MATREDUC_TEST_HS
-#    ${MATRIX_HS}
-#    ${MATH_HS}
-#    ${MATRIX_EVAL_HS_}
-#    ${MAP_EXPR_HS_}
-#    ${MATRIX_REDUC_HS_})
+#add_executable(test_cpd_ewise ${MATEXPR_HS_EX} mateval/test_cpd_ewise.cpp)
 #
-#add_executable(test_full_reduce    ${MATREDUC_TEST_HS} mateval/test_full_reduce.cpp)
-#add_executable(test_colwise_reduce ${MATREDUC_TEST_HS} mateval/test_colwise_reduce.cpp)
-#add_executable(test_rowwise_reduce ${MATREDUC_TEST_HS} mateval/test_rowwise_reduce.cpp)
-#add_executable(test_more_reduce ${MATREDUC_TEST_HS} mateval/test_more_reduce.cpp)
-#add_executable(test_mat_allany ${MATREDUC_TEST_HS} mateval/test_mat_allany.cpp)
-#add_executable(test_mat_compare ${MATREDUC_TEST_HS} mateval/test_mat_compare.cpp)
-#
-#set(MATALG_TEST_HS
-#    ${MATRIX_HS}
-#    ${MATRIX_EVAL_HS_}
-#    ${MAP_EXPR_HS_}
-#    ${OTHER_EXPR_HS_}
-#    ${MATRIX_ALG_HS_})
-#    
-#add_executable(test_mat_find ${MATALG_TEST_HS} mateval/test_mat_find.cpp)
-#add_executable(test_mat_sort ${MATALG_TEST_HS} mateval/test_mat_sort.cpp)
-#
-#set(MATEVAL_ALL_TEST_HS
-#    ${MATEVAL_HS_EX})
-#
-#add_executable(test_cpd_ewise ${MATEVAL_ALL_TEST_HS} mateval/test_cpd_ewise.cpp)
-#
-#set(LMAT_MATEVAL_TESTS
-#    test_linear_ewise
-#	test_percol_ewise
-#	test_ewise_accum
+#set(LMAT_MATEXPR_TESTS
 #	test_map_expr
 #	test_mat_arith
 #	test_mat_emath
@@ -562,16 +581,7 @@ set(LMAT_MATRIX_TESTS
 #	test_repvecs
 #	test_subs_expr
 #	test_mat_zip
-#	test_full_reduce
-#	test_colwise_reduce
-#	test_rowwise_reduce
-#	test_more_reduce
-#	test_mat_allany
-#	test_mat_compare
-#	test_mat_find
-#	test_mat_sort
-#	test_cpd_ewise
-#)
+#	test_cpd_ewise)
 
 
 # linear algebra module
@@ -613,7 +623,8 @@ set(LMAT_ALL_TESTS
     ${LMAT_SIMD_TESTS}
     ${LMAT_MATH_TESTS}
     ${LMAT_MATRIX_TESTS}
-    # ${LMAT_MATEVAL_TESTS}
+    ${LMAT_MATEVAL_TESTS}
+    # ${LMAT_MATEXPR_TESTS}
     # ${LMAT_LINALG_TESTS}
 )
 

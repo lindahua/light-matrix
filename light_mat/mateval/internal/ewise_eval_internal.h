@@ -48,7 +48,7 @@ namespace lmat { namespace internal {
 		static_assert(is_simdizable<Kernel, SKind>::value, "kernel must be simdizable.");
 
 		typedef typename Kernel::value_type T;
-		const unsigned int W = math::simd_traits<T, SKind>::pack_width;
+		const unsigned int W = simd_traits<T, SKind>::pack_width;
 
 		const index_t len = dim.value();
 		const index_t maj_len = static_cast<index_t>(int_div<W>::maj(static_cast<size_t>(len)));

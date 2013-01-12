@@ -14,8 +14,8 @@
 #define LIGHTMAT_MATRIX_SORT_H_
 
 #include <light_mat/matrix/matrix_classes.h>
-#include <light_mat/mateval/subs_expr.h>
-#include <light_mat/mateval/mat_zip.h>
+#include <light_mat/matexpr/subs_expr.h>
+#include <light_mat/matexpr/mat_zip.h>
 
 #include <functional>
 #include <algorithm>
