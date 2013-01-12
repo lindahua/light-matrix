@@ -25,6 +25,8 @@ namespace lmat { namespace ftags {
 	struct mul_ { };
 	struct div_ { };
 	struct neg_ { };
+
+	struct abs_ { };
 	struct fma_ { };
 
 	struct max_ { };
@@ -51,7 +53,6 @@ namespace lmat { namespace ftags {
 
 	// simple power functions
 
-	struct abs_ { };
 	struct sqr_ { };
 	struct cube_ { };
 
