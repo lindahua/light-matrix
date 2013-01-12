@@ -1,395 +1,21 @@
 /**
- * @file test_sse_ops.cpp
+ * @file test_sse_pred.cpp
  *
- * @brief Unit testing of sse_ops.h
- *
- * @author Dahua Lin
+ * Unit testing of predicates on SSE
+ * 
+ * @author Dahua Lin 
  */
 
+
 #include "simd_test_base.h"
-#include <light_mat/simd/sse_arith.h>
 #include <light_mat/simd/sse_pred.h>
 #include <light_mat/math/math_base.h>
 
 using namespace lmat;
 using namespace lmat::test;
 
-#define DEF_TPACK( pname, tname ) \
-	BEGIN_TPACK( pname##_##tname ) \
-		ADD_T_CASE( pname, tname, float ) \
-		ADD_T_CASE( pname, tname, double ) \
-	END_TPACK
 
-
-
-T_CASE( sse_arith, add )
-{
-	typedef simd_pack<T, sse_t> pack_t;
-	const unsigned int width = pack_t::pack_width;
-
-	T a_src[width];
-	T b_src[width];
-
-	T r1[width];
-	T r2[width];
-
-	for (unsigned i = 0; i < width; ++i)
-	{
-		a_src[i] = T(i + 1);
-		b_src[i] = T(2 * i + 3);
-
-		r1[i] = a_src[i] + b_src[i];
-		r2[i] = r1[i] + b_src[i];
-	}
-
-	pack_t a; a.load_u(a_src);
-	pack_t b; b.load_u(b_src);
-
-	pack_t r = a + b;
-	ASSERT_SIMD_EQ(r, r1);
-
-	r += b;
-	ASSERT_SIMD_EQ(r, r2);
-}
-
-
-T_CASE( sse_arith, sub )
-{
-	typedef simd_pack<T, sse_t> pack_t;
-	const unsigned int width = pack_t::pack_width;
-
-	T a_src[width];
-	T b_src[width];
-
-	T r1[width];
-	T r2[width];
-
-	for (unsigned i = 0; i < width; ++i)
-	{
-		a_src[i] = T(i + 1);
-		b_src[i] = T(2 * i + 3);
-
-		r1[i] = a_src[i] - b_src[i];
-		r2[i] = r1[i] - b_src[i];
-	}
-
-	pack_t a; a.load_u(a_src);
-	pack_t b; b.load_u(b_src);
-
-	pack_t r = a - b;
-	ASSERT_SIMD_EQ(r, r1);
-
-	r -= b;
-	ASSERT_SIMD_EQ(r, r2);
-}
-
-
-T_CASE( sse_arith, mul )
-{
-	typedef simd_pack<T, sse_t> pack_t;
-	const unsigned int width = pack_t::pack_width;
-
-	T a_src[width];
-	T b_src[width];
-
-	T r1[width];
-	T r2[width];
-
-	for (unsigned i = 0; i < width; ++i)
-	{
-		a_src[i] = T(i + 1);
-		b_src[i] = T(2 * i + 3);
-
-		r1[i] = a_src[i] * b_src[i];
-		r2[i] = r1[i] * b_src[i];
-	}
-
-	pack_t a; a.load_u(a_src);
-	pack_t b; b.load_u(b_src);
-
-	pack_t r = a * b;
-	ASSERT_SIMD_EQ(r, r1);
-
-	r *= b;
-	ASSERT_SIMD_EQ(r, r2);
-}
-
-T_CASE( sse_arith, div )
-{
-	typedef simd_pack<T, sse_t> pack_t;
-	const unsigned int width = pack_t::pack_width;
-
-	T a_src[width];
-	T b_src[width];
-
-	T r1[width];
-	T r2[width];
-
-	for (unsigned i = 0; i < width; ++i)
-	{
-		a_src[i] = T(i + 1);
-		b_src[i] = T(2 * i + 3);
-
-		r1[i] = a_src[i] / b_src[i];
-		r2[i] = r1[i] / b_src[i];
-	}
-
-	pack_t a; a.load_u(a_src);
-	pack_t b; b.load_u(b_src);
-
-	pack_t r = a / b;
-	ASSERT_SIMD_ULP(r, r1, 1);
-
-	r /= b;
-	ASSERT_SIMD_ULP(r, r2, 3);
-}
-
-
-T_CASE( sse_arith, neg )
-{
-	typedef simd_pack<T, sse_t> pack_t;
-	const unsigned int width = pack_t::pack_width;
-
-	T a_src[width];
-
-	T r1[width];
-
-	for (unsigned i = 0; i < width; ++i)
-	{
-		a_src[i] = T(i + 1);
-		if (i % 2 == 0) a_src[i] = - a_src[i];
-
-		r1[i] = - a_src[i];
-	}
-
-	pack_t a; a.load_u(a_src);
-
-	pack_t r = -a;
-	ASSERT_SIMD_EQ(r, r1);
-}
-
-
-T_CASE( sse_arith, abs )
-{
-	typedef simd_pack<T, sse_t> pack_t;
-	const unsigned int width = pack_t::pack_width;
-
-	T a_src[width];
-
-	T r1[width];
-
-	for (unsigned i = 0; i < width; ++i)
-	{
-		a_src[i] = T(i + 1);
-		if (i % 2 == 0) a_src[i] = - a_src[i];
-
-		r1[i] = math::abs(a_src[i]);
-	}
-
-	pack_t a; a.load_u(a_src);
-
-	pack_t r = math::abs(a);
-	ASSERT_SIMD_EQ(r, r1);
-}
-
-
-T_CASE( sse_arith, fma )
-{
-	typedef simd_pack<T, sse_t> pack_t;
-	const unsigned int width = pack_t::pack_width;
-
-	T a_src[width];
-	T b_src[width];
-	T c_src[width];
-
-	T r1[width];
-
-	for (unsigned i = 0; i < width; ++i)
-	{
-		a_src[i] = T(i + 1);
-		b_src[i] = T(2 * i + 3);
-		c_src[i] = T(5) - T(i);
-
-		r1[i] = math::fma(a_src[i], b_src[i], c_src[i]);
-	}
-
-	pack_t a; a.load_u(a_src);
-	pack_t b; b.load_u(b_src);
-	pack_t c; c.load_u(c_src);
-
-	pack_t r = math::fma(a, b, c);
-	ASSERT_SIMD_EQ(r, r1);
-}
-
-
-
-T_CASE( sse_arith, max )
-{
-	typedef simd_pack<T, sse_t> pack_t;
-	const unsigned int width = pack_t::pack_width;
-
-	T a_src[width];
-	T b_src[width];
-
-	T r1[width];
-
-	for (unsigned i = 0; i < width; ++i)
-	{
-		a_src[i] = T(i + 2);
-		b_src[i] = T(3 * i + 1);
-
-		r1[i] = math::max(a_src[i], b_src[i]);
-	}
-
-	pack_t a; a.load_u(a_src);
-	pack_t b; b.load_u(b_src);
-
-	pack_t r = math::max(a, b);
-	ASSERT_SIMD_EQ(r, r1);
-}
-
-
-T_CASE( sse_arith, min )
-{
-	typedef simd_pack<T, sse_t> pack_t;
-	const unsigned int width = pack_t::pack_width;
-
-	T a_src[width];
-	T b_src[width];
-
-	T r1[width];
-
-	for (unsigned i = 0; i < width; ++i)
-	{
-		a_src[i] = T(i + 2);
-		b_src[i] = T(3 * i + 1);
-
-		r1[i] = math::min(a_src[i], b_src[i]);
-	}
-
-	pack_t a; a.load_u(a_src);
-	pack_t b; b.load_u(b_src);
-
-	pack_t r = math::min(a, b);
-	ASSERT_SIMD_EQ(r, r1);
-}
-
-
-T_CASE( sse_arith, sqr )
-{
-	typedef simd_pack<T, sse_t> pack_t;
-	const unsigned int width = pack_t::pack_width;
-
-	T a_src[width];
-
-	T r1[width];
-
-	for (unsigned i = 0; i < width; ++i)
-	{
-		a_src[i] = T(i + 2);
-		if (i % 2 == 0) a_src[i] = - a_src[i];
-
-		r1[i] = math::sqr(a_src[i]);
-	}
-
-	pack_t a; a.load_u(a_src);
-
-	pack_t r = math::sqr(a);
-	ASSERT_SIMD_EQ(r, r1);
-}
-
-
-T_CASE( sse_arith, cube )
-{
-	typedef simd_pack<T, sse_t> pack_t;
-	const unsigned int width = pack_t::pack_width;
-
-	T a_src[width];
-
-	T r1[width];
-
-	for (unsigned i = 0; i < width; ++i)
-	{
-		a_src[i] = T(i + 2);
-		if (i % 2 == 0) a_src[i] = - a_src[i];
-
-		r1[i] = math::cube(a_src[i]);
-	}
-
-	pack_t a; a.load_u(a_src);
-
-	pack_t r = math::cube(a);
-	ASSERT_SIMD_EQ(r, r1);
-}
-
-T_CASE( sse_arith, sqrt )
-{
-	typedef simd_pack<T, sse_t> pack_t;
-	const unsigned int width = pack_t::pack_width;
-
-	T a_src[width];
-
-	T r1[width];
-
-	for (unsigned i = 0; i < width; ++i)
-	{
-		a_src[i] = T(i + 2);
-		r1[i] = math::sqrt(a_src[i]);
-	}
-
-	pack_t a; a.load_u(a_src);
-
-	pack_t r = math::sqrt(a);
-	ASSERT_SIMD_ULP(r, r1, 1);
-}
-
-
-T_CASE( sse_arith, rcp )
-{
-	typedef simd_pack<T, sse_t> pack_t;
-	const unsigned int width = pack_t::pack_width;
-
-	T a_src[width];
-
-	T r1[width];
-
-	for (unsigned i = 0; i < width; ++i)
-	{
-		a_src[i] = T(i + 2);
-		if (i % 2 == 0) a_src[i] = - a_src[i];
-
-		r1[i] = math::rcp(a_src[i]);
-	}
-
-	pack_t a; a.load_u(a_src);
-
-	pack_t r = math::rcp(a);
-	ASSERT_SIMD_ULP(r, r1, 1);
-}
-
-T_CASE( sse_arith, rsqrt )
-{
-	typedef simd_pack<T, sse_t> pack_t;
-	const unsigned int width = pack_t::pack_width;
-
-	T a_src[width];
-
-	T r1[width];
-
-	for (unsigned i = 0; i < width; ++i)
-	{
-		a_src[i] = T(i + 2);
-		r1[i] = math::rsqrt(a_src[i]);
-	}
-
-	pack_t a; a.load_u(a_src);
-
-	pack_t r = math::rsqrt(a);
-	ASSERT_SIMD_ULP(r, r1, 1);
-}
-
-
-T_CASE( sse_comp, eq )
+T_CASE( sse_eq )
 {
 	typedef simd_pack<T, sse_t> pack_t;
 	const unsigned int width = pack_t::pack_width;
@@ -418,7 +44,7 @@ T_CASE( sse_comp, eq )
 }
 
 
-T_CASE( sse_comp, ne )
+T_CASE( sse_ne )
 {
 	typedef simd_pack<T, sse_t> pack_t;
 	const unsigned int width = pack_t::pack_width;
@@ -447,7 +73,7 @@ T_CASE( sse_comp, ne )
 }
 
 
-T_CASE( sse_comp, gt )
+T_CASE( sse_gt )
 {
 	typedef simd_pack<T, sse_t> pack_t;
 	const unsigned int width = pack_t::pack_width;
@@ -476,7 +102,7 @@ T_CASE( sse_comp, gt )
 }
 
 
-T_CASE( sse_comp, ge )
+T_CASE( sse_ge )
 {
 	typedef simd_pack<T, sse_t> pack_t;
 	const unsigned int width = pack_t::pack_width;
@@ -505,7 +131,7 @@ T_CASE( sse_comp, ge )
 }
 
 
-T_CASE( sse_comp, lt )
+T_CASE( sse_lt )
 {
 	typedef simd_pack<T, sse_t> pack_t;
 	const unsigned int width = pack_t::pack_width;
@@ -534,7 +160,7 @@ T_CASE( sse_comp, lt )
 }
 
 
-T_CASE( sse_comp, le )
+T_CASE( sse_le )
 {
 	typedef simd_pack<T, sse_t> pack_t;
 	const unsigned int width = pack_t::pack_width;
@@ -561,7 +187,6 @@ T_CASE( sse_comp, le )
 	bpack_t r = (a <= b);
 	ASSERT_SIMD_EQ(r, r1);
 }
-
 
 
 template<typename T> struct sse_not_tbody;
@@ -596,7 +221,7 @@ struct sse_not_tbody<double>
 	}
 };
 
-T_CASE( sse_logical, not )
+T_CASE( sse_logical_not )
 {
 	sse_not_tbody<T>::run();
 }
@@ -641,7 +266,7 @@ struct sse_and_tbody<double>
 	}
 };
 
-T_CASE( sse_logical, and )
+T_CASE( sse_logical_and )
 {
 	sse_and_tbody<T>::run();
 }
@@ -686,7 +311,7 @@ struct sse_or_tbody<double>
 	}
 };
 
-T_CASE( sse_logical, or )
+T_CASE( sse_logical_or )
 {
 	sse_or_tbody<T>::run();
 }
@@ -731,7 +356,7 @@ struct sse_eq_tbody<double>
 	}
 };
 
-T_CASE( sse_logical, eq )
+T_CASE( sse_logical_eq )
 {
 	sse_eq_tbody<T>::run();
 }
@@ -776,61 +401,9 @@ struct sse_ne_tbody<double>
 	}
 };
 
-T_CASE( sse_logical, ne )
+T_CASE( sse_logical_ne )
 {
 	sse_ne_tbody<T>::run();
-}
-
-
-
-template<typename T> struct sse_cond_tbody;
-
-template<>
-struct sse_cond_tbody<float>
-{
-	static void run()
-	{
-		typedef simd_pack<float, sse_t> pack_t;
-		typedef simd_bpack<float, sse_t> bpack_t;
-
-		bpack_t b(true, false, false, true);
-		pack_t x(1.0f, 2.0f, 3.0f, 4.0f);
-		pack_t y(5.0f, 6.0f, 7.0f, 8.0f);
-
-		float r0[4] = {1.0f, 6.0f, 7.0f, 4.0f};
-		pack_t r1 = math::cond(b, x, y);
-		pack_t r2 = internal::cond_sse2(b, x, y);
-
-		ASSERT_SIMD_EQ( r1, r0 );
-		ASSERT_SIMD_EQ( r2, r0 );
-	}
-};
-
-template<>
-struct sse_cond_tbody<double>
-{
-	static void run()
-	{
-		typedef simd_pack<double, sse_t> pack_t;
-		typedef simd_bpack<double, sse_t> bpack_t;
-
-		bpack_t b(true, false);
-		pack_t x(1.0, 2.0);
-		pack_t y(5.0, 6.0);
-
-		double r0[2] = {1.0, 6.0};
-		pack_t r1 = math::cond(b, x, y);
-		pack_t r2 = internal::cond_sse2(b, x, y);
-
-		ASSERT_SIMD_EQ( r1, r0 );
-		ASSERT_SIMD_EQ( r2, r0 );
-	}
-};
-
-
-T_CASE( sse_cond, cond )
-{
-	sse_cond_tbody<T>::run();
 }
 
 
@@ -954,77 +527,33 @@ struct sse_fpclassify_tbody<double>
 	}
 };
 
-T_CASE( sse_fpclassify, all )
+T_CASE( sse_fpclassify )
 {
 	sse_fpclassify_tbody<T>::run();
 }
 
+AUTO_TPACK( sse_comp )
+{
+	ADD_T_CASE_FP( sse_eq )
+	ADD_T_CASE_FP( sse_ne )
+	ADD_T_CASE_FP( sse_gt )
+	ADD_T_CASE_FP( sse_ge )
+	ADD_T_CASE_FP( sse_lt )
+	ADD_T_CASE_FP( sse_le )
+}
 
-DEF_TPACK( sse_arith, add )
-DEF_TPACK( sse_arith, sub )
-DEF_TPACK( sse_arith, mul )
-DEF_TPACK( sse_arith, div )
-DEF_TPACK( sse_arith, neg )
-DEF_TPACK( sse_arith, abs )
-DEF_TPACK( sse_arith, fma )
+AUTO_TPACK( sse_logical )
+{
+	ADD_T_CASE_FP( sse_logical_not )
+	ADD_T_CASE_FP( sse_logical_and )
+	ADD_T_CASE_FP( sse_logical_or )
+	ADD_T_CASE_FP( sse_logical_eq )
+	ADD_T_CASE_FP( sse_logical_ne )
+}
 
-DEF_TPACK( sse_arith, max )
-DEF_TPACK( sse_arith, min )
-DEF_TPACK( sse_arith, sqr )
-DEF_TPACK( sse_arith, cube )
-DEF_TPACK( sse_arith, sqrt )
-DEF_TPACK( sse_arith, rcp )
-DEF_TPACK( sse_arith, rsqrt )
+AUTO_TPACK( sse_fpclassify )
+{
+	ADD_T_CASE_FP( sse_fpclassify )
+}
 
-DEF_TPACK( sse_comp, eq )
-DEF_TPACK( sse_comp, ne )
-DEF_TPACK( sse_comp, gt )
-DEF_TPACK( sse_comp, ge )
-DEF_TPACK( sse_comp, lt )
-DEF_TPACK( sse_comp, le )
-
-DEF_TPACK( sse_logical, not )
-DEF_TPACK( sse_logical, and )
-DEF_TPACK( sse_logical, or )
-DEF_TPACK( sse_logical, eq )
-DEF_TPACK( sse_logical, ne )
-
-DEF_TPACK( sse_cond, cond )
-
-DEF_TPACK( sse_fpclassify, all )
-
-BEGIN_MAIN_SUITE
-	ADD_TPACK( sse_arith_add )
-	ADD_TPACK( sse_arith_sub )
-	ADD_TPACK( sse_arith_mul )
-	ADD_TPACK( sse_arith_div )
-	ADD_TPACK( sse_arith_neg )
-	ADD_TPACK( sse_arith_abs )
-	ADD_TPACK( sse_arith_fma )
-
-	ADD_TPACK( sse_arith_max )
-	ADD_TPACK( sse_arith_min )
-	ADD_TPACK( sse_arith_sqr )
-	ADD_TPACK( sse_arith_cube )
-	ADD_TPACK( sse_arith_sqrt )
-	ADD_TPACK( sse_arith_rcp )
-	ADD_TPACK( sse_arith_rsqrt )
-
-	ADD_TPACK( sse_comp_eq )
-	ADD_TPACK( sse_comp_ne )
-	ADD_TPACK( sse_comp_gt )
-	ADD_TPACK( sse_comp_ge )
-	ADD_TPACK( sse_comp_lt )
-	ADD_TPACK( sse_comp_le )
-
-	ADD_TPACK( sse_logical_not )
-	ADD_TPACK( sse_logical_and )
-	ADD_TPACK( sse_logical_or )
-	ADD_TPACK( sse_logical_eq )
-	ADD_TPACK( sse_logical_ne )
-
-	ADD_TPACK( sse_cond_cond )
-
-	ADD_TPACK( sse_fpclassify_all )
-END_MAIN_SUITE
 

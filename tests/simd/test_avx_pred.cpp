@@ -1,395 +1,20 @@
 /**
- * @file test_avx_ops.cpp
+ * @file test_avx_pred.cpp
  *
- * Unit testing of basic operations on AVX packs
+ * Unit testing of predicates on AVX packs
  * 
  * @author Dahua Lin 
  */
 
 #include "simd_test_base.h"
-#include <light_mat/simd/avx_arith.h>
 #include <light_mat/simd/avx_pred.h>
 #include <light_mat/math/math_base.h>
 
 using namespace lmat;
 using namespace lmat::test;
 
-#define DEF_TPACK( pname, tname ) \
-	BEGIN_TPACK( pname##_##tname ) \
-		ADD_T_CASE( pname, tname, float ) \
-		ADD_T_CASE( pname, tname, double ) \
-	END_TPACK
 
-
-T_CASE( avx_arith, add )
-{
-	typedef simd_pack<T, avx_t> pack_t;
-	const unsigned int width = pack_t::pack_width;
-
-	T a_src[width];
-	T b_src[width];
-
-	T r1[width];
-	T r2[width];
-
-	for (unsigned i = 0; i < width; ++i)
-	{
-		a_src[i] = T(i + 1);
-		b_src[i] = T(2 * i + 3);
-
-		r1[i] = a_src[i] + b_src[i];
-		r2[i] = r1[i] + b_src[i];
-	}
-
-	pack_t a; a.load_u(a_src);
-	pack_t b; b.load_u(b_src);
-
-	pack_t r = a + b;
-	ASSERT_SIMD_EQ(r, r1);
-
-	r += b;
-	ASSERT_SIMD_EQ(r, r2);
-}
-
-
-T_CASE( avx_arith, sub )
-{
-	typedef simd_pack<T, avx_t> pack_t;
-	const unsigned int width = pack_t::pack_width;
-
-	T a_src[width];
-	T b_src[width];
-
-	T r1[width];
-	T r2[width];
-
-	for (unsigned i = 0; i < width; ++i)
-	{
-		a_src[i] = T(i + 1);
-		b_src[i] = T(2 * i + 3);
-
-		r1[i] = a_src[i] - b_src[i];
-		r2[i] = r1[i] - b_src[i];
-	}
-
-	pack_t a; a.load_u(a_src);
-	pack_t b; b.load_u(b_src);
-
-	pack_t r = a - b;
-	ASSERT_SIMD_EQ(r, r1);
-
-	r -= b;
-	ASSERT_SIMD_EQ(r, r2);
-}
-
-
-T_CASE( avx_arith, mul )
-{
-	typedef simd_pack<T, avx_t> pack_t;
-	const unsigned int width = pack_t::pack_width;
-
-	T a_src[width];
-	T b_src[width];
-
-	T r1[width];
-	T r2[width];
-
-	for (unsigned i = 0; i < width; ++i)
-	{
-		a_src[i] = T(i + 1);
-		b_src[i] = T(2 * i + 3);
-
-		r1[i] = a_src[i] * b_src[i];
-		r2[i] = r1[i] * b_src[i];
-	}
-
-	pack_t a; a.load_u(a_src);
-	pack_t b; b.load_u(b_src);
-
-	pack_t r = a * b;
-	ASSERT_SIMD_EQ(r, r1);
-
-	r *= b;
-	ASSERT_SIMD_EQ(r, r2);
-}
-
-T_CASE( avx_arith, div )
-{
-	typedef simd_pack<T, avx_t> pack_t;
-	const unsigned int width = pack_t::pack_width;
-
-	T a_src[width];
-	T b_src[width];
-
-	T r1[width];
-	T r2[width];
-
-	for (unsigned i = 0; i < width; ++i)
-	{
-		a_src[i] = T(i + 1);
-		b_src[i] = T(2 * i + 3);
-
-		r1[i] = a_src[i] / b_src[i];
-		r2[i] = r1[i] / b_src[i];
-	}
-
-	pack_t a; a.load_u(a_src);
-	pack_t b; b.load_u(b_src);
-
-	pack_t r = a / b;
-	ASSERT_SIMD_ULP(r, r1, 1);
-
-	r /= b;
-	ASSERT_SIMD_ULP(r, r2, 3);
-}
-
-
-T_CASE( avx_arith, neg )
-{
-	typedef simd_pack<T, avx_t> pack_t;
-	const unsigned int width = pack_t::pack_width;
-
-	T a_src[width];
-
-	T r1[width];
-
-	for (unsigned i = 0; i < width; ++i)
-	{
-		a_src[i] = T(i + 1);
-		if (i % 2 == 0) a_src[i] = - a_src[i];
-
-		r1[i] = - a_src[i];
-	}
-
-	pack_t a; a.load_u(a_src);
-
-	pack_t r = -a;
-	ASSERT_SIMD_EQ(r, r1);
-}
-
-
-T_CASE( avx_arith, abs )
-{
-	typedef simd_pack<T, avx_t> pack_t;
-	const unsigned int width = pack_t::pack_width;
-
-	T a_src[width];
-
-	T r1[width];
-
-	for (unsigned i = 0; i < width; ++i)
-	{
-		a_src[i] = T(i + 1);
-		if (i % 2 == 0) a_src[i] = - a_src[i];
-
-		r1[i] = math::abs(a_src[i]);
-	}
-
-	pack_t a; a.load_u(a_src);
-
-	pack_t r = math::abs(a);
-	ASSERT_SIMD_EQ(r, r1);
-}
-
-
-T_CASE( avx_arith, fma )
-{
-	typedef simd_pack<T, avx_t> pack_t;
-	const unsigned int width = pack_t::pack_width;
-
-	T a_src[width];
-	T b_src[width];
-	T c_src[width];
-
-	T r1[width];
-
-	for (unsigned i = 0; i < width; ++i)
-	{
-		a_src[i] = T(i + 1);
-		b_src[i] = T(2 * i + 3);
-		c_src[i] = T(5) - T(i);
-
-		r1[i] = math::fma(a_src[i], b_src[i], c_src[i]);
-	}
-
-	pack_t a; a.load_u(a_src);
-	pack_t b; b.load_u(b_src);
-	pack_t c; c.load_u(c_src);
-
-	pack_t r = math::fma(a, b, c);
-	ASSERT_SIMD_EQ(r, r1);
-}
-
-
-
-T_CASE( avx_arith, max )
-{
-	typedef simd_pack<T, avx_t> pack_t;
-	const unsigned int width = pack_t::pack_width;
-
-	T a_src[width];
-	T b_src[width];
-
-	T r1[width];
-
-	for (unsigned i = 0; i < width; ++i)
-	{
-		a_src[i] = T(i + 2);
-		b_src[i] = T(3 * i + 1);
-
-		r1[i] = math::max(a_src[i], b_src[i]);
-	}
-
-	pack_t a; a.load_u(a_src);
-	pack_t b; b.load_u(b_src);
-
-	pack_t r = math::max(a, b);
-	ASSERT_SIMD_EQ(r, r1);
-}
-
-
-T_CASE( avx_arith, min )
-{
-	typedef simd_pack<T, avx_t> pack_t;
-	const unsigned int width = pack_t::pack_width;
-
-	T a_src[width];
-	T b_src[width];
-
-	T r1[width];
-
-	for (unsigned i = 0; i < width; ++i)
-	{
-		a_src[i] = T(i + 2);
-		b_src[i] = T(3 * i + 1);
-
-		r1[i] = math::min(a_src[i], b_src[i]);
-	}
-
-	pack_t a; a.load_u(a_src);
-	pack_t b; b.load_u(b_src);
-
-	pack_t r = math::min(a, b);
-	ASSERT_SIMD_EQ(r, r1);
-}
-
-
-T_CASE( avx_arith, sqr )
-{
-	typedef simd_pack<T, avx_t> pack_t;
-	const unsigned int width = pack_t::pack_width;
-
-	T a_src[width];
-
-	T r1[width];
-
-	for (unsigned i = 0; i < width; ++i)
-	{
-		a_src[i] = T(i + 2);
-		if (i % 2 == 0) a_src[i] = - a_src[i];
-
-		r1[i] = math::sqr(a_src[i]);
-	}
-
-	pack_t a; a.load_u(a_src);
-
-	pack_t r = math::sqr(a);
-	ASSERT_SIMD_EQ(r, r1);
-}
-
-
-T_CASE( avx_arith, cube )
-{
-	typedef simd_pack<T, avx_t> pack_t;
-	const unsigned int width = pack_t::pack_width;
-
-	T a_src[width];
-
-	T r1[width];
-
-	for (unsigned i = 0; i < width; ++i)
-	{
-		a_src[i] = T(i + 2);
-		if (i % 2 == 0) a_src[i] = - a_src[i];
-
-		r1[i] = math::cube(a_src[i]);
-	}
-
-	pack_t a; a.load_u(a_src);
-
-	pack_t r = math::cube(a);
-	ASSERT_SIMD_EQ(r, r1);
-}
-
-T_CASE( avx_arith, sqrt )
-{
-	typedef simd_pack<T, avx_t> pack_t;
-	const unsigned int width = pack_t::pack_width;
-
-	T a_src[width];
-
-	T r1[width];
-
-	for (unsigned i = 0; i < width; ++i)
-	{
-		a_src[i] = T(i + 2);
-		r1[i] = math::sqrt(a_src[i]);
-	}
-
-	pack_t a; a.load_u(a_src);
-
-	pack_t r = math::sqrt(a);
-	ASSERT_SIMD_ULP(r, r1, 1);
-}
-
-
-T_CASE( avx_arith, rcp )
-{
-	typedef simd_pack<T, avx_t> pack_t;
-	const unsigned int width = pack_t::pack_width;
-
-	T a_src[width];
-
-	T r1[width];
-
-	for (unsigned i = 0; i < width; ++i)
-	{
-		a_src[i] = T(i + 2);
-		if (i % 2 == 0) a_src[i] = - a_src[i];
-
-		r1[i] = math::rcp(a_src[i]);
-	}
-
-	pack_t a; a.load_u(a_src);
-
-	pack_t r = math::rcp(a);
-	ASSERT_SIMD_ULP(r, r1, 1);
-}
-
-T_CASE( avx_arith, rsqrt )
-{
-	typedef simd_pack<T, avx_t> pack_t;
-	const unsigned int width = pack_t::pack_width;
-
-	T a_src[width];
-
-	T r1[width];
-
-	for (unsigned i = 0; i < width; ++i)
-	{
-		a_src[i] = T(i + 2);
-		r1[i] = math::rsqrt(a_src[i]);
-	}
-
-	pack_t a; a.load_u(a_src);
-
-	pack_t r = math::rsqrt(a);
-	ASSERT_SIMD_ULP(r, r1, 1);
-}
-
-
-
-T_CASE( avx_comp, eq )
+T_CASE( avx_eq )
 {
 	typedef simd_pack<T, avx_t> pack_t;
 	const unsigned int width = pack_t::pack_width;
@@ -420,7 +45,7 @@ T_CASE( avx_comp, eq )
 }
 
 
-T_CASE( avx_comp, ne )
+T_CASE( avx_ne )
 {
 	typedef simd_pack<T, avx_t> pack_t;
 	const unsigned int width = pack_t::pack_width;
@@ -451,7 +76,7 @@ T_CASE( avx_comp, ne )
 }
 
 
-T_CASE( avx_comp, gt )
+T_CASE( avx_gt )
 {
 	typedef simd_pack<T, avx_t> pack_t;
 	const unsigned int width = pack_t::pack_width;
@@ -482,7 +107,7 @@ T_CASE( avx_comp, gt )
 }
 
 
-T_CASE( avx_comp, ge )
+T_CASE( avx_ge )
 {
 	typedef simd_pack<T, avx_t> pack_t;
 	const unsigned int width = pack_t::pack_width;
@@ -513,7 +138,7 @@ T_CASE( avx_comp, ge )
 }
 
 
-T_CASE( avx_comp, lt )
+T_CASE( avx_lt )
 {
 	typedef simd_pack<T, avx_t> pack_t;
 	const unsigned int width = pack_t::pack_width;
@@ -544,7 +169,7 @@ T_CASE( avx_comp, lt )
 }
 
 
-T_CASE( avx_comp, le )
+T_CASE( avx_le )
 {
 	typedef simd_pack<T, avx_t> pack_t;
 	const unsigned int width = pack_t::pack_width;
@@ -607,7 +232,7 @@ struct avx_not_tbody<double>
 	}
 };
 
-T_CASE( avx_logical, not )
+T_CASE( avx_logical_not )
 {
 	avx_not_tbody<T>::run();
 }
@@ -647,7 +272,7 @@ struct avx_and_tbody<double>
 	}
 };
 
-T_CASE( avx_logical, and )
+T_CASE( avx_logical_and )
 {
 	avx_and_tbody<T>::run();
 }
@@ -687,7 +312,7 @@ struct avx_or_tbody<double>
 	}
 };
 
-T_CASE( avx_logical, or )
+T_CASE( avx_logical_or )
 {
 	avx_or_tbody<T>::run();
 }
@@ -727,7 +352,7 @@ struct avx_eq_tbody<double>
 	}
 };
 
-T_CASE( avx_logical, eq )
+T_CASE( avx_logical_eq )
 {
 	avx_eq_tbody<T>::run();
 }
@@ -767,51 +392,9 @@ struct avx_ne_tbody<double>
 	}
 };
 
-T_CASE( avx_logical, ne )
+T_CASE( avx_logical_ne )
 {
 	avx_ne_tbody<T>::run();
-}
-
-
-template<typename T> struct avx_cond_tbody;
-
-template<> struct avx_cond_tbody<float>
-{
-	static void run()
-	{
-		typedef simd_pack<float, avx_t> pack_t;
-		typedef simd_bpack<float, avx_t> bpack_t;
-
-		bpack_t b(true, false, true, false, true, true, false, false);
-		pack_t x( 1.f,  2.f,  3.f,  4.f,  5.f,  6.f,  7.f,  8.f);
-		pack_t y(-1.f, -2.f, -3.f, -4.f, -5.f, -6.f, -7.f, -8.f);
-
-		float r0[8] = {1.f, -2.f, 3.f, -4.f, 5.f, 6.f, -7.f, -8.f};
-
-		ASSERT_SIMD_EQ( math::cond(b, x, y), r0 );
-	}
-};
-
-template<> struct avx_cond_tbody<double>
-{
-	static void run()
-	{
-		typedef simd_pack<double, avx_t> pack_t;
-		typedef simd_bpack<double, avx_t> bpack_t;
-
-		bpack_t b(true, false, true, false);
-		pack_t x( 1.0,  2.0,  3.0,  4.0);
-		pack_t y(-1.0, -2.0, -3.0, -4.0);
-
-		double r0[8] = {1.0, -2.0, 3.0, -4.0};
-		ASSERT_SIMD_EQ( math::cond(b, x, y), r0 );
-	}
-};
-
-
-T_CASE( avx_cond, cond )
-{
-	avx_cond_tbody<T>::run();
 }
 
 
@@ -903,78 +486,35 @@ struct avx_fpclassify_tbody<double>
 	}
 };
 
-T_CASE( avx_fpclassify, all )
+T_CASE( avx_fpclassify )
 {
 	avx_fpclassify_tbody<T>::run();
 }
 
 
-DEF_TPACK( avx_arith, add )
-DEF_TPACK( avx_arith, sub )
-DEF_TPACK( avx_arith, mul )
-DEF_TPACK( avx_arith, div )
-DEF_TPACK( avx_arith, neg )
-DEF_TPACK( avx_arith, abs )
-DEF_TPACK( avx_arith, fma )
+AUTO_TPACK( avx_comp )
+{
+	ADD_T_CASE_FP( avx_eq )
+	ADD_T_CASE_FP( avx_ne )
+	ADD_T_CASE_FP( avx_gt )
+	ADD_T_CASE_FP( avx_ge )
+	ADD_T_CASE_FP( avx_lt )
+	ADD_T_CASE_FP( avx_le )
+}
 
-DEF_TPACK( avx_arith, max )
-DEF_TPACK( avx_arith, min )
-DEF_TPACK( avx_arith, sqr )
-DEF_TPACK( avx_arith, cube )
-DEF_TPACK( avx_arith, sqrt )
-DEF_TPACK( avx_arith, rcp )
-DEF_TPACK( avx_arith, rsqrt )
+AUTO_TPACK( avx_logical )
+{
+	ADD_T_CASE_FP( avx_logical_not )
+	ADD_T_CASE_FP( avx_logical_and )
+	ADD_T_CASE_FP( avx_logical_or )
+	ADD_T_CASE_FP( avx_logical_eq )
+	ADD_T_CASE_FP( avx_logical_ne )
+}
 
-DEF_TPACK( avx_comp, eq )
-DEF_TPACK( avx_comp, ne )
-DEF_TPACK( avx_comp, gt )
-DEF_TPACK( avx_comp, ge )
-DEF_TPACK( avx_comp, lt )
-DEF_TPACK( avx_comp, le )
-
-DEF_TPACK( avx_logical, not )
-DEF_TPACK( avx_logical, and )
-DEF_TPACK( avx_logical, or )
-DEF_TPACK( avx_logical, eq )
-DEF_TPACK( avx_logical, ne )
-
-DEF_TPACK( avx_cond, cond )
-
-DEF_TPACK( avx_fpclassify, all )
+AUTO_TPACK( avx_fpclassify )
+{
+	ADD_T_CASE_FP( avx_fpclassify )
+}
 
 
-BEGIN_MAIN_SUITE
-	ADD_TPACK( avx_arith_add )
-	ADD_TPACK( avx_arith_sub )
-	ADD_TPACK( avx_arith_mul )
-	ADD_TPACK( avx_arith_div )
-	ADD_TPACK( avx_arith_neg )
-	ADD_TPACK( avx_arith_abs )
-	ADD_TPACK( avx_arith_fma )
-
-	ADD_TPACK( avx_arith_max )
-	ADD_TPACK( avx_arith_min )
-	ADD_TPACK( avx_arith_sqr )
-	ADD_TPACK( avx_arith_cube )
-	ADD_TPACK( avx_arith_sqrt )
-	ADD_TPACK( avx_arith_rcp )
-	ADD_TPACK( avx_arith_rsqrt )
-
-	ADD_TPACK( avx_comp_eq )
-	ADD_TPACK( avx_comp_ne )
-	ADD_TPACK( avx_comp_gt )
-	ADD_TPACK( avx_comp_ge )
-	ADD_TPACK( avx_comp_lt )
-	ADD_TPACK( avx_comp_le )
-
-	ADD_TPACK( avx_logical_not )
-	ADD_TPACK( avx_logical_and )
-	ADD_TPACK( avx_logical_or )
-	ADD_TPACK( avx_logical_eq )
-	ADD_TPACK( avx_logical_ne )
-
-	ADD_TPACK( avx_cond_cond )
-
-	ADD_TPACK( avx_fpclassify_all )
-END_MAIN_SUITE
 
