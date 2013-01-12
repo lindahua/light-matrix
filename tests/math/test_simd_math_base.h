@@ -29,7 +29,7 @@ inline double randunif(double LB, double UB)
  ************************************************/
 
 #define DEFINE_MATH_CASE1( Name, SIMD, ulp, LB, UB ) \
-	T_CASE( simd_math, Name##_##SIMD ) { \
+	T_CASE( Name##_##SIMD ) { \
 		typedef simd_pack<T, SIMD##_t> pack_t; \
 		const unsigned int width = pack_t::pack_width; \
 		T a_src[width]; \
@@ -46,7 +46,7 @@ inline double randunif(double LB, double UB)
 	}
 
 #define DEFINE_MATH_CASE2( Name, SIMD, ulp, LBa, UBa, LBb, UBb ) \
-	T_CASE( simd_math, Name##_##SIMD ) { \
+	T_CASE( Name##_##SIMD ) { \
 		typedef simd_pack<T, SIMD##_t> pack_t; \
 		const unsigned int width = pack_t::pack_width; \
 		T a_src[width]; \
@@ -71,43 +71,40 @@ inline double randunif(double LB, double UB)
 #define DEFINE_MATH_TPACK1( Name, ulp, LB, UB ) \
 	DEFINE_MATH_CASE1( Name,  sse, ulp, LB, UB ) \
 	DEFINE_MATH_CASE1( Name,  avx, ulp, LB, UB ) \
-	BEGIN_TPACK( simd_##Name ) \
-		ADD_T_CASE( simd_math, Name##_sse, float ) \
-		ADD_T_CASE( simd_math, Name##_sse, double ) \
-		ADD_T_CASE( simd_math, Name##_avx, float ) \
-		ADD_T_CASE( simd_math, Name##_avx, double ) \
-	END_TPACK
+	AUTO_TPACK ( Name##_simd ) { \
+		ADD_T_CASE( Name##_sse, float ) \
+		ADD_T_CASE( Name##_sse, double ) \
+		ADD_T_CASE( Name##_avx, float ) \
+		ADD_T_CASE( Name##_avx, double ) \
+	}
 
 #define DEFINE_MATH_TPACK2( Name, ulp, LBa, UBa, LBb, UBb ) \
 	DEFINE_MATH_CASE2( Name,  sse, ulp, LBa, UBa, LBb, UBb ) \
 	DEFINE_MATH_CASE2( Name,  avx, ulp, LBa, UBa, LBb, UBb ) \
-	BEGIN_TPACK( simd_##Name ) \
-		ADD_T_CASE( simd_math, Name##_sse, float ) \
-		ADD_T_CASE( simd_math, Name##_sse, double ) \
-		ADD_T_CASE( simd_math, Name##_avx, float ) \
-		ADD_T_CASE( simd_math, Name##_avx, double ) \
-	END_TPACK
+	AUTO_TPACK( Name##_simd ) { \
+		ADD_T_CASE( Name##_sse, float ) \
+		ADD_T_CASE( Name##_sse, double ) \
+		ADD_T_CASE( Name##_avx, float ) \
+		ADD_T_CASE( Name##_avx, double ) \
+	}
 
 #else
 
 #define DEFINE_MATH_TPACK1( Name, ulp, LB, UB ) \
 	DEFINE_MATH_CASE1( Name,  sse, ulp, LB, UB ) \
-	BEGIN_TPACK( simd_##Name ) \
+	AUTO_TPACK( Name##_simd) { \
 		ADD_T_CASE( simd_math, Name##_sse, float ) \
 		ADD_T_CASE( simd_math, Name##_sse, double ) \
-	END_TPACK
+	}
 
 #define DEFINE_MATH_TPACK2( Name, ulp, LBa, UBa, LBb, UBb ) \
 	DEFINE_MATH_CASE2( Name,  sse, ulp, LBa, UBa, LBb, UBb ) \
-	BEGIN_TPACK( simd_##Name ) \
+	AUTO_TPACK( Name##_simd ) { \
 		ADD_T_CASE( simd_math, Name##_sse, float ) \
 		ADD_T_CASE( simd_math, Name##_sse, double ) \
-	END_TPACK
+	}
 
 #endif
-
-
-#define ADD_MATH_TPACK( Name ) ADD_TPACK( simd_##Name )
 
 
 #endif

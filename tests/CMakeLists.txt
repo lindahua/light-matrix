@@ -426,16 +426,16 @@ endif (ALLOW_AVX)
 
 # math module
 
-#if (SVML_PATH)
-#
-#add_executable(test_simd_math_svml ${MATH_HS_EX} math/test_simd_math.cpp)
-#add_executable(test_simd_special ${MATH_HS_EX} math/test_simd_special.cpp)
-#
-#set(LMAT_MATH_TESTS
-#    test_simd_math_svml
-#    test_simd_special)
-#
-#endif (SVML_PATH)
+if (SVML_PATH)
+
+add_executable(test_simd_math_svml ${MATH_HS_EX} math/test_simd_math.cpp)
+add_executable(test_simd_special ${MATH_HS_EX} math/test_simd_special.cpp)
+
+set(LMAT_MATH_TESTS
+    test_simd_math_svml
+    test_simd_special)
+
+endif (SVML_PATH)
 
 # matrix module
 
@@ -631,7 +631,7 @@ endif (ALLOW_AVX)
 set(LMAT_ALL_TESTS
     ${LMAT_COMMON_TESTS}
     ${LMAT_SIMD_TESTS}
-    #${LMAT_MATH_TESTS}
+    ${LMAT_MATH_TESTS}
     #${LMAT_MATRIX_TESTS}
     #${LMAT_MATEVAL_TESTS}
     #${LMAT_MATEXPR_TESTS}
@@ -650,31 +650,32 @@ set(LMAT_ALL_TESTS
 #if (${CMAKE_CXX_COMPILER_ID} MATCHES "GNU")
 #set_target_properties(test_dense_eval PROPERTIES COMPILE_FLAGS "-Wno-free-nonheap-object")
 #endif (${CMAKE_CXX_COMPILER_ID} MATCHES "GNU")
-#    
+# 
+   
 # Link to SVML
-#
-#if (SVML_PATH)
-#
-#set(TESTS_USING_SVML
-#    test_simd_math_svml
-#    test_simd_special
+
+if (SVML_PATH)
+
+set(TESTS_USING_SVML
+    test_simd_math_svml
+    test_simd_special
     # test_mat_emath
     # test_cpd_ewise
-#    )
-#
-#foreach (tname ${TESTS_USING_SVML}) 
-#set_target_properties(${tname}
-#	PROPERTIES
-#	COMPILE_FLAGS "-DLMAT_USE_INTEL_SVML"
-#)
-#if (MSVC)
-#target_link_libraries(${tname} ${SVML} ${LIBIRC})
-#else (MSVC)
-#target_link_libraries(${tname} ${SVML})
-#endif (MSVC)
-#endforeach (tname)
-#    
-#endif (SVML_PATH)
+    )
+
+foreach (tname ${TESTS_USING_SVML}) 
+set_target_properties(${tname}
+	PROPERTIES
+	COMPILE_FLAGS "-DLMAT_USE_INTEL_SVML"
+)
+if (MSVC)
+target_link_libraries(${tname} ${SVML} ${LIBIRC})
+else (MSVC)
+target_link_libraries(${tname} ${SVML})
+endif (MSVC)
+endforeach (tname)
+    
+endif (SVML_PATH)
     
 # Link to MKL
 

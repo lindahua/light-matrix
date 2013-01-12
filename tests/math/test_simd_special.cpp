@@ -26,10 +26,4 @@ DEFINE_MATH_TPACK1( erfc, 4, -2.0, 2.0 )
 
 DEFINE_MATH_TPACK1( norminv, 4, 0.0, 1.0 )
 
-BEGIN_MAIN_SUITE
-	ADD_TPACK( simd_erf )
-	ADD_TPACK( simd_erfc )
-	ADD_TPACK( simd_norminv )
-END_MAIN_SUITE
-
 
