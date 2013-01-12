@@ -46,14 +46,7 @@ template<> struct elemwise_construct<double>
 };
 
 
-#define DEF_TPACK( pname, tname ) \
-	BEGIN_TPACK( pname##_##tname ) \
-		ADD_T_CASE( pname, tname, float ) \
-		ADD_T_CASE( pname, tname, double ) \
-	END_TPACK
-
-
-T_CASE( avx_bpack, constructs )
+T_CASE( avx_bpack_constructs )
 {
 	typedef simd_bpack<T, avx_t> bpack_t;
 	typedef typename bpack_t::bint_type bint;
@@ -82,7 +75,7 @@ T_CASE( avx_bpack, constructs )
 }
 
 
-T_CASE( avx_bpack, load_and_store )
+T_CASE( avx_bpack_load_and_store )
 {
 	typedef simd_bpack<T, avx_t> bpack_t;
 	typedef typename bpack_t::bint_type bint;
@@ -107,7 +100,7 @@ T_CASE( avx_bpack, load_and_store )
 }
 
 
-T_CASE( avx_bpack, set )
+T_CASE( avx_bpack_set )
 {
 	typedef simd_bpack<T, avx_t> bpack_t;
 	typedef typename bpack_t::bint_type bint;
@@ -132,7 +125,7 @@ T_CASE( avx_bpack, set )
 }
 
 
-T_CASE( avx_bpack, to_scalar )
+T_CASE( avx_bpack_to_scalar )
 {
 	typedef simd_bpack<T, avx_t> bpack_t;
 	typedef typename bpack_t::bint_type bint;
@@ -153,7 +146,7 @@ T_CASE( avx_bpack, to_scalar )
 }
 
 
-T_CASE( avx_bpack, extracts )
+T_CASE( avx_bpack_extracts )
 {
 	typedef simd_bpack<T, avx_t> bpack_t;
 	typedef typename bpack_t::bint_type bint;
@@ -180,21 +173,19 @@ T_CASE( avx_bpack, extracts )
 	}
 }
 
+AUTO_TPACK( avx_bpack_basic )
+{
+	ADD_T_CASE_FP( avx_bpack_constructs )
+	ADD_T_CASE_FP( avx_bpack_load_and_store )
+	ADD_T_CASE_FP( avx_bpack_set )
+}
 
-DEF_TPACK( avx_bpack, constructs )
-DEF_TPACK( avx_bpack, load_and_store )
-DEF_TPACK( avx_bpack, set )
-DEF_TPACK( avx_bpack, to_scalar )
-DEF_TPACK( avx_bpack, extracts )
+AUTO_TPACK( avx_bpack_elems )
+{
+	ADD_T_CASE_FP( avx_bpack_to_scalar )
+	ADD_T_CASE_FP( avx_bpack_extracts )
+}
 
-
-BEGIN_MAIN_SUITE
-	ADD_TPACK( avx_bpack_constructs )
-	ADD_TPACK( avx_bpack_load_and_store )
-	ADD_TPACK( avx_bpack_set )
-	ADD_TPACK( avx_bpack_to_scalar )
-	ADD_TPACK( avx_bpack_extracts )
-END_MAIN_SUITE
 
 
 

@@ -6,6 +6,7 @@
  * @author Dahua Lin
  */
 
+#include <light_test/auto_suite.h>
 #include <light_test/std_test_mon.h>
 
 #ifdef _MSC_VER
@@ -14,14 +15,11 @@
 
 using namespace ltest;
 
-extern void lmat_add_test_packs();
-extern ltest::test_suite lmat_main_suite;
+LTEST_INIT_AUTOSUITE
 
 int main(int argc, char *argv[])
 {
-	::lmat_add_test_packs();
-
-	if (std_test_main(lmat_main_suite))
+	if (std_test_main(*auto_test_suite::main_suite()))
 	{
 		return 0;
 	}

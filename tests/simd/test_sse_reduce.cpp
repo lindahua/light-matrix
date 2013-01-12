@@ -13,14 +13,7 @@ using namespace lmat;
 using namespace lmat::test;
 
 
-#define DEF_TPACK( pname, tname ) \
-	BEGIN_TPACK( pname##_##tname ) \
-		ADD_T_CASE( pname, tname, float ) \
-		ADD_T_CASE( pname, tname, double ) \
-	END_TPACK
-
-
-T_CASE( sse_reduce, sum )
+T_CASE( sse_sum )
 {
 	typedef simd_pack<T, sse_t> pack_t;
 	const unsigned int width = pack_t::pack_width;
@@ -39,7 +32,7 @@ T_CASE( sse_reduce, sum )
 	ASSERT_EQ( sum(a), s0 );
 }
 
-T_CASE( sse_reduce, max )
+T_CASE( sse_max )
 {
 	typedef simd_pack<T, sse_t> pack_t;
 	const unsigned int width = pack_t::pack_width;
@@ -59,7 +52,7 @@ T_CASE( sse_reduce, max )
 }
 
 
-T_CASE( sse_reduce, min )
+T_CASE( sse_min )
 {
 	typedef simd_pack<T, sse_t> pack_t;
 	const unsigned int width = pack_t::pack_width;
@@ -79,7 +72,7 @@ T_CASE( sse_reduce, min )
 }
 
 
-SIMPLE_CASE( sse_reduce, booltest_f32 )
+SIMPLE_CASE( sse_booltest_f32 )
 {
 	const unsigned int M = 15;
 	for (unsigned i = 0; i <= M; ++i)
@@ -108,7 +101,7 @@ SIMPLE_CASE( sse_reduce, booltest_f32 )
 }
 
 
-SIMPLE_CASE( sse_reduce, booltest_f64 )
+SIMPLE_CASE( sse_booltest_f64 )
 {
 	const unsigned int M = 3;
 	for (unsigned i = 0; i <= M; ++i)
@@ -135,21 +128,17 @@ SIMPLE_CASE( sse_reduce, booltest_f64 )
 }
 
 
+AUTO_TPACK( sse_stats )
+{
+	ADD_T_CASE_FP( sse_sum )
+	ADD_T_CASE_FP( sse_max )
+	ADD_T_CASE_FP( sse_min )
+}
 
-DEF_TPACK( sse_reduce, sum )
-DEF_TPACK( sse_reduce, max )
-DEF_TPACK( sse_reduce, min )
+AUTO_TPACK( sse_booltest )
+{
+	ADD_SIMPLE_CASE( sse_booltest_f32 )
+	ADD_SIMPLE_CASE( sse_booltest_f64 )
+}
 
-BEGIN_TPACK( sse_reduce_booltest )
-	ADD_SIMPLE_CASE( sse_reduce, booltest_f32 )
-	ADD_SIMPLE_CASE( sse_reduce, booltest_f64 )
-END_TPACK
-
-
-BEGIN_MAIN_SUITE
-	ADD_TPACK( sse_reduce_sum )
-	ADD_TPACK( sse_reduce_max )
-	ADD_TPACK( sse_reduce_min )
-	ADD_TPACK( sse_reduce_booltest )
-END_MAIN_SUITE
 

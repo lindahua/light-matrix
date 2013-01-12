@@ -13,13 +13,6 @@
 using namespace lmat;
 using namespace lmat::test;
 
-
-#define DEF_TPACK( pname, tname ) \
-	BEGIN_TPACK( pname##_##tname ) \
-		ADD_T_CASE( pname, tname, float ) \
-		ADD_T_CASE( pname, tname, double ) \
-	END_TPACK
-
 using lmat::math::floor;
 using lmat::math::ceil;
 using lmat::math::trunc;
@@ -39,7 +32,7 @@ static double da3[2] = { 2.2, 2.5 };
 static double da4[2] = { 2.7, 3.0 };
 
 
-SIMPLE_CASE( sse_round, floor_f32 )
+SIMPLE_CASE( sse_floor_f32 )
 {
 	sse_f32pk a1; a1.load_u(sa1);
 	sse_f32pk a2; a2.load_u(sa2);
@@ -54,7 +47,7 @@ SIMPLE_CASE( sse_round, floor_f32 )
 	ASSERT_SIMD_EQ( floor(a2), r2 );
 }
 
-SIMPLE_CASE( sse_round, floor_f64 )
+SIMPLE_CASE( sse_floor_f64 )
 {
 	sse_f64pk a1; a1.load_u(da1);
 	sse_f64pk a2; a2.load_u(da2);
@@ -78,7 +71,7 @@ SIMPLE_CASE( sse_round, floor_f64 )
 }
 
 
-SIMPLE_CASE( sse_round, ceil_f32 )
+SIMPLE_CASE( sse_ceil_f32 )
 {
 	sse_f32pk a1; a1.load_u(sa1);
 	sse_f32pk a2; a2.load_u(sa2);
@@ -93,7 +86,7 @@ SIMPLE_CASE( sse_round, ceil_f32 )
 	ASSERT_SIMD_EQ( ceil(a2), r2 );
 }
 
-SIMPLE_CASE( sse_round, ceil_f64 )
+SIMPLE_CASE( sse_ceil_f64 )
 {
 	sse_f64pk a1; a1.load_u(da1);
 	sse_f64pk a2; a2.load_u(da2);
@@ -117,7 +110,7 @@ SIMPLE_CASE( sse_round, ceil_f64 )
 }
 
 
-SIMPLE_CASE( sse_round, trunc_f32 )
+SIMPLE_CASE( sse_trunc_f32 )
 {
 	sse_f32pk a1; a1.load_u(sa1);
 	sse_f32pk a2; a2.load_u(sa2);
@@ -132,7 +125,7 @@ SIMPLE_CASE( sse_round, trunc_f32 )
 	ASSERT_SIMD_EQ( trunc(a2), r2 );
 }
 
-SIMPLE_CASE( sse_round, trunc_f64 )
+SIMPLE_CASE( sse_trunc_f64 )
 {
 	sse_f64pk a1; a1.load_u(da1);
 	sse_f64pk a2; a2.load_u(da2);
@@ -156,7 +149,7 @@ SIMPLE_CASE( sse_round, trunc_f64 )
 }
 
 
-SIMPLE_CASE( sse_round, round_f32 )
+SIMPLE_CASE( sse_round_f32 )
 {
 	sse_f32pk a1; a1.load_u(sa1);
 	sse_f32pk a2; a2.load_u(sa2);
@@ -171,7 +164,7 @@ SIMPLE_CASE( sse_round, round_f32 )
 	ASSERT_SIMD_EQ( round(a2), r2 );
 }
 
-SIMPLE_CASE( sse_round, round_f64 )
+SIMPLE_CASE( sse_round_f64 )
 {
 	sse_f64pk a1; a1.load_u(da1);
 	sse_f64pk a2; a2.load_u(da2);
@@ -195,22 +188,15 @@ SIMPLE_CASE( sse_round, round_f64 )
 }
 
 
-
-BEGIN_TPACK( sse_all_rounding_ways )
-	ADD_SIMPLE_CASE( sse_round, floor_f32 )
-	ADD_SIMPLE_CASE( sse_round, floor_f64 )
-	ADD_SIMPLE_CASE( sse_round,  ceil_f32 )
-	ADD_SIMPLE_CASE( sse_round,  ceil_f64 )
-	ADD_SIMPLE_CASE( sse_round, trunc_f32 )
-	ADD_SIMPLE_CASE( sse_round, trunc_f64 )
-	ADD_SIMPLE_CASE( sse_round, round_f32 )
-	ADD_SIMPLE_CASE( sse_round, round_f64 )
-END_TPACK
-
-BEGIN_MAIN_SUITE
-	ADD_TPACK( sse_all_rounding_ways )
-END_MAIN_SUITE
-
-
-
+AUTO_TPACK( sse_round )
+{
+	ADD_SIMPLE_CASE( sse_floor_f32 )
+	ADD_SIMPLE_CASE( sse_floor_f64 )
+	ADD_SIMPLE_CASE( sse_ceil_f32 )
+	ADD_SIMPLE_CASE( sse_ceil_f64 )
+	ADD_SIMPLE_CASE( sse_trunc_f32 )
+	ADD_SIMPLE_CASE( sse_trunc_f64 )
+	ADD_SIMPLE_CASE( sse_round_f32 )
+	ADD_SIMPLE_CASE( sse_round_f64 )
+}
 

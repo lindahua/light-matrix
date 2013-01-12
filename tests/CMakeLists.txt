@@ -378,7 +378,8 @@ set(SSE_TEST_HS
 
 add_executable(test_sse_packs  ${SSE_TEST_HS} simd/test_sse_packs.cpp)
 add_executable(test_sse_bpacks ${SSE_TEST_HS} simd/test_sse_bpacks.cpp)
-add_executable(test_sse_ops    ${SSE_TEST_HS} simd/test_sse_ops.cpp)
+add_executable(test_sse_arith  ${SSE_TEST_HS} simd/test_sse_arith.cpp)
+add_executable(test_sse_pred   ${SSE_TEST_HS} simd/test_sse_pred.cpp)
 add_executable(test_sse_round  ${SSE_TEST_HS} simd/test_sse_round.cpp)
 add_executable(test_sse_reduce ${SSE_TEST_HS} simd/test_sse_reduce.cpp)
 
@@ -390,7 +391,8 @@ set(AVX_TEST_HS
 if (ALLOW_AVX)
 add_executable(test_avx_packs  ${AVX_TEST_HS} simd/test_avx_packs.cpp)
 add_executable(test_avx_bpacks ${AVX_TEST_HS} simd/test_avx_bpacks.cpp)
-add_executable(test_avx_ops    ${AVX_TEST_HS} simd/test_avx_ops.cpp)
+add_executable(test_avx_arith  ${SSE_TEST_HS} simd/test_avx_arith.cpp)
+add_executable(test_avx_pred   ${SSE_TEST_HS} simd/test_avx_pred.cpp)
 add_executable(test_avx_round  ${AVX_TEST_HS} simd/test_avx_round.cpp)
 add_executable(test_avx_reduce ${AVX_TEST_HS} simd/test_avx_reduce.cpp)
 endif (ALLOW_AVX)
@@ -398,7 +400,8 @@ endif (ALLOW_AVX)
 set(LMAT_SSE_TESTS
     test_sse_packs
     test_sse_bpacks
-    test_sse_ops
+    test_sse_arith
+    test_sse_pred
     test_sse_round
     test_sse_reduce)
 
@@ -406,7 +409,8 @@ if (ALLOW_AVX)
 set(LMAT_AVX_TESTS
     test_avx_packs
     test_avx_bpacks
-    test_avx_ops
+    test_avx_arith
+    test_avx_pred
     test_avx_round
     test_avx_reduce)
 endif (ALLOW_AVX)
@@ -422,95 +426,95 @@ endif (ALLOW_AVX)
 
 # math module
 
-if (SVML_PATH)
-
-add_executable(test_simd_math_svml ${MATH_HS_EX} math/test_simd_math.cpp)
-add_executable(test_simd_special ${MATH_HS_EX} math/test_simd_special.cpp)
-
-set(LMAT_MATH_TESTS
-    test_simd_math_svml
-    test_simd_special)
-
-endif (SVML_PATH)
+#if (SVML_PATH)
+#
+#add_executable(test_simd_math_svml ${MATH_HS_EX} math/test_simd_math.cpp)
+#add_executable(test_simd_special ${MATH_HS_EX} math/test_simd_special.cpp)
+#
+#set(LMAT_MATH_TESTS
+#    test_simd_math_svml
+#    test_simd_special)
+#
+#endif (SVML_PATH)
 
 # matrix module
 
-set(MATCLASS_TEST_HS
-    ${COMMON_HS_EX}
-    ${MATRIX_BASE_HS_}
-    ${MATRIX_CLASS_HS_})
-
-add_executable(test_dense_mat ${MATCLASS_TEST_HS} matrix/test_dense_mat.cpp)
-add_executable(test_dense_vec ${MATCLASS_TEST_HS} matrix/test_dense_vec.cpp)     
-add_executable(test_ref_mat   ${MATCLASS_TEST_HS} matrix/test_ref_mat.cpp)
-add_executable(test_ref_vec   ${MATCLASS_TEST_HS} matrix/test_ref_vec.cpp)
-add_executable(test_ref_block ${MATCLASS_TEST_HS} matrix/test_ref_block.cpp)
-add_executable(test_ref_grid  ${MATCLASS_TEST_HS} matrix/test_ref_grid.cpp)
-add_executable(test_step_vec  ${MATCLASS_TEST_HS} matrix/test_step_vec.cpp)
-
-set(MATOPS_TEST_HS
-    ${COMMON_HS_EX}
-    ${MATRIX_BASE_HS_}
-    ${MATRIX_CLASS_HS_}
-    ${MATRIX_OPS_HS_})
-
-add_executable(test_mat_props  ${MATOPS_TEST_HS} matrix/test_mat_props.cpp)
-add_executable(test_mat_iter   ${MATOPS_TEST_HS} matrix/test_mat_iter.cpp)
-add_executable(test_mat_fill   ${MATOPS_TEST_HS} matrix/test_mat_fill.cpp)
-add_executable(test_mat_copy   ${MATOPS_TEST_HS} matrix/test_mat_copy.cpp)
-add_executable(test_dense_eval ${MATOPS_TEST_HS}  matrix/test_dense_eval.cpp)
-
-set(MATVIEWS_TEST_HS
-    ${COMMON_HS_EX}
-    ${MATRIX_BASE_HS_}
-    ${MATRIX_CLASS_HS_}
-    ${MATRIX_VIEWS_HS_})
-
-add_executable(test_mat_vecviews ${MATVIEWS_TEST_HS} matrix/test_mat_vecviews.cpp)
-add_executable(test_mat_matviews ${MATVIEWS_TEST_HS} matrix/test_mat_matviews.cpp)
-add_executable(test_mat_asvec ${MATVIEWS_TEST_HS} matrix/test_mat_asvec.cpp) 
-
-set(MATMANIP_TEST_HS
-    ${COMMON_HS}
-    ${MATRIX_BASE_HS_}
-    ${MATRIX_CLASS_HS_}
-    ${MATRIX_MANIP_HS_})
-     
-add_executable(test_mat_select ${MATMANIP_TEST_HS} matrix/test_mat_select.cpp)
-add_executable(test_direct_trans ${MATMANIP_TEST_HS} matrix/test_direct_trans.cpp)    
-add_executable(test_transpose_expr ${MATMANIP_TEST_HS} matrix/test_transpose_expr.cpp) 
-
-set(LMAT_MATRIX_TESTS
-    test_dense_mat
-	test_dense_vec
-	test_ref_mat
-	test_ref_vec
-	test_ref_block
-	test_ref_grid
-	test_step_vec
-	test_mat_props
-	test_mat_iter
-	test_mat_fill
-	test_mat_copy
-	test_dense_eval
-	test_mat_vecviews
-	test_mat_matviews
-	test_mat_asvec
-	test_mat_select
-	test_direct_trans
-	test_transpose_expr
-	)
+#set(MATCLASS_TEST_HS
+#    ${COMMON_HS_EX}
+#    ${MATRIX_BASE_HS_}
+#    ${MATRIX_CLASS_HS_})
+#
+#add_executable(test_dense_mat ${MATCLASS_TEST_HS} matrix/test_dense_mat.cpp)
+#add_executable(test_dense_vec ${MATCLASS_TEST_HS} matrix/test_dense_vec.cpp)     
+#add_executable(test_ref_mat   ${MATCLASS_TEST_HS} matrix/test_ref_mat.cpp)
+#add_executable(test_ref_vec   ${MATCLASS_TEST_HS} matrix/test_ref_vec.cpp)
+#add_executable(test_ref_block ${MATCLASS_TEST_HS} matrix/test_ref_block.cpp)
+#add_executable(test_ref_grid  ${MATCLASS_TEST_HS} matrix/test_ref_grid.cpp)
+#add_executable(test_step_vec  ${MATCLASS_TEST_HS} matrix/test_step_vec.cpp)
+#
+#set(MATOPS_TEST_HS
+#    ${COMMON_HS_EX}
+#    ${MATRIX_BASE_HS_}
+#    ${MATRIX_CLASS_HS_}
+#    ${MATRIX_OPS_HS_})
+#
+#add_executable(test_mat_props  ${MATOPS_TEST_HS} matrix/test_mat_props.cpp)
+#add_executable(test_mat_iter   ${MATOPS_TEST_HS} matrix/test_mat_iter.cpp)
+#add_executable(test_mat_fill   ${MATOPS_TEST_HS} matrix/test_mat_fill.cpp)
+#add_executable(test_mat_copy   ${MATOPS_TEST_HS} matrix/test_mat_copy.cpp)
+#add_executable(test_dense_eval ${MATOPS_TEST_HS}  matrix/test_dense_eval.cpp)
+#
+#set(MATVIEWS_TEST_HS
+#    ${COMMON_HS_EX}
+#    ${MATRIX_BASE_HS_}
+#    ${MATRIX_CLASS_HS_}
+#    ${MATRIX_VIEWS_HS_})
+#
+#add_executable(test_mat_vecviews ${MATVIEWS_TEST_HS} matrix/test_mat_vecviews.cpp)
+#add_executable(test_mat_matviews ${MATVIEWS_TEST_HS} matrix/test_mat_matviews.cpp)
+#add_executable(test_mat_asvec ${MATVIEWS_TEST_HS} matrix/test_mat_asvec.cpp) 
+#
+#set(MATMANIP_TEST_HS
+#    ${COMMON_HS}
+#    ${MATRIX_BASE_HS_}
+#    ${MATRIX_CLASS_HS_}
+#    ${MATRIX_MANIP_HS_})
+#     
+#add_executable(test_mat_select ${MATMANIP_TEST_HS} matrix/test_mat_select.cpp)
+#add_executable(test_direct_trans ${MATMANIP_TEST_HS} matrix/test_direct_trans.cpp)    
+#add_executable(test_transpose_expr ${MATMANIP_TEST_HS} matrix/test_transpose_expr.cpp) 
+#
+#set(LMAT_MATRIX_TESTS
+#    test_dense_mat
+#	test_dense_vec
+#	test_ref_mat
+#	test_ref_vec
+#	test_ref_block
+#	test_ref_grid
+#	test_step_vec
+#	test_mat_props
+#	test_mat_iter
+#	test_mat_fill
+#	test_mat_copy
+#	test_dense_eval
+#	test_mat_vecviews
+#	test_mat_matviews
+#	test_mat_asvec
+#	test_mat_select
+#	test_direct_trans
+#	test_transpose_expr
+#	)
 
 # matrix evaluation module
 
-set(MATEVAL_TEST_HS
-    ${MATRIX_HS}
-    ${MATH_HS}
-    ${MATRIX_EVAL_HS_})
-    
-add_executable(test_linear_ewise ${MATEVAL_TEST_HS} mateval/test_linear_ewise.cpp)    
-add_executable(test_percol_ewise ${MATEVAL_TEST_HS} mateval/test_percol_ewise.cpp)
-add_executable(test_ewise_accum ${MATEVAL_TEST_HS}  mateval/test_ewise_accum.cpp)
+#set(MATEVAL_TEST_HS
+#    ${MATRIX_HS}
+#    ${MATH_HS}
+#    ${MATRIX_EVAL_HS_})
+#    
+#add_executable(test_linear_ewise ${MATEVAL_TEST_HS} mateval/test_linear_ewise.cpp)    
+#add_executable(test_percol_ewise ${MATEVAL_TEST_HS} mateval/test_percol_ewise.cpp)
+#add_executable(test_ewise_accum ${MATEVAL_TEST_HS}  mateval/test_ewise_accum.cpp)
 
 #set(MATREDUC_TEST_HS
 #    ${MATRIX_HS}
@@ -536,10 +540,10 @@ add_executable(test_ewise_accum ${MATEVAL_TEST_HS}  mateval/test_ewise_accum.cpp
 #add_executable(test_mat_find ${MATALG_TEST_HS} mateval/test_mat_find.cpp)
 #add_executable(test_mat_sort ${MATALG_TEST_HS} mateval/test_mat_sort.cpp)
 
-set(LMAT_MATEVAL_TESTS
-    test_linear_ewise
-	test_percol_ewise
-	test_ewise_accum
+#set(LMAT_MATEVAL_TESTS
+#   test_linear_ewise
+#	test_percol_ewise
+#	test_ewise_accum
 #	test_full_reduce
 #	test_colwise_reduce
 #	test_rowwise_reduce
@@ -548,19 +552,19 @@ set(LMAT_MATEVAL_TESTS
 #	test_mat_compare
 #	test_mat_find
 #	test_mat_sort
-	)
+#	)
 
 
 # matrix expressions
 
-set(MAPEXPR_TEST_HS
-    ${MATRIX_HS}
-    ${MATH_HS}
-    ${MATRIX_EVAL_HS_}
-    ${MAP_EXPR_HS_})
-    
-add_executable(test_map_expr ${MAPEXPR_TEST_HS} matexpr/test_map_expr.cpp)
-add_executable(test_mat_arith ${MAPEXPR_TEST_HS} matexpr/test_mat_arith.cpp)
+#set(MAPEXPR_TEST_HS
+#    ${MATRIX_HS}
+#    ${MATH_HS}
+#    ${MATRIX_EVAL_HS_}
+#    ${MAP_EXPR_HS_})
+#    
+#add_executable(test_map_expr ${MAPEXPR_TEST_HS} matexpr/test_map_expr.cpp)
+#add_executable(test_mat_arith ${MAPEXPR_TEST_HS} matexpr/test_mat_arith.cpp)
 #add_executable(test_mat_emath ${MAPEXPR_TEST_HS} matexpr/test_mat_emath.cpp)
 #add_executable(test_mat_cast ${MAPEXPR_TEST_HS} matexpr/test_mat_cast.cpp)
 #add_executable(test_mat_pred ${MAPEXPR_TEST_HS} matexpr/test_mat_pred.cpp)
@@ -577,9 +581,9 @@ add_executable(test_mat_arith ${MAPEXPR_TEST_HS} matexpr/test_mat_arith.cpp)
 #
 #add_executable(test_cpd_ewise ${MATEXPR_HS_EX} matexpr/test_cpd_ewise.cpp)
 
-set(LMAT_MATEXPR_TESTS
-	test_map_expr
-	test_mat_arith
+#set(LMAT_MATEXPR_TESTS
+#	test_map_expr
+#	test_mat_arith
 #	test_mat_emath
 #	test_mat_cast
 #	test_mat_pred
@@ -587,7 +591,7 @@ set(LMAT_MATEXPR_TESTS
 #	test_subs_expr
 #	test_mat_zip
 #	test_cpd_ewise
-	)
+#	)
 
 
 # linear algebra module
@@ -627,10 +631,10 @@ set(LMAT_MATEXPR_TESTS
 set(LMAT_ALL_TESTS
     ${LMAT_COMMON_TESTS}
     ${LMAT_SIMD_TESTS}
-    ${LMAT_MATH_TESTS}
-    ${LMAT_MATRIX_TESTS}
-    ${LMAT_MATEVAL_TESTS}
-    ${LMAT_MATEXPR_TESTS}
+    #${LMAT_MATH_TESTS}
+    #${LMAT_MATRIX_TESTS}
+    #${LMAT_MATEVAL_TESTS}
+    #${LMAT_MATEXPR_TESTS}
     # ${LMAT_LINALG_TESTS}
 )
 
@@ -643,34 +647,34 @@ set(LMAT_ALL_TESTS
 
 # suppress bogus free-nonheap-object complaint under GCC
 
-if (${CMAKE_CXX_COMPILER_ID} MATCHES "GNU")
-set_target_properties(test_dense_eval PROPERTIES COMPILE_FLAGS "-Wno-free-nonheap-object")
-endif (${CMAKE_CXX_COMPILER_ID} MATCHES "GNU")
-    
+#if (${CMAKE_CXX_COMPILER_ID} MATCHES "GNU")
+#set_target_properties(test_dense_eval PROPERTIES COMPILE_FLAGS "-Wno-free-nonheap-object")
+#endif (${CMAKE_CXX_COMPILER_ID} MATCHES "GNU")
+#    
 # Link to SVML
-
-if (SVML_PATH)
-
-set(TESTS_USING_SVML
-    test_simd_math_svml
-    test_simd_special
+#
+#if (SVML_PATH)
+#
+#set(TESTS_USING_SVML
+#    test_simd_math_svml
+#    test_simd_special
     # test_mat_emath
     # test_cpd_ewise
-    )
-
-foreach (tname ${TESTS_USING_SVML}) 
-set_target_properties(${tname}
-	PROPERTIES
-	COMPILE_FLAGS "-DLMAT_USE_INTEL_SVML"
-)
-if (MSVC)
-target_link_libraries(${tname} ${SVML} ${LIBIRC})
-else (MSVC)
-target_link_libraries(${tname} ${SVML})
-endif (MSVC)
-endforeach (tname)
-    
-endif (SVML_PATH)
+#    )
+#
+#foreach (tname ${TESTS_USING_SVML}) 
+#set_target_properties(${tname}
+#	PROPERTIES
+#	COMPILE_FLAGS "-DLMAT_USE_INTEL_SVML"
+#)
+#if (MSVC)
+#target_link_libraries(${tname} ${SVML} ${LIBIRC})
+#else (MSVC)
+#target_link_libraries(${tname} ${SVML})
+#endif (MSVC)
+#endforeach (tname)
+#    
+#endif (SVML_PATH)
     
 # Link to MKL
 

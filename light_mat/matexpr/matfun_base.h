@@ -175,12 +175,12 @@
 	LMAT_DEF_GMATFUN( operator Op, ftags::Name##_, 2 ) \
 	template<typename T, class X, class Y> \
 	LMAT_ENSURE_INLINE \
-	X& operator Op##= (IRegularMatrix<X, T>& x, const IEWiseMatrix<Y, T>& y) { \
+	inline X& operator Op##= (IRegularMatrix<X, T>& x, const IEWiseMatrix<Y, T>& y) { \
 		x.derived() = x Op y; \
 		return x.derived(); } \
 	template<typename T, class X> \
 	LMAT_ENSURE_INLINE \
-	X& operator Op##= (IRegularMatrix<X, T>& x, const T& y) { \
+	inline X& operator Op##= (IRegularMatrix<X, T>& x, const T& y) { \
 		x.derived() = x Op y; \
 		return x.derived(); } \
 

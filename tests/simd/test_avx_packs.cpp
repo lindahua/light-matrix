@@ -8,6 +8,7 @@
 
 #include "simd_test_base.h"
 #include <light_mat/simd/avx_packs.h>
+#include <cmath>
 
 using namespace lmat;
 using namespace lmat::test;
@@ -44,14 +45,7 @@ template<> struct elemwise_construct<double>
 };
 
 
-#define DEF_TPACK( pname, tname ) \
-	BEGIN_TPACK( pname##_##tname ) \
-		ADD_T_CASE( pname, tname, float ) \
-		ADD_T_CASE( pname, tname, double ) \
-	END_TPACK
-
-
-T_CASE( avx_pack, constructs )
+T_CASE( avx_pack_constructs )
 {
 	typedef simd_pack<T, avx_t> pack_t;
 	const unsigned int width = pack_t::pack_width;
@@ -77,33 +71,31 @@ T_CASE( avx_pack, constructs )
 	pack_t pv1 = pack_t::ones();
 	ASSERT_SIMD_EQ( pv1, T(1) );
 
-#ifdef LMAT_HAS_CXX11_MATH
 	pack_t pv_inf = pack_t::inf();
 	for (unsigned i = 0; i < width; ++i)
 	{
-		bool is_inf_i = math::isinf(pv_inf[i]) && pv_inf[i] > T(0);
+		bool is_inf_i = std::isinf(pv_inf[i]) && pv_inf[i] > T(0);
 		ASSERT_TRUE( is_inf_i );
 	}
 
 	pack_t pv_neginf = pack_t::neg_inf();
 	for (unsigned i = 0; i < width; ++i)
 	{
-		bool is_neginf_i = math::isinf(pv_neginf[i]) && pv_neginf[i] < T(0);
+		bool is_neginf_i = std::isinf(pv_neginf[i]) && pv_neginf[i] < T(0);
 		ASSERT_TRUE( is_neginf_i );
 	}
 
 	pack_t pv_nan = pack_t::nan();
 	for (unsigned i = 0; i < width; ++i)
 	{
-		bool is_nan_i = math::isnan(pv_nan[i]);
+		bool is_nan_i = std::isnan(pv_nan[i]);
 		ASSERT_TRUE( is_nan_i );
 	}
-#endif
 }
 
 
 
-T_CASE( avx_pack, sets )
+T_CASE( avx_pack_sets )
 {
 	typedef simd_pack<T, avx_t> pack_t;
 	const unsigned int width = pack_t::pack_width;
@@ -125,7 +117,7 @@ T_CASE( avx_pack, sets )
 }
 
 
-T_CASE( avx_pack, loads )
+T_CASE( avx_pack_loads )
 {
 	typedef simd_pack<T, avx_t> pack_t;
 	const unsigned int width = pack_t::pack_width;
@@ -143,7 +135,7 @@ T_CASE( avx_pack, loads )
 	ASSERT_SIMD_EQ(pk, src + 1);
 }
 
-T_CASE( avx_pack, stores )
+T_CASE( avx_pack_stores )
 {
 	typedef simd_pack<T, avx_t> pack_t;
 	const unsigned int width = pack_t::pack_width;
@@ -167,7 +159,7 @@ T_CASE( avx_pack, stores )
 }
 
 
-TI_CASE( avx_pack, load_parts )
+TI_CASE( avx_pack_load_parts )
 {
 	typedef simd_pack<T, avx_t> pack_t;
 	const unsigned int width = pack_t::pack_width;
@@ -186,7 +178,7 @@ TI_CASE( avx_pack, load_parts )
 	ASSERT_SIMD_EQ( pk, r );
 }
 
-TI_CASE( avx_pack, store_parts )
+TI_CASE( avx_pack_store_parts )
 {
 	typedef simd_pack<T, avx_t> pack_t;
 	const unsigned int width = pack_t::pack_width;
@@ -210,7 +202,7 @@ TI_CASE( avx_pack, store_parts )
 	ASSERT_VEC_EQ( width, dst, r );
 }
 
-T_CASE( avx_pack, to_scalar )
+T_CASE( avx_pack_to_scalar )
 {
 	typedef simd_pack<T, avx_t> pack_t;
 	const unsigned int width = pack_t::pack_width;
@@ -226,7 +218,7 @@ T_CASE( avx_pack, to_scalar )
 	ASSERT_EQ(v, src[0]);
 }
 
-T_CASE( avx_pack, extracts )
+T_CASE( avx_pack_extracts )
 {
 	typedef simd_pack<T, avx_t> pack_t;
 	const unsigned int width = pack_t::pack_width;
@@ -245,48 +237,40 @@ T_CASE( avx_pack, extracts )
 }
 
 
-DEF_TPACK( avx_pack, constructs )
-DEF_TPACK( avx_pack, sets )
-DEF_TPACK( avx_pack, loads )
-DEF_TPACK( avx_pack, stores )
+AUTO_TPACK( avx_basics )
+{
+	ADD_T_CASE_FP( avx_pack_constructs )
+	ADD_T_CASE_FP( avx_pack_sets )
+	ADD_T_CASE_FP( avx_pack_loads )
+	ADD_T_CASE_FP( avx_pack_stores )
+}
 
-BEGIN_TPACK( avx_pack_load_parts )
-	ADD_TI_CASE( avx_pack, load_parts, float, 0 )
-	ADD_TI_CASE( avx_pack, load_parts, float, 1 )
-	ADD_TI_CASE( avx_pack, load_parts, float, 2 )
-	ADD_TI_CASE( avx_pack, load_parts, float, 3 )
-	ADD_TI_CASE( avx_pack, load_parts, float, 4 )
+AUTO_TPACK( avx_parts )
+{
+	ADD_TI_CASE( avx_pack_load_parts, float, 0 )
+	ADD_TI_CASE( avx_pack_load_parts, float, 1 )
+	ADD_TI_CASE( avx_pack_load_parts, float, 2 )
+	ADD_TI_CASE( avx_pack_load_parts, float, 3 )
+	ADD_TI_CASE( avx_pack_load_parts, float, 4 )
 
-	ADD_TI_CASE( avx_pack, load_parts, double, 0 )
-	ADD_TI_CASE( avx_pack, load_parts, double, 1 )
-	ADD_TI_CASE( avx_pack, load_parts, double, 2 )
-END_TPACK
+	ADD_TI_CASE( avx_pack_load_parts, double, 0 )
+	ADD_TI_CASE( avx_pack_load_parts, double, 1 )
+	ADD_TI_CASE( avx_pack_load_parts, double, 2 )
 
-BEGIN_TPACK( avx_pack_store_parts )
-	ADD_TI_CASE( avx_pack, store_parts, float, 0 )
-	ADD_TI_CASE( avx_pack, store_parts, float, 1 )
-	ADD_TI_CASE( avx_pack, store_parts, float, 2 )
-	ADD_TI_CASE( avx_pack, store_parts, float, 3 )
-	ADD_TI_CASE( avx_pack, store_parts, float, 4 )
+	ADD_TI_CASE( avx_pack_store_parts, float, 0 )
+	ADD_TI_CASE( avx_pack_store_parts, float, 1 )
+	ADD_TI_CASE( avx_pack_store_parts, float, 2 )
+	ADD_TI_CASE( avx_pack_store_parts, float, 3 )
+	ADD_TI_CASE( avx_pack_store_parts, float, 4 )
 
-	ADD_TI_CASE( avx_pack, store_parts, double, 0 )
-	ADD_TI_CASE( avx_pack, store_parts, double, 1 )
-	ADD_TI_CASE( avx_pack, store_parts, double, 2 )
-END_TPACK
+	ADD_TI_CASE( avx_pack_store_parts, double, 0 )
+	ADD_TI_CASE( avx_pack_store_parts, double, 1 )
+	ADD_TI_CASE( avx_pack_store_parts, double, 2 )
+}
 
-DEF_TPACK( avx_pack, to_scalar )
-DEF_TPACK( avx_pack, extracts )
-
-
-BEGIN_MAIN_SUITE
-	ADD_TPACK( avx_pack_constructs )
-	ADD_TPACK( avx_pack_sets )
-	ADD_TPACK( avx_pack_loads )
-	ADD_TPACK( avx_pack_stores )
-	ADD_TPACK( avx_pack_load_parts )
-	ADD_TPACK( avx_pack_store_parts )
-	ADD_TPACK( avx_pack_to_scalar )
-	ADD_TPACK( avx_pack_extracts )
-END_MAIN_SUITE
-
+AUTO_TPACK( avx_elems )
+{
+	ADD_T_CASE_FP( avx_pack_to_scalar )
+	ADD_T_CASE_FP( avx_pack_extracts )
+}
 

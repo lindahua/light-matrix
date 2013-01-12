@@ -13,15 +13,7 @@
 using namespace lmat;
 using namespace lmat::test;
 
-
-#define DEF_TPACK( pname, tname ) \
-	BEGIN_TPACK( pname##_##tname ) \
-		ADD_T_CASE( pname, tname, float ) \
-		ADD_T_CASE( pname, tname, double ) \
-	END_TPACK
-
-
-T_CASE( avx_reduce, sum )
+T_CASE( avx_sum )
 {
 	typedef simd_pack<T, avx_t> pack_t;
 	const unsigned int width = pack_t::pack_width;
@@ -41,7 +33,7 @@ T_CASE( avx_reduce, sum )
 }
 
 
-T_CASE( avx_reduce, max )
+T_CASE( avx_max )
 {
 	typedef simd_pack<T, avx_t> pack_t;
 	const unsigned int width = pack_t::pack_width;
@@ -61,7 +53,7 @@ T_CASE( avx_reduce, max )
 }
 
 
-T_CASE( avx_reduce, min )
+T_CASE( avx_min )
 {
 	typedef simd_pack<T, avx_t> pack_t;
 	const unsigned int width = pack_t::pack_width;
@@ -81,7 +73,7 @@ T_CASE( avx_reduce, min )
 }
 
 
-SIMPLE_CASE( avx_reduce, booltest_f32 )
+SIMPLE_CASE( avx_booltest_f32 )
 {
 	const unsigned int M = 255;
 	for (unsigned i = 0; i <= M; ++i)
@@ -109,7 +101,7 @@ SIMPLE_CASE( avx_reduce, booltest_f32 )
 	}
 }
 
-SIMPLE_CASE( avx_reduce, booltest_f64 )
+SIMPLE_CASE( avx_booltest_f64 )
 {
 	const unsigned int M = 15;
 	for (unsigned i = 0; i <= M; ++i)
@@ -134,21 +126,17 @@ SIMPLE_CASE( avx_reduce, booltest_f64 )
 }
 
 
+AUTO_TPACK( avx_stats )
+{
+	ADD_T_CASE_FP( avx_sum )
+	ADD_T_CASE_FP( avx_max )
+	ADD_T_CASE_FP( avx_min )
+}
 
-DEF_TPACK( avx_reduce, sum )
-DEF_TPACK( avx_reduce, max )
-DEF_TPACK( avx_reduce, min )
-
-BEGIN_TPACK( avx_reduce_booltest )
-	ADD_SIMPLE_CASE( avx_reduce, booltest_f32 )
-	ADD_SIMPLE_CASE( avx_reduce, booltest_f64 )
-END_TPACK
-
-BEGIN_MAIN_SUITE
-	ADD_TPACK( avx_reduce_sum )
-	ADD_TPACK( avx_reduce_max )
-	ADD_TPACK( avx_reduce_min )
-	ADD_TPACK( avx_reduce_booltest )
-END_MAIN_SUITE
+AUTO_TPACK( avx_booltest )
+{
+	ADD_SIMPLE_CASE( avx_booltest_f32 )
+	ADD_SIMPLE_CASE( avx_booltest_f64 )
+}
 
 

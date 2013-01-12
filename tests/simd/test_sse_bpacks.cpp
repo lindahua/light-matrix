@@ -45,14 +45,7 @@ template<> struct elemwise_construct<double>
 };
 
 
-#define DEF_TPACK( pname, tname ) \
-	BEGIN_TPACK( pname##_##tname ) \
-		ADD_T_CASE( pname, tname, float ) \
-		ADD_T_CASE( pname, tname, double ) \
-	END_TPACK
-
-
-T_CASE( sse_bpack, constructs )
+T_CASE( sse_bpack_constructs )
 {
 	typedef simd_bpack<T, sse_t> bpack_t;
 	typedef typename bpack_t::bint_type bint;
@@ -81,7 +74,7 @@ T_CASE( sse_bpack, constructs )
 }
 
 
-T_CASE( sse_bpack, load_and_store )
+T_CASE( sse_bpack_load_and_store )
 {
 	typedef simd_bpack<T, sse_t> bpack_t;
 	typedef typename bpack_t::bint_type bint;
@@ -106,7 +99,7 @@ T_CASE( sse_bpack, load_and_store )
 }
 
 
-T_CASE( sse_bpack, set )
+T_CASE( sse_bpack_set )
 {
 	typedef simd_bpack<T, sse_t> bpack_t;
 	typedef typename bpack_t::bint_type bint;
@@ -131,7 +124,7 @@ T_CASE( sse_bpack, set )
 }
 
 
-T_CASE( sse_bpack, to_scalar )
+T_CASE( sse_bpack_to_scalar )
 {
 	typedef simd_bpack<T, sse_t> bpack_t;
 	typedef typename bpack_t::bint_type bint;
@@ -152,7 +145,7 @@ T_CASE( sse_bpack, to_scalar )
 }
 
 
-T_CASE( sse_bpack, extracts )
+T_CASE( sse_bpack_extracts )
 {
 	typedef simd_bpack<T, sse_t> bpack_t;
 	typedef typename bpack_t::bint_type bint;
@@ -178,19 +171,16 @@ T_CASE( sse_bpack, extracts )
 	}
 }
 
+AUTO_TPACK( sse_bpack_basic )
+{
+	ADD_T_CASE_FP( sse_bpack_constructs )
+	ADD_T_CASE_FP( sse_bpack_load_and_store )
+	ADD_T_CASE_FP( sse_bpack_set )
+}
 
-DEF_TPACK( sse_bpack, constructs )
-DEF_TPACK( sse_bpack, load_and_store )
-DEF_TPACK( sse_bpack, set )
-DEF_TPACK( sse_bpack, to_scalar )
-DEF_TPACK( sse_bpack, extracts )
-
-BEGIN_MAIN_SUITE
-	ADD_TPACK( sse_bpack_constructs )
-	ADD_TPACK( sse_bpack_load_and_store )
-	ADD_TPACK( sse_bpack_set )
-	ADD_TPACK( sse_bpack_to_scalar )
-	ADD_TPACK( sse_bpack_extracts )
-END_MAIN_SUITE
-
+AUTO_TPACK( sse_bpack_elems )
+{
+	ADD_T_CASE_FP( sse_bpack_to_scalar )
+	ADD_T_CASE_FP( sse_bpack_extracts )
+}
 

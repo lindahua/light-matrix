@@ -54,19 +54,18 @@ namespace lmat { namespace test {
 } }
 
 
-#define TI_CASE( pname, tname ) \
+#define TI_CASE( Name ) \
 	template<typename T, int I> \
-	class TCASE_CLASS(pname, tname) : public lmat::test::TI_case<T, I> { \
+	class Name : public lmat::test::TI_case<T, I> { \
 	public: \
-		TCASE_CLASS(pname, tname)() : lmat::test::TI_case<T, I>( #tname ) { } \
-		virtual ~TCASE_CLASS(pname, tname)() { } \
+		Name() : lmat::test::TI_case<T, I>( #Name ) { } \
+		virtual ~Name() { } \
 		virtual void run(); \
 	}; \
 	template<typename T, int I> \
-	void TCASE_CLASS(pname, tname)<T, I>::run()
+	void Name<T, I>::run()
 
-#define ADD_TI_CASE( pname, tname, ty, id ) \
-	tpack->add( new TCASE_CLASS( pname, tname )<ty, id>() );
+#define ADD_TI_CASE( Name, ty, id ) this->add( new Name<ty, id>() );
 
 
 #define ASSERT_SIMD_EQ( a, b ) \

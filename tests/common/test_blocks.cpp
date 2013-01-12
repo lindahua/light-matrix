@@ -28,7 +28,7 @@ lmat::test::memory_allocation_monitor lmat::test::global_memory_allocation_monit
 #define ASSERT_NO_PENDING ASSERT_FALSE( global_memory_allocation_monitor.has_pending() );
 
 
-SIMPLE_CASE( dblock, construct )
+SIMPLE_CASE( dblock_construct )
 {
 	ASSERT_NO_PENDING
 
@@ -79,7 +79,7 @@ SIMPLE_CASE( dblock, construct )
 	ASSERT_NO_PENDING
 }
 
-SIMPLE_CASE( dblock, copy_and_assign )
+SIMPLE_CASE( dblock_copy_and_assign )
 {
 	ASSERT_NO_PENDING
 
@@ -146,7 +146,7 @@ SIMPLE_CASE( dblock, copy_and_assign )
 }
 
 
-SIMPLE_CASE( dblock, move )
+SIMPLE_CASE( dblock_move )
 {
 	ASSERT_NO_PENDING
 
@@ -183,7 +183,7 @@ SIMPLE_CASE( dblock, move )
 }
 
 
-SIMPLE_CASE( dblock, swap )
+SIMPLE_CASE( dblock_swap )
 {
 	ASSERT_NO_PENDING
 
@@ -235,7 +235,7 @@ SIMPLE_CASE( dblock, swap )
 }
 
 
-SIMPLE_CASE( sblock, construct )
+SIMPLE_CASE( sblock_construct )
 {
 	const index_t n = 5;
 	typedef sblock<int, n> sarr_t;
@@ -265,7 +265,7 @@ SIMPLE_CASE( sblock, construct )
 }
 
 
-SIMPLE_CASE( sblock, copy_and_assign )
+SIMPLE_CASE( sblock_copy_and_assign )
 {
 	const index_t n = 5;
 	typedef sblock<int, n> sarr_t;
@@ -298,7 +298,7 @@ SIMPLE_CASE( sblock, copy_and_assign )
 }
 
 
-SIMPLE_CASE( sblock, swap )
+SIMPLE_CASE( sblock_swap )
 {
 	const index_t n = 5;
 	typedef sblock<int, n> sarr_t;
@@ -319,25 +319,19 @@ SIMPLE_CASE( sblock, swap )
 }
 
 
-BEGIN_TPACK( dblock )
-	ADD_SIMPLE_CASE( dblock, construct )
-	ADD_SIMPLE_CASE( dblock, copy_and_assign )
-	ADD_SIMPLE_CASE( dblock, move )
-	ADD_SIMPLE_CASE( dblock, swap )
-END_TPACK
+AUTO_TPACK( dblock )
+{
+	ADD_SIMPLE_CASE( dblock_construct )
+	ADD_SIMPLE_CASE( dblock_copy_and_assign )
+	ADD_SIMPLE_CASE( dblock_move )
+	ADD_SIMPLE_CASE( dblock_swap )
+}
 
-BEGIN_TPACK( sblock )
-	ADD_SIMPLE_CASE( sblock, construct )
-	ADD_SIMPLE_CASE( sblock, copy_and_assign )
-	ADD_SIMPLE_CASE( sblock, swap )
-END_TPACK
-
-
-BEGIN_MAIN_SUITE
-	ADD_TPACK( dblock )
-	ADD_TPACK( sblock )
-END_MAIN_SUITE
-
-
+AUTO_TPACK( sblock )
+{
+	ADD_SIMPLE_CASE( sblock_construct )
+	ADD_SIMPLE_CASE( sblock_copy_and_assign )
+	ADD_SIMPLE_CASE( sblock_swap )
+}
 
 
