@@ -14,7 +14,8 @@
 #include "../multimat_supp.h"
 
 #include <light_mat/matrix/matrix_classes.h>
-#include <light_mat/mateval/map_expr.h>
+#include <light_mat/matexpr/map_expr.h>
+#include <light_mat/math/basic_functors.h>
 
 using namespace lmat;
 using namespace lmat::test;
@@ -54,7 +55,7 @@ bool my_use_simd(const map_expr<FTag, A>& expr)
 {
 	bool use_linear = my_use_linear(expr);
 
-	int pw = math::simd_traits<double, default_simd_kind>::pack_width;
+	int pw = simd_traits<double, default_simd_kind>::pack_width;
 
 	if (use_linear)
 	{
@@ -77,7 +78,7 @@ bool my_use_simd(const map_expr<FTag, A, B>& expr)
 {
 	bool use_linear = my_use_linear(expr);
 
-	int pw = math::simd_traits<double, default_simd_kind>::pack_width;
+	int pw = simd_traits<double, default_simd_kind>::pack_width;
 
 	if (use_linear)
 	{

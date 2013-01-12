@@ -9,7 +9,7 @@
 #include "../test_base.h"
 #include "../multimat_supp.h"
 
-#include <light_mat/mateval/mat_arith.h>
+#include <light_mat/matexpr/mat_arith.h>
 
 using namespace lmat;
 using namespace lmat::test;
@@ -50,7 +50,7 @@ inline void check_policy(const Expr& )
 	typedef preferred_macc_policy<Expr> pmap;
 
 	typedef typename matrix_traits<Expr>::value_type T;
-	const int pw = (int)math::simd_traits<T, default_simd_kind>::pack_width;
+	const int pw = (int)simd_traits<T, default_simd_kind>::pack_width;
 	ASSERT_TRUE( pmap::prefer_linear );
 
 	int M = meta::nrows<Expr>::value;

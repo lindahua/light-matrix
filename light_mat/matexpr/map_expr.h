@@ -14,6 +14,8 @@
 #define LIGHTMAT_MAP_EXPR_H_
 
 #include <light_mat/matrix/matrix_classes.h>
+#include <light_mat/simd/simd.h>
+
 #include "internal/map_expr_internal.h"
 
 namespace lmat
@@ -468,7 +470,7 @@ namespace lmat
 		evaluate_by_map(sexpr, dmat);
 	}
 
-
 }
 
-#endif /* EWISE_EXPR_H_ */
+#endif
+

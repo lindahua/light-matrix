@@ -13,64 +13,44 @@
 #ifndef LIGHTMAT_MAT_ARITH_H_
 #define LIGHTMAT_MAT_ARITH_H_
 
-#include <light_mat/mateval/map_expr.h>
-
-
-#define _LMAT_DEFINE_MAT_ARITH_FUN_1( FunName, FTag ) \
-	template<typename T, class X> \
-	LMAT_ENSURE_INLINE \
-	inline map_expr<ftags::FTag, X> \
-	FunName (const IEWiseMatrix<X, T>& x) \
-	{ return make_map_expr(ftags::FTag(), x); }
-
-#define _LMAT_DEFINE_MAT_INPLACE_ARITH( FunName, FTag ) \
-	template<typename T, class X, class Y> \
-	LMAT_ENSURE_INLINE \
-	inline X& FunName (IEWiseMatrix<X, T>& x, const IEWiseMatrix<Y, T>& y) \
-	{ x.derived() = make_map_expr(ftags::FTag(), x, y); return x.derived(); } \
-	template<typename T, class X> \
-	LMAT_ENSURE_INLINE \
-	inline X& FunName (IEWiseMatrix<X, T>& x, const T& y) \
-	{ x.derived() = make_map_expr_fix2(ftags::FTag(), x, y); return x.derived(); }
-
-#define _LMAT_DEFINE_MAT_ARITH_FUN_2( FunName, FTag ) \
-	template<typename T, class X, class Y> \
-	LMAT_ENSURE_INLINE \
-	inline map_expr<ftags::FTag, X, Y> \
-	FunName (const IEWiseMatrix<X, T>& x, const IEWiseMatrix<Y, T>& y) \
-	{ return make_map_expr(ftags::FTag(), x, y); } \
-	template<typename T, class X> \
-	LMAT_ENSURE_INLINE \
-	inline map_expr<ftags::FTag, X, T> \
-	FunName (const IEWiseMatrix<X, T>& x, const T& y) \
-	{ return make_map_expr_fix2(ftags::FTag(), x, y); } \
-	template<typename T, class Y> \
-	LMAT_ENSURE_INLINE \
-	inline map_expr<ftags::FTag, T, Y> \
-	FunName (const T& x, const IEWiseMatrix<Y, T>& y) \
-	{ return make_map_expr_fix1(ftags::FTag(), x, y); }
-
+#include <light_mat/matexpr/matfun_base.h>
+#include <light_mat/math/basic_functors.h>
 
 namespace lmat
 {
 
-	_LMAT_DEFINE_MAT_ARITH_FUN_2( operator +, add_ )
-	_LMAT_DEFINE_MAT_ARITH_FUN_2( operator -, sub_ )
-	_LMAT_DEFINE_MAT_ARITH_FUN_2( operator *, mul_ )
-	_LMAT_DEFINE_MAT_ARITH_FUN_2( operator /, div_ )
-	_LMAT_DEFINE_MAT_ARITH_FUN_1( operator -, neg_ )
+	// arithmetics
 
-	_LMAT_DEFINE_MAT_INPLACE_ARITH( operator +=, add_ )
-	_LMAT_DEFINE_MAT_INPLACE_ARITH( operator -=, sub_ )
-	_LMAT_DEFINE_MAT_INPLACE_ARITH( operator *=, mul_ )
-	_LMAT_DEFINE_MAT_INPLACE_ARITH( operator /=, div_ )
+	_LMAT_DEFINE_GMATOP2( add, + )
+	_LMAT_DEFINE_GMATOP2( sub, - )
+	_LMAT_DEFINE_GMATOP2( mul, * )
+	_LMAT_DEFINE_GMATOP2( div, / )
 
-	_LMAT_DEFINE_MAT_ARITH_FUN_1( abs, abs_ )
-	_LMAT_DEFINE_MAT_ARITH_FUN_1( sqr, sqr_ )
-	_LMAT_DEFINE_MAT_ARITH_FUN_1( cube, cube_ )
+	_LMAT_DEFINE_GMATOP( neg, -, 1 )
 
-	_LMAT_DEFINE_MAT_ARITH_FUN_2( max, max_ )
-	_LMAT_DEFINE_MAT_ARITH_FUN_2( min, min_ )
+	_LMAT_DEFINE_RMATFUN( fma, 3 )
+
+	// min & max
+
+	_LMAT_DEFINE_GMATFUN( max, 2 )
+	_LMAT_DEFINE_GMATFUN( min, 2 )
+	_LMAT_DEFINE_GMATFUN( clamp, 2 )
+
+	// simple power functions
+
+	_LMAT_DEFINE_GMATFUN( abs, 1 )
+	_LMAT_DEFINE_GMATFUN( sqr, 1 )
+	_LMAT_DEFINE_RMATFUN( cube, 1 )
+	_LMAT_DEFINE_RMATFUN( rcp, 1 )
+	_LMAT_DEFINE_RMATFUN( sqrt, 1 )
+	_LMAT_DEFINE_RMATFUN( rsqrt, 1 )
+
+	// rounding
+
+	_LMAT_DEFINE_RMATFUN( floor, 1 )
+	_LMAT_DEFINE_RMATFUN( ceil, 1 )
+	_LMAT_DEFINE_RMATFUN( round, 1 )
+	_LMAT_DEFINE_RMATFUN( trunc, 1 )
 
 }
 

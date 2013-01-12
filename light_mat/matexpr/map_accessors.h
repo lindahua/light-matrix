@@ -14,7 +14,7 @@
 #define LIGHTMAT_MAP_ACCESSORS_H_
 
 #include <light_mat/mateval/multicol_accessors.h>
-#include <light_mat/math/math_functors.h>
+#include <light_mat/math/functor_base.h>
 
 namespace lmat
 {

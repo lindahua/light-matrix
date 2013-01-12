@@ -14,10 +14,8 @@
 #define LIGHTMAT_MAP_EXPR_INTERNAL_H_
 
 #include <light_mat/matrix/matrix_properties.h>
-#include <light_mat/mateval/map_accessors.h>
+#include <light_mat/matexpr/map_accessors.h>
 #include <light_mat/mateval/ewise_eval.h>
-#include <light_mat/mateval/fun_maps.h>
-
 
 namespace lmat { namespace internal {
 
