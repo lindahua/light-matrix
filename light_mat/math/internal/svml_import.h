@@ -13,7 +13,7 @@
 #ifndef LIGHTMAT_SVML_IMPORT_H_
 #define LIGHTMAT_SVML_IMPORT_H_
 
-#include <light_mat/math/simd_ops.h>
+#include <light_mat/simd/simd_packs.h>
 
 #ifdef LMAT_USE_INTEL_SVML
 

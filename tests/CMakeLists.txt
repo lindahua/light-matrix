@@ -172,7 +172,7 @@ set(MATH_SPECIAL_HS_
 set(MATH_FUNCTOR_HS_
     ${INC}/math/fun_tags.h
     ${INC}/math/functor_base.h
-    ${INC}/math/math_functors.h) 
+    ${INC}/math/functors.h) 
     
 set(MATH_HS
     ${MATH_BASE_HS_}
@@ -409,26 +409,16 @@ endif (ALLOW_AVX)
 
 # math module
 
-#if (SVML_PATH)
-#
-#add_executable(test_sse_math_svml ${MATH_HS_EX} math/test_sse_math.cpp)
-#if (ALLOW_AVX)
-#add_executable(test_avx_math_svml ${MATH_HS_EX} math/test_avx_math.cpp)
-#endif (ALLOW_AVX)
-#add_executable(test_simd_special ${MATH_HS_EX} math/test_simd_special.cpp)
-#
-#if (ALLOW_AVX)
-#set(LMAT_MATH_TESTS
-#    test_sse_math_svml
-#    test_avx_math_svml
-#    test_simd_special)
-#else (ALLOW_AVX)
-#set(LMAT_MATH_TESTS
-#    test_sse_math_svml
-#    test_simd_special)
-#endif (ALLOW_AVX)
-#
-#endif (SVML_PATH)
+if (SVML_PATH)
+
+add_executable(test_simd_math_svml ${MATH_HS_EX} math/test_simd_math.cpp)
+add_executable(test_simd_special ${MATH_HS_EX} math/test_simd_special.cpp)
+
+set(LMAT_MATH_TESTS
+    test_simd_math_svml
+    test_simd_special)
+
+endif (SVML_PATH)
 
 # matrix module
 
@@ -621,7 +611,7 @@ set(LMAT_MATRIX_TESTS
 set(LMAT_ALL_TESTS
     ${LMAT_COMMON_TESTS}
     ${LMAT_SIMD_TESTS}
-    # ${LMAT_MATH_TESTS}
+    ${LMAT_MATH_TESTS}
     ${LMAT_MATRIX_TESTS}
     # ${LMAT_MATEVAL_TESTS}
     # ${LMAT_LINALG_TESTS}
@@ -642,34 +632,28 @@ endif (${CMAKE_CXX_COMPILER_ID} MATCHES "GNU")
     
 # Link to SVML
 
-#if (SVML_PATH)
-#
-#set(TESTS_USING_SVML
-#    test_sse_math_svml
-#    test_simd_special
-#    test_mat_emath
-#    test_cpd_ewise
-#    )
-#    
-#if (ALLOW_AVX)
-#set(TESTS_USING_SVML
-#    ${TESTS_USING_SVML}
-#    test_avx_math_svml)
-#endif (ALLOW_AVX)
-#
-#foreach (tname ${TESTS_USING_SVML}) 
-#set_target_properties(${tname}
-#	PROPERTIES
-#	COMPILE_FLAGS "-DLMAT_USE_INTEL_SVML"
-#)
-#if (MSVC)
-#target_link_libraries(${tname} ${SVML} ${LIBIRC})
-#else (MSVC)
-#target_link_libraries(${tname} ${SVML})
-#endif (MSVC)
-#endforeach (tname)
-#    
-#endif (SVML_PATH)
+if (SVML_PATH)
+
+set(TESTS_USING_SVML
+    test_simd_math_svml
+    test_simd_special
+    # test_mat_emath
+    # test_cpd_ewise
+    )
+
+foreach (tname ${TESTS_USING_SVML}) 
+set_target_properties(${tname}
+	PROPERTIES
+	COMPILE_FLAGS "-DLMAT_USE_INTEL_SVML"
+)
+if (MSVC)
+target_link_libraries(${tname} ${SVML} ${LIBIRC})
+else (MSVC)
+target_link_libraries(${tname} ${SVML})
+endif (MSVC)
+endforeach (tname)
+    
+endif (SVML_PATH)
     
 # Link to MKL
 

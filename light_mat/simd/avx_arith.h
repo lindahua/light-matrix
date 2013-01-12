@@ -248,14 +248,14 @@ namespace lmat {  namespace math {
 	LMAT_ENSURE_INLINE
 	inline avx_f32pk abs(const avx_f32pk& a)
 	{
-		typedef internal::num_fmt<float> fmt;
+		typedef lmat::internal::num_fmt<float> fmt;
 		return _mm256_andnot_ps(_mm256_castsi256_ps(_mm256_set1_epi32(fmt::sign_bit)), a);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline avx_f64pk abs(const avx_f64pk& a)
 	{
-		typedef internal::num_fmt<double> fmt;
+		typedef lmat::internal::num_fmt<double> fmt;
 		return _mm256_andnot_pd(_mm256_castsi256_pd(_mm256_set1_epi64x(fmt::sign_bit)), a);
 	}
 

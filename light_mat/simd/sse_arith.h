@@ -243,14 +243,14 @@ namespace lmat { namespace math {
 	inline sse_f32pk abs(const sse_f32pk& a)
 	{
 		return _mm_andnot_ps(
-				_mm_castsi128_ps(internal::sse_signmask_ps()), a);
+				_mm_castsi128_ps(lmat::internal::sse_signmask_ps()), a);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline sse_f64pk abs(const sse_f64pk& a)
 	{
 		return _mm_andnot_pd(
-				_mm_castsi128_pd(internal::sse_signmask_pd()), a);
+				_mm_castsi128_pd(lmat::internal::sse_signmask_pd()), a);
 	}
 
 	LMAT_ENSURE_INLINE

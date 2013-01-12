@@ -14,7 +14,8 @@
 #define LIGHTMAT_SIMD_MATH_H_
 
 #include <light_mat/math/math.h>
-#include <light_mat/math/simd_ops.h>
+#include <light_mat/math/math_special.h>
+#include <light_mat/simd/simd.h>
 
 #if defined(LMAT_USE_INTEL_SVML) && defined(LMAT_USE_AMD_LIBM)
 #error SVML and LIBM cannot be used simultaneously.
@@ -23,6 +24,7 @@
 #ifdef LMAT_USE_INTEL_SVML
 #include "internal/svml_import.h"
 #elif LMAT_USE_AMD_LIBM
+#include "internal/libm_simd_import.h"
 #endif
 
 #endif 
