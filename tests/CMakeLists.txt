@@ -655,7 +655,7 @@ set(PRNG_TEST_HS
     
 add_executable(test_stracker ${PRNG_TEST_HS} random/test_stracker.cpp)
 add_executable(test_sfmt ${PRNG_TEST_HS} random/test_sfmt.cpp)
-    
+  
 # SFMT verification files
 configure_file(random/data/sfmt/sfmt.000607.txt ${CMAKE_CURRENT_BINARY_DIR}/data/sfmt/sfmt.000607.txt COPYONLY)
 configure_file(random/data/sfmt/sfmt.001279.txt ${CMAKE_CURRENT_BINARY_DIR}/data/sfmt/sfmt.001279.txt COPYONLY)
@@ -669,21 +669,34 @@ configure_file(random/data/sfmt/sfmt.132049.txt ${CMAKE_CURRENT_BINARY_DIR}/data
 configure_file(random/data/sfmt/sfmt.216091.txt ${CMAKE_CURRENT_BINARY_DIR}/data/sfmt/sfmt.216091.txt COPYONLY)
 
 set(DISTR_TEST_HS
+    random/distr_test_base.h
     ${COMMON_HS}
     ${MATH_HS_EX}
     ${PRNG_HS_}
     ${DISTR_HS_})
 
-add_executable(test_discrete_distrs ${DISTR_TEST_HS} random/test_discrete_distrs.cpp)
-add_executable(test_real_distrs ${DISTR_TEST_HS} random/test_real_distrs.cpp)
+add_executable(test_uniform_int ${DISTR_TEST_HS} random/test_uniform_int.cpp)
+add_executable(test_bernoulli ${DISTR_TEST_HS} random/test_bernoulli.cpp)
+add_executable(test_binomial ${DISTR_TEST_HS} random/test_binomial.cpp)
+add_executable(test_geometric ${DISTR_TEST_HS} random/test_geometric.cpp)
+add_executable(test_discreted ${DISTR_TEST_HS} random/test_discreted.cpp)
+  
+add_executable(test_uniform_real ${DISTR_TEST_HS} random/test_uniform_real.cpp)
+add_executable(test_exponential ${DISTR_TEST_HS} random/test_exponential.cpp)
+add_executable(test_normal ${DISTR_TEST_HS} random/test_normal.cpp)
      
 set(LMAT_RANDOM_TESTS
     test_stracker
     test_sfmt
-    test_discrete_distrs
-    test_real_distrs)        
+    test_uniform_int
+    test_bernoulli
+    test_binomial
+    test_geometric
+    test_discreted
+    test_uniform_real
+    test_exponential
+    test_normal)        
 
-    
 # all
 
 set(LMAT_ALL_TESTS
@@ -721,7 +734,8 @@ set(TESTS_USING_SVML
     test_mat_emath
     test_mat_special
     test_cpd_ewise
-    test_real_distrs)
+    test_exponential
+    test_normal)
 
 foreach (tname ${TESTS_USING_SVML}) 
     set_target_properties(${tname}
