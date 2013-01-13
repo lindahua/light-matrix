@@ -23,13 +23,12 @@ namespace lmat { namespace random {
 	// tags to indicate PRNG methods
 
 	struct naive_ { };
+	struct basic_ { };
 	struct icdf_ { };
 	struct box_muller_ { };
 	struct marsaglia_ { };
 	struct ziggurat_ { };
 	struct huffman_ { };
-
-	struct ahrens_dieter_ { };
 
 	// discrete distributions
 
@@ -57,8 +56,8 @@ namespace lmat { namespace random {
 	template<typename T=double, typename Method=icdf_> class std_normal_distr;
 	template<typename T=double, typename Method=icdf_> class normal_distr;
 
-	template<typename T=double, typename Method=ahrens_dieter_> class std_gamma_distr;
-	template<typename T=double, typename Method=ahrens_dieter_> class gamma_distr;
+	template<typename T=double, typename Method=basic_> class std_gamma_distr;
+	template<typename T=double, typename Method=basic_> class gamma_distr;
 
 
 } }

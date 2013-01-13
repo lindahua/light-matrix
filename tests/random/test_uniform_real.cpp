@@ -111,7 +111,7 @@ T_CASE( test_uniform_real_avx )
 #endif
 
 
-AUTO_TPACK( uniform_real )
+AUTO_TPACK( test_uniform_real )
 {
 	ADD_T_CASE( test_std_uniform_real, double )
 	ADD_T_CASE( test_std_uniform_real, float )

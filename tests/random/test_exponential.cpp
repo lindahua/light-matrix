@@ -110,7 +110,7 @@ T_CASE( test_exponential_avx )
 #endif
 
 
-AUTO_TPACK( exponential )
+AUTO_TPACK( test_exponential )
 {
 	ADD_T_CASE( test_std_exponential, double )
 	ADD_T_CASE( test_std_exponential, float )

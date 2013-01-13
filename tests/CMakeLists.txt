@@ -336,6 +336,8 @@ set(PRNG_HS_
 set(DISTR_HS_
     ${INC}/random/distr_fwd.h
     ${INC}/random/internal/uniform_real_internal.h
+    ${INC}/random/internal/normal_distr_internal.h
+    ${INC}/random/internal/gamma_distr_internal.h
     ${INC}/random/uniform_int_distr.h
     ${INC}/random/bernoulli_distr.h
     ${INC}/random/binomial_distr.h
@@ -344,6 +346,7 @@ set(DISTR_HS_
     ${INC}/random/uniform_real_distr.h
     ${INC}/random/exponential_distr.h
     ${INC}/random/normal_distr.h
+    ${INC}/random/gamma_distr.h
 )
         
     
@@ -684,6 +687,7 @@ add_executable(test_discreted ${DISTR_TEST_HS} random/test_discreted.cpp)
 add_executable(test_uniform_real ${DISTR_TEST_HS} random/test_uniform_real.cpp)
 add_executable(test_exponential ${DISTR_TEST_HS} random/test_exponential.cpp)
 add_executable(test_normal ${DISTR_TEST_HS} random/test_normal.cpp)
+add_executable(test_gammad ${DISTR_TEST_HS} random/test_gammad.cpp)
      
 set(LMAT_RANDOM_TESTS
     test_stracker
@@ -695,7 +699,8 @@ set(LMAT_RANDOM_TESTS
     test_discreted
     test_uniform_real
     test_exponential
-    test_normal)        
+    test_normal
+    test_gammad)        
 
 # all
 

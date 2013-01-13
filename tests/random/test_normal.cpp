@@ -108,7 +108,7 @@ T_CASE( test_normal_icdf )
 }
 
 
-AUTO_TPACK( normal_icdf )
+AUTO_TPACK( test_normal_icdf )
 {
 	ADD_T_CASE( test_std_normal_icdf, double )
 	ADD_T_CASE( test_std_normal_icdf, float )

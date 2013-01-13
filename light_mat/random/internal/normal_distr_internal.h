@@ -59,7 +59,7 @@ namespace lmat { namespace random { namespace internal {
 		T m_sigma;
 
 		LMAT_ENSURE_INLINE
-		explicit normal_distr_impl(T mu, T sigma)
+		explicit normal_distr_impl(const T& mu, const T& sigma)
 		: m_mu(mu), m_sigma(sigma)
 		{ }
 
