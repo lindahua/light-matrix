@@ -19,6 +19,7 @@
 #include <light_mat/random/bernoulli_distr.h>
 #include <light_mat/random/binomial_distr.h>
 #include <light_mat/random/geometric_distr.h>
+#include <light_mat/random/poisson_distr.h>
 #include <light_mat/random/discrete_distr.h>
 
 // continuous

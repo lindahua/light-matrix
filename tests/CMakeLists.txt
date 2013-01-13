@@ -342,6 +342,7 @@ set(DISTR_HS_
     ${INC}/random/bernoulli_distr.h
     ${INC}/random/binomial_distr.h
     ${INC}/random/geometric_distr.h
+    ${INC}/random/poisson_distr.h
     ${INC}/random/discrete_distr.h
     ${INC}/random/uniform_real_distr.h
     ${INC}/random/exponential_distr.h
@@ -682,6 +683,7 @@ add_executable(test_uniform_int ${DISTR_TEST_HS} random/test_uniform_int.cpp)
 add_executable(test_bernoulli ${DISTR_TEST_HS} random/test_bernoulli.cpp)
 add_executable(test_binomial ${DISTR_TEST_HS} random/test_binomial.cpp)
 add_executable(test_geometric ${DISTR_TEST_HS} random/test_geometric.cpp)
+add_executable(test_poissond ${DISTR_TEST_HS} random/test_poissond.cpp)
 add_executable(test_discreted ${DISTR_TEST_HS} random/test_discreted.cpp)
   
 add_executable(test_uniform_real ${DISTR_TEST_HS} random/test_uniform_real.cpp)
@@ -696,6 +698,7 @@ set(LMAT_RANDOM_TESTS
     test_bernoulli
     test_binomial
     test_geometric
+    test_poissond
     test_discreted
     test_uniform_real
     test_exponential

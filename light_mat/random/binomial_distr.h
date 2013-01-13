@@ -15,6 +15,7 @@
 
 #include <light_mat/random/bernoulli_distr.h>
 
+
 namespace lmat { namespace random {
 
 
