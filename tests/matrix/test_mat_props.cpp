@@ -351,7 +351,7 @@ SIMPLE_CASE( mat_ct_common_ncols )
 	ASSERT_CT_VALUE( t333,  3 );
 }
 
-
+LTEST_INIT_AUTOSUITE
 
 AUTO_TPACK( mat_ct_dims )
 {

@@ -412,6 +412,7 @@ MN_CASE( dense_mat_swap )
 	ASSERT_VEC_EQ( m * n, a2, s );
 }
 
+LTEST_INIT_AUTOSUITE
 
 AUTO_TPACK( dense_mat_constructs )
 {

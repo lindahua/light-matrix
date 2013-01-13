@@ -289,7 +289,7 @@ MN_CASE( ref_block_import )
 
 }
 
-
+LTEST_INIT_AUTOSUITE
 
 AUTO_TPACK( cref_block_constructs )
 {

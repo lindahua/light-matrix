@@ -503,7 +503,7 @@ N_CASE( dense_row_swap )
 }
 
 
-
+LTEST_INIT_AUTOSUITE
 
 AUTO_TPACK( dense_col_constructs )
 {

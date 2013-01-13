@@ -16,6 +16,7 @@ using namespace lmat::test;
 
 const int TTimes = 10;
 
+LTEST_INIT_AUTOSUITE
 
 // error functions
 

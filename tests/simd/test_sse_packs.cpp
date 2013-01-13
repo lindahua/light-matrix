@@ -236,6 +236,9 @@ T_CASE( sse_pack_extracts )
 	}
 }
 
+
+LTEST_INIT_AUTOSUITE
+
 AUTO_TPACK( sse_basics )
 {
 	ADD_T_CASE_FP( sse_pack_constructs )

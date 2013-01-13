@@ -187,6 +187,7 @@ SIMPLE_CASE( sse_round_f64 )
 	ASSERT_SIMD_EQ( round(a4), r4 );
 }
 
+LTEST_INIT_AUTOSUITE
 
 AUTO_TPACK( sse_round )
 {

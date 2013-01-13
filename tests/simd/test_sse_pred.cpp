@@ -532,6 +532,8 @@ T_CASE( sse_fpclassify )
 	sse_fpclassify_tbody<T>::run();
 }
 
+LTEST_INIT_AUTOSUITE
+
 AUTO_TPACK( sse_comp )
 {
 	ADD_T_CASE_FP( sse_eq )

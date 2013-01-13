@@ -492,6 +492,8 @@ T_CASE( avx_fpclassify )
 }
 
 
+LTEST_INIT_AUTOSUITE
+
 AUTO_TPACK( avx_comp )
 {
 	ADD_T_CASE_FP( avx_eq )

@@ -15,6 +15,8 @@ using namespace lmat::test;
 
 const int TTimes = 10;
 
+LTEST_INIT_AUTOSUITE
+
 // power
 
 DEFINE_MATH_TPACK2( pow,   4,  0.5,  3.0, 0.5, 2.0 )

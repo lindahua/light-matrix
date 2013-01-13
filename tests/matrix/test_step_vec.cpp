@@ -187,6 +187,7 @@ N_CASE( step_col_assign )
 	ASSERT_VEC_EQ( n, a1, a2 );
 }
 
+LTEST_INIT_AUTOSUITE
 
 AUTO_TPACK( cstep_row_constructs )
 {

@@ -15,8 +15,6 @@
 
 using namespace ltest;
 
-LTEST_INIT_AUTOSUITE
-
 int main(int argc, char *argv[])
 {
 	if (std_test_main(*auto_test_suite::main_suite()))

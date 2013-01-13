@@ -430,6 +430,8 @@ T_CASE( sse_cond )
 	sse_cond_tbody<T>::run();
 }
 
+LTEST_INIT_AUTOSUITE
+
 AUTO_TPACK( sse_arith )
 {
 	ADD_T_CASE_FP( sse_add )
