@@ -344,133 +344,101 @@ void test_accum_rowwise()
 
 // accum linear
 
-MN_CASE( ewise_accum, linear_scalar )
+MN_CASE( ewise_accum_linear_scalar )
 {
 	test_linear_accum<atags::scalar, M, N>();
 }
 
-MN_CASE( ewise_accum, linear_sse )
+MN_CASE( ewise_accum_linear_sse )
 {
 	test_linear_accum<atags::simd<sse_t>, M, N>();
 }
 
 #ifdef LMAT_HAS_AVX
 
-MN_CASE( ewise_accum, linear_avx )
+MN_CASE( ewise_accum_linear_avx )
 {
 	test_linear_accum<atags::simd<avx_t>, M, N>();
 }
 
 #endif
 
-BEGIN_TPACK( accum_linear_scalar )
-	ADD_MN_CASE_3X3( ewise_accum, linear_scalar, DM, DN );
-END_TPACK
-
-BEGIN_TPACK( accum_linear_sse )
-	ADD_MN_CASE_3X3( ewise_accum, linear_sse, DM, DN );
-END_TPACK
-
-#ifdef LMAT_HAS_AVX
-
-BEGIN_TPACK( accum_linear_avx )
-	ADD_MN_CASE_3X3( ewise_accum, linear_avx, DM, DN );
-END_TPACK
-
-#endif
-
 
 // accum percol
 
-MN_CASE( ewise_accum, percol_scalar )
+MN_CASE( ewise_accum_percol_scalar )
 {
 	test_percol_accum<atags::scalar, M, N>();
 }
 
-MN_CASE( ewise_accum, percol_sse )
+MN_CASE( ewise_accum_percol_sse )
 {
 	test_percol_accum<atags::simd<sse_t>, M, N>();
 }
 
 #ifdef LMAT_HAS_AVX
 
-MN_CASE( ewise_accum, percol_avx )
+MN_CASE( ewise_accum_percol_avx )
 {
 	test_percol_accum<atags::simd<avx_t>, M, N>();
 }
 
 #endif
 
-BEGIN_TPACK( accum_percol_scalar )
-	ADD_MN_CASE_3X3( ewise_accum, percol_scalar, DM, DN );
-END_TPACK
-
-BEGIN_TPACK( accum_percol_sse )
-	ADD_MN_CASE_3X3( ewise_accum, percol_sse, DM, DN );
-END_TPACK
-
-#ifdef LMAT_HAS_AVX
-
-BEGIN_TPACK( accum_percol_avx )
-	ADD_MN_CASE_3X3( ewise_accum, percol_avx, DM, DN );
-END_TPACK
-
-#endif
-
 
 // accum colwise
 
-MN_CASE( ewise_accum, colwise_scalar_cont )
+MN_CASE( ewise_accum_colwise_scalar_cont )
 {
 	test_accum_colwise<atags::scalar, cont, M, N>();
 }
 
-MN_CASE( ewise_accum, colwise_sse_cont )
+MN_CASE( ewise_accum_colwise_sse_cont )
 {
 	test_accum_colwise<atags::simd<sse_t>, cont, M, N>();
 }
 
 #ifdef LMAT_HAS_AVX
 
-MN_CASE( ewise_accum, colwise_avx_cont )
+MN_CASE( ewise_accum_colwise_avx_cont )
 {
 	test_accum_colwise<atags::simd<avx_t>, cont, M, N>();
 }
 
 #endif
 
-MN_CASE( ewise_accum, colwise_scalar_bloc )
+MN_CASE( ewise_accum_colwise_scalar_bloc )
 {
 	test_accum_colwise<atags::scalar, bloc, M, N>();
 }
 
-MN_CASE( ewise_accum, colwise_sse_bloc )
+MN_CASE( ewise_accum_colwise_sse_bloc )
 {
 	test_accum_colwise<atags::simd<sse_t>, bloc, M, N>();
 }
 
 #ifdef LMAT_HAS_AVX
 
-MN_CASE( ewise_accum, colwise_avx_bloc )
+MN_CASE( ewise_accum_colwise_avx_bloc )
 {
 	test_accum_colwise<atags::simd<avx_t>, bloc, M, N>();
 }
 
 #endif
 
-MN_CASE( ewise_accum, colwise_scalar_grid )
+MN_CASE( ewise_accum_colwise_scalar_grid )
 {
 	test_accum_colwise<atags::scalar, grid, M, N>();
 }
 
-MN_CASE( ewise_accum, colwise_sse_grid )
+MN_CASE( ewise_accum_colwise_sse_grid )
 {
 	test_accum_colwise<atags::simd<sse_t>, grid, M, N>();
 }
 
 #ifdef LMAT_HAS_AVX
 
-MN_CASE( ewise_accum, colwise_avx_grid )
+MN_CASE( ewise_accum_colwise_avx_grid )
 {
 	test_accum_colwise<atags::simd<avx_t>, grid, M, N>();
 }
@@ -478,195 +446,193 @@ MN_CASE( ewise_accum, colwise_avx_grid )
 #endif
 
 
-BEGIN_TPACK( accum_colwise_scalar_cont )
-	ADD_MN_CASE_3X3( ewise_accum, colwise_scalar_cont, DM, DN )
-END_TPACK
-
-BEGIN_TPACK( accum_colwise_sse_cont )
-	ADD_MN_CASE_3X3( ewise_accum, colwise_sse_cont, DM, DN )
-END_TPACK
-
-#ifdef LMAT_HAS_AVX
-
-BEGIN_TPACK( accum_colwise_avx_cont )
-	ADD_MN_CASE_3X3( ewise_accum, colwise_avx_cont, DM, DN )
-END_TPACK
-
-#endif
-
-BEGIN_TPACK( accum_colwise_scalar_bloc )
-	ADD_MN_CASE_3X3( ewise_accum, colwise_scalar_bloc, DM, DN )
-END_TPACK
-
-BEGIN_TPACK( accum_colwise_sse_bloc )
-	ADD_MN_CASE_3X3( ewise_accum, colwise_sse_bloc, DM, DN )
-END_TPACK
-
-#ifdef LMAT_HAS_AVX
-
-BEGIN_TPACK( accum_colwise_avx_bloc )
-	ADD_MN_CASE_3X3( ewise_accum, colwise_avx_bloc, DM, DN )
-END_TPACK
-
-#endif
-
-BEGIN_TPACK( accum_colwise_scalar_grid )
-	ADD_MN_CASE_3X3( ewise_accum, colwise_scalar_grid, DM, DN )
-END_TPACK
-
-BEGIN_TPACK( accum_colwise_sse_grid )
-	ADD_MN_CASE_3X3( ewise_accum, colwise_sse_grid, DM, DN )
-END_TPACK
-
-#ifdef LMAT_HAS_AVX
-
-BEGIN_TPACK( accum_colwise_avx_grid )
-	ADD_MN_CASE_3X3( ewise_accum, colwise_avx_grid, DM, DN )
-END_TPACK
-
-#endif
-
-
-
 // accum rowwise
 
-MN_CASE( ewise_accum, rowwise_scalar_cont )
+MN_CASE( ewise_accum_rowwise_scalar_cont )
 {
 	test_accum_rowwise<atags::scalar, cont, M, N>();
 }
 
-MN_CASE( ewise_accum, rowwise_sse_cont )
+MN_CASE( ewise_accum_rowwise_sse_cont )
 {
 	test_accum_rowwise<atags::simd<sse_t>, cont, M, N>();
 }
 
 #ifdef LMAT_HAS_AVX
 
-MN_CASE( ewise_accum, rowwise_avx_cont )
+MN_CASE( ewise_accum_rowwise_avx_cont )
 {
 	test_accum_rowwise<atags::simd<avx_t>, cont, M, N>();
 }
 
 #endif
 
-MN_CASE( ewise_accum, rowwise_scalar_bloc )
+MN_CASE( ewise_accum_rowwise_scalar_bloc )
 {
 	test_accum_rowwise<atags::scalar, bloc, M, N>();
 }
 
-MN_CASE( ewise_accum, rowwise_sse_bloc )
+MN_CASE( ewise_accum_rowwise_sse_bloc )
 {
 	test_accum_rowwise<atags::simd<sse_t>, bloc, M, N>();
 }
 
 #ifdef LMAT_HAS_AVX
 
-MN_CASE( ewise_accum, rowwise_avx_bloc )
+MN_CASE( ewise_accum_rowwise_avx_bloc )
 {
 	test_accum_rowwise<atags::simd<avx_t>, bloc, M, N>();
 }
 
 #endif
 
-MN_CASE( ewise_accum, rowwise_scalar_grid )
+MN_CASE( ewise_accum_rowwise_scalar_grid )
 {
 	test_accum_rowwise<atags::scalar, grid, M, N>();
 }
 
 
-BEGIN_TPACK( accum_rowwise_scalar_cont )
-	ADD_MN_CASE_3X3( ewise_accum, rowwise_scalar_cont, DM, DN )
-END_TPACK
 
-BEGIN_TPACK( accum_rowwise_sse_cont )
-	ADD_MN_CASE_3X3( ewise_accum, rowwise_sse_cont, DM, DN )
-END_TPACK
+// Test Packs
 
-#ifdef LMAT_HAS_AVX
+LTEST_INIT_AUTOSUITE
 
-BEGIN_TPACK( accum_rowwise_avx_cont )
-	ADD_MN_CASE_3X3( ewise_accum, rowwise_avx_cont, DM, DN )
-END_TPACK
 
-#endif
+AUTO_TPACK( accum_linear_scalar )
+{
+	ADD_MN_CASE_3X3( ewise_accum_linear_scalar, DM, DN )
+}
 
-BEGIN_TPACK( accum_rowwise_scalar_bloc )
-	ADD_MN_CASE_3X3( ewise_accum, rowwise_scalar_bloc, DM, DN )
-END_TPACK
-
-BEGIN_TPACK( accum_rowwise_sse_bloc )
-	ADD_MN_CASE_3X3( ewise_accum, rowwise_sse_bloc, DM, DN )
-END_TPACK
+AUTO_TPACK( accum_linear_sse )
+{
+	ADD_MN_CASE_3X3( ewise_accum_linear_sse, DM, DN )
+}
 
 #ifdef LMAT_HAS_AVX
 
-BEGIN_TPACK( accum_rowwise_avx_bloc )
-	ADD_MN_CASE_3X3( ewise_accum, rowwise_avx_bloc, DM, DN )
-END_TPACK
+AUTO_TPACK( accum_linear_avx )
+{
+	ADD_MN_CASE_3X3( ewise_accum_linear_avx, DM, DN )
+}
 
 #endif
 
-BEGIN_TPACK( accum_rowwise_scalar_grid )
-	ADD_MN_CASE_3X3( ewise_accum, rowwise_scalar_grid, DM, DN )
-END_TPACK
+AUTO_TPACK( accum_percol_scalar )
+{
+	ADD_MN_CASE_3X3( ewise_accum_percol_scalar, DM, DN )
+}
 
+AUTO_TPACK( accum_percol_sse )
+{
+	ADD_MN_CASE_3X3( ewise_accum_percol_sse, DM, DN )
+}
 
-BEGIN_MAIN_SUITE
-
-	// accum linear
-
-	ADD_TPACK( accum_linear_scalar )
-	ADD_TPACK( accum_linear_sse )
 #ifdef LMAT_HAS_AVX
-	ADD_TPACK( accum_linear_avx )
+
+AUTO_TPACK( accum_percol_avx )
+{
+	ADD_MN_CASE_3X3( ewise_accum_percol_avx, DM, DN )
+}
+
 #endif
 
-	// accum percol
+AUTO_TPACK( accum_colwise_scalar_cont )
+{
+	ADD_MN_CASE_3X3( ewise_accum_colwise_scalar_cont, DM, DN )
+}
 
-	ADD_TPACK( accum_percol_scalar )
-	ADD_TPACK( accum_percol_sse )
+AUTO_TPACK( accum_colwise_sse_cont )
+{
+	ADD_MN_CASE_3X3( ewise_accum_colwise_sse_cont, DM, DN )
+}
+
 #ifdef LMAT_HAS_AVX
-	ADD_TPACK( accum_percol_avx )
+
+AUTO_TPACK( accum_colwise_avx_cont )
+{
+	ADD_MN_CASE_3X3( ewise_accum_colwise_avx_cont, DM, DN )
+}
+
 #endif
 
-	// accum colwise
+AUTO_TPACK( accum_colwise_scalar_bloc )
+{
+	ADD_MN_CASE_3X3( ewise_accum_colwise_scalar_bloc, DM, DN )
+}
 
-	ADD_TPACK( accum_colwise_scalar_cont )
-	ADD_TPACK( accum_colwise_sse_cont )
+AUTO_TPACK( accum_colwise_sse_bloc )
+{
+	ADD_MN_CASE_3X3( ewise_accum_colwise_sse_bloc, DM, DN )
+}
+
 #ifdef LMAT_HAS_AVX
-	ADD_TPACK( accum_colwise_avx_cont )
+
+AUTO_TPACK( accum_colwise_avx_bloc )
+{
+	ADD_MN_CASE_3X3( ewise_accum_colwise_avx_bloc, DM, DN )
+}
+
 #endif
 
-	ADD_TPACK( accum_colwise_scalar_bloc )
-	ADD_TPACK( accum_colwise_sse_bloc )
+AUTO_TPACK( accum_colwise_scalar_grid )
+{
+	ADD_MN_CASE_3X3( ewise_accum_colwise_scalar_grid, DM, DN )
+}
+
+AUTO_TPACK( accum_colwise_sse_grid )
+{
+	ADD_MN_CASE_3X3( ewise_accum_colwise_sse_grid, DM, DN )
+}
+
 #ifdef LMAT_HAS_AVX
-	ADD_TPACK( accum_colwise_avx_bloc )
+
+AUTO_TPACK( accum_colwise_avx_grid )
+{
+	ADD_MN_CASE_3X3( ewise_accum_colwise_avx_grid, DM, DN )
+}
+
 #endif
 
-	ADD_TPACK( accum_colwise_scalar_grid )
-	ADD_TPACK( accum_colwise_sse_grid )
+
+AUTO_TPACK( accum_rowwise_scalar_cont )
+{
+	ADD_MN_CASE_3X3( ewise_accum_rowwise_scalar_cont, DM, DN )
+}
+
+AUTO_TPACK( accum_rowwise_sse_cont )
+{
+	ADD_MN_CASE_3X3( ewise_accum_rowwise_sse_cont, DM, DN )
+}
+
 #ifdef LMAT_HAS_AVX
-	ADD_TPACK( accum_colwise_avx_grid )
+
+AUTO_TPACK( accum_rowwise_avx_cont )
+{
+	ADD_MN_CASE_3X3( ewise_accum_rowwise_avx_cont, DM, DN )
+}
+
 #endif
 
-	// accum rowwise
+AUTO_TPACK( accum_rowwise_scalar_bloc )
+{
+	ADD_MN_CASE_3X3( ewise_accum_rowwise_scalar_bloc, DM, DN )
+}
 
-	ADD_TPACK( accum_rowwise_scalar_cont )
-	ADD_TPACK( accum_rowwise_sse_cont )
+AUTO_TPACK( accum_rowwise_sse_bloc )
+{
+	ADD_MN_CASE_3X3( ewise_accum_rowwise_sse_bloc, DM, DN )
+}
+
 #ifdef LMAT_HAS_AVX
-	ADD_TPACK( accum_rowwise_avx_cont )
+
+AUTO_TPACK( accum_rowwise_avx_bloc )
+{
+	ADD_MN_CASE_3X3( ewise_accum_rowwise_avx_bloc, DM, DN )
+}
+
 #endif
 
-	ADD_TPACK( accum_rowwise_scalar_bloc )
-	ADD_TPACK( accum_rowwise_sse_bloc )
-#ifdef LMAT_HAS_AVX
-	ADD_TPACK( accum_rowwise_avx_bloc )
-#endif
-
-	ADD_TPACK( accum_rowwise_scalar_grid )
-
-END_MAIN_SUITE
-
-
-
-
+AUTO_TPACK( accum_rowwise_scalar_grid )
+{
+	ADD_MN_CASE_3X3( ewise_accum_rowwise_scalar_grid, DM, DN )
+}

@@ -507,14 +507,14 @@ set(LMAT_MATRIX_TESTS
 
 # matrix evaluation module
 
-#set(MATEVAL_TEST_HS
-#    ${MATRIX_HS}
-#    ${MATH_HS}
-#    ${MATRIX_EVAL_HS_})
-#    
-#add_executable(test_linear_ewise ${MATEVAL_TEST_HS} mateval/test_linear_ewise.cpp)    
-#add_executable(test_percol_ewise ${MATEVAL_TEST_HS} mateval/test_percol_ewise.cpp)
-#add_executable(test_ewise_accum ${MATEVAL_TEST_HS}  mateval/test_ewise_accum.cpp)
+set(MATEVAL_TEST_HS
+    ${MATRIX_HS}
+    ${MATH_HS}
+    ${MATRIX_EVAL_HS_})
+    
+add_executable(test_linear_ewise ${MATEVAL_TEST_HS} mateval/test_linear_ewise.cpp)    
+add_executable(test_percol_ewise ${MATEVAL_TEST_HS} mateval/test_percol_ewise.cpp)
+add_executable(test_ewise_accum ${MATEVAL_TEST_HS}  mateval/test_ewise_accum.cpp)
 
 #set(MATREDUC_TEST_HS
 #    ${MATRIX_HS}
@@ -540,10 +540,10 @@ set(LMAT_MATRIX_TESTS
 #add_executable(test_mat_find ${MATALG_TEST_HS} mateval/test_mat_find.cpp)
 #add_executable(test_mat_sort ${MATALG_TEST_HS} mateval/test_mat_sort.cpp)
 
-#set(LMAT_MATEVAL_TESTS
-#   test_linear_ewise
-#	test_percol_ewise
-#	test_ewise_accum
+set(LMAT_MATEVAL_TESTS
+    test_linear_ewise
+	test_percol_ewise
+	test_ewise_accum
 #	test_full_reduce
 #	test_colwise_reduce
 #	test_rowwise_reduce
@@ -552,7 +552,7 @@ set(LMAT_MATRIX_TESTS
 #	test_mat_compare
 #	test_mat_find
 #	test_mat_sort
-#	)
+	)
 
 
 # matrix expressions
@@ -633,7 +633,7 @@ set(LMAT_ALL_TESTS
     ${LMAT_SIMD_TESTS}
     ${LMAT_MATH_TESTS}
     ${LMAT_MATRIX_TESTS}
-    #${LMAT_MATEVAL_TESTS}
+    ${LMAT_MATEVAL_TESTS}
     #${LMAT_MATEXPR_TESTS}
     # ${LMAT_LINALG_TESTS}
 )
