@@ -18,7 +18,127 @@
 
 namespace lmat { namespace random {
 
-	// classes
+	/********************************************
+	 *
+	 *  rand_real generator
+	 *
+	 ********************************************/
+
+	template<typename T> struct rand_real;
+
+	template<>
+	struct rand_real<float>
+	{
+		template<class RStream>
+		LMAT_ENSURE_INLINE
+		static float c1o2(RStream& rs)  // [1, 2)
+		{
+			return internal::randbits_to_c1o2_f32(rs.rand_u32());
+		}
+
+		template<class RStream>
+		LMAT_ENSURE_INLINE
+		static float c0o1(RStream& rs) // [0, 1)
+		{
+			return c1o2(rs) - 1.0f;
+		}
+
+		template<class RStream>
+		LMAT_ENSURE_INLINE
+		static float o0c1(RStream& rs)  // (0, 1]
+		{
+			return 2.0f - c1o2(rs);
+		}
+	};
+
+
+	template<typename Kind>
+	struct rand_real<simd_pack<float, Kind> >
+	{
+		typedef simd_pack<float, Kind> pack_t;
+
+		template<class RStream>
+		LMAT_ENSURE_INLINE
+		static pack_t c1o2(RStream& rs)
+		{
+			return internal::randbits_to_c1o2_f32(rs.rand_pack(Kind()), Kind());
+		}
+
+		template<class RStream>
+		LMAT_ENSURE_INLINE
+		static pack_t c0o1(RStream& rs)
+		{
+			return c1o2(rs) - pack_t(1.0f);
+		}
+
+		template<class RStream>
+		LMAT_ENSURE_INLINE
+		static pack_t o0c1(RStream& rs)
+		{
+			return pack_t(2.0f) - c1o2(rs);
+		}
+	};
+
+
+	template<>
+	struct rand_real<double>
+	{
+		template<class RStream>
+		LMAT_ENSURE_INLINE
+		static double c1o2(RStream& rs)  // [1, 2)
+		{
+			return internal::randbits_to_c1o2_f64(rs.rand_u64());
+		}
+
+		template<class RStream>
+		LMAT_ENSURE_INLINE
+		static double c0o1(RStream& rs) // [0, 1)
+		{
+			return c1o2(rs) - 1.0;
+		}
+
+		template<class RStream>
+		LMAT_ENSURE_INLINE
+		static double o0c1(RStream& rs)  // (0, 1]
+		{
+			return 2.0 - c1o2(rs);
+		}
+	};
+
+
+	template<typename Kind>
+	struct rand_real<simd_pack<double, Kind> >
+	{
+		typedef simd_pack<double, Kind> pack_t;
+
+		template<class RStream>
+		LMAT_ENSURE_INLINE
+		static pack_t c1o2(RStream& rs)
+		{
+			return internal::randbits_to_c1o2_f64(rs.rand_pack(Kind()), Kind());
+		}
+
+		template<class RStream>
+		LMAT_ENSURE_INLINE
+		static pack_t c0o1(RStream& rs)
+		{
+			return c1o2(rs) - pack_t(1.0);
+		}
+
+		template<class RStream>
+		LMAT_ENSURE_INLINE
+		static pack_t o0c1(RStream& rs)
+		{
+			return pack_t(2.0) - c1o2(rs);
+		}
+	};
+
+
+	/********************************************
+	 *
+	 *  distribution classes
+	 *
+	 ********************************************/
 
 	template<typename T>
 	class std_uniform_real_distr  // U [0, 1)
@@ -51,7 +171,7 @@ namespace lmat { namespace random {
 		LMAT_ENSURE_INLINE
 		T operator() (RStream& rs) const
 		{
-			return internal::randreal_helper<T>::c1o2(rs) - T(1);
+			return rand_real<T>::c0o1(rs);
 		}
 	};
 
@@ -94,7 +214,7 @@ namespace lmat { namespace random {
 		LMAT_ENSURE_INLINE
 		T operator() (RStream& rs) const
 		{
-			return m_base + internal::randreal_helper<T>::c1o2(rs) * m_span;
+			return m_base + rand_real<T>::c1o2(rs) * m_span;
 		}
 
 		LMAT_ENSURE_INLINE
@@ -124,7 +244,7 @@ namespace lmat { namespace random {
 		LMAT_ENSURE_INLINE
 		result_type operator() (RStream& rs) const
 		{
-			result_type pk = internal::randreal_helper<T>::c1o2(rs, Kind());
+			result_type pk = rand_real<result_type>::c1o2(rs);
 			return pk - m_one;
 		}
 
@@ -147,7 +267,7 @@ namespace lmat { namespace random {
 		LMAT_ENSURE_INLINE
 		result_type operator() (RStream& rs) const
 		{
-			result_type pk = internal::randreal_helper<T>::c1o2(rs, Kind());
+			result_type pk = rand_real<result_type>::c1o2(rs);
 			return m_base + pk * m_span;
 		}
 

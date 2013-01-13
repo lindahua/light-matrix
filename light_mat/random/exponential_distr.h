@@ -13,7 +13,7 @@
 #ifndef LIGHTMAT_EXPONENTIAL_DISTR_H_
 #define LIGHTMAT_EXPONENTIAL_DISTR_H_
 
-#include "internal/uniform_real_internal.h"
+#include <light_mat/random/uniform_real_distr.h>
 #include <light_mat/math/simd_math.h>
 
 namespace lmat { namespace random {
@@ -54,8 +54,7 @@ namespace lmat { namespace random {
 		LMAT_ENSURE_INLINE
 		T operator() (RStream& rs) const
 		{
-			T u = T(2) - internal::randreal_helper<T>::c1o2(rs);
-			return - math::log(u);
+			return - math::log(rand_real<T>::o0c1(rs));
 		}
 	};
 
@@ -99,8 +98,7 @@ namespace lmat { namespace random {
 		LMAT_ENSURE_INLINE
 		T operator() (RStream& rs) const
 		{
-			T u = T(2) - internal::randreal_helper<T>::c1o2(rs);
-			return (-m_beta) * math::log(u);
+			return (-m_beta) * math::log(rand_real<T>::o0c1(rs));
 		}
 
 	private:
@@ -109,54 +107,44 @@ namespace lmat { namespace random {
 	};
 
 
-	// SIMD generator
+	// SIMD generators
 
 	template<typename T, typename Kind>
-	class std_exponential_simd
+	class std_exponential_distr_simd
 	{
 	public:
 		typedef simd_pack<T, Kind> result_type;
-
-		LMAT_ENSURE_INLINE
-		explicit std_exponential_simd()
-		: m_two(T(2)) { }
 
 		template<class RStream>
 		LMAT_ENSURE_INLINE
 		result_type operator() (RStream& rs) const
 		{
-			result_type pk = internal::randreal_helper<T>::c1o2(rs, Kind());
-			return - math::log(m_two - pk);
+			return - math::log(rand_real<result_type>::o0c1(rs));
 		}
-
-	private:
-		result_type m_two;
 	};
 
 
 	template<typename T, typename Kind>
-	class exponential_simd
+	class exponential_distr_simd
 	{
 	public:
 		typedef simd_pack<T, Kind> result_type;
 
 		LMAT_ENSURE_INLINE
-		explicit exponential_simd(T beta)
-		: m_two(T(2)), m_neg_beta(-beta) { }
+		explicit exponential_distr_simd(const T& beta)
+		: m_neg_beta(-beta)
+		{ }
 
 		template<class RStream>
 		LMAT_ENSURE_INLINE
 		result_type operator() (RStream& rs) const
 		{
-			result_type pk = internal::randreal_helper<T>::c1o2(rs, Kind());
-			return math::log(m_two - pk) * m_neg_beta;
+			return m_neg_beta * math::log(rand_real<result_type>::o0c1(rs));
 		}
 
 	private:
-		result_type m_two;
-		result_type m_neg_beta;
+		T m_neg_beta;
 	};
-
 
 } }
 
@@ -175,7 +163,7 @@ namespace lmat
 	template<typename T, typename Kind>
 	struct simdize_map< random::std_exponential_distr<T>, Kind >
 	{
-		typedef random::std_exponential_simd<T, Kind> type;
+		typedef random::std_exponential_distr_simd<T, Kind> type;
 
 		LMAT_ENSURE_INLINE
 		static type get(const random::std_exponential_distr<T>& s)
@@ -187,7 +175,7 @@ namespace lmat
 	template<typename T, typename Kind>
 	struct simdize_map< random::exponential_distr<T>, Kind >
 	{
-		typedef random::exponential_simd<T, Kind> type;
+		typedef random::exponential_distr_simd<T, Kind> type;
 
 		LMAT_ENSURE_INLINE
 		static type get(const random::exponential_distr<T>& s)

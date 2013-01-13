@@ -95,12 +95,6 @@ namespace lmat { namespace random {
 		internal::normal_distr_impl<T, Method> m_impl;
 	};
 
-
-	// SIMD generators
-
-	using internal::std_normal_distr_simd_impl;
-	using internal::normal_distr_simd_impl;
-
 } }
 
 
@@ -115,25 +109,25 @@ namespace lmat
 	struct is_simdizable<random::normal_distr<T, random::icdf_>, Kind>
 	: public meta::has_simd_support<ftags::norminv_, T, Kind> { };
 
-	template<typename T, typename Kind, typename Method>
-	struct simdize_map< random::std_normal_distr<T, Method>, Kind >
+	template<typename T, typename Kind>
+	struct simdize_map< random::std_normal_distr<T, random::icdf_>, Kind >
 	{
-		typedef random::std_normal_distr_simd_impl<T, Kind, Method> type;
+		typedef random::internal::std_normal_distr_impl<simd_pack<T, Kind>, random::icdf_> type;
 
 		LMAT_ENSURE_INLINE
-		static type get(const random::std_normal_distr<T, Method>& s)
+		static type get(const random::std_normal_distr<T, random::icdf_>& s)
 		{
 			return type();
 		}
 	};
 
-	template<typename T, typename Kind, typename Method>
-	struct simdize_map< random::normal_distr<T, Method>, Kind >
+	template<typename T, typename Kind>
+	struct simdize_map< random::normal_distr<T, random::icdf_>, Kind >
 	{
-		typedef random::normal_distr_simd_impl<T, Kind, Method> type;
+		typedef random::internal::normal_distr_impl<simd_pack<T, Kind>, random::icdf_> type;
 
 		LMAT_ENSURE_INLINE
-		static type get(const random::normal_distr<T, Method>& s)
+		static type get(const random::normal_distr<T, random::icdf_>& s)
 		{
 			return type(s.mean(), s.stddev());
 		}

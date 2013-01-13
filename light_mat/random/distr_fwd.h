@@ -29,6 +29,8 @@ namespace lmat { namespace random {
 	struct ziggurat_ { };
 	struct huffman_ { };
 
+	struct ahrens_dieter_ { };
+
 	// discrete distributions
 
 	template<typename TI=uint32_t> class std_uniform_int_distr;
@@ -55,11 +57,8 @@ namespace lmat { namespace random {
 	template<typename T=double, typename Method=icdf_> class std_normal_distr;
 	template<typename T=double, typename Method=icdf_> class normal_distr;
 
-	template<typename T=double, typename Method=naive_> class std_gamma_distr;
-	template<typename T=double, typename Method=naive_> class gamma_distr;
-
-	template<typename T=double, typename Method=icdf_> class std_lognormal_distr;
-	template<typename T=double, typename Method=icdf_> class lognormal_distr;
+	template<typename T=double, typename Method=ahrens_dieter_> class std_gamma_distr;
+	template<typename T=double, typename Method=ahrens_dieter_> class gamma_distr;
 
 
 } }

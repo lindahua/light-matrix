@@ -13,7 +13,7 @@
 #ifndef LIGHTMAT_NORMAL_DISTR_INTERNAL_H_
 #define LIGHTMAT_NORMAL_DISTR_INTERNAL_H_
 
-#include "uniform_real_internal.h"
+#include <light_mat/random/uniform_real_distr.h>
 #include <light_mat/math/math_special.h>
 #include <light_mat/math/simd_math.h>
 
@@ -48,8 +48,7 @@ namespace lmat { namespace random { namespace internal {
 		LMAT_ENSURE_INLINE
 		T operator() (RStream& rs) const
 		{
-			T u = internal::randreal_helper<T>::c1o2(rs) - T(1);
-			return math::norminv(u);
+			return math::norminv(rand_real<T>::o0c1(rs));
 		}
 	};
 
@@ -80,54 +79,8 @@ namespace lmat { namespace random { namespace internal {
 		LMAT_ENSURE_INLINE
 		T operator() (RStream& rs) const
 		{
-			T u = internal::randreal_helper<T>::c1o2(rs) - T(1);
-			return m_mu + math::norminv(u) * m_sigma;
+			return m_mu + math::norminv(rand_real<T>::o0c1(rs)) * m_sigma;
 		}
-	};
-
-
-	template<typename T, typename Kind>
-	struct std_normal_distr_simd_impl<T, Kind, icdf_>
-	{
-		typedef simd_pack<T, Kind> result_type;
-
-		result_type m_one;
-
-		LMAT_ENSURE_INLINE
-		explicit std_normal_distr_simd_impl()
-		: m_one(T(1)) { }
-
-		template<class RStream>
-		LMAT_ENSURE_INLINE
-		result_type operator() (RStream& rs) const
-		{
-			result_type pk = internal::randreal_helper<T>::c1o2(rs, Kind());
-			return math::norminv(pk - m_one);
-		}
-	};
-
-
-	template<typename T, typename Kind>
-	struct normal_distr_simd_impl<T, Kind, icdf_>
-	{
-		typedef simd_pack<T, Kind> result_type;
-
-		result_type m_one;
-		result_type m_mu;
-		result_type m_sigma;
-
-		LMAT_ENSURE_INLINE
-		explicit normal_distr_simd_impl(T mu, T sigma)
-		: m_one(T(1)), m_mu(mu), m_sigma(sigma) { }
-
-		template<class RStream>
-		LMAT_ENSURE_INLINE
-		result_type operator() (RStream& rs) const
-		{
-			result_type pk = internal::randreal_helper<T>::c1o2(rs, Kind());
-			return m_mu + math::norminv(pk - m_one) * m_sigma;
-		}
-
 	};
 
 
