@@ -571,18 +571,18 @@ add_executable(test_mat_emath ${MAPEXPR_TEST_HS} matexpr/test_mat_emath.cpp)
 add_executable(test_mat_special ${MAPEXPR_TEST_HS} matexpr/test_mat_special.cpp)
 add_executable(test_mat_cast ${MAPEXPR_TEST_HS} matexpr/test_mat_cast.cpp)
 add_executable(test_mat_pred ${MAPEXPR_TEST_HS} matexpr/test_mat_pred.cpp)
-#
-#set(OTHEREXPR_TEST_HS
-#    ${MATRIX_HS}
-#    ${MATH_HS}
-#    ${MATRIX_EVAL_HS_}
-#    ${OTHER_EXPR_HS_})
-#
-#add_executable(test_repvecs ${OTHEREXPR_TEST_HS} matexpr/test_repvecs.cpp)
-#add_executable(test_subs_expr ${OTHEREXPR_TEST_HS} matexpr/test_subs_expr.cpp)
-#add_executable(test_mat_zip ${OTHEREXPR_TEST_HS} matexpr/test_mat_zip.cpp)
-#
-#add_executable(test_cpd_ewise ${MATEXPR_HS_EX} matexpr/test_cpd_ewise.cpp)
+
+set(OTHEREXPR_TEST_HS
+    ${MATRIX_HS}
+    ${MATH_HS}
+    ${MATRIX_EVAL_HS_}
+    ${OTHER_EXPR_HS_})
+
+add_executable(test_repvecs ${OTHEREXPR_TEST_HS} matexpr/test_repvecs.cpp)
+add_executable(test_subs_expr ${OTHEREXPR_TEST_HS} matexpr/test_subs_expr.cpp)
+add_executable(test_mat_zip ${OTHEREXPR_TEST_HS} matexpr/test_mat_zip.cpp)
+
+add_executable(test_cpd_ewise ${MATEXPR_HS_EX} matexpr/test_cpd_ewise.cpp)
 
 set(LMAT_MATEXPR_TESTS
 	test_map_expr
@@ -591,10 +591,10 @@ set(LMAT_MATEXPR_TESTS
 	test_mat_special
 	test_mat_cast
 	test_mat_pred
-#	test_repvecs
-#	test_subs_expr
-#	test_mat_zip
-#	test_cpd_ewise
+	test_repvecs
+	test_subs_expr
+	test_mat_zip
+	test_cpd_ewise
 	)
 
 
@@ -665,7 +665,7 @@ set(TESTS_USING_SVML
     test_simd_special
     test_mat_emath
     test_mat_special
-    # test_cpd_ewise
+    test_cpd_ewise
     )
 
 foreach (tname ${TESTS_USING_SVML}) 

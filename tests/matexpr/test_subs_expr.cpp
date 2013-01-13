@@ -8,8 +8,8 @@
 
 
 #include "../test_base.h"
-#include <light_mat/mateval/subs_expr.h>
-#include <light_mat/mateval/mat_arith.h>
+#include <light_mat/matexpr/subs_expr.h>
+#include <light_mat/matexpr/mat_arith.h>
 
 using namespace lmat;
 using namespace lmat::test;
@@ -17,7 +17,7 @@ using namespace lmat::test;
 const index_t DM = 9;
 const index_t DN = 8;
 
-TMN_CASE( test_subs, inds_expr )
+TMN_CASE( test_inds_expr )
 {
 	index_t m = M == 0 ? DM : M;
 	index_t n = N == 0 ? DN : N;
@@ -36,7 +36,7 @@ TMN_CASE( test_subs, inds_expr )
 	ASSERT_MAT_EQ( m, n, r, r0 );
 }
 
-TMN_CASE( test_subs, subs_i_expr )
+TMN_CASE( test_subs_i_expr )
 {
 	index_t m = M == 0 ? DM : M;
 	index_t n = N == 0 ? DN : N;
@@ -56,7 +56,7 @@ TMN_CASE( test_subs, subs_i_expr )
 	ASSERT_MAT_EQ( m, n, r, r0 );
 }
 
-TMN_CASE( test_subs, subs_j_expr )
+TMN_CASE( test_subs_j_expr )
 {
 	index_t m = M == 0 ? DM : M;
 	index_t n = N == 0 ? DN : N;
@@ -77,7 +77,7 @@ TMN_CASE( test_subs, subs_j_expr )
 }
 
 
-TMN_CASE( test_subs, sub2ind )
+TMN_CASE( test_sub2ind )
 {
 	index_t m = M == 0 ? DM : M;
 	index_t n = N == 0 ? DN : N;
@@ -99,41 +99,40 @@ TMN_CASE( test_subs, sub2ind )
 }
 
 
-BEGIN_TPACK( test_inds )
-	ADD_TMN_CASE_3X3( test_subs, inds_expr, double, DM, DN )
-	ADD_TMN_CASE_3X3( test_subs, inds_expr, float, DM, DN )
-	ADD_TMN_CASE_3X3( test_subs, inds_expr, int32_t, DM, DN )
-	ADD_TMN_CASE_3X3( test_subs, inds_expr, uint32_t, DM, DN )
-END_TPACK
+LTEST_INIT_AUTOSUITE
 
-BEGIN_TPACK( test_subs_i )
-	ADD_TMN_CASE_3X3( test_subs, subs_i_expr, double, DM, DN )
-	ADD_TMN_CASE_3X3( test_subs, subs_i_expr, float, DM, DN )
-	ADD_TMN_CASE_3X3( test_subs, subs_i_expr, int32_t, DM, DN )
-	ADD_TMN_CASE_3X3( test_subs, subs_i_expr, uint32_t, DM, DN )
-END_TPACK
+AUTO_TPACK( test_inds )
+{
+	ADD_TMN_CASE_3X3( test_inds_expr, double, DM, DN )
+	ADD_TMN_CASE_3X3( test_inds_expr, float, DM, DN )
+	ADD_TMN_CASE_3X3( test_inds_expr, int32_t, DM, DN )
+	ADD_TMN_CASE_3X3( test_inds_expr, uint32_t, DM, DN )
+}
 
-BEGIN_TPACK( test_subs_j )
-	ADD_TMN_CASE_3X3( test_subs, subs_j_expr, double, DM, DN )
-	ADD_TMN_CASE_3X3( test_subs, subs_j_expr, float, DM, DN )
-	ADD_TMN_CASE_3X3( test_subs, subs_j_expr, int32_t, DM, DN )
-	ADD_TMN_CASE_3X3( test_subs, subs_j_expr, uint32_t, DM, DN )
-END_TPACK
+AUTO_TPACK( test_subs_i )
+{
+	ADD_TMN_CASE_3X3( test_subs_i_expr, double, DM, DN )
+	ADD_TMN_CASE_3X3( test_subs_i_expr, float, DM, DN )
+	ADD_TMN_CASE_3X3( test_subs_i_expr, int32_t, DM, DN )
+	ADD_TMN_CASE_3X3( test_subs_i_expr, uint32_t, DM, DN )
+}
 
-BEGIN_TPACK( test_sub2ind )
-	ADD_TMN_CASE_3X3( test_subs, sub2ind, double, DM, DN )
-	ADD_TMN_CASE_3X3( test_subs, sub2ind, float, DM, DN )
-	ADD_TMN_CASE_3X3( test_subs, sub2ind, int32_t, DM, DN )
-	ADD_TMN_CASE_3X3( test_subs, sub2ind, uint32_t, DM, DN )
-END_TPACK
+AUTO_TPACK( test_subs_j )
+{
+	ADD_TMN_CASE_3X3( test_subs_j_expr, double, DM, DN )
+	ADD_TMN_CASE_3X3( test_subs_j_expr, float, DM, DN )
+	ADD_TMN_CASE_3X3( test_subs_j_expr, int32_t, DM, DN )
+	ADD_TMN_CASE_3X3( test_subs_j_expr, uint32_t, DM, DN )
+}
 
+AUTO_TPACK( test_sub2ind )
+{
+	ADD_TMN_CASE_3X3( test_sub2ind, double, DM, DN )
+	ADD_TMN_CASE_3X3( test_sub2ind, float, DM, DN )
+	ADD_TMN_CASE_3X3( test_sub2ind, int32_t, DM, DN )
+	ADD_TMN_CASE_3X3( test_sub2ind, uint32_t, DM, DN )
+}
 
-BEGIN_MAIN_SUITE
-	ADD_TPACK( test_inds )
-	ADD_TPACK( test_subs_i )
-	ADD_TPACK( test_subs_j )
-	ADD_TPACK( test_sub2ind )
-END_MAIN_SUITE
 
 
 

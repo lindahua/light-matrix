@@ -8,7 +8,11 @@
 
 #include "../test_base.h"
 
-#include <light_mat/mateval/mateval.h>
+#include <light_mat/matexpr/mat_arith.h>
+#include <light_mat/matexpr/mat_emath.h>
+#include <light_mat/matexpr/mat_cast.h>
+#include <light_mat/matexpr/repvec_expr.h>
+
 #include <light_mat/math/math_constants.h>
 #include <cstdlib>
 
@@ -29,7 +33,7 @@ void fill_ran(dense_matrix<double, M, N>& X, double a, double b)
 
 // test cases
 
-MN_CASE( cpd_expr, ewise_sqdist )
+MN_CASE( ewise_sqdist )
 {
 	const index_t m = M == 0 ? 5 : M;
 	const index_t n = N == 0 ? 6 : N;
@@ -59,7 +63,7 @@ MN_CASE( cpd_expr, ewise_sqdist )
 }
 
 
-MN_CASE( cpd_expr, ewise_normpdf )
+MN_CASE( ewise_normpdf )
 {
 	const index_t m = M == 0 ? 5 : M;
 	const index_t n = N == 0 ? 6 : N;
@@ -93,7 +97,7 @@ MN_CASE( cpd_expr, ewise_normpdf )
 }
 
 
-MN_CASE( cpd_expr, axpy_cast )
+MN_CASE( axpy_cast )
 {
 	const index_t m = M == 0 ? 5 : M;
 	const index_t n = N == 0 ? 6 : N;
@@ -122,8 +126,7 @@ MN_CASE( cpd_expr, axpy_cast )
 	ASSERT_MAT_APPROX( m, n, Z, R, tol );
 }
 
-
-MN_CASE( cpd_expr, pwise_sqdist )
+MN_CASE( pwise_sqdist )
 {
 	const index_t m = M == 0 ? 5 : M;
 	const index_t n = N == 0 ? 6 : N;
@@ -156,30 +159,27 @@ MN_CASE( cpd_expr, pwise_sqdist )
 }
 
 
+LTEST_INIT_AUTOSUITE
 
-BEGIN_TPACK( cpd_ewise_sqdist )
-	ADD_MN_CASE_3X3( cpd_expr, ewise_sqdist, 5, 6 )
-END_TPACK
+AUTO_TPACK( ewise_sqdist )
+{
+	ADD_MN_CASE_3X3( ewise_sqdist, 5, 6 )
+}
 
-BEGIN_TPACK( cpd_ewise_normpdf )
-	ADD_MN_CASE_3X3( cpd_expr, ewise_normpdf, 5, 6 )
-END_TPACK
+AUTO_TPACK( ewise_normpdf )
+{
+	ADD_MN_CASE_3X3( ewise_normpdf, 5, 6 )
+}
 
-BEGIN_TPACK( cpd_ewise_axpy_cast )
-	ADD_MN_CASE_3X3( cpd_expr, axpy_cast, 5, 6 )
-END_TPACK
+AUTO_TPACK( axpy_cast )
+{
+	ADD_MN_CASE_3X3( axpy_cast, 5, 6 )
+}
 
-BEGIN_TPACK( cpd_pwise_sqdist )
-	ADD_MN_CASE_3X3( cpd_expr, pwise_sqdist, 5, 6 )
-END_TPACK
-
-
-BEGIN_MAIN_SUITE
-	ADD_TPACK( cpd_ewise_sqdist )
-	ADD_TPACK( cpd_ewise_normpdf )
-	ADD_TPACK( cpd_ewise_axpy_cast )
-	ADD_TPACK( cpd_pwise_sqdist )
-END_MAIN_SUITE
+AUTO_TPACK( pwise_sqdist )
+{
+	ADD_MN_CASE_3X3( pwise_sqdist, 5, 6 )
+}
 
 
 

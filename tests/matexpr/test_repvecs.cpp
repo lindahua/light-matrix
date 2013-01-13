@@ -9,8 +9,8 @@
 #include "../test_base.h"
 #include "../multimat_supp.h"
 
-#include <light_mat/mateval/repvec_expr.h>
-#include <light_mat/mateval/map_expr.h>
+#include <light_mat/matexpr/repvec_expr.h>
+#include <light_mat/matexpr/map_expr.h>
 
 using namespace lmat;
 using namespace lmat::test;
@@ -112,19 +112,20 @@ void test_reprows()
 
 
 #define TEST_REPCOLS( sform, dform, name ) \
-	MN_CASE( test_repcols, name ) { \
+	MN_CASE( test_repcols_##name ) { \
 		test_repcols<sform, dform, M, N>(); } \
-	BEGIN_TPACK( test_repcols_##name ) \
-		ADD_MN_CASE_3X3( test_repcols, name, DM, DN ) \
-	END_TPACK
+	AUTO_TPACK( test_repcols_##name ) { \
+		ADD_MN_CASE_3X3( test_repcols_##name, DM, DN ) \
+	}
 
 #define TEST_REPROWS( sform, dform, name ) \
-	MN_CASE( test_reprows, name ) { \
+	MN_CASE( test_reprows_##name ) { \
 		test_reprows<sform, dform, M, N>(); } \
-	BEGIN_TPACK( test_reprows_##name ) \
-		ADD_MN_CASE_3X3( test_reprows, name, DM, DN ) \
-	END_TPACK
+	AUTO_TPACK( test_reprows_##name ) { \
+		ADD_MN_CASE_3X3( test_reprows_##name, DM, DN ) \
+	}
 
+LTEST_INIT_AUTOSUITE
 
 TEST_REPCOLS( cont, cont, mat_to_mat )
 TEST_REPCOLS( cont, bloc, mat_to_blk )
@@ -145,31 +146,6 @@ TEST_REPROWS( bloc, grid, blk_to_grid )
 TEST_REPROWS( grid, cont, grid_to_mat )
 TEST_REPROWS( grid, bloc, grid_to_blk )
 TEST_REPROWS( grid, grid, grid_to_grid )
-
-
-BEGIN_MAIN_SUITE
-	ADD_TPACK( test_repcols_mat_to_mat )
-	ADD_TPACK( test_repcols_mat_to_blk )
-	ADD_TPACK( test_repcols_mat_to_grid )
-	ADD_TPACK( test_repcols_blk_to_mat )
-	ADD_TPACK( test_repcols_blk_to_blk )
-	ADD_TPACK( test_repcols_blk_to_grid )
-	ADD_TPACK( test_repcols_grid_to_mat )
-	ADD_TPACK( test_repcols_grid_to_blk )
-	ADD_TPACK( test_repcols_grid_to_grid )
-
-	ADD_TPACK( test_reprows_mat_to_mat )
-	ADD_TPACK( test_reprows_mat_to_blk )
-	ADD_TPACK( test_reprows_mat_to_grid )
-	ADD_TPACK( test_reprows_blk_to_mat )
-	ADD_TPACK( test_reprows_blk_to_blk )
-	ADD_TPACK( test_reprows_blk_to_grid )
-	ADD_TPACK( test_reprows_grid_to_mat )
-	ADD_TPACK( test_reprows_grid_to_blk )
-	ADD_TPACK( test_reprows_grid_to_grid )
-END_MAIN_SUITE
-
-
 
 
 

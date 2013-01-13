@@ -9,7 +9,7 @@
 #include "../test_base.h"
 
 #include <light_mat/matrix/matrix_classes.h>
-#include <light_mat/mateval/mat_zip.h>
+#include <light_mat/matexpr/mat_zip.h>
 
 using namespace lmat;
 using namespace lmat::test;
@@ -18,7 +18,7 @@ const index_t DM = 9;
 const index_t DN = 8;
 
 
-MN_CASE( mat_zip, zip_pair_aa )
+MN_CASE( mat_zip_pair_aa )
 {
 	index_t m = M == 0 ? DM : M;
 	index_t n = N == 0 ? DN : N;
@@ -68,7 +68,7 @@ MN_CASE( mat_zip, zip_pair_aa )
 	ASSERT_MAT_EQ( m, n, u1, b );
 }
 
-MN_CASE( mat_zip, zip_pair_av )
+MN_CASE( mat_zip_pair_av )
 {
 	index_t m = M == 0 ? DM : M;
 	index_t n = N == 0 ? DN : N;
@@ -95,7 +95,7 @@ MN_CASE( mat_zip, zip_pair_av )
 }
 
 
-MN_CASE( mat_zip, zip_pair_va )
+MN_CASE( mat_zip_pair_va )
 {
 	index_t m = M == 0 ? DM : M;
 	index_t n = N == 0 ? DN : N;
@@ -122,24 +122,23 @@ MN_CASE( mat_zip, zip_pair_va )
 }
 
 
-BEGIN_TPACK( mat_zip_pair_aa )
-	ADD_MN_CASE_3X3( mat_zip, zip_pair_aa, DM, DN )
-END_TPACK
+LTEST_INIT_AUTOSUITE
 
-BEGIN_TPACK( mat_zip_pair_av )
-	ADD_MN_CASE_3X3( mat_zip, zip_pair_av, DM, DN )
-END_TPACK
+AUTO_TPACK( mat_zip_pair_aa )
+{
+	ADD_MN_CASE_3X3( mat_zip_pair_aa, DM, DN )
+}
 
-BEGIN_TPACK( mat_zip_pair_va )
-	ADD_MN_CASE_3X3( mat_zip, zip_pair_va, DM, DN )
-END_TPACK
+AUTO_TPACK( mat_zip_pair_av )
+{
+	ADD_MN_CASE_3X3( mat_zip_pair_av, DM, DN )
+}
 
+AUTO_TPACK( mat_zip_pair_va )
+{
+	ADD_MN_CASE_3X3( mat_zip_pair_va, DM, DN )
+}
 
-BEGIN_MAIN_SUITE
-	ADD_TPACK( mat_zip_pair_aa )
-	ADD_TPACK( mat_zip_pair_av )
-	ADD_TPACK( mat_zip_pair_va )
-END_MAIN_SUITE
 
 
 

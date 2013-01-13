@@ -13,7 +13,7 @@
 #ifndef LIGHTMAT_MAT_ZIP_H_
 #define LIGHTMAT_MAT_ZIP_H_
 
-#include <light_mat/mateval/map_expr.h>
+#include <light_mat/matexpr/map_expr.h>
 #include <tuple>
 
 namespace lmat
