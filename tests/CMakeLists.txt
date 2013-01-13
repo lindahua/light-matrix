@@ -20,59 +20,33 @@ set(CMAKE_MODULE_PATH "../cmake_modules" ${CMAKE_MODULE_PATH})
 
 # Intel SVML 
 
-set(SVML_PATH "$ENV{ICC_LIBPATH}")
-
-if (SVML_PATH)
-
-    message(STATUS "[LMAT] SVML_PATH = ${SVML_PATH}")
-
-    if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-    	find_library(SVML svml_disp
-    		HINTS ${SVML_PATH})
-    	find_library(LIBIRC libirc 
-    		HINTS ${SVML_PATH})
-    else (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-    	find_library(SVML svml 
-    		HINTS ${SVML_PATH})
-    endif (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-    
-    if (SVML_NOT_FOUND)
-        message(SEND_ERROR "Intel SVML (Short Vector Math Library) is NOT found.")
-    endif (SVML_NOT_FOUND)
-
-else (SVML_PATH)
-    message(STATUS "[LMAT] SVML is not used")
-endif (SVML_PATH)
+find_package(SVML)
+if (SVML_FOUND)
+message(STATUS "[LMAT] Intel SVML found: ${SVML_PATH}")
+else (SVML_FOUND)
+message(STATUS "[LMAT] Intel SVML not found")
+endif (SVML_FOUND)
 
 # AMD LibM
 
-set(LIBM_PATH "$ENV{AMDLIBM_PATH}")
-
-if ( LIBM_PATH )
-
-    message(STATUS "[LMAT] LIBM_PATH = ${LIBM_PATH}")
-
-    set(AMDLIBM_PATH "$ENV{AMDLIBM_PATH}/lib/dynamic")
-
-    find_library(AMDLIBM amdlibm
-        HINTS ${AMDLIBM_PATH})
-    
-    if (AMDLIBM_NOT_FOUND)
-        message(SEND_ERROR "AMD LibM is NOT found.")
-    endif (AMDLIBM_NOT_FOUND)
-
-else (LIBM_PATH)
-    
-    message(STATUS "[LMAT] AMD LibM is not used.") 
-
-endif ( LIBM_PATH )
-
+find_package(LIBM)
+if (LIBM_FOUND)
+message(STATUS "[LMAT] AMD LibM found: ${LIBM_PATH}")
+else (LIBM_FOUND)
+message(STATUS "[LMAT] AMD LibM not found")
+endif (LIBM_FOUND)
 
 # Intel MKL
 
 find_package(MKL)
-
+if (MKL_FOUND)
 message(STATUS "[LMAT] Intel MKL found: ${MKLROOT_PATH}")
+else (MKL_FOUND)
+message(STATUS "[LMAT] Intel MKL not found")
+endif (MKL_FOUND)
+
+set(BLAS_FOUND MKL_FOUND)
+set(LAPACK_FOUND MKL_FOUND)
 
 
 #==========================================================
@@ -428,7 +402,7 @@ endif (ALLOW_AVX)
 
 # math module
 
-if (SVML_PATH)
+if (SVML_FOUND)
 
 add_executable(test_simd_math_svml ${MATH_HS_EX} math/test_simd_math.cpp)
 add_executable(test_simd_special ${MATH_HS_EX} math/test_simd_special.cpp)
@@ -437,7 +411,7 @@ set(LMAT_MATH_TESTS
     test_simd_math_svml
     test_simd_special)
 
-endif (SVML_PATH)
+endif (SVML_FOUND)
 
 # matrix module
 
@@ -600,6 +574,8 @@ set(LMAT_MATEXPR_TESTS
 
 # linear algebra module
 
+if (BLAS_FOUND)
+
 set(BLAS_TEST_HS
     ${MATRIX_HS}
     ${BLAS_HS_})
@@ -607,6 +583,18 @@ set(BLAS_TEST_HS
 add_executable(test_blas_l1 ${BLAS_TEST_HS} linalg/test_blas_l1.cpp)
 add_executable(test_blas_l2 ${BLAS_TEST_HS} linalg/test_blas_l2.cpp)
 add_executable(test_blas_l3 ${BLAS_TEST_HS} linalg/test_blas_l3.cpp)
+
+set(LMAT_BLAS_TESTS
+    test_blas_l1
+    test_blas_l2
+    test_blas_l3
+)
+
+else (BLAS_FOUND)
+set(LMAT_BLAS_TESTS)
+endif(BLAS_FOUND)
+
+if (LAPACK_FOUND)
 
 set(LAPACK_TEST_HS
     ${MATRIX_HS}
@@ -619,16 +607,23 @@ add_executable(test_lapack_qr ${LAPACK_TEST_HS} linalg/test_lapack_qr.cpp)
 add_executable(test_lapack_syev ${LAPACK_TEST_HS} linalg/test_lapack_syev.cpp)
 add_executable(test_lapack_svd ${LAPACK_TEST_HS} linalg/test_lapack_svd.cpp)
 
-set(LMAT_LINALG_TESTS
-    test_blas_l1
-    test_blas_l2
-    test_blas_l3
+set(LMAT_LAPACK_TESTS
     test_lapack_lu
     test_lapack_chol
     test_lapack_qr
     test_lapack_syev
     test_lapack_svd
 )
+
+elseif(LAPACK_FOUND)
+set(LMAT_LAPACK_TESTS)
+endif (LAPACK_FOUND)
+
+set(LMAT_LINALG_TESTS
+    ${LMAT_BLAS_TESTS}
+    ${LMAT_LAPACK_TESTS})
+
+
     
 # all
 
@@ -658,7 +653,7 @@ endif (${CMAKE_CXX_COMPILER_ID} MATCHES "GNU")
    
 # Link to SVML
 
-if (SVML_PATH)
+if (SVML_FOUND)
 
 set(TESTS_USING_SVML
     test_simd_math_svml
@@ -669,25 +664,23 @@ set(TESTS_USING_SVML
     )
 
 foreach (tname ${TESTS_USING_SVML}) 
-set_target_properties(${tname}
-	PROPERTIES
-	COMPILE_FLAGS "-DLMAT_USE_INTEL_SVML"
-)
-if (MSVC)
-target_link_libraries(${tname} ${SVML} ${LIBIRC})
-else (MSVC)
-target_link_libraries(${tname} ${SVML})
-endif (MSVC)
+    set_target_properties(${tname}
+	    PROPERTIES
+	    COMPILE_FLAGS "-DLMAT_USE_INTEL_SVML")
+    target_link_libraries(${tname} ${SVML_LIBRARY})
 endforeach (tname)
     
-endif (SVML_PATH)
+endif (SVML_FOUND)
     
 # Link to MKL
+
+if (MKL_FOUND)
 
 foreach(tname ${LMAT_LINALG_TESTS})
     target_link_libraries(${tname} ${MKL_LIBRARY})
 endforeach(tname)
 
+endif (MKL_FOUND)
 
 #==========================================================
 #
