@@ -474,15 +474,15 @@ add_executable(test_mat_vecviews ${MATVIEWS_TEST_HS} matrix/test_mat_vecviews.cp
 add_executable(test_mat_matviews ${MATVIEWS_TEST_HS} matrix/test_mat_matviews.cpp)
 add_executable(test_mat_asvec ${MATVIEWS_TEST_HS} matrix/test_mat_asvec.cpp) 
 
-#set(MATMANIP_TEST_HS
-#    ${COMMON_HS}
-#    ${MATRIX_BASE_HS_}
-#    ${MATRIX_CLASS_HS_}
-#    ${MATRIX_MANIP_HS_})
-#     
-#add_executable(test_mat_select ${MATMANIP_TEST_HS} matrix/test_mat_select.cpp)
-#add_executable(test_direct_trans ${MATMANIP_TEST_HS} matrix/test_direct_trans.cpp)    
-#add_executable(test_transpose_expr ${MATMANIP_TEST_HS} matrix/test_transpose_expr.cpp) 
+set(MATMANIP_TEST_HS
+    ${COMMON_HS}
+    ${MATRIX_BASE_HS_}
+    ${MATRIX_CLASS_HS_}
+    ${MATRIX_MANIP_HS_})
+     
+add_executable(test_mat_select ${MATMANIP_TEST_HS} matrix/test_mat_select.cpp)
+add_executable(test_direct_trans ${MATMANIP_TEST_HS} matrix/test_direct_trans.cpp)    
+add_executable(test_transpose_expr ${MATMANIP_TEST_HS} matrix/test_transpose_expr.cpp) 
 
 set(LMAT_MATRIX_TESTS
     test_dense_mat
@@ -500,9 +500,9 @@ set(LMAT_MATRIX_TESTS
 	test_mat_vecviews
 	test_mat_matviews
 	test_mat_asvec
-#	test_mat_select
-#	test_direct_trans
-#	test_transpose_expr
+	test_mat_select
+	test_direct_trans
+	test_transpose_expr
 	)
 
 # matrix evaluation module
@@ -647,10 +647,10 @@ set(LMAT_ALL_TESTS
 
 # suppress bogus free-nonheap-object complaint under GCC
 
-#if (${CMAKE_CXX_COMPILER_ID} MATCHES "GNU")
-#set_target_properties(test_dense_eval PROPERTIES COMPILE_FLAGS "-Wno-free-nonheap-object")
-#endif (${CMAKE_CXX_COMPILER_ID} MATCHES "GNU")
-# 
+if (${CMAKE_CXX_COMPILER_ID} MATCHES "GNU")
+set_target_properties(test_dense_eval PROPERTIES COMPILE_FLAGS "-Wno-free-nonheap-object")
+endif (${CMAKE_CXX_COMPILER_ID} MATCHES "GNU")
+ 
    
 # Link to SVML
 
