@@ -26,8 +26,12 @@
 #define LMAT_SVML_SSE_F( name ) __svml_##name##f4
 #define LMAT_SVML_SSE_D( name ) __svml_##name##2
 
+#ifdef LMAT_HAS_AVX
 #define LMAT_SVML_AVX_F( name ) __svml_##name##f8
 #define LMAT_SVML_AVX_D( name ) __svml_##name##4
+#endif
+
+#ifdef LMAT_HAS_AVX
 
 #define LMAT_DECLARE_SVML_EXTERN1( name ) \
 	__m128  LMAT_SVML_SSE_F(name)( __m128 ); \
@@ -40,6 +44,18 @@
 	__m128d LMAT_SVML_SSE_D(name)( __m128d, __m128d ); \
 	__m256  LMAT_SVML_AVX_F(name)( __m256,  __m256  ); \
 	__m256d LMAT_SVML_AVX_D(name)( __m256d, __m256d );
+
+#else
+
+#define LMAT_DECLARE_SVML_EXTERN1( name ) \
+	__m128  LMAT_SVML_SSE_F(name)( __m128 ); \
+	__m128d LMAT_SVML_SSE_D(name)( __m128d );
+
+#define LMAT_DECLARE_SVML_EXTERN2( name ) \
+	__m128  LMAT_SVML_SSE_F(name)( __m128,  __m128  ); \
+	__m128d LMAT_SVML_SSE_D(name)( __m128d, __m128d );
+
+#endif
 
 
 extern "C"
@@ -103,6 +119,8 @@ extern "C"
  *
  ************************************************/
 
+#ifdef LMAT_HAS_AVX
+
 #define LMAT_IMPORT_SVML1( Name ) \
 	LMAT_ENSURE_INLINE \
 	inline sse_f32pk Name( const sse_f32pk& a ) { \
@@ -131,6 +149,25 @@ extern "C"
 	inline avx_f64pk Name( const avx_f64pk& a, const avx_f64pk& b ) { \
 		return LMAT_SVML_AVX_D(Name)(a, b); }
 
+#else
+
+#define LMAT_IMPORT_SVML1( Name ) \
+	LMAT_ENSURE_INLINE \
+	inline sse_f32pk Name( const sse_f32pk& a ) { \
+		return LMAT_SVML_SSE_F(Name)(a); } \
+	LMAT_ENSURE_INLINE \
+	inline sse_f64pk Name( const sse_f64pk& a ) { \
+		return LMAT_SVML_SSE_D(Name)(a); }
+
+#define LMAT_IMPORT_SVML2( Name ) \
+	LMAT_ENSURE_INLINE \
+	inline sse_f32pk Name( const sse_f32pk& a, const sse_f32pk& b ) { \
+		return LMAT_SVML_SSE_F(Name)(a, b); } \
+	LMAT_ENSURE_INLINE \
+	inline sse_f64pk Name( const sse_f64pk& a, const sse_f64pk& b ) { \
+		return LMAT_SVML_SSE_D(Name)(a, b); }
+
+#endif
 
 namespace lmat { namespace math {
 
@@ -197,6 +234,7 @@ namespace lmat { namespace math {
 		return cond(a > z, log(b), z) * a;
 	}
 
+#ifdef LMAT_HAS_AVX
 	LMAT_ENSURE_INLINE
 	inline avx_f32pk xlogy(const avx_f32pk& a, const avx_f32pk& b)
 	{
@@ -210,6 +248,7 @@ namespace lmat { namespace math {
 		avx_f64pk z = avx_f64pk::zeros();
 		return cond(a > z, log(b), z) * a;
 	}
+#endif
 
 	// xlogx
 
@@ -225,6 +264,7 @@ namespace lmat { namespace math {
 		return xlogy(a, a);
 	}
 
+#ifdef LMAT_HAS_AVX
 	LMAT_ENSURE_INLINE
 	inline avx_f32pk xlogx(const avx_f32pk& a)
 	{
@@ -236,6 +276,7 @@ namespace lmat { namespace math {
 	{
 		return xlogy(a, a);
 	}
+#endif
 
 	// norminv
 
@@ -251,6 +292,7 @@ namespace lmat { namespace math {
 		return LMAT_SVML_SSE_D(cdfnorminv)(a);
 	}
 
+#ifdef LMAT_HAS_AVX
 	LMAT_ENSURE_INLINE
 	inline avx_f32pk norminv(const avx_f32pk& a)
 	{
@@ -262,6 +304,7 @@ namespace lmat { namespace math {
 	{
 		return LMAT_SVML_AVX_D(cdfnorminv)(a);
 	}
+#endif
 
 } }
 
@@ -272,9 +315,18 @@ namespace lmat { namespace math {
  *
  ************************************************/
 
+#ifdef LMAT_HAS_AVX
+
 #define _LMAT_DECLARE_SVML_SIMD_SUPPORT( name ) \
 	LMAT_DEFINE_HAS_SSE_SUPPORT( name ) \
 	LMAT_DEFINE_HAS_AVX_SUPPORT( name )
+
+#else
+
+#define _LMAT_DECLARE_SVML_SIMD_SUPPORT( name ) LMAT_DEFINE_HAS_SSE_SUPPORT( name )
+
+#endif
+
 
 namespace lmat { namespace meta {
 

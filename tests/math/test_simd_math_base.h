@@ -93,15 +93,15 @@ inline double randunif(double LB, double UB)
 #define DEFINE_MATH_TPACK1( Name, ulp, LB, UB ) \
 	DEFINE_MATH_CASE1( Name,  sse, ulp, LB, UB ) \
 	AUTO_TPACK( Name##_simd) { \
-		ADD_T_CASE( simd_math, Name##_sse, float ) \
-		ADD_T_CASE( simd_math, Name##_sse, double ) \
+		ADD_T_CASE( Name##_sse, float ) \
+		ADD_T_CASE( Name##_sse, double ) \
 	}
 
 #define DEFINE_MATH_TPACK2( Name, ulp, LBa, UBa, LBb, UBb ) \
 	DEFINE_MATH_CASE2( Name,  sse, ulp, LBa, UBa, LBb, UBb ) \
 	AUTO_TPACK( Name##_simd ) { \
-		ADD_T_CASE( simd_math, Name##_sse, float ) \
-		ADD_T_CASE( simd_math, Name##_sse, double ) \
+		ADD_T_CASE( Name##_sse, float ) \
+		ADD_T_CASE( Name##_sse, double ) \
 	}
 
 #endif
