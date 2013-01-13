@@ -6,8 +6,7 @@
  * @author Dahua Lin
  */
 
-#include "../test_base.h"
-#include "../multimat_supp.h"
+#include "matfun_test_base.h"
 
 #include <light_mat/matexpr/mat_arith.h>
 
@@ -17,51 +16,7 @@ using namespace lmat::test;
 typedef dense_matrix<double> dmat_t;
 
 
-template<int M, int N>
-void fill_ran(dense_matrix<double, M, N>& X, double a, double b)
-{
-	for (index_t i = 0; i < X.nelems(); ++i)
-	{
-		X[i] = a + (double(std::rand()) / RAND_MAX) * (b - a);
-	}
-}
-
-
-template<class A, class B>
-bool my_is_equal(const A& a, const B& b)
-{
-	if ( have_same_shape(a, b) )
-	{
-		index_t m = a.nrows();
-		index_t n = a.ncolumns();
-
-		return ltest::test_matrix_equal(m, n, a, b);
-	}
-	else
-	{
-		return false;
-	}
-}
-
-
-template<class Expr>
-inline void check_policy(const Expr& )
-{
-	typedef preferred_macc_policy<Expr> pmap;
-
-	typedef typename matrix_traits<Expr>::value_type T;
-	const int pw = (int)simd_traits<T, default_simd_kind>::pack_width;
-	ASSERT_TRUE( pmap::prefer_linear );
-
-	int M = meta::nrows<Expr>::value;
-	int N = meta::ncols<Expr>::value;
-
-	bool use_simd = ((M * N) % pw == 0);
-	ASSERT_EQ( pmap::prefer_simd, use_simd );
-}
-
-
-MN_CASE( mat_arith, add )
+MN_CASE( mat_add )
 {
 	typedef dense_matrix<double, M, N> mat_t;
 
@@ -95,18 +50,24 @@ MN_CASE( mat_arith, add )
 	// default evaluation
 
 	mat_t AB = A + B;
-	ASSERT_TRUE( my_is_equal(AB, AB_r) );
+	ASSERT_EQ( AB.nrows(), m );
+	ASSERT_EQ( AB.ncolumns(), n );
+	ASSERT_MAT_EQ( m, n, AB, AB_r);
 
 	mat_t AC = A + c;
-	ASSERT_TRUE( my_is_equal(AC, AC_r) );
+	ASSERT_EQ( AC.nrows(), m );
+	ASSERT_EQ( AC.ncolumns(), n );
+	ASSERT_MAT_EQ( m, n, AC, AC_r );
 
 	mat_t CB = c + B;
-	ASSERT_TRUE( my_is_equal(CB, CB_r) );
+	ASSERT_EQ( CB.nrows(), m );
+	ASSERT_EQ( CB.ncolumns(), n );
+	ASSERT_MAT_EQ( m, n, CB, CB_r );
 
 }
 
 
-MN_CASE( mat_arith, add_ip )
+MN_CASE( mat_add_ip )
 {
 	typedef dense_matrix<double, M, N> mat_t;
 
@@ -132,16 +93,16 @@ MN_CASE( mat_arith, add_ip )
 
 	mat_t AB(A);
 	AB += B;
-	ASSERT_TRUE( my_is_equal(AB, AB_r) );
+	ASSERT_MAT_EQ( m, n, AB, AB_r );
 
 	mat_t AC(A);
 	AC += c;
-	ASSERT_TRUE( my_is_equal(AC, AC_r) );
+	ASSERT_MAT_EQ( m, n, AC, AC_r );
 }
 
 
 
-MN_CASE( mat_arith, sub )
+MN_CASE( mat_sub )
 {
 	typedef dense_matrix<double, M, N> mat_t;
 
@@ -175,17 +136,23 @@ MN_CASE( mat_arith, sub )
 	// default evaluation
 
 	mat_t AB = A - B;
-	ASSERT_TRUE( my_is_equal(AB, AB_r) );
+	ASSERT_EQ( AB.nrows(), m );
+	ASSERT_EQ( AB.ncolumns(), n );
+	ASSERT_MAT_EQ( m, n, AB, AB_r);
 
 	mat_t AC = A - c;
-	ASSERT_TRUE( my_is_equal(AC, AC_r) );
+	ASSERT_EQ( AC.nrows(), m );
+	ASSERT_EQ( AC.ncolumns(), n );
+	ASSERT_MAT_EQ( m, n, AC, AC_r );
 
 	mat_t CB = c - B;
-	ASSERT_TRUE( my_is_equal(CB, CB_r) );
+	ASSERT_EQ( CB.nrows(), m );
+	ASSERT_EQ( CB.ncolumns(), n );
+	ASSERT_MAT_EQ( m, n, CB, CB_r );
 
 }
 
-MN_CASE( mat_arith, sub_ip )
+MN_CASE( mat_sub_ip )
 {
 	typedef dense_matrix<double, M, N> mat_t;
 
@@ -211,15 +178,15 @@ MN_CASE( mat_arith, sub_ip )
 
 	mat_t AB(A);
 	AB -= B;
-	ASSERT_TRUE( my_is_equal(AB, AB_r) );
+	ASSERT_MAT_EQ( m, n, AB, AB_r );
 
 	mat_t AC(A);
 	AC -= c;
-	ASSERT_TRUE( my_is_equal(AC, AC_r) );
+	ASSERT_MAT_EQ( m, n, AC, AC_r );
 }
 
 
-MN_CASE( mat_arith, mul )
+MN_CASE( mat_mul )
 {
 	typedef dense_matrix<double, M, N> mat_t;
 
@@ -253,16 +220,22 @@ MN_CASE( mat_arith, mul )
 	// default evaluation
 
 	mat_t AB = A * B;
-	ASSERT_TRUE( my_is_equal(AB, AB_r) );
+	ASSERT_EQ( AB.nrows(), m );
+	ASSERT_EQ( AB.ncolumns(), n );
+	ASSERT_MAT_EQ( m, n, AB, AB_r);
 
 	mat_t AC = A * c;
-	ASSERT_TRUE( my_is_equal(AC, AC_r) );
+	ASSERT_EQ( AC.nrows(), m );
+	ASSERT_EQ( AC.ncolumns(), n );
+	ASSERT_MAT_EQ( m, n, AC, AC_r );
 
 	mat_t CB = c * B;
-	ASSERT_TRUE( my_is_equal(CB, CB_r) );
+	ASSERT_EQ( CB.nrows(), m );
+	ASSERT_EQ( CB.ncolumns(), n );
+	ASSERT_MAT_EQ( m, n, CB, CB_r );
 }
 
-MN_CASE( mat_arith, mul_ip )
+MN_CASE( mat_mul_ip )
 {
 	typedef dense_matrix<double, M, N> mat_t;
 
@@ -288,15 +261,15 @@ MN_CASE( mat_arith, mul_ip )
 
 	mat_t AB(A);
 	AB *= B;
-	ASSERT_TRUE( my_is_equal(AB, AB_r) );
+	ASSERT_MAT_EQ( m, n, AB, AB_r );
 
 	mat_t AC(A);
 	AC *= c;
-	ASSERT_TRUE( my_is_equal(AC, AC_r) );
+	ASSERT_MAT_EQ( m, n, AC, AC_r );
 }
 
 
-MN_CASE( mat_arith, div )
+MN_CASE( mat_div )
 {
 	typedef dense_matrix<double, M, N> mat_t;
 
@@ -330,17 +303,23 @@ MN_CASE( mat_arith, div )
 	// default evaluation
 
 	mat_t AB = A / B;
-	ASSERT_TRUE( my_is_equal(AB, AB_r) );
+	ASSERT_EQ( AB.nrows(), m );
+	ASSERT_EQ( AB.ncolumns(), n );
+	ASSERT_MAT_EQ( m, n, AB, AB_r);
 
 	mat_t AC = A / c;
-	ASSERT_TRUE( my_is_equal(AC, AC_r) );
+	ASSERT_EQ( AC.nrows(), m );
+	ASSERT_EQ( AC.ncolumns(), n );
+	ASSERT_MAT_EQ( m, n, AC, AC_r );
 
 	mat_t CB = c / B;
-	ASSERT_TRUE( my_is_equal(CB, CB_r) );
+	ASSERT_EQ( CB.nrows(), m );
+	ASSERT_EQ( CB.ncolumns(), n );
+	ASSERT_MAT_EQ( m, n, CB, CB_r );
 }
 
 
-MN_CASE( mat_arith, div_ip )
+MN_CASE( mat_div_ip )
 {
 	typedef dense_matrix<double, M, N> mat_t;
 
@@ -366,15 +345,15 @@ MN_CASE( mat_arith, div_ip )
 
 	mat_t AB(A);
 	AB /= B;
-	ASSERT_TRUE( my_is_equal(AB, AB_r) );
+	ASSERT_MAT_EQ( m, n, AB, AB_r );
 
 	mat_t AC(A);
 	AC /= c;
-	ASSERT_TRUE( my_is_equal(AC, AC_r) );
+	ASSERT_MAT_EQ( m, n, AC, AC_r );
 }
 
 
-MN_CASE( mat_arith, neg )
+MN_CASE( mat_neg )
 {
 	typedef dense_matrix<double, M, N> mat_t;
 
@@ -396,227 +375,85 @@ MN_CASE( mat_arith, neg )
 	// default evaluation
 
 	mat_t R = -A;
-	ASSERT_TRUE( my_is_equal(R, R_r) );
+	ASSERT_EQ( R.nrows(), m );
+	ASSERT_EQ( R.ncolumns(), n );
+	ASSERT_MAT_EQ( m, n, R, R_r  );
 }
 
 
-MN_CASE( mat_arith, abs )
+
+LTEST_INIT_AUTOSUITE
+
+// test packs for arithmetic operators
+
+AUTO_TPACK( mat_add )
 {
-	typedef dense_matrix<double, M, N> mat_t;
-
-	const index_t m = M == 0 ? DM : M;
-	const index_t n = N == 0 ? DN : N;
-
-	mat_t A(m, n);
-	for (index_t i = 0; i < m * n; ++i) A[i] = double((i+1) * (i % 3 - 1));
-
-	check_policy(abs(A));
-
-	// prepare ground-truth
-
-	mat_t R_r(m, n);
-	for (index_t i = 0; i < m * n; ++i) R_r[i] = std::abs(A[i]);
-
-	// default evaluation
-
-	mat_t R = abs(A);
-	ASSERT_TRUE( my_is_equal(R, R_r) );
+	ADD_MN_CASE_3X3( mat_add, DM, DN )
 }
 
-
-MN_CASE( mat_arith, sqr )
+AUTO_TPACK( mat_add_ip )
 {
-	typedef dense_matrix<double, M, N> mat_t;
-
-	const index_t m = M == 0 ? DM : M;
-	const index_t n = N == 0 ? DN : N;
-
-	mat_t A(m, n);
-	for (index_t i = 0; i < m * n; ++i) A[i] = double((i+1));
-
-	mat_t R_r(m, n);
-	for (index_t i = 0; i < m * n; ++i) R_r[i] = A[i] * A[i];
-
-	check_policy(sqr(A));
-
-	mat_t R = sqr(A);
-	ASSERT_TRUE( my_is_equal(R, R_r) );
+	ADD_MN_CASE_3X3( mat_add_ip, DM, DN )
 }
 
-
-MN_CASE( mat_arith, cube )
+AUTO_TPACK( mat_sub )
 {
-	typedef dense_matrix<double, M, N> mat_t;
-
-	const index_t m = M == 0 ? DM : M;
-	const index_t n = N == 0 ? DN : N;
-
-	mat_t A(m, n);
-	for (index_t i = 0; i < m * n; ++i) A[i] = double((i+1));
-
-	mat_t R_r(m, n);
-	for (index_t i = 0; i < m * n; ++i) R_r[i] = A[i] * A[i] * A[i];
-
-	check_policy(cube(A));
-
-	mat_t R = cube(A);
-	ASSERT_TRUE( my_is_equal(R, R_r) );
+	ADD_MN_CASE_3X3( mat_sub, DM, DN )
 }
 
-
-MN_CASE( mat_arith, max )
+AUTO_TPACK( mat_sub_ip )
 {
-	typedef dense_matrix<double, M, N> mat_t;
-
-	const index_t m = M == 0 ? DM : M;
-	const index_t n = N == 0 ? DN : N;
-
-	mat_t A(m, n); fill_ran(A, 0.0, 10.0);
-	mat_t B(m, n); fill_ran(B, 0.0, 10.0);
-	double c = 5.0;
-
-	// check policy
-
-	check_policy(max(A, B));
-	check_policy(max(A, c));
-	check_policy(max(c, B));
-
-	mat_t AB_r(m, n);
-	for (index_t i = 0; i < m * n; ++i) AB_r[i] = A[i] > B[i] ? A[i] : B[i];
-
-	mat_t AC_r(m, n);
-	for (index_t i = 0; i < m * n; ++i) AC_r[i] = A[i] > c ? A[i] : c;
-
-	mat_t CB_r(m, n);
-	for (index_t i = 0; i < m * n; ++i) CB_r[i] = c > B[i] ? c : B[i];
-
-	mat_t AB = (max)(A, B);
-	ASSERT_TRUE( my_is_equal(AB, AB_r) );
-
-	mat_t AC = (max)(A, c);
-	ASSERT_TRUE( my_is_equal(AC, AC_r) );
-
-	mat_t CB = (max)(c, B);
-	ASSERT_TRUE( my_is_equal(CB, CB_r) );
+	ADD_MN_CASE_3X3( mat_sub_ip, DM, DN )
 }
 
-MN_CASE( mat_arith, min )
+AUTO_TPACK( mat_mul )
 {
-	typedef dense_matrix<double, M, N> mat_t;
+	ADD_MN_CASE_3X3( mat_mul, DM, DN )
+}
 
-	const index_t m = M == 0 ? DM : M;
-	const index_t n = N == 0 ? DN : N;
+AUTO_TPACK( mat_mul_ip )
+{
+	ADD_MN_CASE_3X3( mat_mul_ip, DM, DN )
+}
 
-	mat_t A(m, n); fill_ran(A, 0.0, 10.0);
-	mat_t B(m, n); fill_ran(B, 0.0, 10.0);
-	double c = 5.0;
+AUTO_TPACK( mat_div )
+{
+	ADD_MN_CASE_3X3( mat_div, DM, DN )
+}
 
-	check_policy(min(A, B));
-	check_policy(min(A, c));
-	check_policy(min(c, B));
+AUTO_TPACK( mat_div_ip )
+{
+	ADD_MN_CASE_3X3( mat_div_ip, DM, DN )
+}
 
-	mat_t AB_r(m, n);
-	for (index_t i = 0; i < m * n; ++i) AB_r[i] = A[i] < B[i] ? A[i] : B[i];
-
-	mat_t AC_r(m, n);
-	for (index_t i = 0; i < m * n; ++i) AC_r[i] = A[i] < c ? A[i] : c;
-
-	mat_t CB_r(m, n);
-	for (index_t i = 0; i < m * n; ++i) CB_r[i] = c < B[i] ? c : B[i];
-
-	mat_t AB = (min)(A, B);
-	ASSERT_TRUE( my_is_equal(AB, AB_r) );
-
-	mat_t AC = (min)(A, c);
-	ASSERT_TRUE( my_is_equal(AC, AC_r) );
-
-	mat_t CB = (min)(c, B);
-	ASSERT_TRUE( my_is_equal(CB, CB_r) );
+AUTO_TPACK( mat_neg )
+{
+	ADD_MN_CASE_3X3( mat_neg, DM, DN )
 }
 
 
+// test packs for other matrix functions
 
-BEGIN_TPACK( mat_arith_add )
-	ADD_MN_CASE_3X3( mat_arith, add, DM, DN )
-END_TPACK
+DEFINE_MATFUN_TESTS3a( fma, -2.0, 2.0, 1.0e-15 )
 
-BEGIN_TPACK( mat_arith_add_ip )
-	ADD_MN_CASE_3X3( mat_arith, add_ip, DM, DN )
-END_TPACK
+DEFINE_MATFUN_TESTS2( min, -2.0, 2.0, -2.0, 2.0, 1.0e-16 )
+DEFINE_MATFUN_TESTS2( max, -2.0, 2.0, -2.0, 2.0, 1.0e-16 )
+DEFINE_MATFUN_TESTS3a( clamp, -2.0, 2.0, 1.0e-15 )
 
+// simple powers
 
-BEGIN_TPACK( mat_arith_sub )
-	ADD_MN_CASE_3X3( mat_arith, sub, DM, DN )
-END_TPACK
+DEFINE_MATFUN_TESTS1( abs, -2.0, 2.0, 1.0e-16 )
+DEFINE_MATFUN_TESTS1( sqr, -2.0, 2.0, 1.0e-16 )
+DEFINE_MATFUN_TESTS1( cube, -2.0, 2.0, 1.0e-15 )
 
-BEGIN_TPACK( mat_arith_sub_ip )
-	ADD_MN_CASE_3X3( mat_arith, sub_ip, DM, DN )
-END_TPACK
+DEFINE_MATFUN_TESTS1( rcp, -2.0, 2.0, 1.0e-15 )
+DEFINE_MATFUN_TESTS1( sqrt, -2.0, 2.0, 1.0e-15 )
+DEFINE_MATFUN_TESTS1( rsqrt, -2.0, 2.0, 1.0e-15 )
 
+// rounding
 
-BEGIN_TPACK( mat_arith_mul )
-	ADD_MN_CASE_3X3( mat_arith, mul, DM, DN )
-END_TPACK
-
-BEGIN_TPACK( mat_arith_mul_ip )
-	ADD_MN_CASE_3X3( mat_arith, mul_ip, DM, DN )
-END_TPACK
-
-
-BEGIN_TPACK( mat_arith_div )
-	ADD_MN_CASE_3X3( mat_arith, div, DM, DN )
-END_TPACK
-
-BEGIN_TPACK( mat_arith_div_ip )
-	ADD_MN_CASE_3X3( mat_arith, div_ip, DM, DN )
-END_TPACK
-
-
-BEGIN_TPACK( mat_arith_neg )
-	ADD_MN_CASE_3X3( mat_arith, neg, DM, DN )
-END_TPACK
-
-BEGIN_TPACK( mat_arith_abs )
-	ADD_MN_CASE_3X3( mat_arith, abs, DM, DN )
-END_TPACK
-
-BEGIN_TPACK( mat_arith_sqr )
-	ADD_MN_CASE_3X3( mat_arith, sqr, DM, DN )
-END_TPACK
-
-BEGIN_TPACK( mat_arith_cube )
-	ADD_MN_CASE_3X3( mat_arith, cube, DM, DN )
-END_TPACK
-
-
-BEGIN_TPACK( mat_arith_max )
-	ADD_MN_CASE_3X3( mat_arith, max, DM, DN )
-END_TPACK
-
-BEGIN_TPACK( mat_arith_min )
-	ADD_MN_CASE_3X3( mat_arith, min, DM, DN )
-END_TPACK
-
-
-
-BEGIN_MAIN_SUITE
-	ADD_TPACK( mat_arith_add )
-	ADD_TPACK( mat_arith_add_ip )
-	ADD_TPACK( mat_arith_sub )
-	ADD_TPACK( mat_arith_sub_ip )
-	ADD_TPACK( mat_arith_mul )
-	ADD_TPACK( mat_arith_mul_ip )
-	ADD_TPACK( mat_arith_div )
-	ADD_TPACK( mat_arith_div_ip )
-
-	ADD_TPACK( mat_arith_neg )
-	ADD_TPACK( mat_arith_abs )
-	ADD_TPACK( mat_arith_sqr )
-	ADD_TPACK( mat_arith_cube )
-
-	ADD_TPACK( mat_arith_max )
-	ADD_TPACK( mat_arith_min )
-END_MAIN_SUITE
-
-
+DEFINE_MATFUN_TESTS1( floor, -10.0, 10.0, 1.0e-16 )
+DEFINE_MATFUN_TESTS1( ceil,  -10.0, 10.0, 1.0e-16 )
+DEFINE_MATFUN_TESTS1( round, -10.0, 10.0, 1.0e-16 )
+DEFINE_MATFUN_TESTS1( trunc, -10.0, 10.0, 1.0e-16 )
 

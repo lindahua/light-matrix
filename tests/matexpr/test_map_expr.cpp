@@ -335,11 +335,13 @@ void test_mapexpr_3()
 
 // Unary expressions
 
+LTEST_INIT_AUTOSUITE
+
 #define DEF_MEXPR_TESTS_1( stag, dtag ) \
-		MN_CASE( map_expr, unary_##stag##_##dtag ) { test_mapexpr_1<stag, dtag, M, N>(); } \
-		BEGIN_TPACK( unary_map_expr_##stag##_##dtag ) \
-		ADD_MN_CASE_3X3( map_expr, unary_##stag##_##dtag, DM, DN ) \
-		END_TPACK
+		MN_CASE( map_unary_##stag##_##dtag ) { test_mapexpr_1<stag, dtag, M, N>(); } \
+		AUTO_TPACK( unary_map_expr_##stag##_##dtag ) { \
+		ADD_MN_CASE_3X3( map_unary_##stag##_##dtag, DM, DN ) \
+		}
 
 DEF_MEXPR_TESTS_1( cont, cont )
 DEF_MEXPR_TESTS_1( cont, bloc )
@@ -354,10 +356,10 @@ DEF_MEXPR_TESTS_1( grid, grid )
 // Binary expression
 
 #define DEF_MEXPR_TESTS_2( stag1, stag2, dtag ) \
-		MN_CASE( map_expr, binary_##stag1##_##stag2##_##dtag ) { test_mapexpr_2<stag1, stag2, dtag, M, N>(); } \
-		BEGIN_TPACK( binary_map_expr_##stag1##_##stag2##_##dtag ) \
-		ADD_MN_CASE_3X3( map_expr, binary_##stag1##_##stag2##_##dtag, DM, DN ) \
-		END_TPACK
+		MN_CASE( map_binary_##stag1##_##stag2##_##dtag ) { test_mapexpr_2<stag1, stag2, dtag, M, N>(); } \
+		AUTO_TPACK( binary_map_expr_##stag1##_##stag2##_##dtag ) { \
+		ADD_MN_CASE_3X3( map_binary_##stag1##_##stag2##_##dtag, DM, DN ) \
+		}
 
 DEF_MEXPR_TESTS_2( cont, cont, cont )
 DEF_MEXPR_TESTS_2( cont, cont, bloc )
@@ -393,10 +395,10 @@ DEF_MEXPR_TESTS_2( grid, grid, grid )
 
 
 #define DEF_MEXPR_TESTS_3( stag1, stag2, stag3, dtag ) \
-		MN_CASE( map_expr, ternary_##stag1##_##stag2##_##stag3##_##dtag ) { test_mapexpr_3<stag1, stag2, stag3, dtag, M, N>(); } \
-		BEGIN_TPACK( ternary_map_expr_##stag1##_##stag2##_##stag3##_##dtag ) \
-		ADD_MN_CASE_3X3( map_expr, ternary_##stag1##_##stag2##_##stag3##_##dtag, DM, DN ) \
-		END_TPACK
+		MN_CASE( map_ternary_##stag1##_##stag2##_##stag3##_##dtag ) { test_mapexpr_3<stag1, stag2, stag3, dtag, M, N>(); } \
+		AUTO_TPACK( ternary_map_expr_##stag1##_##stag2##_##stag3##_##dtag ) { \
+		ADD_MN_CASE_3X3( map_ternary_##stag1##_##stag2##_##stag3##_##dtag, DM, DN ) \
+		}
 
 DEF_MEXPR_TESTS_3( cont, cont, cont, cont )
 DEF_MEXPR_TESTS_3( cont, cont, cont, bloc )
@@ -421,7 +423,7 @@ DEF_MEXPR_TESTS_3( cont, bloc, grid, grid )
 
 // Compound expressions
 
-MN_CASE( map_expr, compound_expr )
+MN_CASE( map_compound_expr )
 {
 	index_t m = M == 0 ? DM : M;
 	index_t n = N == 0 ? DN : N;
@@ -479,83 +481,10 @@ MN_CASE( map_expr, compound_expr )
 	ASSERT_MAT_APPROX(m, n, d, r, tol);
 }
 
-BEGIN_TPACK( compound_map_expr )
-	ADD_MN_CASE_3X3( map_expr, compound_expr, DM, DN )
-END_TPACK
+AUTO_TPACK( compound_map_expr )
+{
+	ADD_MN_CASE_3X3( map_compound_expr, DM, DN )
+}
 
 
-
-BEGIN_MAIN_SUITE
-
-	// unary
-
-	ADD_TPACK( unary_map_expr_cont_cont )
-	ADD_TPACK( unary_map_expr_cont_bloc )
-	ADD_TPACK( unary_map_expr_cont_grid )
-	ADD_TPACK( unary_map_expr_bloc_cont )
-	ADD_TPACK( unary_map_expr_bloc_bloc )
-	ADD_TPACK( unary_map_expr_bloc_grid )
-	ADD_TPACK( unary_map_expr_grid_cont )
-	ADD_TPACK( unary_map_expr_grid_bloc )
-	ADD_TPACK( unary_map_expr_grid_grid )
-
-	// binary
-
-	ADD_TPACK( binary_map_expr_cont_cont_cont )
-	ADD_TPACK( binary_map_expr_cont_cont_bloc )
-	ADD_TPACK( binary_map_expr_cont_cont_grid )
-	ADD_TPACK( binary_map_expr_cont_bloc_cont )
-	ADD_TPACK( binary_map_expr_cont_bloc_bloc )
-	ADD_TPACK( binary_map_expr_cont_bloc_grid )
-	ADD_TPACK( binary_map_expr_cont_grid_cont )
-	ADD_TPACK( binary_map_expr_cont_grid_bloc )
-	ADD_TPACK( binary_map_expr_cont_grid_grid )
-
-	ADD_TPACK( binary_map_expr_bloc_cont_cont )
-	ADD_TPACK( binary_map_expr_bloc_cont_bloc )
-	ADD_TPACK( binary_map_expr_bloc_cont_grid )
-	ADD_TPACK( binary_map_expr_bloc_bloc_cont )
-	ADD_TPACK( binary_map_expr_bloc_bloc_bloc )
-	ADD_TPACK( binary_map_expr_bloc_bloc_grid )
-	ADD_TPACK( binary_map_expr_bloc_grid_cont )
-	ADD_TPACK( binary_map_expr_bloc_grid_bloc )
-	ADD_TPACK( binary_map_expr_bloc_grid_grid )
-
-	ADD_TPACK( binary_map_expr_grid_cont_cont )
-	ADD_TPACK( binary_map_expr_grid_cont_bloc )
-	ADD_TPACK( binary_map_expr_grid_cont_grid )
-	ADD_TPACK( binary_map_expr_grid_bloc_cont )
-	ADD_TPACK( binary_map_expr_grid_bloc_bloc )
-	ADD_TPACK( binary_map_expr_grid_bloc_grid )
-	ADD_TPACK( binary_map_expr_grid_grid_cont )
-	ADD_TPACK( binary_map_expr_grid_grid_bloc )
-	ADD_TPACK( binary_map_expr_grid_grid_grid )
-
-	// ternary
-
-	ADD_TPACK( ternary_map_expr_cont_cont_cont_cont )
-	ADD_TPACK( ternary_map_expr_cont_cont_cont_bloc )
-	ADD_TPACK( ternary_map_expr_cont_cont_cont_grid )
-	ADD_TPACK( ternary_map_expr_cont_cont_bloc_cont )
-	ADD_TPACK( ternary_map_expr_cont_cont_bloc_bloc )
-	ADD_TPACK( ternary_map_expr_cont_cont_bloc_grid )
-	ADD_TPACK( ternary_map_expr_cont_cont_grid_cont )
-	ADD_TPACK( ternary_map_expr_cont_cont_grid_bloc )
-	ADD_TPACK( ternary_map_expr_cont_cont_grid_grid )
-
-	ADD_TPACK( ternary_map_expr_cont_bloc_cont_cont )
-	ADD_TPACK( ternary_map_expr_cont_bloc_cont_bloc )
-	ADD_TPACK( ternary_map_expr_cont_bloc_cont_grid )
-	ADD_TPACK( ternary_map_expr_bloc_cont_bloc_cont )
-	ADD_TPACK( ternary_map_expr_bloc_cont_bloc_bloc )
-	ADD_TPACK( ternary_map_expr_bloc_cont_bloc_grid )
-	ADD_TPACK( ternary_map_expr_cont_bloc_grid_cont )
-	ADD_TPACK( ternary_map_expr_cont_bloc_grid_bloc )
-	ADD_TPACK( ternary_map_expr_cont_bloc_grid_grid )
-
-	// compound
-
-	ADD_TPACK( compound_map_expr )
-
-END_MAIN_SUITE
 

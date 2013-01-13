@@ -34,7 +34,7 @@ namespace lmat
 
 	_LMAT_DEFINE_GMATFUN( max, 2 )
 	_LMAT_DEFINE_GMATFUN( min, 2 )
-	_LMAT_DEFINE_GMATFUN( clamp, 2 )
+	_LMAT_DEFINE_GMATFUN( clamp, 3 )
 
 	// simple power functions
 

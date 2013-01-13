@@ -123,6 +123,14 @@ namespace lmat {
 	_LMAT_DEFINE_LOGICAL_FUN( logical_eq,  2, x1 == x2, x1 == x2 )
 	_LMAT_DEFINE_LOGICAL_FUN( logical_ne,  2, x1 != x2, x1 != x2 )
 
+	// rounding
+
+	_LMAT_DEFINE_REAL_MATH_FUN( floor, 1 )
+	_LMAT_DEFINE_REAL_MATH_FUN( ceil, 1 )
+	_LMAT_DEFINE_REAL_MATH_FUN( round, 1 )
+	_LMAT_DEFINE_REAL_MATH_FUN( trunc, 1 )
+
+
 	// conditional selection
 
 	template<typename T>

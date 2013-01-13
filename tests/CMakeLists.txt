@@ -557,14 +557,14 @@ set(LMAT_MATEVAL_TESTS
 
 # matrix expressions
 
-#set(MAPEXPR_TEST_HS
-#    ${MATRIX_HS}
-#    ${MATH_HS}
-#    ${MATRIX_EVAL_HS_}
-#    ${MAP_EXPR_HS_})
-#    
-#add_executable(test_map_expr ${MAPEXPR_TEST_HS} matexpr/test_map_expr.cpp)
-#add_executable(test_mat_arith ${MAPEXPR_TEST_HS} matexpr/test_mat_arith.cpp)
+set(MAPEXPR_TEST_HS
+    ${MATRIX_HS}
+    ${MATH_HS}
+    ${MATRIX_EVAL_HS_}
+    ${MAP_EXPR_HS_})
+    
+add_executable(test_map_expr ${MAPEXPR_TEST_HS} matexpr/test_map_expr.cpp)
+add_executable(test_mat_arith ${MAPEXPR_TEST_HS} matexpr/test_mat_arith.cpp)
 #add_executable(test_mat_emath ${MAPEXPR_TEST_HS} matexpr/test_mat_emath.cpp)
 #add_executable(test_mat_cast ${MAPEXPR_TEST_HS} matexpr/test_mat_cast.cpp)
 #add_executable(test_mat_pred ${MAPEXPR_TEST_HS} matexpr/test_mat_pred.cpp)
@@ -581,9 +581,9 @@ set(LMAT_MATEVAL_TESTS
 #
 #add_executable(test_cpd_ewise ${MATEXPR_HS_EX} matexpr/test_cpd_ewise.cpp)
 
-#set(LMAT_MATEXPR_TESTS
-#	test_map_expr
-#	test_mat_arith
+set(LMAT_MATEXPR_TESTS
+	test_map_expr
+	test_mat_arith
 #	test_mat_emath
 #	test_mat_cast
 #	test_mat_pred
@@ -591,7 +591,7 @@ set(LMAT_MATEVAL_TESTS
 #	test_subs_expr
 #	test_mat_zip
 #	test_cpd_ewise
-#	)
+	)
 
 
 # linear algebra module
@@ -634,7 +634,7 @@ set(LMAT_ALL_TESTS
     ${LMAT_MATH_TESTS}
     ${LMAT_MATRIX_TESTS}
     ${LMAT_MATEVAL_TESTS}
-    #${LMAT_MATEXPR_TESTS}
+    ${LMAT_MATEXPR_TESTS}
     # ${LMAT_LINALG_TESTS}
 )
 
