@@ -49,11 +49,11 @@ namespace lmat { namespace random {
 	template<typename T=double> class std_uniform_real_distr;
 	template<typename T=double> class uniform_real_distr;
 
-	template<typename T=double, typename Method=icdf_> class std_normal_distr;
-	template<typename T=double, typename Method=icdf_> class normal_distr;
-
 	template<typename T=double> class std_exponential_distr;
 	template<typename T=double> class exponential_distr;
+
+	template<typename T=double, typename Method=icdf_> class std_normal_distr;
+	template<typename T=double, typename Method=icdf_> class normal_distr;
 
 	template<typename T=double, typename Method=naive_> class std_gamma_distr;
 	template<typename T=double, typename Method=naive_> class gamma_distr;

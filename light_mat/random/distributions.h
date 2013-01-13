@@ -25,5 +25,6 @@
 
 #include <light_mat/random/uniform_real_distr.h>
 #include <light_mat/random/exponential_distr.h>
+#include <light_mat/random/normal_distr.h>
 
 #endif 
