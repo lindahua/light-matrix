@@ -1,7 +1,7 @@
 /**
  * @file functors.h
  *
- * Arithmetic and Math functors
+ * Arithmetic and Basic math functors
  * 
  * @author Dahua Lin 
  */
@@ -10,8 +10,8 @@
 #pragma once
 #endif
 
-#ifndef LIGHTMAT_FUNCTORS_H_
-#define LIGHTMAT_FUNCTORS_H_
+#ifndef LIGHTMAT_BASIC_FUNCTORS_H_
+#define LIGHTMAT_BASIC_FUNCTORS_H_
 
 #include <light_mat/math/math_base.h>
 

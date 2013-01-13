@@ -38,8 +38,8 @@ inline void check_policy(const Expr& expr)
 	int M = meta::nrows<Expr>::value;
 	int N = meta::ncols<Expr>::value;
 
-	bool use_simd = ((M * N) % pw == 0) &&
-			meta::has_simd_support<tag_t, T, skind>::value;
+	bool use_simd = ((M * N) % pw == 0)
+			&& meta::has_simd_support<tag_t, T, skind>::value;
 	ASSERT_EQ( pmap::prefer_simd, use_simd );
 }
 

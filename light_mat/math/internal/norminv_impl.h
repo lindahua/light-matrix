@@ -43,7 +43,7 @@ namespace lmat { namespace math { namespace internal {
 				float r__ = q < 0.f ? x : 1.f - x;
 				if (r__ < 0.f) r__ = 0.f;
 
-				r__ = sqrt(-log(r__));
+				r__ = sqrtf(-logf(r__));
 
 				if (r__ <= 5.f)
 				{

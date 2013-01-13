@@ -176,7 +176,8 @@ set(MATH_FUNCTOR_HS_
     ${INC}/math/fun_tags.h
     ${INC}/math/functor_base.h
     ${INC}/math/basic_functors.h
-    ) 
+    ${INC}/math/math_functors.h
+    ${INC}/math/special_functors.h) 
     
 set(MATH_HS
     ${MATH_BASE_HS_}
@@ -299,6 +300,7 @@ set(MAP_EXPR_HS_
     ${INC}/matexpr/matfun_base.h
     ${INC}/matexpr/mat_arith.h
     ${INC}/matexpr/mat_emath.h
+    ${INC}/matexpr/mat_special.h
     ${INC}/matexpr/mat_cast.h
     ${INC}/matexpr/mat_pred.h)
     
@@ -565,7 +567,8 @@ set(MAPEXPR_TEST_HS
     
 add_executable(test_map_expr ${MAPEXPR_TEST_HS} matexpr/test_map_expr.cpp)
 add_executable(test_mat_arith ${MAPEXPR_TEST_HS} matexpr/test_mat_arith.cpp)
-#add_executable(test_mat_emath ${MAPEXPR_TEST_HS} matexpr/test_mat_emath.cpp)
+add_executable(test_mat_emath ${MAPEXPR_TEST_HS} matexpr/test_mat_emath.cpp)
+add_executable(test_mat_special ${MAPEXPR_TEST_HS} matexpr/test_mat_special.cpp)
 #add_executable(test_mat_cast ${MAPEXPR_TEST_HS} matexpr/test_mat_cast.cpp)
 #add_executable(test_mat_pred ${MAPEXPR_TEST_HS} matexpr/test_mat_pred.cpp)
 #
@@ -584,7 +587,8 @@ add_executable(test_mat_arith ${MAPEXPR_TEST_HS} matexpr/test_mat_arith.cpp)
 set(LMAT_MATEXPR_TESTS
 	test_map_expr
 	test_mat_arith
-#	test_mat_emath
+	test_mat_emath
+	test_mat_special
 #	test_mat_cast
 #	test_mat_pred
 #	test_repvecs
@@ -659,7 +663,8 @@ if (SVML_PATH)
 set(TESTS_USING_SVML
     test_simd_math_svml
     test_simd_special
-    # test_mat_emath
+    test_mat_emath
+    test_mat_special
     # test_cpd_ewise
     )
 
