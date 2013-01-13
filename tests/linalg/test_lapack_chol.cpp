@@ -171,78 +171,72 @@ void test_posv( char uplo )
 
 
 
-T_CASE( mat_chol, solve_l )
+T_CASE( mat_chol_solve_l )
 {
 	test_chol_solve<T>('L');
 }
 
-T_CASE( mat_chol, solve_u )
+T_CASE( mat_chol_solve_u )
 {
 	test_chol_solve<T>('U');
 }
 
-T_CASE( mat_chol, inv_l )
+T_CASE( mat_chol_inv_l )
 {
 	test_chol_inv<T>('L');
 }
 
-T_CASE( mat_chol, inv_u )
+T_CASE( mat_chol_inv_u )
 {
 	test_chol_inv<T>('U');
 }
 
-T_CASE( mat_chol, pdinv )
+T_CASE( mat_chol_pdinv )
 {
 	test_pdinv<T>();
 }
 
-T_CASE( mat_chol, posv_l )
+T_CASE( mat_posv_l )
 {
 	test_posv<T>('L');
 }
 
-T_CASE( mat_chol, posv_u )
+T_CASE( mat_posv_u )
 {
 	test_posv<T>('U');
 }
 
 
-BEGIN_TPACK( mat_chol_solve )
-	ADD_T_CASE( mat_chol, solve_l, float )
-	ADD_T_CASE( mat_chol, solve_l, double )
-	ADD_T_CASE( mat_chol, solve_u, float )
-	ADD_T_CASE( mat_chol, solve_u, double )
-END_TPACK
+AUTO_TPACK( mat_chol_solve )
+{
+	ADD_T_CASE( mat_chol_solve_l, float )
+	ADD_T_CASE( mat_chol_solve_l, double )
+	ADD_T_CASE( mat_chol_solve_u, float )
+	ADD_T_CASE( mat_chol_solve_u, double )
+}
 
 
-BEGIN_TPACK( mat_chol_inv )
-	ADD_T_CASE( mat_chol, inv_l, float )
-	ADD_T_CASE( mat_chol, inv_l, double )
-	ADD_T_CASE( mat_chol, inv_u, float )
-	ADD_T_CASE( mat_chol, inv_u, double )
-END_TPACK
+AUTO_TPACK( mat_chol_inv )
+{
+	ADD_T_CASE( mat_chol_inv_l, float )
+	ADD_T_CASE( mat_chol_inv_l, double )
+	ADD_T_CASE( mat_chol_inv_u, float )
+	ADD_T_CASE( mat_chol_inv_u, double )
+}
 
-BEGIN_TPACK( mat_pdinv )
-	ADD_T_CASE( mat_chol, pdinv, float )
-	ADD_T_CASE( mat_chol, pdinv, double )
-END_TPACK
+AUTO_TPACK( mat_pdinv )
+{
+	ADD_T_CASE( mat_chol_pdinv, float )
+	ADD_T_CASE( mat_chol_pdinv, double )
+}
 
-BEGIN_TPACK( mat_posv )
-	ADD_T_CASE( mat_chol, posv_l, float )
-	ADD_T_CASE( mat_chol, posv_l, double )
-	ADD_T_CASE( mat_chol, posv_u, float )
-	ADD_T_CASE( mat_chol, posv_u, double )
-END_TPACK
-
-
-BEGIN_MAIN_SUITE
-	ADD_TPACK( mat_chol_solve )
-	ADD_TPACK( mat_chol_inv )
-	ADD_TPACK( mat_pdinv )
-	ADD_TPACK( mat_posv )
-END_MAIN_SUITE
-
-
+AUTO_TPACK( mat_posv )
+{
+	ADD_T_CASE( mat_posv_l, float )
+	ADD_T_CASE( mat_posv_l, double )
+	ADD_T_CASE( mat_posv_u, float )
+	ADD_T_CASE( mat_posv_u, double )
+}
 
 
 

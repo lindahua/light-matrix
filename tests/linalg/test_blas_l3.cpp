@@ -493,220 +493,162 @@ void test_trsm_rt(char uplo)
 
 
 #define DEF_BLAS3_CASES_P3( Name ) \
-	TMN_CASE( mat_blas3, Name##_ccc ) { test_##Name<cont, cont, cont, T, M, N>(); } \
-	TMN_CASE( mat_blas3, Name##_ccb ) { test_##Name<cont, cont, bloc, T, M, N>(); } \
-	TMN_CASE( mat_blas3, Name##_cbc ) { test_##Name<cont, bloc, cont, T, M, N>(); } \
-	TMN_CASE( mat_blas3, Name##_cbb ) { test_##Name<cont, bloc, bloc, T, M, N>(); } \
-	TMN_CASE( mat_blas3, Name##_bcc ) { test_##Name<bloc, cont, cont, T, M, N>(); } \
-	TMN_CASE( mat_blas3, Name##_bcb ) { test_##Name<bloc, cont, bloc, T, M, N>(); } \
-	TMN_CASE( mat_blas3, Name##_bbc ) { test_##Name<bloc, bloc, cont, T, M, N>(); } \
-	TMN_CASE( mat_blas3, Name##_bbb ) { test_##Name<bloc, bloc, bloc, T, M, N>(); }
+	TMN_CASE( mat_blas_##Name##_ccc ) { test_##Name<cont, cont, cont, T, M, N>(); } \
+	TMN_CASE( mat_blas_##Name##_ccb ) { test_##Name<cont, cont, bloc, T, M, N>(); } \
+	TMN_CASE( mat_blas_##Name##_cbc ) { test_##Name<cont, bloc, cont, T, M, N>(); } \
+	TMN_CASE( mat_blas_##Name##_cbb ) { test_##Name<cont, bloc, bloc, T, M, N>(); } \
+	TMN_CASE( mat_blas_##Name##_bcc ) { test_##Name<bloc, cont, cont, T, M, N>(); } \
+	TMN_CASE( mat_blas_##Name##_bcb ) { test_##Name<bloc, cont, bloc, T, M, N>(); } \
+	TMN_CASE( mat_blas_##Name##_bbc ) { test_##Name<bloc, bloc, cont, T, M, N>(); } \
+	TMN_CASE( mat_blas_##Name##_bbb ) { test_##Name<bloc, bloc, bloc, T, M, N>(); }
 
 #define DEF_BLAS3_CASES_P3_TR( Name ) \
-	TMN_CASE( mat_blas3, Name##_ccc ) { test_##Name<cont, cont, cont, T, M, N>('l'); test_##Name<cont, cont, cont, T, M, N>('u'); } \
-	TMN_CASE( mat_blas3, Name##_ccb ) { test_##Name<cont, cont, bloc, T, M, N>('l'); test_##Name<cont, cont, bloc, T, M, N>('u'); } \
-	TMN_CASE( mat_blas3, Name##_cbc ) { test_##Name<cont, bloc, cont, T, M, N>('l'); test_##Name<cont, bloc, cont, T, M, N>('u'); } \
-	TMN_CASE( mat_blas3, Name##_cbb ) { test_##Name<cont, bloc, bloc, T, M, N>('l'); test_##Name<cont, bloc, bloc, T, M, N>('u'); } \
-	TMN_CASE( mat_blas3, Name##_bcc ) { test_##Name<bloc, cont, cont, T, M, N>('l'); test_##Name<bloc, cont, cont, T, M, N>('u'); } \
-	TMN_CASE( mat_blas3, Name##_bcb ) { test_##Name<bloc, cont, bloc, T, M, N>('l'); test_##Name<bloc, cont, bloc, T, M, N>('u'); } \
-	TMN_CASE( mat_blas3, Name##_bbc ) { test_##Name<bloc, bloc, cont, T, M, N>('l'); test_##Name<bloc, bloc, cont, T, M, N>('u'); } \
-	TMN_CASE( mat_blas3, Name##_bbb ) { test_##Name<bloc, bloc, bloc, T, M, N>('l'); test_##Name<bloc, bloc, bloc, T, M, N>('u'); }
+	TMN_CASE( mat_blas_##Name##_ccc ) { test_##Name<cont, cont, cont, T, M, N>('l'); test_##Name<cont, cont, cont, T, M, N>('u'); } \
+	TMN_CASE( mat_blas_##Name##_ccb ) { test_##Name<cont, cont, bloc, T, M, N>('l'); test_##Name<cont, cont, bloc, T, M, N>('u'); } \
+	TMN_CASE( mat_blas_##Name##_cbc ) { test_##Name<cont, bloc, cont, T, M, N>('l'); test_##Name<cont, bloc, cont, T, M, N>('u'); } \
+	TMN_CASE( mat_blas_##Name##_cbb ) { test_##Name<cont, bloc, bloc, T, M, N>('l'); test_##Name<cont, bloc, bloc, T, M, N>('u'); } \
+	TMN_CASE( mat_blas_##Name##_bcc ) { test_##Name<bloc, cont, cont, T, M, N>('l'); test_##Name<bloc, cont, cont, T, M, N>('u'); } \
+	TMN_CASE( mat_blas_##Name##_bcb ) { test_##Name<bloc, cont, bloc, T, M, N>('l'); test_##Name<bloc, cont, bloc, T, M, N>('u'); } \
+	TMN_CASE( mat_blas_##Name##_bbc ) { test_##Name<bloc, bloc, cont, T, M, N>('l'); test_##Name<bloc, bloc, cont, T, M, N>('u'); } \
+	TMN_CASE( mat_blas_##Name##_bbb ) { test_##Name<bloc, bloc, bloc, T, M, N>('l'); test_##Name<bloc, bloc, bloc, T, M, N>('u'); }
 
 #define ADD_BLAS3_CASES_P3( Name, T ) \
-	ADD_TMN_CASE_3X3( mat_blas3, Name##_ccc, T, DM, DN ); \
-	ADD_TMN_CASE_3X3( mat_blas3, Name##_ccb, T, DM, DN ); \
-	ADD_TMN_CASE_3X3( mat_blas3, Name##_cbc, T, DM, DN ); \
-	ADD_TMN_CASE_3X3( mat_blas3, Name##_cbb, T, DM, DN ); \
-	ADD_TMN_CASE_3X3( mat_blas3, Name##_bcc, T, DM, DN ); \
-	ADD_TMN_CASE_3X3( mat_blas3, Name##_bcb, T, DM, DN ); \
-	ADD_TMN_CASE_3X3( mat_blas3, Name##_bbc, T, DM, DN ); \
-	ADD_TMN_CASE_3X3( mat_blas3, Name##_bbb, T, DM, DN );
+	ADD_TMN_CASE_3X3( mat_blas_##Name##_ccc, T, DM, DN ); \
+	ADD_TMN_CASE_3X3( mat_blas_##Name##_ccb, T, DM, DN ); \
+	ADD_TMN_CASE_3X3( mat_blas_##Name##_cbc, T, DM, DN ); \
+	ADD_TMN_CASE_3X3( mat_blas_##Name##_cbb, T, DM, DN ); \
+	ADD_TMN_CASE_3X3( mat_blas_##Name##_bcc, T, DM, DN ); \
+	ADD_TMN_CASE_3X3( mat_blas_##Name##_bcb, T, DM, DN ); \
+	ADD_TMN_CASE_3X3( mat_blas_##Name##_bbc, T, DM, DN ); \
+	ADD_TMN_CASE_3X3( mat_blas_##Name##_bbb, T, DM, DN );
 
 
 // gemm
 
 DEF_BLAS3_CASES_P3( gemm_nn )
 
-BEGIN_TPACK( mat_gemm_nn_float )
+AUTO_TPACK( mat_gemm_nn )
+{
 	ADD_BLAS3_CASES_P3( gemm_nn, float )
-END_TPACK
-
-BEGIN_TPACK( mat_gemm_nn_double )
 	ADD_BLAS3_CASES_P3( gemm_nn, double )
-END_TPACK
+}
 
 DEF_BLAS3_CASES_P3( gemm_nt )
 
-BEGIN_TPACK( mat_gemm_nt_float )
+AUTO_TPACK( mat_gemm_nt )
+{
 	ADD_BLAS3_CASES_P3( gemm_nt, float )
-END_TPACK
-
-BEGIN_TPACK( mat_gemm_nt_double )
 	ADD_BLAS3_CASES_P3( gemm_nt, double )
-END_TPACK
+}
 
 DEF_BLAS3_CASES_P3( gemm_tn )
 
-BEGIN_TPACK( mat_gemm_tn_float )
+AUTO_TPACK( mat_gemm_tn )
+{
 	ADD_BLAS3_CASES_P3( gemm_tn, float )
-END_TPACK
-
-BEGIN_TPACK( mat_gemm_tn_double )
 	ADD_BLAS3_CASES_P3( gemm_tn, double )
-END_TPACK
+}
 
 DEF_BLAS3_CASES_P3( gemm_tt )
 
-BEGIN_TPACK( mat_gemm_tt_float )
+AUTO_TPACK( mat_gemm_tt )
+{
 	ADD_BLAS3_CASES_P3( gemm_tt, float )
-END_TPACK
-
-BEGIN_TPACK( mat_gemm_tt_double )
 	ADD_BLAS3_CASES_P3( gemm_tt, double )
-END_TPACK
+}
+
 
 
 // symm
 
 DEF_BLAS3_CASES_P3( symm_l )
 
-BEGIN_TPACK( mat_symm_l_float )
+AUTO_TPACK( mat_symm_l )
+{
 	ADD_BLAS3_CASES_P3( symm_l, float )
-END_TPACK
-
-BEGIN_TPACK( mat_symm_l_double )
 	ADD_BLAS3_CASES_P3( symm_l, double )
-END_TPACK
+}
 
 DEF_BLAS3_CASES_P3( symm_r )
 
-BEGIN_TPACK( mat_symm_r_float )
+AUTO_TPACK( mat_symm_r )
+{
 	ADD_BLAS3_CASES_P3( symm_r, float )
-END_TPACK
-
-BEGIN_TPACK( mat_symm_r_double )
 	ADD_BLAS3_CASES_P3( symm_r, double )
-END_TPACK
+}
+
+
 
 
 // trmm
 
 DEF_BLAS3_CASES_P3_TR( trmm_ln )
 
-BEGIN_TPACK( mat_trmm_ln_float )
+AUTO_TPACK( mat_trmm_ln )
+{
 	ADD_BLAS3_CASES_P3( trmm_ln, float )
-END_TPACK
-
-BEGIN_TPACK( mat_trmm_ln_double )
 	ADD_BLAS3_CASES_P3( trmm_ln, double )
-END_TPACK
+}
+
 
 DEF_BLAS3_CASES_P3_TR( trmm_lt )
 
-BEGIN_TPACK( mat_trmm_lt_float )
+AUTO_TPACK( mat_trmm_lt )
+{
 	ADD_BLAS3_CASES_P3( trmm_lt, float )
-END_TPACK
-
-BEGIN_TPACK( mat_trmm_lt_double )
 	ADD_BLAS3_CASES_P3( trmm_lt, double )
-END_TPACK
+}
+
 
 DEF_BLAS3_CASES_P3_TR( trmm_rn )
 
-BEGIN_TPACK( mat_trmm_rn_float )
+AUTO_TPACK( mat_trmm_rn )
+{
 	ADD_BLAS3_CASES_P3( trmm_rn, float )
-END_TPACK
-
-BEGIN_TPACK( mat_trmm_rn_double )
 	ADD_BLAS3_CASES_P3( trmm_rn, double )
-END_TPACK
+}
 
 DEF_BLAS3_CASES_P3_TR( trmm_rt )
 
-BEGIN_TPACK( mat_trmm_rt_float )
+AUTO_TPACK( mat_trmm_rt )
+{
 	ADD_BLAS3_CASES_P3( trmm_rt, float )
-END_TPACK
-
-BEGIN_TPACK( mat_trmm_rt_double )
 	ADD_BLAS3_CASES_P3( trmm_rt, double )
-END_TPACK
+}
 
 
 // tsmm
 
 DEF_BLAS3_CASES_P3_TR( trsm_ln )
 
-BEGIN_TPACK( mat_trsm_ln_float )
+AUTO_TPACK( mat_trsm_ln )
+{
 	ADD_BLAS3_CASES_P3( trsm_ln, float )
-END_TPACK
-
-BEGIN_TPACK( mat_trsm_ln_double )
 	ADD_BLAS3_CASES_P3( trsm_ln, double )
-END_TPACK
+}
+
 
 DEF_BLAS3_CASES_P3_TR( trsm_lt )
 
-BEGIN_TPACK( mat_trsm_lt_float )
+AUTO_TPACK( mat_trsm_lt )
+{
 	ADD_BLAS3_CASES_P3( trsm_lt, float )
-END_TPACK
-
-BEGIN_TPACK( mat_trsm_lt_double )
 	ADD_BLAS3_CASES_P3( trsm_lt, double )
-END_TPACK
+}
 
 DEF_BLAS3_CASES_P3_TR( trsm_rn )
 
-BEGIN_TPACK( mat_trsm_rn_float )
+AUTO_TPACK( mat_trsm_rn )
+{
 	ADD_BLAS3_CASES_P3( trsm_rn, float )
-END_TPACK
-
-BEGIN_TPACK( mat_trsm_rn_double )
 	ADD_BLAS3_CASES_P3( trsm_rn, double )
-END_TPACK
+}
 
 DEF_BLAS3_CASES_P3_TR( trsm_rt )
 
-BEGIN_TPACK( mat_trsm_rt_float )
+AUTO_TPACK( mat_trsm_rt )
+{
 	ADD_BLAS3_CASES_P3( trsm_rt, float )
-END_TPACK
-
-BEGIN_TPACK( mat_trsm_rt_double )
 	ADD_BLAS3_CASES_P3( trsm_rt, double )
-END_TPACK
-
-
-BEGIN_MAIN_SUITE
-	ADD_TPACK( mat_gemm_nn_float )
-	ADD_TPACK( mat_gemm_nn_double )
-	ADD_TPACK( mat_gemm_nt_float )
-	ADD_TPACK( mat_gemm_nt_double )
-	ADD_TPACK( mat_gemm_tn_float )
-	ADD_TPACK( mat_gemm_tn_double )
-	ADD_TPACK( mat_gemm_tt_float )
-	ADD_TPACK( mat_gemm_tt_double )
-
-	ADD_TPACK( mat_symm_l_float )
-	ADD_TPACK( mat_symm_l_double )
-	ADD_TPACK( mat_symm_r_float )
-	ADD_TPACK( mat_symm_r_double )
-
-	ADD_TPACK( mat_trmm_ln_float )
-	ADD_TPACK( mat_trmm_ln_double )
-	ADD_TPACK( mat_trmm_lt_float )
-	ADD_TPACK( mat_trmm_lt_double )
-	ADD_TPACK( mat_trmm_rn_float )
-	ADD_TPACK( mat_trmm_rn_double )
-	ADD_TPACK( mat_trmm_rt_float )
-	ADD_TPACK( mat_trmm_rt_double )
-
-	ADD_TPACK( mat_trsm_ln_float )
-	ADD_TPACK( mat_trsm_ln_double )
-	ADD_TPACK( mat_trsm_lt_float )
-	ADD_TPACK( mat_trsm_lt_double )
-	ADD_TPACK( mat_trsm_rn_float )
-	ADD_TPACK( mat_trsm_rn_double )
-	ADD_TPACK( mat_trsm_rt_float )
-	ADD_TPACK( mat_trsm_rt_double )
-END_MAIN_SUITE
-
+}
 

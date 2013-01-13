@@ -600,35 +600,35 @@ set(LMAT_MATEXPR_TESTS
 
 # linear algebra module
 
-#set(BLAS_TEST_HS
-#    ${MATRIX_HS}
-#    ${BLAS_HS_})
-#
-#add_executable(test_blas_l1 ${BLAS_TEST_HS} linalg/test_blas_l1.cpp)
-#add_executable(test_blas_l2 ${BLAS_TEST_HS} linalg/test_blas_l2.cpp)
-#add_executable(test_blas_l3 ${BLAS_TEST_HS} linalg/test_blas_l3.cpp)
-#
-#set(LAPACK_TEST_HS
-#    ${MATRIX_HS}
-#    ${BLAS_HS_}
-#    ${LAPACK_HS_})
-#    
-#add_executable(test_lapack_lu ${LAPACK_TEST_HS} linalg/test_lapack_lu.cpp)
-#add_executable(test_lapack_chol ${LAPACK_TEST_HS} linalg/test_lapack_chol.cpp)
-#add_executable(test_lapack_qr ${LAPACK_TEST_HS} linalg/test_lapack_qr.cpp)
-#add_executable(test_lapack_syev ${LAPACK_TEST_HS} linalg/test_lapack_syev.cpp)
-#add_executable(test_lapack_svd ${LAPACK_TEST_HS} linalg/test_lapack_svd.cpp)
-#
-#set(LMAT_LINALG_TESTS
-#    test_blas_l1
-#    test_blas_l2
-#    test_blas_l3
-#    test_lapack_lu
-#    test_lapack_chol
-#    test_lapack_qr
-#    test_lapack_syev
-#    test_lapack_svd
-#)
+set(BLAS_TEST_HS
+    ${MATRIX_HS}
+    ${BLAS_HS_})
+
+add_executable(test_blas_l1 ${BLAS_TEST_HS} linalg/test_blas_l1.cpp)
+add_executable(test_blas_l2 ${BLAS_TEST_HS} linalg/test_blas_l2.cpp)
+add_executable(test_blas_l3 ${BLAS_TEST_HS} linalg/test_blas_l3.cpp)
+
+set(LAPACK_TEST_HS
+    ${MATRIX_HS}
+    ${BLAS_HS_}
+    ${LAPACK_HS_})
+    
+add_executable(test_lapack_lu ${LAPACK_TEST_HS} linalg/test_lapack_lu.cpp)
+add_executable(test_lapack_chol ${LAPACK_TEST_HS} linalg/test_lapack_chol.cpp)
+add_executable(test_lapack_qr ${LAPACK_TEST_HS} linalg/test_lapack_qr.cpp)
+add_executable(test_lapack_syev ${LAPACK_TEST_HS} linalg/test_lapack_syev.cpp)
+add_executable(test_lapack_svd ${LAPACK_TEST_HS} linalg/test_lapack_svd.cpp)
+
+set(LMAT_LINALG_TESTS
+    test_blas_l1
+    test_blas_l2
+    test_blas_l3
+    test_lapack_lu
+    test_lapack_chol
+    test_lapack_qr
+    test_lapack_syev
+    test_lapack_svd
+)
     
 # all
 
@@ -639,7 +639,7 @@ set(LMAT_ALL_TESTS
     ${LMAT_MATRIX_TESTS}
     ${LMAT_MATEVAL_TESTS}
     ${LMAT_MATEXPR_TESTS}
-    # ${LMAT_LINALG_TESTS}
+    ${LMAT_LINALG_TESTS}
 )
 
 
@@ -684,9 +684,9 @@ endif (SVML_PATH)
     
 # Link to MKL
 
-#foreach(tname ${LMAT_LINALG_TESTS})
-#    target_link_libraries(${tname} ${MKL_LIBRARY})
-#endforeach(tname)
+foreach(tname ${LMAT_LINALG_TESTS})
+    target_link_libraries(${tname} ${MKL_LIBRARY})
+endforeach(tname)
 
 
 #==========================================================

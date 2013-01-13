@@ -72,7 +72,7 @@ void test_syev(const A& a, const CW& w0, const CW& w, const CV& V, T tol0, T tol
 }
 
 
-T_CASE( mat_syev, syev )
+T_CASE( mat_syev )
 {
 	typedef mat_host<bloc, T, 0, 0> host_t;
 	typedef typename host_t::mat_t mat_t;
@@ -98,7 +98,7 @@ T_CASE( mat_syev, syev )
 }
 
 
-T_CASE( mat_syev, syevd )
+T_CASE( mat_syevd )
 {
 	typedef mat_host<bloc, T, 0, 0> host_t;
 	typedef typename host_t::mat_t mat_t;
@@ -124,7 +124,7 @@ T_CASE( mat_syev, syevd )
 }
 
 
-T_CASE( mat_syev, syevr )
+T_CASE( mat_syevr )
 {
 	typedef mat_host<bloc, T, 0, 0> host_t;
 	typedef typename host_t::mat_t mat_t;
@@ -218,26 +218,23 @@ T_CASE( mat_syev, syevr )
 }
 
 
-BEGIN_TPACK( mat_syev )
-	ADD_T_CASE( mat_syev, syev, float )
-	ADD_T_CASE( mat_syev, syev, double )
-END_TPACK
+AUTO_TPACK( mat_syev )
+{
+	ADD_T_CASE( mat_syev, float )
+	ADD_T_CASE( mat_syev, double )
+}
 
-BEGIN_TPACK( mat_syevd )
-	ADD_T_CASE( mat_syev, syevd, float )
-	ADD_T_CASE( mat_syev, syevd, double )
-END_TPACK
+AUTO_TPACK( mat_syevd )
+{
+	ADD_T_CASE( mat_syevd, float )
+	ADD_T_CASE( mat_syevd, double )
+}
 
-BEGIN_TPACK( mat_syevr )
-	ADD_T_CASE( mat_syev, syevr, float )
-	ADD_T_CASE( mat_syev, syevr, double )
-END_TPACK
+AUTO_TPACK( mat_syevr )
+{
+	ADD_T_CASE( mat_syevr, float )
+	ADD_T_CASE( mat_syevr, double )
+}
 
-
-BEGIN_MAIN_SUITE
-	ADD_TPACK( mat_syev )
-	ADD_TPACK( mat_syevd )
-	ADD_TPACK( mat_syevr )
-END_MAIN_SUITE
 
 
