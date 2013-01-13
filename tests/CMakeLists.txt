@@ -350,6 +350,16 @@ set(DISTR_HS_
     ${INC}/random/gamma_distr.h
 )
         
+set(RANDOM_HS
+    ${PRNG_HS_}
+    ${DISTR_HS_}
+    ${INC}/random/rand_accessors.h
+    ${INC}/random/rand_expr.h)
+    
+set(RANDOM_HS_EX
+    ${MATEXPR_HS_EX}
+    ${RANDOM_HS})
+        
     
 #==========================================================
 #
@@ -690,6 +700,8 @@ add_executable(test_uniform_real ${DISTR_TEST_HS} random/test_uniform_real.cpp)
 add_executable(test_exponential ${DISTR_TEST_HS} random/test_exponential.cpp)
 add_executable(test_normal ${DISTR_TEST_HS} random/test_normal.cpp)
 add_executable(test_gammad ${DISTR_TEST_HS} random/test_gammad.cpp)
+
+add_executable(test_rand_expr ${RANDOM_HS_EX} random/test_rand_expr.cpp)
      
 set(LMAT_RANDOM_TESTS
     test_stracker
@@ -703,7 +715,8 @@ set(LMAT_RANDOM_TESTS
     test_uniform_real
     test_exponential
     test_normal
-    test_gammad)        
+    test_gammad
+    test_rand_expr)        
 
 # all
 
