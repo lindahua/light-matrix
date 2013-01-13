@@ -14,7 +14,7 @@
 #define LIGHTMAT_MAT_ENORMS_H_
 
 #include <light_mat/mateval/mat_reduce.h>
-#include <light_mat/mateval/mat_emath.h>
+#include <light_mat/matexpr/mat_arith.h>
 
 namespace lmat
 {

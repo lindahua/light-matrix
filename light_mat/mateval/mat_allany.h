@@ -14,7 +14,7 @@
 #define LIGHTMAT_MAT_ALLANY_H_
 
 #include "internal/mat_allany_internal.h"
-#include <light_mat/mateval/mat_pred.h>
+#include <light_mat/matexpr/mat_pred.h>
 
 namespace lmat
 {

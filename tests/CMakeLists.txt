@@ -518,42 +518,42 @@ add_executable(test_linear_ewise ${MATEVAL_TEST_HS} mateval/test_linear_ewise.cp
 add_executable(test_percol_ewise ${MATEVAL_TEST_HS} mateval/test_percol_ewise.cpp)
 add_executable(test_ewise_accum ${MATEVAL_TEST_HS}  mateval/test_ewise_accum.cpp)
 
-#set(MATREDUC_TEST_HS
-#    ${MATRIX_HS}
-#    ${MATH_HS}
-#    ${MATRIX_EVAL_HS_}
-#    ${MAP_EXPR_HS_}
-#    ${MATRIX_REDUC_HS_})
-#
-#add_executable(test_full_reduce    ${MATREDUC_TEST_HS} mateval/test_full_reduce.cpp)
-#add_executable(test_colwise_reduce ${MATREDUC_TEST_HS} mateval/test_colwise_reduce.cpp)
-#add_executable(test_rowwise_reduce ${MATREDUC_TEST_HS} mateval/test_rowwise_reduce.cpp)
-#add_executable(test_more_reduce ${MATREDUC_TEST_HS} mateval/test_more_reduce.cpp)
-#add_executable(test_mat_allany ${MATREDUC_TEST_HS} mateval/test_mat_allany.cpp)
-#add_executable(test_mat_compare ${MATREDUC_TEST_HS} mateval/test_mat_compare.cpp)
+set(MATREDUC_TEST_HS
+    ${MATRIX_HS}
+    ${MATH_HS}
+    ${MATRIX_EVAL_HS_}
+    ${MAP_EXPR_HS_}
+    ${MATRIX_REDUC_HS_})
 
-#set(MATALG_TEST_HS
-#    ${MATRIX_HS}
-#    ${MATRIX_EVAL_HS_}
-#    ${MAP_EXPR_HS_}
-#    ${OTHER_EXPR_HS_}
-#    ${MATRIX_ALG_HS_})
-#    
-#add_executable(test_mat_find ${MATALG_TEST_HS} mateval/test_mat_find.cpp)
-#add_executable(test_mat_sort ${MATALG_TEST_HS} mateval/test_mat_sort.cpp)
+add_executable(test_full_reduce    ${MATREDUC_TEST_HS} mateval/test_full_reduce.cpp)
+add_executable(test_colwise_reduce ${MATREDUC_TEST_HS} mateval/test_colwise_reduce.cpp)
+add_executable(test_rowwise_reduce ${MATREDUC_TEST_HS} mateval/test_rowwise_reduce.cpp)
+add_executable(test_more_reduce ${MATREDUC_TEST_HS} mateval/test_more_reduce.cpp)
+add_executable(test_mat_allany ${MATREDUC_TEST_HS} mateval/test_mat_allany.cpp)
+add_executable(test_mat_compare ${MATREDUC_TEST_HS} mateval/test_mat_compare.cpp)
+
+set(MATALG_TEST_HS
+    ${MATRIX_HS}
+    ${MATRIX_EVAL_HS_}
+    ${MAP_EXPR_HS_}
+    ${OTHER_EXPR_HS_}
+    ${MATRIX_ALG_HS_})
+    
+add_executable(test_mat_find ${MATALG_TEST_HS} mateval/test_mat_find.cpp)
+add_executable(test_mat_sort ${MATALG_TEST_HS} mateval/test_mat_sort.cpp)
 
 set(LMAT_MATEVAL_TESTS
     test_linear_ewise
 	test_percol_ewise
 	test_ewise_accum
-#	test_full_reduce
-#	test_colwise_reduce
-#	test_rowwise_reduce
-#	test_more_reduce
-#	test_mat_allany
-#	test_mat_compare
-#	test_mat_find
-#	test_mat_sort
+	test_full_reduce
+	test_colwise_reduce
+	test_rowwise_reduce
+	test_more_reduce
+	test_mat_allany
+	test_mat_compare
+	test_mat_find
+	test_mat_sort
 	)
 
 

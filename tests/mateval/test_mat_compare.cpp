@@ -134,195 +134,190 @@ void test_matrix_approx()
 }
 
 
-MN_CASE( mat_equal, cont_to_cont )
+MN_CASE( mat_equal_cont_to_cont )
 {
 	test_matrix_equal<ref_matrix, ref_matrix, M, N>();
 }
 
-MN_CASE( mat_equal, cont_to_bloc )
+MN_CASE( mat_equal_cont_to_bloc )
 {
 	test_matrix_equal<ref_matrix, ref_block, M, N>();
 }
 
-MN_CASE( mat_equal, cont_to_grid )
+MN_CASE( mat_equal_cont_to_grid )
 {
 	test_matrix_equal<ref_matrix, ref_grid, M, N>();
 }
 
-MN_CASE( mat_equal, bloc_to_cont )
+MN_CASE( mat_equal_bloc_to_cont )
 {
 	test_matrix_equal<ref_block, ref_matrix, M, N>();
 }
 
-MN_CASE( mat_equal, bloc_to_bloc )
+MN_CASE( mat_equal_bloc_to_bloc )
 {
 	test_matrix_equal<ref_block, ref_block, M, N>();
 }
 
-MN_CASE( mat_equal, bloc_to_grid )
+MN_CASE( mat_equal_bloc_to_grid )
 {
 	test_matrix_equal<ref_block, ref_grid, M, N>();
 }
 
-MN_CASE( mat_equal, grid_to_cont )
+MN_CASE( mat_equal_grid_to_cont )
 {
 	test_matrix_equal<ref_grid, ref_matrix, M, N>();
 }
 
-MN_CASE( mat_equal, grid_to_bloc )
+MN_CASE( mat_equal_grid_to_bloc )
 {
 	test_matrix_equal<ref_grid, ref_block, M, N>();
 }
 
-MN_CASE( mat_equal, grid_to_grid )
+MN_CASE( mat_equal_grid_to_grid )
 {
 	test_matrix_equal<ref_grid, ref_grid, M, N>();
 }
 
 
-MN_CASE( mat_approx, cont_to_cont )
+MN_CASE( mat_approx_cont_to_cont )
 {
 	test_matrix_approx<ref_matrix, ref_matrix, M, N>();
 }
 
-MN_CASE( mat_approx, cont_to_bloc )
+MN_CASE( mat_approx_cont_to_bloc )
 {
 	test_matrix_approx<ref_matrix, ref_block, M, N>();
 }
 
-MN_CASE( mat_approx, cont_to_grid )
+MN_CASE( mat_approx_cont_to_grid )
 {
 	test_matrix_approx<ref_matrix, ref_grid, M, N>();
 }
 
-MN_CASE( mat_approx, bloc_to_cont )
+MN_CASE( mat_approx_bloc_to_cont )
 {
 	test_matrix_approx<ref_block, ref_matrix, M, N>();
 }
 
-MN_CASE( mat_approx, bloc_to_bloc )
+MN_CASE( mat_approx_bloc_to_bloc )
 {
 	test_matrix_approx<ref_block, ref_block, M, N>();
 }
 
-MN_CASE( mat_approx, bloc_to_grid )
+MN_CASE( mat_approx_bloc_to_grid )
 {
 	test_matrix_approx<ref_block, ref_grid, M, N>();
 }
 
-MN_CASE( mat_approx, grid_to_cont )
+MN_CASE( mat_approx_grid_to_cont )
 {
 	test_matrix_approx<ref_grid, ref_matrix, M, N>();
 }
 
-MN_CASE( mat_approx, grid_to_bloc )
+MN_CASE( mat_approx_grid_to_bloc )
 {
 	test_matrix_approx<ref_grid, ref_block, M, N>();
 }
 
-MN_CASE( mat_approx, grid_to_grid )
+MN_CASE( mat_approx_grid_to_grid )
 {
 	test_matrix_approx<ref_grid, ref_grid, M, N>();
 }
 
 
 
-BEGIN_TPACK( mat_equal_cc )
-	ADD_MN_CASE_3X3( mat_equal, cont_to_cont, 3, 4 );
-END_TPACK
+LTEST_INIT_AUTOSUITE
 
-BEGIN_TPACK( mat_equal_cb )
-	ADD_MN_CASE_3X3( mat_equal, cont_to_bloc, 3, 4 );
-END_TPACK
+AUTO_TPACK( mat_equal_cc )
+{
+	ADD_MN_CASE_3X3( mat_equal_cont_to_cont, 3, 4 );
+}
 
-BEGIN_TPACK( mat_equal_cg )
-	ADD_MN_CASE_3X3( mat_equal, cont_to_grid, 3, 4 );
-END_TPACK
+AUTO_TPACK( mat_equal_cb )
+{
+	ADD_MN_CASE_3X3( mat_equal_cont_to_bloc, 3, 4 );
+}
 
-BEGIN_TPACK( mat_equal_bc )
-	ADD_MN_CASE_3X3( mat_equal, bloc_to_cont, 3, 4 );
-END_TPACK
+AUTO_TPACK( mat_equal_cg )
+{
+	ADD_MN_CASE_3X3( mat_equal_cont_to_grid, 3, 4 );
+}
 
-BEGIN_TPACK( mat_equal_bb )
-	ADD_MN_CASE_3X3( mat_equal, bloc_to_bloc, 3, 4 );
-END_TPACK
+AUTO_TPACK( mat_equal_bc )
+{
+	ADD_MN_CASE_3X3( mat_equal_bloc_to_cont, 3, 4 );
+}
 
-BEGIN_TPACK( mat_equal_bg )
-	ADD_MN_CASE_3X3( mat_equal, bloc_to_grid, 3, 4 );
-END_TPACK
+AUTO_TPACK( mat_equal_bb )
+{
+	ADD_MN_CASE_3X3( mat_equal_bloc_to_bloc, 3, 4 );
+}
 
-BEGIN_TPACK( mat_equal_gc )
-	ADD_MN_CASE_3X3( mat_equal, grid_to_cont, 3, 4 );
-END_TPACK
+AUTO_TPACK( mat_equal_bg )
+{
+	ADD_MN_CASE_3X3( mat_equal_bloc_to_grid, 3, 4 );
+}
 
-BEGIN_TPACK( mat_equal_gb )
-	ADD_MN_CASE_3X3( mat_equal, grid_to_bloc, 3, 4 );
-END_TPACK
+AUTO_TPACK( mat_equal_gc )
+{
+	ADD_MN_CASE_3X3( mat_equal_grid_to_cont, 3, 4 );
+}
 
-BEGIN_TPACK( mat_equal_gg )
-	ADD_MN_CASE_3X3( mat_equal, grid_to_grid, 3, 4 );
-END_TPACK
+AUTO_TPACK( mat_equal_gb )
+{
+	ADD_MN_CASE_3X3( mat_equal_grid_to_bloc, 3, 4 );
+}
 
-
-BEGIN_TPACK( mat_approx_cc )
-	ADD_MN_CASE_3X3( mat_approx, cont_to_cont, 3, 4 );
-END_TPACK
-
-BEGIN_TPACK( mat_approx_cb )
-	ADD_MN_CASE_3X3( mat_approx, cont_to_bloc, 3, 4 );
-END_TPACK
-
-BEGIN_TPACK( mat_approx_cg )
-	ADD_MN_CASE_3X3( mat_approx, cont_to_grid, 3, 4 );
-END_TPACK
-
-BEGIN_TPACK( mat_approx_bc )
-	ADD_MN_CASE_3X3( mat_approx, bloc_to_cont, 3, 4 );
-END_TPACK
-
-BEGIN_TPACK( mat_approx_bb )
-	ADD_MN_CASE_3X3( mat_approx, bloc_to_bloc, 3, 4 );
-END_TPACK
-
-BEGIN_TPACK( mat_approx_bg )
-	ADD_MN_CASE_3X3( mat_approx, bloc_to_grid, 3, 4 );
-END_TPACK
-
-BEGIN_TPACK( mat_approx_gc )
-	ADD_MN_CASE_3X3( mat_approx, grid_to_cont, 3, 4 );
-END_TPACK
-
-BEGIN_TPACK( mat_approx_gb )
-	ADD_MN_CASE_3X3( mat_approx, grid_to_bloc, 3, 4 );
-END_TPACK
-
-BEGIN_TPACK( mat_approx_gg )
-	ADD_MN_CASE_3X3( mat_approx, grid_to_grid, 3, 4 );
-END_TPACK
+AUTO_TPACK( mat_equal_gg )
+{
+	ADD_MN_CASE_3X3( mat_equal_grid_to_grid, 3, 4 );
+}
 
 
-BEGIN_MAIN_SUITE
-	ADD_TPACK( mat_equal_cc )
-	ADD_TPACK( mat_equal_cb )
-	ADD_TPACK( mat_equal_cg )
-	ADD_TPACK( mat_equal_bc )
-	ADD_TPACK( mat_equal_bb )
-	ADD_TPACK( mat_equal_bg )
-	ADD_TPACK( mat_equal_gc )
-	ADD_TPACK( mat_equal_gb )
-	ADD_TPACK( mat_equal_gg )
+AUTO_TPACK( mat_approx_cc )
+{
+	ADD_MN_CASE_3X3( mat_approx_cont_to_cont, 3, 4 );
+}
 
-	ADD_TPACK( mat_approx_cc )
-	ADD_TPACK( mat_approx_cb )
-	ADD_TPACK( mat_approx_cg )
-	ADD_TPACK( mat_approx_bc )
-	ADD_TPACK( mat_approx_bb )
-	ADD_TPACK( mat_approx_bg )
-	ADD_TPACK( mat_approx_gc )
-	ADD_TPACK( mat_approx_gb )
-	ADD_TPACK( mat_approx_gg )
-END_MAIN_SUITE
+AUTO_TPACK( mat_approx_cb )
+{
+	ADD_MN_CASE_3X3( mat_approx_cont_to_bloc, 3, 4 );
+}
 
+AUTO_TPACK( mat_approx_cg )
+{
+	ADD_MN_CASE_3X3( mat_approx_cont_to_grid, 3, 4 );
+}
 
+AUTO_TPACK( mat_approx_bc )
+{
+	ADD_MN_CASE_3X3( mat_approx_bloc_to_cont, 3, 4 );
+}
+
+AUTO_TPACK( mat_approx_bb )
+{
+	ADD_MN_CASE_3X3( mat_approx_bloc_to_bloc, 3, 4 );
+}
+
+AUTO_TPACK( mat_approx_bg )
+{
+	ADD_MN_CASE_3X3( mat_approx_bloc_to_grid, 3, 4 );
+}
+
+AUTO_TPACK( mat_approx_gc )
+{
+	ADD_MN_CASE_3X3( mat_approx_grid_to_cont, 3, 4 );
+}
+
+AUTO_TPACK( mat_approx_gb )
+{
+	ADD_MN_CASE_3X3( mat_approx_grid_to_bloc, 3, 4 );
+}
+
+AUTO_TPACK( mat_approx_gg )
+{
+	ADD_MN_CASE_3X3( mat_approx_grid_to_grid, 3, 4 );
+}
 
 

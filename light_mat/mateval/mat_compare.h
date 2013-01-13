@@ -14,7 +14,7 @@
 #define LIGHTMAT_MAT_COMPARE_H_
 
 #include <light_mat/mateval/mat_allany.h>
-#include <light_mat/mateval/mat_arith.h>
+#include <light_mat/matexpr/mat_arith.h>
 
 namespace lmat
 {

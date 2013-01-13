@@ -8,7 +8,7 @@
 
 #include "../test_base.h"
 #include <light_mat/matrix/matrix_classes.h>
-#include <light_mat/mateval/mat_pred.h>
+#include <light_mat/matexpr/mat_pred.h>
 #include <light_mat/mateval/matrix_find.h>
 #include <vector>
 #include <algorithm>
@@ -30,7 +30,7 @@ void fill_ran(dense_matrix<double, M, N>& a)
 }
 
 
-MN_CASE( mat_count, count )
+MN_CASE( mat_count )
 {
 	const index_t m = M == 0 ? DM : M;
 	const index_t n = N == 0 ? DN : N;
@@ -51,7 +51,7 @@ MN_CASE( mat_count, count )
 	ASSERT_EQ( r, r0 );
 }
 
-MN_CASE( mat_count, count_ex )
+MN_CASE( mat_count_ex )
 {
 	const index_t m = M == 0 ? DM : M;
 	const index_t n = N == 0 ? DN : N;
@@ -75,7 +75,7 @@ MN_CASE( mat_count, count_ex )
 }
 
 
-MN_CASE( mat_count, colwise_count )
+MN_CASE( mat_colwise_count )
 {
 	const index_t m = M == 0 ? DM : M;
 	const index_t n = N == 0 ? DN : N;
@@ -100,7 +100,7 @@ MN_CASE( mat_count, colwise_count )
 }
 
 
-MN_CASE( mat_count, colwise_count_ex )
+MN_CASE( mat_colwise_count_ex )
 {
 	const index_t m = M == 0 ? DM : M;
 	const index_t n = N == 0 ? DN : N;
@@ -126,7 +126,7 @@ MN_CASE( mat_count, colwise_count_ex )
 }
 
 
-SIMPLE_CASE( mat_find, findl )
+SIMPLE_CASE( mat_findl )
 {
 	const index_t m = DM;
 	const index_t n = DN;
@@ -150,7 +150,7 @@ SIMPLE_CASE( mat_find, findl )
 }
 
 
-SIMPLE_CASE( mat_find, findij )
+SIMPLE_CASE( mat_findij )
 {
 	const index_t m = DM;
 	const index_t n = DN;
@@ -187,36 +187,33 @@ SIMPLE_CASE( mat_find, findij )
 
 
 
-BEGIN_TPACK( mat_count )
-	ADD_MN_CASE_3X3( mat_count, count, DM, DN )
-END_TPACK
+LTEST_INIT_AUTOSUITE
 
-BEGIN_TPACK( mat_count_ex )
-	ADD_MN_CASE_3X3( mat_count, count_ex, DM, DN )
-END_TPACK
+AUTO_TPACK( mat_count )
+{
+	ADD_MN_CASE_3X3( mat_count, DM, DN )
+}
 
-BEGIN_TPACK( mat_colwise_count )
-	ADD_MN_CASE_3X3( mat_count, colwise_count, DM, DN )
-END_TPACK
+AUTO_TPACK( mat_count_ex )
+{
+	ADD_MN_CASE_3X3( mat_count_ex, DM, DN )
+}
 
-BEGIN_TPACK( mat_colwise_count_ex )
-	ADD_MN_CASE_3X3( mat_count, colwise_count_ex, DM, DN )
-END_TPACK
+AUTO_TPACK( mat_colwise_count )
+{
+	ADD_MN_CASE_3X3( mat_colwise_count, DM, DN )
+}
 
-BEGIN_TPACK( mat_find )
-	ADD_SIMPLE_CASE( mat_find, findl )
-	ADD_SIMPLE_CASE( mat_find, findij )
-END_TPACK
+AUTO_TPACK( mat_colwise_count_ex )
+{
+	ADD_MN_CASE_3X3( mat_colwise_count_ex, DM, DN )
+}
 
-
-BEGIN_MAIN_SUITE
-	ADD_TPACK( mat_count )
-	ADD_TPACK( mat_count_ex )
-	ADD_TPACK( mat_colwise_count )
-	ADD_TPACK( mat_colwise_count_ex )
-	ADD_TPACK( mat_find )
-END_MAIN_SUITE
-
+AUTO_TPACK( mat_find )
+{
+	ADD_SIMPLE_CASE( mat_findl )
+	ADD_SIMPLE_CASE( mat_findij )
+}
 
 
 

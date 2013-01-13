@@ -141,7 +141,7 @@ bool test_cw_sorted_ex(const A& a, const R& re, S)
 
 // Test cases
 
-MN_CASE( mat_sort, inplace_sort )
+MN_CASE( mat_inplace_sort )
 {
 	index_t m = M == 0 ? DM : M;
 	index_t n = N == 0 ? DN : N;
@@ -165,7 +165,7 @@ MN_CASE( mat_sort, inplace_sort )
 	ASSERT_TRUE( test_sorted(a0, a, asc_()) );
 }
 
-MN_CASE( mat_sort, colwise_inplace_sort )
+MN_CASE( mat_colwise_inplace_sort )
 {
 	index_t m = M == 0 ? DM : M;
 	index_t n = N == 0 ? DN : N;
@@ -189,7 +189,7 @@ MN_CASE( mat_sort, colwise_inplace_sort )
 	ASSERT_TRUE( test_cw_sorted(a0, a, asc_()) );
 }
 
-MN_CASE( mat_sort, copy_sort )
+MN_CASE( mat_copy_sort )
 {
 	index_t m = M == 0 ? DM : M;
 	index_t n = N == 0 ? DN : N;
@@ -216,7 +216,7 @@ MN_CASE( mat_sort, copy_sort )
 	ASSERT_TRUE( test_sorted(a, b3, asc_()) );
 }
 
-MN_CASE( mat_sort, colwise_copy_sort )
+MN_CASE( mat_colwise_copy_sort )
 {
 	index_t m = M == 0 ? DM : M;
 	index_t n = N == 0 ? DN : N;
@@ -245,7 +245,7 @@ MN_CASE( mat_sort, colwise_copy_sort )
 }
 
 
-MN_CASE( mat_sort, sort_idx )
+MN_CASE( mat_sort_idx )
 {
 	index_t m = M == 0 ? DM : M;
 	index_t n = N == 0 ? DN : N;
@@ -272,7 +272,7 @@ MN_CASE( mat_sort, sort_idx )
 	ASSERT_TRUE( test_sorted_idx(a, b3, asc_()) );
 }
 
-MN_CASE( mat_sort, colwise_sort_idx )
+MN_CASE( mat_colwise_sort_idx )
 {
 	index_t m = M == 0 ? DM : M;
 	index_t n = N == 0 ? DN : N;
@@ -300,7 +300,7 @@ MN_CASE( mat_sort, colwise_sort_idx )
 }
 
 
-MN_CASE( mat_sort, sort_ex )
+MN_CASE( mat_sort_ex )
 {
 	index_t m = M == 0 ? DM : M;
 	index_t n = N == 0 ? DN : N;
@@ -329,7 +329,7 @@ MN_CASE( mat_sort, sort_ex )
 }
 
 
-MN_CASE( mat_sort, colwise_sort_ex )
+MN_CASE( mat_colwise_sort_ex )
 {
 	index_t m = M == 0 ? DM : M;
 	index_t n = N == 0 ? DN : N;
@@ -359,50 +359,49 @@ MN_CASE( mat_sort, colwise_sort_ex )
 
 
 
+LTEST_INIT_AUTOSUITE
 
-BEGIN_TPACK( mat_inplace_sort )
-	ADD_MN_CASE_3X3( mat_sort, inplace_sort, DM, DN )
-END_TPACK
+AUTO_TPACK( mat_inplace_sort )
+{
+	ADD_MN_CASE_3X3( mat_inplace_sort, DM, DN )
+}
 
-BEGIN_TPACK( mat_colwise_inplace_sort )
-	ADD_MN_CASE_3X3( mat_sort, colwise_inplace_sort, DM, DN )
-END_TPACK
+AUTO_TPACK( mat_colwise_inplace_sort )
+{
+	ADD_MN_CASE_3X3( mat_colwise_inplace_sort, DM, DN )
+}
 
-BEGIN_TPACK( mat_copy_sort )
-	ADD_MN_CASE_3X3( mat_sort, copy_sort, DM, DN )
-END_TPACK
+AUTO_TPACK( mat_copy_sort )
+{
+	ADD_MN_CASE_3X3( mat_copy_sort, DM, DN )
+}
 
-BEGIN_TPACK( mat_colwise_copy_sort )
-	ADD_MN_CASE_3X3( mat_sort, colwise_copy_sort, DM, DN )
-END_TPACK
+AUTO_TPACK( mat_colwise_copy_sort )
+{
+	ADD_MN_CASE_3X3( mat_colwise_copy_sort, DM, DN )
+}
 
-BEGIN_TPACK( mat_sort_idx )
-	ADD_MN_CASE_3X3( mat_sort, sort_idx, DM, DN )
-END_TPACK
+AUTO_TPACK( mat_sort_idx )
+{
+	ADD_MN_CASE_3X3( mat_sort_idx, DM, DN )
+}
 
-BEGIN_TPACK( mat_colwise_sort_idx )
-	ADD_MN_CASE_3X3( mat_sort, colwise_sort_idx, DM, DN )
-END_TPACK
+AUTO_TPACK( mat_colwise_sort_idx )
+{
+	ADD_MN_CASE_3X3( mat_colwise_sort_idx, DM, DN )
+}
 
-BEGIN_TPACK( mat_sort_ex )
-	ADD_MN_CASE_3X3( mat_sort, sort_ex, DM, DN )
-END_TPACK
+AUTO_TPACK( mat_sort_ex )
+{
+	ADD_MN_CASE_3X3( mat_sort_ex, DM, DN )
+}
 
-BEGIN_TPACK( mat_colwise_sort_ex )
-	ADD_MN_CASE_3X3( mat_sort, colwise_sort_ex, DM, DN )
-END_TPACK
+AUTO_TPACK( mat_colwise_sort_ex )
+{
+	ADD_MN_CASE_3X3( mat_colwise_sort_ex, DM, DN )
+}
 
 
-BEGIN_MAIN_SUITE
-	ADD_TPACK( mat_inplace_sort )
-	ADD_TPACK( mat_colwise_inplace_sort )
-	ADD_TPACK( mat_copy_sort )
-	ADD_TPACK( mat_colwise_copy_sort )
-	ADD_TPACK( mat_sort_idx )
-	ADD_TPACK( mat_colwise_sort_idx )
-	ADD_TPACK( mat_sort_ex )
-	ADD_TPACK( mat_colwise_sort_ex )
-END_MAIN_SUITE
 
 
 

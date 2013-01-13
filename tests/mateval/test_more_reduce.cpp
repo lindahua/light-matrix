@@ -46,7 +46,7 @@ const unsigned int ntest_nrows = sizeof(test_nrows) / sizeof(index_t);
 
 // norms
 
-SIMPLE_CASE( norms, full )
+SIMPLE_CASE( tfull_norms )
 {
 	dense_col<double> s(max_len);
 	fill_rand(s);
@@ -61,7 +61,7 @@ SIMPLE_CASE( norms, full )
 	}
 }
 
-SIMPLE_CASE( norms, colwise )
+SIMPLE_CASE( tcolwise_norms )
 {
 	const index_t n = 6;
 	dense_matrix<double> src(max_nrows, n);
@@ -90,7 +90,7 @@ SIMPLE_CASE( norms, colwise )
 	}
 }
 
-SIMPLE_CASE( norms, rowwise )
+SIMPLE_CASE( trowwise_norms )
 {
 	const index_t n = 6;
 	dense_matrix<double> src(max_nrows, n);
@@ -122,7 +122,7 @@ SIMPLE_CASE( norms, rowwise )
 
 // min-max
 
-SIMPLE_CASE( minmax, full )
+SIMPLE_CASE( tfull_minmax )
 {
 	dense_col<double> s(max_len);
 	fill_rand(s);
@@ -139,7 +139,7 @@ SIMPLE_CASE( minmax, full )
 	}
 }
 
-SIMPLE_CASE( minmax, colwise )
+SIMPLE_CASE( tcolwise_minmax )
 {
 	const index_t n = 6;
 	dense_matrix<double> src(max_nrows, n);
@@ -165,21 +165,22 @@ SIMPLE_CASE( minmax, colwise )
 }
 
 
-BEGIN_TPACK( mat_norms )
-	ADD_SIMPLE_CASE( norms, full )
-	ADD_SIMPLE_CASE( norms, colwise )
-	ADD_SIMPLE_CASE( norms, rowwise )
-END_TPACK
+LTEST_INIT_AUTOSUITE
 
-BEGIN_TPACK( mat_minmax )
-	ADD_SIMPLE_CASE( minmax, full )
-	ADD_SIMPLE_CASE( minmax, colwise )
-END_TPACK
+AUTO_TPACK( mat_norms )
+{
+	ADD_SIMPLE_CASE( tfull_norms )
+	ADD_SIMPLE_CASE( tcolwise_norms )
+	ADD_SIMPLE_CASE( trowwise_norms )
+}
+
+AUTO_TPACK( mat_minmax )
+{
+	ADD_SIMPLE_CASE( tfull_minmax )
+	ADD_SIMPLE_CASE( tcolwise_minmax )
+}
 
 
-BEGIN_MAIN_SUITE
-	ADD_TPACK( mat_norms )
-	ADD_TPACK( mat_minmax )
-END_MAIN_SUITE
+
 
 

@@ -39,7 +39,7 @@ const unsigned int ntest_nrows = sizeof(test_nrows) / sizeof(index_t);
 
 
 #define DEFINE_ROWWISE_REDUCE_CASE( Name ) \
-		SIMPLE_CASE( rowwise_reduce, Name ) { \
+		SIMPLE_CASE( trowwise_##Name ) { \
 			const index_t n = 9; \
 			dense_matrix<double> src(max_nrows, n); \
 			dense_matrix<double> tsrc(n, max_nrows); \
@@ -63,7 +63,7 @@ const unsigned int ntest_nrows = sizeof(test_nrows) / sizeof(index_t);
 				ASSERT_MAT_APPROX(nr, 1, r, d, 1.0e-12); } }
 
 #define DEFINE_ROWWISE_REDUCE_CASE_2( Name ) \
-		SIMPLE_CASE( rowwise_reduce, Name ) { \
+		SIMPLE_CASE( trowwise_##Name ) { \
 			const index_t n = 9; \
 			dense_matrix<double> src1(max_nrows, n); \
 			dense_matrix<double> src2(max_nrows, n); \
@@ -95,6 +95,7 @@ const unsigned int ntest_nrows = sizeof(test_nrows) / sizeof(index_t);
 				ASSERT_MAT_APPROX(nr, 1, r, d, 1.0e-12); } }
 
 
+
 DEFINE_ROWWISE_REDUCE_CASE( sum )
 DEFINE_ROWWISE_REDUCE_CASE( mean )
 DEFINE_ROWWISE_REDUCE_CASE( maximum )
@@ -112,27 +113,27 @@ DEFINE_ROWWISE_REDUCE_CASE_2( diff_sqsum )
 
 DEFINE_ROWWISE_REDUCE_CASE_2( dot )
 
-BEGIN_TPACK( rowwise_reduce )
-	ADD_SIMPLE_CASE( rowwise_reduce, sum )
-	ADD_SIMPLE_CASE( rowwise_reduce, mean )
-	ADD_SIMPLE_CASE( rowwise_reduce, maximum )
-	ADD_SIMPLE_CASE( rowwise_reduce, minimum )
+LTEST_INIT_AUTOSUITE
 
-	ADD_SIMPLE_CASE( rowwise_reduce, asum )
-	ADD_SIMPLE_CASE( rowwise_reduce, amean )
-	ADD_SIMPLE_CASE( rowwise_reduce, amax )
-	ADD_SIMPLE_CASE( rowwise_reduce, sqsum )
+AUTO_TPACK( rowwise_reduce )
+{
+	ADD_SIMPLE_CASE( trowwise_sum )
+	ADD_SIMPLE_CASE( trowwise_mean )
+	ADD_SIMPLE_CASE( trowwise_maximum )
+	ADD_SIMPLE_CASE( trowwise_minimum )
 
-	ADD_SIMPLE_CASE( rowwise_reduce, diff_asum )
-	ADD_SIMPLE_CASE( rowwise_reduce, diff_amean )
-	ADD_SIMPLE_CASE( rowwise_reduce, diff_amax )
-	ADD_SIMPLE_CASE( rowwise_reduce, diff_sqsum )
+	ADD_SIMPLE_CASE( trowwise_asum )
+	ADD_SIMPLE_CASE( trowwise_amean )
+	ADD_SIMPLE_CASE( trowwise_amax )
+	ADD_SIMPLE_CASE( trowwise_sqsum )
 
-	ADD_SIMPLE_CASE( rowwise_reduce, dot )
-END_TPACK
+	ADD_SIMPLE_CASE( trowwise_diff_asum )
+	ADD_SIMPLE_CASE( trowwise_diff_amean )
+	ADD_SIMPLE_CASE( trowwise_diff_amax )
+	ADD_SIMPLE_CASE( trowwise_diff_sqsum )
+
+	ADD_SIMPLE_CASE( trowwise_dot )
+}
 
 
-BEGIN_MAIN_SUITE
-	ADD_TPACK( rowwise_reduce )
-END_MAIN_SUITE
 

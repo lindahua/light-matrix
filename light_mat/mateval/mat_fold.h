@@ -33,8 +33,8 @@
 		void fold(T& a, const T& x) const { FoldExpr; } \
 	}; \
 	template<typename T, typename Kind> \
-	struct Name##_folder<math::simd_pack<T, Kind> > { \
-		typedef math::simd_pack<T, Kind> value_type; \
+	struct Name##_folder<simd_pack<T, Kind> > { \
+		typedef simd_pack<T, Kind> value_type; \
 		LMAT_ENSURE_INLINE \
 		value_type init(const value_type& x) const { return InitExpr; } \
 		LMAT_ENSURE_INLINE \
@@ -55,11 +55,11 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	LMAT_DEFINE_SIMPLE_FOLDER( sum, x, a += x, math::sum(a) )
+	LMAT_DEFINE_SIMPLE_FOLDER( sum, x, a += x, sum(a) )
 
-	LMAT_DEFINE_SIMPLE_FOLDER( maximum, x, a = math::max(a, x), math::maximum(a) )
+	LMAT_DEFINE_SIMPLE_FOLDER( maximum, x, a = math::max(a, x), maximum(a) )
 
-	LMAT_DEFINE_SIMPLE_FOLDER( minimum, x, a = math::min(a, x), math::minimum(a) )
+	LMAT_DEFINE_SIMPLE_FOLDER( minimum, x, a = math::min(a, x), minimum(a) )
 
 
 
