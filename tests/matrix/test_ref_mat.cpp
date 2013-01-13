@@ -54,7 +54,7 @@ inline void verify_layout(const ref_matrix<double, M, N>& a, index_t m, index_t 
 	ASSERT_EQ(a.col_stride(), m);
 }
 
-MN_CASE( cref_mat, constructs )
+MN_CASE( cref_mat_constructs )
 {
 	const index_t m = M == 0 ? 3 : M;
 	const index_t n = N == 0 ? 4 : N;
@@ -73,7 +73,7 @@ MN_CASE( cref_mat, constructs )
 	ASSERT_EQ(a2.ptr_data(), ps);
 }
 
-MN_CASE( ref_mat, constructs )
+MN_CASE( ref_mat_constructs )
 {
 	const index_t m = M == 0 ? 3 : M;
 	const index_t n = N == 0 ? 4 : N;
@@ -93,7 +93,7 @@ MN_CASE( ref_mat, constructs )
 }
 
 
-MN_CASE( cref_mat, access )
+MN_CASE( cref_mat_access )
 {
 	const index_t m = M == 0 ? 3 : M;
 	const index_t n = N == 0 ? 4 : N;
@@ -128,7 +128,7 @@ MN_CASE( cref_mat, access )
 }
 
 
-MN_CASE( ref_mat, access )
+MN_CASE( ref_mat_access )
 {
 	const index_t m = M == 0 ? 3 : M;
 	const index_t n = N == 0 ? 4 : N;
@@ -163,7 +163,7 @@ MN_CASE( ref_mat, access )
 }
 
 
-MN_CASE( ref_mat, assign )
+MN_CASE( ref_mat_assign )
 {
 	const index_t m = M == 0 ? 3 : M;
 	const index_t n = N == 0 ? 4 : N;
@@ -192,7 +192,7 @@ MN_CASE( ref_mat, assign )
 	ASSERT_VEC_EQ( m * n, a1, a2 );
 }
 
-MN_CASE( ref_mat, import )
+MN_CASE( ref_mat_import )
 {
 	const index_t m = M == 0 ? 3 : M;
 	const index_t n = N == 0 ? 4 : N;
@@ -219,43 +219,34 @@ MN_CASE( ref_mat, import )
 }
 
 
+AUTO_TPACK( cref_mat_constructs )
+{
+	ADD_MN_CASE_3X3( cref_mat_constructs, 3, 4 )
+}
 
-BEGIN_TPACK( cref_mat_constructs )
-	ADD_MN_CASE_3X3( cref_mat, constructs, 3, 4 )
-END_TPACK
+AUTO_TPACK( ref_mat_constructs )
+{
+	ADD_MN_CASE_3X3( ref_mat_constructs, 3, 4 )
+}
 
-BEGIN_TPACK( ref_mat_constructs )
-	ADD_MN_CASE_3X3( ref_mat, constructs, 3, 4 )
-END_TPACK
+AUTO_TPACK( cref_mat_access )
+{
+	ADD_MN_CASE_3X3( cref_mat_access, 3, 4 )
+}
 
-BEGIN_TPACK( cref_mat_access )
-	ADD_MN_CASE_3X3( cref_mat, access, 3, 4 )
-END_TPACK
+AUTO_TPACK( ref_mat_access )
+{
+	ADD_MN_CASE_3X3( ref_mat_access, 3, 4 )
+}
 
-BEGIN_TPACK( ref_mat_access )
-	ADD_MN_CASE_3X3( ref_mat, access, 3, 4 )
-END_TPACK
+AUTO_TPACK( ref_mat_assign )
+{
+	ADD_MN_CASE_3X3( ref_mat_assign, 3, 4 )
+}
 
-BEGIN_TPACK( ref_mat_assign )
-	ADD_MN_CASE_3X3( ref_mat, assign, 3, 4 )
-END_TPACK
-
-BEGIN_TPACK( ref_mat_import )
-	ADD_MN_CASE_3X3( ref_mat, import, 3, 4 )
-END_TPACK
-
-
-
-BEGIN_MAIN_SUITE
-	ADD_TPACK( cref_mat_constructs )
-	ADD_TPACK( cref_mat_access )
-
-	ADD_TPACK( ref_mat_constructs )
-	ADD_TPACK( ref_mat_access )
-	ADD_TPACK( ref_mat_assign )
-	ADD_TPACK( ref_mat_import )
-END_MAIN_SUITE
-
-
+AUTO_TPACK( ref_mat_import )
+{
+	ADD_MN_CASE_3X3( ref_mat_import, 3, 4 )
+}
 
 

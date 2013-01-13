@@ -287,60 +287,58 @@ void test_sdd( index_t m, index_t n )
 
 
 
-T_CASE( mat_svd, svd_eq )
+T_CASE( mat_svd_eq )
 {
 	test_svd<T>(8, 8);
 }
 
-T_CASE( mat_svd, svd_gt )
+T_CASE( mat_svd_gt )
 {
 	test_svd<T>(8, 5);
 }
 
-T_CASE( mat_svd, svd_lt )
+T_CASE( mat_svd_lt )
 {
 	test_svd<T>(5, 8);
 }
 
 
-T_CASE( mat_svd, sdd_eq )
+T_CASE( mat_sdd_eq )
 {
 	test_sdd<T>(8, 8);
 }
 
-T_CASE( mat_svd, sdd_gt )
+T_CASE( mat_sdd_gt )
 {
 	test_sdd<T>(8, 5);
 }
 
-T_CASE( mat_svd, sdd_lt )
+T_CASE( mat_sdd_lt )
 {
 	test_sdd<T>(5, 8);
 }
 
 
-BEGIN_TPACK( mat_svd )
-	ADD_T_CASE( mat_svd, svd_eq, float )
-	ADD_T_CASE( mat_svd, svd_gt, float )
-	ADD_T_CASE( mat_svd, svd_lt, float )
-	ADD_T_CASE( mat_svd, svd_eq, double )
-	ADD_T_CASE( mat_svd, svd_gt, double )
-	ADD_T_CASE( mat_svd, svd_lt, double )
-END_TPACK
+AUTO_TPACK( mat_svd )
+{
+	ADD_T_CASE( mat_svd_eq, float )
+	ADD_T_CASE( mat_svd_gt, float )
+	ADD_T_CASE( mat_svd_lt, float )
+	ADD_T_CASE( mat_svd_eq, double )
+	ADD_T_CASE( mat_svd_gt, double )
+	ADD_T_CASE( mat_svd_lt, double )
+}
 
-BEGIN_TPACK( mat_sdd )
-	ADD_T_CASE( mat_svd, sdd_eq, float )
-	ADD_T_CASE( mat_svd, sdd_gt, float )
-	ADD_T_CASE( mat_svd, sdd_lt, float )
-	ADD_T_CASE( mat_svd, sdd_eq, double )
-	ADD_T_CASE( mat_svd, sdd_gt, double )
-	ADD_T_CASE( mat_svd, sdd_lt, double )
-END_TPACK
+AUTO_TPACK( mat_sdd )
+{
+	ADD_T_CASE( mat_sdd_eq, float )
+	ADD_T_CASE( mat_sdd_gt, float )
+	ADD_T_CASE( mat_sdd_lt, float )
+	ADD_T_CASE( mat_sdd_eq, double )
+	ADD_T_CASE( mat_sdd_gt, double )
+	ADD_T_CASE( mat_sdd_lt, double )
+}
 
-BEGIN_MAIN_SUITE
-	ADD_TPACK( mat_svd )
-	ADD_TPACK( mat_sdd )
-END_MAIN_SUITE
 
 
 

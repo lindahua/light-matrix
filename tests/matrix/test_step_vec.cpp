@@ -48,7 +48,7 @@ inline void verify_stepcol_layout(const Vec& a, index_t m, index_t step)
 }
 
 
-N_CASE( cstep_row, constructs )
+N_CASE( cstep_row_constructs )
 {
 	const index_t n = N == 0 ? 4 : N;
 	const index_t step = 2;
@@ -68,7 +68,7 @@ N_CASE( cstep_row, constructs )
 }
 
 
-N_CASE( step_row, constructs )
+N_CASE( step_row_constructs )
 {
 	const index_t n = N == 0 ? 4 : N;
 	const index_t step = 2;
@@ -88,7 +88,7 @@ N_CASE( step_row, constructs )
 }
 
 
-N_CASE( cstep_col, constructs )
+N_CASE( cstep_col_constructs )
 {
 	const index_t n = N == 0 ? 4 : N;
 	const index_t step = 2;
@@ -108,7 +108,7 @@ N_CASE( cstep_col, constructs )
 }
 
 
-N_CASE( step_col, constructs )
+N_CASE( step_col_constructs )
 {
 	const index_t n = N == 0 ? 4 : N;
 	const index_t step = 2;
@@ -128,7 +128,7 @@ N_CASE( step_col, constructs )
 }
 
 
-N_CASE( step_row, assign )
+N_CASE( step_row_assign )
 {
 	const index_t n = N == 0 ? 4 : N;
 	const index_t step = 2;
@@ -158,7 +158,7 @@ N_CASE( step_row, assign )
 }
 
 
-N_CASE( step_col, assign )
+N_CASE( step_col_assign )
 {
 	const index_t n = N == 0 ? 4 : N;
 	const index_t step = 2;
@@ -188,53 +188,37 @@ N_CASE( step_col, assign )
 }
 
 
-BEGIN_TPACK( cstep_row_constructs )
-	ADD_N_CASE( cstep_row, constructs, 0 )
-	ADD_N_CASE( cstep_row, constructs, 1 )
-	ADD_N_CASE( cstep_row, constructs, 4 )
-END_TPACK
+AUTO_TPACK( cstep_row_constructs )
+{
+	ADD_N_CASE_3( cstep_row_constructs, 4 )
+}
 
-BEGIN_TPACK( step_row_constructs )
-	ADD_N_CASE( step_row, constructs, 0 )
-	ADD_N_CASE( step_row, constructs, 1 )
-	ADD_N_CASE( step_row, constructs, 4 )
-END_TPACK
+AUTO_TPACK( step_row_constructs )
+{
+	ADD_N_CASE_3( step_row_constructs, 4 )
+}
 
-BEGIN_TPACK( cstep_col_constructs )
-	ADD_N_CASE( cstep_col, constructs, 0 )
-	ADD_N_CASE( cstep_col, constructs, 1 )
-	ADD_N_CASE( cstep_col, constructs, 4 )
-END_TPACK
+AUTO_TPACK( cstep_col_constructs )
+{
+	ADD_N_CASE_3( cstep_col_constructs, 4 )
+}
 
-BEGIN_TPACK( step_col_constructs )
-	ADD_N_CASE( step_col, constructs, 0 )
-	ADD_N_CASE( step_col, constructs, 1 )
-	ADD_N_CASE( step_col, constructs, 4 )
-END_TPACK
+AUTO_TPACK( step_col_constructs )
+{
+	ADD_N_CASE_3( step_col_constructs, 4 )
+}
 
 
-BEGIN_TPACK( step_row_assign )
-	ADD_N_CASE( step_row, assign, 0 )
-	ADD_N_CASE( step_row, assign, 1 )
-	ADD_N_CASE( step_row, assign, 4 )
-END_TPACK
+AUTO_TPACK( step_row_assign )
+{
+	ADD_N_CASE_3( step_row_assign, 4 )
+}
 
-BEGIN_TPACK( step_col_assign )
-	ADD_N_CASE( step_col, assign, 0 )
-	ADD_N_CASE( step_col, assign, 1 )
-	ADD_N_CASE( step_col, assign, 4 )
-END_TPACK
+AUTO_TPACK( step_col_assign )
+{
+	ADD_N_CASE_3( step_col_assign, 4 )
+}
 
-
-BEGIN_MAIN_SUITE
-	ADD_TPACK( cstep_col_constructs )
-	ADD_TPACK( step_col_constructs )
-	ADD_TPACK( cstep_row_constructs )
-	ADD_TPACK( step_row_constructs )
-
-	ADD_TPACK( step_col_assign )
-	ADD_TPACK( step_row_assign )
-END_MAIN_SUITE
 
 
 

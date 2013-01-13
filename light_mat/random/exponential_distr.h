@@ -14,7 +14,7 @@
 #define LIGHTMAT_EXPONENTIAL_DISTR_H_
 
 #include "internal/uniform_real_internal.h"
-#include <light_mat/math/simd.h>
+#include <light_mat/math/simd_math.h>
 
 namespace lmat { namespace random {
 
@@ -115,7 +115,7 @@ namespace lmat { namespace random {
 	class std_exponential_simd
 	{
 	public:
-		typedef math::simd_pack<T, Kind> result_type;
+		typedef simd_pack<T, Kind> result_type;
 
 		LMAT_ENSURE_INLINE
 		explicit std_exponential_simd()
@@ -138,7 +138,7 @@ namespace lmat { namespace random {
 	class exponential_simd
 	{
 	public:
-		typedef math::simd_pack<T, Kind> result_type;
+		typedef simd_pack<T, Kind> result_type;
 
 		LMAT_ENSURE_INLINE
 		explicit exponential_simd(T beta)

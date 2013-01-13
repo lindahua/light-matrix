@@ -198,161 +198,136 @@ namespace lmat { namespace test {
 
 /********************************************
  *
- *  general constructs
- *
- ********************************************/
-
-#define BEGIN_MAIN_SUITE \
-	ltest::test_suite lmat_main_suite( "Main" ); \
-	void lmat_add_test_packs() {
-
-#define END_MAIN_SUITE }
-
-#define ADD_TPACK( pname ) lmat_main_suite.add( create_tpack_##pname() );
-
-#define TCASE_CLASS( pname, tname ) pname##_##tname##_tests
-
-#define BEGIN_TPACK( pname ) \
-	ltest::test_pack* create_tpack_##pname() { \
-		ltest::test_pack *tpack = new ltest::test_pack( #pname );
-
-#define END_TPACK return tpack; }
-
-/********************************************
- *
  *  specific constructs
  *
  ********************************************/
 
 // simple cases
 
-#define SIMPLE_CASE( pname, tname ) \
-	class TCASE_CLASS(pname, tname) : public lmat::test::simple_case { \
+#define SIMPLE_CASE( Name ) \
+	class Name: public lmat::test::simple_case { \
 	public: \
-		TCASE_CLASS(pname, tname)() : lmat::test::simple_case( #tname ) { } \
-		virtual ~TCASE_CLASS(pname, tname)() { } \
+		Name() : lmat::test::simple_case( #Name ) { } \
+		virtual ~Name() { } \
 		virtual void run(); \
 	}; \
-	void TCASE_CLASS(pname, tname)::run()
+	void Name::run()
 
-#define ADD_SIMPLE_CASE( pname, tname ) \
-		tpack->add( new TCASE_CLASS( pname, tname )()  );
+#define ADD_SIMPLE_CASE( Name ) this->add( new Name() );
 
 // T cases
 
-#define T_CASE( pname, tname ) \
+#define T_CASE( Name ) \
 	template<typename T> \
-	class TCASE_CLASS(pname, tname) : public lmat::test::T_case<T> { \
+	class Name : public lmat::test::T_case<T> { \
 	public: \
-		TCASE_CLASS(pname, tname)() : lmat::test::T_case<T>( #tname ) { } \
-		virtual ~TCASE_CLASS(pname, tname)() { } \
+		Name() : lmat::test::T_case<T>( #Name ) { } \
+		virtual ~Name() { } \
 		virtual void run(); \
 	}; \
 	template<typename T> \
-	void TCASE_CLASS(pname, tname)<T>::run()
+	void Name<T>::run()
 
-#define ADD_T_CASE( pname, tname, ty ) \
-	tpack->add( new TCASE_CLASS( pname, tname )<ty>() );
+#define ADD_T_CASE( Name, ty ) this->add( new Name<ty>());
+
+#define ADD_T_CASE_FP( Name ) \
+		ADD_T_CASE( Name, double ) \
+		ADD_T_CASE( Name, float )
 
 // N cases
 
-#define N_CASE( pname, tname ) \
+#define N_CASE( Name ) \
 	template<int N> \
-	class TCASE_CLASS(pname, tname) : public lmat::test::N_case<N> { \
+	class Name : public lmat::test::N_case<N> { \
 	public: \
-		TCASE_CLASS(pname, tname)() : lmat::test::N_case<N>( #tname ) { } \
-		virtual ~TCASE_CLASS(pname, tname)() { } \
+		Name() : lmat::test::N_case<N>( #Name ) { } \
+		virtual ~Name() { } \
 		virtual void run(); \
 	}; \
 	template<int N> \
-	void TCASE_CLASS(pname, tname)<N>::run()
+	void Name<N>::run()
 
-#define ADD_N_CASE( pname, tname, n ) \
-		tpack->add( new TCASE_CLASS( pname, tname )<n>()  );
+#define ADD_N_CASE( Name, n ) this->add( new Name<n>() );
 
-#define ADD_N_CASE_3( pname, tname, n ) \
-		ADD_N_CASE( pname, tname, 0 ) \
-		ADD_N_CASE( pname, tname, 1 ) \
-		ADD_N_CASE( pname, tname, n )
+#define ADD_N_CASE_3( Name, n ) \
+		ADD_N_CASE( Name, 0 ) \
+		ADD_N_CASE( Name, 1 ) \
+		ADD_N_CASE( Name, n )
 
 
 // TN cases
 
-#define TN_CASE( pname, tname ) \
+#define TN_CASE( Name ) \
 	template<typename T, int N> \
-	class TCASE_CLASS(pname, tname) : public lmat::test::TN_case<T, N> { \
+	class Name : public lmat::test::TN_case<T, N> { \
 	public: \
-		TCASE_CLASS(pname, tname)() : lmat::test::TN_case<T, N>( #tname ) { } \
-		virtual ~TCASE_CLASS(pname, tname)() { } \
+		Name() : lmat::test::TN_case<T, N>( #Name ) { } \
+		virtual ~Name() { } \
 		virtual void run(); \
 	}; \
 	template<typename T, int N> \
-	void TCASE_CLASS(pname, tname)<T, N>::run()
+	void Name<T, N>::run()
 
-#define ADD_TN_CASE( pname, tname, ty, n ) \
-	tpack->add( new TCASE_CLASS( pname, tname )<ty, n>() );
+#define ADD_TN_CASE( Name, ty, n ) this->add( new Name<ty, n>() );
 
-#define ADD_TN_CASE_3( pname, tname, ty, n ) \
-		ADD_TN_CASE( pname, tname, ty, 0 ) \
-		ADD_TN_CASE( pname, tname, ty, 1 ) \
-		ADD_TN_CASE( pname, tname, ty, n )
+#define ADD_TN_CASE_3( Name, ty, n ) \
+		ADD_TN_CASE( Name, ty, 0 ) \
+		ADD_TN_CASE( Name, ty, 1 ) \
+		ADD_TN_CASE( Name, ty, n )
 
 
 // MN cases
 
-#define MN_CASE( pname, tname ) \
+#define MN_CASE( Name ) \
 	template<int M, int N> \
-	class TCASE_CLASS(pname, tname) : public lmat::test::MN_case<M, N> { \
+	class Name : public lmat::test::MN_case<M, N> { \
 	public: \
-		TCASE_CLASS(pname, tname)() : lmat::test::MN_case<M, N>( #tname ) { } \
-		virtual ~TCASE_CLASS(pname, tname)() { } \
+		Name() : lmat::test::MN_case<M, N>( #Name ) { } \
+		virtual ~Name() { } \
 		virtual void run(); \
 	}; \
 	template<int M, int N> \
-	void TCASE_CLASS(pname, tname)<M, N>::run()
+	void Name<M, N>::run()
 
-#define ADD_MN_CASE( pname, tname, m, n ) \
-		tpack->add( new TCASE_CLASS( pname, tname )<m,n>()  );
+#define ADD_MN_CASE( Name, m, n ) this->add( new Name<m,n>()  );
 
-#define ADD_MN_CASE_3X3( pname, tname, m, n ) \
-		ADD_MN_CASE( pname, tname, 0, 0 ) \
-		ADD_MN_CASE( pname, tname, 0, 1 ) \
-		ADD_MN_CASE( pname, tname, 0, n ) \
-		ADD_MN_CASE( pname, tname, 1, 0 ) \
-		ADD_MN_CASE( pname, tname, 1, 1 ) \
-		ADD_MN_CASE( pname, tname, 1, n ) \
-		ADD_MN_CASE( pname, tname, m, 0 ) \
-		ADD_MN_CASE( pname, tname, m, 1 ) \
-		ADD_MN_CASE( pname, tname, m, n )
+#define ADD_MN_CASE_3X3( Name, m, n ) \
+		ADD_MN_CASE( Name, 0, 0 ) \
+		ADD_MN_CASE( Name, 0, 1 ) \
+		ADD_MN_CASE( Name, 0, n ) \
+		ADD_MN_CASE( Name, 1, 0 ) \
+		ADD_MN_CASE( Name, 1, 1 ) \
+		ADD_MN_CASE( Name, 1, n ) \
+		ADD_MN_CASE( Name, m, 0 ) \
+		ADD_MN_CASE( Name, m, 1 ) \
+		ADD_MN_CASE( Name, m, n )
 
 
 // TMN cases
 
-#define TMN_CASE( pname, tname ) \
+#define TMN_CASE( Name ) \
 	template<typename T, int M, int N> \
-	class TCASE_CLASS(pname, tname) : public lmat::test::TMN_case<T, M, N> { \
+	class Name : public lmat::test::TMN_case<T, M, N> { \
 	public: \
-		TCASE_CLASS(pname, tname)() : lmat::test::TMN_case<T, M, N>( #tname ) { } \
-		virtual ~TCASE_CLASS(pname, tname)() { } \
+		Name() : lmat::test::TMN_case<T, M, N>( #Name ) { } \
+		virtual ~Name() { } \
 		virtual void run(); \
 	}; \
 	template<typename T, int M, int N> \
-	void TCASE_CLASS(pname, tname)<T, M, N>::run()
+	void Name<T, M, N>::run()
 
-#define ADD_TMN_CASE( pname, tname, ty, m, n ) \
-	tpack->add( new TCASE_CLASS( pname, tname )<ty, m, n>() );
+#define ADD_TMN_CASE( Name, ty, m, n ) this->add( new Name<ty, m, n>() );
 
-
-#define ADD_TMN_CASE_3X3( pname, tname, ty, m, n ) \
-		ADD_TMN_CASE( pname, tname, ty, 0, 0 ) \
-		ADD_TMN_CASE( pname, tname, ty, 0, 1 ) \
-		ADD_TMN_CASE( pname, tname, ty, 0, n ) \
-		ADD_TMN_CASE( pname, tname, ty, 1, 0 ) \
-		ADD_TMN_CASE( pname, tname, ty, 1, 1 ) \
-		ADD_TMN_CASE( pname, tname, ty, 1, n ) \
-		ADD_TMN_CASE( pname, tname, ty, m, 0 ) \
-		ADD_TMN_CASE( pname, tname, ty, m, 1 ) \
-		ADD_TMN_CASE( pname, tname, ty, m, n )
+#define ADD_TMN_CASE_3X3( Name, ty, m, n ) \
+		ADD_TMN_CASE( Name, ty, 0, 0 ) \
+		ADD_TMN_CASE( Name, ty, 0, 1 ) \
+		ADD_TMN_CASE( Name, ty, 0, n ) \
+		ADD_TMN_CASE( Name, ty, 1, 0 ) \
+		ADD_TMN_CASE( Name, ty, 1, 1 ) \
+		ADD_TMN_CASE( Name, ty, 1, n ) \
+		ADD_TMN_CASE( Name, ty, m, 0 ) \
+		ADD_TMN_CASE( Name, ty, m, 1 ) \
+		ADD_TMN_CASE( Name, ty, m, n )
 
 
 

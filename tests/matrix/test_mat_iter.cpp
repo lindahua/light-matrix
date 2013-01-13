@@ -81,68 +81,51 @@ void test_matrix_coliter()
 }
 
 
-MN_CASE( mat_iter, cont )
+MN_CASE( mat_iter_cont )
 {
 	test_matrix_matiter<cont, M, N>();
 }
 
-MN_CASE( mat_iter, bloc )
+MN_CASE( mat_iter_bloc )
 {
 	test_matrix_matiter<bloc, M, N>();
 }
 
-MN_CASE( mat_iter, grid )
+MN_CASE( mat_iter_grid )
 {
 	test_matrix_matiter<grid, M, N>();
 }
 
-MN_CASE( mat_coliter, cont )
+MN_CASE( mat_coliter_cont )
 {
 	test_matrix_coliter<cont, M, N>();
 }
 
-MN_CASE( mat_coliter, bloc )
+MN_CASE( mat_coliter_bloc )
 {
 	test_matrix_coliter<bloc, M, N>();
 }
 
-MN_CASE( mat_coliter, grid )
+MN_CASE( mat_coliter_grid )
 {
 	test_matrix_coliter<grid, M, N>();
 }
 
 
-BEGIN_TPACK( mat_iter_cont )
-	ADD_MN_CASE_3X3( mat_iter, cont, DM, DN )
-END_TPACK
 
-BEGIN_TPACK( mat_iter_bloc )
-	ADD_MN_CASE_3X3( mat_iter, bloc, DM, DN )
-END_TPACK
-
-BEGIN_TPACK( mat_iter_grid )
-	ADD_MN_CASE_3X3( mat_iter, grid, DM, DN )
-END_TPACK
-
-BEGIN_TPACK( mat_coliter_cont )
-	ADD_MN_CASE_3X3( mat_coliter, cont, DM, DN )
-END_TPACK
-
-BEGIN_TPACK( mat_coliter_bloc )
-	ADD_MN_CASE_3X3( mat_coliter, bloc, DM, DN )
-END_TPACK
-
-BEGIN_TPACK( mat_coliter_grid )
-	ADD_MN_CASE_3X3( mat_coliter, grid, DM, DN )
-END_TPACK
+AUTO_TPACK( mat_iter_cont )
+{
+	ADD_MN_CASE_3X3( mat_iter_cont, DM, DN )
+	ADD_MN_CASE_3X3( mat_iter_bloc, DM, DN )
+	ADD_MN_CASE_3X3( mat_iter_grid, DM, DN )
+}
 
 
-BEGIN_MAIN_SUITE
-	ADD_TPACK( mat_iter_cont )
-	ADD_TPACK( mat_iter_bloc )
-	ADD_TPACK( mat_iter_grid )
-	ADD_TPACK( mat_coliter_cont )
-	ADD_TPACK( mat_coliter_bloc )
-	ADD_TPACK( mat_coliter_grid )
-END_MAIN_SUITE
+AUTO_TPACK( mat_coliter_cont )
+{
+	ADD_MN_CASE_3X3( mat_coliter_cont, DM, DN )
+	ADD_MN_CASE_3X3( mat_coliter_bloc, DM, DN )
+	ADD_MN_CASE_3X3( mat_coliter_grid, DM, DN )
+}
+
 

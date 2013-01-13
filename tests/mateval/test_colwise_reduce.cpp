@@ -38,7 +38,7 @@ const unsigned int ntest_nrows = sizeof(test_nrows) / sizeof(index_t);
 
 
 #define DEFINE_COLWISE_REDUCE_CASE( Name ) \
-	SIMPLE_CASE( colwise_reduce, Name ) { \
+	SIMPLE_CASE( tcolwise_##Name ) { \
 		const index_t n = 6; \
 		dense_matrix<double> src(max_nrows, n); \
 		fill_rand(src); \
@@ -56,7 +56,7 @@ const unsigned int ntest_nrows = sizeof(test_nrows) / sizeof(index_t);
 			ASSERT_MAT_APPROX( 1, n, drow, rrow, 1.0e-12 ); } }
 
 #define DEFINE_COLWISE_REDUCE_CASE_2( Name ) \
-	SIMPLE_CASE( colwise_reduce, Name ) { \
+	SIMPLE_CASE( tcolwise_##Name ) { \
 		const index_t n = 6; \
 		dense_matrix<double> src1(max_nrows, n); \
 		dense_matrix<double> src2(max_nrows, n); \
@@ -96,26 +96,25 @@ DEFINE_COLWISE_REDUCE_CASE_2( diff_sqsum )
 DEFINE_COLWISE_REDUCE_CASE_2( dot )
 
 
-BEGIN_TPACK( colwise_reduce )
-	ADD_SIMPLE_CASE( colwise_reduce, sum )
-	ADD_SIMPLE_CASE( colwise_reduce, mean )
-	ADD_SIMPLE_CASE( colwise_reduce, maximum )
-	ADD_SIMPLE_CASE( colwise_reduce, minimum )
+AUTO_TPACK( colwise_reduce )
+{
+	ADD_SIMPLE_CASE( tcolwise_sum )
+	ADD_SIMPLE_CASE( tcolwise_mean )
+	ADD_SIMPLE_CASE( tcolwise_maximum )
+	ADD_SIMPLE_CASE( tcolwise_minimum )
 
-	ADD_SIMPLE_CASE( colwise_reduce, asum )
-	ADD_SIMPLE_CASE( colwise_reduce, amean )
-	ADD_SIMPLE_CASE( colwise_reduce, amax )
-	ADD_SIMPLE_CASE( colwise_reduce, sqsum )
+	ADD_SIMPLE_CASE( tcolwise_asum )
+	ADD_SIMPLE_CASE( tcolwise_amean )
+	ADD_SIMPLE_CASE( tcolwise_amax )
+	ADD_SIMPLE_CASE( tcolwise_sqsum )
 
-	ADD_SIMPLE_CASE( colwise_reduce, diff_asum )
-	ADD_SIMPLE_CASE( colwise_reduce, diff_amean )
-	ADD_SIMPLE_CASE( colwise_reduce, diff_amax )
-	ADD_SIMPLE_CASE( colwise_reduce, diff_sqsum )
+	ADD_SIMPLE_CASE( tcolwise_diff_asum )
+	ADD_SIMPLE_CASE( tcolwise_diff_amean )
+	ADD_SIMPLE_CASE( tcolwise_diff_amax )
+	ADD_SIMPLE_CASE( tcolwise_diff_sqsum )
 
-	ADD_SIMPLE_CASE( colwise_reduce, dot )
-END_TPACK
+	ADD_SIMPLE_CASE( tcolwise_dot )
+}
 
-BEGIN_MAIN_SUITE
-	ADD_TPACK( colwise_reduce )
-END_MAIN_SUITE
+
 

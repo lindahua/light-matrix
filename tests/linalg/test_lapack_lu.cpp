@@ -137,47 +137,46 @@ void test_gesv()
 
 
 
-T_CASE( mat_lu, solve_n )
+T_CASE( mat_lu_solve_n )
 {
 	test_lu_solve<T>('n');
 }
 
-T_CASE( mat_lu, solve_t )
+T_CASE( mat_lu_solve_t )
 {
 	test_lu_solve<T>('t');
 }
 
-T_CASE( mat_lu, inv )
+T_CASE( mat_lu_inv )
 {
 	test_inv<T>();
 }
 
-T_CASE( mat_lu, gesv )
+T_CASE( mat_gesv )
 {
 	test_gesv<T>();
 }
 
 
-BEGIN_TPACK( mat_lu_solve )
-	ADD_T_CASE( mat_lu, solve_n, float )
-	ADD_T_CASE( mat_lu, solve_n, double )
-	ADD_T_CASE( mat_lu, solve_t, float )
-	ADD_T_CASE( mat_lu, solve_t, double )
-END_TPACK
+AUTO_TPACK( mat_lu_solve )
+{
+	ADD_T_CASE( mat_lu_solve_n, float )
+	ADD_T_CASE( mat_lu_solve_n, double )
+	ADD_T_CASE( mat_lu_solve_t, float )
+	ADD_T_CASE( mat_lu_solve_t, double )
+}
 
-BEGIN_TPACK( mat_inv )
-	ADD_T_CASE( mat_lu, inv, float )
-	ADD_T_CASE( mat_lu, inv, double )
-END_TPACK
+AUTO_TPACK( mat_inv )
+{
+	ADD_T_CASE( mat_lu_inv, float )
+	ADD_T_CASE( mat_lu_inv, double )
+}
 
-BEGIN_TPACK( mat_gesv )
-	ADD_T_CASE( mat_lu, gesv, float )
-	ADD_T_CASE( mat_lu, gesv, double )
-END_TPACK
+AUTO_TPACK( mat_gesv )
+{
+	ADD_T_CASE( mat_gesv, float )
+	ADD_T_CASE( mat_gesv, double )
+}
 
-BEGIN_MAIN_SUITE
-	ADD_TPACK( mat_lu_solve )
-	ADD_TPACK( mat_inv )
-	ADD_TPACK( mat_gesv )
-END_MAIN_SUITE
+
 

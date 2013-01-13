@@ -14,7 +14,7 @@
 
 using namespace lmat;
 
-MN_CASE( mat_ct_props, dims )
+MN_CASE( mat_ct_dims )
 {
 	typedef dense_matrix<double, M, N> mat_t;
 
@@ -28,7 +28,7 @@ MN_CASE( mat_ct_props, dims )
 }
 
 
-MN_CASE( mat_ct_props, layout )
+MN_CASE( mat_ct_layout )
 {
 	typedef dense_matrix<double, M, N> dens_t;
 	typedef ref_matrix<double, M, N> cont_t;
@@ -105,7 +105,7 @@ struct ternary_common_nrows
 };
 
 
-SIMPLE_CASE( mat_common_props, nrows_compat )
+SIMPLE_CASE( mat_ct_compat_nrows )
 {
 	typedef binary_compatible_nrows<0, 3> t00;
 	ASSERT_CT_VALUE( t00,  true );
@@ -157,7 +157,7 @@ SIMPLE_CASE( mat_common_props, nrows_compat )
 }
 
 
-SIMPLE_CASE( mat_common_props, nrows )
+SIMPLE_CASE( mat_ct_common_nrows )
 {
 	typedef unary_common_nrows<0> t0;
 	ASSERT_CT_VALUE( t0, 0 );
@@ -254,7 +254,7 @@ struct ternary_common_ncols
 
 
 
-SIMPLE_CASE( mat_common_props, ncols_compat )
+SIMPLE_CASE( mat_ct_compat_ncols )
 {
 	typedef binary_compatible_ncols<0, 3> t00;
 	ASSERT_CT_VALUE( t00,  true );
@@ -306,7 +306,7 @@ SIMPLE_CASE( mat_common_props, ncols_compat )
 }
 
 
-SIMPLE_CASE( mat_common_props, ncols )
+SIMPLE_CASE( mat_ct_common_ncols )
 {
 	typedef unary_common_ncols<0> t0;
 	ASSERT_CT_VALUE( t0, 0 );
@@ -352,27 +352,24 @@ SIMPLE_CASE( mat_common_props, ncols )
 }
 
 
+AUTO_TPACK( mat_ct_dims )
+{
+	ADD_MN_CASE_3X3( mat_ct_dims, 3, 4 )
+}
 
-BEGIN_TPACK( mat_ct_dims )
-	ADD_MN_CASE_3X3( mat_ct_props, dims, 3, 4 )
-END_TPACK
+AUTO_TPACK( mat_ct_layout )
+{
+	ADD_MN_CASE_3X3( mat_ct_layout, 3, 4 )
+}
 
-BEGIN_TPACK( mat_ct_layout )
-	ADD_MN_CASE_3X3( mat_ct_props, layout, 3, 4 )
-END_TPACK
+AUTO_TPACK( mat_common_dims )
+{
+	ADD_SIMPLE_CASE( mat_ct_compat_nrows )
+	ADD_SIMPLE_CASE( mat_ct_common_nrows )
+	ADD_SIMPLE_CASE( mat_ct_compat_ncols )
+	ADD_SIMPLE_CASE( mat_ct_common_ncols )
+}
 
-BEGIN_TPACK( mat_common_dims )
-	ADD_SIMPLE_CASE( mat_common_props, nrows_compat )
-	ADD_SIMPLE_CASE( mat_common_props, nrows )
-	ADD_SIMPLE_CASE( mat_common_props, ncols_compat )
-	ADD_SIMPLE_CASE( mat_common_props, ncols )
-END_TPACK
-
-BEGIN_MAIN_SUITE
-	ADD_TPACK( mat_ct_dims )
-	ADD_TPACK( mat_ct_layout )
-	ADD_TPACK( mat_common_dims )
-END_MAIN_SUITE
 
 
 

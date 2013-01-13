@@ -16,11 +16,7 @@
 #include <light_mat/common/prim_types.h>
 #include <light_mat/common/mask_type.h>
 
-// macros to declare fun tags
-
-
 namespace lmat { namespace ftags {
-
 
 	// arithmetic
 
@@ -31,12 +27,12 @@ namespace lmat { namespace ftags {
 	struct neg_ { };
 
 	struct abs_ { };
-	struct sqr_ { };
-	struct cube_ { };
+	struct fma_ { };
 
 	struct max_ { };
 	struct min_ { };
 	struct clamp_ { };
+	struct cond_ { };
 
 	// comparison
 
@@ -55,23 +51,52 @@ namespace lmat { namespace ftags {
 	struct logical_eq_ { };
 	struct logical_ne_ { };
 
+	// simple power functions
 
-	// real math
+	struct sqr_ { };
+	struct cube_ { };
 
-	struct fma_ { };
 	struct rcp_ { };
 	struct sqrt_ { };
 	struct rsqrt_ { };
-	struct pow_ { };
+
+	// rounding
 
 	struct floor_ { };
 	struct ceil_ { };
+	struct round_ { };
+	struct trunc_ { };
+
+	// numeric predicates
+
+	struct signbit_ { };
+	struct isfinite_ { };
+	struct isinf_ { };
+	struct isnan_ { };
+
+	// ******************************
+
+	// power functions
+
+	struct pow_ { };
+	struct cbrt_ { };
+	struct hypot_ { };
+
+	// exp & log
 
 	struct exp_ { };
 	struct log_ { };
 	struct log10_ { };
 	struct xlogx_ { };
 	struct xlogy_ { };
+
+	struct exp2_ { };
+	struct log2_ { };
+	struct exp10_ { };
+	struct expm1_ { };
+	struct log1p_ { };
+
+	// trigonometry
 
 	struct sin_ { };
 	struct cos_ { };
@@ -82,40 +107,29 @@ namespace lmat { namespace ftags {
 	struct atan_ { };
 	struct atan2_ { };
 
+	// hyperbolic
+
 	struct sinh_ { };
 	struct cosh_ { };
 	struct tanh_ { };
-
-	// C++11 real math
-
-	struct cbrt_ { };
-	struct hypot_ { };
-
-	struct round_ { };
-	struct trunc_ { };
-
-	struct exp2_ { };
-	struct log2_ { };
-	struct expm1_ { };
-	struct log1p_ { };
 
 	struct asinh_ { };
 	struct acosh_ { };
 	struct atanh_ { };
 
+	// ******************************
+
+	// special functions
+
 	struct erf_ { };
 	struct erfc_ { };
+	struct erfinv_ { };
+	struct erfcinv_ { };
+	struct norminv_ { };
+
 	struct lgamma_ { };
 	struct tgamma_ { };
-
-	// numeric predicates
-
-	struct signbit_ { };
-	struct isfinite_ { };
-	struct isinf_ { };
-	struct isnan_ { };
-
-	struct cond_ { };
+	struct psi_ { };
 
 } }
 

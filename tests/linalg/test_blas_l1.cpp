@@ -184,17 +184,17 @@ void test_scal()
 
 
 #define DEFINE_BLAS_L1_CASE( Name ) \
-	TMN_CASE( mat_blas1, Name##_cont ) { test_##Name<cont, T, M, N>(); } \
-	TMN_CASE( mat_blas1, Name##_bloc ) { test_##Name<bloc, T, M, N>(); } \
-	TMN_CASE( mat_blas1, Name##_grid ) { test_##Name<grid, T, M, N>(); } \
-	BEGIN_TPACK( mat_##Name ) \
-		ADD_TMN_CASE_3X3( mat_blas1, Name##_cont, float, DM, DN ) \
-		ADD_TMN_CASE_3X3( mat_blas1, Name##_cont, double, DM, DN ) \
-		ADD_TMN_CASE( mat_blas1, Name##_bloc, float, 1, 0 ) \
-		ADD_TMN_CASE( mat_blas1, Name##_bloc, double, 1, DN ) \
-		ADD_TMN_CASE( mat_blas1, Name##_grid, float, 0, 1 ) \
-		ADD_TMN_CASE( mat_blas1, Name##_grid, double, DM, 1 ) \
-	END_TPACK
+	TMN_CASE( mat_blas_##Name##_cont ) { test_##Name<cont, T, M, N>(); } \
+	TMN_CASE( mat_blas_##Name##_bloc ) { test_##Name<bloc, T, M, N>(); } \
+	TMN_CASE( mat_blas_##Name##_grid ) { test_##Name<grid, T, M, N>(); } \
+	AUTO_TPACK( mat_blas_##Name ) { \
+		ADD_TMN_CASE_3X3( mat_blas_##Name##_cont, float, DM, DN ) \
+		ADD_TMN_CASE_3X3( mat_blas_##Name##_cont, double, DM, DN ) \
+		ADD_TMN_CASE( mat_blas_##Name##_bloc, float, 1, 0 ) \
+		ADD_TMN_CASE( mat_blas_##Name##_bloc, double, 1, DN ) \
+		ADD_TMN_CASE( mat_blas_##Name##_grid, float, 0, 1 ) \
+		ADD_TMN_CASE( mat_blas_##Name##_grid, double, DM, 1 ) \
+	}
 
 DEFINE_BLAS_L1_CASE( asum )
 DEFINE_BLAS_L1_CASE( axpy )
@@ -202,13 +202,4 @@ DEFINE_BLAS_L1_CASE( nrm2 )
 DEFINE_BLAS_L1_CASE( dot )
 DEFINE_BLAS_L1_CASE( rot )
 DEFINE_BLAS_L1_CASE( scal )
-
-BEGIN_MAIN_SUITE
-	ADD_TPACK( mat_asum )
-	ADD_TPACK( mat_axpy )
-	ADD_TPACK( mat_nrm2 )
-	ADD_TPACK( mat_dot )
-	ADD_TPACK( mat_rot )
-	ADD_TPACK( mat_scal )
-END_MAIN_SUITE
 

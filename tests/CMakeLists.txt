@@ -8,36 +8,7 @@ enable_testing()
 include_directories(..)
 include_directories($ENV{LIGHT_TEST_HOME})
 
-#==========================================================
-#
-#    compiler configurations
-#
-#==========================================================
-
-include("../cmake_modules/DetectISA.cmake")
-
-set(CMAKE_BUILD_TYPE "Release")
-
-if (MSVC)
-	set(LANG_FLAGS "${ARCH_FLAG} /EHsc")
-	set(WARNING_FLAGS "/W4")
-else (MSVC)
-	set(LANG_FLAGS "-std=c++0x -pedantic -m64 ${ARCH_FLAG}")
-	set(WARNING_FLAGS "-Wall -Wextra -Wconversion -Wformat -Wno-unused-parameter ")
-endif (MSVC)
-
-if (${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
-	set(LANG_FLAGS "${LANG_FLAGS} -stdlib=libc++ -Qunused-arguments")
-	set(CMAKE_CXX_COMPILER "clang++")
-endif (${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
-
-set(TEST_CXX_FLAGS "${LANG_FLAGS} ${WARNING_FLAGS}")
-
-set(CMAKE_CXX_FLAGS "${TEST_CXX_FLAGS}")
-
-message(STATUS "[LMAT] CMAKE_CXX_COMPILER_ID = ${CMAKE_CXX_COMPILER_ID}")
-message(STATUS "[LMAT] CMAKE_CXX_FLAGS = ${CMAKE_CXX_FLAGS}")
-
+include("../cmake_modules/CompilerConfig.cmake")
 
 #==========================================================
 #
@@ -49,59 +20,33 @@ set(CMAKE_MODULE_PATH "../cmake_modules" ${CMAKE_MODULE_PATH})
 
 # Intel SVML 
 
-set(SVML_PATH "$ENV{ICC_LIBPATH}")
-
-if (SVML_PATH)
-
-    message(STATUS "[LMAT] SVML_PATH = ${SVML_PATH}")
-
-    if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-    	find_library(SVML svml_disp
-    		HINTS ${SVML_PATH})
-    	find_library(LIBIRC libirc 
-    		HINTS ${SVML_PATH})
-    else (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-    	find_library(SVML svml 
-    		HINTS ${SVML_PATH})
-    endif (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-    
-    if (SVML_NOT_FOUND)
-        message(SEND_ERROR "Intel SVML (Short Vector Math Library) is NOT found.")
-    endif (SVML_NOT_FOUND)
-
-else (SVML_PATH)
-    message(STATUS "[LMAT] SVML is not used")
-endif (SVML_PATH)
+find_package(SVML)
+if (SVML_FOUND)
+message(STATUS "[LMAT] Intel SVML found: ${SVML_PATH}")
+else (SVML_FOUND)
+message(STATUS "[LMAT] Intel SVML not found")
+endif (SVML_FOUND)
 
 # AMD LibM
 
-set(LIBM_PATH "$ENV{AMDLIBM_PATH}")
-
-if ( LIBM_PATH )
-
-    message(STATUS "[LMAT] LIBM_PATH = ${LIBM_PATH}")
-
-    set(AMDLIBM_PATH "$ENV{AMDLIBM_PATH}/lib/dynamic")
-
-    find_library(AMDLIBM amdlibm
-        HINTS ${AMDLIBM_PATH})
-    
-    if (AMDLIBM_NOT_FOUND)
-        message(SEND_ERROR "AMD LibM is NOT found.")
-    endif (AMDLIBM_NOT_FOUND)
-
-else (LIBM_PATH)
-    
-    message(STATUS "[LMAT] AMD LibM is not used.") 
-
-endif ( LIBM_PATH )
-
+find_package(LIBM)
+if (LIBM_FOUND)
+message(STATUS "[LMAT] AMD LibM found: ${LIBM_PATH}")
+else (LIBM_FOUND)
+message(STATUS "[LMAT] AMD LibM not found")
+endif (LIBM_FOUND)
 
 # Intel MKL
 
 find_package(MKL)
-
+if (MKL_FOUND)
 message(STATUS "[LMAT] Intel MKL found: ${MKLROOT_PATH}")
+else (MKL_FOUND)
+message(STATUS "[LMAT] Intel MKL not found")
+endif (MKL_FOUND)
+
+set(BLAS_FOUND MKL_FOUND)
+set(LAPACK_FOUND MKL_FOUND)
 
 
 #==========================================================
@@ -147,53 +92,76 @@ set(COMMON_HS_EX
     ${CONFIG_HS}
     ${COMMON_HS})
     
-# math module
-    
-set(MATH_FUNBASE_HS_
-    ${INC}/math/math_base.h
-    ${INC}/math/math_constants.h
-    ${INC}/math/fun_tags.h
-    ${INC}/math/functor_base.h
-    ${INC}/math/math_functors.h)
-    
+# simd module
+
 set(SIMD_BASE_HS_
-    ${INC}/math/internal/numrepr_format.h
-    ${INC}/math/simd_arch.h
-    ${INC}/math/simd_base.h
-    ${INC}/math/simd_debug.h)
+    ${INC}/simd/internal/numrepr_format.h
+    ${INC}/simd/simd_arch.h
+    ${INC}/simd/simd_base.h
+    ${INC}/simd/simd_debug.h)
     
 set(SSE_HS_
-    ${INC}/math/internal/sse_helpers.h
-    ${INC}/math/internal/sse_testz_impl.h
-    ${INC}/math/internal/sse2_round_impl.h
-    ${INC}/math/internal/sse_math_emulate.h
-    ${INC}/math/sse_packs.h
-    ${INC}/math/sse_bpacks.h
-    ${INC}/math/sse_ops.h
-    ${INC}/math/sse_math.h
-    ${INC}/math/sse_reduce.h
-    ${INC}/math/sse.h)
+    ${INC}/simd/internal/sse_helpers.h
+    ${INC}/simd/internal/sse_testz_impl.h
+    ${INC}/simd/internal/sse2_round_impl.h
+    ${INC}/simd/internal/sse_fpclass_impl.h
+    ${INC}/simd/sse_packs.h
+    ${INC}/simd/sse_bpacks.h
+    ${INC}/simd/sse_arith.h
+    ${INC}/simd/sse_pred.h
+    ${INC}/simd/sse_reduce.h
+    ${INC}/simd/sse.h)
     
 set(AVX_HS_
-    ${INC}/math/internal/avx_helpers.h
-    ${INC}/math/internal/avx_math_emulate.h
-    ${INC}/math/avx_packs.h
-    ${INC}/math/avx_bpacks.h
-    ${INC}/math/avx_ops.h
-    ${INC}/math/avx_math.h
-    ${INC}/math/avx_reduce.h
-    ${INC}/math/avx.h)
+    ${INC}/simd/internal/avx_helpers.h
+    ${INC}/simd/avx_packs.h
+    ${INC}/simd/avx_bpacks.h
+    ${INC}/simd/avx_arith.h
+    ${INC}/simd/avx_pred.h
+    ${INC}/simd/avx_reduce.h
+    ${INC}/simd/avx.h) 
     
-set(MATH_HS
-    ${MATH_FUNBASE_HS_}
+set(SIMD_HS
     ${SIMD_BASE_HS_}
     ${SSE_HS_}
-    ${AVX_HS_}
-    ${INC}/math/simd.h)    
+    ${AVX_HS_})    
+    
+set(SIMD_HS_EX
+    ${CONFIG_HS}
+    ${COMMON_HS}
+    ${SIMD_HS})    
+    
+# math module
+    
+set(MATH_BASE_HS_
+    ${INC}/math/internal/cmath_win32.h
+    ${INC}/math/internal/svml_import.h
+    ${INC}/math/internal/libm_simd_import.h
+    ${INC}/math/math_base.h
+    ${INC}/math/math_constants.h
+    ${INC}/math/math.h
+    ${INC}/math/simd_math.h)
+    
+set(MATH_SPECIAL_HS_
+    ${INC}/math/internal/norminv_impl.h
+    ${INC}/math/math_special.h)
+    
+set(MATH_FUNCTOR_HS_
+    ${INC}/math/fun_tags.h
+    ${INC}/math/functor_base.h
+    ${INC}/math/basic_functors.h
+    ${INC}/math/math_functors.h
+    ${INC}/math/special_functors.h) 
+    
+set(MATH_HS
+    ${MATH_BASE_HS_}
+    ${MATH_SPECIAL_HS_}
+    ${MATH_FUNCTOR_HS_})    
     
 set(MATH_HS_EX
     ${CONFIG_HS}
     ${COMMON_HS}
+    ${SIMD_HS}
     ${MATH_HS})
     
 # matrix module    
@@ -260,27 +228,11 @@ set(MATRIX_HS_EX
 set(MATRIX_EVAL_HS_
     ${INC}/mateval/internal/ewise_eval_internal.h
     ${INC}/mateval/mateval_fwd.h
-    ${INC}/mateval/fun_maps.h
     ${INC}/mateval/common_kernels.h
     ${INC}/mateval/vec_accessors.h
     ${INC}/mateval/multicol_accessors.h
     ${INC}/mateval/macc_policy.h
     ${INC}/mateval/ewise_eval.h)
-    
-set(MAP_EXPR_HS_
-    ${INC}/mateval/internal/map_expr_internal.h
-    ${INC}/mateval/map_accessors.h
-    ${INC}/mateval/map_expr.h
-    ${INC}/mateval/map_expr_inspect.h
-    ${INC}/mateval/mat_arith.h
-    ${INC}/mateval/mat_emath.h
-    ${INC}/mateval/mat_cast.h
-    ${INC}/mateval/mat_pred.h)
-    
-set(OTHER_EXPR_HS_
-    ${INC}/mateval/repvec_expr.h
-    ${INC}/mateval/subs_expr.h
-    ${INC}/mateval/mat_zip.h)  
     
 set(MATRIX_REDUC_HS_
     ${INC}/mateval/internal/mat_fold_internal.h
@@ -291,7 +243,7 @@ set(MATRIX_REDUC_HS_
     ${INC}/mateval/mat_enorms.h
     ${INC}/mateval/mat_minmax.h
     ${INC}/mateval/mat_allany.h
-    ${INC}/mateval/mat_compare.h)   
+    ${INC}/mateval/mat_compare.h)    
     
 set(MATRIX_ALG_HS_
     ${INC}/mateval/internal/matrix_find_internal.h
@@ -300,8 +252,6 @@ set(MATRIX_ALG_HS_
     
 set(MATEVAL_HS
     ${MATRIX_EVAL_HS_}
-    ${MAP_EXPR_HS_}
-    ${OTHER_EXPR_HS_}
     ${MATRIX_REDUC_HS_}
     ${MATRIX_ALG_HS_}
     ${INC}/mateval/mateval.h)
@@ -309,9 +259,38 @@ set(MATEVAL_HS
 set(MATEVAL_HS_EX
     ${CONFIG_HS}
     ${COMMON_HS}
+    ${SIMD_HS}
     ${MATH_HS}
     ${MATRIX_HS}
     ${MATEVAL_HS})
+    
+# matrix expression 
+
+set(MAP_EXPR_HS_
+    ${INC}/matexpr/internal/map_expr_internal.h
+    ${INC}/matexpr/map_accessors.h
+    ${INC}/matexpr/map_expr.h
+    ${INC}/matexpr/map_expr_inspect.h
+    ${INC}/matexpr/matfun_base.h
+    ${INC}/matexpr/mat_arith.h
+    ${INC}/matexpr/mat_emath.h
+    ${INC}/matexpr/mat_special.h
+    ${INC}/matexpr/mat_cast.h
+    ${INC}/matexpr/mat_pred.h)
+    
+set(OTHER_EXPR_HS_
+    ${INC}/matexpr/repvec_expr.h
+    ${INC}/matexpr/subs_expr.h
+    ${INC}/matexpr/mat_zip.h) 
+    
+set(MATEXPR_HS
+    ${MAP_EXPR_HS_}
+    ${OTHER_EXPR_HS_})
+
+set(MATEXPR_HS_EX
+    ${MATEVAL_HS_EX}
+    ${MATEXPR_HS})
+               
     
 # linear algebra
     
@@ -390,21 +369,19 @@ set(LMAT_COMMON_TESTS
     test_memory
     test_blocks)
 
-# math module
+# simd module
 
 set(SSE_TEST_HS
     ${COMMON_HS_EX}
     ${SIMD_BASE_HS_}
     ${SSE_HS_})
 
-add_executable(test_sse_packs  ${SSE_TEST_HS} math/test_sse_packs.cpp)
-add_executable(test_sse_bpacks ${SSE_TEST_HS} math/test_sse_bpacks.cpp)
-add_executable(test_sse_ops    ${SSE_TEST_HS} math/test_sse_ops.cpp)
-add_executable(test_sse_round  ${SSE_TEST_HS} math/test_sse_round.cpp)
-add_executable(test_sse_reduce ${SSE_TEST_HS} math/test_sse_reduce.cpp)
-if (SVML_PATH)
-add_executable(test_sse_math_svml ${SSE_TEST_HS} math/test_sse_math.cpp)
-endif (SVML_PATH)
+add_executable(test_sse_packs  ${SSE_TEST_HS} simd/test_sse_packs.cpp)
+add_executable(test_sse_bpacks ${SSE_TEST_HS} simd/test_sse_bpacks.cpp)
+add_executable(test_sse_arith  ${SSE_TEST_HS} simd/test_sse_arith.cpp)
+add_executable(test_sse_pred   ${SSE_TEST_HS} simd/test_sse_pred.cpp)
+add_executable(test_sse_round  ${SSE_TEST_HS} simd/test_sse_round.cpp)
+add_executable(test_sse_reduce ${SSE_TEST_HS} simd/test_sse_reduce.cpp)
 
 set(AVX_TEST_HS
     ${COMMON_HS_EX}
@@ -412,20 +389,19 @@ set(AVX_TEST_HS
     ${AVX_HS_})
 
 if (ALLOW_AVX)
-add_executable(test_avx_packs  ${AVX_TEST_HS} math/test_avx_packs.cpp)
-add_executable(test_avx_bpacks ${AVX_TEST_HS} math/test_avx_bpacks.cpp)
-add_executable(test_avx_ops    ${AVX_TEST_HS} math/test_avx_ops.cpp)
-add_executable(test_avx_round  ${AVX_TEST_HS} math/test_avx_round.cpp)
-add_executable(test_avx_reduce ${AVX_TEST_HS} math/test_avx_reduce.cpp)
-if (SVML_PATH)
-add_executable(test_avx_math_svml ${AVX_TEST_HS} math/test_avx_math.cpp)
-endif (SVML_PATH)
+add_executable(test_avx_packs  ${AVX_TEST_HS} simd/test_avx_packs.cpp)
+add_executable(test_avx_bpacks ${AVX_TEST_HS} simd/test_avx_bpacks.cpp)
+add_executable(test_avx_arith  ${SSE_TEST_HS} simd/test_avx_arith.cpp)
+add_executable(test_avx_pred   ${SSE_TEST_HS} simd/test_avx_pred.cpp)
+add_executable(test_avx_round  ${AVX_TEST_HS} simd/test_avx_round.cpp)
+add_executable(test_avx_reduce ${AVX_TEST_HS} simd/test_avx_reduce.cpp)
 endif (ALLOW_AVX)
 
 set(LMAT_SSE_TESTS
     test_sse_packs
     test_sse_bpacks
-    test_sse_ops
+    test_sse_arith
+    test_sse_pred
     test_sse_round
     test_sse_reduce)
 
@@ -433,30 +409,33 @@ if (ALLOW_AVX)
 set(LMAT_AVX_TESTS
     test_avx_packs
     test_avx_bpacks
-    test_avx_ops
+    test_avx_arith
+    test_avx_pred
     test_avx_round
     test_avx_reduce)
 endif (ALLOW_AVX)
 
-if (SVML_PATH)
-set(LMAT_SSE_TESTS
-    ${LMAT_SSE_TESTS}
-    test_sse_math_svml)
 if (ALLOW_AVX)
-set(LMAT_AVX_TESTS
-    ${LMAT_AVX_TESTS}
-    test_avx_math_svml)
-endif (ALLOW_AVX)
-endif (SVML_PATH)
-
-if (ALLOW_AVX)
-set(LMAT_MATH_TESTS
+set(LMAT_SIMD_TESTS
     ${LMAT_SSE_TESTS}
     ${LMAT_AVX_TESTS})
 else (ALLOW_AVX)
-set(LMAT_MATH_TESTS
+set(LMAT_SIMD_TESTS
     ${LMAT_SSE_TESTS})
 endif (ALLOW_AVX) 
+
+# math module
+
+if (SVML_FOUND)
+
+add_executable(test_simd_math_svml ${MATH_HS_EX} math/test_simd_math.cpp)
+add_executable(test_simd_special ${MATH_HS_EX} math/test_simd_special.cpp)
+
+set(LMAT_MATH_TESTS
+    test_simd_math_svml
+    test_simd_special)
+
+endif (SVML_FOUND)
 
 # matrix module
 
@@ -530,34 +509,16 @@ set(LMAT_MATRIX_TESTS
 
 set(MATEVAL_TEST_HS
     ${MATRIX_HS}
+    ${MATH_HS}
     ${MATRIX_EVAL_HS_})
     
 add_executable(test_linear_ewise ${MATEVAL_TEST_HS} mateval/test_linear_ewise.cpp)    
 add_executable(test_percol_ewise ${MATEVAL_TEST_HS} mateval/test_percol_ewise.cpp)
 add_executable(test_ewise_accum ${MATEVAL_TEST_HS}  mateval/test_ewise_accum.cpp)
 
-set(MAPEXPR_TEST_HS
-    ${MATRIX_HS}
-    ${MATRIX_EVAL_HS_}
-    ${MAP_EXPR_HS_})
-    
-add_executable(test_map_expr ${MAPEXPR_TEST_HS} mateval/test_map_expr.cpp)
-add_executable(test_mat_arith ${MAPEXPR_TEST_HS} mateval/test_mat_arith.cpp)
-add_executable(test_mat_emath ${MAPEXPR_TEST_HS} mateval/test_mat_emath.cpp)
-add_executable(test_mat_cast ${MAPEXPR_TEST_HS} mateval/test_mat_cast.cpp)
-add_executable(test_mat_pred ${MAPEXPR_TEST_HS} mateval/test_mat_pred.cpp)
-
-set(OTHEREXPR_TEST_HS
-    ${MATRIX_HS}
-    ${MATRIX_EVAL_HS_}
-    ${OTHER_EXPR_HS_})
-
-add_executable(test_repvecs ${OTHEREXPR_TEST_HS} mateval/test_repvecs.cpp)
-add_executable(test_subs_expr ${OTHEREXPR_TEST_HS} mateval/test_subs_expr.cpp)
-add_executable(test_mat_zip ${OTHEREXPR_TEST_HS} mateval/test_mat_zip.cpp)
-
 set(MATREDUC_TEST_HS
     ${MATRIX_HS}
+    ${MATH_HS}
     ${MATRIX_EVAL_HS_}
     ${MAP_EXPR_HS_}
     ${MATRIX_REDUC_HS_})
@@ -579,23 +540,10 @@ set(MATALG_TEST_HS
 add_executable(test_mat_find ${MATALG_TEST_HS} mateval/test_mat_find.cpp)
 add_executable(test_mat_sort ${MATALG_TEST_HS} mateval/test_mat_sort.cpp)
 
-set(MATEVAL_ALL_TEST_HS
-    ${MATEVAL_HS_EX})
-
-add_executable(test_cpd_ewise ${MATEVAL_ALL_TEST_HS} mateval/test_cpd_ewise.cpp)
-
 set(LMAT_MATEVAL_TESTS
     test_linear_ewise
 	test_percol_ewise
 	test_ewise_accum
-	test_map_expr
-	test_mat_arith
-	test_mat_emath
-	test_mat_cast
-	test_mat_pred
-	test_repvecs
-	test_subs_expr
-	test_mat_zip
 	test_full_reduce
 	test_colwise_reduce
 	test_rowwise_reduce
@@ -604,11 +552,53 @@ set(LMAT_MATEVAL_TESTS
 	test_mat_compare
 	test_mat_find
 	test_mat_sort
+	)
+
+
+# matrix expressions
+
+set(MAPEXPR_TEST_HS
+    ${MATRIX_HS}
+    ${MATH_HS}
+    ${MATRIX_EVAL_HS_}
+    ${MAP_EXPR_HS_})
+    
+add_executable(test_map_expr ${MAPEXPR_TEST_HS} matexpr/test_map_expr.cpp)
+add_executable(test_mat_arith ${MAPEXPR_TEST_HS} matexpr/test_mat_arith.cpp)
+add_executable(test_mat_emath ${MAPEXPR_TEST_HS} matexpr/test_mat_emath.cpp)
+add_executable(test_mat_special ${MAPEXPR_TEST_HS} matexpr/test_mat_special.cpp)
+add_executable(test_mat_cast ${MAPEXPR_TEST_HS} matexpr/test_mat_cast.cpp)
+add_executable(test_mat_pred ${MAPEXPR_TEST_HS} matexpr/test_mat_pred.cpp)
+
+set(OTHEREXPR_TEST_HS
+    ${MATRIX_HS}
+    ${MATH_HS}
+    ${MATRIX_EVAL_HS_}
+    ${OTHER_EXPR_HS_})
+
+add_executable(test_repvecs ${OTHEREXPR_TEST_HS} matexpr/test_repvecs.cpp)
+add_executable(test_subs_expr ${OTHEREXPR_TEST_HS} matexpr/test_subs_expr.cpp)
+add_executable(test_mat_zip ${OTHEREXPR_TEST_HS} matexpr/test_mat_zip.cpp)
+
+add_executable(test_cpd_ewise ${MATEXPR_HS_EX} matexpr/test_cpd_ewise.cpp)
+
+set(LMAT_MATEXPR_TESTS
+	test_map_expr
+	test_mat_arith
+	test_mat_emath
+	test_mat_special
+	test_mat_cast
+	test_mat_pred
+	test_repvecs
+	test_subs_expr
+	test_mat_zip
 	test_cpd_ewise
-)
+	)
 
 
 # linear algebra module
+
+if (BLAS_FOUND)
 
 set(BLAS_TEST_HS
     ${MATRIX_HS}
@@ -617,6 +607,18 @@ set(BLAS_TEST_HS
 add_executable(test_blas_l1 ${BLAS_TEST_HS} linalg/test_blas_l1.cpp)
 add_executable(test_blas_l2 ${BLAS_TEST_HS} linalg/test_blas_l2.cpp)
 add_executable(test_blas_l3 ${BLAS_TEST_HS} linalg/test_blas_l3.cpp)
+
+set(LMAT_BLAS_TESTS
+    test_blas_l1
+    test_blas_l2
+    test_blas_l3
+)
+
+else (BLAS_FOUND)
+set(LMAT_BLAS_TESTS)
+endif(BLAS_FOUND)
+
+if (LAPACK_FOUND)
 
 set(LAPACK_TEST_HS
     ${MATRIX_HS}
@@ -629,16 +631,20 @@ add_executable(test_lapack_qr ${LAPACK_TEST_HS} linalg/test_lapack_qr.cpp)
 add_executable(test_lapack_syev ${LAPACK_TEST_HS} linalg/test_lapack_syev.cpp)
 add_executable(test_lapack_svd ${LAPACK_TEST_HS} linalg/test_lapack_svd.cpp)
 
-set(LMAT_LINALG_TESTS
-    test_blas_l1
-    test_blas_l2
-    test_blas_l3
+set(LMAT_LAPACK_TESTS
     test_lapack_lu
     test_lapack_chol
     test_lapack_qr
     test_lapack_syev
     test_lapack_svd)
 
+elseif(LAPACK_FOUND)
+set(LMAT_LAPACK_TESTS)
+endif (LAPACK_FOUND)
+
+set(LMAT_LINALG_TESTS
+    ${LMAT_BLAS_TESTS}
+    ${LMAT_LAPACK_TESTS})
     
 # random module
 
@@ -676,15 +682,17 @@ set(LMAT_RANDOM_TESTS
     test_sfmt
     test_discrete_distrs
     test_real_distrs)        
-    
+
     
 # all
 
 set(LMAT_ALL_TESTS
     ${LMAT_COMMON_TESTS}
+    ${LMAT_SIMD_TESTS}
     ${LMAT_MATH_TESTS}
     ${LMAT_MATRIX_TESTS}
     ${LMAT_MATEVAL_TESTS}
+    ${LMAT_MATEXPR_TESTS}
     ${LMAT_LINALG_TESTS}
     ${LMAT_RANDOM_TESTS}
 )
@@ -701,43 +709,38 @@ set(LMAT_ALL_TESTS
 if (${CMAKE_CXX_COMPILER_ID} MATCHES "GNU")
 set_target_properties(test_dense_eval PROPERTIES COMPILE_FLAGS "-Wno-free-nonheap-object")
 endif (${CMAKE_CXX_COMPILER_ID} MATCHES "GNU")
-    
+ 
+   
 # Link to SVML
 
-if (SVML_PATH)
+if (SVML_FOUND)
 
 set(TESTS_USING_SVML
-    test_sse_math_svml
+    test_simd_math_svml
+    test_simd_special
     test_mat_emath
+    test_mat_special
     test_cpd_ewise
     test_real_distrs)
-    
-if (ALLOW_AVX)
-set(TESTS_USING_SVML
-    ${TESTS_USING_SVML}
-    test_avx_math_svml)
-endif (ALLOW_AVX)
 
 foreach (tname ${TESTS_USING_SVML}) 
-set_target_properties(${tname}
-	PROPERTIES
-	COMPILE_FLAGS "-DLMAT_USE_INTEL_SVML"
-)
-if (MSVC)
-target_link_libraries(${tname} ${SVML} ${LIBIRC})
-else (MSVC)
-target_link_libraries(${tname} ${SVML})
-endif (MSVC)
+    set_target_properties(${tname}
+	    PROPERTIES
+	    COMPILE_FLAGS "-DLMAT_USE_INTEL_SVML")
+    target_link_libraries(${tname} ${SVML_LIBRARY})
 endforeach (tname)
     
-endif (SVML_PATH)
+endif (SVML_FOUND)
     
 # Link to MKL
+
+if (MKL_FOUND)
 
 foreach(tname ${LMAT_LINALG_TESTS})
     target_link_libraries(${tname} ${MKL_LIBRARY})
 endforeach(tname)
 
+endif (MKL_FOUND)
 
 #==========================================================
 #

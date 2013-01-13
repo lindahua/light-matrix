@@ -88,7 +88,7 @@ inline bool my_any_ne(const A& a, const B& b)
 }
 
 
-TMN_CASE( full_reduc, all_true )
+TMN_CASE( tfull_all_true )
 {
 	const index_t m = M == 0 ? DM : M;
 	const index_t n = N == 0 ? DN : N;
@@ -114,7 +114,7 @@ TMN_CASE( full_reduc, all_true )
 	ASSERT_EQ( all(to_bool(a == b), true),  my_all_eq(a, b) );
 }
 
-TMN_CASE( full_reduc, all_false )
+TMN_CASE( tfull_all_false )
 {
 	const index_t m = M == 0 ? DM : M;
 	const index_t n = N == 0 ? DN : N;
@@ -140,7 +140,7 @@ TMN_CASE( full_reduc, all_false )
 	ASSERT_EQ( all(to_bool(a == b), false),  my_all_ne(a, b) );
 }
 
-TMN_CASE( full_reduc, any_true )
+TMN_CASE( tfull_any_true )
 {
 	const index_t m = M == 0 ? DM : M;
 	const index_t n = N == 0 ? DN : N;
@@ -166,7 +166,7 @@ TMN_CASE( full_reduc, any_true )
 	ASSERT_EQ( any(to_bool(a == b), true),  my_any_eq(a, b) );
 }
 
-TMN_CASE( full_reduc, any_false )
+TMN_CASE( tfull_any_false )
 {
 	const index_t m = M == 0 ? DM : M;
 	const index_t n = N == 0 ? DN : N;
@@ -193,7 +193,7 @@ TMN_CASE( full_reduc, any_false )
 }
 
 
-TMN_CASE( colwise_reduc, all_true )
+TMN_CASE( tcolwise_all_true )
 {
 	const index_t m = M == 0 ? DM : M;
 	const index_t n = N == 0 ? DN : N;
@@ -231,7 +231,7 @@ TMN_CASE( colwise_reduc, all_true )
 }
 
 
-TMN_CASE( colwise_reduc, all_false )
+TMN_CASE( tcolwise_all_false )
 {
 	const index_t m = M == 0 ? DM : M;
 	const index_t n = N == 0 ? DN : N;
@@ -270,7 +270,7 @@ TMN_CASE( colwise_reduc, all_false )
 }
 
 
-TMN_CASE( colwise_reduc, any_true )
+TMN_CASE( tcolwise_any_true )
 {
 	const index_t m = M == 0 ? DM : M;
 	const index_t n = N == 0 ? DN : N;
@@ -308,7 +308,7 @@ TMN_CASE( colwise_reduc, any_true )
 }
 
 
-TMN_CASE( colwise_reduc, any_false )
+TMN_CASE( tcolwise_any_false )
 {
 	const index_t m = M == 0 ? DM : M;
 	const index_t n = N == 0 ? DN : N;
@@ -347,59 +347,55 @@ TMN_CASE( colwise_reduc, any_false )
 }
 
 
+AUTO_TPACK( tfull_alltrue )
+{
+	ADD_TMN_CASE_3X3( tfull_all_true, double, DM, DN )
+	ADD_TMN_CASE_3X3( tfull_all_true, int, DM, DN )
+}
 
-BEGIN_TPACK( mat_full_alltrue )
-	ADD_TMN_CASE_3X3( full_reduc, all_true, double, DM, DN )
-	ADD_TMN_CASE_3X3( full_reduc, all_true, int, DM, DN )
-END_TPACK
+AUTO_TPACK( tfull_allfalse )
+{
+	ADD_TMN_CASE_3X3( tfull_all_false, double, DM, DN )
+	ADD_TMN_CASE_3X3( tfull_all_false, int, DM, DN )
+}
 
-BEGIN_TPACK( mat_full_allfalse )
-	ADD_TMN_CASE_3X3( full_reduc, all_false, double, DM, DN )
-	ADD_TMN_CASE_3X3( full_reduc, all_false, int, DM, DN )
-END_TPACK
+AUTO_TPACK( tfull_anytrue )
+{
+	ADD_TMN_CASE_3X3( tfull_any_true, double, DM, DN )
+	ADD_TMN_CASE_3X3( tfull_any_true, int, DM, DN )
+}
 
-BEGIN_TPACK( mat_full_anytrue )
-	ADD_TMN_CASE_3X3( full_reduc, any_true, double, DM, DN )
-	ADD_TMN_CASE_3X3( full_reduc, any_true, int, DM, DN )
-END_TPACK
-
-BEGIN_TPACK( mat_full_anyfalse )
-	ADD_TMN_CASE_3X3( full_reduc, any_false, double, DM, DN )
-	ADD_TMN_CASE_3X3( full_reduc, any_false, int, DM, DN )
-END_TPACK
-
-
-BEGIN_TPACK( mat_colwise_alltrue )
-	ADD_TMN_CASE_3X3( colwise_reduc, all_true, double, DM, DN )
-	ADD_TMN_CASE_3X3( colwise_reduc, all_true, int, DM, DN )
-END_TPACK
-
-BEGIN_TPACK( mat_colwise_allfalse )
-	ADD_TMN_CASE_3X3( colwise_reduc, all_false, double, DM, DN )
-	ADD_TMN_CASE_3X3( colwise_reduc, all_false, int, DM, DN )
-END_TPACK
-
-BEGIN_TPACK( mat_colwise_anytrue )
-	ADD_TMN_CASE_3X3( colwise_reduc, any_true, double, DM, DN )
-	ADD_TMN_CASE_3X3( colwise_reduc, any_true, int, DM, DN )
-END_TPACK
-
-BEGIN_TPACK( mat_colwise_anyfalse )
-	ADD_TMN_CASE_3X3( colwise_reduc, any_false, double, DM, DN )
-	ADD_TMN_CASE_3X3( colwise_reduc, any_false, int, DM, DN )
-END_TPACK
+AUTO_TPACK( tfull_anyfalse )
+{
+	ADD_TMN_CASE_3X3( tfull_any_false, double, DM, DN )
+	ADD_TMN_CASE_3X3( tfull_any_false, int, DM, DN )
+}
 
 
-BEGIN_MAIN_SUITE
-	ADD_TPACK( mat_full_alltrue )
-	ADD_TPACK( mat_full_allfalse )
-	ADD_TPACK( mat_full_anytrue )
-	ADD_TPACK( mat_full_anyfalse )
+AUTO_TPACK( tcolwise_alltrue )
+{
+	ADD_TMN_CASE_3X3( tcolwise_all_true, double, DM, DN )
+	ADD_TMN_CASE_3X3( tcolwise_all_true, int, DM, DN )
+}
 
-	ADD_TPACK( mat_colwise_alltrue )
-	ADD_TPACK( mat_colwise_allfalse )
-	ADD_TPACK( mat_colwise_anytrue )
-	ADD_TPACK( mat_colwise_anyfalse )
-END_MAIN_SUITE
+AUTO_TPACK( tcolwise_allfalse )
+{
+	ADD_TMN_CASE_3X3( tcolwise_all_false, double, DM, DN )
+	ADD_TMN_CASE_3X3( tcolwise_all_false, int, DM, DN )
+}
+
+AUTO_TPACK( tcolwise_anytrue )
+{
+	ADD_TMN_CASE_3X3( tcolwise_any_true, double, DM, DN )
+	ADD_TMN_CASE_3X3( tcolwise_any_true, int, DM, DN )
+}
+
+AUTO_TPACK( tcolwise_anyfalse )
+{
+	ADD_TMN_CASE_3X3( tcolwise_any_false, double, DM, DN )
+	ADD_TMN_CASE_3X3( tcolwise_any_false, int, DM, DN )
+}
+
+
 
 

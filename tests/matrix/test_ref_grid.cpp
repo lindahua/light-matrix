@@ -57,7 +57,7 @@ inline void verify_layout(const ref_grid<double, M, N>& mat,
 }
 
 
-MN_CASE( cref_grid, constructs )
+MN_CASE( cref_grid_constructs )
 {
 	const index_t m = M == 0 ? 3 : M;
 	const index_t n = N == 0 ? 4 : N;
@@ -78,7 +78,7 @@ MN_CASE( cref_grid, constructs )
 	ASSERT_EQ(a2.ptr_data(), ps);
 }
 
-MN_CASE( ref_grid, constructs )
+MN_CASE( ref_grid_constructs )
 {
 	const index_t m = M == 0 ? 3 : M;
 	const index_t n = N == 0 ? 4 : N;
@@ -100,7 +100,7 @@ MN_CASE( ref_grid, constructs )
 }
 
 
-MN_CASE( cref_grid, access )
+MN_CASE( cref_grid_access )
 {
 	const index_t m = M == 0 ? 3 : M;
 	const index_t n = N == 0 ? 4 : N;
@@ -147,7 +147,7 @@ MN_CASE( cref_grid, access )
 	}
 }
 
-MN_CASE( ref_grid, access )
+MN_CASE( ref_grid_access )
 {
 	const index_t m = M == 0 ? 3 : M;
 	const index_t n = N == 0 ? 4 : N;
@@ -195,7 +195,7 @@ MN_CASE( ref_grid, access )
 }
 
 
-MN_CASE( ref_grid, assign )
+MN_CASE( ref_grid_assign )
 {
 
 	const index_t m = M == 0 ? 3 : M;
@@ -243,7 +243,7 @@ MN_CASE( ref_grid, assign )
 }
 
 
-MN_CASE( ref_grid, import )
+MN_CASE( ref_grid_import )
 {
 	const index_t m = M == 0 ? 3 : M;
 	const index_t n = N == 0 ? 4 : N;
@@ -295,44 +295,35 @@ MN_CASE( ref_grid, import )
 }
 
 
+AUTO_TPACK( cref_grid_constructs )
+{
+	ADD_MN_CASE_3X3( cref_grid_constructs, 3, 4 )
+}
 
-BEGIN_TPACK( cref_grid_constructs )
-	ADD_MN_CASE_3X3( cref_grid, constructs, 3, 4 )
-END_TPACK
+AUTO_TPACK( ref_grid_constructs )
+{
+	ADD_MN_CASE_3X3( ref_grid_constructs, 3, 4 )
+}
 
-BEGIN_TPACK( ref_grid_constructs )
-	ADD_MN_CASE_3X3( ref_grid, constructs, 3, 4 )
-END_TPACK
+AUTO_TPACK( cref_grid_access )
+{
+	ADD_MN_CASE_3X3( cref_grid_access, 3, 4 )
+}
 
-BEGIN_TPACK( cref_grid_access )
-	ADD_MN_CASE_3X3( cref_grid, access, 3, 4 )
-END_TPACK
+AUTO_TPACK( ref_grid_access )
+{
+	ADD_MN_CASE_3X3( ref_grid_access, 3, 4 )
+}
 
-BEGIN_TPACK( ref_grid_access )
-	ADD_MN_CASE_3X3( ref_grid, access, 3, 4 )
-END_TPACK
+AUTO_TPACK( ref_grid_assign )
+{
+	ADD_MN_CASE_3X3( ref_grid_assign, 3, 4 )
+}
 
-BEGIN_TPACK( ref_grid_assign )
-	ADD_MN_CASE_3X3( ref_grid, assign, 3, 4 )
-END_TPACK
-
-BEGIN_TPACK( ref_grid_import )
-	ADD_MN_CASE_3X3( ref_grid, import, 3, 4 )
-END_TPACK
-
-
-BEGIN_MAIN_SUITE
-	ADD_TPACK( cref_grid_constructs )
-	ADD_TPACK( cref_grid_access )
-
-	ADD_TPACK( ref_grid_constructs )
-	ADD_TPACK( ref_grid_access )
-	ADD_TPACK( ref_grid_assign )
-	ADD_TPACK( ref_grid_import )
-END_MAIN_SUITE
-
-
-
+AUTO_TPACK( ref_grid_import )
+{
+	ADD_MN_CASE_3X3( ref_grid_import, 3, 4 )
+}
 
 
 

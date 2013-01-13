@@ -13,7 +13,7 @@
 #ifndef LIGHTMAT_MATEVAL_FWD_H_
 #define LIGHTMAT_MATEVAL_FWD_H_
 
-#include <light_mat/math/simd_packs.h>
+#include <light_mat/simd/simd.h>
 #include <light_mat/matrix/matrix_concepts.h>
 #include <light_mat/math/functor_base.h>
 

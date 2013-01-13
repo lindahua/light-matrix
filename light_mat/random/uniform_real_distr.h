@@ -14,7 +14,7 @@
 #define LIGHTMAT_UNIFORM_REAL_DISTR_H_
 
 #include "internal/uniform_real_internal.h"
-#include <light_mat/math/simd_ops.h>
+#include <light_mat/simd/simd.h>
 
 namespace lmat { namespace random {
 
@@ -114,7 +114,7 @@ namespace lmat { namespace random {
 	class std_uniform_real_simd
 	{
 	public:
-		typedef math::simd_pack<T, Kind> result_type;
+		typedef simd_pack<T, Kind> result_type;
 
 		LMAT_ENSURE_INLINE
 		explicit std_uniform_real_simd()
@@ -137,7 +137,7 @@ namespace lmat { namespace random {
 	class uniform_real_simd
 	{
 	public:
-		typedef math::simd_pack<T, Kind> result_type;
+		typedef simd_pack<T, Kind> result_type;
 
 		LMAT_ENSURE_INLINE
 		explicit uniform_real_simd(T base, T span)

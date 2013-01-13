@@ -14,7 +14,6 @@
 #define LIGHTMAT_COMMON_KERNELS_H_
 
 #include <light_mat/mateval/mateval_fwd.h>
-#include <light_mat/math/simd_ops.h>
 
 /************************************************
  *

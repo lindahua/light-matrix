@@ -257,24 +257,24 @@ void verify_sfmt_seq()
 
 
 #define DEF_SFMT_TESTS( packname, tfunname ) \
-		SIMPLE_CASE( packname, 1279 ) { tfunname<1279>(); } \
-		SIMPLE_CASE( packname, 2281 ) { tfunname<2281>(); } \
-		SIMPLE_CASE( packname, 4253 ) { tfunname<4253>(); } \
-		SIMPLE_CASE( packname, 11213 ) { tfunname<11213>(); } \
-		SIMPLE_CASE( packname, 19937 ) { tfunname<19937>(); } \
-		SIMPLE_CASE( packname, 44497 ) { tfunname<44497>(); } \
-		SIMPLE_CASE( packname, 86243 ) { tfunname<86243>(); } \
-		SIMPLE_CASE( packname, 132049 ) { tfunname<132049>(); } \
-		BEGIN_TPACK( packname ) \
-			ADD_SIMPLE_CASE( packname, 1279 ) \
-			ADD_SIMPLE_CASE( packname, 2281 ) \
-			ADD_SIMPLE_CASE( packname, 4253 ) \
-			ADD_SIMPLE_CASE( packname, 11213 ) \
-			ADD_SIMPLE_CASE( packname, 19937 ) \
-			ADD_SIMPLE_CASE( packname, 44497 ) \
-			ADD_SIMPLE_CASE( packname, 86243 ) \
-			ADD_SIMPLE_CASE( packname, 132049 ) \
-		END_TPACK
+		SIMPLE_CASE( packname##_1279 ) { tfunname<1279>(); } \
+		SIMPLE_CASE( packname##_2281 ) { tfunname<2281>(); } \
+		SIMPLE_CASE( packname##_4253 ) { tfunname<4253>(); } \
+		SIMPLE_CASE( packname##_11213 ) { tfunname<11213>(); } \
+		SIMPLE_CASE( packname##_19937 ) { tfunname<19937>(); } \
+		SIMPLE_CASE( packname##_44497 ) { tfunname<44497>(); } \
+		SIMPLE_CASE( packname##_86243 ) { tfunname<86243>(); } \
+		SIMPLE_CASE( packname##_132049 ) { tfunname<132049>(); } \
+		AUTO_TPACK( packname ) { \
+			ADD_SIMPLE_CASE( packname##_1279 ) \
+			ADD_SIMPLE_CASE( packname##_2281 ) \
+			ADD_SIMPLE_CASE( packname##_4253 ) \
+			ADD_SIMPLE_CASE( packname##_11213 ) \
+			ADD_SIMPLE_CASE( packname##_19937 ) \
+			ADD_SIMPLE_CASE( packname##_44497 ) \
+			ADD_SIMPLE_CASE( packname##_86243 ) \
+			ADD_SIMPLE_CASE( packname##_132049 ) \
+		}
 
 DEF_SFMT_TESTS( sfmt_verify, verify_sfmt_stream )
 DEF_SFMT_TESTS( sfmt_verify_u64, verify_sfmt_u64 )
@@ -286,13 +286,4 @@ DEF_SFMT_TESTS( sfmt_verify_m256, verify_sfmt_m256 )
 
 DEF_SFMT_TESTS( sfmt_verify_seq, verify_sfmt_seq )
 
-BEGIN_MAIN_SUITE
-	ADD_TPACK( sfmt_verify )
-	ADD_TPACK( sfmt_verify_u64 )
-	ADD_TPACK( sfmt_verify_m128 )
-#ifdef LMAT_HAS_AVX
-	ADD_TPACK( sfmt_verify_m256 )
-#endif
-	ADD_TPACK( sfmt_verify_seq )
-END_MAIN_SUITE
 

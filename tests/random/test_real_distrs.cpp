@@ -59,8 +59,8 @@ void test_real_rng_simd(const Distr& distr, RStream& rs, Kind,
 		index_t n, double tol_mean, double tol_var, bool print_stats=false)
 {
 	typedef typename Distr::result_type T;
-	const unsigned int W = math::simd_traits<T, Kind>::pack_width;
-	typedef math::simd_pack<T, Kind> pack_t;
+	const unsigned int W = simd_traits<T, Kind>::pack_width;
+	typedef simd_pack<T, Kind> pack_t;
 
 	double expect_mean = distr.mean();
 	double expect_var = distr.var();
@@ -135,7 +135,7 @@ inline double get_var_tol(const Distr& distr, index_t n, double kappa, double ra
  *
  ************************************************/
 
-T_CASE( distrs, std_uniform_real )
+T_CASE( test_std_uniform_real )
 {
 	std_uniform_real_distr<T> distr;
 
@@ -152,7 +152,7 @@ T_CASE( distrs, std_uniform_real )
 	test_real_rng(distr, rstream, N, tol_mean, tol_var);
 }
 
-T_CASE( distrs, std_uniform_real_sse )
+T_CASE( test_std_uniform_real_sse )
 {
 	std_uniform_real_distr<T> distr;
 
@@ -167,7 +167,7 @@ T_CASE( distrs, std_uniform_real_sse )
 }
 
 #ifdef LMAT_HAS_AVX
-T_CASE( distrs, std_uniform_real_avx )
+T_CASE( test_std_uniform_real_avx )
 {
 	std_uniform_real_distr<T> distr;
 
@@ -183,7 +183,7 @@ T_CASE( distrs, std_uniform_real_avx )
 #endif
 
 
-T_CASE( distrs, uniform_real )
+T_CASE( test_uniform_real )
 {
 	T a = T(1.6);
 	T b = T(3.2);
@@ -202,7 +202,7 @@ T_CASE( distrs, uniform_real )
 	test_real_rng(distr, rstream, N, tol_mean, tol_var);
 }
 
-T_CASE( distrs, uniform_real_sse )
+T_CASE( test_uniform_real_sse )
 {
 	uniform_real_distr<T> distr(T(1.6), T(3.2));
 
@@ -217,7 +217,7 @@ T_CASE( distrs, uniform_real_sse )
 }
 
 #ifdef LMAT_HAS_AVX
-T_CASE( distrs, uniform_real_avx )
+T_CASE( test_uniform_real_avx )
 {
 	uniform_real_distr<T> distr(T(1.6), T(3.2));
 
@@ -233,25 +233,26 @@ T_CASE( distrs, uniform_real_avx )
 #endif
 
 
-BEGIN_TPACK( uniform_real )
-	ADD_T_CASE( distrs, std_uniform_real, double )
-	ADD_T_CASE( distrs, std_uniform_real, float )
-	ADD_T_CASE( distrs, std_uniform_real_sse, double )
-	ADD_T_CASE( distrs, std_uniform_real_sse, float )
+AUTO_TPACK( uniform_real )
+{
+	ADD_T_CASE( test_std_uniform_real, double )
+	ADD_T_CASE( test_std_uniform_real, float )
+	ADD_T_CASE( test_std_uniform_real_sse, double )
+	ADD_T_CASE( test_std_uniform_real_sse, float )
 #ifdef LMAT_HAS_AVX
-	ADD_T_CASE( distrs, std_uniform_real_avx, double )
-	ADD_T_CASE( distrs, std_uniform_real_avx, float )
+	ADD_T_CASE( test_std_uniform_real_avx, double )
+	ADD_T_CASE( test_std_uniform_real_avx, float )
 #endif
 
-	ADD_T_CASE( distrs, uniform_real, double )
-	ADD_T_CASE( distrs, uniform_real, float )
-	ADD_T_CASE( distrs, uniform_real_sse, double )
-	ADD_T_CASE( distrs, uniform_real_sse, float )
+	ADD_T_CASE( test_uniform_real, double )
+	ADD_T_CASE( test_uniform_real, float )
+	ADD_T_CASE( test_uniform_real_sse, double )
+	ADD_T_CASE( test_uniform_real_sse, float )
 #ifdef LMAT_HAS_AVX
-	ADD_T_CASE( distrs, uniform_real_avx, double )
-	ADD_T_CASE( distrs, uniform_real_avx, float )
+	ADD_T_CASE( test_uniform_real_avx, double )
+	ADD_T_CASE( test_uniform_real_avx, float )
 #endif
-END_TPACK
+}
 
 
 /************************************************
@@ -260,7 +261,7 @@ END_TPACK
  *
  ************************************************/
 
-T_CASE( distrs, std_exponential )
+T_CASE( test_std_exponential )
 {
 	std_exponential_distr<T> distr;
 
@@ -276,7 +277,7 @@ T_CASE( distrs, std_exponential )
 	test_real_rng(distr, rstream, N, tol_mean, tol_var);
 }
 
-T_CASE( distrs, std_exponential_sse )
+T_CASE( test_std_exponential_sse )
 {
 	std_exponential_distr<T> distr;
 
@@ -291,7 +292,7 @@ T_CASE( distrs, std_exponential_sse )
 }
 
 #ifdef LMAT_HAS_AVX
-T_CASE( distrs, std_exponential_avx )
+T_CASE( test_std_exponential_avx )
 {
 	std_exponential_distr<T> distr;
 
@@ -306,7 +307,7 @@ T_CASE( distrs, std_exponential_avx )
 }
 #endif
 
-T_CASE( distrs, exponential )
+T_CASE( test_exponential )
 {
 	T lambda = T(2);
 	exponential_distr<T> distr(lambda);
@@ -324,7 +325,7 @@ T_CASE( distrs, exponential )
 }
 
 
-T_CASE( distrs, exponential_sse )
+T_CASE( test_exponential_sse )
 {
 	T lambda = T(2);
 	exponential_distr<T> distr(lambda);
@@ -340,7 +341,7 @@ T_CASE( distrs, exponential_sse )
 }
 
 #ifdef LMAT_HAS_AVX
-T_CASE( distrs, exponential_avx )
+T_CASE( test_exponential_avx )
 {
 	T lambda = T(2);
 	exponential_distr<T> distr(lambda);
@@ -357,31 +358,25 @@ T_CASE( distrs, exponential_avx )
 #endif
 
 
-BEGIN_TPACK( exponential )
-	ADD_T_CASE( distrs, std_exponential, double )
-	ADD_T_CASE( distrs, std_exponential, float )
-	ADD_T_CASE( distrs, std_exponential_sse, double )
-	ADD_T_CASE( distrs, std_exponential_sse, float )
+AUTO_TPACK( exponential )
+{
+	ADD_T_CASE( test_std_exponential, double )
+	ADD_T_CASE( test_std_exponential, float )
+	ADD_T_CASE( test_std_exponential_sse, double )
+	ADD_T_CASE( test_std_exponential_sse, float )
 #ifdef LMAT_HAS_AVX
-	ADD_T_CASE( distrs, std_exponential_avx, double )
-	ADD_T_CASE( distrs, std_exponential_avx, float )
+	ADD_T_CASE( test_std_exponential_avx, double )
+	ADD_T_CASE( test_std_exponential_avx, float )
 #endif
 
-	ADD_T_CASE( distrs, exponential, double )
-	ADD_T_CASE( distrs, exponential, float )
-	ADD_T_CASE( distrs, exponential_sse, double )
-	ADD_T_CASE( distrs, exponential_sse, float )
+	ADD_T_CASE( test_exponential, double )
+	ADD_T_CASE( test_exponential, float )
+	ADD_T_CASE( test_exponential_sse, double )
+	ADD_T_CASE( test_exponential_sse, float )
 #ifdef LMAT_HAS_AVX
-	ADD_T_CASE( distrs, exponential_avx, double )
-	ADD_T_CASE( distrs, exponential_avx, float )
+	ADD_T_CASE( test_exponential_avx, double )
+	ADD_T_CASE( test_exponential_avx, float )
 #endif
-END_TPACK
-
-
-BEGIN_MAIN_SUITE
-	ADD_TPACK( uniform_real )
-	ADD_TPACK( exponential )
-END_MAIN_SUITE
-
+}
 
 

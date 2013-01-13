@@ -15,13 +15,8 @@
 #include "../multimat_supp.h"
 
 #include <light_mat/matrix/matrix_classes.h>
-#include <light_mat/math/math_functors.h>
+#include <light_mat/math/basic_functors.h>
 #include <light_mat/mateval/ewise_eval.h>
-
-#include <light_mat/math/sse_ops.h>
-#ifdef LMAT_HAS_AVX
-#include <light_mat/math/avx_ops.h>
-#endif
 
 
 using namespace lmat;
@@ -181,50 +176,50 @@ void test_linear_ewise_map()
 // Specific test cases
 
 
-MN_CASE( linear_ewise, scalar_cont_cont  )
+MN_CASE( linear_ewise_scalar_cont_cont  )
 {
 	test_linear_ewise_cont_cont<atags::scalar, M, N>();
 }
 
-N_CASE( linear_ewise, scalar_cont_stepcol  )
+N_CASE( linear_ewise_scalar_cont_stepcol  )
 {
 	test_linear_ewise_col<atags::scalar, cont, grid, N>();
 }
 
-N_CASE( linear_ewise, scalar_stepcol_cont  )
+N_CASE( linear_ewise_scalar_stepcol_cont  )
 {
 	test_linear_ewise_col<atags::scalar, grid, cont, N>();
 }
 
-N_CASE( linear_ewise, scalar_stepcol_stepcol  )
+N_CASE( linear_ewise_scalar_stepcol_stepcol  )
 {
 	test_linear_ewise_col<atags::scalar, grid, grid, N>();
 }
 
-N_CASE( linear_ewise, scalar_cont_steprow  )
+N_CASE( linear_ewise_scalar_cont_steprow  )
 {
 	test_linear_ewise_row<atags::scalar, cont, bloc, N>();
 }
 
-N_CASE( linear_ewise, scalar_steprow_cont  )
+N_CASE( linear_ewise_scalar_steprow_cont  )
 {
 	test_linear_ewise_row<atags::scalar, bloc, cont, N>();
 }
 
-N_CASE( linear_ewise, scalar_steprow_steprow  )
+N_CASE( linear_ewise_scalar_steprow_steprow  )
 {
 	test_linear_ewise_row<atags::scalar, bloc, bloc, N>();
 }
 
 
-MN_CASE( linear_ewise, sse_cont_cont  )
+MN_CASE( linear_ewise_sse_cont_cont  )
 {
 	test_linear_ewise_cont_cont<atags::simd<sse_t>, M, N>();
 }
 
 #ifdef LMAT_HAS_AVX
 
-MN_CASE( linear_ewise, avx_cont_cont  )
+MN_CASE( linear_ewise_avx_cont_cont  )
 {
 	test_linear_ewise_cont_cont<atags::simd<avx_t>, M, N>();
 }
@@ -232,19 +227,19 @@ MN_CASE( linear_ewise, avx_cont_cont  )
 #endif
 
 
-MN_CASE( linear_ewise, scalar_single_cont )
+MN_CASE( linear_ewise_scalar_single_cont )
 {
 	test_linear_ewise_single_cont<atags::scalar, M, N>();
 }
 
-MN_CASE( linear_ewise, sse_single_cont )
+MN_CASE( linear_ewise_sse_single_cont )
 {
 	test_linear_ewise_single_cont<atags::simd<sse_t>, M, N>();
 }
 
 #ifdef LMAT_HAS_AVX
 
-MN_CASE( linear_ewise, avx_single_cont )
+MN_CASE( linear_ewise_avx_single_cont )
 {
 	test_linear_ewise_single_cont<atags::simd<avx_t>, M, N>();
 }
@@ -252,19 +247,19 @@ MN_CASE( linear_ewise, avx_single_cont )
 #endif
 
 
-MN_CASE( linear_ewise, scalar_map )
+MN_CASE( linear_ewise_scalar_map )
 {
 	test_linear_ewise_map<atags::scalar, M, N>();
 }
 
-MN_CASE( linear_ewise, sse_map )
+MN_CASE( linear_ewise_sse_map )
 {
 	test_linear_ewise_map<atags::simd<sse_t>, M, N>();
 }
 
 #ifdef LMAT_HAS_AVX
 
-MN_CASE( linear_ewise, avx_map )
+MN_CASE( linear_ewise_avx_map )
 {
 	test_linear_ewise_map<atags::simd<avx_t>, M, N>();
 }
@@ -272,7 +267,7 @@ MN_CASE( linear_ewise, avx_map )
 #endif
 
 
-MN_CASE( linear_ewise, map_to )
+MN_CASE( linear_ewise_map_to )
 {
 	const index_t m = M == 0 ? DM : M;
 	const index_t n = N == 0 ? DN : N;
@@ -295,7 +290,7 @@ MN_CASE( linear_ewise, map_to )
 }
 
 
-MN_CASE( linear_ewise, accum_to )
+MN_CASE( linear_ewise_accum_to )
 {
 	const index_t m = M == 0 ? DM : M;
 	const index_t n = N == 0 ? DN : N;
@@ -333,117 +328,104 @@ MN_CASE( linear_ewise, accum_to )
 
 // Test packs
 
-BEGIN_TPACK( linear_ewise_scalar_cont_cont )
-	ADD_MN_CASE_3X3( linear_ewise, scalar_cont_cont, DM, DN )
-END_TPACK
 
-BEGIN_TPACK( linear_ewise_scalar_cont_stepcol )
-	ADD_N_CASE_3( linear_ewise, scalar_cont_stepcol, DM )
-END_TPACK
+AUTO_TPACK( linear_ewise_scalar_cont_cont )
+{
+	ADD_MN_CASE_3X3( linear_ewise_scalar_cont_cont, DM, DN )
+}
 
-BEGIN_TPACK( linear_ewise_scalar_stepcol_cont )
-	ADD_N_CASE_3( linear_ewise, scalar_stepcol_cont, DM )
-END_TPACK
+AUTO_TPACK( linear_ewise_scalar_cont_stepcol )
+{
+	ADD_N_CASE_3( linear_ewise_scalar_cont_stepcol, DM )
+}
 
-BEGIN_TPACK( linear_ewise_scalar_stepcol_stepcol )
-	ADD_N_CASE_3( linear_ewise, scalar_stepcol_stepcol, DM )
-END_TPACK
+AUTO_TPACK( linear_ewise_scalar_stepcol_cont )
+{
+	ADD_N_CASE_3( linear_ewise_scalar_stepcol_cont, DM )
+}
 
-BEGIN_TPACK( linear_ewise_scalar_cont_steprow )
-	ADD_N_CASE_3( linear_ewise, scalar_cont_steprow, DN )
-END_TPACK
+AUTO_TPACK( linear_ewise_scalar_stepcol_stepcol )
+{
+	ADD_N_CASE_3( linear_ewise_scalar_stepcol_stepcol, DM )
+}
 
-BEGIN_TPACK( linear_ewise_scalar_steprow_cont )
-	ADD_N_CASE_3( linear_ewise, scalar_steprow_cont, DN )
-END_TPACK
+AUTO_TPACK( linear_ewise_scalar_cont_steprow )
+{
+	ADD_N_CASE_3( linear_ewise_scalar_cont_steprow, DN )
+}
 
-BEGIN_TPACK( linear_ewise_scalar_steprow_steprow )
-	ADD_N_CASE_3( linear_ewise, scalar_steprow_steprow, DN )
-END_TPACK
+AUTO_TPACK( linear_ewise_scalar_steprow_cont )
+{
+	ADD_N_CASE_3( linear_ewise_scalar_steprow_cont, DN )
+}
+
+AUTO_TPACK( linear_ewise_scalar_steprow_steprow )
+{
+	ADD_N_CASE_3( linear_ewise_scalar_steprow_steprow, DN )
+}
 
 
-BEGIN_TPACK( linear_ewise_sse_cont_cont )
-	ADD_MN_CASE_3X3( linear_ewise, sse_cont_cont, DM, DN )
-END_TPACK
-
-#ifdef LMAT_HAS_AVX
-
-BEGIN_TPACK( linear_ewise_avx_cont_cont )
-	ADD_MN_CASE_3X3( linear_ewise, avx_cont_cont, DM, DN )
-END_TPACK
-
-#endif
-
-BEGIN_TPACK( linear_ewise_scalar_single_cont )
-	ADD_MN_CASE_3X3( linear_ewise, scalar_single_cont, DM, DN )
-END_TPACK
-
-BEGIN_TPACK( linear_ewise_sse_single_cont )
-	ADD_MN_CASE_3X3( linear_ewise, sse_single_cont, DM, DN )
-END_TPACK
+AUTO_TPACK( linear_ewise_sse_cont_cont )
+{
+	ADD_MN_CASE_3X3( linear_ewise_sse_cont_cont, DM, DN )
+}
 
 #ifdef LMAT_HAS_AVX
 
-BEGIN_TPACK( linear_ewise_avx_single_cont )
-	ADD_MN_CASE_3X3( linear_ewise, avx_single_cont, DM, DN )
-END_TPACK
+AUTO_TPACK( linear_ewise_avx_cont_cont )
+{
+	ADD_MN_CASE_3X3( linear_ewise_avx_cont_cont, DM, DN )
+}
 
 #endif
 
+AUTO_TPACK( linear_ewise_scalar_single_cont )
+{
+	ADD_MN_CASE_3X3( linear_ewise_scalar_single_cont, DM, DN )
+}
 
-BEGIN_TPACK( linear_ewise_scalar_map )
-	ADD_MN_CASE_3X3( linear_ewise, scalar_map, DM, DN )
-END_TPACK
-
-BEGIN_TPACK( linear_ewise_sse_map )
-	ADD_MN_CASE_3X3( linear_ewise, sse_map, DM, DN )
-END_TPACK
+AUTO_TPACK( linear_ewise_sse_single_cont )
+{
+	ADD_MN_CASE_3X3( linear_ewise_sse_single_cont, DM, DN )
+}
 
 #ifdef LMAT_HAS_AVX
 
-BEGIN_TPACK( linear_ewise_avx_map )
-	ADD_MN_CASE_3X3( linear_ewise, avx_map, DM, DN )
-END_TPACK
+AUTO_TPACK( linear_ewise_avx_single_cont )
+{
+	ADD_MN_CASE_3X3( linear_ewise_avx_single_cont, DM, DN )
+}
 
 #endif
 
-BEGIN_TPACK( linear_ewise_map_to )
-	ADD_MN_CASE_3X3( linear_ewise, map_to, DM, DN )
-END_TPACK
 
-BEGIN_TPACK( linear_ewise_accum_to )
-	ADD_MN_CASE_3X3( linear_ewise, accum_to, DM, DN )
-END_TPACK
+AUTO_TPACK( linear_ewise_scalar_map )
+{
+	ADD_MN_CASE_3X3( linear_ewise_scalar_map, DM, DN )
+}
 
+AUTO_TPACK( linear_ewise_sse_map )
+{
+	ADD_MN_CASE_3X3( linear_ewise_sse_map, DM, DN )
+}
 
-BEGIN_MAIN_SUITE
-	ADD_TPACK( linear_ewise_scalar_cont_cont )
-	ADD_TPACK( linear_ewise_scalar_cont_stepcol )
-	ADD_TPACK( linear_ewise_scalar_stepcol_cont )
-	ADD_TPACK( linear_ewise_scalar_stepcol_stepcol )
-	ADD_TPACK( linear_ewise_scalar_cont_steprow )
-	ADD_TPACK( linear_ewise_scalar_steprow_cont )
-	ADD_TPACK( linear_ewise_scalar_steprow_steprow )
-
-	ADD_TPACK( linear_ewise_sse_cont_cont )
 #ifdef LMAT_HAS_AVX
-	ADD_TPACK( linear_ewise_avx_cont_cont )
+
+AUTO_TPACK( linear_ewise_avx_map )
+{
+	ADD_MN_CASE_3X3( linear_ewise_avx_map, DM, DN )
+}
+
 #endif
 
-	ADD_TPACK( linear_ewise_scalar_single_cont )
-	ADD_TPACK( linear_ewise_sse_single_cont )
-#ifdef LMAT_HAS_AVX
-	ADD_TPACK( linear_ewise_avx_single_cont )
-#endif
+AUTO_TPACK( linear_ewise_map_to )
+{
+	ADD_MN_CASE_3X3( linear_ewise_map_to, DM, DN )
+}
 
-	ADD_TPACK( linear_ewise_scalar_map )
-	ADD_TPACK( linear_ewise_sse_map )
-#ifdef LMAT_HAS_AVX
-	ADD_TPACK( linear_ewise_avx_map )
-#endif
-
-	ADD_TPACK( linear_ewise_map_to )
-	ADD_TPACK( linear_ewise_accum_to )
-END_MAIN_SUITE
+AUTO_TPACK( linear_ewise_accum_to )
+{
+	ADD_MN_CASE_3X3( linear_ewise_accum_to, DM, DN )
+}
 
 

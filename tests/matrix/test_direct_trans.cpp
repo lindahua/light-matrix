@@ -68,11 +68,11 @@ void test_direct_trans()
 
 
 #define TEST_DIRECT_TRANS( sform, dform, name ) \
-	MN_CASE( direct_trans, name ) \
+	MN_CASE( direct_trans_##name ) \
 	{ test_direct_trans<sform, dform, M, N>(); } \
-	BEGIN_TPACK( direct_trans_##name ) \
-	ADD_MN_CASE_3X3( direct_trans, name, DM, DN ) \
-	END_TPACK
+	AUTO_TPACK( direct_trans_##name ) { \
+	ADD_MN_CASE_3X3( direct_trans_##name, DM, DN ) \
+	}
 
 TEST_DIRECT_TRANS( cont, cont, mat_to_mat )
 TEST_DIRECT_TRANS( cont, bloc, mat_to_blk )
@@ -86,17 +86,5 @@ TEST_DIRECT_TRANS( grid, cont, grid_to_mat )
 TEST_DIRECT_TRANS( grid, bloc, grid_to_blk )
 TEST_DIRECT_TRANS( grid, grid, grid_to_grid )
 
-BEGIN_MAIN_SUITE
-	ADD_TPACK( direct_trans_mat_to_mat )
-	ADD_TPACK( direct_trans_mat_to_blk )
-	ADD_TPACK( direct_trans_mat_to_grid )
 
-	ADD_TPACK( direct_trans_blk_to_mat )
-	ADD_TPACK( direct_trans_blk_to_blk )
-	ADD_TPACK( direct_trans_blk_to_grid )
-
-	ADD_TPACK( direct_trans_grid_to_mat )
-	ADD_TPACK( direct_trans_grid_to_blk )
-	ADD_TPACK( direct_trans_grid_to_grid )
-END_MAIN_SUITE
 

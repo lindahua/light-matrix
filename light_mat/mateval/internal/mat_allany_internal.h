@@ -14,10 +14,7 @@
 #define LIGHTMAT_MAT_ALLANY_INTERNAL_H_
 
 #include <light_mat/mateval/macc_policy.h>
-#include <light_mat/math/sse_reduce.h>
-#ifdef LMAT_HAS_AVX
-#include <light_mat/math/avx_reduce.h>
-#endif
+#include <light_mat/simd/simd.h>
 
 namespace lmat { namespace internal {
 
@@ -41,7 +38,7 @@ namespace lmat { namespace internal {
 	LMAT_ENSURE_INLINE
 	inline bool all_impl(const dimension<N>& dim, type_<T>, atags::simd<SKind>, const Reader& rd)
 	{
-		typedef typename math::simd_bpack<T, SKind> pack_t;
+		typedef simd_bpack<T, SKind> pack_t;
 
 		const index_t pw = (index_t)pack_t::pack_width;
 		const index_t len = dim.value();
@@ -53,7 +50,7 @@ namespace lmat { namespace internal {
 			const index_t l = npacks * pw;
 			for (i = 0; i < l; i += pw)
 			{
-				if (math::any_false(rd.pack(i))) return false;
+				if (any_false(rd.pack(i))) return false;
 			}
 		}
 
@@ -80,7 +77,7 @@ namespace lmat { namespace internal {
 	LMAT_ENSURE_INLINE
 	inline bool any_impl(const dimension<N>& dim, type_<T>, atags::simd<SKind>, const Reader& rd)
 	{
-		typedef typename math::simd_bpack<T, SKind> pack_t;
+		typedef simd_bpack<T, SKind> pack_t;
 
 		const index_t pw = (index_t)pack_t::pack_width;
 		const index_t len = dim.value();
@@ -92,7 +89,7 @@ namespace lmat { namespace internal {
 			const index_t l = npacks * pw;
 			for (i = 0; i < l; i += pw)
 			{
-				if (math::any_true(rd.pack(i))) return true;
+				if (any_true(rd.pack(i))) return true;
 			}
 		}
 

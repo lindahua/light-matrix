@@ -206,288 +206,282 @@ void test_mat_range()
 }
 
 
-MN_CASE( matview, whole_whole )
+MN_CASE( matview_whole_whole )
 {
 	test_mat_range<ref_matrix, whole, whole, M, N>();
 }
 
-MN_CASE( matview, whole_range )
+MN_CASE( matview_whole_range )
 {
 	test_mat_range<ref_matrix, whole, range, M, N>();
 }
 
-MN_CASE( matview, whole_step )
+MN_CASE( matview_whole_step )
 {
 	test_mat_range<ref_matrix, whole, step_range, M, N>();
 }
 
-MN_CASE( matview, range_whole )
+MN_CASE( matview_range_whole )
 {
 	test_mat_range<ref_matrix, range, whole, M, N>();
 }
 
-MN_CASE( matview, range_range )
+MN_CASE( matview_range_range )
 {
 	test_mat_range<ref_matrix, range, range, M, N>();
 }
 
-MN_CASE( matview, range_step )
+MN_CASE( matview_range_step )
 {
 	test_mat_range<ref_matrix, range, step_range, M, N>();
 }
 
-MN_CASE( matview, step_whole )
+MN_CASE( matview_step_whole )
 {
 	test_mat_range<ref_matrix, step_range, whole, M, N>();
 }
 
-MN_CASE( matview, step_range )
+MN_CASE( matview_step_range )
 {
 	test_mat_range<ref_matrix, step_range, range, M, N>();
 }
 
-MN_CASE( matview, step_step )
+MN_CASE( matview_step_step )
 {
 	test_mat_range<ref_matrix, step_range, step_range, M, N>();
 }
 
 
-MN_CASE( blocview, whole_whole )
+MN_CASE( blocview_whole_whole )
 {
 	test_mat_range<ref_block, whole, whole, M, N>();
 }
 
-MN_CASE( blocview, whole_range )
+MN_CASE( blocview_whole_range )
 {
 	test_mat_range<ref_block, whole, range, M, N>();
 }
 
-MN_CASE( blocview, whole_step )
+MN_CASE( blocview_whole_step )
 {
 	test_mat_range<ref_block, whole, step_range, M, N>();
 }
 
-MN_CASE( blocview, range_whole )
+MN_CASE( blocview_range_whole )
 {
 	test_mat_range<ref_block, range, whole, M, N>();
 }
 
-MN_CASE( blocview, range_range )
+MN_CASE( blocview_range_range )
 {
 	test_mat_range<ref_block, range, range, M, N>();
 }
 
-MN_CASE( blocview, range_step )
+MN_CASE( blocview_range_step )
 {
 	test_mat_range<ref_block, range, step_range, M, N>();
 }
 
-MN_CASE( blocview, step_whole )
+MN_CASE( blocview_step_whole )
 {
 	test_mat_range<ref_block, step_range, whole, M, N>();
 }
 
-MN_CASE( blocview, step_range )
+MN_CASE( blocview_step_range )
 {
 	test_mat_range<ref_block, step_range, range, M, N>();
 }
 
-MN_CASE( blocview, step_step )
+MN_CASE( blocview_step_step )
 {
 	test_mat_range<ref_block, step_range, step_range, M, N>();
 }
 
 
-MN_CASE( gridview, whole_whole )
+MN_CASE( gridview_whole_whole )
 {
 	test_mat_range<ref_grid, whole, whole, M, N>();
 }
 
-MN_CASE( gridview, whole_range )
+MN_CASE( gridview_whole_range )
 {
 	test_mat_range<ref_grid, whole, range, M, N>();
 }
 
-MN_CASE( gridview, whole_step )
+MN_CASE( gridview_whole_step )
 {
 	test_mat_range<ref_grid, whole, step_range, M, N>();
 }
 
-MN_CASE( gridview, range_whole )
+MN_CASE( gridview_range_whole )
 {
 	test_mat_range<ref_grid, range, whole, M, N>();
 }
 
-MN_CASE( gridview, range_range )
+MN_CASE( gridview_range_range )
 {
 	test_mat_range<ref_grid, range, range, M, N>();
 }
 
-MN_CASE( gridview, range_step )
+MN_CASE( gridview_range_step )
 {
 	test_mat_range<ref_grid, range, step_range, M, N>();
 }
 
-MN_CASE( gridview, step_whole )
+MN_CASE( gridview_step_whole )
 {
 	test_mat_range<ref_grid, step_range, whole, M, N>();
 }
 
-MN_CASE( gridview, step_range )
+MN_CASE( gridview_step_range )
 {
 	test_mat_range<ref_grid, step_range, range, M, N>();
 }
 
-MN_CASE( gridview, step_step )
+MN_CASE( gridview_step_step )
 {
 	test_mat_range<ref_grid, step_range, step_range, M, N>();
 }
 
 
 
-BEGIN_TPACK( whole_whole_of_mat )
-	ADD_MN_CASE_3X3( matview, whole_whole, DM, DN )
-END_TPACK
+AUTO_TPACK( whole_whole_of_mat )
+{
+	ADD_MN_CASE_3X3( matview_whole_whole, DM, DN )
+}
 
-BEGIN_TPACK( whole_range_of_mat )
-	ADD_MN_CASE_3X3( matview, whole_range, DM, DN )
-END_TPACK
+AUTO_TPACK( whole_range_of_mat )
+{
+	ADD_MN_CASE_3X3( matview_whole_range, DM, DN )
+}
 
-BEGIN_TPACK( whole_step_of_mat )
-	ADD_MN_CASE_3X3( matview, whole_step, DM, DN )
-END_TPACK
+AUTO_TPACK( whole_step_of_mat )
+{
+	ADD_MN_CASE_3X3( matview_whole_step, DM, DN )
+}
 
-BEGIN_TPACK( range_whole_of_mat )
-	ADD_MN_CASE_3X3( matview, range_whole, DM, DN )
-END_TPACK
+AUTO_TPACK( range_whole_of_mat )
+{
+	ADD_MN_CASE_3X3( matview_range_whole, DM, DN )
+}
 
-BEGIN_TPACK( range_range_of_mat )
-	ADD_MN_CASE_3X3( matview, range_range, DM, DN )
-END_TPACK
+AUTO_TPACK( range_range_of_mat )
+{
+	ADD_MN_CASE_3X3( matview_range_range, DM, DN )
+}
 
-BEGIN_TPACK( range_step_of_mat )
-	ADD_MN_CASE_3X3( matview, range_step, DM, DN )
-END_TPACK
+AUTO_TPACK( range_step_of_mat )
+{
+	ADD_MN_CASE_3X3( matview_range_step, DM, DN )
+}
 
-BEGIN_TPACK( step_whole_of_mat )
-	ADD_MN_CASE_3X3( matview, step_whole, DM, DN )
-END_TPACK
+AUTO_TPACK( step_whole_of_mat )
+{
+	ADD_MN_CASE_3X3( matview_step_whole, DM, DN )
+}
 
-BEGIN_TPACK( step_range_of_mat )
-	ADD_MN_CASE_3X3( matview, step_range, DM, DN )
-END_TPACK
+AUTO_TPACK( step_range_of_mat )
+{
+	ADD_MN_CASE_3X3( matview_step_range, DM, DN )
+}
 
-BEGIN_TPACK( step_step_of_mat )
-	ADD_MN_CASE_3X3( matview, step_step, DM, DN )
-END_TPACK
-
-
-BEGIN_TPACK( whole_whole_of_block )
-	ADD_MN_CASE_3X3( blocview, whole_whole, DM, DN )
-END_TPACK
-
-BEGIN_TPACK( whole_range_of_block )
-	ADD_MN_CASE_3X3( blocview, whole_range, DM, DN )
-END_TPACK
-
-BEGIN_TPACK( whole_step_of_block )
-	ADD_MN_CASE_3X3( blocview, whole_step, DM, DN )
-END_TPACK
-
-BEGIN_TPACK( range_whole_of_block )
-	ADD_MN_CASE_3X3( blocview, range_whole, DM, DN )
-END_TPACK
-
-BEGIN_TPACK( range_range_of_block )
-	ADD_MN_CASE_3X3( blocview, range_range, DM, DN )
-END_TPACK
-
-BEGIN_TPACK( range_step_of_block )
-	ADD_MN_CASE_3X3( blocview, range_step, DM, DN )
-END_TPACK
-
-BEGIN_TPACK( step_whole_of_block )
-	ADD_MN_CASE_3X3( blocview, step_whole, DM, DN )
-END_TPACK
-
-BEGIN_TPACK( step_range_of_block )
-	ADD_MN_CASE_3X3( blocview, step_range, DM, DN )
-END_TPACK
-
-BEGIN_TPACK( step_step_of_block )
-	ADD_MN_CASE_3X3( blocview, step_step, DM, DN )
-END_TPACK
+AUTO_TPACK( step_step_of_mat )
+{
+	ADD_MN_CASE_3X3( matview_step_step, DM, DN )
+}
 
 
-BEGIN_TPACK( whole_whole_of_grid )
-	ADD_MN_CASE_3X3( gridview, whole_whole, DM, DN )
-END_TPACK
+AUTO_TPACK( whole_whole_of_block )
+{
+	ADD_MN_CASE_3X3( blocview_whole_whole, DM, DN )
+}
 
-BEGIN_TPACK( whole_range_of_grid )
-	ADD_MN_CASE_3X3( gridview, whole_range, DM, DN )
-END_TPACK
+AUTO_TPACK( whole_range_of_block )
+{
+	ADD_MN_CASE_3X3( blocview_whole_range, DM, DN )
+}
 
-BEGIN_TPACK( whole_step_of_grid )
-	ADD_MN_CASE_3X3( gridview, whole_step, DM, DN )
-END_TPACK
+AUTO_TPACK( whole_step_of_block )
+{
+	ADD_MN_CASE_3X3( blocview_whole_step, DM, DN )
+}
 
-BEGIN_TPACK( range_whole_of_grid )
-	ADD_MN_CASE_3X3( gridview, range_whole, DM, DN )
-END_TPACK
+AUTO_TPACK( range_whole_of_block )
+{
+	ADD_MN_CASE_3X3( blocview_range_whole, DM, DN )
+}
 
-BEGIN_TPACK( range_range_of_grid )
-	ADD_MN_CASE_3X3( gridview, range_range, DM, DN )
-END_TPACK
+AUTO_TPACK( range_range_of_block )
+{
+	ADD_MN_CASE_3X3( blocview_range_range, DM, DN )
+}
 
-BEGIN_TPACK( range_step_of_grid )
-	ADD_MN_CASE_3X3( gridview, range_step, DM, DN )
-END_TPACK
+AUTO_TPACK( range_step_of_block )
+{
+	ADD_MN_CASE_3X3( blocview_range_step, DM, DN )
+}
 
-BEGIN_TPACK( step_whole_of_grid )
-	ADD_MN_CASE_3X3( gridview, step_whole, DM, DN )
-END_TPACK
+AUTO_TPACK( step_whole_of_block )
+{
+	ADD_MN_CASE_3X3( blocview_step_whole, DM, DN )
+}
 
-BEGIN_TPACK( step_range_of_grid )
-	ADD_MN_CASE_3X3( gridview, step_range, DM, DN )
-END_TPACK
+AUTO_TPACK( step_range_of_block )
+{
+	ADD_MN_CASE_3X3( blocview_step_range, DM, DN )
+}
 
-BEGIN_TPACK( step_step_of_grid )
-	ADD_MN_CASE_3X3( gridview, step_step, DM, DN )
-END_TPACK
+AUTO_TPACK( step_step_of_block )
+{
+	ADD_MN_CASE_3X3( blocview_step_step, DM, DN )
+}
 
 
+AUTO_TPACK( whole_whole_of_grid )
+{
+	ADD_MN_CASE_3X3( gridview_whole_whole, DM, DN )
+}
 
-BEGIN_MAIN_SUITE
-	ADD_TPACK( whole_whole_of_mat )
-	ADD_TPACK( whole_range_of_mat )
-	ADD_TPACK( whole_step_of_mat )
-	ADD_TPACK( range_whole_of_mat )
-	ADD_TPACK( range_range_of_mat )
-	ADD_TPACK( range_step_of_mat )
-	ADD_TPACK( step_whole_of_mat )
-	ADD_TPACK( step_range_of_mat )
-	ADD_TPACK( step_step_of_mat )
+AUTO_TPACK( whole_range_of_grid )
+{
+	ADD_MN_CASE_3X3( gridview_whole_range, DM, DN )
+}
 
-	ADD_TPACK( whole_whole_of_block )
-	ADD_TPACK( whole_range_of_block )
-	ADD_TPACK( whole_step_of_block )
-	ADD_TPACK( range_whole_of_block )
-	ADD_TPACK( range_range_of_block )
-	ADD_TPACK( range_step_of_block )
-	ADD_TPACK( step_whole_of_block )
-	ADD_TPACK( step_range_of_block )
-	ADD_TPACK( step_step_of_block )
+AUTO_TPACK( whole_step_of_grid )
+{
+	ADD_MN_CASE_3X3( gridview_whole_step, DM, DN )
+}
 
-	ADD_TPACK( whole_whole_of_grid )
-	ADD_TPACK( whole_range_of_grid )
-	ADD_TPACK( whole_step_of_grid )
-	ADD_TPACK( range_whole_of_grid )
-	ADD_TPACK( range_range_of_grid )
-	ADD_TPACK( range_step_of_grid )
-	ADD_TPACK( step_whole_of_grid )
-	ADD_TPACK( step_range_of_grid )
-	ADD_TPACK( step_step_of_grid )
-END_MAIN_SUITE
+AUTO_TPACK( range_whole_of_grid )
+{
+	ADD_MN_CASE_3X3( gridview_range_whole, DM, DN )
+}
+
+AUTO_TPACK( range_range_of_grid )
+{
+	ADD_MN_CASE_3X3( gridview_range_range, DM, DN )
+}
+
+AUTO_TPACK( range_step_of_grid )
+{
+	ADD_MN_CASE_3X3( gridview_range_step, DM, DN )
+}
+
+AUTO_TPACK( step_whole_of_grid )
+{
+	ADD_MN_CASE_3X3( gridview_step_whole, DM, DN )
+}
+
+AUTO_TPACK( step_range_of_grid )
+{
+	ADD_MN_CASE_3X3( gridview_step_range, DM, DN )
+}
+
+AUTO_TPACK( step_step_of_grid )
+{
+	ADD_MN_CASE_3X3( gridview_step_step, DM, DN )
+}
+
 
 
 

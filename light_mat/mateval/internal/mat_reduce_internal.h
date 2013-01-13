@@ -16,7 +16,7 @@
 #include <light_mat/mateval/mat_fold.h>
 #include <light_mat/mateval/common_kernels.h>
 #include <light_mat/math/math_functors.h>
-#include <light_mat/mateval/mat_arith.h>
+#include <light_mat/matexpr/mat_arith.h>
 
 namespace lmat {
 

@@ -84,13 +84,12 @@ void test_mat_transpose()
 }
 
 
-
 #define TEST_MAT_TRANS( sform, dform, name ) \
-	MN_CASE( mat_trans, name ) \
+	MN_CASE( mat_trans_##name ) \
 	{ test_mat_transpose<sform, dform, M, N>(); } \
-	BEGIN_TPACK( mat_trans_##name ) \
-	ADD_MN_CASE_3X3( mat_trans, name, DM, DN ) \
-	END_TPACK
+	AUTO_TPACK( mat_trans_##name ) { \
+	ADD_MN_CASE_3X3( mat_trans_##name, DM, DN ) \
+	}
 
 TEST_MAT_TRANS( cont, cont, mat_to_mat )
 TEST_MAT_TRANS( cont, bloc, mat_to_blk )
@@ -105,17 +104,4 @@ TEST_MAT_TRANS( grid, bloc, grid_to_blk )
 TEST_MAT_TRANS( grid, grid, grid_to_grid )
 
 
-BEGIN_MAIN_SUITE
-	ADD_TPACK( mat_trans_mat_to_mat )
-	ADD_TPACK( mat_trans_mat_to_blk )
-	ADD_TPACK( mat_trans_mat_to_grid )
-
-	ADD_TPACK( mat_trans_blk_to_mat )
-	ADD_TPACK( mat_trans_blk_to_blk )
-	ADD_TPACK( mat_trans_blk_to_grid )
-
-	ADD_TPACK( mat_trans_grid_to_mat )
-	ADD_TPACK( mat_trans_grid_to_blk )
-	ADD_TPACK( mat_trans_grid_to_grid )
-END_MAIN_SUITE
 

@@ -87,79 +87,79 @@ void test_matrix_export()
 }
 
 
-MN_CASE( mat_copy, cont_to_cont )
+MN_CASE( mat_copy_cont_to_cont )
 {
 	test_matrix_copy<cont, cont, M, N>();
 }
 
-MN_CASE( mat_copy, cont_to_bloc )
+MN_CASE( mat_copy_cont_to_bloc )
 {
 	test_matrix_copy<cont, bloc, M, N>();
 }
 
-MN_CASE( mat_copy, cont_to_grid )
+MN_CASE( mat_copy_cont_to_grid )
 {
 	test_matrix_copy<cont, grid, M, N>();
 }
 
-MN_CASE( mat_copy, bloc_to_cont )
+MN_CASE( mat_copy_bloc_to_cont )
 {
 	test_matrix_copy<bloc, cont, M, N>();
 }
 
-MN_CASE( mat_copy, bloc_to_bloc )
+MN_CASE( mat_copy_bloc_to_bloc )
 {
 	test_matrix_copy<bloc, bloc, M, N>();
 }
 
-MN_CASE( mat_copy, bloc_to_grid )
+MN_CASE( mat_copy_bloc_to_grid )
 {
 	test_matrix_copy<bloc, grid, M, N>();
 }
 
-MN_CASE( mat_copy, grid_to_cont )
+MN_CASE( mat_copy_grid_to_cont )
 {
 	test_matrix_copy<grid, cont, M, N>();
 }
 
-MN_CASE( mat_copy, grid_to_bloc )
+MN_CASE( mat_copy_grid_to_bloc )
 {
 	test_matrix_copy<grid, bloc, M, N>();
 }
 
-MN_CASE( mat_copy, grid_to_grid )
+MN_CASE( mat_copy_grid_to_grid )
 {
 	test_matrix_copy<grid, grid, M, N>();
 }
 
 
-MN_CASE( mat_import, cont )
+MN_CASE( mat_import_cont )
 {
 	test_matrix_import<cont, M, N>();
 }
 
-MN_CASE( mat_import, bloc )
+MN_CASE( mat_import_bloc )
 {
 	test_matrix_import<bloc, M, N>();
 }
 
-MN_CASE( mat_import, grid )
+MN_CASE( mat_import_grid )
 {
 	test_matrix_import<grid, M, N>();
 }
 
 
-MN_CASE( mat_export, cont )
+MN_CASE( mat_export_cont )
 {
 	test_matrix_export<cont, M, N>();
 }
 
-MN_CASE( mat_export, bloc )
+MN_CASE( mat_export_bloc )
 {
 	test_matrix_export<bloc, M, N>();
 }
 
-MN_CASE( mat_export, grid )
+MN_CASE( mat_export_grid )
 {
 	test_matrix_export<grid, M, N>();
 }
@@ -191,7 +191,7 @@ void safe_copy_tril(index_t m, index_t n, const S& smat, D& dmat, index_t k)
 
 
 
-SIMPLE_CASE( mat_copy, triu )
+SIMPLE_CASE( mat_copy_triu )
 {
 	index_t LDimA = 9;
 	index_t LDimB = 10;
@@ -229,7 +229,7 @@ SIMPLE_CASE( mat_copy, triu )
 }
 
 
-SIMPLE_CASE( mat_copy, tril )
+SIMPLE_CASE( mat_copy_tril )
 {
 	index_t LDimA = 9;
 	index_t LDimB = 10;
@@ -267,94 +267,38 @@ SIMPLE_CASE( mat_copy, tril )
 }
 
 
+AUTO_TPACK( mat_copy )
+{
+	ADD_MN_CASE_3X3( mat_copy_cont_to_cont, 3, 4 )
+	ADD_MN_CASE_3X3( mat_copy_cont_to_bloc, 3, 4 )
+	ADD_MN_CASE_3X3( mat_copy_cont_to_grid, 3, 4 )
 
-BEGIN_TPACK( mat_copy_cc )
-	ADD_MN_CASE_3X3( mat_copy, cont_to_cont, 3, 4 );
-END_TPACK
+	ADD_MN_CASE_3X3( mat_copy_bloc_to_cont, 3, 4 )
+	ADD_MN_CASE_3X3( mat_copy_bloc_to_bloc, 3, 4 )
+	ADD_MN_CASE_3X3( mat_copy_bloc_to_grid, 3, 4 )
 
-BEGIN_TPACK( mat_copy_cb )
-	ADD_MN_CASE_3X3( mat_copy, cont_to_bloc, 3, 4 );
-END_TPACK
+	ADD_MN_CASE_3X3( mat_copy_grid_to_cont, 3, 4 )
+	ADD_MN_CASE_3X3( mat_copy_grid_to_bloc, 3, 4 )
+	ADD_MN_CASE_3X3( mat_copy_grid_to_grid, 3, 4 )
+}
 
-BEGIN_TPACK( mat_copy_cg )
-	ADD_MN_CASE_3X3( mat_copy, cont_to_grid, 3, 4 );
-END_TPACK
+AUTO_TPACK( mat_import )
+{
+	ADD_MN_CASE_3X3( mat_import_cont, 3, 4 )
+	ADD_MN_CASE_3X3( mat_import_bloc, 3, 4 )
+	ADD_MN_CASE_3X3( mat_import_grid, 3, 4 )
+}
 
-BEGIN_TPACK( mat_copy_bc )
-	ADD_MN_CASE_3X3( mat_copy, bloc_to_cont, 3, 4 );
-END_TPACK
+AUTO_TPACK( mat_export )
+{
+	ADD_MN_CASE_3X3( mat_export_cont, 3, 4 )
+	ADD_MN_CASE_3X3( mat_export_bloc, 3, 4 )
+	ADD_MN_CASE_3X3( mat_export_grid, 3, 4 )
+}
 
-BEGIN_TPACK( mat_copy_bb )
-	ADD_MN_CASE_3X3( mat_copy, bloc_to_bloc, 3, 4 );
-END_TPACK
-
-BEGIN_TPACK( mat_copy_bg )
-	ADD_MN_CASE_3X3( mat_copy, bloc_to_grid, 3, 4 );
-END_TPACK
-
-BEGIN_TPACK( mat_copy_gc )
-	ADD_MN_CASE_3X3( mat_copy, grid_to_cont, 3, 4 );
-END_TPACK
-
-BEGIN_TPACK( mat_copy_gb )
-	ADD_MN_CASE_3X3( mat_copy, grid_to_bloc, 3, 4 );
-END_TPACK
-
-BEGIN_TPACK( mat_copy_gg )
-	ADD_MN_CASE_3X3( mat_copy, grid_to_grid, 3, 4 );
-END_TPACK
-
-BEGIN_TPACK( mat_import_cont )
-	ADD_MN_CASE_3X3( mat_import, cont, 3, 4 )
-END_TPACK
-
-BEGIN_TPACK( mat_import_bloc )
-	ADD_MN_CASE_3X3( mat_import, bloc, 3, 4 )
-END_TPACK
-
-BEGIN_TPACK( mat_import_grid )
-	ADD_MN_CASE_3X3( mat_import, grid, 3, 4 )
-END_TPACK
-
-BEGIN_TPACK( mat_export_cont )
-	ADD_MN_CASE_3X3( mat_export, cont, 3, 4 )
-END_TPACK
-
-BEGIN_TPACK( mat_export_bloc )
-	ADD_MN_CASE_3X3( mat_export, bloc, 3, 4 )
-END_TPACK
-
-BEGIN_TPACK( mat_export_grid )
-	ADD_MN_CASE_3X3( mat_export, grid, 3, 4 )
-END_TPACK
-
-BEGIN_TPACK( mat_copy_tri )
-	ADD_SIMPLE_CASE( mat_copy, triu )
-	ADD_SIMPLE_CASE( mat_copy, tril )
-END_TPACK
-
-
-BEGIN_MAIN_SUITE
-	ADD_TPACK( mat_copy_cc )
-	ADD_TPACK( mat_copy_cb )
-	ADD_TPACK( mat_copy_cg )
-	ADD_TPACK( mat_copy_bc )
-	ADD_TPACK( mat_copy_bb )
-	ADD_TPACK( mat_copy_bg )
-	ADD_TPACK( mat_copy_gc )
-	ADD_TPACK( mat_copy_gb )
-	ADD_TPACK( mat_copy_gg )
-
-	ADD_TPACK( mat_import_cont )
-	ADD_TPACK( mat_import_bloc )
-	ADD_TPACK( mat_import_grid )
-
-	ADD_TPACK( mat_export_cont )
-	ADD_TPACK( mat_export_bloc )
-	ADD_TPACK( mat_export_grid )
-
-	ADD_TPACK( mat_copy_tri )
-END_MAIN_SUITE
-
-
+AUTO_TPACK( mat_copy_tri )
+{
+	ADD_SIMPLE_CASE( mat_copy_triu )
+	ADD_SIMPLE_CASE( mat_copy_tril )
+}
 

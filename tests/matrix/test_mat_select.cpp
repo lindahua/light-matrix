@@ -40,7 +40,7 @@ void fill_randi(dense_matrix<index_t, M, N>& X, index_t U)
 }
 
 
-MN_CASE( mat_select, selectl )
+MN_CASE( mat_selectl )
 {
 	dense_matrix<double> s(M0, N0);
 	fill_ran(s);
@@ -65,7 +65,7 @@ MN_CASE( mat_select, selectl )
 	ASSERT_MAT_EQ( m, n, r, r0 );
 }
 
-MN_CASE( mat_select, selectl_ex )
+MN_CASE( mat_selectl_ex )
 {
 	dense_matrix<double> s(M0, N0);
 	fill_ran(s);
@@ -91,7 +91,7 @@ MN_CASE( mat_select, selectl_ex )
 	ASSERT_MAT_EQ( m, n, r, r0 );
 }
 
-MN_CASE( mat_select, selectl2 )
+MN_CASE( mat_selectl2 )
 {
 	dense_matrix<double> s(M0, N0);
 	fill_ran(s);
@@ -118,7 +118,7 @@ MN_CASE( mat_select, selectl2 )
 	ASSERT_MAT_EQ( m, n, r, r0 );
 }
 
-MN_CASE( mat_select, selectl2_ex )
+MN_CASE( mat_selectl2_ex )
 {
 	dense_matrix<double> s(M0, N0);
 	fill_ran(s);
@@ -148,7 +148,7 @@ MN_CASE( mat_select, selectl2_ex )
 	ASSERT_MAT_EQ( m, n, r, r0 );
 }
 
-MN_CASE( mat_select, select )
+MN_CASE( mat_select )
 {
 	dense_matrix<double> s(M0, N0);
 	fill_ran(s);
@@ -176,7 +176,7 @@ MN_CASE( mat_select, select )
 }
 
 
-MN_CASE( mat_select, select_rows )
+MN_CASE( mat_select_rows )
 {
 	index_t m = M == 0 ? DM : M;
 	index_t n = N == 0 ? DN : N;
@@ -202,7 +202,7 @@ MN_CASE( mat_select, select_rows )
 }
 
 
-MN_CASE( mat_select, select_cols )
+MN_CASE( mat_select_cols )
 {
 	index_t m = M == 0 ? DM : M;
 	index_t n = N == 0 ? DN : N;
@@ -228,46 +228,40 @@ MN_CASE( mat_select, select_cols )
 }
 
 
+AUTO_TPACK( mat_selectl )
+{
+	ADD_MN_CASE_3X3( mat_selectl, DM, DN )
+}
 
-BEGIN_TPACK( mat_selectl )
-	ADD_MN_CASE_3X3( mat_select, selectl, DM, DN )
-END_TPACK
+AUTO_TPACK( mat_selectl_ex )
+{
+	ADD_MN_CASE_3X3( mat_selectl_ex, DM, DN )
+}
 
-BEGIN_TPACK( mat_selectl_ex )
-	ADD_MN_CASE_3X3( mat_select, selectl_ex, DM, DN )
-END_TPACK
+AUTO_TPACK( mat_selectl2 )
+{
+	ADD_MN_CASE_3X3( mat_selectl2, DM, DN )
+}
 
-BEGIN_TPACK( mat_selectl2 )
-	ADD_MN_CASE_3X3( mat_select, selectl2, DM, DN )
-END_TPACK
+AUTO_TPACK( mat_selectl2_ex )
+{
+	ADD_MN_CASE_3X3( mat_selectl2, DM, DN )
+}
 
-BEGIN_TPACK( mat_selectl2_ex )
-	ADD_MN_CASE_3X3( mat_select, selectl2, DM, DN )
-END_TPACK
+AUTO_TPACK( mat_select )
+{
+	ADD_MN_CASE_3X3( mat_select, DM, DN )
+}
 
-BEGIN_TPACK( mat_select )
-	ADD_MN_CASE_3X3( mat_select, select, DM, DN )
-END_TPACK
+AUTO_TPACK( mat_select_rows )
+{
+	ADD_MN_CASE_3X3( mat_select_rows, DM, DN )
+}
 
-BEGIN_TPACK( mat_select_rows )
-	ADD_MN_CASE_3X3( mat_select, select_rows, DM, DN )
-END_TPACK
-
-BEGIN_TPACK( mat_select_cols )
-	ADD_MN_CASE_3X3( mat_select, select_cols, DM, DN )
-END_TPACK
-
-
-BEGIN_MAIN_SUITE
-	ADD_TPACK( mat_selectl )
-	ADD_TPACK( mat_selectl_ex )
-	ADD_TPACK( mat_selectl2 )
-	ADD_TPACK( mat_selectl2_ex )
-
-	ADD_TPACK( mat_select )
-	ADD_TPACK( mat_select_rows )
-	ADD_TPACK( mat_select_cols )
-END_MAIN_SUITE
+AUTO_TPACK( mat_select_cols )
+{
+	ADD_MN_CASE_3X3( mat_select_cols, DM, DN )
+}
 
 
 

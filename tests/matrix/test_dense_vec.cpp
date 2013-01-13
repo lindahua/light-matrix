@@ -49,7 +49,7 @@ inline void verify_layout(const dense_matrix<double, M, N>& a, index_t m, index_
 }
 
 
-N_CASE( dense_col, constructs )
+N_CASE( dense_col_constructs )
 {
 	// default construction
 
@@ -76,7 +76,7 @@ N_CASE( dense_col, constructs )
 }
 
 
-SIMPLE_CASE( dense_col, initializes )
+SIMPLE_CASE( dense_col_initializes )
 {
 	dense_col<double> a {1.0, 2.0, 3.0, 4.0, 5.0};
 	double s[5] = {1.0, 2.0, 3.0, 4.0, 5.0};
@@ -87,7 +87,7 @@ SIMPLE_CASE( dense_col, initializes )
 }
 
 
-N_CASE( dense_col, generates )
+N_CASE( dense_col_generates )
 {
 	const index_t n = N == 0 ? 4 : N;
 
@@ -119,7 +119,7 @@ N_CASE( dense_col, generates )
 	ASSERT_VEC_EQ(n, a2, ref);
 }
 
-N_CASE( dense_col, copy_constructs )
+N_CASE( dense_col_copy_constructs )
 {
 	const index_t n = N == 0 ? 4 : N;
 
@@ -137,7 +137,7 @@ N_CASE( dense_col, copy_constructs )
 }
 
 
-N_CASE( dense_col, resize )
+N_CASE( dense_col_resize )
 {
 	const index_t n = N == 0 ? 4 : N;
 	const index_t n2 = N == 0 ? 5 : N;
@@ -166,7 +166,7 @@ N_CASE( dense_col, resize )
 }
 
 
-N_CASE( dense_col, assign )
+N_CASE( dense_col_assign )
 {
 	const index_t n = N == 0 ? 4 : N;
 
@@ -213,7 +213,7 @@ N_CASE( dense_col, assign )
 }
 
 
-N_CASE( dense_col, import )
+N_CASE( dense_col_import )
 {
 	const index_t n = N == 0 ? 4 : N;
 
@@ -239,7 +239,7 @@ N_CASE( dense_col, import )
 	ASSERT_VEC_EQ(n, a, ref);
 }
 
-N_CASE( dense_col, swap )
+N_CASE( dense_col_swap )
 {
 	const index_t n = N == 0 ? 4 : N;
 	const index_t n2 = N == 0 ? 5 : N;
@@ -278,7 +278,7 @@ N_CASE( dense_col, swap )
 
 
 
-N_CASE( dense_row, constructs )
+N_CASE( dense_row_constructs )
 {
 	// default construction
 
@@ -304,7 +304,7 @@ N_CASE( dense_row, constructs )
 	ASSERT_TRUE(a1.ptr_data() != 0);
 }
 
-SIMPLE_CASE( dense_row, initializes )
+SIMPLE_CASE( dense_row_initializes )
 {
 	dense_row<double> a {1.0, 2.0, 3.0, 4.0, 5.0};
 	double s[5] = {1.0, 2.0, 3.0, 4.0, 5.0};
@@ -315,8 +315,7 @@ SIMPLE_CASE( dense_row, initializes )
 }
 
 
-
-N_CASE( dense_row, generates )
+N_CASE( dense_row_generates )
 {
 	const index_t n = N == 0 ? 4 : N;
 
@@ -348,7 +347,7 @@ N_CASE( dense_row, generates )
 	ASSERT_VEC_EQ(n, a2, ref);
 }
 
-N_CASE( dense_row, copy_constructs )
+N_CASE( dense_row_copy_constructs )
 {
 	const index_t n = N == 0 ? 4 : N;
 
@@ -365,7 +364,7 @@ N_CASE( dense_row, copy_constructs )
 	ASSERT_VEC_EQ(n, a, a2);
 }
 
-N_CASE( dense_row, resize )
+N_CASE( dense_row_resize )
 {
 	const index_t n = N == 0 ? 4 : N;
 	const index_t n2 = N == 0 ? 5 : N;
@@ -395,7 +394,7 @@ N_CASE( dense_row, resize )
 }
 
 
-N_CASE( dense_row, assign )
+N_CASE( dense_row_assign )
 {
 	const index_t n = N == 0 ? 4 : N;
 
@@ -441,7 +440,7 @@ N_CASE( dense_row, assign )
 	ASSERT_VEC_EQ( n, c, s );
 }
 
-N_CASE( dense_row, import )
+N_CASE( dense_row_import )
 {
 	const index_t n = N == 0 ? 4 : N;
 
@@ -466,7 +465,7 @@ N_CASE( dense_row, import )
 	ASSERT_VEC_EQ(n, a, ref);
 }
 
-N_CASE( dense_row, swap )
+N_CASE( dense_row_swap )
 {
 	const index_t n = N == 0 ? 4 : N;
 	const index_t n2 = N == 0 ? 5 : N;
@@ -504,114 +503,78 @@ N_CASE( dense_row, swap )
 }
 
 
+AUTO_TPACK( dense_col_constructs )
+{
+	ADD_N_CASE_3( dense_col_constructs, 4 )
+	ADD_SIMPLE_CASE( dense_col_initializes )
+}
+
+AUTO_TPACK( dense_col_generates )
+{
+	ADD_N_CASE_3( dense_col_generates, 4 )
+}
+
+AUTO_TPACK( dense_col_copycon )
+{
+	ADD_N_CASE_3( dense_col_copy_constructs, 4 )
+}
+
+AUTO_TPACK( dense_col_resize )
+{
+	ADD_N_CASE_3( dense_col_resize, 4 )
+}
+
+AUTO_TPACK( dense_col_assign )
+{
+	ADD_N_CASE_3( dense_col_assign, 4 )
+}
+
+AUTO_TPACK( dense_col_import )
+{
+	ADD_N_CASE_3( dense_col_import, 4 )
+}
+
+AUTO_TPACK( dense_col_swap )
+{
+	ADD_N_CASE_3( dense_col_swap, 4 )
+}
 
 
-BEGIN_TPACK( dense_col_constructs )
-	ADD_N_CASE( dense_col, constructs, 0 )
-	ADD_N_CASE( dense_col, constructs, 1 )
-	ADD_N_CASE( dense_col, constructs, 4 )
-	ADD_SIMPLE_CASE( dense_col, initializes )
-END_TPACK
+AUTO_TPACK( dense_row_constructs )
+{
+	ADD_N_CASE_3( dense_row_constructs, 4 )
+}
 
-BEGIN_TPACK( dense_col_generates )
-	ADD_N_CASE( dense_col, generates, 0 )
-	ADD_N_CASE( dense_col, generates, 1 )
-	ADD_N_CASE( dense_col, generates, 4 )
-END_TPACK
+AUTO_TPACK( dense_row_generates )
+{
+	ADD_N_CASE_3( dense_row_generates, 4 )
+}
 
-BEGIN_TPACK( dense_col_copycon )
-	ADD_N_CASE( dense_col, copy_constructs, 0 )
-	ADD_N_CASE( dense_col, copy_constructs, 1 )
-	ADD_N_CASE( dense_col, copy_constructs, 4 )
-END_TPACK
+AUTO_TPACK( dense_row_copycon )
+{
+	ADD_N_CASE_3( dense_row_copy_constructs, 4 )
+}
 
-BEGIN_TPACK( dense_col_resize )
-	ADD_N_CASE( dense_col, resize, 0 )
-	ADD_N_CASE( dense_col, resize, 1 )
-	ADD_N_CASE( dense_col, resize, 4 )
-END_TPACK
+AUTO_TPACK( dense_row_resize )
+{
+	ADD_N_CASE_3( dense_row_resize, 4 )
+}
 
-BEGIN_TPACK( dense_col_assign )
-	ADD_N_CASE( dense_col, assign, 0 )
-	ADD_N_CASE( dense_col, assign, 1 )
-	ADD_N_CASE( dense_col, assign, 4 )
-END_TPACK
+AUTO_TPACK( dense_row_assign )
+{
+	ADD_N_CASE_3( dense_row_assign, 4 )
+}
 
-BEGIN_TPACK( dense_col_import )
-	ADD_N_CASE( dense_col, import, 0 )
-	ADD_N_CASE( dense_col, import, 1 )
-	ADD_N_CASE( dense_col, import, 4 )
-END_TPACK
+AUTO_TPACK( dense_row_import )
+{
+	ADD_N_CASE_3( dense_row_import, 4 )
+}
 
-BEGIN_TPACK( dense_col_swap )
-	ADD_N_CASE( dense_col, swap, 0 )
-	ADD_N_CASE( dense_col, swap, 1 )
-	ADD_N_CASE( dense_col, swap, 4 )
-END_TPACK
+AUTO_TPACK( dense_row_swap )
+{
+	ADD_N_CASE_3( dense_row_swap, 4 )
+}
 
-
-BEGIN_TPACK( dense_row_constructs )
-	ADD_N_CASE( dense_row, constructs, 0 )
-	ADD_N_CASE( dense_row, constructs, 1 )
-	ADD_N_CASE( dense_row, constructs, 4 )
-	ADD_SIMPLE_CASE( dense_row, initializes )
-END_TPACK
-
-BEGIN_TPACK( dense_row_generates )
-	ADD_N_CASE( dense_row, generates, 0 )
-	ADD_N_CASE( dense_row, generates, 1 )
-	ADD_N_CASE( dense_row, generates, 4 )
-END_TPACK
-
-BEGIN_TPACK( dense_row_copycon )
-	ADD_N_CASE( dense_row, copy_constructs, 0 )
-	ADD_N_CASE( dense_row, copy_constructs, 1 )
-	ADD_N_CASE( dense_row, copy_constructs, 4 )
-END_TPACK
-
-BEGIN_TPACK( dense_row_resize )
-	ADD_N_CASE( dense_row, resize, 0 )
-	ADD_N_CASE( dense_row, resize, 1 )
-	ADD_N_CASE( dense_row, resize, 4 )
-END_TPACK
-
-BEGIN_TPACK( dense_row_assign )
-	ADD_N_CASE( dense_row, assign, 0 )
-	ADD_N_CASE( dense_row, assign, 1 )
-	ADD_N_CASE( dense_row, assign, 4 )
-END_TPACK
-
-BEGIN_TPACK( dense_row_import )
-	ADD_N_CASE( dense_row, import, 0 )
-	ADD_N_CASE( dense_row, import, 1 )
-	ADD_N_CASE( dense_row, import, 4 )
-END_TPACK
-
-BEGIN_TPACK( dense_row_swap )
-	ADD_N_CASE( dense_row, swap, 0 )
-	ADD_N_CASE( dense_row, swap, 1 )
-	ADD_N_CASE( dense_row, swap, 4 )
-END_TPACK
-
-
-
-BEGIN_MAIN_SUITE
-	ADD_TPACK( dense_col_constructs )
-	ADD_TPACK( dense_col_generates )
-	ADD_TPACK( dense_col_copycon )
-	ADD_TPACK( dense_col_resize )
-	ADD_TPACK( dense_col_assign )
-	ADD_TPACK( dense_col_import )
-	ADD_TPACK( dense_col_swap )
-
-	ADD_TPACK( dense_row_constructs )
-	ADD_TPACK( dense_row_generates )
-	ADD_TPACK( dense_row_copycon )
-	ADD_TPACK( dense_row_resize )
-	ADD_TPACK( dense_row_assign )
-	ADD_TPACK( dense_row_import )
-	ADD_TPACK( dense_row_swap )
-END_MAIN_SUITE
 
 
 

@@ -19,7 +19,7 @@ inline void fill_lin(index_t n, double *x)
 }
 
 
-SIMPLE_CASE( zerovec, zero_c )
+SIMPLE_CASE( zero_cont )
 {
 	const index_t n = 10;
 	double *x = new double[n];
@@ -37,7 +37,7 @@ SIMPLE_CASE( zerovec, zero_c )
 }
 
 
-SIMPLE_CASE( zerovec, zero_u )
+SIMPLE_CASE( zero_step )
 {
 	const index_t n = 10;
 	const index_t m = 5;
@@ -59,7 +59,7 @@ SIMPLE_CASE( zerovec, zero_u )
 }
 
 
-SIMPLE_CASE( fillvec, fill_c )
+SIMPLE_CASE( fill_cont )
 {
 	const index_t n = 10;
 	double *x = new double[n];
@@ -77,7 +77,7 @@ SIMPLE_CASE( fillvec, fill_c )
 }
 
 
-SIMPLE_CASE( fillvec, fill_u )
+SIMPLE_CASE( fill_step )
 {
 	const index_t n = 10;
 	const index_t m = 5;
@@ -99,7 +99,7 @@ SIMPLE_CASE( fillvec, fill_u )
 }
 
 
-SIMPLE_CASE( copyvec, copy_cc )
+SIMPLE_CASE( copy_cont_cont )
 {
 	const index_t n = 10;
 
@@ -118,7 +118,7 @@ SIMPLE_CASE( copyvec, copy_cc )
 }
 
 
-SIMPLE_CASE( copyvec, copy_cu )
+SIMPLE_CASE( copy_cont_step )
 {
 	const index_t n = 10;
 	const index_t sy = 2;
@@ -143,7 +143,7 @@ SIMPLE_CASE( copyvec, copy_cu )
 	delete [] yr;
 }
 
-SIMPLE_CASE( copyvec, copy_uc )
+SIMPLE_CASE( copy_step_cont )
 {
 	const index_t n = 10;
 	const index_t sx = 2;
@@ -169,7 +169,7 @@ SIMPLE_CASE( copyvec, copy_uc )
 }
 
 
-SIMPLE_CASE( copyvec, copy_uu )
+SIMPLE_CASE( copy_step_step )
 {
 	const index_t nx = 15;
 	const index_t ny = 10;
@@ -197,26 +197,24 @@ SIMPLE_CASE( copyvec, copy_uu )
 }
 
 
-BEGIN_TPACK( zerovec )
-	ADD_SIMPLE_CASE( zerovec, zero_c )
-	ADD_SIMPLE_CASE( zerovec, zero_u )
-END_TPACK
+AUTO_TPACK( zerovec )
+{
+	ADD_SIMPLE_CASE( zero_cont )
+	ADD_SIMPLE_CASE( zero_step )
+}
 
-BEGIN_TPACK( fillvec )
-	ADD_SIMPLE_CASE( fillvec, fill_c )
-	ADD_SIMPLE_CASE( fillvec, fill_u )
-END_TPACK
+AUTO_TPACK( fillvec )
+{
+	ADD_SIMPLE_CASE( fill_cont )
+	ADD_SIMPLE_CASE( fill_step )
+}
 
-BEGIN_TPACK( copyvec )
-	ADD_SIMPLE_CASE( copyvec, copy_cc )
-	ADD_SIMPLE_CASE( copyvec, copy_cu )
-	ADD_SIMPLE_CASE( copyvec, copy_uc )
-	ADD_SIMPLE_CASE( copyvec, copy_uu )
-END_TPACK
+AUTO_TPACK( copyvec )
+{
+	ADD_SIMPLE_CASE( copy_cont_cont )
+	ADD_SIMPLE_CASE( copy_cont_step )
+	ADD_SIMPLE_CASE( copy_step_cont )
+	ADD_SIMPLE_CASE( copy_step_step )
+}
 
-BEGIN_MAIN_SUITE
-	ADD_TPACK( zerovec )
-	ADD_TPACK( fillvec )
-	ADD_TPACK( copyvec )
-END_MAIN_SUITE
 

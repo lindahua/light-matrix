@@ -14,7 +14,7 @@
 #define LIGHTMAT_RAND_STREAM_H_
 
 #include <light_mat/common/basic_defs.h>
-#include <light_mat/math/simd_base.h>
+#include <light_mat/simd/simd_base.h>
 
 namespace lmat { namespace random {
 

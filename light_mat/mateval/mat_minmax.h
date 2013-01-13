@@ -53,7 +53,7 @@ namespace lmat
 	template<typename T, typename Kind>
 	struct minmax_stat_pack
 	{
-		typedef math::simd_pack<T, Kind> pack_t;
+		typedef simd_pack<T, Kind> pack_t;
 		static const unsigned int pack_width = pack_t::pack_width;
 		pack_t min_pack;
 		pack_t max_pack;
@@ -112,10 +112,10 @@ namespace lmat
 	struct minmax_pack_folder
 	{
 		typedef minmax_stat_pack<T, Kind> value_type;
-		typedef math::simd_pack<T, Kind> pack_t;
+		typedef simd_pack<T, Kind> pack_t;
 
 		LMAT_ENSURE_INLINE
-		value_type init(const math::simd_pack<T, Kind>& x) const
+		value_type init(const simd_pack<T, Kind>& x) const
 		{
 			return value_type({x, x});
 		}
@@ -135,8 +135,8 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		minmax_stat<T> reduce(const value_type& a) const
 		{
-			T v0 = math::minimum(a.min_pack);
-			T v1 = math::maximum(a.max_pack);
+			T v0 = minimum(a.min_pack);
+			T v1 = maximum(a.max_pack);
 			return minmax_stat<T>({v0, v1});
 		}
 	};

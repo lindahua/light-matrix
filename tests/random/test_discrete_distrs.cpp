@@ -52,7 +52,7 @@ const index_t N = 200000;
 const double default_ptol = 5.0 / std::sqrt(double(N));
 
 
-SIMPLE_CASE( distrs, std_uniform_int )
+SIMPLE_CASE( test_std_uniform_int )
 {
 	const index_t b = 5;
 	std_uniform_int_distr<> distr(b);
@@ -68,7 +68,7 @@ SIMPLE_CASE( distrs, std_uniform_int )
 	test_discrete_rng(distr, rstream, N, b+1, default_ptol);
 }
 
-SIMPLE_CASE( distrs, uniform_int )
+SIMPLE_CASE( test_uniform_int )
 {
 	const index_t a = 2;
 	const index_t b = 6;
@@ -86,7 +86,7 @@ SIMPLE_CASE( distrs, uniform_int )
 }
 
 
-SIMPLE_CASE( distrs, std_bernoulli )
+SIMPLE_CASE( test_std_bernoulli )
 {
 	std_bernoulli_distr distr;
 
@@ -99,7 +99,7 @@ SIMPLE_CASE( distrs, std_bernoulli )
 	test_discrete_rng(distr, rstream, N, 2, default_ptol );
 }
 
-SIMPLE_CASE( distrs, bernoulli )
+SIMPLE_CASE( test_bernoulli )
 {
 	const double p = 0.3;
 	bernoulli_distr distr(p);
@@ -113,7 +113,7 @@ SIMPLE_CASE( distrs, bernoulli )
 	test_discrete_rng(distr, rstream, N, 2, default_ptol );
 }
 
-SIMPLE_CASE( distrs, binomial_naive )
+SIMPLE_CASE( test_binomial_naive )
 {
 	uint32_t t = 5;
 	const double p = 0.4;
@@ -128,7 +128,7 @@ SIMPLE_CASE( distrs, binomial_naive )
 }
 
 
-SIMPLE_CASE( distrs, geometric_naive )
+SIMPLE_CASE( test_geometric_naive )
 {
 	const double p = 0.4;
 	geometric_distr<uint32_t, naive_> distr(p);
@@ -141,7 +141,7 @@ SIMPLE_CASE( distrs, geometric_naive )
 }
 
 
-SIMPLE_CASE( distrs, discrete_naive )
+SIMPLE_CASE( test_discrete_naive )
 {
 	discrete_distr<uint32_t, naive_> distr { 0.3, 0.6, 0.1, 0.7, 0.3 };
 
@@ -157,36 +157,32 @@ SIMPLE_CASE( distrs, discrete_naive )
 }
 
 
-BEGIN_TPACK( uniform_int )
-	ADD_SIMPLE_CASE( distrs, std_uniform_int )
-	ADD_SIMPLE_CASE( distrs, uniform_int )
-END_TPACK
+AUTO_TPACK( uniform_int )
+{
+	ADD_SIMPLE_CASE( test_std_uniform_int )
+	ADD_SIMPLE_CASE( test_uniform_int )
+}
 
-BEGIN_TPACK( bernoulli )
-	ADD_SIMPLE_CASE( distrs, std_bernoulli )
-	ADD_SIMPLE_CASE( distrs, bernoulli )
-END_TPACK
+AUTO_TPACK( bernoulli )
+{
+	ADD_SIMPLE_CASE( test_std_bernoulli )
+	ADD_SIMPLE_CASE( test_bernoulli )
+}
 
-BEGIN_TPACK( binomial )
-	ADD_SIMPLE_CASE( distrs, binomial_naive )
-END_TPACK
+AUTO_TPACK( binomial )
+{
+	ADD_SIMPLE_CASE( test_binomial_naive )
+}
 
-BEGIN_TPACK( geometric )
-	ADD_SIMPLE_CASE( distrs, geometric_naive )
-END_TPACK
+AUTO_TPACK( geometric )
+{
+	ADD_SIMPLE_CASE( test_geometric_naive )
+}
 
-BEGIN_TPACK( discrete )
-	ADD_SIMPLE_CASE( distrs, discrete_naive )
-END_TPACK
-
-BEGIN_MAIN_SUITE
-	ADD_TPACK( uniform_int )
-	ADD_TPACK( bernoulli )
-	ADD_TPACK( binomial )
-	ADD_TPACK( geometric )
-	ADD_TPACK( discrete )
-END_MAIN_SUITE
-
+AUTO_TPACK( discrete )
+{
+	ADD_SIMPLE_CASE( test_discrete_naive )
+}
 
 
 

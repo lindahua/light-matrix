@@ -19,7 +19,7 @@ void fill_lin(dblock<double>& arr)
 		arr[i] = double(i + 1);
 }
 
-MN_CASE( mat_eval, dense_mat )
+MN_CASE( dense_mat_eval )
 {
 	const index_t m = M == 0 ? 4 : M;
 	const index_t n = N == 0 ? 5 : N;
@@ -37,7 +37,7 @@ MN_CASE( mat_eval, dense_mat )
 	ASSERT_MAT_EQ(m, n, a, r);
 }
 
-MN_CASE( mat_eval, ref_mat )
+MN_CASE( ref_mat_eval )
 {
 	const index_t m = M == 0 ? 4 : M;
 	const index_t n = N == 0 ? 5 : N;
@@ -55,7 +55,7 @@ MN_CASE( mat_eval, ref_mat )
 	ASSERT_MAT_EQ(m, n, a, r);
 }
 
-MN_CASE( mat_eval, ref_block )
+MN_CASE( ref_block_eval )
 {
 	const index_t ldim = 7;
 	const index_t m = M == 0 ? 4 : M;
@@ -74,7 +74,7 @@ MN_CASE( mat_eval, ref_block )
 	ASSERT_MAT_EQ(m, n, a, r);
 }
 
-MN_CASE( mat_eval, ref_grid )
+MN_CASE( ref_grid_eval )
 {
 	const index_t m = M == 0 ? 4 : M;
 	const index_t n = N == 0 ? 5 : N;
@@ -95,30 +95,25 @@ MN_CASE( mat_eval, ref_grid )
 }
 
 
-BEGIN_TPACK( dense_mat_eval )
-	ADD_MN_CASE_3X3( mat_eval, dense_mat, 4, 5 );
-END_TPACK
+AUTO_TPACK( dense_mat_eval )
+{
+	ADD_MN_CASE_3X3( dense_mat_eval, 4, 5 );
+}
 
-BEGIN_TPACK( ref_mat_eval )
-	ADD_MN_CASE_3X3( mat_eval, ref_mat, 4, 5 );
-END_TPACK
+AUTO_TPACK( ref_mat_eval )
+{
+	ADD_MN_CASE_3X3( ref_mat_eval, 4, 5 );
+}
 
-BEGIN_TPACK( ref_block_eval )
-	ADD_MN_CASE_3X3( mat_eval, ref_block, 4, 5 );
-END_TPACK
+AUTO_TPACK( ref_block_eval )
+{
+	ADD_MN_CASE_3X3( ref_block_eval, 4, 5 );
+}
 
-BEGIN_TPACK( ref_grid_eval )
-	ADD_MN_CASE_3X3( mat_eval, ref_grid, 4, 5 );
-END_TPACK
-
-
-BEGIN_MAIN_SUITE
-	ADD_TPACK( dense_mat_eval )
-	ADD_TPACK( ref_mat_eval )
-	ADD_TPACK( ref_block_eval )
-	ADD_TPACK( ref_grid_eval )
-END_MAIN_SUITE
-
+AUTO_TPACK( ref_grid_eval )
+{
+	ADD_MN_CASE_3X3( ref_grid_eval, 4, 5 );
+}
 
 
 

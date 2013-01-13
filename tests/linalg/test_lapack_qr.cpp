@@ -202,94 +202,92 @@ void test_qr_solve(index_t m, index_t n )
 }
 
 
-T_CASE( mat_qr, fac_eq )
+T_CASE( mat_qr_fac_eq )
 {
 	test_qr_fac<T>(5, 5);
 }
 
-T_CASE( mat_qr, fac_gt )
+T_CASE( mat_qr_fac_gt )
 {
 	test_qr_fac<T>(8, 5);
 }
 
-T_CASE( mat_qr, fac_lt )
+T_CASE( mat_qr_fac_lt )
 {
 	test_qr_fac<T>(5, 8);
 }
 
 
-T_CASE( mat_qr, multq_eq_l )
+T_CASE( mat_qr_multq_eq_l )
 {
 	test_qr_multq<T>(5, 5, 'L');
 }
 
-T_CASE( mat_qr, multq_eq_r )
+T_CASE( mat_qr_multq_eq_r )
 {
 	test_qr_multq<T>(5, 5, 'R');
 }
 
-T_CASE( mat_qr, multq_gt_l )
+T_CASE( mat_qr_multq_gt_l )
 {
 	test_qr_multq<T>(8, 5, 'L');
 }
 
-T_CASE( mat_qr, multq_gt_r )
+T_CASE( mat_qr_multq_gt_r )
 {
 	test_qr_multq<T>(8, 5, 'R');
 }
 
-T_CASE( mat_qr, multq_lt_l )
+T_CASE( mat_qr_multq_lt_l )
 {
 	test_qr_multq<T>(5, 8, 'L');
 }
 
-T_CASE( mat_qr, multq_lt_r )
+T_CASE( mat_qr_multq_lt_r )
 {
 	test_qr_multq<T>(5, 8, 'R');
 }
 
 
-T_CASE( mat_qr, solve )
+T_CASE( mat_qr_solve )
 {
 	test_qr_solve<T>(8, 5);
 }
 
 
-BEGIN_TPACK( mat_qr_fac )
-	ADD_T_CASE( mat_qr, fac_eq, float )
-	ADD_T_CASE( mat_qr, fac_gt, float )
-	ADD_T_CASE( mat_qr, fac_lt, float )
-	ADD_T_CASE( mat_qr, fac_eq, double )
-	ADD_T_CASE( mat_qr, fac_gt, double )
-	ADD_T_CASE( mat_qr, fac_lt, double )
-END_TPACK
+AUTO_TPACK( mat_qr_fac )
+{
+	ADD_T_CASE( mat_qr_fac_eq, float )
+	ADD_T_CASE( mat_qr_fac_gt, float )
+	ADD_T_CASE( mat_qr_fac_lt, float )
+	ADD_T_CASE( mat_qr_fac_eq, double )
+	ADD_T_CASE( mat_qr_fac_gt, double )
+	ADD_T_CASE( mat_qr_fac_lt, double )
+}
 
 
-BEGIN_TPACK( mat_qr_multq )
-	ADD_T_CASE( mat_qr, multq_eq_l, float )
-	ADD_T_CASE( mat_qr, multq_eq_r, float )
-	ADD_T_CASE( mat_qr, multq_gt_l, float )
-	ADD_T_CASE( mat_qr, multq_gt_r, float )
-	ADD_T_CASE( mat_qr, multq_lt_l, float )
-	ADD_T_CASE( mat_qr, multq_lt_r, float )
+AUTO_TPACK( mat_qr_multq )
+{
+	ADD_T_CASE( mat_qr_multq_eq_l, float )
+	ADD_T_CASE( mat_qr_multq_eq_r, float )
+	ADD_T_CASE( mat_qr_multq_gt_l, float )
+	ADD_T_CASE( mat_qr_multq_gt_r, float )
+	ADD_T_CASE( mat_qr_multq_lt_l, float )
+	ADD_T_CASE( mat_qr_multq_lt_r, float )
 
-	ADD_T_CASE( mat_qr, multq_eq_l, double )
-	ADD_T_CASE( mat_qr, multq_eq_r, double )
-	ADD_T_CASE( mat_qr, multq_gt_l, double )
-	ADD_T_CASE( mat_qr, multq_gt_r, double )
-	ADD_T_CASE( mat_qr, multq_lt_l, double )
-	ADD_T_CASE( mat_qr, multq_lt_r, double )
-END_TPACK
+	ADD_T_CASE( mat_qr_multq_eq_l, double )
+	ADD_T_CASE( mat_qr_multq_eq_r, double )
+	ADD_T_CASE( mat_qr_multq_gt_l, double )
+	ADD_T_CASE( mat_qr_multq_gt_r, double )
+	ADD_T_CASE( mat_qr_multq_lt_l, double )
+	ADD_T_CASE( mat_qr_multq_lt_r, double )
+}
+
+AUTO_TPACK( mat_qr_solve )
+{
+	ADD_T_CASE( mat_qr_solve, float )
+	ADD_T_CASE( mat_qr_solve, double )
+}
 
 
-BEGIN_TPACK( mat_qr_solve )
-	ADD_T_CASE( mat_qr, solve, float )
-	ADD_T_CASE( mat_qr, solve, double )
-END_TPACK
-
-BEGIN_MAIN_SUITE
-	ADD_TPACK( mat_qr_fac )
-	ADD_TPACK( mat_qr_multq )
-	ADD_TPACK( mat_qr_solve )
-END_MAIN_SUITE
 

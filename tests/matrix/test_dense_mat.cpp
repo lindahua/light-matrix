@@ -35,7 +35,7 @@ inline void verify_layout(const dense_matrix<double, M, N>& a, index_t m, index_
 }
 
 
-MN_CASE( dense_mat, constructs )
+MN_CASE( dense_mat_constructs )
 {
 	// default construction
 
@@ -65,7 +65,7 @@ MN_CASE( dense_mat, constructs )
 }
 
 
-SIMPLE_CASE( dense_mat, initializes )
+SIMPLE_CASE( dense_mat_initializes )
 {
 	const index_t m = 2;
 	const index_t n = 3;
@@ -91,7 +91,7 @@ SIMPLE_CASE( dense_mat, initializes )
 }
 
 
-MN_CASE( dense_mat, generates )
+MN_CASE( dense_mat_generates )
 {
 	const index_t m = M == 0 ? 3 : M;
 	const index_t n = N == 0 ? 4 : N;
@@ -125,7 +125,7 @@ MN_CASE( dense_mat, generates )
 }
 
 
-MN_CASE( dense_mat, copy_constructs )
+MN_CASE( dense_mat_copy_constructs )
 {
 	const index_t m = M == 0 ? 3 : M;
 	const index_t n = N == 0 ? 4 : N;
@@ -144,7 +144,7 @@ MN_CASE( dense_mat, copy_constructs )
 }
 
 
-MN_CASE( dense_mat, move_constructs )
+MN_CASE( dense_mat_move_constructs )
 {
 	const index_t m = M == 0 ? 3 : M;
 	const index_t n = N == 0 ? 4 : N;
@@ -171,7 +171,7 @@ MN_CASE( dense_mat, move_constructs )
 }
 
 
-MN_CASE( dense_mat, access )
+MN_CASE( dense_mat_access )
 {
 	const index_t m = M == 0 ? 3 : M;
 	const index_t n = N == 0 ? 4 : N;
@@ -207,7 +207,7 @@ MN_CASE( dense_mat, access )
 	}
 }
 
-MN_CASE( dense_mat, resize )
+MN_CASE( dense_mat_resize )
 {
 	const index_t m = M == 0 ? 3 : M;
 	const index_t n = N == 0 ? 4 : N;
@@ -253,7 +253,7 @@ MN_CASE( dense_mat, resize )
 }
 
 
-MN_CASE( dense_mat, assign )
+MN_CASE( dense_mat_assign )
 {
 	const index_t m = M == 0 ? 3 : M;
 	const index_t n = N == 0 ? 4 : N;
@@ -304,7 +304,7 @@ MN_CASE( dense_mat, assign )
 
 
 
-MN_CASE( dense_mat, move_assign )
+MN_CASE( dense_mat_move_assign )
 {
 	const index_t m = M == 0 ? 3 : M;
 	const index_t n = N == 0 ? 4 : N;
@@ -346,7 +346,7 @@ MN_CASE( dense_mat, move_assign )
 }
 
 
-MN_CASE( dense_mat, import )
+MN_CASE( dense_mat_import )
 {
 	const index_t m = M == 0 ? 3 : M;
 	const index_t n = N == 0 ? 4 : N;
@@ -372,7 +372,7 @@ MN_CASE( dense_mat, import )
 	ASSERT_VEC_EQ(m * n, a, ref);
 }
 
-MN_CASE( dense_mat, swap )
+MN_CASE( dense_mat_swap )
 {
 	const index_t m = M == 0 ? 3 : M;
 	const index_t n = N == 0 ? 4 : N;
@@ -413,59 +413,54 @@ MN_CASE( dense_mat, swap )
 }
 
 
-BEGIN_TPACK( dense_mat_constructs )
-	ADD_MN_CASE_3X3( dense_mat, constructs, 3, 4 )
-	ADD_SIMPLE_CASE( dense_mat, initializes )
-END_TPACK
+AUTO_TPACK( dense_mat_constructs )
+{
+	ADD_MN_CASE_3X3( dense_mat_constructs, 3, 4 )
+	ADD_SIMPLE_CASE( dense_mat_initializes )
+}
 
-BEGIN_TPACK( dense_mat_generates )
-	ADD_MN_CASE_3X3( dense_mat, generates, 3, 4 )
-END_TPACK
+AUTO_TPACK( dense_mat_generates )
+{
+	ADD_MN_CASE_3X3( dense_mat_generates, 3, 4 )
+}
 
-BEGIN_TPACK( dense_mat_copycon )
-	ADD_MN_CASE_3X3( dense_mat, copy_constructs, 3, 4 )
-END_TPACK
+AUTO_TPACK( dense_mat_copycon )
+{
+	ADD_MN_CASE_3X3( dense_mat_copy_constructs, 3, 4 )
+}
 
-BEGIN_TPACK( dense_mat_movecon )
-	ADD_MN_CASE_3X3( dense_mat, move_constructs, 3, 4 )
-END_TPACK
+AUTO_TPACK( dense_mat_movecon )
+{
+	ADD_MN_CASE_3X3( dense_mat_move_constructs, 3, 4 )
+}
 
-BEGIN_TPACK( dense_mat_access )
-	ADD_MN_CASE_3X3( dense_mat, access, 3, 4 )
-END_TPACK
+AUTO_TPACK( dense_mat_access )
+{
+	ADD_MN_CASE_3X3( dense_mat_access, 3, 4 )
+}
 
-BEGIN_TPACK( dense_mat_resize )
-	ADD_MN_CASE_3X3( dense_mat, resize, 3, 4 )
-END_TPACK
+AUTO_TPACK( dense_mat_resize )
+{
+	ADD_MN_CASE_3X3( dense_mat_resize, 3, 4 )
+}
 
-BEGIN_TPACK( dense_mat_assign )
-	ADD_MN_CASE_3X3( dense_mat, assign, 3, 4 )
-END_TPACK
+AUTO_TPACK( dense_mat_assign )
+{
+	ADD_MN_CASE_3X3( dense_mat_assign, 3, 4 )
+}
 
-BEGIN_TPACK( dense_mat_move_assign )
-	ADD_MN_CASE_3X3( dense_mat, move_assign, 3, 4 )
-END_TPACK
+AUTO_TPACK( dense_mat_move_assign )
+{
+	ADD_MN_CASE_3X3( dense_mat_move_assign, 3, 4 )
+}
 
-BEGIN_TPACK( dense_mat_import )
-	ADD_MN_CASE_3X3( dense_mat, import, 3, 4 )
-END_TPACK
+AUTO_TPACK( dense_mat_import )
+{
+	ADD_MN_CASE_3X3( dense_mat_import, 3, 4 )
+}
 
-BEGIN_TPACK( dense_mat_swap )
-	ADD_MN_CASE_3X3( dense_mat, swap, 3, 4 )
-END_TPACK
-
-
-BEGIN_MAIN_SUITE
-	ADD_TPACK( dense_mat_constructs )
-	ADD_TPACK( dense_mat_generates )
-	ADD_TPACK( dense_mat_copycon )
-	ADD_TPACK( dense_mat_movecon )
-	ADD_TPACK( dense_mat_access )
-	ADD_TPACK( dense_mat_resize )
-	ADD_TPACK( dense_mat_assign )
-	ADD_TPACK( dense_mat_move_assign )
-	ADD_TPACK( dense_mat_import )
-	ADD_TPACK( dense_mat_swap )
-END_MAIN_SUITE
-
+AUTO_TPACK( dense_mat_swap )
+{
+	ADD_MN_CASE_3X3( dense_mat_swap, 3, 4 )
+}
 

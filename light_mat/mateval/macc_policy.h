@@ -69,7 +69,7 @@ namespace lmat
 		{
 			typedef typename matrix_traits<Mat>::value_type T;
 			static const unsigned int L = (unsigned int)meta::nelems<Mat>::value;
-			static const unsigned int W = math::simd_traits<T, Kind>::pack_width;
+			static const unsigned int W = simd_traits<T, Kind>::pack_width;
 
 			static const bool value = meta::is_contiguous<Mat>::value && (L % W == 0);
 		};
@@ -79,7 +79,7 @@ namespace lmat
 		{
 			typedef typename matrix_traits<Mat>::value_type T;
 			static const unsigned int L = (unsigned int)meta::nrows<Mat>::value;
-			static const unsigned int W = math::simd_traits<T, Kind>::pack_width;
+			static const unsigned int W = simd_traits<T, Kind>::pack_width;
 
 			static const bool value = meta::is_percol_contiguous<Mat>::value && (L % W == 0);
 		};
