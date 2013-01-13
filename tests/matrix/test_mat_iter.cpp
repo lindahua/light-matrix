@@ -112,7 +112,6 @@ MN_CASE( mat_coliter_grid )
 }
 
 
-LTEST_INIT_AUTOSUITE
 
 AUTO_TPACK( mat_iter_cont )
 {

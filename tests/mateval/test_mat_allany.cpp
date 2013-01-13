@@ -347,8 +347,6 @@ TMN_CASE( tcolwise_any_false )
 }
 
 
-LTEST_INIT_AUTOSUITE
-
 AUTO_TPACK( tfull_alltrue )
 {
 	ADD_TMN_CASE_3X3( tfull_all_true, double, DM, DN )

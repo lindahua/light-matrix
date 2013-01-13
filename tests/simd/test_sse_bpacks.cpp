@@ -171,7 +171,6 @@ T_CASE( sse_bpack_extracts )
 	}
 }
 
-LTEST_INIT_AUTOSUITE
 
 AUTO_TPACK( sse_bpack_basic )
 {

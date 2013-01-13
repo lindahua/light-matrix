@@ -159,8 +159,6 @@ MN_CASE( pwise_sqdist )
 }
 
 
-LTEST_INIT_AUTOSUITE
-
 AUTO_TPACK( ewise_sqdist )
 {
 	ADD_MN_CASE_3X3( ewise_sqdist, 5, 6 )

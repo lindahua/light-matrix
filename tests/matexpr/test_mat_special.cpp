@@ -13,7 +13,6 @@
 using namespace lmat;
 using namespace lmat::test;
 
-LTEST_INIT_AUTOSUITE
 
 // gauss related functions
 

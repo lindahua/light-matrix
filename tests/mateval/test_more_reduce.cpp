@@ -165,8 +165,6 @@ SIMPLE_CASE( tcolwise_minmax )
 }
 
 
-LTEST_INIT_AUTOSUITE
-
 AUTO_TPACK( mat_norms )
 {
 	ADD_SIMPLE_CASE( tfull_norms )

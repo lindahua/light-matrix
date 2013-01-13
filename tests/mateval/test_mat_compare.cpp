@@ -227,8 +227,6 @@ MN_CASE( mat_approx_grid_to_grid )
 
 
 
-LTEST_INIT_AUTOSUITE
-
 AUTO_TPACK( mat_equal_cc )
 {
 	ADD_MN_CASE_3X3( mat_equal_cont_to_cont, 3, 4 );

@@ -267,8 +267,6 @@ SIMPLE_CASE( mat_copy_tril )
 }
 
 
-LTEST_INIT_AUTOSUITE
-
 AUTO_TPACK( mat_copy )
 {
 	ADD_MN_CASE_3X3( mat_copy_cont_to_cont, 3, 4 )

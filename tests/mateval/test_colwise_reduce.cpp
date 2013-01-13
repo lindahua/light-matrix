@@ -96,8 +96,6 @@ DEFINE_COLWISE_REDUCE_CASE_2( diff_sqsum )
 DEFINE_COLWISE_REDUCE_CASE_2( dot )
 
 
-LTEST_INIT_AUTOSUITE
-
 AUTO_TPACK( colwise_reduce )
 {
 	ADD_SIMPLE_CASE( tcolwise_sum )

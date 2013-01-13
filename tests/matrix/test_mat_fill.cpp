@@ -104,8 +104,6 @@ MN_CASE( mat_fill_grid )
 }
 
 
-LTEST_INIT_AUTOSUITE
-
 AUTO_TPACK( mat_zero )
 {
 	ADD_MN_CASE_3X3( mat_zero_cont, 3, 4 )

@@ -228,8 +228,6 @@ MN_CASE( mat_select_cols )
 }
 
 
-LTEST_INIT_AUTOSUITE
-
 AUTO_TPACK( mat_selectl )
 {
 	ADD_MN_CASE_3X3( mat_selectl, DM, DN )

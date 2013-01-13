@@ -162,8 +162,6 @@ void fill_spec_values()
 	}
 
 
-LTEST_INIT_AUTOSUITE
-
 // specific tests
 
 DEF_NUMCOMP_TESTS( eq, == )

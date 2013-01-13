@@ -257,7 +257,6 @@ N_CASE( ref_row_import )
 	ASSERT_VEC_EQ(n, a, ref);
 }
 
-LTEST_INIT_AUTOSUITE
 
 AUTO_TPACK( cref_col_constructs )
 {

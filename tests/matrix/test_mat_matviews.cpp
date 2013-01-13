@@ -345,8 +345,6 @@ MN_CASE( gridview_step_step )
 
 
 
-LTEST_INIT_AUTOSUITE
-
 AUTO_TPACK( whole_whole_of_mat )
 {
 	ADD_MN_CASE_3X3( matview_whole_whole, DM, DN )

@@ -192,8 +192,6 @@ SIMPLE_CASE( full_diff_amean )
 DEF_FULL_REDUC_CASE_2( dot, r0 += sk1[i] * sk2[i], 0, 0.0, 1.0e-12 )
 
 
-LTEST_INIT_AUTOSUITE
-
 AUTO_TPACK( full_reduce ) {
 	ADD_SIMPLE_CASE( full_sum )
 	ADD_SIMPLE_CASE( full_maximum )

@@ -198,8 +198,6 @@ MN_CASE( percol_ewise_avx_repcol_cont )
 
 // TEST SUITES
 
-LTEST_INIT_AUTOSUITE
-
 #define DEFINE_PERCOL_EWISE_SCALAR_TEST( STag, DTag ) \
 		MN_CASE( percol_ewise_scalar_##STag##_##DTag  ) { \
 			test_percol_ewise<STag, DTag, atags::scalar, M, N>(); } \

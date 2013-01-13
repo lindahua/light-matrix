@@ -421,7 +421,6 @@ T_CASE( avx_cond )
 	avx_cond_tbody<T>::run();
 }
 
-LTEST_INIT_AUTOSUITE
 
 AUTO_TPACK( avx_arith )
 {

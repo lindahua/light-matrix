@@ -125,8 +125,6 @@ void test_reprows()
 		ADD_MN_CASE_3X3( test_reprows_##name, DM, DN ) \
 	}
 
-LTEST_INIT_AUTOSUITE
-
 TEST_REPCOLS( cont, cont, mat_to_mat )
 TEST_REPCOLS( cont, bloc, mat_to_blk )
 TEST_REPCOLS( cont, grid, mat_to_grid )

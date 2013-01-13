@@ -192,8 +192,6 @@ MN_CASE( mat_as_row_grid )
 }
 
 
-LTEST_INIT_AUTOSUITE
-
 AUTO_TPACK( vector_adapter )
 {
 	ADD_SIMPLE_CASE( vector_as_col )

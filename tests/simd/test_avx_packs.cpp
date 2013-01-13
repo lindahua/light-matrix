@@ -236,7 +236,6 @@ T_CASE( avx_pack_extracts )
 	}
 }
 
-LTEST_INIT_AUTOSUITE
 
 AUTO_TPACK( avx_basics )
 {

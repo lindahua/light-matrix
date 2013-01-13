@@ -67,8 +67,6 @@ void test_direct_trans()
 }
 
 
-LTEST_INIT_AUTOSUITE
-
 #define TEST_DIRECT_TRANS( sform, dform, name ) \
 	MN_CASE( direct_trans_##name ) \
 	{ test_direct_trans<sform, dform, M, N>(); } \

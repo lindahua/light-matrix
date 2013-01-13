@@ -173,7 +173,6 @@ T_CASE( avx_bpack_extracts )
 	}
 }
 
-LTEST_INIT_AUTOSUITE
 
 AUTO_TPACK( avx_bpack_basic )
 {

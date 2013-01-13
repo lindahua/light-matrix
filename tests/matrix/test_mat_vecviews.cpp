@@ -715,8 +715,6 @@ MN_CASE( diagview_of_grid )
 }
 
 
-LTEST_INIT_AUTOSUITE
-
 AUTO_TPACK( colview )
 {
 	ADD_MN_CASE_3X3( colview_of_mat, DM, DN )

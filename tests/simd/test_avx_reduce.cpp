@@ -126,8 +126,6 @@ SIMPLE_CASE( avx_booltest_f64 )
 }
 
 
-LTEST_INIT_AUTOSUITE
-
 AUTO_TPACK( avx_stats )
 {
 	ADD_T_CASE_FP( avx_sum )

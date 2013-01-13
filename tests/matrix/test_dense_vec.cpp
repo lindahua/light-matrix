@@ -503,8 +503,6 @@ N_CASE( dense_row_swap )
 }
 
 
-LTEST_INIT_AUTOSUITE
-
 AUTO_TPACK( dense_col_constructs )
 {
 	ADD_N_CASE_3( dense_col_constructs, 4 )

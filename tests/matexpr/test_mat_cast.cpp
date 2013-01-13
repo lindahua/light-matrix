@@ -47,8 +47,6 @@ const index_t DN = 6;
 #define ADD_CAST_TPACK( S, T ) ADD_TPACK( mat_cast_##S##_to_##T )
 
 
-LTEST_INIT_AUTOSUITE
-
 TEST_MAT_CAST( int8_t, double, to_f64 )
 TEST_MAT_CAST( uint8_t, double, to_f64 )
 TEST_MAT_CAST( int16_t, double, to_f64 )

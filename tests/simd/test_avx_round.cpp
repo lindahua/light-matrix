@@ -111,7 +111,6 @@ SIMPLE_CASE( avx_round_f64 )
 	ASSERT_SIMD_EQ( round(a2), r2 );
 }
 
-LTEST_INIT_AUTOSUITE
 
 AUTO_TPACK( avx_round )
 {

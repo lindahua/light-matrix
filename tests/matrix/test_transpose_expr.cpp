@@ -84,8 +84,6 @@ void test_mat_transpose()
 }
 
 
-LTEST_INIT_AUTOSUITE
-
 #define TEST_MAT_TRANS( sform, dform, name ) \
 	MN_CASE( mat_trans_##name ) \
 	{ test_mat_transpose<sform, dform, M, N>(); } \

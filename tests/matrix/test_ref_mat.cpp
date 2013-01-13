@@ -218,7 +218,6 @@ MN_CASE( ref_mat_import )
 	ASSERT_VEC_EQ(m * n, a, ref);
 }
 
-LTEST_INIT_AUTOSUITE
 
 AUTO_TPACK( cref_mat_constructs )
 {

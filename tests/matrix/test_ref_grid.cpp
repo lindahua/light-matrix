@@ -294,7 +294,6 @@ MN_CASE( ref_grid_import )
 
 }
 
-LTEST_INIT_AUTOSUITE
 
 AUTO_TPACK( cref_grid_constructs )
 {

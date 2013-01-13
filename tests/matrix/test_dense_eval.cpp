@@ -95,8 +95,6 @@ MN_CASE( ref_grid_eval )
 }
 
 
-LTEST_INIT_AUTOSUITE
-
 AUTO_TPACK( dense_mat_eval )
 {
 	ADD_MN_CASE_3X3( dense_mat_eval, 4, 5 );

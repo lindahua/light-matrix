@@ -359,8 +359,6 @@ MN_CASE( mat_colwise_sort_ex )
 
 
 
-LTEST_INIT_AUTOSUITE
-
 AUTO_TPACK( mat_inplace_sort )
 {
 	ADD_MN_CASE_3X3( mat_inplace_sort, DM, DN )

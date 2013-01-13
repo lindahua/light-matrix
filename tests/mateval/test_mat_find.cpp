@@ -187,8 +187,6 @@ SIMPLE_CASE( mat_findij )
 
 
 
-LTEST_INIT_AUTOSUITE
-
 AUTO_TPACK( mat_count )
 {
 	ADD_MN_CASE_3X3( mat_count, DM, DN )

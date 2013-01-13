@@ -122,8 +122,6 @@ MN_CASE( mat_zip_pair_va )
 }
 
 
-LTEST_INIT_AUTOSUITE
-
 AUTO_TPACK( mat_zip_pair_aa )
 {
 	ADD_MN_CASE_3X3( mat_zip_pair_aa, DM, DN )

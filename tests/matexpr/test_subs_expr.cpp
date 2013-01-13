@@ -99,8 +99,6 @@ TMN_CASE( test_sub2ind )
 }
 
 
-LTEST_INIT_AUTOSUITE
-
 AUTO_TPACK( test_inds )
 {
 	ADD_TMN_CASE_3X3( test_inds_expr, double, DM, DN )

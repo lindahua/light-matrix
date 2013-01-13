@@ -318,7 +318,6 @@ SIMPLE_CASE( sblock_swap )
 	ASSERT_VEC_EQ( n, a2, src1 );
 }
 
-LTEST_INIT_AUTOSUITE
 
 AUTO_TPACK( dblock )
 {

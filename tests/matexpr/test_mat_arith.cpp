@@ -381,9 +381,6 @@ MN_CASE( mat_neg )
 }
 
 
-
-LTEST_INIT_AUTOSUITE
-
 // test packs for arithmetic operators
 
 AUTO_TPACK( mat_add )

@@ -196,7 +196,6 @@ SIMPLE_CASE( copy_step_step )
 	delete [] yr;
 }
 
-LTEST_INIT_AUTOSUITE
 
 AUTO_TPACK( zerovec )
 {

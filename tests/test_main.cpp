@@ -6,7 +6,9 @@
  * @author Dahua Lin
  */
 
-#include <light_test/auto_suite.h>
+#define LTEST_MAINSUITE_NAME "LightMatrix"
+
+#include <light_test/tests.h>
 #include <light_test/std_test_mon.h>
 
 #ifdef _MSC_VER
@@ -17,7 +19,7 @@ using namespace ltest;
 
 int main(int argc, char *argv[])
 {
-	if (std_test_main(*auto_test_suite::main_suite()))
+	if (std_test_main(auto_main_suite()))
 	{
 		return 0;
 	}

@@ -335,7 +335,6 @@ void test_mapexpr_3()
 
 // Unary expressions
 
-LTEST_INIT_AUTOSUITE
 
 #define DEF_MEXPR_TESTS_1( stag, dtag ) \
 		MN_CASE( map_unary_##stag##_##dtag ) { test_mapexpr_1<stag, dtag, M, N>(); } \

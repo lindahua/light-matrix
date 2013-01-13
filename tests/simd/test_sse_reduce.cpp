@@ -127,7 +127,6 @@ SIMPLE_CASE( sse_booltest_f64 )
 	}
 }
 
-LTEST_INIT_AUTOSUITE
 
 AUTO_TPACK( sse_stats )
 {

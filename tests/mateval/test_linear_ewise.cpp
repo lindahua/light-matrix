@@ -328,8 +328,6 @@ MN_CASE( linear_ewise_accum_to )
 
 // Test packs
 
-LTEST_INIT_AUTOSUITE
-
 
 AUTO_TPACK( linear_ewise_scalar_cont_cont )
 {

@@ -495,8 +495,6 @@ MN_CASE( ewise_accum_rowwise_scalar_grid )
 
 // Test Packs
 
-LTEST_INIT_AUTOSUITE
-
 
 AUTO_TPACK( accum_linear_scalar )
 {
