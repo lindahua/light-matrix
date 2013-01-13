@@ -13,31 +13,8 @@
 #ifndef LIGHTMAT_MAT_PRED_H_
 #define LIGHTMAT_MAT_PRED_H_
 
-#include <light_mat/mateval/mat_cast.h>
-
-#define _LMAT_DEFINE_MAT_PRED_FUN_G1( FunName, FTag ) \
-	template<typename T, class X> \
-	LMAT_ENSURE_INLINE \
-	inline map_expr<ftags::FTag, X> \
-	FunName (const IEWiseMatrix<X, T>& x) \
-	{ return make_map_expr(ftags::FTag(), x); }
-
-#define _LMAT_DEFINE_MAT_PRED_FUN_G2( FunName, FTag ) \
-	template<typename T, class X, class Y> \
-	LMAT_ENSURE_INLINE \
-	inline map_expr<ftags::FTag, X, Y> \
-	FunName (const IEWiseMatrix<X, T>& x, const IEWiseMatrix<Y, T>& y) \
-	{ return make_map_expr(ftags::FTag(), x, y); } \
-	template<typename T, class X> \
-	LMAT_ENSURE_INLINE \
-	inline map_expr<ftags::FTag, X, T> \
-	FunName (const IEWiseMatrix<X, T>& x, const T& y) \
-	{ return make_map_expr_fix2(ftags::FTag(), x, y); } \
-	template<typename T, class Y> \
-	LMAT_ENSURE_INLINE \
-	inline map_expr<ftags::FTag, T, Y> \
-	FunName (const T& x, const IEWiseMatrix<Y, T>& y) \
-	{ return make_map_expr_fix1(ftags::FTag(), x, y); }
+#include <light_mat/matexpr/mat_cast.h>
+#include <light_mat/math/basic_functors.h>
 
 #define _LMAT_DEFINE_MAT_LOGICAL_FUN_1( FunName, FTag ) \
 	template<typename T, class X> \
@@ -78,23 +55,18 @@ namespace lmat
 {
 	// comparison
 
-	_LMAT_DEFINE_MAT_PRED_FUN_G2( operator ==, eq_ )
-	_LMAT_DEFINE_MAT_PRED_FUN_G2( operator !=, ne_ )
-	_LMAT_DEFINE_MAT_PRED_FUN_G2( operator >=, ge_ )
-	_LMAT_DEFINE_MAT_PRED_FUN_G2( operator >,  gt_ )
-	_LMAT_DEFINE_MAT_PRED_FUN_G2( operator <=, le_ )
-	_LMAT_DEFINE_MAT_PRED_FUN_G2( operator <,  lt_ )
+	_LMAT_DEFINE_GMATOP( eq, ==, 2 )
+	_LMAT_DEFINE_GMATOP( ne, !=, 2 )
+	_LMAT_DEFINE_GMATOP( lt, <,  2 )
+	_LMAT_DEFINE_GMATOP( le, <=, 2 )
+	_LMAT_DEFINE_GMATOP( gt, >,  2 )
+	_LMAT_DEFINE_GMATOP( ge, >=, 2 )
 
-#ifdef LMAT_HAS_CXX11_MATH
+	_LMAT_DEFINE_RMATFUN( signbit, 1 )
+	_LMAT_DEFINE_RMATFUN( isfinite, 1 )
+	_LMAT_DEFINE_RMATFUN( isinf, 1 )
+	_LMAT_DEFINE_RMATFUN( isnan, 1 )
 
-	// classification
-
-	_LMAT_DEFINE_MAT_PRED_FUN_G1( signbit,  signbit_ )
-	_LMAT_DEFINE_MAT_PRED_FUN_G1( isfinite, isfinite_ )
-	_LMAT_DEFINE_MAT_PRED_FUN_G1( isinf,    isinf_ )
-	_LMAT_DEFINE_MAT_PRED_FUN_G1( isnan,    isnan_ )
-
-#endif
 
 	// logical
 
@@ -103,61 +75,6 @@ namespace lmat
 	_LMAT_DEFINE_MAT_LOGICAL_FUN_2( operator |,  logical_or_ )
 	_LMAT_DEFINE_MAT_LOGICAL_FUN_2( operator ==, logical_eq_ )
 	_LMAT_DEFINE_MAT_LOGICAL_FUN_2( operator !=, logical_ne_ )
-
-
-	/********************************************
-	 *
-	 *  conditional operation
-	 *
-	 ********************************************/
-
-	template<typename T, class C, class X, class Y>
-	LMAT_ENSURE_INLINE
-	inline map_expr<ftags::cond_, C, X, Y>
-	cond(const IEWiseMatrix<C, bool>& c, const IEWiseMatrix<X, T>& x, const IEWiseMatrix<Y, T>& y)
-	{
-		return make_map_expr(ftags::cond_(), c, x, y);
-	}
-
-	template<typename T, class C, class X, class Y>
-	LMAT_ENSURE_INLINE
-	inline map_expr<ftags::cond_, C, X, Y>
-	cond(const IEWiseMatrix<C, mask_t<T> >& c, const IEWiseMatrix<X, T>& x, const IEWiseMatrix<Y, T>& y)
-	{
-		return make_map_expr(ftags::cond_(), c, x, y);
-	}
-
-	template<typename T, class C, class X>
-	LMAT_ENSURE_INLINE
-	inline map_expr<ftags::cond_, C, X, T>
-	cond(const IEWiseMatrix<C, bool>& c, const IEWiseMatrix<X, T>& x, const T& y)
-	{
-		return make_map_expr_fix3(ftags::cond_(), c, x, y);
-	}
-
-	template<typename T, class C, class X>
-	LMAT_ENSURE_INLINE
-	inline map_expr<ftags::cond_, C, X, T>
-	cond(const IEWiseMatrix<C, mask_t<T> >& c, const IEWiseMatrix<X, T>& x, const T& y)
-	{
-		return make_map_expr_fix3(ftags::cond_(), c, x, y);
-	}
-
-	template<typename T, class C, class Y>
-	LMAT_ENSURE_INLINE
-	inline map_expr<ftags::cond_, C, T, Y>
-	cond(const IEWiseMatrix<C, bool>& c, const T& x, const IEWiseMatrix<Y, T>& y)
-	{
-		return make_map_expr_fix2(ftags::cond_(), c, x, y);
-	}
-
-	template<typename T, class C, class Y>
-	LMAT_ENSURE_INLINE
-	inline map_expr<ftags::cond_, C, T, Y>
-	cond(const IEWiseMatrix<C, mask_t<T> >& c, const T& x, const IEWiseMatrix<Y, T>& y)
-	{
-		return make_map_expr_fix2(ftags::cond_(), c, x, y);
-	}
 
 }
 

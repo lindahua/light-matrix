@@ -9,7 +9,7 @@
 #include "../test_base.h"
 
 #include <light_mat/matrix/matrix_classes.h>
-#include <light_mat/mateval/mat_cast.h>
+#include <light_mat/matexpr/mat_cast.h>
 
 using namespace lmat;
 using namespace lmat::test;
@@ -19,7 +19,7 @@ const index_t DN = 6;
 
 
 #define TEST_MAT_CAST(S, T, to_fun) \
-	MN_CASE( mat_cast, S##_to_##T ) { \
+	MN_CASE( mat_cast_##S##_to_##T ) { \
 		const index_t m = M == 0 ? DM : M; \
 		const index_t n = N == 0 ? DN : N; \
 		dense_matrix<S, M, N> smat(m, n); \
@@ -39,13 +39,15 @@ const index_t DN = 6;
 		ASSERT_EQ( tmat2.ncolumns(), n ); \
 		ASSERT_MAT_EQ( m, n, tmat2, rmat ); \
 	} \
-	BEGIN_TPACK( mat_cast_##S##_to_##T ) \
-		ADD_MN_CASE_3X3( mat_cast, S##_to_##T, DM, DN ) \
-	END_TPACK
+	AUTO_TPACK( mat_cast_##S##_to_##T ) { \
+		ADD_MN_CASE_3X3( mat_cast_##S##_to_##T, DM, DN ) \
+	}
 
 
 #define ADD_CAST_TPACK( S, T ) ADD_TPACK( mat_cast_##S##_to_##T )
 
+
+LTEST_INIT_AUTOSUITE
 
 TEST_MAT_CAST( int8_t, double, to_f64 )
 TEST_MAT_CAST( uint8_t, double, to_f64 )
@@ -118,83 +120,6 @@ TEST_MAT_CAST( int32_t, uint8_t, to_u8 )
 TEST_MAT_CAST( uint32_t, uint8_t, to_u8 )
 TEST_MAT_CAST( float, uint8_t, to_u8 )
 TEST_MAT_CAST( double, uint8_t, to_u8 )
-
-
-BEGIN_MAIN_SUITE
-	ADD_CAST_TPACK( int8_t, double )
-	ADD_CAST_TPACK( uint8_t, double )
-	ADD_CAST_TPACK( int16_t, double )
-	ADD_CAST_TPACK( uint16_t, double )
-	ADD_CAST_TPACK( int32_t, double )
-	ADD_CAST_TPACK( uint32_t, double )
-	ADD_CAST_TPACK( float, double )
-	ADD_CAST_TPACK( double, double )
-
-	ADD_CAST_TPACK( int8_t, float )
-	ADD_CAST_TPACK( uint8_t, float )
-	ADD_CAST_TPACK( int16_t, float )
-	ADD_CAST_TPACK( uint16_t, float )
-	ADD_CAST_TPACK( int32_t, float )
-	ADD_CAST_TPACK( uint32_t, float )
-	ADD_CAST_TPACK( float, float )
-	ADD_CAST_TPACK( double, float )
-
-	ADD_CAST_TPACK( int8_t, int32_t )
-	ADD_CAST_TPACK( uint8_t, int32_t )
-	ADD_CAST_TPACK( int16_t, int32_t )
-	ADD_CAST_TPACK( uint16_t, int32_t )
-	ADD_CAST_TPACK( int32_t, int32_t )
-	ADD_CAST_TPACK( uint32_t, int32_t )
-	ADD_CAST_TPACK( float, int32_t )
-	ADD_CAST_TPACK( double, int32_t)
-
-	ADD_CAST_TPACK( int8_t, uint32_t )
-	ADD_CAST_TPACK( uint8_t, uint32_t )
-	ADD_CAST_TPACK( int16_t, uint32_t )
-	ADD_CAST_TPACK( uint16_t, uint32_t )
-	ADD_CAST_TPACK( int32_t, uint32_t )
-	ADD_CAST_TPACK( uint32_t, uint32_t )
-	ADD_CAST_TPACK( float, uint32_t )
-	ADD_CAST_TPACK( double, uint32_t )
-
-	ADD_CAST_TPACK( int8_t, int16_t )
-	ADD_CAST_TPACK( uint8_t, int16_t )
-	ADD_CAST_TPACK( int16_t, int16_t )
-	ADD_CAST_TPACK( uint16_t, int16_t )
-	ADD_CAST_TPACK( int32_t, int16_t )
-	ADD_CAST_TPACK( uint32_t, int16_t )
-	ADD_CAST_TPACK( float, int16_t )
-	ADD_CAST_TPACK( double, int16_t )
-
-	ADD_CAST_TPACK( int8_t, uint16_t )
-	ADD_CAST_TPACK( uint8_t, uint16_t )
-	ADD_CAST_TPACK( int16_t, uint16_t )
-	ADD_CAST_TPACK( uint16_t, uint16_t )
-	ADD_CAST_TPACK( int32_t, uint16_t )
-	ADD_CAST_TPACK( uint32_t, uint16_t )
-	ADD_CAST_TPACK( float, uint16_t )
-	ADD_CAST_TPACK( double, uint16_t )
-
-	ADD_CAST_TPACK( int8_t, int8_t )
-	ADD_CAST_TPACK( uint8_t, int8_t )
-	ADD_CAST_TPACK( int16_t, int8_t )
-	ADD_CAST_TPACK( uint16_t, int8_t )
-	ADD_CAST_TPACK( int32_t, int8_t )
-	ADD_CAST_TPACK( uint32_t, int8_t )
-	ADD_CAST_TPACK( float, int8_t )
-	ADD_CAST_TPACK( double, int8_t )
-
-	ADD_CAST_TPACK( int8_t, uint8_t )
-	ADD_CAST_TPACK( uint8_t, uint8_t )
-	ADD_CAST_TPACK( int16_t, uint8_t )
-	ADD_CAST_TPACK( uint16_t, uint8_t )
-	ADD_CAST_TPACK( int32_t, uint8_t )
-	ADD_CAST_TPACK( uint32_t, uint8_t )
-	ADD_CAST_TPACK( float, uint8_t )
-	ADD_CAST_TPACK( double, uint8_t )
-END_MAIN_SUITE
-
-
 
 
 

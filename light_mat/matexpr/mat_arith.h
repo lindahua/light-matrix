@@ -52,6 +52,56 @@ namespace lmat
 	_LMAT_DEFINE_RMATFUN( round, 1 )
 	_LMAT_DEFINE_RMATFUN( trunc, 1 )
 
+	// conditional operator
+
+	template<typename T, class C, class X, class Y>
+	LMAT_ENSURE_INLINE
+	inline map_expr<ftags::cond_, C, X, Y>
+	cond(const IEWiseMatrix<C, bool>& c, const IEWiseMatrix<X, T>& x, const IEWiseMatrix<Y, T>& y)
+	{
+		return make_map_expr(ftags::cond_(), c, x, y);
+	}
+
+	template<typename T, class C, class X, class Y>
+	LMAT_ENSURE_INLINE
+	inline map_expr<ftags::cond_, C, X, Y>
+	cond(const IEWiseMatrix<C, mask_t<T> >& c, const IEWiseMatrix<X, T>& x, const IEWiseMatrix<Y, T>& y)
+	{
+		return make_map_expr(ftags::cond_(), c, x, y);
+	}
+
+	template<typename T, class C, class X>
+	LMAT_ENSURE_INLINE
+	inline map_expr<ftags::cond_, C, X, T>
+	cond(const IEWiseMatrix<C, bool>& c, const IEWiseMatrix<X, T>& x, const T& y)
+	{
+		return make_map_expr_fix3(ftags::cond_(), c, x, y);
+	}
+
+	template<typename T, class C, class X>
+	LMAT_ENSURE_INLINE
+	inline map_expr<ftags::cond_, C, X, T>
+	cond(const IEWiseMatrix<C, mask_t<T> >& c, const IEWiseMatrix<X, T>& x, const T& y)
+	{
+		return make_map_expr_fix3(ftags::cond_(), c, x, y);
+	}
+
+	template<typename T, class C, class Y>
+	LMAT_ENSURE_INLINE
+	inline map_expr<ftags::cond_, C, T, Y>
+	cond(const IEWiseMatrix<C, bool>& c, const T& x, const IEWiseMatrix<Y, T>& y)
+	{
+		return make_map_expr_fix2(ftags::cond_(), c, x, y);
+	}
+
+	template<typename T, class C, class Y>
+	LMAT_ENSURE_INLINE
+	inline map_expr<ftags::cond_, C, T, Y>
+	cond(const IEWiseMatrix<C, mask_t<T> >& c, const T& x, const IEWiseMatrix<Y, T>& y)
+	{
+		return make_map_expr_fix2(ftags::cond_(), c, x, y);
+	}
+
 }
 
 #endif /* MAT_ARITH_H_ */

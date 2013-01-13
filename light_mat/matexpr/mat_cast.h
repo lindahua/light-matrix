@@ -13,7 +13,7 @@
 #ifndef LIGHTMAT_MAT_CAST_H_
 #define LIGHTMAT_MAT_CAST_H_
 
-#include <light_mat/mateval/map_expr.h>
+#include <light_mat/matexpr/matfun_base.h>
 
 #define LMAT_DEFINE_MAT_CAST_FUN(T, Fun) \
 	template<typename S, class SMat> \

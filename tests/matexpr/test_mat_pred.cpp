@@ -6,21 +6,20 @@
  * @author Dahua Lin
  */
 
-#include "../test_base.h"
+#include "matfun_test_base.h"
 
 #include <light_mat/matrix/matrix_classes.h>
-#include <light_mat/mateval/mat_pred.h>
+#include <light_mat/matexpr/mat_pred.h>
+#include <light_mat/matexpr/mat_arith.h>
 #include <limits>
 
-#include <light_mat/mateval/map_expr_inspect.h>
+#include <light_mat/matexpr/map_expr_inspect.h>
 
 using namespace lmat;
 using namespace lmat::test;
 
 typedef mask_t<double> fmsk;
 
-const int DM = 9;
-const int DN = 8;
 
 typedef std::numeric_limits<double> nlim;
 
@@ -40,133 +39,130 @@ void fill_spec_values()
 }
 
 
-template<class A, class B>
-bool my_is_equal(const A& a, const B& b)
-{
-	if ( have_same_shape(a, b) )
-	{
-		index_t m = a.nrows();
-		index_t n = a.ncolumns();
-
-		return ltest::test_matrix_equal(m, n, a, b);
-	}
-	else
-	{
-		return false;
-	}
-}
-
-template<int M, int N>
-void fill_ran(dense_matrix<double, M, N>& X)
-{
-	for (index_t i = 0; i < X.nelems(); ++i)
-	{
-		X[i] = (double(std::rand()) / RAND_MAX);
-	}
-}
-
-
 #define DEF_NUMCOMP_CASE( name, op, aexpr, bexpr, cexpr ) \
-		MN_CASE( mat_comp, name ) { \
-			typedef dense_matrix<double, M, N> mat_t; \
-			typedef dense_matrix<bool, M, N> bmat_t; \
-			typedef dense_matrix<fmsk, M, N> mmat_t; \
-			const index_t m = M == 0 ? DM : M; \
-			const index_t n = N == 0 ? DN : N; \
-			mat_t A(m, n); \
-			mat_t B(m, n); \
-			double c = double( cexpr ); \
-			for (index_t i = 0; i < m * n; ++i) A[i] = double( aexpr ); \
-			for (index_t i = 0; i < m * n; ++i) B[i] = double( bexpr ); \
-			bmat_t AB_r(m, n); \
-			for (index_t i = 0; i < m * n; ++i) AB_r[i] = (A[i] op B[i]); \
-			bmat_t AC_r(m, n); \
-			for (index_t i = 0; i < m * n; ++i) AC_r[i] = (A[i] op c); \
-			bmat_t CB_r(m, n); \
-			for (index_t i = 0; i < m * n; ++i) CB_r[i] = (c op B[i]); \
-			mmat_t ABm = (A op B); \
-			bmat_t AB = to_bool(ABm); \
-			ASSERT_TRUE( my_is_equal(AB, AB_r) ); \
-			mmat_t ACm = (A op c); \
-			bmat_t AC = to_bool(ACm); \
-			ASSERT_TRUE( my_is_equal(AC, AC_r) ); \
-			mmat_t CBm = (c op B); \
-			bmat_t CB = to_bool(CBm); \
-			ASSERT_TRUE( my_is_equal(CB, CB_r) ); }
+	MN_CASE( mat_##name ) { \
+		typedef dense_matrix<double, M, N> mat_t; \
+		typedef dense_matrix<bool, M, N> bmat_t; \
+		typedef dense_matrix<fmsk, M, N> mmat_t; \
+		const index_t m = M == 0 ? DM : M; \
+		const index_t n = N == 0 ? DN : N; \
+		mat_t A(m, n); \
+		mat_t B(m, n); \
+		double c = double( cexpr ); \
+		for (index_t i = 0; i < m * n; ++i) A[i] = double( aexpr ); \
+		for (index_t i = 0; i < m * n; ++i) B[i] = double( bexpr ); \
+		bmat_t AB_r(m, n); \
+		for (index_t i = 0; i < m * n; ++i) AB_r[i] = (A[i] op B[i]); \
+		bmat_t AC_r(m, n); \
+		for (index_t i = 0; i < m * n; ++i) AC_r[i] = (A[i] op c); \
+		bmat_t CB_r(m, n); \
+		for (index_t i = 0; i < m * n; ++i) CB_r[i] = (c op B[i]); \
+		mmat_t ABm = (A op B); \
+		bmat_t AB = to_bool(ABm); \
+		ASSERT_EQ( AB.nrows(), m ); \
+		ASSERT_EQ( AB.ncolumns(), n ); \
+		ASSERT_MAT_EQ( m, n, AB, AB_r ); \
+		mmat_t ACm = (A op c); \
+		bmat_t AC = to_bool(ACm); \
+		ASSERT_EQ( AC.nrows(), m ); \
+		ASSERT_EQ( AC.ncolumns(), n ); \
+		ASSERT_MAT_EQ( m, n, AC, AC_r ); \
+		mmat_t CBm = (c op B); \
+		bmat_t CB = to_bool(CBm); \
+		ASSERT_EQ( CB.nrows(), m ); \
+		ASSERT_EQ( CB.ncolumns(), n ); \
+		ASSERT_MAT_EQ( m, n, CB, CB_r ); }
 
 #define DEF_NUMCOMP_TESTS( name, op ) \
-		DEF_NUMCOMP_CASE( name, op, i+1, (i+1) * (i%2==1), (m*n)/2 ) \
-		BEGIN_TPACK( mat_##name ) \
-			ADD_MN_CASE_3X3( mat_comp, name, DM, DN ) \
-		END_TPACK
+	DEF_NUMCOMP_CASE( name, op, i+1, (i+1) * (i%2==1), (m*n)/2 ) \
+	AUTO_TPACK( mat_##name ) { \
+		ADD_MN_CASE_3X3( mat_##name, DM, DN ) \
+	}
 
 
 #define DEF_NUMPRED_TESTS( name ) \
-		MN_CASE( mat_pred, name ) { \
-			typedef dense_matrix<double, M, N> mat_t; \
-			typedef dense_matrix<bool, M, N> bmat_t; \
-			typedef dense_matrix<fmsk, M, N> mmat_t; \
-			const index_t m = M == 0 ? DM : M; \
-			const index_t n = N == 0 ? DN : N; \
-			mat_t A(m, n); \
-			fill_spec_values(); \
-			for (index_t i = 0; i < m * n; ++i) A[i] = spec_values[i % n_spec_values]; \
-			mmat_t Rm = name(A); \
-			bmat_t R = to_bool(Rm); \
-			bmat_t R_r(m, n); \
-			for (index_t i = 0; i < m * n; ++i) R_r[i] = math::name(A[i]); \
-			ASSERT_TRUE( my_is_equal(R, R_r) ); } \
-		BEGIN_TPACK( mat_##name ) \
-			ADD_MN_CASE_3X3( mat_pred, name, DM, DN ) \
-		END_TPACK
+	MN_CASE( mat_##name ) { \
+		typedef dense_matrix<double, M, N> mat_t; \
+		typedef dense_matrix<bool, M, N> bmat_t; \
+		typedef dense_matrix<fmsk, M, N> mmat_t; \
+		const index_t m = M == 0 ? DM : M; \
+		const index_t n = N == 0 ? DN : N; \
+		mat_t A(m, n); \
+		fill_spec_values(); \
+		for (index_t i = 0; i < m * n; ++i) A[i] = spec_values[i % n_spec_values]; \
+		mmat_t Rm = name(A); \
+		bmat_t R = to_bool(Rm); \
+		bmat_t R_r(m, n); \
+		for (index_t i = 0; i < m * n; ++i) R_r[i] = math::name(A[i]); \
+		ASSERT_EQ( R.nrows(), m ); \
+		ASSERT_EQ( R.ncolumns(), n ); \
+		ASSERT_MAT_EQ( m, n, R, R_r); } \
+	AUTO_TPACK( mat_##name ) { \
+		ADD_MN_CASE_3X3( mat_##name, DM, DN ) \
+	}
 
 #define DEF_LOGICAL_TESTS_1( name, op, bop ) \
-		MN_CASE( mat_logical, name ) { \
-			typedef dense_matrix<bool, M, N> bmat_t; \
-			typedef dense_matrix<fmsk, M, N> mmat_t; \
-			const index_t m = M == 0 ? DM : M; \
-			const index_t n = N == 0 ? DN : N; \
-			bmat_t A(m, n); \
-			for (index_t i = 0; i < m * n; ++i) A[i] = bool(i % 2); \
-			mmat_t Am = to_f64m(A); \
-			bmat_t R_r(m, n); \
-			for (index_t i = 0; i < m * n; ++i) R_r[i] = bop(A[i]); \
-			bmat_t R = op(A); \
-			mmat_t Rm = op(Am); \
-			bmat_t Rmb = to_bool(Rm); \
-			ASSERT_TRUE( my_is_equal(R, R_r) ); \
-			ASSERT_TRUE( my_is_equal(Rmb, R_r) ); } \
-		BEGIN_TPACK( mat_logical_##name ) \
-			ADD_MN_CASE_3X3( mat_logical, name, DM, DN ) \
-		END_TPACK
+	MN_CASE( mat_##name ) { \
+		typedef dense_matrix<bool, M, N> bmat_t; \
+		typedef dense_matrix<fmsk, M, N> mmat_t; \
+		const index_t m = M == 0 ? DM : M; \
+		const index_t n = N == 0 ? DN : N; \
+		bmat_t A(m, n); \
+		for (index_t i = 0; i < m * n; ++i) A[i] = bool(i % 2); \
+		mmat_t Am = to_f64m(A); \
+		bmat_t R_r(m, n); \
+		for (index_t i = 0; i < m * n; ++i) R_r[i] = bop(A[i]); \
+		bmat_t R = op(A); \
+		mmat_t Rm = op(Am); \
+		bmat_t Rmb = to_bool(Rm); \
+		ASSERT_EQ( R.nrows(), m ); \
+		ASSERT_EQ( R.ncolumns(), n ); \
+		ASSERT_MAT_EQ( m, n, R, R_r); \
+		ASSERT_EQ( Rmb.nrows(), m ); \
+		ASSERT_EQ( Rmb.ncolumns(), n ); \
+		ASSERT_MAT_EQ( m, n, Rmb, R_r); } \
+	AUTO_TPACK( mat_##name ) { \
+		ADD_MN_CASE_3X3( mat_##name, DM, DN ) \
+	}
 
 #define DEF_LOGICAL_TESTS_2( name, op, bop ) \
-		MN_CASE( mat_logical, name ) { \
-			typedef dense_matrix<bool, M, N> bmat_t; \
-			typedef dense_matrix<fmsk, M, N> mmat_t; \
-			const index_t m = M == 0 ? DM : M; \
-			const index_t n = N == 0 ? DN : N; \
-			bmat_t A(m, n); \
-			bmat_t B(m, n); \
-			for (index_t i = 0; i < m * n; ++i) A[i] = bool(i % 2); \
-			for (index_t i = 0; i < m * n; ++i) B[i] = bool(i % 3); \
-			mmat_t Am = to_f64m(A); \
-			mmat_t Bm = to_f64m(B); \
-			bmat_t R_r(m, n); \
-			for (index_t i = 0; i < m * n; ++i) R_r[i] = (A[i] bop B[i]); \
-			bmat_t R1 = A op B; \
-			mmat_t Rm2 = Am op Bm; \
-			bmat_t R2 = to_bool(Rm2); \
-			bmat_t R3 = Am op B; \
-			bmat_t R4 = A op Bm; \
-			ASSERT_TRUE( my_is_equal(R1, R_r) ); \
-			ASSERT_TRUE( my_is_equal(R2, R_r) ); \
-			ASSERT_TRUE( my_is_equal(R3, R_r) ); \
-			ASSERT_TRUE( my_is_equal(R4, R_r) ); } \
-		BEGIN_TPACK( mat_logical_##name ) \
-			ADD_MN_CASE_3X3( mat_logical, name, DM, DN ) \
-		END_TPACK
+	MN_CASE( mat_##name ) { \
+		typedef dense_matrix<bool, M, N> bmat_t; \
+		typedef dense_matrix<fmsk, M, N> mmat_t; \
+		const index_t m = M == 0 ? DM : M; \
+		const index_t n = N == 0 ? DN : N; \
+		bmat_t A(m, n); \
+		bmat_t B(m, n); \
+		for (index_t i = 0; i < m * n; ++i) A[i] = bool(i % 2); \
+		for (index_t i = 0; i < m * n; ++i) B[i] = bool(i % 3); \
+		mmat_t Am = to_f64m(A); \
+		mmat_t Bm = to_f64m(B); \
+		bmat_t R_r(m, n); \
+		for (index_t i = 0; i < m * n; ++i) R_r[i] = (A[i] bop B[i]); \
+		bmat_t R1 = A op B; \
+		mmat_t Rm2 = Am op Bm; \
+		bmat_t R2 = to_bool(Rm2); \
+		bmat_t R3 = Am op B; \
+		bmat_t R4 = A op Bm; \
+		ASSERT_EQ( R1.nrows(), m ); \
+		ASSERT_EQ( R1.ncolumns(), n ); \
+		ASSERT_MAT_EQ( m, n, R1, R_r); \
+		ASSERT_EQ( R2.nrows(), m ); \
+		ASSERT_EQ( R2.ncolumns(), n ); \
+		ASSERT_MAT_EQ( m, n, R2, R_r); \
+		ASSERT_EQ( R3.nrows(), m ); \
+		ASSERT_EQ( R3.ncolumns(), n ); \
+		ASSERT_MAT_EQ( m, n, R3, R_r); \
+		ASSERT_EQ( R4.nrows(), m ); \
+		ASSERT_EQ( R4.ncolumns(), n ); \
+		ASSERT_MAT_EQ( m, n, R1, R_r); \
+    } \
+	AUTO_TPACK( mat_##name ) { \
+		ADD_MN_CASE_3X3( mat_##name, DM, DN ) \
+	}
 
+
+LTEST_INIT_AUTOSUITE
 
 // specific tests
 
@@ -184,15 +180,15 @@ DEF_NUMPRED_TESTS( isnan )
 
 // ewise logical tests
 
-DEF_LOGICAL_TESTS_1( not, ~, !)
-DEF_LOGICAL_TESTS_2( and, &, && )
-DEF_LOGICAL_TESTS_2( or,  |, || )
-DEF_LOGICAL_TESTS_2( eq,  ==, == )
-DEF_LOGICAL_TESTS_2( ne,  !=, != )
+DEF_LOGICAL_TESTS_1( logical_not, ~, !)
+DEF_LOGICAL_TESTS_2( logical_and, &, && )
+DEF_LOGICAL_TESTS_2( logical_or,  |, || )
+DEF_LOGICAL_TESTS_2( logical_eq,  ==, == )
+DEF_LOGICAL_TESTS_2( logical_ne,  !=, != )
 
 // conditional selection
 
-MN_CASE( mat_cond, cond_b )
+MN_CASE( mat_cond_b )
 {
 	typedef dense_matrix<bool, M, N> bmat_t;
 	typedef dense_matrix<double, M, N> mat_t;
@@ -203,8 +199,8 @@ MN_CASE( mat_cond, cond_b )
 	bmat_t C(m, n);
 	for (index_t i = 0; i < m * n; ++i) C[i] = bool(i % 2);
 
-	mat_t X(m, n); fill_ran(X);
-	mat_t Y(m, n); fill_ran(Y);
+	mat_t X(m, n); fill_ran(X, 0.0, 1.0);
+	mat_t Y(m, n); fill_ran(Y, 0.0, 1.0);
 	double cv = X[0] + Y[0];
 
 	typedef map_expr<ftags::cond_, bmat_t, mat_t, mat_t> expr_t;
@@ -216,20 +212,26 @@ MN_CASE( mat_cond, cond_b )
 	mat_t R1 = cond(C, X, Y);
 	mat_t R1_r(m, n);
 	for (index_t i = 0; i < m * n; ++i) R1_r[i] = C[i] ? X[i] : Y[i];
-	ASSERT_TRUE( my_is_equal(R1, R1_r) );
+	ASSERT_EQ( R1.nrows(), m );
+	ASSERT_EQ( R1.ncolumns(), n );
+	ASSERT_MAT_EQ( m, n, R1, R1_r );
 
 	mat_t R2 = cond(C, X, cv);
 	mat_t R2_r(m, n);
 	for (index_t i = 0; i < m * n; ++i) R2_r[i] = C[i] ? X[i] : cv;
-	ASSERT_TRUE( my_is_equal(R2, R2_r) );
+	ASSERT_EQ( R2.nrows(), m );
+	ASSERT_EQ( R2.ncolumns(), n );
+	ASSERT_MAT_EQ( m, n, R2, R2_r );
 
 	mat_t R3 = cond(C, cv, Y);
 	mat_t R3_r(m, n);
 	for (index_t i = 0; i < m * n; ++i) R3_r[i] = C[i] ? cv : Y[i];
-	ASSERT_TRUE( my_is_equal(R3, R3_r) );
+	ASSERT_EQ( R3.nrows(), m );
+	ASSERT_EQ( R3.ncolumns(), n );
+	ASSERT_MAT_EQ( m, n, R3, R3_r );
 }
 
-MN_CASE( mat_cond, cond_m )
+MN_CASE( mat_cond_m )
 {
 	typedef dense_matrix<double, M, N> mat_t;
 
@@ -244,14 +246,14 @@ MN_CASE( mat_cond, cond_m )
 		B[i] = A[i] + double(i % 2);
 	}
 
-	mat_t X(m, n); fill_ran(X);
-	mat_t Y(m, n); fill_ran(Y);
+	mat_t X(m, n); fill_ran(X, 0.0, 1.0);
+	mat_t Y(m, n); fill_ran(Y, 0.0, 1.0);
 	double cv = X[0] + Y[0];
 
 	typedef map_expr<ftags::cond_, map_expr<ftags::eq_, mat_t, mat_t>, mat_t, mat_t> expr_t;
 	typedef preferred_macc_policy<expr_t> pmap;
 
-	const int pw = math::simd_traits<double, default_simd_kind>::pack_width;
+	const int pw = simd_traits<double, default_simd_kind>::pack_width;
 	ASSERT_TRUE( pmap::prefer_linear );
 	bool use_simd = ((M * N) % pw == 0);
 
@@ -260,51 +262,34 @@ MN_CASE( mat_cond, cond_m )
 	mat_t R1 = cond(A == B, X, Y);
 	mat_t R1_r(m, n);
 	for (index_t i = 0; i < m * n; ++i) R1_r[i] = A[i] == B[i] ? X[i] : Y[i];
-	ASSERT_TRUE( my_is_equal(R1, R1_r) );
+	ASSERT_EQ( R1.nrows(), m );
+	ASSERT_EQ( R1.ncolumns(), n );
+	ASSERT_MAT_EQ( m, n, R1, R1_r );
 
 	mat_t R2 = cond(A == B, X, cv);
 	mat_t R2_r(m, n);
 	for (index_t i = 0; i < m * n; ++i) R2_r[i] = A[i] == B[i] ? X[i] : cv;
-	ASSERT_TRUE( my_is_equal(R2, R2_r) );
+	ASSERT_EQ( R2.nrows(), m );
+	ASSERT_EQ( R2.ncolumns(), n );
+	ASSERT_MAT_EQ( m, n, R2, R2_r );
 
 	mat_t R3 = cond(A == B, cv, Y);
 	mat_t R3_r(m, n);
 	for (index_t i = 0; i < m * n; ++i) R3_r[i] = A[i] == B[i] ? cv : Y[i];
-	ASSERT_TRUE( my_is_equal(R3, R3_r) );
+	ASSERT_EQ( R3.nrows(), m );
+	ASSERT_EQ( R3.ncolumns(), n );
+	ASSERT_MAT_EQ( m, n, R3, R3_r );
 }
 
 
-BEGIN_TPACK( mat_cond_b )
-	ADD_MN_CASE_3X3( mat_cond, cond_b, DM, DN )
-END_TPACK
+AUTO_TPACK( mat_cond_b )
+{
+	ADD_MN_CASE_3X3( mat_cond_b, DM, DN )
+}
 
-BEGIN_TPACK( mat_cond_m )
-	ADD_MN_CASE_3X3( mat_cond, cond_m, DM, DN )
-END_TPACK
-
-
-BEGIN_MAIN_SUITE
-	ADD_TPACK( mat_eq )
-	ADD_TPACK( mat_ne )
-	ADD_TPACK( mat_ge )
-	ADD_TPACK( mat_gt )
-	ADD_TPACK( mat_le )
-	ADD_TPACK( mat_lt )
-
-	ADD_TPACK( mat_signbit )
-	ADD_TPACK( mat_isfinite )
-	ADD_TPACK( mat_isinf )
-	ADD_TPACK( mat_isnan )
-
-	ADD_TPACK( mat_logical_not )
-	ADD_TPACK( mat_logical_and )
-	ADD_TPACK( mat_logical_or )
-	ADD_TPACK( mat_logical_eq )
-	ADD_TPACK( mat_logical_ne )
-
-	ADD_TPACK( mat_cond_b )
-	ADD_TPACK( mat_cond_m )
-END_MAIN_SUITE
-
+AUTO_TPACK( mat_cond_m )
+{
+	ADD_MN_CASE_3X3( mat_cond_m, DM, DN )
+}
 
 

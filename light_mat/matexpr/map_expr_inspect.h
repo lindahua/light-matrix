@@ -13,7 +13,7 @@
 #ifndef LIGHTMAT_MAP_EXPR_INSPECT_H_
 #define LIGHTMAT_MAP_EXPR_INSPECT_H_
 
-#include <light_mat/mateval/map_expr.h>
+#include <light_mat/matexpr/map_expr.h>
 #include <light_mat/matrix/matrix_inspect.h>
 
 //#define LMAT_DUMP_FUN

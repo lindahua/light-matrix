@@ -569,8 +569,8 @@ add_executable(test_map_expr ${MAPEXPR_TEST_HS} matexpr/test_map_expr.cpp)
 add_executable(test_mat_arith ${MAPEXPR_TEST_HS} matexpr/test_mat_arith.cpp)
 add_executable(test_mat_emath ${MAPEXPR_TEST_HS} matexpr/test_mat_emath.cpp)
 add_executable(test_mat_special ${MAPEXPR_TEST_HS} matexpr/test_mat_special.cpp)
-#add_executable(test_mat_cast ${MAPEXPR_TEST_HS} matexpr/test_mat_cast.cpp)
-#add_executable(test_mat_pred ${MAPEXPR_TEST_HS} matexpr/test_mat_pred.cpp)
+add_executable(test_mat_cast ${MAPEXPR_TEST_HS} matexpr/test_mat_cast.cpp)
+add_executable(test_mat_pred ${MAPEXPR_TEST_HS} matexpr/test_mat_pred.cpp)
 #
 #set(OTHEREXPR_TEST_HS
 #    ${MATRIX_HS}
@@ -589,8 +589,8 @@ set(LMAT_MATEXPR_TESTS
 	test_mat_arith
 	test_mat_emath
 	test_mat_special
-#	test_mat_cast
-#	test_mat_pred
+	test_mat_cast
+	test_mat_pred
 #	test_repvecs
 #	test_subs_expr
 #	test_mat_zip

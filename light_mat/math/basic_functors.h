@@ -130,6 +130,13 @@ namespace lmat {
 	_LMAT_DEFINE_REAL_MATH_FUN( round, 1 )
 	_LMAT_DEFINE_REAL_MATH_FUN( trunc, 1 )
 
+	// FP classification
+
+	_LMAT_DEFINE_REAL_PRED_FUN( signbit, 1 )
+	_LMAT_DEFINE_REAL_PRED_FUN( isinf, 1 )
+	_LMAT_DEFINE_REAL_PRED_FUN( isnan, 1 )
+	_LMAT_DEFINE_REAL_PRED_FUN( isfinite, 1 )
+
 
 	// conditional selection
 
