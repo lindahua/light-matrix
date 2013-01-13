@@ -44,6 +44,8 @@ namespace lmat { namespace random { namespace internal {
 	template<typename T>
 	struct std_normal_distr_impl<T, icdf_>
 	{
+		typedef T result_type;
+
 		template<class RStream>
 		LMAT_ENSURE_INLINE
 		T operator() (RStream& rs) const
@@ -55,6 +57,8 @@ namespace lmat { namespace random { namespace internal {
 	template<typename T>
 	struct normal_distr_impl<T, icdf_>
 	{
+		typedef T result_type;
+
 		T m_mu;
 		T m_sigma;
 

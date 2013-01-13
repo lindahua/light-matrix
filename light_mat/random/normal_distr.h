@@ -100,7 +100,6 @@ namespace lmat { namespace random {
 
 namespace lmat
 {
-
 	template<typename T, typename Kind>
 	struct is_simdizable<random::std_normal_distr<T, random::icdf_>, Kind>
 	: public meta::has_simd_support<ftags::norminv_, T, Kind> { };
@@ -108,6 +107,7 @@ namespace lmat
 	template<typename T, typename Kind>
 	struct is_simdizable<random::normal_distr<T, random::icdf_>, Kind>
 	: public meta::has_simd_support<ftags::norminv_, T, Kind> { };
+
 
 	template<typename T, typename Kind>
 	struct simdize_map< random::std_normal_distr<T, random::icdf_>, Kind >

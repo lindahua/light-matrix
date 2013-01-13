@@ -756,7 +756,8 @@ set(TESTS_USING_SVML
     test_mat_special
     test_cpd_ewise
     test_exponential
-    test_normal)
+    test_normal
+    test_rand_expr)
 
 foreach (tname ${TESTS_USING_SVML}) 
     set_target_properties(${tname}

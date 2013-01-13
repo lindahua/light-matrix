@@ -26,6 +26,7 @@ inline void check_policy(const rand_expr<Distr, RStream, M, N>& expr)
 {
 	typedef rand_expr<Distr, RStream, M, N> expr_t;
 	bool expect_usimd = is_simdizable<Distr, default_simd_kind>::value;
+	// bool expect_usimd = true;
 
 	typedef preferred_macc_policy<expr_t> pmap;
 	ASSERT_EQ( pmap::prefer_simd, expect_usimd );
