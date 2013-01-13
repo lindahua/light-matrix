@@ -459,21 +459,21 @@ set(MATOPS_TEST_HS
     ${MATRIX_OPS_HS_})
 
 add_executable(test_mat_props  ${MATOPS_TEST_HS} matrix/test_mat_props.cpp)
-#add_executable(test_mat_iter   ${MATOPS_TEST_HS} matrix/test_mat_iter.cpp)
-#add_executable(test_mat_fill   ${MATOPS_TEST_HS} matrix/test_mat_fill.cpp)
-#add_executable(test_mat_copy   ${MATOPS_TEST_HS} matrix/test_mat_copy.cpp)
-#add_executable(test_dense_eval ${MATOPS_TEST_HS}  matrix/test_dense_eval.cpp)
-#
-#set(MATVIEWS_TEST_HS
-#    ${COMMON_HS_EX}
-#    ${MATRIX_BASE_HS_}
-#    ${MATRIX_CLASS_HS_}
-#    ${MATRIX_VIEWS_HS_})
-#
-#add_executable(test_mat_vecviews ${MATVIEWS_TEST_HS} matrix/test_mat_vecviews.cpp)
-#add_executable(test_mat_matviews ${MATVIEWS_TEST_HS} matrix/test_mat_matviews.cpp)
-#add_executable(test_mat_asvec ${MATVIEWS_TEST_HS} matrix/test_mat_asvec.cpp) 
-#
+add_executable(test_mat_iter   ${MATOPS_TEST_HS} matrix/test_mat_iter.cpp)
+add_executable(test_mat_fill   ${MATOPS_TEST_HS} matrix/test_mat_fill.cpp)
+add_executable(test_mat_copy   ${MATOPS_TEST_HS} matrix/test_mat_copy.cpp)
+add_executable(test_dense_eval ${MATOPS_TEST_HS}  matrix/test_dense_eval.cpp)
+
+set(MATVIEWS_TEST_HS
+    ${COMMON_HS_EX}
+    ${MATRIX_BASE_HS_}
+    ${MATRIX_CLASS_HS_}
+    ${MATRIX_VIEWS_HS_})
+
+add_executable(test_mat_vecviews ${MATVIEWS_TEST_HS} matrix/test_mat_vecviews.cpp)
+add_executable(test_mat_matviews ${MATVIEWS_TEST_HS} matrix/test_mat_matviews.cpp)
+add_executable(test_mat_asvec ${MATVIEWS_TEST_HS} matrix/test_mat_asvec.cpp) 
+
 #set(MATMANIP_TEST_HS
 #    ${COMMON_HS}
 #    ${MATRIX_BASE_HS_}
@@ -493,13 +493,13 @@ set(LMAT_MATRIX_TESTS
 	test_ref_grid
 	test_step_vec
 	test_mat_props
-#	test_mat_iter
-#	test_mat_fill
-#	test_mat_copy
-#	test_dense_eval
-#	test_mat_vecviews
-#	test_mat_matviews
-#	test_mat_asvec
+	test_mat_iter
+	test_mat_fill
+	test_mat_copy
+	test_dense_eval
+	test_mat_vecviews
+	test_mat_matviews
+	test_mat_asvec
 #	test_mat_select
 #	test_direct_trans
 #	test_transpose_expr

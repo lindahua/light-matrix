@@ -117,7 +117,7 @@ void test_asrow_view()
 }
 
 
-SIMPLE_CASE( vector_adapter, as_col )
+SIMPLE_CASE( vector_as_col )
 {
 	std::vector<double> x;
 	const index_t n = 10;
@@ -138,7 +138,7 @@ SIMPLE_CASE( vector_adapter, as_col )
 	ASSERT_VEC_EQ( n, xv, r );
 }
 
-SIMPLE_CASE( vector_adapter, as_row )
+SIMPLE_CASE( vector_as_row )
 {
 	std::vector<double> x;
 	const index_t n = 10;
@@ -161,73 +161,80 @@ SIMPLE_CASE( vector_adapter, as_row )
 
 
 
-#define DEF_ASVEC_TESTS( V, STag ) \
-	MN_CASE( mat_as_##V, STag##_as_##V ) { test_as##V##_view<STag, M, N>(); }
+MN_CASE( mat_as_col_cont )
+{
+	test_ascol_view<cont, M, N>();
+}
 
-DEF_ASVEC_TESTS( col, cont )
-DEF_ASVEC_TESTS( col, bloc )
-DEF_ASVEC_TESTS( col, grid )
+MN_CASE( mat_as_col_bloc )
+{
+	test_ascol_view<bloc, M, N>();
+}
 
-DEF_ASVEC_TESTS( row, cont )
-DEF_ASVEC_TESTS( row, bloc )
-DEF_ASVEC_TESTS( row, grid )
+MN_CASE( mat_as_col_grid )
+{
+	test_ascol_view<grid, M, N>();
+}
 
-BEGIN_TPACK( mat_as_col_cont )
-	ADD_MN_CASE_3X3( mat_as_col, cont_as_col, DM, DN )
-END_TPACK
+MN_CASE( mat_as_row_cont )
+{
+	test_asrow_view<cont, M, N>();
+}
 
-BEGIN_TPACK( mat_as_col_bloc )
-	ADD_MN_CASE( mat_as_col, bloc_as_col, 1, 1 )
-	ADD_MN_CASE( mat_as_col, bloc_as_col, 0, 1 )
-	ADD_MN_CASE( mat_as_col, bloc_as_col, DM, 1 )
-	ADD_MN_CASE( mat_as_col, bloc_as_col, 1, 0 )
-	ADD_MN_CASE( mat_as_col, bloc_as_col, 1, DN )
-END_TPACK
+MN_CASE( mat_as_row_bloc )
+{
+	test_asrow_view<bloc, M, N>();
+}
 
-BEGIN_TPACK( mat_as_col_grid )
-	ADD_MN_CASE( mat_as_col, grid_as_col, 1, 1 )
-	ADD_MN_CASE( mat_as_col, grid_as_col, 0, 1 )
-	ADD_MN_CASE( mat_as_col, grid_as_col, DM, 1 )
-	ADD_MN_CASE( mat_as_col, grid_as_col, 1, 0 )
-	ADD_MN_CASE( mat_as_col, grid_as_col, 1, DN )
-END_TPACK
+MN_CASE( mat_as_row_grid )
+{
+	test_asrow_view<grid, M, N>();
+}
 
-BEGIN_TPACK( mat_as_row_cont )
-	ADD_MN_CASE_3X3( mat_as_row, cont_as_row, DM, DN )
-END_TPACK
 
-BEGIN_TPACK( mat_as_row_bloc )
-	ADD_MN_CASE( mat_as_row, bloc_as_row, 1, 1 )
-	ADD_MN_CASE( mat_as_row, bloc_as_row, 0, 1 )
-	ADD_MN_CASE( mat_as_row, bloc_as_row, DM, 1 )
-	ADD_MN_CASE( mat_as_row, bloc_as_row, 1, 0 )
-	ADD_MN_CASE( mat_as_row, bloc_as_row, 1, DN )
-END_TPACK
+LTEST_INIT_AUTOSUITE
 
-BEGIN_TPACK( mat_as_row_grid )
-	ADD_MN_CASE( mat_as_row, grid_as_row, 1, 1 )
-	ADD_MN_CASE( mat_as_row, grid_as_row, 0, 1 )
-	ADD_MN_CASE( mat_as_row, grid_as_row, DM, 1 )
-	ADD_MN_CASE( mat_as_row, grid_as_row, 1, 0 )
-	ADD_MN_CASE( mat_as_row, grid_as_row, 1, DN )
-END_TPACK
+AUTO_TPACK( vector_adapter )
+{
+	ADD_SIMPLE_CASE( vector_as_col )
+	ADD_SIMPLE_CASE( vector_as_row )
+}
 
-BEGIN_TPACK( vector_adapter )
-	ADD_SIMPLE_CASE( vector_adapter, as_col )
-	ADD_SIMPLE_CASE( vector_adapter, as_row )
-END_TPACK
+AUTO_TPACK( mat_as_col )
+{
+	ADD_MN_CASE_3X3( mat_as_col_cont, DM, DN )
 
-BEGIN_MAIN_SUITE
-	ADD_TPACK( mat_as_col_cont )
-	ADD_TPACK( mat_as_col_bloc )
-	ADD_TPACK( mat_as_col_grid )
+	ADD_MN_CASE( mat_as_col_bloc, 1, 1 )
+	ADD_MN_CASE( mat_as_col_bloc, 0, 1 )
+	ADD_MN_CASE( mat_as_col_bloc, DM, 1 )
+	ADD_MN_CASE( mat_as_col_bloc, 1, 0 )
+	ADD_MN_CASE( mat_as_col_bloc, 1, DN )
 
-	ADD_TPACK( mat_as_row_cont )
-	ADD_TPACK( mat_as_row_bloc )
-	ADD_TPACK( mat_as_row_grid )
+	ADD_MN_CASE( mat_as_col_grid, 1, 1 )
+	ADD_MN_CASE( mat_as_col_grid, 0, 1 )
+	ADD_MN_CASE( mat_as_col_grid, DM, 1 )
+	ADD_MN_CASE( mat_as_col_grid, 1, 0 )
+	ADD_MN_CASE( mat_as_col_grid, 1, DN )
+}
 
-	ADD_TPACK( vector_adapter )
-END_MAIN_SUITE
+
+AUTO_TPACK( mat_as_row )
+{
+	ADD_MN_CASE_3X3( mat_as_row_cont, DM, DN )
+
+	ADD_MN_CASE( mat_as_row_bloc, 1, 1 )
+	ADD_MN_CASE( mat_as_row_bloc, 0, 1 )
+	ADD_MN_CASE( mat_as_row_bloc, DM, 1 )
+	ADD_MN_CASE( mat_as_row_bloc, 1, 0 )
+	ADD_MN_CASE( mat_as_row_bloc, 1, DN )
+
+	ADD_MN_CASE( mat_as_row_grid, 1, 1 )
+	ADD_MN_CASE( mat_as_row_grid, 0, 1 )
+	ADD_MN_CASE( mat_as_row_grid, DM, 1 )
+	ADD_MN_CASE( mat_as_row_grid, 1, 0 )
+	ADD_MN_CASE( mat_as_row_grid, 1, DN )
+}
+
 
 
 

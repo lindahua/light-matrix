@@ -72,72 +72,55 @@ void test_matrix_fill()
 }
 
 
-MN_CASE( mat_zero, cont )
+MN_CASE( mat_zero_cont )
 {
 	test_matrix_zero<cont, M, N>();
 }
 
-MN_CASE( mat_zero, bloc )
+MN_CASE( mat_zero_bloc )
 {
 	test_matrix_zero<bloc, M, N>();
 }
 
-MN_CASE( mat_zero, grid )
+MN_CASE( mat_zero_grid )
 {
 	test_matrix_zero<grid, M, N>();
 }
 
 
-MN_CASE( mat_fill, cont )
+MN_CASE( mat_fill_cont )
 {
 	test_matrix_fill<cont, M, N>();
 }
 
-MN_CASE( mat_fill, bloc )
+MN_CASE( mat_fill_bloc )
 {
 	test_matrix_fill<bloc, M, N>();
 }
 
-MN_CASE( mat_fill, grid )
+MN_CASE( mat_fill_grid )
 {
 	test_matrix_fill<grid, M, N>();
 }
 
 
-BEGIN_TPACK( mat_zero_cont )
-	ADD_MN_CASE_3X3( mat_zero, cont, 3, 4 )
-END_TPACK
+LTEST_INIT_AUTOSUITE
 
-BEGIN_TPACK( mat_zero_bloc )
-	ADD_MN_CASE_3X3( mat_zero, bloc, 3, 4 )
-END_TPACK
+AUTO_TPACK( mat_zero )
+{
+	ADD_MN_CASE_3X3( mat_zero_cont, 3, 4 )
+	ADD_MN_CASE_3X3( mat_zero_bloc, 3, 4 )
+	ADD_MN_CASE_3X3( mat_zero_grid, 3, 4 )
+}
 
-BEGIN_TPACK( mat_zero_grid )
-	ADD_MN_CASE_3X3( mat_zero, grid, 3, 4 )
-END_TPACK
-
-BEGIN_TPACK( mat_fill_cont )
-	ADD_MN_CASE_3X3( mat_fill, cont, 3, 4 )
-END_TPACK
-
-BEGIN_TPACK( mat_fill_bloc )
-	ADD_MN_CASE_3X3( mat_fill, bloc, 3, 4 )
-END_TPACK
-
-BEGIN_TPACK( mat_fill_grid )
-	ADD_MN_CASE_3X3( mat_fill, grid, 3, 4 )
-END_TPACK
+AUTO_TPACK( mat_fill )
+{
+	ADD_MN_CASE_3X3( mat_fill_cont, 3, 4 )
+	ADD_MN_CASE_3X3( mat_fill_bloc, 3, 4 )
+	ADD_MN_CASE_3X3( mat_fill_grid, 3, 4 )
+}
 
 
-BEGIN_MAIN_SUITE
-	ADD_TPACK( mat_zero_cont )
-	ADD_TPACK( mat_zero_bloc )
-	ADD_TPACK( mat_zero_grid )
-
-	ADD_TPACK( mat_fill_cont )
-	ADD_TPACK( mat_fill_bloc )
-	ADD_TPACK( mat_fill_grid )
-END_MAIN_SUITE
 
 
 
