@@ -18,14 +18,16 @@ include("../cmake_modules/CompilerConfig.cmake")
 
 set(CMAKE_MODULE_PATH "../cmake_modules" ${CMAKE_MODULE_PATH})
 
-# Intel SVML 
+# Intel library 
 
-find_package(SVML)
-if (SVML_FOUND)
-message(STATUS "[LMAT] Intel SVML found: ${SVML_PATH}")
-else (SVML_FOUND)
-message(STATUS "[LMAT] Intel SVML not found")
-endif (SVML_FOUND)
+find_package(ICCLib)
+if (ICCLIB_FOUND)
+message(STATUS "[LMAT] ICC Library found: ${ICCLIB_PATH}")
+else (ICCLIB_FOUND)
+message(STATUS "[LMAT] ICC Library not found")
+endif (ICCLIB_FOUND)
+
+set(SVML_FOUND ICCLIB_FOUND)
 
 # AMD LibM
 
@@ -743,7 +745,7 @@ set(LMAT_ALL_TESTS
 if (${CMAKE_CXX_COMPILER_ID} MATCHES "GNU")
 set_target_properties(test_dense_eval PROPERTIES COMPILE_FLAGS "-Wno-free-nonheap-object")
 endif (${CMAKE_CXX_COMPILER_ID} MATCHES "GNU")
- 
+
    
 # Link to SVML
 
