@@ -16,6 +16,7 @@
 
 namespace lmat { namespace bench {
 
+	using ltest::timer;
 
 	enum performance_unit
 	{
@@ -24,7 +25,6 @@ namespace lmat { namespace bench {
 		PUNIT_MPS = 2,
 		PUNIT_GPS = 3
 	};
-
 
 	inline double et_to_speed(performance_unit u, uint64_t N, double et)
 	{
