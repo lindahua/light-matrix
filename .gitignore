@@ -3,6 +3,8 @@
 bin/*
 build/*
 build-bench/*
+build-sse/*
+build-icc/*
 
 # Eclipse projects
 

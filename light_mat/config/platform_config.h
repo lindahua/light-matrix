@@ -16,6 +16,7 @@
 #define LIGHTMAT_MSVC 0x01
 #define LIGHTMAT_GCC 0x02
 #define LIGHTMAT_CLANG 0x03
+#define LIGHTMAT_ICC 0x04
 
 #define LIGHTMAT_WIN32 0x11
 #define LIGHTMAT_POSIX 0x12
@@ -40,7 +41,12 @@
 		#if ((__GNUC__ < 4) || (__GNUC__ == 4 && __GNUC_MINOR__ < 5))
 			#error GCC of version lower than 4.5.0 is not supported
 		#endif
-		#define LIGHTMAT_COMPILER LIGHTMAT_GCC
+
+		#if (defined(__INTEL_COMPILER))
+			#define LIGHTMAT_COMPILER LIGHTMAT_ICC
+		#else
+			#define LIGHTMAT_COMPILER LIGHTMAT_GCC
+		#endif
 
 		#if (!(defined(__GXX_EXPERIMENTAL_CXX0X__)))
 			#error Light-Matrix requires support of C++11 standard.
