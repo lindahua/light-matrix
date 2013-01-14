@@ -159,7 +159,7 @@ namespace lmat
 
 	template<class RStream>
 	LMAT_ENSURE_INLINE
-	rand_expr<random::std_normal_distr<double>, RStream>
+	inline rand_expr<random::std_normal_distr<double>, RStream>
 	randn(RStream& rs, index_t m, index_t n)
 	{
 		return rand_mat(random::std_normal_distr<double>(), rs, m, n);
@@ -167,7 +167,7 @@ namespace lmat
 
 	template<class RStream>
 	LMAT_ENSURE_INLINE
-	rand_expr<random::std_normal_distr<float>, RStream>
+	inline rand_expr<random::std_normal_distr<float>, RStream>
 	randnf(RStream& rs, index_t m, index_t n)
 	{
 		return rand_mat(random::std_normal_distr<float>(), rs, m, n);
@@ -187,7 +187,7 @@ namespace lmat
 
 	template<class RStream>
 	LMAT_ENSURE_INLINE
-	rand_expr<random::std_exponential_distr<double>, RStream>
+	inline rand_expr<random::std_exponential_distr<double>, RStream>
 	rande(RStream& rs, index_t m, index_t n)
 	{
 		return rand_mat(random::std_exponential_distr<double>(), rs, m, n);
@@ -195,7 +195,7 @@ namespace lmat
 
 	template<class RStream>
 	LMAT_ENSURE_INLINE
-	rand_expr<random::std_exponential_distr<float>, RStream>
+	inline rand_expr<random::std_exponential_distr<float>, RStream>
 	randef(RStream& rs, index_t m, index_t n)
 	{
 		return rand_mat(random::std_exponential_distr<float>(), rs, m, n);
