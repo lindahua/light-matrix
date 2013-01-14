@@ -10,7 +10,7 @@
 #define LIGHTMAT_BENCH_BASE_H_
 
 #include <light_mat/matrix/matrix_classes.h>
-#include <light_mat/common/timer.h>
+#include <light_test/timer.h>
 #include <cstdio>
 #include <cstdlib>
 
