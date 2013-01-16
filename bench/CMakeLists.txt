@@ -14,15 +14,18 @@ set(EXECUTABLE_OUTPUT_PATH bin)
 
 include("../cmake_modules/CompilerConfig.cmake")
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
+
 if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -lrt")
 endif (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 
+message(STATUS "[LMAT] Updated CMAKE_CXX_FLAGS = ${CMAKE_CXX_FLAGS}")
 
 # Add executables
 
 add_executable(bench_copy ${COMMON_HS} bench_copy.cpp)
-
+add_executable(bench_arith ${COMMON_HS} bench_arith.cpp)
 
 
 
