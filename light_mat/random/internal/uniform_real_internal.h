@@ -10,8 +10,8 @@
 #pragma once
 #endif
 
-#ifndef UNIFORM_REAL_INTERNAL_H_
-#define UNIFORM_REAL_INTERNAL_H_
+#ifndef LIGHTMAT_UNIFORM_REAL_INTERNAL_H_
+#define LIGHTMAT_UNIFORM_REAL_INTERNAL_H_
 
 #include <light_mat/random/distr_fwd.h>
 

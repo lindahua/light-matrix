@@ -1,5 +1,5 @@
 /**
- * @file functors.h
+ * @file basic_functors.h
  *
  * Arithmetic and Basic math functors
  * 

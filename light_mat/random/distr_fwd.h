@@ -1,5 +1,5 @@
 /**
- * @file prng_fwd.h
+ * @file distr_fwd.h
  *
  * @brief Forward header for all distributions
  *

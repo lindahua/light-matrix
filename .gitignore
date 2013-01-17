@@ -16,6 +16,10 @@ build-icc/*
 
 doc/_build/*
 
+# Python objects
+
+*.pyc
+
 # Backup files
 
 *.cmake~

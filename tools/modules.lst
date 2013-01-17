@@ -1,8 +1,10 @@
 config
 common
+simd
 math
 matrix
 mateval
+matexpr
 linalg
 matlab
 random
