@@ -116,12 +116,12 @@ struct bench_rawsimd : public bench_arith_base<T>
 
 
 template<typename T>
-struct bench_linear_scalar : public bench_arith_base<T>
+struct bench_kernel_linear_scalar : public bench_arith_base<T>
 {
-	bench_linear_scalar(const bench_arith_base<T>& base)
+	bench_kernel_linear_scalar(const bench_arith_base<T>& base)
 	: bench_arith_base<T>(base) { }
 
-	const char *name() const { return "arith-linear-scalar"; }
+	const char *name() const { return "arith-kernel-linear-scalar"; }
 
 	LMAT_ENSURE_INLINE
 	void operator() () const
@@ -133,12 +133,12 @@ struct bench_linear_scalar : public bench_arith_base<T>
 };
 
 template<typename T>
-struct bench_linear_simd : public bench_arith_base<T>
+struct bench_kernel_linear_simd : public bench_arith_base<T>
 {
-	bench_linear_simd(const bench_arith_base<T>& base)
+	bench_kernel_linear_simd(const bench_arith_base<T>& base)
 	: bench_arith_base<T>(base) { }
 
-	const char *name() const { return "arith-linear-simd"; }
+	const char *name() const { return "arith-kernel-linear-simd"; }
 
 	LMAT_ENSURE_INLINE
 	void operator() () const
@@ -149,7 +149,126 @@ struct bench_linear_simd : public bench_arith_base<T>
 	}
 };
 
+
+template<typename T>
+struct bench_kernel_percol_scalar : public bench_arith_base<T>
+{
+	bench_kernel_percol_scalar(const bench_arith_base<T>& base)
+	: bench_arith_base<T>(base) { }
+
+	const char *name() const { return "arith-kernel-percol-scalar"; }
+
+	LMAT_ENSURE_INLINE
+	void operator() () const
+	{
+		const index_t m = this->a.nrows();
+		const index_t n = this->a.ncolumns();
+		percol(ewise(calc_kernel<T>(), atags::scalar()), m, n,
+				in_(this->a), in_(this->b), out_(this->dst));
+	}
+};
+
+template<typename T>
+struct bench_kernel_percol_simd : public bench_arith_base<T>
+{
+	bench_kernel_percol_simd(const bench_arith_base<T>& base)
+	: bench_arith_base<T>(base) { }
+
+	const char *name() const { return "arith-kernel-percol-simd"; }
+
+	LMAT_ENSURE_INLINE
+	void operator() () const
+	{
+		const index_t m = this->a.nrows();
+		const index_t n = this->a.ncolumns();
+		percol(ewise(calc_kernel<T>()), m, n,
+				in_(this->a), in_(this->b), out_(this->dst));
+	}
+};
+
 // r = cube(x + y) + sqrt(sqr(x) + sqr(y)) + x * y;
+
+template<typename T>
+struct bench_expr_linear_scalar : public bench_arith_base<T>
+{
+	bench_expr_linear_scalar(const bench_arith_base<T>& base)
+	: bench_arith_base<T>(base) { }
+
+	const char *name() const { return "arith-expr-linear-scalar"; }
+
+	LMAT_ENSURE_INLINE
+	void operator() () const
+	{
+		const cref_matrix<T>& a = this->a;
+		const cref_matrix<T>& b = this->b;
+		ref_matrix<T>& dst = this->dst;
+
+		linear_macc<atags::scalar> policy;
+		evaluate(cube(a + b) + sqrt(sqr(a) + sqr(b)) + a * b, dst, policy);
+	}
+};
+
+template<typename T>
+struct bench_expr_linear_simd : public bench_arith_base<T>
+{
+	bench_expr_linear_simd(const bench_arith_base<T>& base)
+	: bench_arith_base<T>(base) { }
+
+	const char *name() const { return "arith-expr-linear-simd"; }
+
+	LMAT_ENSURE_INLINE
+	void operator() () const
+	{
+		const cref_matrix<T>& a = this->a;
+		const cref_matrix<T>& b = this->b;
+		ref_matrix<T>& dst = this->dst;
+
+		linear_macc<atags::simd<default_simd_kind> > policy;
+		evaluate(cube(a + b) + sqrt(sqr(a) + sqr(b)) + a * b, dst, policy);
+	}
+};
+
+
+template<typename T>
+struct bench_expr_percol_scalar : public bench_arith_base<T>
+{
+	bench_expr_percol_scalar(const bench_arith_base<T>& base)
+	: bench_arith_base<T>(base) { }
+
+	const char *name() const { return "arith-expr-percol-scalar"; }
+
+	LMAT_ENSURE_INLINE
+	void operator() () const
+	{
+		const cref_matrix<T>& a = this->a;
+		const cref_matrix<T>& b = this->b;
+		ref_matrix<T>& dst = this->dst;
+
+		percol_macc<atags::scalar> policy;
+		evaluate(cube(a + b) + sqrt(sqr(a) + sqr(b)) + a * b, dst, policy);
+	}
+};
+
+template<typename T>
+struct bench_expr_percol_simd : public bench_arith_base<T>
+{
+	bench_expr_percol_simd(const bench_arith_base<T>& base)
+	: bench_arith_base<T>(base) { }
+
+	const char *name() const { return "arith-expr-percol-simd"; }
+
+	LMAT_ENSURE_INLINE
+	void operator() () const
+	{
+		const cref_matrix<T>& a = this->a;
+		const cref_matrix<T>& b = this->b;
+		ref_matrix<T>& dst = this->dst;
+
+		percol_macc<atags::simd<default_simd_kind> > policy;
+		evaluate(cube(a + b) + sqrt(sqr(a) + sqr(b)) + a * b, dst, policy);
+	}
+};
+
 
 template<typename T>
 struct bench_expr_default : public bench_arith_base<T>
@@ -172,7 +291,7 @@ struct bench_expr_default : public bench_arith_base<T>
 
 
 
-index_t max_size = 1024;
+index_t max_size = 2048;
 index_t sizes[] = {4, 8, 16, 32, 64, 128, 256, 512, 1024 };
 const size_t nsizes = sizeof(sizes) / sizeof(index_t);
 
@@ -196,7 +315,7 @@ void run_bench()
 		index_t siz = sizes[k];
 		index_t m = siz;
 		index_t n = siz;
-		size_t pbsiz = 20000000 / (m * n);
+		size_t pbsiz = 20000000 / size_t(m * n);
 
 		benchmark_option opt(pbsiz);
 
@@ -208,9 +327,15 @@ void run_bench()
 		run_benchmark(bench_rawloop<T>(base), mon, opt);
 		run_benchmark(bench_rawsimd<T>(base), mon, opt);
 
-		run_benchmark(bench_linear_scalar<T>(base), mon, opt);
-		run_benchmark(bench_linear_simd<T>(base), mon, opt);
+		run_benchmark(bench_kernel_linear_scalar<T>(base), mon, opt);
+		run_benchmark(bench_kernel_linear_simd<T>  (base), mon, opt);
+		run_benchmark(bench_kernel_percol_scalar<T>(base), mon, opt);
+		run_benchmark(bench_kernel_percol_simd<T>  (base), mon, opt);
 
+		run_benchmark(bench_expr_linear_scalar<T>(base), mon, opt);
+		run_benchmark(bench_expr_linear_simd<T>(base), mon, opt);
+		run_benchmark(bench_expr_percol_scalar<T>(base), mon, opt);
+		run_benchmark(bench_expr_percol_simd<T>(base), mon, opt);
 		run_benchmark(bench_expr_default<T>(base), mon, opt);
 
 		std::cout << "\n";

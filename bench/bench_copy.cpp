@@ -321,7 +321,7 @@ void run_bench()
 		index_t siz = sizes[k];
 		index_t m = siz;
 		index_t n = siz;
-		size_t pbsiz = 20000000 / (m * n);
+		size_t pbsiz = 20000000 / size_t(m * n);
 
 		benchmark_option opt(pbsiz);
 
