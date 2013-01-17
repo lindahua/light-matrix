@@ -47,6 +47,8 @@ if (SVML_FOUND)
 add_executable(bench_math_svml ${COMMON_HS} bench_math.cpp)
 endif (SVML_FOUND)
 
+add_executable(bench_reduction ${COMMON_HS} bench_reduction.cpp)
+
 # Special Linking
 
 set(BENCH_ON_SVML
