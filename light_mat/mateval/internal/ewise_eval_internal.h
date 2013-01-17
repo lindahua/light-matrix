@@ -49,29 +49,65 @@ namespace lmat { namespace internal {
 
 		typedef typename Kernel::value_type T;
 		const unsigned int W = simd_traits<T, SKind>::pack_width;
+		const index_t W_ = static_cast<index_t>(W);
 
 		const index_t len = dim.value();
-		const index_t maj_len = static_cast<index_t>(int_div<W>::maj(static_cast<size_t>(len)));
 
-		if (maj_len)
+		if (len >= W_)
 		{
+			const unsigned int W2 = W * 2;
+			const index_t W2_ = static_cast<index_t>(W2);
+
+			const size_t npacks = int_div<W>::quo(static_cast<size_t>(len));
 			auto pk_kernel = lmat::simdize_map<Kernel, SKind>::get(kernel);
 
-			pass(accessors.begin_packs()...);
+			index_t maj_len;
 
-			for (index_t i = 0; i < maj_len; i += W)
+			if (npacks > 1)
 			{
-				pk_kernel(accessors.pack(i)...);
-				pass(accessors.done_pack(i)...);
+				maj_len = static_cast<index_t>(int_div<W2>::maj(static_cast<size_t>(len)));
+				pass(accessors.begin_packs()...);
+
+				for (index_t i = 0; i < maj_len; i += W2_)
+				{
+					pk_kernel(accessors.pack(i)...);
+					pass(accessors.done_pack(i)...);
+					pk_kernel(accessors.pack(i + W_)...);
+					pass(accessors.done_pack(i + W_)...);
+				}
+
+				if (npacks & 1)
+				{
+					pk_kernel(accessors.pack(maj_len)...);
+					pass(accessors.done_pack(maj_len)...);
+					maj_len += W_;
+				}
+
+				pass(accessors.end_packs()...);
+
+			}
+			else // npacks == 1
+			{
+				maj_len = W_;
+				pass(accessors.begin_packs()...);
+				pk_kernel(accessors.pack(0)...);
+				pass(accessors.done_pack(0)...);
+				pass(accessors.end_packs()...);
 			}
 
-			pass(accessors.end_packs()...);
+			for (index_t i = maj_len; i < len; ++i)
+			{
+				kernel(accessors.scalar(i)...);
+				pass(accessors.done_scalar(i)...);
+			}
 		}
-
-		for (index_t i = maj_len; i < len; ++i)
+		else
 		{
-			kernel(accessors.scalar(i)...);
-			pass(accessors.done_scalar(i)...);
+			for (index_t i = 0; i < len; ++i)
+			{
+				kernel(accessors.scalar(i)...);
+				pass(accessors.done_scalar(i)...);
+			}
 		}
 
 		pass(accessors.finalize()...);

@@ -22,7 +22,7 @@ template<typename T>
 LMAT_ENSURE_INLINE
 inline void calc(const T& x, const T& y, T& r)
 {
-	r = math::cube(x + y) + math::sqrt(math::sqr(x) + math::sqr(y)) + x * y;
+	r = math::sqrt(x * x + y * y);
 }
 
 template<typename T>
@@ -36,6 +36,9 @@ struct calc_kernel
 		calc(x, y, r);
 	}
 };
+
+#define MAT_EXPR sqr(a * a + b * b)
+
 
 namespace lmat
 {
@@ -186,7 +189,6 @@ struct bench_kernel_percol_simd : public bench_arith_base<T>
 	}
 };
 
-// r = cube(x + y) + sqrt(sqr(x) + sqr(y)) + x * y;
 
 template<typename T>
 struct bench_expr_linear_scalar : public bench_arith_base<T>
@@ -204,7 +206,7 @@ struct bench_expr_linear_scalar : public bench_arith_base<T>
 		ref_matrix<T>& dst = this->dst;
 
 		linear_macc<atags::scalar> policy;
-		evaluate(cube(a + b) + sqrt(sqr(a) + sqr(b)) + a * b, dst, policy);
+		evaluate(MAT_EXPR, dst, policy);
 	}
 };
 
@@ -224,7 +226,7 @@ struct bench_expr_linear_simd : public bench_arith_base<T>
 		ref_matrix<T>& dst = this->dst;
 
 		linear_macc<atags::simd<default_simd_kind> > policy;
-		evaluate(cube(a + b) + sqrt(sqr(a) + sqr(b)) + a * b, dst, policy);
+		evaluate(MAT_EXPR, dst, policy);
 	}
 };
 
@@ -245,7 +247,7 @@ struct bench_expr_percol_scalar : public bench_arith_base<T>
 		ref_matrix<T>& dst = this->dst;
 
 		percol_macc<atags::scalar> policy;
-		evaluate(cube(a + b) + sqrt(sqr(a) + sqr(b)) + a * b, dst, policy);
+		evaluate(MAT_EXPR, dst, policy);
 	}
 };
 
@@ -265,7 +267,7 @@ struct bench_expr_percol_simd : public bench_arith_base<T>
 		ref_matrix<T>& dst = this->dst;
 
 		percol_macc<atags::simd<default_simd_kind> > policy;
-		evaluate(cube(a + b) + sqrt(sqr(a) + sqr(b)) + a * b, dst, policy);
+		evaluate(MAT_EXPR, dst, policy);
 	}
 };
 
@@ -285,7 +287,7 @@ struct bench_expr_default : public bench_arith_base<T>
 		const cref_matrix<T>& b = this->b;
 		ref_matrix<T>& dst = this->dst;
 
-		dst = cube(a + b) + sqrt(sqr(a) + sqr(b)) + a * b;
+		dst = MAT_EXPR;
 	}
 };
 

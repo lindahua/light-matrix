@@ -22,6 +22,8 @@
 		LMAT_ENSURE_INLINE \
 		static size_t rem(size_t n) { return n & (D-1); } \
 		LMAT_ENSURE_INLINE \
+		static size_t mul(size_t n) { return n << L; } \
+		LMAT_ENSURE_INLINE \
 		static size_t maj(size_t n) { return (n >> L) << L; } \
 	};
 
@@ -39,6 +41,9 @@ namespace lmat
 
 		LMAT_ENSURE_INLINE
 		static size_t rem(size_t n) { return 0; }
+
+		LMAT_ENSURE_INLINE
+		static size_t mul(size_t n) { return n; }
 
 		LMAT_ENSURE_INLINE
 		static size_t maj(size_t n) { return n; }

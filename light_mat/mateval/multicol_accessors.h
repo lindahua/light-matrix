@@ -802,7 +802,7 @@ namespace lmat
 	inline rowwise_accumulator<Mat, U>
 	make_multicol_accessor(U, const in_out_wrap<Mat, atags::rowwise_sum>& wrap)
 	{
-		return rowwise_accumulator<Mat, U>(wrap.arg());
+		return rowwise_accumulator<Mat, U>(wrap.arg().derived());
 	}
 
 	template<class Mat, typename U>
@@ -810,7 +810,7 @@ namespace lmat
 	inline rowwise_accumulator<Mat, U>
 	make_multicol_accessor(U, const in_out_wrap<Mat, atags::rowwise_max>& wrap)
 	{
-		return rowwise_accumulator<Mat, U>(wrap.arg());
+		return rowwise_accumulator<Mat, U>(wrap.arg().derived());
 	}
 
 	template<class Mat, typename U>
@@ -818,7 +818,7 @@ namespace lmat
 	inline rowwise_accumulator<Mat, U>
 	make_multicol_accessor(U, const in_out_wrap<Mat, atags::rowwise_min>& wrap)
 	{
-		return rowwise_accumulator<Mat, U>(wrap.arg());
+		return rowwise_accumulator<Mat, U>(wrap.arg().derived());
 	}
 
 }

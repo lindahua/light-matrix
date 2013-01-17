@@ -109,47 +109,78 @@ namespace lmat
 		Arg& m_arg;
 	};
 
+	// matrix-wrappers
 
-	template<class Arg, typename ATag>
+	template<class Arg, typename T, typename ATag>
 	LMAT_ENSURE_INLINE
-	inline in_wrap<Arg, ATag> in_(const Arg& arg, ATag)
+	inline in_wrap<Arg, ATag> in_(const IEWiseMatrix<Arg, T>& arg, ATag)
 	{
-		return in_wrap<Arg, ATag>(arg);
+		return in_wrap<Arg, ATag>(arg.derived());
 	}
 
-	template<class Arg>
+	template<class Arg, typename T>
 	LMAT_ENSURE_INLINE
-	inline in_wrap<Arg, atags::normal> in_(const Arg& arg)
+	inline in_wrap<Arg, atags::normal> in_(const IEWiseMatrix<Arg, T>& arg)
 	{
-		return in_wrap<Arg, atags::normal>(arg);
+		return in_wrap<Arg, atags::normal>(arg.derived());
 	}
 
-	template<class Arg, typename ATag>
+	template<class Arg, typename T, typename ATag>
 	LMAT_ENSURE_INLINE
-	inline out_wrap<Arg, ATag> out_(Arg& arg, ATag)
+	inline out_wrap<Arg, ATag> out_(const IEWiseMatrix<Arg, T>& arg, ATag)
 	{
-		return out_wrap<Arg, ATag>(arg);
+		return out_wrap<Arg, ATag>(arg.derived());
 	}
 
-	template<class Arg>
+	template<class Arg, typename T>
 	LMAT_ENSURE_INLINE
-	inline out_wrap<Arg, atags::normal> out_(Arg& arg)
+	inline out_wrap<Arg, atags::normal> out_(IEWiseMatrix<Arg, T>& arg)
 	{
-		return out_wrap<Arg, atags::normal>(arg);
+		return out_wrap<Arg, atags::normal>(arg.derived());
 	}
 
-	template<class Arg, typename ATag>
+	template<class Arg, typename T, typename ATag>
 	LMAT_ENSURE_INLINE
-	inline in_out_wrap<Arg, ATag> in_out_(Arg& arg, ATag)
+	inline in_out_wrap<Arg, ATag> in_out_(IEWiseMatrix<Arg, T>& arg, ATag)
 	{
-		return in_out_wrap<Arg, ATag>(arg);
+		return in_out_wrap<Arg, ATag>(arg.derived());
 	}
 
-	template<class Arg>
+	template<class Arg, typename T>
 	LMAT_ENSURE_INLINE
-	inline in_out_wrap<Arg, atags::normal> in_out_(Arg& arg)
+	inline in_out_wrap<Arg, atags::normal> in_out_(IEWiseMatrix<Arg, T>& arg)
 	{
-		return in_out_wrap<Arg, atags::normal>(arg);
+		return in_out_wrap<Arg, atags::normal>(arg.derived());
+	}
+
+	// scalar-wrappers
+
+	template<typename T>
+	LMAT_ENSURE_INLINE
+	inline in_wrap<T, atags::single> in_(const T& v, atags::single)
+	{
+		return in_wrap<T, atags::single>(v);
+	}
+
+	template<typename T>
+	LMAT_ENSURE_INLINE
+	inline in_out_wrap<T, atags::sum> in_out_(T& v, atags::sum)
+	{
+		return in_out_wrap<T, atags::sum>(v);
+	}
+
+	template<typename T>
+	LMAT_ENSURE_INLINE
+	inline in_out_wrap<T, atags::max> in_out_(T& v, atags::max)
+	{
+		return in_out_wrap<T, atags::max>(v);
+	}
+
+	template<typename T>
+	LMAT_ENSURE_INLINE
+	inline in_out_wrap<T, atags::min> in_out_(T& v, atags::min)
+	{
+		return in_out_wrap<T, atags::min>(v);
 	}
 
 }

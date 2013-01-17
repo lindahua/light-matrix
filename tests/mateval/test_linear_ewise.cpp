@@ -24,6 +24,7 @@ using namespace lmat::test;
 
 // core functions
 
+
 template<typename U, int M, int N>
 void test_linear_ewise_cont_cont()
 {
@@ -172,6 +173,32 @@ void test_linear_ewise_map()
 }
 
 
+template<typename U>
+void test_linear_ewise_varysize()
+{
+	const index_t max_len = 64;
+
+	dense_col<double> s(max_len);
+	dense_col<double> d(max_len, zero());
+	dense_col<double> r(max_len, zero());
+
+	for (index_t i = 0; i < max_len; ++i)
+	{
+		s[i] = double(2 * i + 3);
+	}
+
+	for (index_t len = 0; len <= 64; ++len)
+	{
+		zero(d);
+		zero(r);
+
+		for (index_t i = 0; i < len; ++i)
+			r[i] = math::sqr(s[i]);
+
+		map(sqr_fun<double>(), U())(len, out_(d), in_(s));
+		ASSERT_VEC_EQ( len, d, r );
+	}
+}
 
 // Specific test cases
 
@@ -264,6 +291,24 @@ MN_CASE( linear_ewise_avx_map )
 	test_linear_ewise_map<atags::simd<avx_t>, M, N>();
 }
 
+#endif
+
+
+SIMPLE_CASE( linear_ewise_varysize_scalar )
+{
+	test_linear_ewise_varysize<atags::scalar>();
+}
+
+SIMPLE_CASE( linear_ewise_varysize_sse )
+{
+	test_linear_ewise_varysize<atags::simd<sse_t> >();
+}
+
+#ifdef LMAT_HAS_AVX
+SIMPLE_CASE( linear_ewise_varysize_avx )
+{
+	test_linear_ewise_varysize<atags::simd<avx_t> >();
+}
 #endif
 
 
@@ -427,5 +472,16 @@ AUTO_TPACK( linear_ewise_accum_to )
 {
 	ADD_MN_CASE_3X3( linear_ewise_accum_to, DM, DN )
 }
+
+
+AUTO_TPACK( linear_ewise_varysize )
+{
+	ADD_SIMPLE_CASE( linear_ewise_varysize_scalar )
+	ADD_SIMPLE_CASE( linear_ewise_varysize_sse )
+#ifdef LMAT_HAS_AVX
+	ADD_SIMPLE_CASE( linear_ewise_varysize_avx )
+#endif
+}
+
 
 
