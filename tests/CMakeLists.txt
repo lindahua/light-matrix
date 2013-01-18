@@ -250,7 +250,8 @@ set(MATRIX_REDUC_HS_
 set(MATRIX_ALG_HS_
     ${INC}/mateval/internal/matrix_find_internal.h
     ${INC}/mateval/matrix_find.h
-    ${INC}/mateval/matrix_sort.h)  
+    ${INC}/mateval/matrix_sort.h
+    ${INC}/mateval/matrix_ordstats.h)  
     
 set(MATEVAL_HS
     ${MATRIX_EVAL_HS_}
@@ -555,6 +556,7 @@ set(MATALG_TEST_HS
     
 add_executable(test_mat_find ${MATALG_TEST_HS} mateval/test_mat_find.cpp)
 add_executable(test_mat_sort ${MATALG_TEST_HS} mateval/test_mat_sort.cpp)
+add_executable(test_mat_ordstat ${MATALG_TEST_HS} mateval/test_mat_ordstat.cpp)
 
 set(LMAT_MATEVAL_TESTS
     test_linear_ewise
@@ -568,6 +570,7 @@ set(LMAT_MATEVAL_TESTS
 	test_mat_compare
 	test_mat_find
 	test_mat_sort
+	test_mat_ordstat
 	)
 
 
