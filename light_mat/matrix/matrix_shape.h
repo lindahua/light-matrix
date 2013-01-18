@@ -101,6 +101,9 @@ namespace lmat
 	class matrix_shape
 	{
 	public:
+		static const int ct_nrows = M;
+		static const int ct_ncols = N;
+
 		LMAT_ENSURE_INLINE matrix_shape() { }
 
 		LMAT_ENSURE_INLINE matrix_shape(index_t m, index_t n)
@@ -129,6 +132,9 @@ namespace lmat
 	class matrix_shape<M, 0>
 	{
 	public:
+		static const int ct_nrows = M;
+		static const int ct_ncols = 0;
+
 		LMAT_ENSURE_INLINE matrix_shape() : m_ncols(0) { }
 
 		LMAT_ENSURE_INLINE matrix_shape(index_t m, index_t n)
@@ -161,6 +167,9 @@ namespace lmat
 	class matrix_shape<0, N>
 	{
 	public:
+		static const int ct_nrows = 0;
+		static const int ct_ncols = N;
+
 		LMAT_ENSURE_INLINE matrix_shape() : m_nrows(0) { }
 
 		LMAT_ENSURE_INLINE matrix_shape(index_t m, index_t n)
@@ -193,6 +202,9 @@ namespace lmat
 	class matrix_shape<0, 0>
 	{
 	public:
+		static const int ct_nrows = 0;
+		static const int ct_ncols = 0;
+
 		LMAT_ENSURE_INLINE matrix_shape() : m_nrows(0), m_ncols(0) { }
 
 		LMAT_ENSURE_INLINE matrix_shape(index_t m, index_t n) : m_nrows(m), m_ncols(n) { }
