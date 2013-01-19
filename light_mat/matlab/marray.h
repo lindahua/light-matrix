@@ -75,6 +75,12 @@ namespace lmat { namespace matlab {
 			return mxGetClassID(m_pm);
 		}
 
+		template<typename T>
+		LMAT_ENSURE_INLINE bool is_of_type() const
+		{
+			return class_id() == type_to_mclassid<T>::value;
+		}
+
 		LMAT_ENSURE_INLINE const char* class_name() const
 		{
 			return mxGetClassName(m_pm);
@@ -160,11 +166,6 @@ namespace lmat { namespace matlab {
 			return mxIsCell(m_pm);
 		}
 
-		LMAT_ENSURE_INLINE bool is_empty() const
-		{
-			return mxIsEmpty(m_pm);
-		}
-
 		LMAT_ENSURE_INLINE bool is_sparse() const
 		{
 			return mxIsSparse(m_pm);
@@ -177,6 +178,11 @@ namespace lmat { namespace matlab {
 
 	public:
 		// Size
+
+		LMAT_ENSURE_INLINE bool is_empty() const
+		{
+			return mxIsEmpty(m_pm);
+		}
 
 		LMAT_ENSURE_INLINE int ndims() const
 		{
@@ -201,6 +207,21 @@ namespace lmat { namespace matlab {
 		LMAT_ENSURE_INLINE const mwSize* dims() const
 		{
 			return mxGetDimensions(m_pm);
+		}
+
+		LMAT_ENSURE_INLINE bool is_matrix() const
+		{
+			return ndims() == 2;
+		}
+
+		LMAT_ENSURE_INLINE bool is_vector() const
+		{
+			return ndims() == 2 && (nrows() == 1 || ncolumns() == 1);
+		}
+
+		LMAT_ENSURE_INLINE bool is_scalar() const
+		{
+			return nelems() == 1;
 		}
 
 	public:
