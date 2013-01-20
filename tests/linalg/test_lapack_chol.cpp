@@ -169,6 +169,16 @@ void test_posv( char uplo )
 	ASSERT_MAT_APPROX(m, n, b, r, tol);
 }
 
+template<typename T>
+void test_pddet(const dense_matrix<T>& a, const T& vdet)
+{
+	const T lddet = math::log(vdet);
+
+	T tol = (T)(sizeof(T) == 4 ? 2.0e-5 : 1.0e-10) * vdet;
+
+	ASSERT_APPROX( pddet(a), vdet, tol );
+	ASSERT_APPROX( pdlogdet(a), lddet, tol );
+}
 
 
 T_CASE( mat_chol_solve_l )
@@ -207,6 +217,60 @@ T_CASE( mat_posv_u )
 }
 
 
+T_CASE( mat_pddet_1 )
+{
+	T v = T(12.3);
+	dense_matrix<T> a(1, 1);
+	a[0] = v;
+
+	test_pddet(a, v);
+}
+
+T_CASE( mat_pddet_2 )
+{
+	int isrc[4] = { 3, -2, -2, 4 };
+	T src[4];
+	for (int i = 0; i < 4; ++i) src[i] = T(isrc[i]);
+
+	dense_matrix<T> a(2, 2, copy_from(src));
+	T v = T(8);
+
+	test_pddet(a, v);
+}
+
+T_CASE( mat_pddet_3 )
+{
+	int isrc[9] = { 8, -2, -1, -2, 5, -3, -1, -3, 6 };
+	T src[9];
+	for (int i = 0; i < 9; ++i) src[i] = T(isrc[i]);
+
+	dense_matrix<T> a(3, 3, copy_from(src));
+	T v = T(127);
+
+	test_pddet(a, v);
+}
+
+
+T_CASE( mat_pddet_5 )
+{
+	int isrc[25] = {
+		 8,  0, -2,  1, -6,
+		 0,  6,  1,  1,  2,
+		-2,  1,  6,  1,  5,
+		 1,  1,  1,  8,  1,
+		-6,  2,  5,  1, 18 };
+
+	T src[25];
+	for (int i = 0; i < 25; ++i) src[i] = T(isrc[i]);
+
+	dense_matrix<T> a(5, 5, copy_from(src));
+	T v = T(20844);
+
+	test_pddet(a, v);
+}
+
+
+
 AUTO_TPACK( mat_chol_solve )
 {
 	ADD_T_CASE( mat_chol_solve_l, float )
@@ -238,6 +302,16 @@ AUTO_TPACK( mat_posv )
 	ADD_T_CASE( mat_posv_u, double )
 }
 
-
+AUTO_TPACK( mat_pddev )
+{
+	ADD_T_CASE( mat_pddet_1, float )
+	ADD_T_CASE( mat_pddet_1, double )
+	ADD_T_CASE( mat_pddet_2, float )
+	ADD_T_CASE( mat_pddet_2, double )
+	ADD_T_CASE( mat_pddet_3, float )
+	ADD_T_CASE( mat_pddet_3, double )
+	ADD_T_CASE( mat_pddet_5, float )
+	ADD_T_CASE( mat_pddet_5, double )
+}
 
 

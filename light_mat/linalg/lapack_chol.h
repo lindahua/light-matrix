@@ -15,7 +15,7 @@
 #define LIGHTMAT_LAPACK_CHOL_H_
 
 #include <light_mat/linalg/lapack_fwd.h>
-
+#include <light_mat/math/math.h>
 
 /************************************************
  *
@@ -233,6 +233,24 @@ namespace lmat { namespace lapack {
 			solve_inplace(x);
 		}
 
+		float eval_det() const   // det of the factor
+		{
+			const dense_matrix<float> &a_ = this->m_a;
+			const index_t n = a_.nrows();
+			double r(1.0);
+			for (index_t i = 0; i < n; ++i) r *= a_(i,i);
+			return static_cast<float>(r);
+		}
+
+		float eval_logdet() const  // logdet of the factor
+		{
+			const dense_matrix<float> &a_ = this->m_a;
+			const index_t n = a_.nrows();
+			double r(0.0);
+			for (index_t i = 0; i < n; ++i) r += math::log(a_(i,i));
+			return static_cast<float>(r);
+		}
+
 	public:
 		template<class A>
 		static void inv_inplace(IRegularMatrix<A, float>& a, char uplo='L')
@@ -318,6 +336,25 @@ namespace lmat { namespace lapack {
 
 			x.derived() = b.derived();
 			solve_inplace(x);
+		}
+
+
+		double eval_det() const   // det of the factor
+		{
+			const dense_matrix<double> &a_ = this->m_a;
+			const index_t n = a_.nrows();
+			double r(1.0);
+			for (index_t i = 0; i < n; ++i) r *= a_(i,i);
+			return r;
+		}
+
+		double eval_logdet() const  // logdet of the factor
+		{
+			const dense_matrix<double> &a_ = this->m_a;
+			const index_t n = a_.nrows();
+			double r(0.0);
+			for (index_t i = 0; i < n; ++i) r += math::log(a_(i,i));
+			return r;
 		}
 
 	public:
@@ -515,6 +552,87 @@ namespace lmat
 	{
 		return pdinv_expr<Arg>(a.derived(), uplo);
 	}
+
+
+	template<typename T, class Mat>
+	LMAT_ENSURE_INLINE
+	inline T pddet2(const IRegularMatrix<Mat, T>& a,
+			const index_t i0, const index_t i1, const index_t j0, const index_t j1)
+	{
+		const Mat& a_ = a.derived();
+		return a_(i0, j0) * a_(i1, j1) - a_(i1, j0) * a_(i0, j1);
+	}
+
+	template<typename T, class Mat>
+	LMAT_ENSURE_INLINE
+	inline T pddet2(const IRegularMatrix<Mat, T>& a)
+	{
+		const Mat& a_ = a.derived();
+		return a_(0, 0) * a_(1, 1) - math::sqr(a_(1, 0));
+	}
+
+	template<typename T, class Mat>
+	LMAT_ENSURE_INLINE
+	inline T pddet3(const IRegularMatrix<Mat, T>& a)
+	{
+		const Mat& a_ = a.derived();
+		double t0 = double(pddet2(a, 0, 1, 0, 1)) * a_(2, 2);
+		double t1 = double(pddet2(a, 0, 2, 0, 1)) * a_(1, 2);
+		double t2 = double(pddet2(a, 1, 2, 0, 1)) * a_(0, 2);
+		return static_cast<T>(t0 - t1 + t2);
+	}
+
+	template<typename T, class Arg>
+	inline T pddet(const IRegularMatrix<Arg, T>& a)
+	{
+		LMAT_CHECK_DIMS( is_square(a) )
+		const index_t n = a.nrows();
+
+		if (n == 1)
+		{
+			return a(0, 0);
+		}
+		else if (n == 2)
+		{
+			return pddet2(a);
+		}
+		else if (n == 3)
+		{
+			return pddet3(a);
+		}
+		else
+		{
+			lapack::chol_fac<T> chol(a);
+			return math::sqr(chol.eval_det());
+		}
+	}
+
+
+	template<typename T, class Arg>
+	inline T pdlogdet(const IRegularMatrix<Arg, T>& a)
+	{
+		LMAT_CHECK_DIMS( is_square(a) )
+
+		const index_t n = a.nrows();
+		if (n == 1)
+		{
+			return math::log(a(0, 0));
+		}
+		else if (n == 2)
+		{
+			return math::log(pddet2(a));
+		}
+		else if (n == 3)
+		{
+			return math::log(pddet3(a));
+		}
+		else
+		{
+			lapack::chol_fac<T> chol(a);
+			return chol.eval_logdet() * T(2);
+		}
+	}
+
 
 }
 
