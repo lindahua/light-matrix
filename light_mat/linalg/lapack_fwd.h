@@ -14,6 +14,7 @@
 #define LIGHTMAT_LAPACK_FWD_H_
 
 #include <light_mat/linalg/linalg_fwd.h>
+#include <string>
 #include "internal/linalg_aux.h"
 
 #define LMAT_CALL_LAPACK(fun, params) \
