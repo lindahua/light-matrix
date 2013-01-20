@@ -16,15 +16,28 @@
 #include <light_mat/config/config.h>
 #include <light_mat/matrix/matrix_classes.h>
 
+
+#ifdef MX_API_VER  // When in MATLAB mex
+
+#if defined(_WIN32) || defined(__hpux)
+#define LMAT_BLAS_NAME(x) x
+#else
+#define LMAT_BLAS_NAME(x) x##_
+#endif
+#define LMAT_LAPACK_NAME(name) LMAT_BLAS_NAME(name)
+
+typedef ptrdiff_t blas_int;
+
+#else
 #ifdef LMAT_BLAS_ILP64
 typedef long long blas_int;
 #else
 typedef int blas_int;
 #endif
-
-
 #define LMAT_BLAS_NAME(name) name
 #define LMAT_LAPACK_NAME(name) LMAT_BLAS_NAME(name)
+#endif
+
 
 #define LMAT_CHECK_WHOLE_CONT(Ty) static_assert( meta::is_contiguous<Ty>::value, #Ty " must be contiguous.");
 #define LMAT_CHECK_PERCOL_CONT(Ty) static_assert( meta::is_percol_contiguous<Ty>::value, #Ty " must be percol contiguous.");

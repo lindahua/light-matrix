@@ -37,7 +37,6 @@ extern "C"
 }
 
 
-
 namespace lmat { namespace blas {
 
 	// asum
