@@ -342,6 +342,7 @@ set(DISTR_HS_
     ${INC}/random/internal/normal_distr_internal.h
     ${INC}/random/internal/gamma_distr_internal.h
     ${INC}/random/uniform_int_distr.h
+    ${INC}/random/sample_wor.h
     ${INC}/random/bernoulli_distr.h
     ${INC}/random/binomial_distr.h
     ${INC}/random/geometric_distr.h
@@ -695,6 +696,7 @@ set(DISTR_TEST_HS
     ${DISTR_HS_})
 
 add_executable(test_uniform_int ${DISTR_TEST_HS} random/test_uniform_int.cpp)
+add_executable(test_sample_wor ${DISTR_TEST_HS} random/test_sample_wor.cpp)
 add_executable(test_bernoulli ${DISTR_TEST_HS} random/test_bernoulli.cpp)
 add_executable(test_binomial ${DISTR_TEST_HS} random/test_binomial.cpp)
 add_executable(test_geometric ${DISTR_TEST_HS} random/test_geometric.cpp)
@@ -712,6 +714,7 @@ set(LMAT_RANDOM_TESTS
     test_stracker
     test_sfmt
     test_uniform_int
+    test_sample_wor
     test_bernoulli
     test_binomial
     test_geometric

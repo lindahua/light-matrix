@@ -13,10 +13,10 @@ default_rand_stream rstream;
 const index_t N = 200000;
 
 
-SIMPLE_CASE( test_std_uniform_int )
+T_CASE( test_std_uniform_int )
 {
 	const uint32_t b = 5;
-	std_uniform_int_distr<> distr(b);
+	std_uniform_int_distr<T> distr(b);
 
 	const uint32_t s = b + 1;
 
@@ -30,11 +30,11 @@ SIMPLE_CASE( test_std_uniform_int )
 	test_discrete_rng(distr, rstream, N, b+1, ptol);
 }
 
-SIMPLE_CASE( test_uniform_int )
+T_CASE( test_uniform_int )
 {
 	const uint32_t a = 2;
 	const uint32_t b = 6;
-	uniform_int_distr<> distr(a, b);
+	uniform_int_distr<T> distr(a, b);
 
 	const uint32_t s = b - a + 1;
 
@@ -50,7 +50,10 @@ SIMPLE_CASE( test_uniform_int )
 
 AUTO_TPACK( test_uniform_int )
 {
-	ADD_SIMPLE_CASE( test_std_uniform_int )
-	ADD_SIMPLE_CASE( test_uniform_int )
+	ADD_T_CASE( test_std_uniform_int, uint32_t )
+	ADD_T_CASE( test_std_uniform_int, int32_t )
+
+	ADD_T_CASE( test_uniform_int, uint32_t )
+	ADD_T_CASE( test_uniform_int, int32_t )
 }
 

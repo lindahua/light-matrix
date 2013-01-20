@@ -53,7 +53,7 @@ namespace lmat { namespace random {
 		};
 
 		template<class RStream>
-		struct rand_int_helper<RStream, uint64_t, 4>
+		struct rand_int_helper<RStream, uint64_t, 8>
 		{
 			LMAT_ENSURE_INLINE
 			static uint64_t get(RStream& rs)
@@ -82,11 +82,44 @@ namespace lmat { namespace random {
 			}
 		};
 
+		template<typename T, bool IsSigned>
+		struct rand_int_mod;
+
+		template<typename T>
+		struct rand_int_mod<T, false>
+		{
+			LMAT_ENSURE_INLINE
+			static T eval(const T& x, const T& u)
+			{
+				return x % u;
+			}
+		};
+
+		template<typename T>
+		struct rand_int_mod<T, true>
+		{
+			typedef typename std::make_unsigned<T>::type UT;
+
+			LMAT_ENSURE_INLINE
+			static T eval(const T& x, const T& u)
+			{
+				return static_cast<T>(static_cast<UT>(x) % static_cast<UT>(u));
+			}
+		};
+
 		template<class RStream, typename T>
 		LMAT_ENSURE_INLINE
 		inline T get_rand_int(RStream& rs)
 		{
 			return rand_int_helper<RStream, T, (unsigned int)sizeof(T)>::get(rs);
+		}
+
+		template<class RStream, typename T>
+		LMAT_ENSURE_INLINE
+		inline T get_rand_int(RStream& rs, const T& m)
+		{
+			T x = get_rand_int<RStream, T>(rs);
+			return rand_int_mod<T, std::is_signed<T>::value>::eval(x, m);
 		}
 	}
 
@@ -131,7 +164,7 @@ namespace lmat { namespace random {
 		LMAT_ENSURE_INLINE
 		TI operator() (RStream& rs) const
 		{
-			return internal::get_rand_int<RStream, TI>(rs) % m_span;
+			return internal::get_rand_int(rs, m_span);
 		}
 
 	private:
@@ -179,7 +212,7 @@ namespace lmat { namespace random {
 		LMAT_ENSURE_INLINE
 		TI operator() (RStream& rs) const
 		{
-			return (internal::get_rand_int<RStream, TI>(rs) % m_span) + m_a;
+			return (internal::get_rand_int(rs, m_span)) + m_a;
 		}
 
 	private:
