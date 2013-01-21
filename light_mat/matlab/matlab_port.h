@@ -136,7 +136,7 @@ namespace lmat { namespace matlab {
 
 	template<typename T, class Mat>
 	LMAT_ENSURE_INLINE
-	static typename std::enable_if<std::is_arithmetic<T>::value,
+	inline typename std::enable_if<std::is_arithmetic<T>::value,
 	marray>::type
 	marray_like(const IMatrixXpr<Mat, T>& src)
 	{
@@ -145,7 +145,7 @@ namespace lmat { namespace matlab {
 
 	template<typename T, class Mat>
 	LMAT_ENSURE_INLINE
-	static marray marray_like(const IMatrixXpr<Mat, bool>& src)
+	inline marray marray_like(const IMatrixXpr<Mat, bool>& src)
 	{
 		return marray::logical_matrix(src.nrows(), src.ncolumns());
 	}
