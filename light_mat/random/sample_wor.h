@@ -88,7 +88,15 @@ namespace lmat { namespace random {
 
 		LMAT_ENSURE_INLINE
 		past_avoid_rand_enumerator(RStream& rstream, TI n)
-		: m_rstream(rstream), m_past((size_t)n)
+		: m_rstream(rstream), m_past()
+		, m_len((index_t)n), m_i(0), m_distr((TI)(n - 1))
+		{
+			reset();
+		}
+
+		LMAT_ENSURE_INLINE
+		past_avoid_rand_enumerator(RStream& rstream, TI n, TI c)
+		: m_rstream(rstream), m_past(c)
 		, m_len((index_t)n), m_i(0), m_distr((TI)(n - 1))
 		{
 			reset();
