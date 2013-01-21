@@ -15,10 +15,10 @@ const index_t N = 200000;
 
 T_CASE( test_std_uniform_int )
 {
-	const uint32_t b = 5;
+	const T b = 5;
 	std_uniform_int_distr<T> distr(b);
 
-	const uint32_t s = b + 1;
+	const T s = b + 1;
 
 	ASSERT_EQ( distr.a(), 0 );
 	ASSERT_EQ( distr.b(), b );
@@ -32,11 +32,11 @@ T_CASE( test_std_uniform_int )
 
 T_CASE( test_uniform_int )
 {
-	const uint32_t a = 2;
-	const uint32_t b = 6;
+	const T a = 2;
+	const T b = 6;
 	uniform_int_distr<T> distr(a, b);
 
-	const uint32_t s = b - a + 1;
+	const T s = b - a + 1;
 
 	ASSERT_EQ( distr.a(), a );
 	ASSERT_EQ( distr.b(), b );
