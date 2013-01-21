@@ -444,8 +444,8 @@ DEFINE_MATFUN_TESTS1( sqr, -2.0, 2.0, 1.0e-16 )
 DEFINE_MATFUN_TESTS1( cube, -2.0, 2.0, 1.0e-15 )
 
 DEFINE_MATFUN_TESTS1( rcp, -2.0, 2.0, 1.0e-15 )
-DEFINE_MATFUN_TESTS1( sqrt, -2.0, 2.0, 1.0e-15 )
-DEFINE_MATFUN_TESTS1( rsqrt, -2.0, 2.0, 1.0e-15 )
+DEFINE_MATFUN_TESTS1( sqrt, 0.0, 2.0, 1.0e-15 )
+DEFINE_MATFUN_TESTS1( rsqrt, 0.0, 2.0, 1.0e-15 )
 
 // rounding
 
