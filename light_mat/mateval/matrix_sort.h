@@ -82,7 +82,7 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		void sort(Iterator first, Iterator last, Compare comp) const
 		{
-			std::partial_sort(first, first + k, last);
+			std::partial_sort(first, first + k, last, comp);
 		}
 	};
 
