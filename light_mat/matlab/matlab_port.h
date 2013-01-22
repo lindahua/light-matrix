@@ -25,16 +25,17 @@
 #else
 #define LMAT_MX( idx, name, MTag, T ) \
 	const_marray _##name##_mx_(prhs[idx]); \
-	if (lmat::matlab::MTag<T>::require_scalar) { \
-		if (!_##name##_mx_.is_scalar()) { throw lmat::invalid_argument(#name " must be a scalar."); } \
-	} \
-	else { \
-		if (!_##name##_mx_.is_matrix()) { throw lmat::invalid_argument(#name " must be a matrix."); } \
-	} \
+	if (!_##name##_mx_.is_matrix()) { throw lmat::invalid_argument(#name " must be a matrix."); } \
 	if (!_##name##_mx_.is_of_type<T>()) { throw lmat::invalid_argument(#name " has invalid value type."); } \
 	if (_##name##_mx_.is_sparse()) { throw lmat::invalid_argument(#name " can not be a sparse-matrix."); } \
 	auto name = lmat::matlab::as_(prhs[idx], lmat::matlab::MTag<T>());
 #endif
+
+#define LMAT_MX_SCA(idx, name, T) \
+	const_marray _##name##_mx_(prhs[idx]); \
+	if (!_##name##_mx_.is_scalar()) { throw lmat::invalid_argument(#name " must be a scalar."); } \
+	const T name = to_scalar<T>(prhs[idx]);
+
 
 #define LMAT_MX_OUT( idx, name, MObj, MTag, T ) \
 	plhs[idx] = MObj.get(); \
@@ -157,10 +158,9 @@ namespace lmat { namespace matlab {
 	 *
 	 ********************************************/
 
-	template<typename T> struct mat_ { static const bool require_scalar = false; };
-	template<typename T> struct col_ { static const bool require_scalar = false; };
-	template<typename T> struct row_ { static const bool require_scalar = false; };
-	template<typename T> struct sca_ { static const bool require_scalar = true; };
+	template<typename T> struct mat_ { };
+	template<typename T> struct col_ { };
+	template<typename T> struct row_ { };
 
 	template<typename T>
 	LMAT_ENSURE_INLINE
@@ -206,9 +206,9 @@ namespace lmat { namespace matlab {
 
 	template<typename T>
 	LMAT_ENSURE_INLINE
-	inline T as_(const mxArray* mx, sca_<T>)
+	inline T to_scalar(const mxArray* mx)
 	{
-		return const_marray(mx).scalar<T>();
+		return static_cast<T>(const_marray(mx).get_scalar());
 	}
 
 
