@@ -28,73 +28,43 @@ namespace lmat
 
 	template<class Mat, class L>
 	struct matrix_traits<selectl_expr<Mat, L> >
-	{
-		static const int num_dimensions = 2;
-		static const int ct_num_rows = meta::nrows<L>::value;
-		static const int ct_num_cols = meta::ncols<L>::value;
-
-		static const bool is_readonly = true;
-
-		typedef matrix_shape<ct_num_rows, ct_num_cols> shape_type;
-		typedef typename matrix_traits<Mat>::value_type value_type;
-		typedef typename meta::common_domain<Mat, L>::type domain;
-	};
+	: public matrix_xpr_traits_base<
+	  typename meta::value_type_of<Mat>::type,
+	  meta::nrows<L>::value,
+	  meta::ncols<L>::value,
+	  typename meta::domain_of<Mat>::type >  { };
 
 	template<class Mat, class I, class J>
 	struct matrix_traits<selectl2_expr<Mat, I, J> >
-	{
-		static const int num_dimensions = 2;
-		static const int ct_num_rows = meta::common_nrows<I, J>::value;
-		static const int ct_num_cols = meta::common_ncols<I, J>::value;
-
-		static const bool is_readonly = true;
-
-		typedef matrix_shape<ct_num_rows, ct_num_cols> shape_type;
-		typedef typename matrix_traits<Mat>::value_type value_type;
-		typedef typename meta::common_domain<Mat, I, J>::type domain;
-	};
+	: public matrix_xpr_traits_base<
+	  typename meta::value_type_of<Mat>::type,
+	  meta::common_nrows<I, J>::value,
+	  meta::common_ncols<I, J>::value,
+	  typename meta::domain_of<Mat>::type >  { };
 
 	template<class Mat, class I, class J>
 	struct matrix_traits<select_expr<Mat, I, J> >
-	{
-		static const int num_dimensions = 2;
-		static const int ct_num_rows = meta::nelems<I>::value;
-		static const int ct_num_cols = meta::nelems<J>::value;
-
-		static const bool is_readonly = true;
-
-		typedef matrix_shape<ct_num_rows, ct_num_cols> shape_type;
-		typedef typename matrix_traits<Mat>::value_type value_type;
-		typedef typename meta::common_domain<Mat, I, J>::type domain;
-	};
+	: public matrix_xpr_traits_base<
+	  typename meta::value_type_of<Mat>::type,
+	  meta::nelems<I>::value,
+	  meta::nelems<J>::value,
+	  typename meta::domain_of<Mat>::type >  { };
 
 	template<class Mat, class I>
 	struct matrix_traits<select_rows_expr<Mat, I> >
-	{
-		static const int num_dimensions = 2;
-		static const int ct_num_rows = meta::nelems<I>::value;
-		static const int ct_num_cols = meta::ncols<Mat>::value;
-
-		static const bool is_readonly = true;
-
-		typedef matrix_shape<ct_num_rows, ct_num_cols> shape_type;
-		typedef typename matrix_traits<Mat>::value_type value_type;
-		typedef typename meta::common_domain<Mat, I>::type domain;
-	};
+	: public matrix_xpr_traits_base<
+	  typename meta::value_type_of<Mat>::type,
+	  meta::common_nelems<I>::value,
+	  meta::common_ncols<Mat>::value,
+	  typename meta::domain_of<Mat>::type >  { };
 
 	template<class Mat, class J>
 	struct matrix_traits<select_cols_expr<Mat, J> >
-	{
-		static const int num_dimensions = 2;
-		static const int ct_num_rows = meta::nrows<Mat>::value;
-		static const int ct_num_cols = meta::nelems<J>::value;
-
-		static const bool is_readonly = true;
-
-		typedef matrix_shape<ct_num_rows, ct_num_cols> shape_type;
-		typedef typename matrix_traits<Mat>::value_type value_type;
-		typedef typename meta::common_domain<Mat, J>::type domain;
-	};
+	: public matrix_xpr_traits_base<
+	  typename meta::value_type_of<Mat>::type,
+	  meta::common_nrows<Mat>::value,
+	  meta::common_nelems<J>::value,
+	  typename meta::domain_of<Mat>::type >  { };
 
 
 	/********************************************

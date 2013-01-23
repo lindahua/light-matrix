@@ -73,9 +73,11 @@ namespace lmat
 		typedef typename meta::shape<Derived>::type shape_type;
 
 	public:
+		LMAT_ENSURE_INLINE
 		matrix_xpr_base(index_t m, index_t n)
 		: m_shape(m, n) { }
 
+		LMAT_ENSURE_INLINE
 		matrix_xpr_base(const shape_type& shape)
 		: m_shape(shape) { }
 
@@ -104,6 +106,50 @@ namespace lmat
 	};
 
 
+	template<class Derived, class Arg>
+	class sarg_matrix_xpr_base
+	: public IMatrixXpr<Derived, typename meta::value_type_of<Derived>::type>
+	{
+	public:
+		typedef typename meta::value_type_of<Derived>::type value_type;
+		typedef typename meta::shape<Derived>::type shape_type;
+
+	public:
+
+		LMAT_ENSURE_INLINE
+		sarg_matrix_xpr_base(const Arg& arg)
+		: m_arg(arg) { }
+
+		LMAT_ENSURE_INLINE const Arg& arg() const
+		{
+			return m_arg;
+		}
+
+		LMAT_ENSURE_INLINE index_t nelems() const
+		{
+			return m_arg.nelems();
+		}
+
+		LMAT_ENSURE_INLINE index_t nrows() const
+		{
+			return m_arg.nrows();
+		}
+
+		LMAT_ENSURE_INLINE index_t ncolumns() const
+		{
+			return m_arg.ncolumns();
+		}
+
+		LMAT_ENSURE_INLINE shape_type shape() const
+		{
+			return m_arg.shape();
+		}
+
+	private:
+		const Arg& m_arg;
+	};
+
+
 	/********************************************
 	 *
 	 *  IEWiseMatrix
@@ -123,9 +169,12 @@ namespace lmat
 		typedef typename meta::shape<Derived>::type shape_type;
 
 	public:
+
+		LMAT_ENSURE_INLINE
 		ewise_matrix_base(index_t m, index_t n)
 		: m_shape(m, n) { }
 
+		LMAT_ENSURE_INLINE
 		ewise_matrix_base(const shape_type& shape)
 		: m_shape(shape) { }
 

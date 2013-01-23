@@ -233,31 +233,19 @@ namespace lmat
 
 	template<class Arg, class Alg, class Compare>
 	struct matrix_traits<sort_expr<Arg, Alg, Compare> >
-	{
-		static const int num_dimensions = 2;
-		static const int ct_num_rows = meta::nrows<Arg>::value;
-		static const int ct_num_cols = meta::ncols<Arg>::value;
-
-		static const bool is_readonly = true;
-
-		typedef matrix_shape<ct_num_rows, ct_num_cols> shape_type;
-		typedef typename matrix_traits<Arg>::value_type value_type;
-		typedef typename matrix_traits<Arg>::domain domain;
-	};
+	: public matrix_xpr_traits_base<
+	  typename meta::value_type_of<Arg>::type,
+	  meta::nrows<Arg>::value,
+	  meta::ncols<Arg>::value,
+	  typename meta::domain_of<Arg>::type > { };
 
 	template<class Arg, class Alg, class Compare>
 	struct matrix_traits<colwise_sort_expr<Arg, Alg, Compare> >
-	{
-		static const int num_dimensions = 2;
-		static const int ct_num_rows = meta::nrows<Arg>::value;
-		static const int ct_num_cols = meta::ncols<Arg>::value;
-
-		static const bool is_readonly = true;
-
-		typedef matrix_shape<ct_num_rows, ct_num_cols> shape_type;
-		typedef typename matrix_traits<Arg>::value_type value_type;
-		typedef typename matrix_traits<Arg>::domain domain;
-	};
+	: public matrix_xpr_traits_base<
+	  typename meta::value_type_of<Arg>::type,
+	  meta::nrows<Arg>::value,
+	  meta::ncols<Arg>::value,
+	  typename meta::domain_of<Arg>::type > { };
 
 
 	template<class Arg, class Alg, class Compare>

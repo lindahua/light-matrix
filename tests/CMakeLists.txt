@@ -256,8 +256,7 @@ set(MATRIX_ALG_HS_
 set(MATEVAL_HS
     ${MATRIX_EVAL_HS_}
     ${MATRIX_REDUC_HS_}
-    ${MATRIX_ALG_HS_}
-    ${INC}/mateval/mateval.h)
+    ${MATRIX_ALG_HS_})
     
 set(MATEVAL_HS_EX
     ${CONFIG_HS}
