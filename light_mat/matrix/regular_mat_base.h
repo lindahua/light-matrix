@@ -17,17 +17,13 @@
 #include <light_mat/matrix/matrix_base.h>
 #include <light_mat/matrix/matrix_layout.h>
 
-#define LMAT_DEFINE_REGMAT_CTYPES(VT) \
-	typedef VT value_type; \
-	typedef const VT& const_reference; \
-	typedef const VT* const_pointer;
 
-#define LMAT_DEFINE_REGMAT_TYPES(VT) \
-	typedef VT value_type; \
-	typedef const VT& const_reference; \
-	typedef const VT* const_pointer; \
-	typedef VT& reference; \
-	typedef VT* pointer;
+#define LMAT_DEFINE_REGMAT_TYPES(QT) \
+	typedef typename std::remove_const<QT>::type value_type; \
+	typedef const value_type& const_reference; \
+	typedef const value_type* const_pointer; \
+	typedef QT& reference; \
+	typedef QT* pointer;
 
 #define LMAT_DEFINE_NO_RESIZE( classname ) \
 		LMAT_ENSURE_INLINE void require_size(index_t m, index_t n) { \
@@ -36,18 +32,21 @@
 
 namespace lmat
 {
-	template<class Derived, typename T>
-	class regular_mat_base : public IRegularMatrix<Derived, T>
+	template<class Derived>
+	class regular_mat_base
+	: public IRegularMatrix<Derived, typename matrix_traits<Derived>::value_type>
 	{
-		static_assert( meta::is_supported_matrix_value_type<T>::value,
-				"T must be a supported matrix value type");
 
 	public:
-		typedef T value_type;
-		typedef typename matrix_traits<Derived>::pointer pointer;
-		typedef typename matrix_traits<Derived>::reference reference;
-		typedef const value_type* const_pointer;
-		typedef const value_type& const_reference;
+		typedef typename matrix_traits<Derived>::value_type value_type;
+
+		static_assert( meta::is_supported_matrix_value_type<value_type>::value,
+				"T must be a supported matrix value type");
+
+		typedef typename meta::pointer_of<Derived>::type pointer;
+		typedef typename meta::reference_of<Derived>::type reference;
+		typedef typename meta::const_pointer_of<Derived>::type const_pointer;
+		typedef typename meta::const_reference_of<Derived>::type const_reference;
 
 		typedef typename meta::shape<Derived>::type shape_type;
 		typedef typename matrix_traits<Derived>::layout_type layout_type;
@@ -71,6 +70,11 @@ namespace lmat
 			return derived().ptr_data();
 		}
 
+		LMAT_ENSURE_INLINE void require_size(index_t m, index_t n)
+		{
+			derived().require_size(m, n);
+		}
+
 	public:
 
 		LMAT_ENSURE_INLINE index_t nelems() const
@@ -91,6 +95,16 @@ namespace lmat
 		LMAT_ENSURE_INLINE shape_type shape() const
 		{
 			return layout().shape();
+		}
+
+		LMAT_ENSURE_INLINE bool is_contiguous() const
+		{
+			return layout().is_contiguous();
+		}
+
+		LMAT_ENSURE_INLINE bool is_percol_contiguous() const
+		{
+			return layout().is_percol_contiguous();
 		}
 
 		LMAT_ENSURE_INLINE index_t row_stride() const
@@ -145,7 +159,10 @@ namespace lmat
 
 	};
 
-
 }
+
+
+
+
 
 #endif

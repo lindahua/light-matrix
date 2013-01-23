@@ -20,33 +20,38 @@ namespace lmat
 
 	/********************************************
 	 *
-	 *  cref_matrix
+	 *  matrix traits
 	 *
 	 ********************************************/
 
-	template<typename T, int CTRows, int CTCols>
-	struct matrix_traits<cref_matrix<T, CTRows, CTCols> >
+
+	template<typename T, int CM, int CN>
+	struct matrix_traits<cref_matrix<T, CM, CN> >
+	: public regular_matrix_traits_base<const T, CM, CN, cpu_domain>
 	{
-		static const int num_dimensions = 2;
-		static const int ct_num_rows = CTRows;
-		static const int ct_num_cols = CTCols;
-
-		static const bool is_readonly = true;
-
-		typedef T value_type;
-		typedef const T* pointer;
-		typedef const T& reference;
-
-		typedef cont_layout_cm<CTRows, CTCols> layout_type;
-		typedef cpu_domain domain;
+		typedef cont_layout_cm<CM, CN> layout_type;
 	};
 
-	template<typename T, int CTRows, int CTCols>
-	class cref_matrix : public regular_mat_base<cref_matrix<T, CTRows, CTCols>, T>
+	template<typename T, int CM, int CN>
+	struct matrix_traits<ref_matrix<T, CM, CN> >
+	: public regular_matrix_traits_base<T, CM, CN, cpu_domain>
+	{
+		typedef cont_layout_cm<CM, CN> layout_type;
+	};
+
+
+	/********************************************
+	 *
+	 *  matrix classes
+	 *
+	 ********************************************/
+
+	template<typename T, int CM, int CN>
+	class cref_matrix : public regular_mat_base<cref_matrix<T, CM, CN> >
 	{
 	public:
-		LMAT_DEFINE_REGMAT_CTYPES(T)
-		typedef cont_layout_cm<CTRows, CTCols> layout_type;
+		LMAT_DEFINE_REGMAT_TYPES(const T)
+		typedef cont_layout_cm<CM, CN> layout_type;
 
 	public:
 		LMAT_ENSURE_INLINE
@@ -78,37 +83,12 @@ namespace lmat
 	}; // end class cref_matrix
 
 
-	/********************************************
-	 *
-	 *  ref_matrix
-	 *
-	 ********************************************/
-
-
-	template<typename T, int CTRows, int CTCols>
-	struct matrix_traits<ref_matrix<T, CTRows, CTCols> >
-	{
-		static const int num_dimensions = 2;
-		static const int ct_num_rows = CTRows;
-		static const int ct_num_cols = CTCols;
-
-		static const bool is_readonly = false;
-
-		typedef T value_type;
-		typedef T* pointer;
-		typedef T& reference;
-
-		typedef cont_layout_cm<CTRows, CTCols> layout_type;
-		typedef cpu_domain domain;
-	};
-
-
-	template<typename T, int CTRows, int CTCols>
-	class ref_matrix : public regular_mat_base<ref_matrix<T, CTRows, CTCols>, T>
+	template<typename T, int CM, int CN>
+	class ref_matrix : public regular_mat_base<ref_matrix<T, CM, CN> >
 	{
 	public:
 		LMAT_DEFINE_REGMAT_TYPES(T)
-		typedef cont_layout_cm<CTRows, CTCols> layout_type;
+		typedef cont_layout_cm<CM, CN> layout_type;
 
 	public:
 		LMAT_ENSURE_INLINE
@@ -174,10 +154,10 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<typename T, int CTRows>
-	class cref_col: public cref_matrix<T, CTRows, 1>
+	template<typename T, int CM>
+	class cref_col: public cref_matrix<T, CM, 1>
 	{
-		typedef cref_matrix<T, CTRows, 1> base_mat_t;
+		typedef cref_matrix<T, CM, 1> base_mat_t;
 
 	public:
 		LMAT_ENSURE_INLINE
@@ -190,10 +170,10 @@ namespace lmat
 
 	};
 
-	template<typename T, int CTRows>
-	class ref_col: public ref_matrix<T, CTRows, 1>
+	template<typename T, int CM>
+	class ref_col: public ref_matrix<T, CM, 1>
 	{
-		typedef ref_matrix<T, CTRows, 1> base_mat_t;
+		typedef ref_matrix<T, CM, 1> base_mat_t;
 
 	public:
 		LMAT_ENSURE_INLINE
@@ -214,10 +194,10 @@ namespace lmat
 	};
 
 
-	template<typename T, int CTCols>
-	class cref_row: public cref_matrix<T, 1, CTCols>
+	template<typename T, int CN>
+	class cref_row: public cref_matrix<T, 1, CN>
 	{
-		typedef cref_matrix<T, 1, CTCols> base_mat_t;
+		typedef cref_matrix<T, 1, CN> base_mat_t;
 
 	public:
 		LMAT_ENSURE_INLINE
@@ -229,10 +209,10 @@ namespace lmat
 		: base_mat_t(s) { }
 	};
 
-	template<typename T, int CTCols>
-	class ref_row: public ref_matrix<T, 1, CTCols>
+	template<typename T, int CN>
+	class ref_row: public ref_matrix<T, 1, CN>
 	{
-		typedef ref_matrix<T, 1, CTCols> base_mat_t;
+		typedef ref_matrix<T, 1, CN> base_mat_t;
 
 	public:
 		LMAT_ENSURE_INLINE

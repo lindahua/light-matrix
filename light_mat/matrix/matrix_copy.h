@@ -49,8 +49,7 @@ namespace lmat
 
 	template<typename T, class SExpr, class DMat>
 	LMAT_ENSURE_INLINE
-	inline typename meta::enable_if_< meta::is_mat_assignable<SExpr, DMat>, void>::type
-	evaluate(const IRegularMatrix<SExpr, T>& sexpr, IRegularMatrix<DMat, T>& dmat)
+	void evaluate(const IRegularMatrix<SExpr, T>& sexpr, IRegularMatrix<DMat, T>& dmat)
 	{
 		copy(sexpr.derived(), dmat.derived());
 	}

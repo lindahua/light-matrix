@@ -44,16 +44,11 @@ namespace lmat
 
 	template<class Arg>
 	struct matrix_traits<transpose_expr<Arg> >
-	{
-		static const int num_dimensions = 2;
-		static const int ct_num_rows = meta::ncols<Arg>::value;
-		static const int ct_num_cols = meta::nrows<Arg>::value;
-
-		static const bool is_readonly = true;
-
-		typedef typename matrix_traits<Arg>::value_type value_type;
-		typedef typename matrix_traits<Arg>::domain domain;
-	};
+	: public matrix_xpr_traits_base<
+	  	  typename meta::value_type_of<Arg>::type,
+	  	  meta::ncols<Arg>::value,
+	  	  meta::nrows<Arg>::value,
+	  	  typename meta::domain_of<Arg>::type> { };
 
 
 	template<class Arg>

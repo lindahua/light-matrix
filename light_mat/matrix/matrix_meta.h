@@ -26,11 +26,8 @@ namespace lmat { namespace meta {
 
 	template<class T>
 	struct is_supported_matrix_value_type
-	: public all_<
-	  	  std::is_standard_layout<T>,
-	  	  meta::not_<std::is_const<T> >,
-	  	  meta::not_<std::is_volatile<T> >
-	> { };
+	: public std::is_standard_layout<T>
+	{ };
 
 	template<class T>
 	struct is_supported_matrix_value_type<mask_t<T> > : public true_ { };
@@ -89,6 +86,12 @@ namespace lmat { namespace meta {
 	 ********************************************/
 
 	template<class Mat>
+	struct qualified_value_type_of
+	{
+		typedef typename matrix_traits<Mat>::qualified_value_type type;
+	};
+
+	template<class Mat>
 	struct value_type_of
 	{
 		typedef typename matrix_traits<Mat>::value_type type;
@@ -107,6 +110,35 @@ namespace lmat { namespace meta {
 	{
 		typedef typename common_<typename value_type_of<Mat>::type...>::type type;
 	};
+
+
+	template<class Mat>
+	struct pointer_of
+	{
+		typedef typename matrix_traits<Mat>::qualified_value_type* type;
+	};
+
+	template<class Mat>
+	struct reference_of
+	{
+		typedef typename matrix_traits<Mat>::qualified_value_type& type;
+	};
+
+	template<class Mat>
+	struct const_pointer_of
+	{
+		typedef const typename matrix_traits<Mat>::qualified_value_type* type;
+	};
+
+	template<class Mat>
+	struct const_reference_of
+	{
+		typedef const typename matrix_traits<Mat>::qualified_value_type& type;
+	};
+
+	template<class Mat>
+	struct is_readonly : public std::is_const<typename qualified_value_type_of<Mat>::type> { };
+
 
 	/********************************************
 	 *
@@ -247,16 +279,6 @@ namespace lmat { namespace meta {
 
 	/********************************************
 	 *
-	 *  Matrix access and manipulation
-	 *
-	 ********************************************/
-
-	template<class Mat>
-	struct is_readonly : public bool_<matrix_traits<Mat>::is_readonly> { };
-
-
-	/********************************************
-	 *
 	 *  Layout attributes
 	 *
 	 ********************************************/
@@ -298,25 +320,6 @@ namespace lmat { namespace meta {
 	struct supports_linear_index
 	: public or_<is_contiguous<Mat>, is_vector<Mat> > { };
 
-
-
-	/********************************************
-	 *
-	 *  Evaluation
-	 *
-	 ********************************************/
-
-	template<class SExpr, class DMat>
-	struct is_mat_assignable
-	{
-		static const bool value =
-				is_regular_mat<DMat>::value &&
-				!is_readonly<DMat>::value &&
-				is_mat_xpr<SExpr>::value &&
-				in_same_domain<SExpr, DMat>::value &&
-				have_same_value_type<SExpr, DMat>::value &&
-				have_compatible_shapes<SExpr, DMat>::value;
-	};
 
 } }
 

@@ -17,30 +17,40 @@
 
 namespace lmat
 {
+	/********************************************
+	 *
+	 *  matrix traits
+	 *
+	 ********************************************/
 
-	template<typename T, int CTRows, int CTCols>
-	struct matrix_traits<cref_block<T, CTRows, CTCols> >
+	template<typename T, int CM, int CN>
+	struct matrix_traits<cref_block<T, CM, CN> >
+	: public regular_matrix_traits_base<const T, CM, CN, cpu_domain>
 	{
-		static const int num_dimensions = 2;
-		static const int ct_num_rows = CTRows;
-		static const int ct_num_cols = CTCols;
-
-		static const bool is_readonly = true;
-
-		typedef T value_type;
-		typedef const T* pointer;
-		typedef const T& reference;
-
-		typedef block_layout_cm<CTRows, CTCols> layout_type;
-		typedef cpu_domain domain;
+		typedef block_layout_cm<CM, CN> layout_type;
 	};
 
-	template<typename T, int CTRows, int CTCols>
-	class cref_block : public regular_mat_base<cref_block<T, CTRows, CTCols>, T>
+
+	template<typename T, int CM, int CN>
+	struct matrix_traits<ref_block<T, CM, CN> >
+	: public regular_matrix_traits_base<T, CM, CN, cpu_domain>
+	{
+		typedef block_layout_cm<CM, CN> layout_type;
+	};
+
+
+	/********************************************
+	 *
+	 *  matrix classes
+	 *
+	 ********************************************/
+
+	template<typename T, int CM, int CN>
+	class cref_block : public regular_mat_base<cref_block<T, CM, CN> >
 	{
 	public:
-		LMAT_DEFINE_REGMAT_CTYPES(T)
-		typedef block_layout_cm<CTRows, CTCols> layout_type;
+		LMAT_DEFINE_REGMAT_TYPES(const T)
+		typedef block_layout_cm<CM, CN> layout_type;
 
 	public:
 
@@ -73,29 +83,14 @@ namespace lmat
 	}; // end class cref_block
 
 
-	template<typename T, int CTRows, int CTCols>
-	struct matrix_traits<ref_block<T, CTRows, CTCols> >
-	{
-		static const int num_dimensions = 2;
-		static const int ct_num_rows = CTRows;
-		static const int ct_num_cols = CTCols;
 
-		static const bool is_readonly = false;
 
-		typedef T value_type;
-		typedef T* pointer;
-		typedef T& reference;
-
-		typedef block_layout_cm<CTRows, CTCols> layout_type;
-		typedef cpu_domain domain;
-	};
-
-	template<typename T, int CTRows, int CTCols>
-	class ref_block : public regular_mat_base<ref_block<T, CTRows, CTCols>, T>
+	template<typename T, int CM, int CN>
+	class ref_block : public regular_mat_base<ref_block<T, CM, CN> >
 	{
 	public:
 		LMAT_DEFINE_REGMAT_TYPES(T)
-		typedef block_layout_cm<CTRows, CTCols> layout_type;
+		typedef block_layout_cm<CM, CN> layout_type;
 
 	public:
 		LMAT_ENSURE_INLINE

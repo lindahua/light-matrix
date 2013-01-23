@@ -52,45 +52,66 @@ namespace lmat
 		typedef nil_t value_type;
 	};
 
+	template<typename T, int M, int N, typename Domain>
+	struct matrix_xpr_traits_base
+	{
+		static const unsigned int num_dimensions = 2;
+
+		static const index_t ct_num_rows = M;
+		static const index_t ct_num_cols = N;
+
+		typedef typename std::remove_cv<T>::type value_type;
+
+		typedef Domain domain;
+	};
+
+	template<typename QT, int M, int N, typename Domain>
+	struct regular_matrix_traits_base
+	{
+		static const unsigned int num_dimensions = 2;
+
+		static const index_t ct_num_rows = M;
+		static const index_t ct_num_cols = N;
+
+		typedef QT qualified_value_type;
+		typedef typename std::remove_cv<QT>::type value_type;
+
+		typedef Domain domain;
+	};
+
+
 	template<class Derived, typename T> class IMatrixXpr;
 	template<class Derived, typename T> class IEWiseMatrix;
 	template<class Derived, typename T> class IRegularMatrix;
 
 	// forward declaration of some important types
 
-	template<typename T, int CTRows=0, int CTCols=0>
-	class dense_matrix;
+	template<typename T, index_t CM=0, index_t CN=0> class dense_matrix;
+	template<typename T, index_t CM=0> class dense_col;
+	template<typename T, index_t CN=0> class dense_row;
 
-	template<typename T, int CTRows=0> class dense_col;
-	template<typename T, int CTCols=0> class dense_row;
+	template<typename T, index_t CM=0, index_t CN=0> class cref_matrix;
+	template<typename T, index_t CM=0, index_t CN=0> class ref_matrix;
+	template<typename T, index_t CM=0> class cref_col;
+	template<typename T, index_t CN=0> class cref_row;
+	template<typename T, index_t CM=0> class ref_col;
+	template<typename T, index_t CN=0> class ref_row;
 
-	template<typename T, int CTRows=0, int CTCols=0>
-	class cref_matrix;
+	template<typename T, index_t CM=0, index_t CN=0> class cref_block;
+	template<typename T, index_t CM=0, index_t CN=0> class ref_block;
+	template<typename T, index_t CM=0, index_t CN=0> class cref_grid;
+	template<typename T, index_t CM=0, index_t CN=0> class ref_grid;
 
-	template<typename T, int CTRows=0, int CTCols=0>
-	class ref_matrix;
-
-	template<typename T, int CTRows=0> class cref_col;
-	template<typename T, int CTRows=0> class ref_col;
-	template<typename T, int CTCols=0> class cref_row;
-	template<typename T, int CTCols=0> class ref_row;
-
-	template<typename T, int CTRows=0, int CTCols=0> class cref_block;
-	template<typename T, int CTRows=0, int CTCols=0> class ref_block;
-
-	template<typename T, int CTRows=0, int CTCols=0> class cref_grid;
-	template<typename T, int CTRows=0, int CTCols=0> class ref_grid;
-
-	template<typename T, int CTRows=0> class cstep_col;
-	template<typename T, int CTRows=0> class step_col;
-	template<typename T, int CTCols=0> class cstep_row;
-	template<typename T, int CTCols=0> class step_row;
+	template<typename T, index_t CM=0> class cstep_col;
+	template<typename T, index_t CM=0> class step_col;
+	template<typename T, index_t CN=0> class cstep_row;
+	template<typename T, index_t CN=0> class step_row;
 
 	template<class Mat> class dense_mutable_view;
 
-	template<typename T, int M, int N> class inds_expr;
-	template<typename T, int M, int N> class subs_i_expr;
-	template<typename T, int M, int N> class subs_j_expr;
+	template<typename T, int CM, int CN> class inds_expr;
+	template<typename T, int CM, int CN> class subs_i_expr;
+	template<typename T, int CM, int CN> class subs_j_expr;
 
 	// contiguous levels
 

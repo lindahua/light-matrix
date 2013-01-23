@@ -27,21 +27,11 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<typename T, int CTRows, int CTCols>
-	struct matrix_traits<dense_matrix<T, CTRows, CTCols> >
+	template<typename T, int CM, int CN>
+	struct matrix_traits<dense_matrix<T, CM, CN> >
+	: public regular_matrix_traits_base<T, CM, CN, cpu_domain>
 	{
-		static const int num_dimensions = 2;
-		static const int ct_num_rows = CTRows;
-		static const int ct_num_cols = CTCols;
-
-		static const bool is_readonly = false;
-
-		typedef T value_type;
-		typedef T* pointer;
-		typedef T& reference;
-
-		typedef cont_layout_cm<CTRows, CTCols> layout_type;
-		typedef cpu_domain domain;
+		typedef cont_layout_cm<CM, CN> layout_type;
 	};
 
 
@@ -156,12 +146,12 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<typename T, int CTRows, int CTCols>
-	class dense_matrix : public regular_mat_base<dense_matrix<T, CTRows, CTCols>, T>
+	template<typename T, int CM, int CN>
+	class dense_matrix : public regular_mat_base<dense_matrix<T, CM, CN> >
 	{
 	public:
 		LMAT_DEFINE_REGMAT_TYPES(T)
-		typedef cont_layout_cm<CTRows, CTCols> layout_type;
+		typedef cont_layout_cm<CM, CN> layout_type;
 
 	public:
 		LMAT_ENSURE_INLINE dense_matrix()
@@ -294,16 +284,16 @@ namespace lmat
 		}
 
 	private:
-		typedef internal::dense_mat_storage<T, CTRows * CTCols> storage_t;
+		typedef internal::dense_mat_storage<T, CM * CN> storage_t;
 
 		layout_type m_layout;
 		storage_t m_store;
 	};
 
 
-	template<typename T, int CTRows, int CTCols>
+	template<typename T, int CM, int CN>
 	LMAT_ENSURE_INLINE
-	inline void swap(dense_matrix<T, CTRows, CTCols>& a, dense_matrix<T, CTRows, CTCols>& b)
+	inline void swap(dense_matrix<T, CM, CN>& a, dense_matrix<T, CM, CN>& b)
 	{
 		a.swap(b);
 	}
@@ -315,13 +305,13 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<typename T, int CTRows>
-	class dense_col : public dense_matrix<T, CTRows, 1>
+	template<typename T, int CM>
+	class dense_col : public dense_matrix<T, CM, 1>
 	{
-		typedef dense_matrix<T, CTRows, 1> base_mat_t;
+		typedef dense_matrix<T, CM, 1> base_mat_t;
 
 	public:
-		LMAT_ENSURE_INLINE dense_col() : base_mat_t(CTRows, 1) { }
+		LMAT_ENSURE_INLINE dense_col() : base_mat_t(CM, 1) { }
 
 		LMAT_ENSURE_INLINE explicit dense_col(index_t m) : base_mat_t(m, 1) { }
 
@@ -362,13 +352,13 @@ namespace lmat
 	};
 
 
-	template<typename T, int CTCols>
-	class dense_row : public dense_matrix<T, 1, CTCols>
+	template<typename T, int CN>
+	class dense_row : public dense_matrix<T, 1, CN>
 	{
-		typedef dense_matrix<T, 1, CTCols> base_mat_t;
+		typedef dense_matrix<T, 1, CN> base_mat_t;
 
 	public:
-		LMAT_ENSURE_INLINE dense_row() : base_mat_t(1, CTCols) { }
+		LMAT_ENSURE_INLINE dense_row() : base_mat_t(1, CN) { }
 
 		LMAT_ENSURE_INLINE explicit dense_row(index_t n) : base_mat_t(1, n) { }
 

@@ -297,7 +297,7 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		bool is_contiguous() const
 		{
-			return m_leaddim == nrows();
+			return m_leaddim == nrows() || ncolumns() == 1;
 		}
 
 		LMAT_ENSURE_INLINE
@@ -383,13 +383,14 @@ namespace lmat
 		LMAT_ENSURE_INLINE
 		bool is_contiguous() const
 		{
-			return m_rowstride == 1 && m_colstride == nrows();
+			return (m_rowstride == 1 || nrows() == 1) &&
+					(m_colstride == nrows() || ncolumns() == 1);
 		}
 
 		LMAT_ENSURE_INLINE
 		bool is_percol_contiguous() const
 		{
-			return true;
+			return m_rowstride() == 1;
 		}
 
 		LMAT_ENSURE_INLINE

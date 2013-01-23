@@ -18,30 +18,39 @@
 namespace lmat
 {
 
-	template<typename T, int CTRows, int CTCols>
-	struct matrix_traits<cref_grid<T, CTRows, CTCols> >
+	/********************************************
+	 *
+	 *  matrix traits
+	 *
+	 ********************************************/
+
+	template<typename T, int CM, int CN>
+	struct matrix_traits<cref_grid<T, CM, CN> >
+	: public regular_matrix_traits_base<const T, CM, CN, cpu_domain>
 	{
-		static const int num_dimensions = 2;
-		static const int ct_num_rows = CTRows;
-		static const int ct_num_cols = CTCols;
+		typedef grid_layout<CM, CN> layout_type;
+	};
 
-		static const bool is_readonly = true;
-
-		typedef T value_type;
-		typedef const T* pointer;
-		typedef const T& reference;
-
-		typedef grid_layout<CTRows, CTCols> layout_type;
-		typedef cpu_domain domain;
+	template<typename T, int CM, int CN>
+	struct matrix_traits<ref_grid<T, CM, CN> >
+	: public regular_matrix_traits_base<T, CM, CN, cpu_domain>
+	{
+		typedef grid_layout<CM, CN> layout_type;
 	};
 
 
-	template<typename T, int CTRows, int CTCols>
-	class cref_grid : public regular_mat_base<cref_grid<T, CTRows, CTCols>, T>
+	/********************************************
+	 *
+	 *  matrix classes
+	 *
+	 ********************************************/
+
+	template<typename T, int CM, int CN>
+	class cref_grid : public regular_mat_base<cref_grid<T, CM, CN> >
 	{
 	public:
-		LMAT_DEFINE_REGMAT_CTYPES(T)
-		typedef grid_layout<CTRows, CTCols> layout_type;
+		LMAT_DEFINE_REGMAT_TYPES(const T)
+		typedef grid_layout<CM, CN> layout_type;
 
 	public:
 
@@ -74,30 +83,12 @@ namespace lmat
 	}; // end class cref_grid
 
 
-	template<typename T, int CTRows, int CTCols>
-	struct matrix_traits<ref_grid<T, CTRows, CTCols> >
-	{
-		static const int num_dimensions = 2;
-		static const int ct_num_rows = CTRows;
-		static const int ct_num_cols = CTCols;
-
-		static const bool is_readonly = false;
-
-		typedef T value_type;
-		typedef T* pointer;
-		typedef T& reference;
-
-		typedef grid_layout<CTRows, CTCols> layout_type;
-		typedef cpu_domain domain;
-	};
-
-
-	template<typename T, int CTRows, int CTCols>
-	class ref_grid : public regular_mat_base<ref_grid<T, CTRows, CTCols>, T>
+	template<typename T, int CM, int CN>
+	class ref_grid : public regular_mat_base<ref_grid<T, CM, CN> >
 	{
 	public:
 		LMAT_DEFINE_REGMAT_TYPES(T)
-		typedef grid_layout<CTRows, CTCols> layout_type;
+		typedef grid_layout<CM, CN> layout_type;
 
 	public:
 		LMAT_ENSURE_INLINE

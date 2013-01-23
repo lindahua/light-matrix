@@ -38,9 +38,6 @@ namespace lmat
 	class IMatrixXpr
 	{
 	public:
-		typedef T value_type;
-		typedef matrix_shape< meta::nrows<Derived>::value, meta::ncols<Derived>::value > shape_type;
-
 		LMAT_CRTP_REF
 
 		LMAT_ENSURE_INLINE index_t nelems() const
@@ -58,7 +55,8 @@ namespace lmat
 			return derived().ncolumns();
 		}
 
-		LMAT_ENSURE_INLINE shape_type shape() const
+		LMAT_ENSURE_INLINE typename meta::shape<Derived>::type
+		shape() const
 		{
 			return derived().shape();
 		}
@@ -66,42 +64,54 @@ namespace lmat
 	}; // end class IMatrixXpr
 
 
-	/********************************************
-	 *
-	 *  IMatrixXpr
-	 *
-	 ********************************************/
-
 	template<class Derived, typename T>
-	class IEWiseMatrix : public IMatrixXpr<Derived, T>
+	class matrix_xpr_base : public IMatrixXpr<Derived, T>
 	{
 	public:
 		typedef T value_type;
-		typedef matrix_shape< meta::nrows<Derived>::value, meta::ncols<Derived>::value > shape_type;
+		typedef typename meta::shape<Derived>::type shape_type;
 
-		LMAT_CRTP_REF
+	public:
+		matrix_xpr_base(index_t m, index_t n)
+		: m_shape(m, n) { }
+
+		matrix_xpr_base(const shape_type& shape)
+		: m_shape(shape) { }
 
 		LMAT_ENSURE_INLINE index_t nelems() const
 		{
-			return derived().nelems();
+			return m_shape.nelems();
 		}
 
 		LMAT_ENSURE_INLINE index_t nrows() const
 		{
-			return derived().nrows();
+			return m_shape.nrows();
 		}
 
 		LMAT_ENSURE_INLINE index_t ncolumns() const
 		{
-			return derived().ncolumns();
+			return m_shape.ncolumns();
 		}
 
 		LMAT_ENSURE_INLINE shape_type shape() const
 		{
-			return derived().shape();
+			return m_shape.shape();
 		}
 
-	}; // end class IEWiseMatrix
+	private:
+		shape_type m_shape;
+	};
+
+
+
+	/********************************************
+	 *
+	 *  IEWiseMatrix
+	 *
+	 ********************************************/
+
+	template<class Derived, typename T>
+	class IEWiseMatrix : public IMatrixXpr<Derived, T> { };
 
 
 	/********************************************
@@ -114,11 +124,11 @@ namespace lmat
 	class IRegularMatrix : public IEWiseMatrix<Derived, T>
 	{
 	public:
-		typedef typename matrix_traits<Derived>::value_type value_type;
-		typedef typename matrix_traits<Derived>::pointer pointer;
-		typedef typename matrix_traits<Derived>::reference reference;
-		typedef const value_type* const_pointer;
-		typedef const value_type& const_reference;
+		typedef typename meta::value_type_of<Derived>::type value_type;
+		typedef typename meta::pointer_of<Derived>::type pointer;
+		typedef typename meta::reference_of<Derived>::type reference;
+		typedef typename meta::const_pointer_of<Derived>::type const_pointer;
+		typedef typename meta::const_reference_of<Derived>::type const_reference;
 
 		typedef typename meta::shape<Derived>::type shape_type;
 
@@ -143,6 +153,16 @@ namespace lmat
 		LMAT_ENSURE_INLINE shape_type shape() const
 		{
 			return derived().shape();
+		}
+
+		LMAT_ENSURE_INLINE bool is_contiguous() const
+		{
+			return derived().is_contiguous();
+		}
+
+		LMAT_ENSURE_INLINE bool is_percol_contiguous() const
+		{
+			return derived().is_percol_contiguous();
 		}
 
 		LMAT_ENSURE_INLINE index_t row_stride() const

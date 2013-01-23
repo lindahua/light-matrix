@@ -24,9 +24,8 @@ namespace lmat
 		static_assert(meta::is_regular_mat<Mat>::value, "Mat should be a dense matrix class");
 
 	public:
-		LMAT_DEFINE_REGMAT_CTYPES(typename matrix_traits<Mat>::value_type)
+		typedef typename meta::value_type_of<Mat>::type value_type;
 
-	public:
 		LMAT_ENSURE_INLINE
 		dense_mutable_view(const Mat& base_mat) : Mat(base_mat)
 		{
