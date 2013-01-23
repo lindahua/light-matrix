@@ -20,9 +20,9 @@ namespace lmat
 {
 	// forward declaration
 
-	template<typename T, int M, int N> class inds_expr;
-	template<typename T, int M, int N> class subs_i_expr;
-	template<typename T, int M, int N> class subs_j_expr;
+	template<typename T, int CM, int CN> class inds_expr;
+	template<typename T, int CM, int CN> class subs_i_expr;
+	template<typename T, int CM, int CN> class subs_j_expr;
 
 	/********************************************
 	 *
@@ -30,156 +30,65 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<typename T, int M, int N>
-	struct matrix_traits<inds_expr<T, M, N> >
-	{
-		static const int num_dimensions = 2;
-		static const int ct_num_rows = M;
-		static const int ct_num_cols = N;
+	template<typename T, int CM, int CN>
+	struct matrix_traits<inds_expr<T, CM, CN> >
+	: public matrix_xpr_traits_base<T, CM, CN, cpu_domain> { };
 
-		static const bool is_readonly = true;
 
-		typedef matrix_shape<M, N> shape_type;
-		typedef T value_type;
-		typedef cpu_domain domain;
-	};
+	template<typename T, int CM, int CN>
+	struct matrix_traits<subs_i_expr<T, CM, CN> >
+	: public matrix_xpr_traits_base<T, CM, CN, cpu_domain> { };
 
-	template<typename T, int M, int N>
-	struct matrix_traits<subs_i_expr<T, M, N> >
-	{
-		static const int num_dimensions = 2;
-		static const int ct_num_rows = M;
-		static const int ct_num_cols = N;
+	template<typename T, int CM, int CN>
+	struct matrix_traits<subs_j_expr<T, CM, CN> >
+	: public matrix_xpr_traits_base<T, CM, CN, cpu_domain> { };
 
-		static const bool is_readonly = true;
-
-		typedef matrix_shape<M, N> shape_type;
-		typedef T value_type;
-		typedef cpu_domain domain;
-	};
-
-	template<typename T, int M, int N>
-	struct matrix_traits<subs_j_expr<T, M, N> >
-	{
-		static const int num_dimensions = 2;
-		static const int ct_num_rows = M;
-		static const int ct_num_cols = N;
-
-		static const bool is_readonly = true;
-
-		typedef matrix_shape<M, N> shape_type;
-		typedef T value_type;
-		typedef cpu_domain domain;
-	};
 
 	// classes
 
-	template<typename T, int M, int N>
-	class inds_expr : public IEWiseMatrix<inds_expr<T, M, N>, T>
+	template<typename T, int CM, int CN>
+	class inds_expr
+	: public ewise_matrix_base<inds_expr<T, CM, CN> >
 	{
-	public:
-		typedef matrix_shape<M, N> shape_type;
+		typedef ewise_matrix_base<inds_expr<T, CM, CN> > base_t;
+		using typename base_t::shape_type;
 
+	public:
 		LMAT_ENSURE_INLINE inds_expr(index_t m, index_t n)
-		: m_shape(m, n) { }
+		: base_t(m, n) { }
 
 		LMAT_ENSURE_INLINE explicit inds_expr(const shape_type& shape)
-		: m_shape(shape) { }
-
-		LMAT_ENSURE_INLINE index_t nelems() const
-		{
-			return m_shape.nelems();
-		}
-
-		LMAT_ENSURE_INLINE index_t nrows() const
-		{
-			return m_shape.nrows();
-		}
-
-		LMAT_ENSURE_INLINE index_t ncolumns() const
-		{
-			return m_shape.ncolumns();
-		}
-
-		LMAT_ENSURE_INLINE shape_type shape() const
-		{
-			return m_shape;
-		}
-
-	private:
-		shape_type m_shape;
+		: base_t(shape) { }
 	};
 
-	template<typename T, int M, int N>
-	class subs_i_expr : public IEWiseMatrix<subs_i_expr<T, M, N>, T>
+	template<typename T, int CM, int CN>
+	class subs_i_expr
+	: public ewise_matrix_base<subs_i_expr<T, CM, CN> >
 	{
-	public:
-		typedef matrix_shape<M, N> shape_type;
+		typedef ewise_matrix_base<subs_i_expr<T, CM, CN> > base_t;
+		using typename base_t::shape_type;
 
+	public:
 		LMAT_ENSURE_INLINE subs_i_expr(index_t m, index_t n)
-		: m_shape(m, n) { }
+		: base_t(m, n) { }
 
 		LMAT_ENSURE_INLINE explicit subs_i_expr(const shape_type& shape)
-		: m_shape(shape) { }
-
-		LMAT_ENSURE_INLINE index_t nelems() const
-		{
-			return m_shape.nelems();
-		}
-
-		LMAT_ENSURE_INLINE index_t nrows() const
-		{
-			return m_shape.nrows();
-		}
-
-		LMAT_ENSURE_INLINE index_t ncolumns() const
-		{
-			return m_shape.ncolumns();
-		}
-
-		LMAT_ENSURE_INLINE shape_type shape() const
-		{
-			return m_shape;
-		}
-
-	private:
-		shape_type m_shape;
+		: base_t(shape) { }
 	};
 
-	template<typename T, int M, int N>
-	class subs_j_expr : public IEWiseMatrix<subs_j_expr<T, M, N>, T>
+	template<typename T, int CM, int CN>
+	class subs_j_expr
+	: public ewise_matrix_base<subs_j_expr<T, CM, CN> >
 	{
-	public:
-		typedef matrix_shape<M, N> shape_type;
+		typedef ewise_matrix_base<subs_j_expr<T, CM, CN> > base_t;
+		using typename base_t::shape_type;
 
+	public:
 		LMAT_ENSURE_INLINE subs_j_expr(index_t m, index_t n)
-		: m_shape(m, n) { }
+		: base_t(m, n) { }
 
 		LMAT_ENSURE_INLINE explicit subs_j_expr(const shape_type& shape)
-		: m_shape(shape) { }
-
-		LMAT_ENSURE_INLINE index_t nelems() const
-		{
-			return m_shape.nelems();
-		}
-
-		LMAT_ENSURE_INLINE index_t nrows() const
-		{
-			return m_shape.nrows();
-		}
-
-		LMAT_ENSURE_INLINE index_t ncolumns() const
-		{
-			return m_shape.ncolumns();
-		}
-
-		LMAT_ENSURE_INLINE shape_type shape() const
-		{
-			return m_shape;
-		}
-
-	private:
-		shape_type m_shape;
+		: base_t(shape) { }
 	};
 
 
@@ -204,20 +113,20 @@ namespace lmat
 		return inds_expr<T, 0, 0>(m, n);
 	}
 
-	template<int M, int N>
+	template<int CM, int CN>
 	LMAT_ENSURE_INLINE
-	inline inds_expr<index_t, M, N>
-	inds(const matrix_shape<M, N>& shape)
+	inline inds_expr<index_t, CM, CN>
+	inds(const matrix_shape<CM, CN>& shape)
 	{
-		return inds_expr<index_t, M, N>(shape);
+		return inds_expr<index_t, CM, CN>(shape);
 	}
 
-	template<typename T, int M, int N>
+	template<typename T, int CM, int CN>
 	LMAT_ENSURE_INLINE
-	inline inds_expr<T, M, N>
-	inds(type_<T>, const matrix_shape<M, N>& shape)
+	inline inds_expr<T, CM, CN>
+	inds(type_<T>, const matrix_shape<CM, CN>& shape)
 	{
-		return inds_expr<T, M, N>(shape);
+		return inds_expr<T, CM, CN>(shape);
 	}
 
 	LMAT_ENSURE_INLINE
@@ -235,20 +144,20 @@ namespace lmat
 		return subs_i_expr<T, 0, 0>(m, n);
 	}
 
-	template<int M, int N>
+	template<int CM, int CN>
 	LMAT_ENSURE_INLINE
-	inline subs_i_expr<index_t, M, N>
-	subs_i(const matrix_shape<M, N>& shape)
+	inline subs_i_expr<index_t, CM, CN>
+	subs_i(const matrix_shape<CM, CN>& shape)
 	{
-		return subs_i_expr<index_t, M, N>(shape);
+		return subs_i_expr<index_t, CM, CN>(shape);
 	}
 
-	template<typename T, int M, int N>
+	template<typename T, int CM, int CN>
 	LMAT_ENSURE_INLINE
-	inline subs_i_expr<T, M, N>
-	subs_i(type_<T>, const matrix_shape<M, N>& shape)
+	inline subs_i_expr<T, CM, CN>
+	subs_i(type_<T>, const matrix_shape<CM, CN>& shape)
 	{
-		return subs_i_expr<T, M, N>(shape);
+		return subs_i_expr<T, CM, CN>(shape);
 	}
 
 	LMAT_ENSURE_INLINE
@@ -266,20 +175,20 @@ namespace lmat
 		return subs_j_expr<T, 0, 0>(m, n);
 	}
 
-	template<int M, int N>
+	template<int CM, int CN>
 	LMAT_ENSURE_INLINE
-	inline subs_j_expr<index_t, M, N>
-	subs_j(const matrix_shape<M, N>& shape)
+	inline subs_j_expr<index_t, CM, CN>
+	subs_j(const matrix_shape<CM, CN>& shape)
 	{
-		return subs_j_expr<index_t, M, N>(shape);
+		return subs_j_expr<index_t, CM, CN>(shape);
 	}
 
-	template<typename T, int M, int N>
+	template<typename T, int CM, int CN>
 	LMAT_ENSURE_INLINE
-	inline subs_j_expr<T, M, N>
-	subs_j(type_<T>, const matrix_shape<M, N>& shape)
+	inline subs_j_expr<T, CM, CN>
+	subs_j(type_<T>, const matrix_shape<CM, CN>& shape)
 	{
-		return subs_j_expr<T, M, N>(shape);
+		return subs_j_expr<T, CM, CN>(shape);
 	}
 
 
@@ -372,49 +281,49 @@ namespace lmat
 		};
 
 
-		template<typename T, int M, int N, typename U>
-		struct vec_reader_map<inds_expr<T, M, N>, U>
+		template<typename T, int CM, int CN, typename U>
+		struct vec_reader_map<inds_expr<T, CM, CN>, U>
 		{
 			typedef iota_vec_reader<T, U> type;
 
 			LMAT_ENSURE_INLINE
-			static type get(const inds_expr<T, M, N>&)
+			static type get(const inds_expr<T, CM, CN>&)
 			{
 				return iota_vec_reader<T, U>();
 			}
 		};
 
-		template<typename T, int M, int N, typename U>
-		struct multicol_reader_map<inds_expr<T, M, N>, U>
+		template<typename T, int CM, int CN, typename U>
+		struct multicol_reader_map<inds_expr<T, CM, CN>, U>
 		{
 			typedef inds_multicol_reader<T, U> type;
 
 			LMAT_ENSURE_INLINE
-			static type get(const inds_expr<T, M, N>& expr)
+			static type get(const inds_expr<T, CM, CN>& expr)
 			{
 				return type(expr.nrows());
 			}
 		};
 
-		template<typename T, int M, int N, typename U>
-		struct multicol_reader_map<subs_i_expr<T, M, N>, U>
+		template<typename T, int CM, int CN, typename U>
+		struct multicol_reader_map<subs_i_expr<T, CM, CN>, U>
 		{
 			typedef subs_i_multicol_reader<T, U> type;
 
 			LMAT_ENSURE_INLINE
-			static type get(const subs_i_expr<T, M, N>&)
+			static type get(const subs_i_expr<T, CM, CN>&)
 			{
 				return type();
 			}
 		};
 
-		template<typename T, int M, int N, typename U>
-		struct multicol_reader_map<subs_j_expr<T, M, N>, U>
+		template<typename T, int CM, int CN, typename U>
+		struct multicol_reader_map<subs_j_expr<T, CM, CN>, U>
 		{
 			typedef subs_j_multicol_reader<T, U> type;
 
 			LMAT_ENSURE_INLINE
-			static type get(const subs_j_expr<T, M, N>&)
+			static type get(const subs_j_expr<T, CM, CN>&)
 			{
 				return type();
 			}
@@ -428,42 +337,42 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<typename T, int M, int N>
-	struct supports_linear_macc<inds_expr<T, M, N> > : public meta::true_ { };
+	template<typename T, int CM, int CN>
+	struct supports_linear_macc<inds_expr<T, CM, CN> > : public meta::true_ { };
 
-	template<typename T, int M, int N>
-	struct supports_linear_macc<subs_i_expr<T, M, N> > : public meta::false_ { };
+	template<typename T, int CM, int CN>
+	struct supports_linear_macc<subs_i_expr<T, CM, CN> > : public meta::false_ { };
 
-	template<typename T, int M, int N>
-	struct supports_linear_macc<subs_j_expr<T, M, N> > : public meta::false_ { };
+	template<typename T, int CM, int CN>
+	struct supports_linear_macc<subs_j_expr<T, CM, CN> > : public meta::false_ { };
 
-	template<typename VT, int M, int N, typename Kind, bool IsLinear>
-	struct supports_simd<inds_expr<VT, M, N>, Kind, IsLinear> : public meta::false_ { };
+	template<typename VT, int CM, int CN, typename Kind, bool IsLinear>
+	struct supports_simd<inds_expr<VT, CM, CN>, Kind, IsLinear> : public meta::false_ { };
 
-	template<typename VT, int M, int N, typename Kind, bool IsLinear>
-	struct supports_simd<subs_i_expr<VT, M, N>, Kind, IsLinear> : public meta::false_ { };
+	template<typename VT, int CM, int CN, typename Kind, bool IsLinear>
+	struct supports_simd<subs_i_expr<VT, CM, CN>, Kind, IsLinear> : public meta::false_ { };
 
-	template<typename VT, int M, int N, typename Kind, bool IsLinear>
-	struct supports_simd<subs_j_expr<VT, M, N>, Kind, IsLinear> : public meta::false_ { };
+	template<typename VT, int CM, int CN, typename Kind, bool IsLinear>
+	struct supports_simd<subs_j_expr<VT, CM, CN>, Kind, IsLinear> : public meta::false_ { };
 
 
-	template<typename T, int M, int N, class DMat>
+	template<typename T, int CM, int CN, class DMat>
 	LMAT_ENSURE_INLINE
-	inline void evaluate(const inds_expr<T, M, N>& sexpr, IRegularMatrix<DMat, T>& dmat)
+	inline void evaluate(const inds_expr<T, CM, CN>& sexpr, IRegularMatrix<DMat, T>& dmat)
 	{
 		evaluate_by_map(sexpr, dmat);
 	}
 
-	template<typename T, int M, int N, class DMat>
+	template<typename T, int CM, int CN, class DMat>
 	LMAT_ENSURE_INLINE
-	inline void evaluate(const subs_i_expr<T, M, N>& sexpr, IRegularMatrix<DMat, T>& dmat)
+	inline void evaluate(const subs_i_expr<T, CM, CN>& sexpr, IRegularMatrix<DMat, T>& dmat)
 	{
 		evaluate_by_map(sexpr, dmat);
 	}
 
-	template<typename T, int M, int N, class DMat>
+	template<typename T, int CM, int CN, class DMat>
 	LMAT_ENSURE_INLINE
-	inline void evaluate(const subs_j_expr<T, M, N>& sexpr, IRegularMatrix<DMat, T>& dmat)
+	inline void evaluate(const subs_j_expr<T, CM, CN>& sexpr, IRegularMatrix<DMat, T>& dmat)
 	{
 		evaluate_by_map(sexpr, dmat);
 	}

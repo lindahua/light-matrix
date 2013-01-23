@@ -56,16 +56,15 @@ namespace lmat
 
 	template<typename Arg, int CN>
 	class repcol_expr
-	: public IEWiseMatrix<repcol_expr<Arg, CN>, typename matrix_traits<Arg>::value_type>
+	: public ewise_matrix_base<repcol_expr<Arg, CN> >
 	{
 		static_assert( meta::is_regular_mat<Arg>::value, "Arg must be a regular matrix" );
-
-		typedef matrix_shape<meta::nrows<Arg>::value, CN> shape_type;
+		typedef ewise_matrix_base<repcol_expr<Arg, CN> > base_t;
 
 	public:
 		LMAT_ENSURE_INLINE
 		repcol_expr(const Arg& a, dimension<CN> rdim)
-		: m_shape(a.nrows(), rdim.value()), m_arg(a)
+		: base_t(a.nrows(), rdim.value()), m_arg(a)
 		{
 			LMAT_CHECK_DIMS( is_column(a) )
 		}
@@ -75,44 +74,22 @@ namespace lmat
 			return m_arg;
 		}
 
-		LMAT_ENSURE_INLINE index_t nrows() const
-		{
-			return m_shape.nrows();
-		}
-
-		LMAT_ENSURE_INLINE index_t ncolumns() const
-		{
-			return m_shape.ncolumns();
-		}
-
-		LMAT_ENSURE_INLINE index_t nelems() const
-		{
-			return m_shape.nelems();
-		}
-
-		LMAT_ENSURE_INLINE shape_type shape() const
-		{
-			return m_shape;
-		}
-
 	private:
-		shape_type m_shape;
 		const Arg& m_arg;
 	};
 
 
 	template<typename Arg, int CM>
 	class reprow_expr
-	: public IEWiseMatrix<reprow_expr<Arg, CM>, typename matrix_traits<Arg>::value_type>
+	: public ewise_matrix_base<reprow_expr<Arg, CM> >
 	{
 		static_assert( meta::is_regular_mat<Arg>::value, "Arg must be a regular matrix" );
-
-		typedef matrix_shape<CM, meta::ncols<Arg>::value> shape_type;
+		typedef ewise_matrix_base<reprow_expr<Arg, CM> > base_t;
 
 	public:
 		LMAT_ENSURE_INLINE
 		reprow_expr(const Arg& a, dimension<CM> cdim)
-		: m_shape(cdim.value(), a.ncolumns()), m_arg(a)
+		: base_t(cdim.value(), a.ncolumns()), m_arg(a)
 		{
 			LMAT_CHECK_DIMS( is_row(a) )
 		}
@@ -122,28 +99,7 @@ namespace lmat
 			return m_arg;
 		}
 
-		LMAT_ENSURE_INLINE index_t nrows() const
-		{
-			return m_shape.nrows();
-		}
-
-		LMAT_ENSURE_INLINE index_t ncolumns() const
-		{
-			return m_shape.ncolumns();
-		}
-
-		LMAT_ENSURE_INLINE index_t nelems() const
-		{
-			return m_shape.nelems();
-		}
-
-		LMAT_ENSURE_INLINE shape_type shape() const
-		{
-			return m_shape;
-		}
-
 	private:
-		shape_type m_shape;
 		const Arg& m_arg;
 	};
 
