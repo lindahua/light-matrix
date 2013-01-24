@@ -458,57 +458,27 @@ namespace lmat
 
 	template<class Arg>
 	struct matrix_traits<pdinv_expr<Arg> >
-	{
-		static const int num_dimensions = 2;
-		static const int ct_num_rows = meta::sq_dim<Arg>::value;
-		static const int ct_num_cols = ct_num_rows;
-
-		static const bool is_readonly = true;
-
-		typedef matrix_shape<ct_num_rows, ct_num_cols> shape_type;
-		typedef typename matrix_traits<Arg>::value_type value_type;
-		typedef typename matrix_traits<Arg>::domain domain;
-	};
-
-
-	namespace internal
-	{
-		template<class Arg>
-		LMAT_ENSURE_INLINE
-		inline typename matrix_traits<pdinv_expr<Arg> >::shape_type
-		pdinv_shape(const Arg& a)
-		{
-			LMAT_CHECK_DIMS( a.nrows() == a.ncolumns() )
-
-			typedef typename matrix_traits<pdinv_expr<Arg> >::shape_type shape_t;
-			return shape_t(a.nrows(), a.ncolumns());
-		}
-	}
+	: public matrix_xpr_traits_base<
+	  typename meta::value_type_of<Arg>::type,
+	  meta::sq_dim<Arg>::value,
+	  meta::sq_dim<Arg>::value,
+	  typename meta::domain_of<Arg>::type> { };
 
 	template<class Arg>
-	class pdinv_expr : public IMatrixXpr<pdinv_expr<Arg>, typename matrix_traits<Arg>::value_type>
+	class pdinv_expr
+	: public matrix_xpr_base<pdinv_expr<Arg> >
 	{
-	public:
-		static const int ct_dim = meta::sq_dim<Arg>::value;
-		typedef matrix_shape<ct_dim, ct_dim> shape_type;
+		typedef matrix_xpr_base<pdinv_expr<Arg> > base_t;
 
+	public:
 		LMAT_ENSURE_INLINE
 		explicit pdinv_expr(const Arg& a, char uplo_)
-		: m_uplo(lapack::internal::check_chol_uplo(uplo_))
-		, m_shape(internal::pdinv_shape(a)), m_arg(a)
-		{ }
-
-		LMAT_ENSURE_INLINE
-		index_t nrows() const { return m_shape.nrows(); }
-
-		LMAT_ENSURE_INLINE
-		index_t ncolumns() const { return m_shape.ncolumns(); }
-
-		LMAT_ENSURE_INLINE
-		index_t nelems() const { return m_shape.nelems(); }
-
-		LMAT_ENSURE_INLINE
-		shape_type shape() const { return m_shape; }
+		: base_t(a.nrows(), a.ncolumns())
+		, m_uplo(lapack::internal::check_chol_uplo(uplo_))
+		, m_arg(a)
+		{
+			LMAT_CHECK_DIMS( a.nrows() == a.ncolumns() )
+		}
 
 		LMAT_ENSURE_INLINE
 		char uplo() const
@@ -524,7 +494,6 @@ namespace lmat
 
 	private:
 		const char m_uplo;
-		shape_type m_shape;
 		const Arg& m_arg;
 	};
 

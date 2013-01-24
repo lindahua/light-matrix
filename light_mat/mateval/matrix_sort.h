@@ -250,16 +250,16 @@ namespace lmat
 
 	template<class Arg, class Alg, class Compare>
 	class sort_expr
-	: public IMatrixXpr<sort_expr<Arg, Alg, Compare>, typename matrix_traits<Arg>::value_type>
+	: public sarg_matrix_xpr_base<sort_expr<Arg, Alg, Compare>, Arg>
 	{
+		static_assert(meta::supports_random_access<Arg>::value,
+				"Arg for sort_expr should support random access iteration.");
+
+		typedef sarg_matrix_xpr_base<sort_expr<Arg, Alg, Compare>, Arg> base_t;
+
 	public:
 		sort_expr(const Arg& arg, const Alg& alg, const Compare& cmp)
-		: m_arg(arg), m_alg(alg), m_cmp(cmp) { }
-
-		LMAT_ENSURE_INLINE const Arg& arg() const
-		{
-			return m_arg;
-		}
+		: base_t(arg), m_alg(alg), m_cmp(cmp) { }
 
 		LMAT_ENSURE_INLINE const Alg& algorithm() const
 		{
@@ -271,46 +271,20 @@ namespace lmat
 			return m_cmp;
 		}
 
-		LMAT_ENSURE_INLINE index_t nrows() const
-		{
-			return m_arg.nrows();
-		}
-
-		LMAT_ENSURE_INLINE index_t ncolumns() const
-		{
-			return m_arg.ncolumns();
-		}
-
-		LMAT_ENSURE_INLINE index_t nelems() const
-		{
-			return m_arg.nelems();
-		}
-
-		LMAT_ENSURE_INLINE
-		matrix_shape<meta::nrows<Arg>::value, meta::ncols<Arg>::value>
-		shape() const
-		{
-			return m_arg.shape();
-		}
-
 	private:
-		const Arg& m_arg;
 		Alg m_alg;
 		Compare m_cmp;
 	};
 
 	template<class Arg, class Alg, class Compare>
 	class colwise_sort_expr
-	: public IMatrixXpr<colwise_sort_expr<Arg, Alg, Compare>, typename matrix_traits<Arg>::value_type>
+	: public sarg_matrix_xpr_base<colwise_sort_expr<Arg, Alg, Compare>, Arg>
 	{
+		typedef sarg_matrix_xpr_base<colwise_sort_expr<Arg, Alg, Compare>, Arg> base_t;
+
 	public:
 		colwise_sort_expr(const Arg& arg, const Alg& alg, const Compare& cmp)
-		: m_arg(arg), m_alg(alg), m_cmp(cmp) { }
-
-		LMAT_ENSURE_INLINE const Arg& arg() const
-		{
-			return m_arg;
-		}
+		: base_t(arg), m_alg(alg), m_cmp(cmp) { }
 
 		LMAT_ENSURE_INLINE const Alg& algorithm() const
 		{
@@ -322,30 +296,7 @@ namespace lmat
 			return m_cmp;
 		}
 
-		LMAT_ENSURE_INLINE index_t nrows() const
-		{
-			return m_arg.nrows();
-		}
-
-		LMAT_ENSURE_INLINE index_t ncolumns() const
-		{
-			return m_arg.ncolumns();
-		}
-
-		LMAT_ENSURE_INLINE index_t nelems() const
-		{
-			return m_arg.nelems();
-		}
-
-		LMAT_ENSURE_INLINE
-		matrix_shape<meta::nrows<Arg>::value, meta::ncols<Arg>::value>
-		shape() const
-		{
-			return m_arg.shape();
-		}
-
 	private:
-		const Arg& m_arg;
 		Alg m_alg;
 		Compare m_cmp;
 	};
@@ -479,48 +430,33 @@ namespace lmat
 
 	template<class Arg, class Alg, class Compare>
 	struct matrix_traits<sort_idx_expr<Arg, Alg, Compare> >
-	{
-		static const int num_dimensions = 2;
-		static const int ct_num_rows = meta::nrows<Arg>::value;
-		static const int ct_num_cols = meta::ncols<Arg>::value;
-
-		static const bool is_readonly = true;
-
-		typedef matrix_shape<ct_num_rows, ct_num_cols> shape_type;
-		typedef index_t value_type;
-		typedef typename matrix_traits<Arg>::domain domain;
-	};
+	: public matrix_xpr_traits_base<
+	  index_t,
+	  meta::nrows<Arg>::value,
+	  meta::ncols<Arg>::value,
+	  typename meta::domain_of<Arg>::type> { };
 
 	template<class Arg, class Alg, class Compare>
 	struct matrix_traits<colwise_sort_idx_expr<Arg, Alg, Compare> >
-	{
-		static const int num_dimensions = 2;
-		static const int ct_num_rows = meta::nrows<Arg>::value;
-		static const int ct_num_cols = meta::ncols<Arg>::value;
-
-		static const bool is_readonly = true;
-
-		typedef matrix_shape<ct_num_rows, ct_num_cols> shape_type;
-		typedef index_t value_type;
-		typedef typename matrix_traits<Arg>::domain domain;
-	};
+	: public matrix_xpr_traits_base<
+	  index_t,
+	  meta::nrows<Arg>::value,
+	  meta::ncols<Arg>::value,
+	  typename meta::domain_of<Arg>::type> { };
 
 
 	template<class Arg, class Alg, class Compare>
 	class sort_idx_expr
-	: public IMatrixXpr<sort_idx_expr<Arg, Alg, Compare>, index_t>
+	: public sarg_matrix_xpr_base<sort_idx_expr<Arg, Alg, Compare>, Arg>
 	{
 		static_assert(meta::supports_random_access<Arg>::value,
 				"Arg for sort_idx_expr should support random access iteration.");
 
+		typedef sarg_matrix_xpr_base<sort_idx_expr<Arg, Alg, Compare>, Arg> base_t;
+
 	public:
 		sort_idx_expr(const Arg& arg, const Alg& alg, const Compare& cmp)
-		: m_arg(arg), m_alg(alg), m_cmp(cmp) { }
-
-		LMAT_ENSURE_INLINE const Arg& arg() const
-		{
-			return m_arg;
-		}
+		: base_t(arg), m_alg(alg), m_cmp(cmp) { }
 
 		LMAT_ENSURE_INLINE const Alg& algorithm() const
 		{
@@ -532,46 +468,20 @@ namespace lmat
 			return m_cmp;
 		}
 
-		LMAT_ENSURE_INLINE index_t nrows() const
-		{
-			return m_arg.nrows();
-		}
-
-		LMAT_ENSURE_INLINE index_t ncolumns() const
-		{
-			return m_arg.ncolumns();
-		}
-
-		LMAT_ENSURE_INLINE index_t nelems() const
-		{
-			return m_arg.nelems();
-		}
-
-		LMAT_ENSURE_INLINE
-		matrix_shape<meta::nrows<Arg>::value, meta::ncols<Arg>::value>
-		shape() const
-		{
-			return m_arg.shape();
-		}
-
 	private:
-		const Arg& m_arg;
 		Alg m_alg;
 		Compare m_cmp;
 	};
 
 	template<class Arg, class Alg, class Compare>
 	class colwise_sort_idx_expr
-	: public IMatrixXpr<colwise_sort_idx_expr<Arg, Alg, Compare>, index_t>
+	: public sarg_matrix_xpr_base<colwise_sort_idx_expr<Arg, Alg, Compare>, Arg>
 	{
+		typedef sarg_matrix_xpr_base<colwise_sort_idx_expr<Arg, Alg, Compare>, Arg> base_t;
+
 	public:
 		colwise_sort_idx_expr(const Arg& arg, const Alg& alg, const Compare& cmp)
-		: m_arg(arg), m_alg(alg), m_cmp(cmp) { }
-
-		LMAT_ENSURE_INLINE const Arg& arg() const
-		{
-			return m_arg;
-		}
+		: base_t(arg), m_alg(alg), m_cmp(cmp) { }
 
 		LMAT_ENSURE_INLINE const Alg& algorithm() const
 		{
@@ -583,30 +493,7 @@ namespace lmat
 			return m_cmp;
 		}
 
-		LMAT_ENSURE_INLINE index_t nrows() const
-		{
-			return m_arg.nrows();
-		}
-
-		LMAT_ENSURE_INLINE index_t ncolumns() const
-		{
-			return m_arg.ncolumns();
-		}
-
-		LMAT_ENSURE_INLINE index_t nelems() const
-		{
-			return m_arg.nelems();
-		}
-
-		LMAT_ENSURE_INLINE
-		matrix_shape<meta::nrows<Arg>::value, meta::ncols<Arg>::value>
-		shape() const
-		{
-			return m_arg.shape();
-		}
-
 	private:
-		const Arg& m_arg;
 		Alg m_alg;
 		Compare m_cmp;
 	};
@@ -757,44 +644,29 @@ namespace lmat
 
 	template<class Arg, class Alg, class Compare>
 	struct matrix_traits<sortx_expr<Arg, Alg, Compare> >
-	{
-		static const int num_dimensions = 2;
-		static const int ct_num_rows = meta::nrows<Arg>::value;
-		static const int ct_num_cols = meta::ncols<Arg>::value;
-
-		static const bool is_readonly = true;
-
-		typedef matrix_shape<ct_num_rows, ct_num_cols> shape_type;
-		typedef typename sortx_value<Arg>::type value_type;
-		typedef typename matrix_traits<Arg>::domain domain;
-	};
+	: public matrix_xpr_traits_base<
+	  typename sortx_value<Arg>::type,
+	  meta::nrows<Arg>::value,
+	  meta::ncols<Arg>::value,
+	  typename meta::domain_of<Arg>::type> { };
 
 	template<class Arg, class Alg, class Compare>
 	struct matrix_traits<colwise_sortx_expr<Arg, Alg, Compare> >
-	{
-		static const int num_dimensions = 2;
-		static const int ct_num_rows = meta::nrows<Arg>::value;
-		static const int ct_num_cols = meta::ncols<Arg>::value;
+	: public matrix_xpr_traits_base<
+	  typename sortx_value<Arg>::type,
+	  meta::nrows<Arg>::value,
+	  meta::ncols<Arg>::value,
+	  typename meta::domain_of<Arg>::type> { };
 
-		static const bool is_readonly = true;
-
-		typedef matrix_shape<ct_num_rows, ct_num_cols> shape_type;
-		typedef typename sortx_value<Arg>::type value_type;
-		typedef typename matrix_traits<Arg>::domain domain;
-	};
 
 	template<class Arg, class Alg, class Compare>
 	class sortx_expr
-	: public IMatrixXpr<sortx_expr<Arg, Alg, Compare>, typename sortx_value<Arg>::type>
+	: public sarg_matrix_xpr_base<sortx_expr<Arg, Alg, Compare>, Arg>
 	{
+		typedef sarg_matrix_xpr_base<sortx_expr<Arg, Alg, Compare>, Arg> base_t;
 	public:
 		sortx_expr(const Arg& arg, const Alg& alg, const Compare& cmp)
-		: m_arg(arg), m_alg(alg), m_cmp(cmp) { }
-
-		LMAT_ENSURE_INLINE const Arg& arg() const
-		{
-			return m_arg;
-		}
+		: base_t(arg), m_alg(alg), m_cmp(cmp) { }
 
 		LMAT_ENSURE_INLINE const Alg& algorithm() const
 		{
@@ -806,46 +678,20 @@ namespace lmat
 			return m_cmp;
 		}
 
-		LMAT_ENSURE_INLINE index_t nrows() const
-		{
-			return m_arg.nrows();
-		}
-
-		LMAT_ENSURE_INLINE index_t ncolumns() const
-		{
-			return m_arg.ncolumns();
-		}
-
-		LMAT_ENSURE_INLINE index_t nelems() const
-		{
-			return m_arg.nelems();
-		}
-
-		LMAT_ENSURE_INLINE
-		matrix_shape<meta::nrows<Arg>::value, meta::ncols<Arg>::value>
-		shape() const
-		{
-			return m_arg.shape();
-		}
-
 	private:
-		const Arg& m_arg;
 		Alg m_alg;
 		Compare m_cmp;
 	};
 
 	template<class Arg, class Alg, class Compare>
 	class colwise_sortx_expr
-	: public IMatrixXpr<colwise_sortx_expr<Arg, Alg, Compare>, typename sortx_value<Arg>::type>
+	: public sarg_matrix_xpr_base<colwise_sortx_expr<Arg, Alg, Compare>, Arg>
 	{
+		typedef sarg_matrix_xpr_base<colwise_sortx_expr<Arg, Alg, Compare>, Arg> base_t;
+
 	public:
 		colwise_sortx_expr(const Arg& arg, const Alg& alg, const Compare& cmp)
-		: m_arg(arg), m_alg(alg), m_cmp(cmp) { }
-
-		LMAT_ENSURE_INLINE const Arg& arg() const
-		{
-			return m_arg;
-		}
+		: base_t(arg), m_alg(alg), m_cmp(cmp) { }
 
 		LMAT_ENSURE_INLINE const Alg& algorithm() const
 		{
@@ -857,30 +703,7 @@ namespace lmat
 			return m_cmp;
 		}
 
-		LMAT_ENSURE_INLINE index_t nrows() const
-		{
-			return m_arg.nrows();
-		}
-
-		LMAT_ENSURE_INLINE index_t ncolumns() const
-		{
-			return m_arg.ncolumns();
-		}
-
-		LMAT_ENSURE_INLINE index_t nelems() const
-		{
-			return m_arg.nelems();
-		}
-
-		LMAT_ENSURE_INLINE
-		matrix_shape<meta::nrows<Arg>::value, meta::ncols<Arg>::value>
-		shape() const
-		{
-			return m_arg.shape();
-		}
-
 	private:
-		const Arg& m_arg;
 		Alg m_alg;
 		Compare m_cmp;
 	};

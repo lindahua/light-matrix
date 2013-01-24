@@ -422,56 +422,26 @@ namespace lmat
 
 	template<class Arg>
 	struct matrix_traits<inv_expr<Arg> >
-	{
-		static const int num_dimensions = 2;
-		static const int ct_num_rows = meta::sq_dim<Arg>::value;
-		static const int ct_num_cols = ct_num_rows;
+	: public matrix_xpr_traits_base<
+	  typename meta::value_type_of<Arg>::type,
+	  meta::sq_dim<Arg>::value,
+	  meta::sq_dim<Arg>::value,
+	  typename meta::domain_of<Arg>::type> { };
 
-		static const bool is_readonly = true;
-
-		typedef matrix_shape<ct_num_rows, ct_num_cols> shape_type;
-		typedef typename matrix_traits<Arg>::value_type value_type;
-		typedef typename matrix_traits<Arg>::domain domain;
-	};
-
-
-	namespace internal
-	{
-		template<class Arg>
-		LMAT_ENSURE_INLINE
-		inline typename matrix_traits<inv_expr<Arg> >::shape_type
-		inv_shape(const Arg& a)
-		{
-			LMAT_CHECK_DIMS( a.nrows() == a.ncolumns() )
-
-			typedef typename matrix_traits<inv_expr<Arg> >::shape_type shape_t;
-			return shape_t(a.nrows(), a.ncolumns());
-		}
-	}
 
 	template<class Arg>
-	class inv_expr : public IMatrixXpr<inv_expr<Arg>, typename matrix_traits<Arg>::value_type>
+	class inv_expr
+	: public matrix_xpr_base<inv_expr<Arg> >
 	{
-	public:
-		static const int ct_dim = meta::sq_dim<Arg>::value;
-		typedef matrix_shape<ct_dim, ct_dim> shape_type;
+		typedef matrix_xpr_base<inv_expr<Arg> > base_t;
 
+	public:
 		LMAT_ENSURE_INLINE
 		explicit inv_expr(const Arg& a)
-		: m_shape(internal::inv_shape(a)), m_arg(a)
-		{ }
-
-		LMAT_ENSURE_INLINE
-		index_t nrows() const { return m_shape.nrows(); }
-
-		LMAT_ENSURE_INLINE
-		index_t ncolumns() const { return m_shape.ncolumns(); }
-
-		LMAT_ENSURE_INLINE
-		index_t nelems() const { return m_shape.nelems(); }
-
-		LMAT_ENSURE_INLINE
-		shape_type shape() const { return m_shape; }
+		: base_t(a.nrows(), a.ncolumns()), m_arg(a)
+		{
+			LMAT_CHECK_DIMS( a.nrows() == a.ncolumns() )
+		}
 
 		LMAT_ENSURE_INLINE
 		const Arg& arg() const
@@ -480,7 +450,6 @@ namespace lmat
 		}
 
 	private:
-		shape_type m_shape;
 		const Arg& m_arg;
 	};
 
