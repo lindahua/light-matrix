@@ -41,7 +41,7 @@ namespace lmat { namespace internal {
 		static size_t run(const A& a)
 		{
 			return count_by_reader(a.nelems(),
-					make_vec_accessor(atags::scalar(), in_(a)));
+					make_vec_accessor(scalar_(), in_(a)));
 
 		}
 	};
@@ -52,7 +52,7 @@ namespace lmat { namespace internal {
 		template<class A>
 		static size_t run(const A& a)
 		{
-			auto rd = make_multicol_accessor(atags::scalar(), in_(a));
+			auto rd = make_multicol_accessor(scalar_(), in_(a));
 			const index_t m = a.nrows();
 			const index_t n = a.ncolumns();
 

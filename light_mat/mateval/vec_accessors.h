@@ -77,7 +77,7 @@ namespace lmat
 	// contvec_reader
 
 	template<typename T>
-	class contvec_reader<T, atags::scalar> : public scalar_vec_accessor_base
+	class contvec_reader<T, scalar_> : public scalar_vec_accessor_base
 	{
 	public:
 		typedef T scalar_type;
@@ -97,7 +97,7 @@ namespace lmat
 
 
 	template<typename T, typename Kind>
-	class contvec_reader<T, atags::simd<Kind> > : public simd_vec_accessor_base
+	class contvec_reader<T, simd_<Kind> > : public simd_vec_accessor_base
 	{
 	public:
 		typedef T scalar_type;
@@ -127,7 +127,7 @@ namespace lmat
 	// stepvec_reader
 
 	template<typename T>
-	class stepvec_reader<T, atags::scalar> : public scalar_vec_accessor_base
+	class stepvec_reader<T, scalar_> : public scalar_vec_accessor_base
 	{
 	public:
 		typedef T scalar_type;
@@ -151,7 +151,7 @@ namespace lmat
 	// single_reader
 
 	template<typename T>
-	class single_reader<T, atags::scalar> : public scalar_vec_accessor_base
+	class single_reader<T, scalar_> : public scalar_vec_accessor_base
 	{
 	public:
 		typedef T scalar_type;
@@ -172,7 +172,7 @@ namespace lmat
 
 
 	template<typename T, typename Kind>
-	class single_reader<T, atags::simd<Kind> > : public simd_vec_accessor_base
+	class single_reader<T, simd_<Kind> > : public simd_vec_accessor_base
 	{
 	public:
 		typedef T scalar_type;
@@ -300,7 +300,7 @@ namespace lmat
 	// contvec_writer
 
 	template<typename T>
-	class contvec_writer<T, atags::scalar> : public scalar_vec_accessor_base
+	class contvec_writer<T, scalar_> : public scalar_vec_accessor_base
 	{
 	public:
 		LMAT_ENSURE_INLINE
@@ -326,7 +326,7 @@ namespace lmat
 
 
 	template<typename T, typename Kind>
-	class contvec_writer<T, atags::simd<Kind> > : public simd_vec_accessor_base
+	class contvec_writer<T, simd_<Kind> > : public simd_vec_accessor_base
 	{
 	public:
 		typedef T scalar_type;
@@ -371,7 +371,7 @@ namespace lmat
 	// stepvec_writer
 
 	template<typename T>
-	class stepvec_writer<T, atags::scalar> : public scalar_vec_accessor_base
+	class stepvec_writer<T, scalar_> : public scalar_vec_accessor_base
 	{
 	public:
 		typedef T scalar_type;
@@ -488,7 +488,7 @@ namespace lmat
 	// contvec_updater
 
 	template<typename T>
-	class contvec_updater<T, atags::scalar> : public scalar_vec_accessor_base
+	class contvec_updater<T, scalar_> : public scalar_vec_accessor_base
 	{
 	public:
 		typedef T scalar_type;
@@ -516,7 +516,7 @@ namespace lmat
 
 
 	template<typename T, typename Kind>
-	class contvec_updater<T, atags::simd<Kind> > : public simd_vec_accessor_base
+	class contvec_updater<T, simd_<Kind> > : public simd_vec_accessor_base
 	{
 	public:
 		typedef T scalar_type;
@@ -562,7 +562,7 @@ namespace lmat
 	// stepvec_updater
 
 	template<typename T>
-	class stepvec_updater<T, atags::scalar> : public scalar_vec_accessor_base
+	class stepvec_updater<T, scalar_> : public scalar_vec_accessor_base
 	{
 	public:
 		typedef T scalar_type;
@@ -676,7 +676,7 @@ namespace lmat
 	 ********************************************/
 
 	template<typename T>
-	class sum_accumulator<T, atags::scalar> : public scalar_vec_accessor_base
+	class sum_accumulator<T, scalar_> : public scalar_vec_accessor_base
 	{
 	public:
 		LMAT_ENSURE_INLINE
@@ -701,7 +701,7 @@ namespace lmat
 	};
 
 	template<typename T, typename Kind>
-	class sum_accumulator<T, atags::simd<Kind> > : public simd_vec_accessor_base
+	class sum_accumulator<T, simd_<Kind> > : public simd_vec_accessor_base
 	{
 	public:
 		typedef simd_pack<T, Kind> pack_type;
@@ -750,7 +750,7 @@ namespace lmat
 
 
 	template<typename T>
-	class max_accumulator<T, atags::scalar> : public scalar_vec_accessor_base
+	class max_accumulator<T, scalar_> : public scalar_vec_accessor_base
 	{
 	public:
 		LMAT_ENSURE_INLINE
@@ -776,7 +776,7 @@ namespace lmat
 	};
 
 	template<typename T, typename Kind>
-	class max_accumulator<T, atags::simd<Kind> > : public simd_vec_accessor_base
+	class max_accumulator<T, simd_<Kind> > : public simd_vec_accessor_base
 	{
 	public:
 		typedef simd_pack<T, Kind> pack_type;
@@ -826,7 +826,7 @@ namespace lmat
 
 
 	template<typename T>
-	class min_accumulator<T, atags::scalar> : public scalar_vec_accessor_base
+	class min_accumulator<T, scalar_> : public scalar_vec_accessor_base
 	{
 	public:
 		LMAT_ENSURE_INLINE
@@ -852,7 +852,7 @@ namespace lmat
 	};
 
 	template<typename T, typename Kind>
-	class min_accumulator<T, atags::simd<Kind> > : public simd_vec_accessor_base
+	class min_accumulator<T, simd_<Kind> > : public simd_vec_accessor_base
 	{
 	public:
 		typedef simd_pack<T, Kind> pack_type;

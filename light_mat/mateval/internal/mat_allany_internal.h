@@ -21,7 +21,7 @@ namespace lmat { namespace internal {
 
 	template<int N, typename T, class Reader>
 	LMAT_ENSURE_INLINE
-	inline bool all_impl(const dimension<N>& dim, type_<T>, atags::scalar, const Reader& rd, index_t i=0)
+	inline bool all_impl(const dimension<N>& dim, type_<T>, scalar_, const Reader& rd, index_t i=0)
 	{
 		const index_t len = dim.value();
 
@@ -36,7 +36,7 @@ namespace lmat { namespace internal {
 
 	template<int N, typename T, typename SKind, class Reader>
 	LMAT_ENSURE_INLINE
-	inline bool all_impl(const dimension<N>& dim, type_<T>, atags::simd<SKind>, const Reader& rd)
+	inline bool all_impl(const dimension<N>& dim, type_<T>, simd_<SKind>, const Reader& rd)
 	{
 		typedef simd_bpack<T, SKind> pack_t;
 
@@ -54,13 +54,13 @@ namespace lmat { namespace internal {
 			}
 		}
 
-		return all_impl(dim, type_<T>(), atags::scalar(), rd, i);
+		return all_impl(dim, type_<T>(), scalar_(), rd, i);
 	}
 
 
 	template<int N, typename T, class Reader>
 	LMAT_ENSURE_INLINE
-	inline bool any_impl(const dimension<N>& dim, type_<T>, atags::scalar, const Reader& rd, index_t i=0)
+	inline bool any_impl(const dimension<N>& dim, type_<T>, scalar_, const Reader& rd, index_t i=0)
 	{
 		const index_t len = dim.value();
 
@@ -75,7 +75,7 @@ namespace lmat { namespace internal {
 
 	template<int N, typename T, typename SKind, class Reader>
 	LMAT_ENSURE_INLINE
-	inline bool any_impl(const dimension<N>& dim, type_<T>, atags::simd<SKind>, const Reader& rd)
+	inline bool any_impl(const dimension<N>& dim, type_<T>, simd_<SKind>, const Reader& rd)
 	{
 		typedef simd_bpack<T, SKind> pack_t;
 
@@ -93,7 +93,7 @@ namespace lmat { namespace internal {
 			}
 		}
 
-		return any_impl(dim, type_<T>(), atags::scalar(), rd, i);
+		return any_impl(dim, type_<T>(), scalar_(), rd, i);
 	}
 
 

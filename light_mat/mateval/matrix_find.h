@@ -38,7 +38,7 @@ namespace lmat
 		const index_t n = a.ncolumns();
 
 		LMAT_CHECK_DIMS( d.nelems() == n )
-		auto rd = make_multicol_accessor(atags::scalar(), in_(a.derived()));
+		auto rd = make_multicol_accessor(scalar_(), in_(a.derived()));
 
 		for (index_t j = 0; j < n; ++j)
 		{
@@ -56,7 +56,7 @@ namespace lmat
 	template<class A, typename T, class Visitor>
 	inline void findl_f(const IEWiseMatrix<A, T>& a, Visitor vis)
 	{
-		auto rd = make_vec_accessor(atags::scalar(), in_(a.derived()));
+		auto rd = make_vec_accessor(scalar_(), in_(a.derived()));
 
 		const index_t n = a.nelems();
 		for (index_t i = 0; i < n; ++i)
@@ -69,7 +69,7 @@ namespace lmat
 	template<class A, typename T, class Visitor>
 	inline void find_f(const IEWiseMatrix<A, T>& a, Visitor vis)
 	{
-		auto rd = make_multicol_accessor(atags::scalar(), in_(a.derived()));
+		auto rd = make_multicol_accessor(scalar_(), in_(a.derived()));
 
 		const index_t m = a.nrows();
 		const index_t n = a.ncolumns();

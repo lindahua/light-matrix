@@ -28,7 +28,7 @@ namespace lmat { namespace internal {
 	 ********************************************/
 
 	template<int N, class Kernel, typename... Accessors>
-	inline void linear_ewise_eval(const dimension<N>& dim, atags::scalar,
+	inline void linear_ewise_eval(const dimension<N>& dim, scalar_,
 			const Kernel& kernel, const Accessors&... accessors)
 	{
 		const index_t len = dim.value();
@@ -42,7 +42,7 @@ namespace lmat { namespace internal {
 	}
 
 	template<int N, typename SKind, class Kernel, typename... Accessors>
-	inline void linear_ewise_eval(const dimension<N>& dim, atags::simd<SKind>,
+	inline void linear_ewise_eval(const dimension<N>& dim, simd_<SKind>,
 			const Kernel& kernel, const Accessors&... accessors)
 	{
 		static_assert(is_simdizable<Kernel, SKind>::value, "kernel must be simdizable.");

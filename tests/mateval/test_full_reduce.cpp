@@ -14,7 +14,7 @@
 using namespace lmat;
 using namespace lmat::test;
 
-typedef atags::simd<default_simd_kind> simd_tag;
+typedef simd_<default_simd_kind> simd_tag;
 
 inline double randunif()
 {
@@ -46,11 +46,11 @@ const index_t max_len = 48;
 			for (index_t i = 0; i < k; ++i) UpdateExpr; \
 			double r = Name(sk); \
 			ASSERT_APPROX(r, r0, tol); \
-			double r1 = Name(sk, linear_macc<atags::scalar>()); \
+			double r1 = Name(sk, linear_macc<scalar_>()); \
 			ASSERT_APPROX(r1, r0, tol); \
 			double r2 = Name(sk, linear_macc<simd_tag>()); \
 			ASSERT_APPROX(r2, r0, tol); \
-			double r3 = Name(sk, percol_macc<atags::scalar>()); \
+			double r3 = Name(sk, percol_macc<scalar_>()); \
 			ASSERT_APPROX(r3, r0, tol); \
 			double r4 = Name(sk, percol_macc<simd_tag>()); \
 			ASSERT_APPROX(r4, r0, tol); } }
@@ -68,11 +68,11 @@ const index_t max_len = 48;
 			for (index_t i = 0; i < k; ++i) UpdateExpr; \
 			double r = Name(sk1, sk2); \
 			ASSERT_APPROX(r, r0, tol); \
-			double r1 = Name(sk1, sk2, linear_macc<atags::scalar>()); \
+			double r1 = Name(sk1, sk2, linear_macc<scalar_>()); \
 			ASSERT_APPROX(r1, r0, tol); \
 			double r2 = Name(sk1, sk2, linear_macc<simd_tag>()); \
 			ASSERT_APPROX(r2, r0, tol); \
-			double r3 = Name(sk1, sk2, percol_macc<atags::scalar>()); \
+			double r3 = Name(sk1, sk2, percol_macc<scalar_>()); \
 			ASSERT_APPROX(r3, r0, tol); \
 			double r4 = Name(sk1, sk2, percol_macc<simd_tag>()); \
 			ASSERT_APPROX(r4, r0, tol); } }
@@ -99,13 +99,13 @@ SIMPLE_CASE( full_mean )
 		double r = mean(sk);
 		ASSERT_APPROX(r, r0, 1.0e-12);
 
-		r = mean(sk, linear_macc<atags::scalar>());
+		r = mean(sk, linear_macc<scalar_>());
 		ASSERT_APPROX(r, r0, 1.0e-12);
 
 		r = mean(sk, linear_macc<simd_tag>());
 		ASSERT_APPROX(r, r0, 1.0e-12);
 
-		r = mean(sk, percol_macc<atags::scalar>());
+		r = mean(sk, percol_macc<scalar_>());
 		ASSERT_APPROX(r, r0, 1.0e-12);
 
 		r = mean(sk, percol_macc<simd_tag>());
@@ -134,13 +134,13 @@ SIMPLE_CASE( full_amean )
 		double r = amean(sk);
 		ASSERT_APPROX(r, r0, 1.0e-12);
 
-		r = amean(sk, linear_macc<atags::scalar>());
+		r = amean(sk, linear_macc<scalar_>());
 		ASSERT_APPROX(r, r0, 1.0e-12);
 
 		r = amean(sk, linear_macc<simd_tag>());
 		ASSERT_APPROX(r, r0, 1.0e-12);
 
-		r = amean(sk, percol_macc<atags::scalar>());
+		r = amean(sk, percol_macc<scalar_>());
 		ASSERT_APPROX(r, r0, 1.0e-12);
 
 		r = amean(sk, percol_macc<simd_tag>());
@@ -174,13 +174,13 @@ SIMPLE_CASE( full_diff_amean )
 		double r = diff_amean(sk1, sk2);
 		ASSERT_APPROX(r, r0, tol);
 
-		r = diff_amean(sk1, sk2, linear_macc<atags::scalar>());
+		r = diff_amean(sk1, sk2, linear_macc<scalar_>());
 		ASSERT_APPROX(r, r0, tol);
 
 		r = diff_amean(sk1, sk2, linear_macc<simd_tag>());
 		ASSERT_APPROX(r, r0, tol);
 
-		r = diff_amean(sk1, sk2, percol_macc<atags::scalar>());
+		r = diff_amean(sk1, sk2, percol_macc<scalar_>());
 		ASSERT_APPROX(r, r0, tol);
 
 		r = diff_amean(sk1, sk2, percol_macc<simd_tag>());

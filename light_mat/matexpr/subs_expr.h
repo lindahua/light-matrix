@@ -208,7 +208,7 @@ namespace lmat
 		template<typename T, typename U> class subs_j_multicol_reader;
 
 		template<typename T>
-		class iota_vec_reader<T, atags::scalar> : public scalar_vec_accessor_base
+		class iota_vec_reader<T, scalar_> : public scalar_vec_accessor_base
 		{
 		public:
 			typedef T scalar_type;

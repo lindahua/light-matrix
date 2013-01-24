@@ -77,8 +77,8 @@ namespace internal {
 				supports_simd<TExpr, simd_kind, use_linear>::value;
 
 		typedef typename std::conditional<use_simd,
-				atags::simd<simd_kind>,
-				atags::scalar>::type atag;
+				simd_<simd_kind>,
+				scalar_>::type atag;
 
 		typedef typename std::conditional<use_linear,
 				linear_macc<atag>,
@@ -98,8 +98,8 @@ namespace internal {
 			supports_simd<TExpr, simd_kind, false>::value;
 
 		typedef typename std::conditional<use_simd,
-				atags::simd<simd_kind>,
-				atags::scalar>::type atag;
+				simd_<simd_kind>,
+				scalar_>::type atag;
 	};
 
 
@@ -115,8 +115,8 @@ namespace internal {
 			supports_simd<TExpr, simd_kind, false>::value;
 
 		typedef typename std::conditional<use_simd,
-				atags::simd<simd_kind>,
-				atags::scalar>::type atag;
+				simd_<simd_kind>,
+				scalar_>::type atag;
 	};
 
 

@@ -157,19 +157,19 @@ void test_percol_ewise_reprow()
 
 MN_CASE( percol_ewise_scalar_single_cont )
 {
-	test_percol_ewise_single<cont, atags::scalar, M, N>();
+	test_percol_ewise_single<cont, scalar_, M, N>();
 }
 
 MN_CASE( percol_ewise_sse_single_cont )
 {
-	test_percol_ewise_single<cont, atags::simd<sse_t>, M, N>();
+	test_percol_ewise_single<cont, simd_<sse_t>, M, N>();
 }
 
 #ifdef LMAT_HAS_AVX
 
 MN_CASE( percol_ewise_avx_single_cont )
 {
-	test_percol_ewise_single<cont, atags::simd<avx_t>, M, N>();
+	test_percol_ewise_single<cont, simd_<avx_t>, M, N>();
 }
 
 #endif
@@ -177,19 +177,19 @@ MN_CASE( percol_ewise_avx_single_cont )
 
 MN_CASE( percol_ewise_scalar_repcol_cont )
 {
-	test_percol_ewise_repcol<cont, atags::scalar, M, N>();
+	test_percol_ewise_repcol<cont, scalar_, M, N>();
 }
 
 MN_CASE( percol_ewise_sse_repcol_cont )
 {
-	test_percol_ewise_repcol<cont, atags::simd<sse_t>, M, N>();
+	test_percol_ewise_repcol<cont, simd_<sse_t>, M, N>();
 }
 
 #ifdef LMAT_HAS_AVX
 
 MN_CASE( percol_ewise_avx_repcol_cont )
 {
-	test_percol_ewise_repcol<cont, atags::simd<avx_t>, M, N>();
+	test_percol_ewise_repcol<cont, simd_<avx_t>, M, N>();
 }
 
 #endif
@@ -200,14 +200,14 @@ MN_CASE( percol_ewise_avx_repcol_cont )
 
 #define DEFINE_PERCOL_EWISE_SCALAR_TEST( STag, DTag ) \
 		MN_CASE( percol_ewise_scalar_##STag##_##DTag  ) { \
-			test_percol_ewise<STag, DTag, atags::scalar, M, N>(); } \
+			test_percol_ewise<STag, DTag, scalar_, M, N>(); } \
 		AUTO_TPACK( percol_ewise_scalar_##STag##_##DTag ) {\
 			ADD_MN_CASE_3X3( percol_ewise_scalar_##STag##_##DTag, DM, DN ) \
 		}
 
 #define DEFINE_PERCOL_EWISE_SIMD_TEST( SKindName, STag, DTag ) \
 		MN_CASE( percol_ewise_##SKindName##_##STag##_##DTag  ) { \
-			test_percol_ewise<STag, DTag, atags::simd<SKindName##_t>, M, N>(); } \
+			test_percol_ewise<STag, DTag, simd_<SKindName##_t>, M, N>(); } \
 		AUTO_TPACK( percol_ewise_##SKindName##_##STag##_##DTag ) { \
 			ADD_MN_CASE_3X3( percol_ewise_##SKindName##_##STag##_##DTag, DM, DN ) \
 		}
@@ -280,19 +280,19 @@ AUTO_TPACK( percol_ewise_avx_repcol_cont )
 
 MN_CASE( percol_ewise_scalar_reprow_cont )
 {
-	test_percol_ewise_reprow<cont, atags::scalar, M, N>();
+	test_percol_ewise_reprow<cont, scalar_, M, N>();
 }
 
 MN_CASE( percol_ewise_sse_reprow_cont )
 {
-	test_percol_ewise_reprow<cont, atags::simd<sse_t>, M, N>();
+	test_percol_ewise_reprow<cont, simd_<sse_t>, M, N>();
 }
 
 #ifdef LMAT_HAS_AVX
 
 MN_CASE( percol_ewise_avx_reprow_cont )
 {
-	test_percol_ewise_reprow<cont, atags::simd<avx_t>, M, N>();
+	test_percol_ewise_reprow<cont, simd_<avx_t>, M, N>();
 }
 
 #endif

@@ -20,8 +20,8 @@
 using namespace lmat;
 using namespace lmat::test;
 
-typedef atags::scalar scalar_tag;
-typedef atags::simd<default_simd_kind> simd_tag;
+typedef scalar_ scalar_tag;
+typedef simd_<default_simd_kind> simd_tag;
 
 
 template<class FTag, class A>

@@ -82,7 +82,7 @@ namespace lmat
 	{
 		typedef default_simd_kind kind;
 		const bool use_simd = supports_simd<Mat, kind, false>::value;
-		typedef typename std::conditional<use_simd, atags::simd<kind>, atags::scalar>::type U;
+		typedef typename std::conditional<use_simd, simd_<kind>, scalar_>::type U;
 
 		LMAT_CHECK_DIMS( dmat.nelems() == mat.ncolumns() )
 		internal::colwise_all_(mat.shape(), type_<T>(), mat.derived(), dmat.derived(), val, U());
@@ -93,7 +93,7 @@ namespace lmat
 			IRegularMatrix<DMat, bool>& dmat, bool val=true)
 	{
 		LMAT_CHECK_DIMS( dmat.nelems() == mat.ncolumns() )
-		internal::colwise_all_(mat.shape(), type_<bool>(), mat.derived(), dmat.derived(), val, atags::scalar());
+		internal::colwise_all_(mat.shape(), type_<bool>(), mat.derived(), dmat.derived(), val, scalar_());
 	}
 
 	template<typename T, class Mat, class DMat>
@@ -102,7 +102,7 @@ namespace lmat
 	{
 		typedef default_simd_kind kind;
 		const bool use_simd = supports_simd<Mat, kind, false>::value;
-		typedef typename std::conditional<use_simd, atags::simd<kind>, atags::scalar>::type U;
+		typedef typename std::conditional<use_simd, simd_<kind>, scalar_>::type U;
 
 		LMAT_CHECK_DIMS( dmat.nelems() == mat.ncolumns() )
 		internal::colwise_any_(mat.shape(), type_<T>(), mat.derived(), dmat.derived(), val, U());
@@ -114,7 +114,7 @@ namespace lmat
 	{
 
 		LMAT_CHECK_DIMS( dmat.nelems() == mat.ncolumns() )
-		internal::colwise_any_(mat.shape(), type_<bool>(), mat.derived(), dmat.derived(), val, atags::scalar());
+		internal::colwise_any_(mat.shape(), type_<bool>(), mat.derived(), dmat.derived(), val, scalar_());
 	}
 }
 

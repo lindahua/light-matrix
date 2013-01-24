@@ -32,7 +32,7 @@ namespace lmat {
 	template<int N, class Folder, class Reader>
 	LMAT_ENSURE_INLINE
 	inline typename Folder::value_type
-	fold_impl(const dimension<N>& dim, atags::scalar, const Folder& folder, const Reader& rd)
+	fold_impl(const dimension<N>& dim, scalar_, const Folder& folder, const Reader& rd)
 	{
 		typedef typename Folder::value_type T;
 		T r = folder.init(rd.scalar(0));
@@ -43,7 +43,7 @@ namespace lmat {
 
 	template<int N, typename SKind, class Folder, class Reader>
 	inline typename Folder::value_type
-	fold_impl(const dimension<N>& dim, atags::simd<SKind>, const Folder& folder, const Reader& rd)
+	fold_impl(const dimension<N>& dim, simd_<SKind>, const Folder& folder, const Reader& rd)
 	{
 		typedef typename Folder::value_type T;
 		typedef typename simdize_map<Folder, SKind>::type simd_folder_t;

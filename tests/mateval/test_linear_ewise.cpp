@@ -205,50 +205,50 @@ void test_linear_ewise_varysize()
 
 MN_CASE( linear_ewise_scalar_cont_cont  )
 {
-	test_linear_ewise_cont_cont<atags::scalar, M, N>();
+	test_linear_ewise_cont_cont<scalar_, M, N>();
 }
 
 N_CASE( linear_ewise_scalar_cont_stepcol  )
 {
-	test_linear_ewise_col<atags::scalar, cont, grid, N>();
+	test_linear_ewise_col<scalar_, cont, grid, N>();
 }
 
 N_CASE( linear_ewise_scalar_stepcol_cont  )
 {
-	test_linear_ewise_col<atags::scalar, grid, cont, N>();
+	test_linear_ewise_col<scalar_, grid, cont, N>();
 }
 
 N_CASE( linear_ewise_scalar_stepcol_stepcol  )
 {
-	test_linear_ewise_col<atags::scalar, grid, grid, N>();
+	test_linear_ewise_col<scalar_, grid, grid, N>();
 }
 
 N_CASE( linear_ewise_scalar_cont_steprow  )
 {
-	test_linear_ewise_row<atags::scalar, cont, bloc, N>();
+	test_linear_ewise_row<scalar_, cont, bloc, N>();
 }
 
 N_CASE( linear_ewise_scalar_steprow_cont  )
 {
-	test_linear_ewise_row<atags::scalar, bloc, cont, N>();
+	test_linear_ewise_row<scalar_, bloc, cont, N>();
 }
 
 N_CASE( linear_ewise_scalar_steprow_steprow  )
 {
-	test_linear_ewise_row<atags::scalar, bloc, bloc, N>();
+	test_linear_ewise_row<scalar_, bloc, bloc, N>();
 }
 
 
 MN_CASE( linear_ewise_sse_cont_cont  )
 {
-	test_linear_ewise_cont_cont<atags::simd<sse_t>, M, N>();
+	test_linear_ewise_cont_cont<simd_<sse_t>, M, N>();
 }
 
 #ifdef LMAT_HAS_AVX
 
 MN_CASE( linear_ewise_avx_cont_cont  )
 {
-	test_linear_ewise_cont_cont<atags::simd<avx_t>, M, N>();
+	test_linear_ewise_cont_cont<simd_<avx_t>, M, N>();
 }
 
 #endif
@@ -256,19 +256,19 @@ MN_CASE( linear_ewise_avx_cont_cont  )
 
 MN_CASE( linear_ewise_scalar_single_cont )
 {
-	test_linear_ewise_single_cont<atags::scalar, M, N>();
+	test_linear_ewise_single_cont<scalar_, M, N>();
 }
 
 MN_CASE( linear_ewise_sse_single_cont )
 {
-	test_linear_ewise_single_cont<atags::simd<sse_t>, M, N>();
+	test_linear_ewise_single_cont<simd_<sse_t>, M, N>();
 }
 
 #ifdef LMAT_HAS_AVX
 
 MN_CASE( linear_ewise_avx_single_cont )
 {
-	test_linear_ewise_single_cont<atags::simd<avx_t>, M, N>();
+	test_linear_ewise_single_cont<simd_<avx_t>, M, N>();
 }
 
 #endif
@@ -276,19 +276,19 @@ MN_CASE( linear_ewise_avx_single_cont )
 
 MN_CASE( linear_ewise_scalar_map )
 {
-	test_linear_ewise_map<atags::scalar, M, N>();
+	test_linear_ewise_map<scalar_, M, N>();
 }
 
 MN_CASE( linear_ewise_sse_map )
 {
-	test_linear_ewise_map<atags::simd<sse_t>, M, N>();
+	test_linear_ewise_map<simd_<sse_t>, M, N>();
 }
 
 #ifdef LMAT_HAS_AVX
 
 MN_CASE( linear_ewise_avx_map )
 {
-	test_linear_ewise_map<atags::simd<avx_t>, M, N>();
+	test_linear_ewise_map<simd_<avx_t>, M, N>();
 }
 
 #endif
@@ -296,18 +296,18 @@ MN_CASE( linear_ewise_avx_map )
 
 SIMPLE_CASE( linear_ewise_varysize_scalar )
 {
-	test_linear_ewise_varysize<atags::scalar>();
+	test_linear_ewise_varysize<scalar_>();
 }
 
 SIMPLE_CASE( linear_ewise_varysize_sse )
 {
-	test_linear_ewise_varysize<atags::simd<sse_t> >();
+	test_linear_ewise_varysize<simd_<sse_t> >();
 }
 
 #ifdef LMAT_HAS_AVX
 SIMPLE_CASE( linear_ewise_varysize_avx )
 {
-	test_linear_ewise_varysize<atags::simd<avx_t> >();
+	test_linear_ewise_varysize<simd_<avx_t> >();
 }
 #endif
 

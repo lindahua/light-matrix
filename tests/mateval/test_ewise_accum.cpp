@@ -346,19 +346,19 @@ void test_accum_rowwise()
 
 MN_CASE( ewise_accum_linear_scalar )
 {
-	test_linear_accum<atags::scalar, M, N>();
+	test_linear_accum<scalar_, M, N>();
 }
 
 MN_CASE( ewise_accum_linear_sse )
 {
-	test_linear_accum<atags::simd<sse_t>, M, N>();
+	test_linear_accum<simd_<sse_t>, M, N>();
 }
 
 #ifdef LMAT_HAS_AVX
 
 MN_CASE( ewise_accum_linear_avx )
 {
-	test_linear_accum<atags::simd<avx_t>, M, N>();
+	test_linear_accum<simd_<avx_t>, M, N>();
 }
 
 #endif
@@ -368,19 +368,19 @@ MN_CASE( ewise_accum_linear_avx )
 
 MN_CASE( ewise_accum_percol_scalar )
 {
-	test_percol_accum<atags::scalar, M, N>();
+	test_percol_accum<scalar_, M, N>();
 }
 
 MN_CASE( ewise_accum_percol_sse )
 {
-	test_percol_accum<atags::simd<sse_t>, M, N>();
+	test_percol_accum<simd_<sse_t>, M, N>();
 }
 
 #ifdef LMAT_HAS_AVX
 
 MN_CASE( ewise_accum_percol_avx )
 {
-	test_percol_accum<atags::simd<avx_t>, M, N>();
+	test_percol_accum<simd_<avx_t>, M, N>();
 }
 
 #endif
@@ -390,57 +390,57 @@ MN_CASE( ewise_accum_percol_avx )
 
 MN_CASE( ewise_accum_colwise_scalar_cont )
 {
-	test_accum_colwise<atags::scalar, cont, M, N>();
+	test_accum_colwise<scalar_, cont, M, N>();
 }
 
 MN_CASE( ewise_accum_colwise_sse_cont )
 {
-	test_accum_colwise<atags::simd<sse_t>, cont, M, N>();
+	test_accum_colwise<simd_<sse_t>, cont, M, N>();
 }
 
 #ifdef LMAT_HAS_AVX
 
 MN_CASE( ewise_accum_colwise_avx_cont )
 {
-	test_accum_colwise<atags::simd<avx_t>, cont, M, N>();
+	test_accum_colwise<simd_<avx_t>, cont, M, N>();
 }
 
 #endif
 
 MN_CASE( ewise_accum_colwise_scalar_bloc )
 {
-	test_accum_colwise<atags::scalar, bloc, M, N>();
+	test_accum_colwise<scalar_, bloc, M, N>();
 }
 
 MN_CASE( ewise_accum_colwise_sse_bloc )
 {
-	test_accum_colwise<atags::simd<sse_t>, bloc, M, N>();
+	test_accum_colwise<simd_<sse_t>, bloc, M, N>();
 }
 
 #ifdef LMAT_HAS_AVX
 
 MN_CASE( ewise_accum_colwise_avx_bloc )
 {
-	test_accum_colwise<atags::simd<avx_t>, bloc, M, N>();
+	test_accum_colwise<simd_<avx_t>, bloc, M, N>();
 }
 
 #endif
 
 MN_CASE( ewise_accum_colwise_scalar_grid )
 {
-	test_accum_colwise<atags::scalar, grid, M, N>();
+	test_accum_colwise<scalar_, grid, M, N>();
 }
 
 MN_CASE( ewise_accum_colwise_sse_grid )
 {
-	test_accum_colwise<atags::simd<sse_t>, grid, M, N>();
+	test_accum_colwise<simd_<sse_t>, grid, M, N>();
 }
 
 #ifdef LMAT_HAS_AVX
 
 MN_CASE( ewise_accum_colwise_avx_grid )
 {
-	test_accum_colwise<atags::simd<avx_t>, grid, M, N>();
+	test_accum_colwise<simd_<avx_t>, grid, M, N>();
 }
 
 #endif
@@ -450,45 +450,45 @@ MN_CASE( ewise_accum_colwise_avx_grid )
 
 MN_CASE( ewise_accum_rowwise_scalar_cont )
 {
-	test_accum_rowwise<atags::scalar, cont, M, N>();
+	test_accum_rowwise<scalar_, cont, M, N>();
 }
 
 MN_CASE( ewise_accum_rowwise_sse_cont )
 {
-	test_accum_rowwise<atags::simd<sse_t>, cont, M, N>();
+	test_accum_rowwise<simd_<sse_t>, cont, M, N>();
 }
 
 #ifdef LMAT_HAS_AVX
 
 MN_CASE( ewise_accum_rowwise_avx_cont )
 {
-	test_accum_rowwise<atags::simd<avx_t>, cont, M, N>();
+	test_accum_rowwise<simd_<avx_t>, cont, M, N>();
 }
 
 #endif
 
 MN_CASE( ewise_accum_rowwise_scalar_bloc )
 {
-	test_accum_rowwise<atags::scalar, bloc, M, N>();
+	test_accum_rowwise<scalar_, bloc, M, N>();
 }
 
 MN_CASE( ewise_accum_rowwise_sse_bloc )
 {
-	test_accum_rowwise<atags::simd<sse_t>, bloc, M, N>();
+	test_accum_rowwise<simd_<sse_t>, bloc, M, N>();
 }
 
 #ifdef LMAT_HAS_AVX
 
 MN_CASE( ewise_accum_rowwise_avx_bloc )
 {
-	test_accum_rowwise<atags::simd<avx_t>, bloc, M, N>();
+	test_accum_rowwise<simd_<avx_t>, bloc, M, N>();
 }
 
 #endif
 
 MN_CASE( ewise_accum_rowwise_scalar_grid )
 {
-	test_accum_rowwise<atags::scalar, grid, M, N>();
+	test_accum_rowwise<scalar_, grid, M, N>();
 }
 
 

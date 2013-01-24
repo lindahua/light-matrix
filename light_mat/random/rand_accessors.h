@@ -30,9 +30,9 @@ namespace lmat
 	 ********************************************/
 
 	template<typename RStream, typename Distr>
-	class rand_vec_reader<RStream, Distr, atags::scalar> : public scalar_vec_accessor_base
+	class rand_vec_reader<RStream, Distr, scalar_> : public scalar_vec_accessor_base
 	{
-		typedef atags::scalar atag;
+		typedef scalar_ atag;
 		typedef typename Distr::result_type result_t;
 
 	public:
@@ -53,9 +53,9 @@ namespace lmat
 	};
 
 	template<typename RStream, typename Distr, typename Kind>
-	class rand_vec_reader<RStream, Distr, atags::simd<Kind>> : public simd_vec_accessor_base
+	class rand_vec_reader<RStream, Distr, simd_<Kind>> : public simd_vec_accessor_base
 	{
-		typedef atags::simd<Kind> atag;
+		typedef simd_<Kind> atag;
 
 		typedef typename Distr::result_type result_t;
 		typedef typename simdize_map<Distr, Kind>::type simd_distr_t;

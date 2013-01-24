@@ -214,7 +214,7 @@ struct linearscalar_copy
 
 	void operator() () const
 	{
-		typedef atags::scalar tag;
+		typedef scalar_ tag;
 		ewise(copy_kernel<T>(), tag())(src.nelems(), in_(src), out_(dst));
 	}
 };
@@ -241,7 +241,7 @@ struct linearsimd_copy
 
 	void operator() () const
 	{
-		typedef atags::simd<default_simd_kind> tag;
+		typedef simd_<default_simd_kind> tag;
 		ewise(copy_kernel<T>(), tag())(src.nelems(), in_(src), out_(dst));
 	}
 };
@@ -268,7 +268,7 @@ struct percolscalar_copy
 
 	void operator() () const
 	{
-		typedef atags::scalar tag;
+		typedef scalar_ tag;
 		percol(ewise(copy_kernel<T>(), tag()), src.shape(), in_(src), out_(dst));
 	}
 };
@@ -295,7 +295,7 @@ struct percolsimd_copy
 
 	void operator() () const
 	{
-		typedef atags::simd<default_simd_kind> tag;
+		typedef simd_<default_simd_kind> tag;
 		percol(ewise(copy_kernel<T>(), tag()), src.shape(), in_(src), out_(dst));
 	}
 };

@@ -19,20 +19,16 @@
 
 namespace lmat
 {
+	struct scalar_ { };
+
+	template<typename Kind>
+	struct simd_ { };
+
 
 	// access tags
 
 	namespace atags
 	{
-		// access units
-
-		struct scalar { };
-
-		template<typename Kind>
-		struct simd { };
-
-		// access patterns
-
 		struct normal { };
 		struct single { };
 		struct repcol { };
@@ -52,7 +48,7 @@ namespace lmat
 	}
 
 
-	typedef atags::simd<default_simd_kind> default_access_unit_t;
+	typedef simd_<default_simd_kind> default_access_unit_t;
 
 	// argument wrapper
 

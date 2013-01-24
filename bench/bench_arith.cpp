@@ -130,7 +130,7 @@ struct bench_kernel_linear_scalar : public bench_arith_base<T>
 	void operator() () const
 	{
 		const index_t N = this->a.nelems();
-		ewise(calc_kernel<T>(), atags::scalar())(N,
+		ewise(calc_kernel<T>(), scalar_())(N,
 				in_(this->a), in_(this->b), out_(this->dst));
 	}
 };
@@ -166,7 +166,7 @@ struct bench_kernel_percol_scalar : public bench_arith_base<T>
 	{
 		const index_t m = this->a.nrows();
 		const index_t n = this->a.ncolumns();
-		percol(ewise(calc_kernel<T>(), atags::scalar()), m, n,
+		percol(ewise(calc_kernel<T>(), scalar_()), m, n,
 				in_(this->a), in_(this->b), out_(this->dst));
 	}
 };
@@ -205,7 +205,7 @@ struct bench_expr_linear_scalar : public bench_arith_base<T>
 		const cref_matrix<T>& b = this->b;
 		ref_matrix<T>& dst = this->dst;
 
-		linear_macc<atags::scalar> policy;
+		linear_macc<scalar_> policy;
 		evaluate(MAT_EXPR, dst, policy);
 	}
 };
@@ -225,7 +225,7 @@ struct bench_expr_linear_simd : public bench_arith_base<T>
 		const cref_matrix<T>& b = this->b;
 		ref_matrix<T>& dst = this->dst;
 
-		linear_macc<atags::simd<default_simd_kind> > policy;
+		linear_macc<simd_<default_simd_kind> > policy;
 		evaluate(MAT_EXPR, dst, policy);
 	}
 };
@@ -246,7 +246,7 @@ struct bench_expr_percol_scalar : public bench_arith_base<T>
 		const cref_matrix<T>& b = this->b;
 		ref_matrix<T>& dst = this->dst;
 
-		percol_macc<atags::scalar> policy;
+		percol_macc<scalar_> policy;
 		evaluate(MAT_EXPR, dst, policy);
 	}
 };
@@ -266,7 +266,7 @@ struct bench_expr_percol_simd : public bench_arith_base<T>
 		const cref_matrix<T>& b = this->b;
 		ref_matrix<T>& dst = this->dst;
 
-		percol_macc<atags::simd<default_simd_kind> > policy;
+		percol_macc<simd_<default_simd_kind> > policy;
 		evaluate(MAT_EXPR, dst, policy);
 	}
 };

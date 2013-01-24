@@ -113,8 +113,8 @@ namespace lmat
 				supports_simd<S, default_simd_kind, prefer_linear>::value;
 
 		typedef typename std::conditional<prefer_simd,
-				atags::simd<default_simd_kind>,
-				atags::scalar >::type atag;
+				simd_<default_simd_kind>,
+				scalar_>::type atag;
 
 		typedef typename std::conditional<prefer_linear,
 				linear_macc<atag>,
@@ -135,8 +135,8 @@ namespace lmat
 				supports_simd<D, default_simd_kind, prefer_linear>::value;
 
 		typedef typename std::conditional<prefer_simd,
-				atags::simd<default_simd_kind>,
-				atags::scalar >::type atag;
+				simd_<default_simd_kind>,
+				scalar_>::type atag;
 
 		typedef typename std::conditional<prefer_linear,
 				linear_macc<atag>,

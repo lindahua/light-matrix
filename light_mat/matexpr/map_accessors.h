@@ -31,9 +31,9 @@ namespace lmat
 	 ********************************************/
 
 	template<typename Fun, typename Rd1>
-	class map_vec_reader<Fun, atags::scalar, Rd1> : public scalar_vec_accessor_base
+	class map_vec_reader<Fun, scalar_, Rd1> : public scalar_vec_accessor_base
 	{
-		typedef atags::scalar atag;
+		typedef scalar_ atag;
 		typedef typename Fun::result_type result_t;
 
 	public:
@@ -54,9 +54,9 @@ namespace lmat
 	};
 
 	template<typename Fun, typename Kind, typename Rd1>
-	class map_vec_reader<Fun, atags::simd<Kind>, Rd1> : public simd_vec_accessor_base
+	class map_vec_reader<Fun, simd_<Kind>, Rd1> : public simd_vec_accessor_base
 	{
-		typedef atags::simd<Kind> atag;
+		typedef simd_<Kind> atag;
 
 		typedef typename Fun::result_type result_t;
 		typedef typename simdize_map<Fun, Kind>::type simd_fun_t;
@@ -90,9 +90,9 @@ namespace lmat
 
 
 	template<typename Fun, typename Rd1, typename Rd2>
-	class map_vec_reader<Fun, atags::scalar, Rd1, Rd2> : public scalar_vec_accessor_base
+	class map_vec_reader<Fun, scalar_, Rd1, Rd2> : public scalar_vec_accessor_base
 	{
-		typedef atags::scalar atag;
+		typedef scalar_ atag;
 		typedef typename Fun::result_type result_t;
 
 	public:
@@ -114,9 +114,9 @@ namespace lmat
 	};
 
 	template<typename Fun, typename Kind, typename Rd1, typename Rd2>
-	class map_vec_reader<Fun, atags::simd<Kind>, Rd1, Rd2> : public simd_vec_accessor_base
+	class map_vec_reader<Fun, simd_<Kind>, Rd1, Rd2> : public simd_vec_accessor_base
 	{
-		typedef atags::simd<Kind> atag;
+		typedef simd_<Kind> atag;
 
 		typedef typename Fun::result_type result_t;
 		typedef typename simdize_map<Fun, Kind>::type simd_fun_t;
@@ -151,9 +151,9 @@ namespace lmat
 
 
 	template<typename Fun, typename Rd1, typename Rd2, typename Rd3>
-	class map_vec_reader<Fun, atags::scalar, Rd1, Rd2, Rd3> : public scalar_vec_accessor_base
+	class map_vec_reader<Fun, scalar_, Rd1, Rd2, Rd3> : public scalar_vec_accessor_base
 	{
-		typedef atags::scalar atag;
+		typedef scalar_ atag;
 		typedef typename Fun::result_type result_t;
 
 	public:
@@ -177,9 +177,9 @@ namespace lmat
 	};
 
 	template<typename Fun, typename Kind, typename Rd1, typename Rd2, typename Rd3>
-	class map_vec_reader<Fun, atags::simd<Kind>, Rd1, Rd2, Rd3> : public simd_vec_accessor_base
+	class map_vec_reader<Fun, simd_<Kind>, Rd1, Rd2, Rd3> : public simd_vec_accessor_base
 	{
-		typedef atags::simd<Kind> atag;
+		typedef simd_<Kind> atag;
 
 		typedef typename Fun::result_type result_t;
 		typedef typename simdize_map<Fun, Kind>::type simd_fun_t;

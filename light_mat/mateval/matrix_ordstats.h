@@ -74,7 +74,7 @@ namespace lmat
 
 		index_t p;
 		T s;
-		internal::_find_max(make_vec_accessor(atags::scalar(), in_(a.derived())),
+		internal::_find_max(make_vec_accessor(scalar_(), in_(a.derived())),
 				n, p, s);
 		return p;
 	}
@@ -90,7 +90,7 @@ namespace lmat
 
 		index_t p;
 		T s;
-		internal::_find_min(make_vec_accessor(atags::scalar(), in_(a.derived())),
+		internal::_find_min(make_vec_accessor(scalar_(), in_(a.derived())),
 				n, p, s);
 		return p;
 	}
@@ -106,7 +106,7 @@ namespace lmat
 
 		index_t p;
 		T s;
-		internal::_find_max(make_vec_accessor(atags::scalar(), in_(a.derived())),
+		internal::_find_max(make_vec_accessor(scalar_(), in_(a.derived())),
 				n, p, s);
 		return std::make_pair(p, s);
 	}
@@ -122,7 +122,7 @@ namespace lmat
 
 		index_t p;
 		T s;
-		internal::_find_min(make_vec_accessor(atags::scalar(), in_(a.derived())),
+		internal::_find_min(make_vec_accessor(scalar_(), in_(a.derived())),
 				n, p, s);
 		return std::make_pair(p, s);
 	}
@@ -144,7 +144,7 @@ namespace lmat
 		index_t p;
 		T s;
 
-		auto rd = make_multicol_accessor(atags::scalar(), in_(a.derived()));
+		auto rd = make_multicol_accessor(scalar_(), in_(a.derived()));
 
 		for (index_t j = 0; j < n; ++j)
 		{
@@ -169,7 +169,7 @@ namespace lmat
 		index_t p;
 		T s;
 
-		auto rd = make_multicol_accessor(atags::scalar(), in_(a.derived()));
+		auto rd = make_multicol_accessor(scalar_(), in_(a.derived()));
 
 		for (index_t j = 0; j < n; ++j)
 		{
@@ -199,7 +199,7 @@ namespace lmat
 		index_t p;
 		T s;
 
-		auto rd = make_multicol_accessor(atags::scalar(), in_(a.derived()));
+		auto rd = make_multicol_accessor(scalar_(), in_(a.derived()));
 
 		for (index_t j = 0; j < n; ++j)
 		{
@@ -229,7 +229,7 @@ namespace lmat
 		index_t p;
 		T s;
 
-		auto rd = make_multicol_accessor(atags::scalar(), in_(a.derived()));
+		auto rd = make_multicol_accessor(scalar_(), in_(a.derived()));
 
 		for (index_t j = 0; j < n; ++j)
 		{
