@@ -276,7 +276,7 @@ namespace lmat
 	template<class Mat, typename U>
 	LMAT_ENSURE_INLINE
 	inline typename internal::multicol_reader_map<Mat, U>::type
-	make_multicol_accessor(U, const in_wrap<Mat, atags::normal>& wrap)
+	make_multicol_accessor(U, const arg_wrap<Mat, atags::in>& wrap)
 	{
 		return internal::multicol_reader_map<Mat, U>::get(wrap.arg());
 	}
@@ -284,7 +284,7 @@ namespace lmat
 	template<typename T, typename U>
 	LMAT_ENSURE_INLINE
 	inline multicol_single_reader<T, U>
-	make_multicol_accessor(U, const in_wrap<T, atags::single>& wrap)
+	make_multicol_accessor(U, const arg_wrap<T, atags::single>& wrap)
 	{
 		return multicol_single_reader<T, U>(wrap.arg());
 	}
@@ -292,7 +292,7 @@ namespace lmat
 	template<class Mat, typename U>
 	LMAT_ENSURE_INLINE
 	inline typename internal::repeatcol_reader_map<Mat, U>::type
-	make_multicol_accessor(U, const in_wrap<Mat, atags::repcol>& wrap)
+	make_multicol_accessor(U, const arg_wrap<Mat, atags::repcol>& wrap)
 	{
 		typedef typename internal::repeatcol_reader_map<Mat, U>::type type;
 		return type(wrap.arg());
@@ -301,7 +301,7 @@ namespace lmat
 	template<class Mat, typename U>
 	LMAT_ENSURE_INLINE
 	inline typename internal::repeatrow_reader_map<Mat, U>::type
-	make_multicol_accessor(U, const in_wrap<Mat, atags::reprow>& wrap)
+	make_multicol_accessor(U, const arg_wrap<Mat, atags::reprow>& wrap)
 	{
 		typedef typename internal::repeatrow_reader_map<Mat, U>::type type;
 		return type(wrap.arg());
@@ -389,7 +389,7 @@ namespace lmat
 	template<class Mat, typename U>
 	LMAT_ENSURE_INLINE
 	inline typename internal::multicol_writer_map<Mat, U>::type
-	make_multicol_accessor(U, const out_wrap<Mat, atags::normal>& wrap)
+	make_multicol_accessor(U, const arg_wrap<Mat, atags::out>& wrap)
 	{
 		typedef typename internal::multicol_writer_map<Mat, U>::type type;
 		return type(wrap.arg());
@@ -477,7 +477,7 @@ namespace lmat
 	template<class Mat, typename U>
 	LMAT_ENSURE_INLINE
 	inline typename internal::multicol_updater_map<Mat, U>::type
-	make_multicol_accessor(U, const in_out_wrap<Mat, atags::normal>& wrap)
+	make_multicol_accessor(U, const arg_wrap<Mat, atags::in_out>& wrap)
 	{
 		typedef typename internal::multicol_updater_map<Mat, U>::type type;
 		return type(wrap.arg());
@@ -747,7 +747,7 @@ namespace lmat
 	template<typename T, typename U>
 	LMAT_ENSURE_INLINE
 	inline multicol_sum_accumulator<T, U>
-	make_multicol_accessor(U, const in_out_wrap<T, atags::sum>& wrap)
+	make_multicol_accessor(U, const arg_wrap<T, atags::sum>& wrap)
 	{
 		return multicol_sum_accumulator<T, U>(wrap.arg());
 	}
@@ -755,7 +755,7 @@ namespace lmat
 	template<typename T, typename U>
 	LMAT_ENSURE_INLINE
 	inline multicol_max_accumulator<T, U>
-	make_multicol_accessor(U, const in_out_wrap<T, atags::max>& wrap)
+	make_multicol_accessor(U, const arg_wrap<T, atags::max>& wrap)
 	{
 		return multicol_max_accumulator<T, U>(wrap.arg());
 	}
@@ -763,7 +763,7 @@ namespace lmat
 	template<typename T, typename U>
 	LMAT_ENSURE_INLINE
 	inline multicol_min_accumulator<T, U>
-	make_multicol_accessor(U, const in_out_wrap<T, atags::min>& wrap)
+	make_multicol_accessor(U, const arg_wrap<T, atags::min>& wrap)
 	{
 		return multicol_min_accumulator<T, U>(wrap.arg());
 	}
@@ -772,7 +772,7 @@ namespace lmat
 	template<class Mat, typename U>
 	LMAT_ENSURE_INLINE
 	inline typename internal::multicol_colwise_accumulator_map<Mat, U>::sum_type
-	make_multicol_accessor(U, const in_out_wrap<Mat, atags::colwise_sum>& wrap)
+	make_multicol_accessor(U, const arg_wrap<Mat, atags::colwise_sum>& wrap)
 	{
 		typedef typename internal::multicol_colwise_accumulator_map<Mat, U>::sum_type type;
 		return type(wrap.arg());
@@ -781,7 +781,7 @@ namespace lmat
 	template<class Mat, typename U>
 	LMAT_ENSURE_INLINE
 	inline typename internal::multicol_colwise_accumulator_map<Mat, U>::max_type
-	make_multicol_accessor(U, const in_out_wrap<Mat, atags::colwise_max>& wrap)
+	make_multicol_accessor(U, const arg_wrap<Mat, atags::colwise_max>& wrap)
 	{
 		typedef typename internal::multicol_colwise_accumulator_map<Mat, U>::max_type type;
 		return type(wrap.arg());
@@ -790,7 +790,7 @@ namespace lmat
 	template<class Mat, typename U>
 	LMAT_ENSURE_INLINE
 	inline typename internal::multicol_colwise_accumulator_map<Mat, U>::min_type
-	make_multicol_accessor(U, const in_out_wrap<Mat, atags::colwise_min>& wrap)
+	make_multicol_accessor(U, const arg_wrap<Mat, atags::colwise_min>& wrap)
 	{
 		typedef typename internal::multicol_colwise_accumulator_map<Mat, U>::min_type type;
 		return type(wrap.arg());
@@ -800,25 +800,25 @@ namespace lmat
 	template<class Mat, typename U>
 	LMAT_ENSURE_INLINE
 	inline rowwise_accumulator<Mat, U>
-	make_multicol_accessor(U, const in_out_wrap<Mat, atags::rowwise_sum>& wrap)
+	make_multicol_accessor(U, const arg_wrap<Mat, atags::rowwise_sum>& wrap)
 	{
-		return rowwise_accumulator<Mat, U>(wrap.arg().derived());
+		return rowwise_accumulator<Mat, U>(wrap.arg());
 	}
 
 	template<class Mat, typename U>
 	LMAT_ENSURE_INLINE
 	inline rowwise_accumulator<Mat, U>
-	make_multicol_accessor(U, const in_out_wrap<Mat, atags::rowwise_max>& wrap)
+	make_multicol_accessor(U, const arg_wrap<Mat, atags::rowwise_max>& wrap)
 	{
-		return rowwise_accumulator<Mat, U>(wrap.arg().derived());
+		return rowwise_accumulator<Mat, U>(wrap.arg());
 	}
 
 	template<class Mat, typename U>
 	LMAT_ENSURE_INLINE
 	inline rowwise_accumulator<Mat, U>
-	make_multicol_accessor(U, const in_out_wrap<Mat, atags::rowwise_min>& wrap)
+	make_multicol_accessor(U, const arg_wrap<Mat, atags::rowwise_min>& wrap)
 	{
-		return rowwise_accumulator<Mat, U>(wrap.arg().derived());
+		return rowwise_accumulator<Mat, U>(wrap.arg());
 	}
 
 }

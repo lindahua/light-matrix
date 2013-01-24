@@ -17,19 +17,73 @@
 #include <light_mat/matrix/matrix_concepts.h>
 #include <light_mat/math/functor_base.h>
 
+#define _LMAT_DEFINE_READONLY_ARG_WRAPPER(TagName) \
+	template<class Arg> \
+	class arg_wrap<Arg, atags::TagName> \
+	{ \
+	public: \
+		typedef Arg arg_type; \
+		typedef atags::TagName tag_type; \
+		LMAT_ENSURE_INLINE \
+		arg_wrap(const Arg& a) : m_arg(a) { } \
+		LMAT_ENSURE_INLINE \
+		const Arg& arg() const { return m_arg; } \
+	private: \
+		const Arg& m_arg; \
+	};
+
+#define _LMAT_DEFINE_WRITABLE_ARG_WRAPPER(TagName) \
+	template<class Arg> \
+	class arg_wrap<Arg, atags::TagName> \
+	{ \
+	public: \
+		typedef Arg arg_type; \
+		typedef atags::TagName tag_type; \
+		LMAT_ENSURE_INLINE \
+		arg_wrap(Arg& a) : m_arg(a) { } \
+		LMAT_ENSURE_INLINE \
+		Arg& arg() const { return m_arg; } \
+	private: \
+		Arg& m_arg; \
+	};
+
+
+#define _LMAT_DEFINE_READONLY_ARGWRAP_FUN(TagName, WFun) \
+	template<class Arg, typename T> \
+	LMAT_ENSURE_INLINE \
+	inline arg_wrap<Arg, atags::TagName> WFun(const IEWiseMatrix<Arg, T>& arg) \
+	{ \
+		return arg_wrap<Arg, atags::TagName>(arg.derived()); \
+	}
+
+#define _LMAT_DEFINE_WRITABLE_ARGWRAP_FUN(TagName, WFun) \
+	template<class Arg, typename T> \
+	LMAT_ENSURE_INLINE \
+	inline arg_wrap<Arg, atags::TagName> WFun(IRegularMatrix<Arg, T>& arg) \
+	{ \
+		return arg_wrap<Arg, atags::TagName>(arg.derived()); \
+	}
+
+
 namespace lmat
 {
+	// access units
+
 	struct scalar_ { };
 
 	template<typename Kind>
 	struct simd_ { };
 
+	typedef simd_<default_simd_kind> default_access_unit_t;
 
 	// access tags
 
 	namespace atags
 	{
-		struct normal { };
+		struct in { };
+		struct out { };
+		struct in_out { };
+
 		struct single { };
 		struct repcol { };
 		struct reprow { };
@@ -47,137 +101,76 @@ namespace lmat
 		struct rowwise_min { };
 	}
 
-
-	typedef simd_<default_simd_kind> default_access_unit_t;
-
 	// argument wrapper
 
 	template<class Arg, typename ATag>
-	class in_wrap
-	{
-	public:
-		typedef Arg arg_type;
-		typedef ATag tag_type;
+	class arg_wrap;
 
-		LMAT_ENSURE_INLINE
-		in_wrap(const Arg& a) : m_arg(a) { }
+	_LMAT_DEFINE_READONLY_ARG_WRAPPER(in)
+	_LMAT_DEFINE_READONLY_ARG_WRAPPER(single)
+	_LMAT_DEFINE_READONLY_ARG_WRAPPER(repcol)
+	_LMAT_DEFINE_READONLY_ARG_WRAPPER(reprow)
 
-		LMAT_ENSURE_INLINE
-		const Arg& arg() const { return m_arg; }
+	_LMAT_DEFINE_WRITABLE_ARG_WRAPPER(out)
+	_LMAT_DEFINE_WRITABLE_ARG_WRAPPER(in_out)
 
-	private:
-		const Arg& m_arg;
-	};
+	_LMAT_DEFINE_WRITABLE_ARG_WRAPPER(sum)
+	_LMAT_DEFINE_WRITABLE_ARG_WRAPPER(max)
+	_LMAT_DEFINE_WRITABLE_ARG_WRAPPER(min)
 
+	_LMAT_DEFINE_WRITABLE_ARG_WRAPPER(colwise_sum)
+	_LMAT_DEFINE_WRITABLE_ARG_WRAPPER(colwise_max)
+	_LMAT_DEFINE_WRITABLE_ARG_WRAPPER(colwise_min)
 
-	template<class Arg, typename ATag>
-	class out_wrap
-	{
-	public:
-		typedef Arg arg_type;
-		typedef ATag tag_type;
+	_LMAT_DEFINE_WRITABLE_ARG_WRAPPER(rowwise_sum)
+	_LMAT_DEFINE_WRITABLE_ARG_WRAPPER(rowwise_max)
+	_LMAT_DEFINE_WRITABLE_ARG_WRAPPER(rowwise_min)
 
-		LMAT_ENSURE_INLINE
-		out_wrap(Arg& a) : m_arg(a) { }
-
-		LMAT_ENSURE_INLINE
-		Arg& arg() const { return m_arg; }
-
-	private:
-		Arg& m_arg;
-	};
-
-
-	template<class Arg, typename ATag>
-	class in_out_wrap
-	{
-	public:
-		typedef Arg arg_type;
-		typedef ATag tag_type;
-
-		LMAT_ENSURE_INLINE
-		in_out_wrap(Arg& a) : m_arg(a) { }
-
-		LMAT_ENSURE_INLINE
-		Arg& arg() const { return m_arg; }
-
-	private:
-		Arg& m_arg;
-	};
 
 	// matrix-wrappers
 
-	template<class Arg, typename T, typename ATag>
-	LMAT_ENSURE_INLINE
-	inline in_wrap<Arg, ATag> in_(const IEWiseMatrix<Arg, T>& arg, ATag)
-	{
-		return in_wrap<Arg, ATag>(arg.derived());
-	}
-
-	template<class Arg, typename T>
-	LMAT_ENSURE_INLINE
-	inline in_wrap<Arg, atags::normal> in_(const IEWiseMatrix<Arg, T>& arg)
-	{
-		return in_wrap<Arg, atags::normal>(arg.derived());
-	}
-
-	template<class Arg, typename T, typename ATag>
-	LMAT_ENSURE_INLINE
-	inline out_wrap<Arg, ATag> out_(const IEWiseMatrix<Arg, T>& arg, ATag)
-	{
-		return out_wrap<Arg, ATag>(arg.derived());
-	}
-
-	template<class Arg, typename T>
-	LMAT_ENSURE_INLINE
-	inline out_wrap<Arg, atags::normal> out_(IEWiseMatrix<Arg, T>& arg)
-	{
-		return out_wrap<Arg, atags::normal>(arg.derived());
-	}
-
-	template<class Arg, typename T, typename ATag>
-	LMAT_ENSURE_INLINE
-	inline in_out_wrap<Arg, ATag> in_out_(IEWiseMatrix<Arg, T>& arg, ATag)
-	{
-		return in_out_wrap<Arg, ATag>(arg.derived());
-	}
-
-	template<class Arg, typename T>
-	LMAT_ENSURE_INLINE
-	inline in_out_wrap<Arg, atags::normal> in_out_(IEWiseMatrix<Arg, T>& arg)
-	{
-		return in_out_wrap<Arg, atags::normal>(arg.derived());
-	}
-
-	// scalar-wrappers
+	_LMAT_DEFINE_READONLY_ARGWRAP_FUN(in, in_)
+	_LMAT_DEFINE_WRITABLE_ARGWRAP_FUN(out, out_)
+	_LMAT_DEFINE_WRITABLE_ARGWRAP_FUN(in_out, in_out_)
 
 	template<typename T>
 	LMAT_ENSURE_INLINE
-	inline in_wrap<T, atags::single> in_(const T& v, atags::single)
+	inline arg_wrap<T, atags::single> const_(const T& v)
 	{
-		return in_wrap<T, atags::single>(v);
+		return arg_wrap<T, atags::single>(v);
+	}
+
+	_LMAT_DEFINE_READONLY_ARGWRAP_FUN(repcol, repcol_)
+	_LMAT_DEFINE_READONLY_ARGWRAP_FUN(reprow, reprow_)
+
+	template<typename T>
+	LMAT_ENSURE_INLINE
+	inline arg_wrap<T, atags::sum> sum_to_(T& v)
+	{
+		return arg_wrap<T, atags::sum>(v);
 	}
 
 	template<typename T>
 	LMAT_ENSURE_INLINE
-	inline in_out_wrap<T, atags::sum> in_out_(T& v, atags::sum)
+	inline arg_wrap<T, atags::max> max_to_(T& v)
 	{
-		return in_out_wrap<T, atags::sum>(v);
+		return arg_wrap<T, atags::max>(v);
 	}
 
 	template<typename T>
 	LMAT_ENSURE_INLINE
-	inline in_out_wrap<T, atags::max> in_out_(T& v, atags::max)
+	inline arg_wrap<T, atags::min> min_to_(T& v)
 	{
-		return in_out_wrap<T, atags::max>(v);
+		return arg_wrap<T, atags::min>(v);
 	}
 
-	template<typename T>
-	LMAT_ENSURE_INLINE
-	inline in_out_wrap<T, atags::min> in_out_(T& v, atags::min)
-	{
-		return in_out_wrap<T, atags::min>(v);
-	}
+	_LMAT_DEFINE_WRITABLE_ARGWRAP_FUN(colwise_sum, colwise_sum_to_)
+	_LMAT_DEFINE_WRITABLE_ARGWRAP_FUN(colwise_max, colwise_max_to_)
+	_LMAT_DEFINE_WRITABLE_ARGWRAP_FUN(colwise_min, colwise_min_to_)
+
+	_LMAT_DEFINE_WRITABLE_ARGWRAP_FUN(rowwise_sum, rowwise_sum_to_)
+	_LMAT_DEFINE_WRITABLE_ARGWRAP_FUN(rowwise_max, rowwise_max_to_)
+	_LMAT_DEFINE_WRITABLE_ARGWRAP_FUN(rowwise_min, rowwise_min_to_)
 
 }
 

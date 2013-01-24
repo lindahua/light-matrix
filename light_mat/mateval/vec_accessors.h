@@ -276,7 +276,7 @@ namespace lmat
 	template<class Mat, typename U>
 	LMAT_ENSURE_INLINE
 	inline typename internal::vec_reader_map<Mat, U>::type
-	make_vec_accessor(U, const in_wrap<Mat, atags::normal>& wrap)
+	make_vec_accessor(U, const arg_wrap<Mat, atags::in>& wrap)
 	{
 		return internal::vec_reader_map<Mat, U>::get(wrap.arg());
 	}
@@ -285,7 +285,7 @@ namespace lmat
 	template<typename T, typename U>
 	LMAT_ENSURE_INLINE
 	inline single_reader<T, U>
-	make_vec_accessor(U, const in_wrap<T, atags::single>& wrap)
+	make_vec_accessor(U, const arg_wrap<T, atags::single>& wrap)
 	{
 		return single_reader<T, U>(wrap.arg());
 	}
@@ -473,7 +473,7 @@ namespace lmat
 	template<class Mat, typename U>
 	LMAT_ENSURE_INLINE
 	inline typename internal::vec_writer_map<Mat, U>::type
-	make_vec_accessor(U, const out_wrap<Mat, atags::normal>& wrap)
+	make_vec_accessor(U, const arg_wrap<Mat, atags::out>& wrap)
 	{
 		return internal::vec_writer_map<Mat, U>::get(wrap.arg());
 	}
@@ -663,7 +663,7 @@ namespace lmat
 	template<class Mat, typename U>
 	LMAT_ENSURE_INLINE
 	inline typename internal::vec_updater_map<Mat, U>::type
-	make_vec_accessor(U, const in_out_wrap<Mat, atags::normal>& wrap)
+	make_vec_accessor(U, const arg_wrap<Mat, atags::in_out>& wrap)
 	{
 		return internal::vec_updater_map<Mat, U>::get(wrap.arg());
 	}
@@ -910,7 +910,7 @@ namespace lmat
 	template<typename T, typename U>
 	LMAT_ENSURE_INLINE
 	inline sum_accumulator<T, U>
-	make_vec_accessor(U, const in_out_wrap<T, atags::sum>& wrap)
+	make_vec_accessor(U, const arg_wrap<T, atags::sum>& wrap)
 	{
 		return sum_accumulator<T, U>(wrap.arg());
 	}
@@ -918,7 +918,7 @@ namespace lmat
 	template<typename T, typename U>
 	LMAT_ENSURE_INLINE
 	inline max_accumulator<T, U>
-	make_vec_accessor(U, const in_out_wrap<T, atags::max>& wrap)
+	make_vec_accessor(U, const arg_wrap<T, atags::max>& wrap)
 	{
 		return max_accumulator<T, U>(wrap.arg());
 	}
@@ -926,7 +926,7 @@ namespace lmat
 	template<typename T, typename U>
 	LMAT_ENSURE_INLINE
 	inline min_accumulator<T, U>
-	make_vec_accessor(U, const in_out_wrap<T, atags::min>& wrap)
+	make_vec_accessor(U, const arg_wrap<T, atags::min>& wrap)
 	{
 		return min_accumulator<T, U>(wrap.arg());
 	}

@@ -63,7 +63,7 @@ struct bench_math2_base
 			void operator() () const { \
 				const cref_matrix<T>& a = this->a; \
 				ref_matrix<T>& dst = this->dst; \
-				evaluate(Fun(a), dst, linear_macc<atags::scalar>()); } \
+				evaluate(Fun(a), dst, linear_macc<scalar_>()); } \
 		}; \
 		template<typename T> \
 		struct bench_##Fun##_simd : public bench_math1_base<T> { \
@@ -89,7 +89,7 @@ struct bench_math2_base
 				const cref_matrix<T>& a = this->a; \
 				const cref_matrix<T>& b = this->b; \
 				ref_matrix<T>& dst = this->dst; \
-				evaluate(Fun(a, b), dst, linear_macc<atags::scalar>()); } \
+				evaluate(Fun(a, b), dst, linear_macc<scalar_>()); } \
 		}; \
 		template<typename T> \
 		struct bench_##Fun##_simd : public bench_math2_base<T> { \

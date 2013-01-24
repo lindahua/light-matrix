@@ -156,7 +156,7 @@ namespace lmat
 			LMAT_ENSURE_INLINE
 			static type get(const expr_type& expr)
 			{
-				return make_multicol_accessor(U(), in_(expr.arg(), atags::repcol()));
+				return make_multicol_accessor(U(), repcol_(expr.arg()));
 			}
 		};
 
@@ -169,7 +169,7 @@ namespace lmat
 			LMAT_ENSURE_INLINE
 			static type get(const expr_type& expr)
 			{
-				return make_multicol_accessor(U(), in_(expr.arg(), atags::reprow()));
+				return make_multicol_accessor(U(), reprow_(expr.arg()));
 			}
 		};
 	}

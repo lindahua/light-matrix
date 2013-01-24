@@ -136,7 +136,7 @@ void test_linear_ewise_single_cont()
 
 	dimension<M * N> dim(m * n);
 
-	ewise(copy_kernel<double>(), U())(dim, in_(v, atags::single()), out_(dmat));
+	ewise(copy_kernel<double>(), U())(dim, const_(v), out_(dmat));
 
 	ASSERT_MAT_EQ(m, n, dmat, rmat);
 }

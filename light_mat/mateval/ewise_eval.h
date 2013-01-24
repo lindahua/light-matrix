@@ -138,7 +138,7 @@ namespace lmat
 	LMAT_ENSURE_INLINE
 	inline void map_to(IRegularMatrix<DMat, T>& dmat, const Fun& fun, const Wraps&... wraps)
 	{
-		map(fun)(dmat.shape(), out_(dmat.derived()), wraps...);
+		map(fun)(dmat.shape(), out_(dmat), wraps...);
 	}
 
 
@@ -148,21 +148,21 @@ namespace lmat
 	LMAT_ENSURE_INLINE
 	inline void accum_to(IRegularMatrix<DMat, T>& dmat, const IEWiseMatrix<SMat, T>& smat)
 	{
-		return ewise(accum_kernel<T>())(dmat.shape(), in_out_(dmat.derived()), in_(smat.derived()));
+		return ewise(accum_kernel<T>())(dmat.shape(), in_out_(dmat), in_(smat));
 	}
 
 	template<typename T, class DMat, class SMat>
 	LMAT_ENSURE_INLINE
 	inline void accum_to(IRegularMatrix<DMat, T>& dmat, const T& c, const IEWiseMatrix<SMat, T>& smat)
 	{
-		return ewise(accumx_kernel<T>())(dmat.shape(), in_out_(dmat.derived()), in_(c, atags::single()), in_(smat.derived()));
+		return ewise(accumx_kernel<T>())(dmat.shape(), in_out_(dmat), const_(c), in_(smat));
 	}
 
 	template<typename T, class DMat, class CMat, class SMat>
 	LMAT_ENSURE_INLINE
 	inline void accum_to(IRegularMatrix<DMat, T>& dmat, const IEWiseMatrix<CMat, T>& cmat, const IEWiseMatrix<SMat, T>& smat)
 	{
-		return ewise(accumx_kernel<T>())(dmat.shape(), in_out_(dmat.derived()), in_(cmat.derived()), in_(smat.derived()));
+		return ewise(accumx_kernel<T>())(dmat.shape(), in_out_(dmat), in_(cmat), in_(smat));
 	}
 
 
