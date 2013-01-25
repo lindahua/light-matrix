@@ -27,7 +27,7 @@ namespace lmat {  namespace internal {
 	template<class Mat>
 	struct matview_cont_level
 	{
-		static const int value =
+		static const index_t value =
 				meta::is_contiguous<Mat>::value ? 2 : (meta::is_percol_contiguous<Mat>::value ? 1 : 0);
 	};
 
@@ -45,8 +45,8 @@ namespace lmat {  namespace internal {
 	{
 		typedef typename matrix_traits<Mat>::value_type value_type;
 
-		static const int M = meta::nrows<Mat>::value;
-		static const int N = meta::ncols<Mat>::value;
+		static const index_t M = meta::nrows<Mat>::value;
+		static const index_t N = meta::ncols<Mat>::value;
 		typedef cref_matrix<value_type, M, N> type;
 
 		LMAT_ENSURE_INLINE
@@ -61,8 +61,8 @@ namespace lmat {  namespace internal {
 	{
 		typedef typename matrix_traits<Mat>::value_type value_type;
 
-		static const int M = meta::nrows<Mat>::value;
-		static const int N = meta::ncols<Mat>::value;
+		static const index_t M = meta::nrows<Mat>::value;
+		static const index_t N = meta::ncols<Mat>::value;
 		typedef ref_matrix<value_type, M, N> type;
 
 		LMAT_ENSURE_INLINE
@@ -79,7 +79,7 @@ namespace lmat {  namespace internal {
 	{
 		typedef typename matrix_traits<Mat>::value_type value_type;
 
-		static const int M = meta::nrows<Mat>::value;
+		static const index_t M = meta::nrows<Mat>::value;
 		typedef cref_matrix<value_type, M, 0> type;
 
 		LMAT_ENSURE_INLINE
@@ -94,7 +94,7 @@ namespace lmat {  namespace internal {
 	{
 		typedef typename matrix_traits<Mat>::value_type value_type;
 
-		static const int M = meta::nrows<Mat>::value;
+		static const index_t M = meta::nrows<Mat>::value;
 		typedef ref_matrix<value_type, M, 0> type;
 
 		LMAT_ENSURE_INLINE
@@ -112,7 +112,7 @@ namespace lmat {  namespace internal {
 	{
 		typedef typename matrix_traits<Mat>::value_type value_type;
 
-		static const int M = meta::nrows<Mat>::value;
+		static const index_t M = meta::nrows<Mat>::value;
 		typedef cref_block<value_type, M, 0> type;
 
 		LMAT_ENSURE_INLINE
@@ -128,7 +128,7 @@ namespace lmat {  namespace internal {
 	{
 		typedef typename matrix_traits<Mat>::value_type value_type;
 
-		static const int M = meta::nrows<Mat>::value;
+		static const index_t M = meta::nrows<Mat>::value;
 		typedef ref_block<value_type, M, 0> type;
 
 		LMAT_ENSURE_INLINE
@@ -142,12 +142,12 @@ namespace lmat {  namespace internal {
 
 	// range x whole
 
-	template<class Mat, int L>
+	template<class Mat, index_t L>
 	struct matview_helper<Mat, range, whole, L, true>
 	{
 		typedef typename matrix_traits<Mat>::value_type value_type;
 
-		static const int N = meta::ncols<Mat>::value;
+		static const index_t N = meta::ncols<Mat>::value;
 		typedef cref_block<value_type, 0, N> type;
 
 		LMAT_ENSURE_INLINE
@@ -158,12 +158,12 @@ namespace lmat {  namespace internal {
 		}
 	};
 
-	template<class Mat, int L>
+	template<class Mat, index_t L>
 	struct matview_helper<Mat, range, whole, L, false>
 	{
 		typedef typename matrix_traits<Mat>::value_type value_type;
 
-		static const int N = meta::ncols<Mat>::value;
+		static const index_t N = meta::ncols<Mat>::value;
 		typedef ref_block<value_type, 0, N> type;
 
 		LMAT_ENSURE_INLINE
@@ -177,7 +177,7 @@ namespace lmat {  namespace internal {
 
 	// range x range
 
-	template<class Mat, int L>
+	template<class Mat, index_t L>
 	struct matview_helper<Mat, range, range, L, true>
 	{
 		typedef typename matrix_traits<Mat>::value_type value_type;
@@ -194,7 +194,7 @@ namespace lmat {  namespace internal {
 		}
 	};
 
-	template<class Mat, int L>
+	template<class Mat, index_t L>
 	struct matview_helper<Mat, range, range, L, false>
 	{
 		typedef typename matrix_traits<Mat>::value_type value_type;
@@ -214,7 +214,7 @@ namespace lmat {  namespace internal {
 
 	// range x step
 
-	template<class Mat, int L>
+	template<class Mat, index_t L>
 	struct matview_helper<Mat, range, step_range, L, true>
 	{
 		typedef typename matrix_traits<Mat>::value_type value_type;
@@ -231,7 +231,7 @@ namespace lmat {  namespace internal {
 		}
 	};
 
-	template<class Mat, int L>
+	template<class Mat, index_t L>
 	struct matview_helper<Mat, range, step_range, L, false>
 	{
 		typedef typename matrix_traits<Mat>::value_type value_type;
@@ -251,12 +251,12 @@ namespace lmat {  namespace internal {
 
 	// step x whole
 
-	template<class Mat, int L>
+	template<class Mat, index_t L>
 	struct matview_helper<Mat, step_range, whole, L, true>
 	{
 		typedef typename matrix_traits<Mat>::value_type value_type;
 
-		static const int N = meta::ncols<Mat>::value;
+		static const index_t N = meta::ncols<Mat>::value;
 		typedef cref_grid<value_type, 0, N> type;
 
 		LMAT_ENSURE_INLINE
@@ -267,12 +267,12 @@ namespace lmat {  namespace internal {
 		}
 	};
 
-	template<class Mat, int L>
+	template<class Mat, index_t L>
 	struct matview_helper<Mat, step_range, whole, L, false>
 	{
 		typedef typename matrix_traits<Mat>::value_type value_type;
 
-		static const int N = meta::ncols<Mat>::value;
+		static const index_t N = meta::ncols<Mat>::value;
 		typedef ref_grid<value_type, 0, N> type;
 
 		LMAT_ENSURE_INLINE
@@ -286,7 +286,7 @@ namespace lmat {  namespace internal {
 
 	// step x range
 
-	template<class Mat, int L>
+	template<class Mat, index_t L>
 	struct matview_helper<Mat, step_range, range, L, true>
 	{
 		typedef typename matrix_traits<Mat>::value_type value_type;
@@ -304,7 +304,7 @@ namespace lmat {  namespace internal {
 		}
 	};
 
-	template<class Mat, int L>
+	template<class Mat, index_t L>
 	struct matview_helper<Mat, step_range, range, L, false>
 	{
 		typedef typename matrix_traits<Mat>::value_type value_type;
@@ -325,7 +325,7 @@ namespace lmat {  namespace internal {
 
 	// step x step
 
-	template<class Mat, int L>
+	template<class Mat, index_t L>
 	struct matview_helper<Mat, step_range, step_range, L, true>
 	{
 		typedef typename matrix_traits<Mat>::value_type value_type;
@@ -343,7 +343,7 @@ namespace lmat {  namespace internal {
 		}
 	};
 
-	template<class Mat, int L>
+	template<class Mat, index_t L>
 	struct matview_helper<Mat, step_range, step_range, L, false>
 	{
 		typedef typename matrix_traits<Mat>::value_type value_type;
@@ -377,8 +377,8 @@ namespace lmat {  namespace internal {
 	{
 		typedef typename matrix_traits<Mat>::value_type value_type;
 
-		static const int M = meta::nrows<Mat>::value;
-		static const int N = meta::ncols<Mat>::value;
+		static const index_t M = meta::nrows<Mat>::value;
+		static const index_t N = meta::ncols<Mat>::value;
 		typedef cref_block<value_type, M, N> type;
 
 		LMAT_ENSURE_INLINE
@@ -393,8 +393,8 @@ namespace lmat {  namespace internal {
 	{
 		typedef typename matrix_traits<Mat>::value_type value_type;
 
-		static const int M = meta::nrows<Mat>::value;
-		static const int N = meta::ncols<Mat>::value;
+		static const index_t M = meta::nrows<Mat>::value;
+		static const index_t N = meta::ncols<Mat>::value;
 		typedef ref_block<value_type, M, N> type;
 
 		LMAT_ENSURE_INLINE
@@ -412,7 +412,7 @@ namespace lmat {  namespace internal {
 	{
 		typedef typename matrix_traits<Mat>::value_type value_type;
 
-		static const int M = meta::nrows<Mat>::value;
+		static const index_t M = meta::nrows<Mat>::value;
 		typedef cref_block<value_type, M, 0> type;
 
 		LMAT_ENSURE_INLINE
@@ -427,7 +427,7 @@ namespace lmat {  namespace internal {
 	{
 		typedef typename matrix_traits<Mat>::value_type value_type;
 
-		static const int M = meta::nrows<Mat>::value;
+		static const index_t M = meta::nrows<Mat>::value;
 		typedef ref_block<value_type, M, 0> type;
 
 		LMAT_ENSURE_INLINE
@@ -445,7 +445,7 @@ namespace lmat {  namespace internal {
 	{
 		typedef typename matrix_traits<Mat>::value_type value_type;
 
-		static const int M = meta::nrows<Mat>::value;
+		static const index_t M = meta::nrows<Mat>::value;
 		typedef cref_block<value_type, M, 0> type;
 
 		LMAT_ENSURE_INLINE
@@ -461,7 +461,7 @@ namespace lmat {  namespace internal {
 	{
 		typedef typename matrix_traits<Mat>::value_type value_type;
 
-		static const int M = meta::nrows<Mat>::value;
+		static const index_t M = meta::nrows<Mat>::value;
 		typedef ref_block<value_type, M, 0> type;
 
 		LMAT_ENSURE_INLINE
@@ -488,8 +488,8 @@ namespace lmat {  namespace internal {
 	{
 		typedef typename matrix_traits<Mat>::value_type value_type;
 
-		static const int M = meta::nrows<Mat>::value;
-		static const int N = meta::ncols<Mat>::value;
+		static const index_t M = meta::nrows<Mat>::value;
+		static const index_t N = meta::ncols<Mat>::value;
 		typedef cref_grid<value_type, M, N> type;
 
 		LMAT_ENSURE_INLINE
@@ -505,8 +505,8 @@ namespace lmat {  namespace internal {
 	{
 		typedef typename matrix_traits<Mat>::value_type value_type;
 
-		static const int M = meta::nrows<Mat>::value;
-		static const int N = meta::ncols<Mat>::value;
+		static const index_t M = meta::nrows<Mat>::value;
+		static const index_t N = meta::ncols<Mat>::value;
 		typedef ref_grid<value_type, M, N> type;
 
 		LMAT_ENSURE_INLINE
@@ -525,8 +525,8 @@ namespace lmat {  namespace internal {
 	{
 		typedef typename matrix_traits<Mat>::value_type value_type;
 
-		static const int M = meta::nrows<Mat>::value;
-		static const int N = meta::ncols<Mat>::value;
+		static const index_t M = meta::nrows<Mat>::value;
+		static const index_t N = meta::ncols<Mat>::value;
 		typedef cref_grid<value_type, M, 0> type;
 
 		LMAT_ENSURE_INLINE
@@ -542,8 +542,8 @@ namespace lmat {  namespace internal {
 	{
 		typedef typename matrix_traits<Mat>::value_type value_type;
 
-		static const int M = meta::nrows<Mat>::value;
-		static const int N = meta::ncols<Mat>::value;
+		static const index_t M = meta::nrows<Mat>::value;
+		static const index_t N = meta::ncols<Mat>::value;
 		typedef ref_grid<value_type, M, 0> type;
 
 		LMAT_ENSURE_INLINE
@@ -562,7 +562,7 @@ namespace lmat {  namespace internal {
 	{
 		typedef typename matrix_traits<Mat>::value_type value_type;
 
-		static const int M = meta::nrows<Mat>::value;
+		static const index_t M = meta::nrows<Mat>::value;
 		typedef cref_grid<value_type, M, 0> type;
 
 		LMAT_ENSURE_INLINE
@@ -578,7 +578,7 @@ namespace lmat {  namespace internal {
 	{
 		typedef typename matrix_traits<Mat>::value_type value_type;
 
-		static const int M = meta::nrows<Mat>::value;
+		static const index_t M = meta::nrows<Mat>::value;
 		typedef ref_grid<value_type, M, 0> type;
 
 		LMAT_ENSURE_INLINE
@@ -597,7 +597,7 @@ namespace lmat {  namespace internal {
 	{
 		typedef typename matrix_traits<Mat>::value_type value_type;
 
-		static const int N = meta::ncols<Mat>::value;
+		static const index_t N = meta::ncols<Mat>::value;
 		typedef cref_grid<value_type, 0, N> type;
 
 		LMAT_ENSURE_INLINE
@@ -613,7 +613,7 @@ namespace lmat {  namespace internal {
 	{
 		typedef typename matrix_traits<Mat>::value_type value_type;
 
-		static const int N = meta::ncols<Mat>::value;
+		static const index_t N = meta::ncols<Mat>::value;
 		typedef ref_grid<value_type, 0, N> type;
 
 		LMAT_ENSURE_INLINE

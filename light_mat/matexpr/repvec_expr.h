@@ -19,8 +19,8 @@ namespace lmat
 {
 	// forward declarations
 
-	template<class Arg, int CN=0> class repcol_expr;
-	template<class Arg, int CM=0> class reprow_expr;
+	template<class Arg, index_t CN=0> class repcol_expr;
+	template<class Arg, index_t CM=0> class reprow_expr;
 
 
 	/********************************************
@@ -29,7 +29,7 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<class Arg, int CN>
+	template<class Arg, index_t CN>
 	struct matrix_traits<repcol_expr<Arg, CN> >
 	: public matrix_xpr_traits_base<
 	  typename meta::value_type_of<Arg>::type,
@@ -38,7 +38,7 @@ namespace lmat
 	  typename meta::domain_of<Arg>::type> { };
 
 
-	template<class Arg, int CM>
+	template<class Arg, index_t CM>
 	struct matrix_traits<reprow_expr<Arg, CM> >
 	: public matrix_xpr_traits_base<
 	  typename meta::value_type_of<Arg>::type,
@@ -54,7 +54,7 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<typename Arg, int CN>
+	template<typename Arg, index_t CN>
 	class repcol_expr
 	: public ewise_matrix_base<repcol_expr<Arg, CN> >
 	{
@@ -79,7 +79,7 @@ namespace lmat
 	};
 
 
-	template<typename Arg, int CM>
+	template<typename Arg, index_t CM>
 	class reprow_expr
 	: public ewise_matrix_base<reprow_expr<Arg, CM> >
 	{
@@ -117,7 +117,7 @@ namespace lmat
 		return repcol_expr<Arg, 0>(arg.derived(), n);
 	}
 
-	template<typename T, class Arg, int CN>
+	template<typename T, class Arg, index_t CN>
 	LMAT_ENSURE_INLINE
 	inline repcol_expr<Arg, CN> repcol(const IRegularMatrix<Arg, T>& arg, dimension<CN> n)
 	{
@@ -131,7 +131,7 @@ namespace lmat
 		return reprow_expr<Arg, 0>(arg.derived(), m);
 	}
 
-	template<typename T, class Arg, int CM>
+	template<typename T, class Arg, index_t CM>
 	LMAT_ENSURE_INLINE
 	inline reprow_expr<Arg, CM> reprow(const IRegularMatrix<Arg, T>& arg, dimension<CM> m)
 	{
@@ -147,7 +147,7 @@ namespace lmat
 
 	namespace internal
 	{
-		template<typename Arg, int CN, typename U>
+		template<typename Arg, index_t CN, typename U>
 		struct multicol_reader_map<repcol_expr<Arg, CN>, U>
 		{
 			typedef repcol_expr<Arg, CN> expr_type;
@@ -160,7 +160,7 @@ namespace lmat
 			}
 		};
 
-		template<typename Arg, int CM, typename U>
+		template<typename Arg, index_t CM, typename U>
 		struct multicol_reader_map<reprow_expr<Arg, CM>, U>
 		{
 			typedef reprow_expr<Arg, CM> expr_type;
@@ -181,28 +181,28 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<typename Arg, int CN>
+	template<typename Arg, index_t CN>
 	struct supports_linear_access<repcol_expr<Arg, CN> >
 	{
 		static const bool value = false;
 	};
 
-	template<typename Arg, int CM>
+	template<typename Arg, index_t CM>
 	struct supports_linear_access<reprow_expr<Arg, CM> >
 	{
 		static const bool value = false;
 	};
 
-	template<typename Arg, int CN, typename Kind>
+	template<typename Arg, index_t CN, typename Kind>
 	struct supports_simd<repcol_expr<Arg, CN>, Kind>
 	: public supports_simd<Arg, Kind> { };
 
-	template<typename Arg, int CM, typename Kind>
+	template<typename Arg, index_t CM, typename Kind>
 	struct supports_simd<reprow_expr<Arg, CM>, Kind>
 	: public supports_simd<typename matrix_traits<Arg>::value_type, Kind> { };
 
 
-	template<typename Arg, int CN, class DMat>
+	template<typename Arg, index_t CN, class DMat>
 	inline void evaluate(const repcol_expr<Arg, CN>& sexpr,
 			IRegularMatrix<DMat, typename matrix_traits<Arg>::value_type>& dmat)
 	{
@@ -230,7 +230,7 @@ namespace lmat
 	}
 
 
-	template<typename Arg, int CM, class DMat>
+	template<typename Arg, index_t CM, class DMat>
 	inline void evaluate(const reprow_expr<Arg, CM>& sexpr,
 			IRegularMatrix<DMat, typename matrix_traits<Arg>::value_type>& dmat)
 	{

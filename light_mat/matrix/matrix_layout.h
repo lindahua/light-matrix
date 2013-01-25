@@ -20,9 +20,9 @@ namespace lmat
 
 	// forward declaration
 
-	template<int M, int N> class cont_layout_cm;
-	template<int M, int N> class block_layout_cm;
-	template<int M, int N> class grid_layout;
+	template<index_t M, index_t N> class cont_layout_cm;
+	template<index_t M, index_t N> class block_layout_cm;
+	template<index_t M, index_t N> class grid_layout;
 
 	/********************************************
 	 *
@@ -32,11 +32,11 @@ namespace lmat
 
 	template<class Layout> struct layout_traits;
 
-	template<int M, int N>
+	template<index_t M, index_t N>
 	struct layout_traits<cont_layout_cm<M, N> >
 	{
-		static const int ct_num_rows = M;
-		static const int ct_num_cols = N;
+		static const index_t ct_num_rows = M;
+		static const index_t ct_num_cols = N;
 
 		static const bool ct_is_contiguous = true;
 		static const bool ct_is_percol_contiguous = true;
@@ -44,11 +44,11 @@ namespace lmat
 		typedef matrix_shape<M, N> shape_type;
 	};
 
-	template<int M, int N>
+	template<index_t M, index_t N>
 	struct layout_traits<block_layout_cm<M, N> >
 	{
-		static const int ct_num_rows = M;
-		static const int ct_num_cols = N;
+		static const index_t ct_num_rows = M;
+		static const index_t ct_num_cols = N;
 
 		static const bool ct_is_contiguous = (N == 1);
 		static const bool ct_is_percol_contiguous = true;
@@ -56,11 +56,11 @@ namespace lmat
 		typedef matrix_shape<M, N> shape_type;
 	};
 
-	template<int M, int N>
+	template<index_t M, index_t N>
 	struct layout_traits<grid_layout<M, N> >
 	{
-		static const int ct_num_rows = M;
-		static const int ct_num_cols = N;
+		static const index_t ct_num_rows = M;
+		static const index_t ct_num_cols = N;
 
 		static const bool ct_is_contiguous = (M == 1 && N == 1);
 		static const bool ct_is_percol_contiguous = M == 1;
@@ -162,7 +162,7 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<int M, int N>
+	template<index_t M, index_t N>
 	class cont_layout_cm : public IMatrixLayout<cont_layout_cm<M, N> >
 	{
 	public:
@@ -250,7 +250,7 @@ namespace lmat
 	};
 
 
-	template<int M, int N>
+	template<index_t M, index_t N>
 	class block_layout_cm : public IMatrixLayout<block_layout_cm<M, N> >
 	{
 	public:
@@ -335,7 +335,7 @@ namespace lmat
 		index_t m_leaddim;
 	};
 
-	template<int M, int N>
+	template<index_t M, index_t N>
 	class grid_layout : public IMatrixLayout<grid_layout<M, N> >
 	{
 	public:

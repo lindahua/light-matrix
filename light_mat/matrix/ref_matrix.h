@@ -25,14 +25,14 @@ namespace lmat
 	 ********************************************/
 
 
-	template<typename T, int CM, int CN>
+	template<typename T, index_t CM, index_t CN>
 	struct matrix_traits<cref_matrix<T, CM, CN> >
 	: public regular_matrix_traits_base<const T, CM, CN, cpu_domain>
 	{
 		typedef cont_layout_cm<CM, CN> layout_type;
 	};
 
-	template<typename T, int CM, int CN>
+	template<typename T, index_t CM, index_t CN>
 	struct matrix_traits<ref_matrix<T, CM, CN> >
 	: public regular_matrix_traits_base<T, CM, CN, cpu_domain>
 	{
@@ -46,7 +46,7 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<typename T, int CM, int CN>
+	template<typename T, index_t CM, index_t CN>
 	class cref_matrix : public regular_mat_base<cref_matrix<T, CM, CN> >
 	{
 	public:
@@ -83,7 +83,7 @@ namespace lmat
 	}; // end class cref_matrix
 
 
-	template<typename T, int CM, int CN>
+	template<typename T, index_t CM, index_t CN>
 	class ref_matrix : public regular_mat_base<ref_matrix<T, CM, CN> >
 	{
 	public:
@@ -154,7 +154,7 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<typename T, int CM>
+	template<typename T, index_t CM>
 	class cref_col: public cref_matrix<T, CM, 1>
 	{
 		typedef cref_matrix<T, CM, 1> base_mat_t;
@@ -170,7 +170,7 @@ namespace lmat
 
 	};
 
-	template<typename T, int CM>
+	template<typename T, index_t CM>
 	class ref_col: public ref_matrix<T, CM, 1>
 	{
 		typedef ref_matrix<T, CM, 1> base_mat_t;
@@ -194,7 +194,7 @@ namespace lmat
 	};
 
 
-	template<typename T, int CN>
+	template<typename T, index_t CN>
 	class cref_row: public cref_matrix<T, 1, CN>
 	{
 		typedef cref_matrix<T, 1, CN> base_mat_t;
@@ -209,7 +209,7 @@ namespace lmat
 		: base_mat_t(s) { }
 	};
 
-	template<typename T, int CN>
+	template<typename T, index_t CN>
 	class ref_row: public ref_matrix<T, 1, CN>
 	{
 		typedef ref_matrix<T, 1, CN> base_mat_t;

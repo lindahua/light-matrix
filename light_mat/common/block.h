@@ -239,7 +239,7 @@ namespace lmat
      *
      ********************************************/
 
-	template<typename T, int N>
+	template<typename T, index_t N>
 	class sblock
 	{
 	public:
@@ -339,7 +339,7 @@ namespace lmat
 
 	}; // end class sblock
 
-	template<typename T, int N>
+	template<typename T, index_t N>
 	LMAT_ENSURE_INLINE
 	inline void swap(sblock<T, N>& a, sblock<T, N>& b)
 	{

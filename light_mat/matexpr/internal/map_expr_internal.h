@@ -61,8 +61,8 @@ namespace lmat { namespace internal {
 	template<typename Arg>
 	struct map_expr_helper1
 	{
-		static const int ct_nrows = meta::nrows<Arg>::value;
-		static const int ct_ncols = meta::ncols<Arg>::value;
+		static const index_t ct_nrows = meta::nrows<Arg>::value;
+		static const index_t ct_ncols = meta::ncols<Arg>::value;
 		typedef matrix_shape<ct_nrows, ct_ncols> shape_type;
 		typedef typename meta::domain_of<Arg>::type domain;
 
@@ -79,8 +79,8 @@ namespace lmat { namespace internal {
 	template<typename Arg1, typename Arg2>
 	struct map_expr_helper2<Arg1, Arg2, false, true>
 	{
-		static const int ct_nrows = meta::nrows<Arg2>::value;
-		static const int ct_ncols = meta::ncols<Arg2>::value;
+		static const index_t ct_nrows = meta::nrows<Arg2>::value;
+		static const index_t ct_ncols = meta::ncols<Arg2>::value;
 		typedef matrix_shape<ct_nrows, ct_ncols> shape_type;
 		typedef typename meta::domain_of<Arg2>::type domain;
 
@@ -93,8 +93,8 @@ namespace lmat { namespace internal {
 	template<typename Arg1, typename Arg2>
 	struct map_expr_helper2<Arg1, Arg2, true, false>
 	{
-		static const int ct_nrows = meta::nrows<Arg1>::value;
-		static const int ct_ncols = meta::ncols<Arg1>::value;
+		static const index_t ct_nrows = meta::nrows<Arg1>::value;
+		static const index_t ct_ncols = meta::ncols<Arg1>::value;
 		typedef matrix_shape<ct_nrows, ct_ncols> shape_type;
 		typedef typename meta::domain_of<Arg1>::type domain;
 
@@ -107,8 +107,8 @@ namespace lmat { namespace internal {
 	template<typename Arg1, typename Arg2>
 	struct map_expr_helper2<Arg1, Arg2, true, true>
 	{
-		static const int ct_nrows = meta::common_nrows<Arg1, Arg2>::value;
-		static const int ct_ncols = meta::common_ncols<Arg1, Arg2>::value;
+		static const index_t ct_nrows = meta::common_nrows<Arg1, Arg2>::value;
+		static const index_t ct_ncols = meta::common_ncols<Arg1, Arg2>::value;
 		typedef matrix_shape<ct_nrows, ct_ncols> shape_type;
 		typedef typename meta::common_domain<Arg1, Arg2>::type domain;
 
@@ -125,8 +125,8 @@ namespace lmat { namespace internal {
 	template<typename Arg1, typename Arg2, typename Arg3>
 	struct map_expr_helper3<Arg1, Arg2, Arg3, false, false, true>
 	{
-		static const int ct_nrows = meta::nrows<Arg3>::value;
-		static const int ct_ncols = meta::ncols<Arg3>::value;
+		static const index_t ct_nrows = meta::nrows<Arg3>::value;
+		static const index_t ct_ncols = meta::ncols<Arg3>::value;
 		typedef matrix_shape<ct_nrows, ct_ncols> shape_type;
 		typedef typename meta::domain_of<Arg3>::type domain;
 
@@ -139,8 +139,8 @@ namespace lmat { namespace internal {
 	template<typename Arg1, typename Arg2, typename Arg3>
 	struct map_expr_helper3<Arg1, Arg2, Arg3, false, true, false>
 	{
-		static const int ct_nrows = meta::nrows<Arg2>::value;
-		static const int ct_ncols = meta::ncols<Arg2>::value;
+		static const index_t ct_nrows = meta::nrows<Arg2>::value;
+		static const index_t ct_ncols = meta::ncols<Arg2>::value;
 		typedef matrix_shape<ct_nrows, ct_ncols> shape_type;
 		typedef typename meta::domain_of<Arg2>::type domain;
 
@@ -153,8 +153,8 @@ namespace lmat { namespace internal {
 	template<typename Arg1, typename Arg2, typename Arg3>
 	struct map_expr_helper3<Arg1, Arg2, Arg3, true, false, false>
 	{
-		static const int ct_nrows = meta::nrows<Arg1>::value;
-		static const int ct_ncols = meta::ncols<Arg1>::value;
+		static const index_t ct_nrows = meta::nrows<Arg1>::value;
+		static const index_t ct_ncols = meta::ncols<Arg1>::value;
 		typedef matrix_shape<ct_nrows, ct_ncols> shape_type;
 		typedef typename meta::domain_of<Arg1>::type domain;
 
@@ -167,8 +167,8 @@ namespace lmat { namespace internal {
 	template<typename Arg1, typename Arg2, typename Arg3>
 	struct map_expr_helper3<Arg1, Arg2, Arg3, false, true, true>
 	{
-		static const int ct_nrows = meta::common_nrows<Arg2, Arg3>::value;
-		static const int ct_ncols = meta::common_ncols<Arg2, Arg3>::value;
+		static const index_t ct_nrows = meta::common_nrows<Arg2, Arg3>::value;
+		static const index_t ct_ncols = meta::common_ncols<Arg2, Arg3>::value;
 		typedef matrix_shape<ct_nrows, ct_ncols> shape_type;
 		typedef typename meta::common_domain<Arg2, Arg3>::type domain;
 
@@ -181,8 +181,8 @@ namespace lmat { namespace internal {
 	template<typename Arg1, typename Arg2, typename Arg3>
 	struct map_expr_helper3<Arg1, Arg2, Arg3, true, false, true>
 	{
-		static const int ct_nrows = meta::common_nrows<Arg1, Arg3>::value;
-		static const int ct_ncols = meta::common_ncols<Arg1, Arg3>::value;
+		static const index_t ct_nrows = meta::common_nrows<Arg1, Arg3>::value;
+		static const index_t ct_ncols = meta::common_ncols<Arg1, Arg3>::value;
 		typedef matrix_shape<ct_nrows, ct_ncols> shape_type;
 		typedef typename meta::common_domain<Arg1, Arg3>::type domain;
 
@@ -195,8 +195,8 @@ namespace lmat { namespace internal {
 	template<typename Arg1, typename Arg2, typename Arg3>
 	struct map_expr_helper3<Arg1, Arg2, Arg3, true, true, false>
 	{
-		static const int ct_nrows = meta::common_nrows<Arg1, Arg2>::value;
-		static const int ct_ncols = meta::common_ncols<Arg1, Arg2>::value;
+		static const index_t ct_nrows = meta::common_nrows<Arg1, Arg2>::value;
+		static const index_t ct_ncols = meta::common_ncols<Arg1, Arg2>::value;
 		typedef matrix_shape<ct_nrows, ct_ncols> shape_type;
 		typedef typename meta::common_domain<Arg1, Arg2>::type domain;
 
@@ -209,8 +209,8 @@ namespace lmat { namespace internal {
 	template<typename Arg1, typename Arg2, typename Arg3>
 	struct map_expr_helper3<Arg1, Arg2, Arg3, true, true, true>
 	{
-		static const int ct_nrows = meta::common_nrows<Arg1, Arg2, Arg3>::value;
-		static const int ct_ncols = meta::common_ncols<Arg1, Arg2, Arg3>::value;
+		static const index_t ct_nrows = meta::common_nrows<Arg1, Arg2, Arg3>::value;
+		static const index_t ct_ncols = meta::common_ncols<Arg1, Arg2, Arg3>::value;
 		typedef matrix_shape<ct_nrows, ct_ncols> shape_type;
 		typedef typename meta::common_domain<Arg1, Arg2, Arg3>::type domain;
 

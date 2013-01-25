@@ -28,7 +28,7 @@ namespace lmat
 {
 	// forward declaration
 
-	template<class Distr, class RStream, int CM=0, int CN=0> class rand_expr;
+	template<class Distr, class RStream, index_t CM=0, index_t CN=0> class rand_expr;
 
 	/********************************************
 	 *
@@ -36,12 +36,12 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<class Distr, class RStream, int CM, int CN>
+	template<class Distr, class RStream, index_t CM, index_t CN>
 	struct matrix_traits<rand_expr<Distr, RStream, CM, CN> >
 	: public matrix_xpr_traits_base<
 	  typename Distr::result_type, CM, CN, cpu_domain> { };
 
-	template<class Distr, class RStream, int CM, int CN>
+	template<class Distr, class RStream, index_t CM, index_t CN>
 	class rand_expr
 	: public ewise_matrix_base<rand_expr<Distr, RStream, CM, CN> >
 	{
@@ -91,7 +91,7 @@ namespace lmat
 		return rand_expr<Distr, RStream>(distr, rs, m, n);
 	}
 
-	template<class Distr, class RStream, int M, int N>
+	template<class Distr, class RStream, index_t M, index_t N>
 	LMAT_ENSURE_INLINE
 	inline rand_expr<Distr, RStream, M, N> rand_mat(const Distr& distr, RStream& rs, const matrix_shape<M, N>& shape)
 	{
@@ -210,7 +210,7 @@ namespace lmat
 
 	namespace internal
 	{
-		template<class Distr, class RStream, int CM, int CN, typename U>
+		template<class Distr, class RStream, index_t CM, index_t CN, typename U>
 		struct vec_reader_map<rand_expr<Distr, RStream, CM, CN>, U>
 		{
 			typedef rand_expr<Distr, RStream, CM, CN> expr_type;
@@ -223,7 +223,7 @@ namespace lmat
 			}
 		};
 
-		template<class Distr, class RStream, int CM, int CN, typename U>
+		template<class Distr, class RStream, index_t CM, index_t CN, typename U>
 		struct multicol_reader_map<rand_expr<Distr, RStream, CM, CN>, U>
 		{
 			typedef rand_expr<Distr, RStream, CM, CN> expr_type;
@@ -244,19 +244,19 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<class Distr, class RStream, int CM, int CN>
+	template<class Distr, class RStream, index_t CM, index_t CN>
 	struct supports_linear_access<rand_expr<Distr, RStream, CM, CN> >
 	{
 		static const bool value = true;
 	};
 
-	template<class Distr, class RStream, int CM, int CN, typename Kind>
+	template<class Distr, class RStream, index_t CM, index_t CN, typename Kind>
 	struct supports_simd<rand_expr<Distr, RStream, CM, CN>, Kind>
 	{
 		static const bool value = is_simdizable<Distr, Kind>::value;
 	};
 
-	template<class Distr, class RStream, int CM, int CN, class DMat>
+	template<class Distr, class RStream, index_t CM, index_t CN, class DMat>
 	LMAT_ENSURE_INLINE
 	inline void evaluate(const rand_expr<Distr, RStream, CM, CN>& sexpr,
 			IRegularMatrix<DMat, typename Distr::result_type>& dmat)

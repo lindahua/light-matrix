@@ -26,7 +26,7 @@ namespace lmat {  namespace internal {
 	{
 		typedef typename matrix_traits<Mat>::value_type value_type;
 
-		static const int ctrows = meta::nrows<Mat>::value;
+		static const index_t ctrows = meta::nrows<Mat>::value;
 		typedef cref_matrix<value_type, ctrows, 1> type;
 
 		LMAT_ENSURE_INLINE
@@ -41,7 +41,7 @@ namespace lmat {  namespace internal {
 	{
 		typedef typename matrix_traits<Mat>::value_type value_type;
 
-		static const int ctrows = meta::nrows<Mat>::value;
+		static const index_t ctrows = meta::nrows<Mat>::value;
 		typedef ref_matrix<value_type, ctrows, 1> type;
 
 		LMAT_ENSURE_INLINE
@@ -56,7 +56,7 @@ namespace lmat {  namespace internal {
 	{
 		typedef typename matrix_traits<Mat>::value_type value_type;
 
-		static const int ctrows = meta::nrows<Mat>::value;
+		static const index_t ctrows = meta::nrows<Mat>::value;
 		typedef cref_grid<value_type, ctrows, 1> type;
 
 		LMAT_ENSURE_INLINE
@@ -71,7 +71,7 @@ namespace lmat {  namespace internal {
 	{
 		typedef typename matrix_traits<Mat>::value_type value_type;
 
-		static const int ctrows = meta::nrows<Mat>::value;
+		static const index_t ctrows = meta::nrows<Mat>::value;
 		typedef ref_grid<value_type, ctrows, 1> type;
 
 		LMAT_ENSURE_INLINE

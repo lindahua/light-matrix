@@ -24,14 +24,14 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<typename T, int CM, int CN>
+	template<typename T, index_t CM, index_t CN>
 	struct matrix_traits<cref_grid<T, CM, CN> >
 	: public regular_matrix_traits_base<const T, CM, CN, cpu_domain>
 	{
 		typedef grid_layout<CM, CN> layout_type;
 	};
 
-	template<typename T, int CM, int CN>
+	template<typename T, index_t CM, index_t CN>
 	struct matrix_traits<ref_grid<T, CM, CN> >
 	: public regular_matrix_traits_base<T, CM, CN, cpu_domain>
 	{
@@ -45,7 +45,7 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<typename T, int CM, int CN>
+	template<typename T, index_t CM, index_t CN>
 	class cref_grid : public regular_mat_base<cref_grid<T, CM, CN> >
 	{
 	public:
@@ -83,7 +83,7 @@ namespace lmat
 	}; // end class cref_grid
 
 
-	template<typename T, int CM, int CN>
+	template<typename T, index_t CM, index_t CN>
 	class ref_grid : public regular_mat_base<ref_grid<T, CM, CN> >
 	{
 	public:

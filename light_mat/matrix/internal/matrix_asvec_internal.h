@@ -20,7 +20,7 @@ namespace lmat { namespace internal {
 	template<class Mat>
 	struct as_vec_indicator
 	{
-		static const int value =
+		static const index_t value =
 				meta::is_contiguous<Mat>::value ? 1 :
 				(meta::is_col<Mat>::value ? 2 :
 				(meta::is_row<Mat>::value ? 3 : 0));
@@ -119,7 +119,7 @@ namespace lmat { namespace internal {
 	template<class Mat>
 	struct as_col_map
 	{
-		static const int I = as_vec_indicator<Mat>::value;
+		static const index_t I = as_vec_indicator<Mat>::value;
 		static const bool is_readonly = meta::is_readonly<Mat>::value;
 
 		typedef _as_col_map<Mat, I, true> chelper_t;
@@ -241,7 +241,7 @@ namespace lmat { namespace internal {
 	template<class Mat>
 	struct as_row_map
 	{
-		static const int I = as_vec_indicator<Mat>::value;
+		static const index_t I = as_vec_indicator<Mat>::value;
 		static const bool is_readonly = meta::is_readonly<Mat>::value;
 
 		typedef _as_row_map<Mat, I, true> chelper_t;

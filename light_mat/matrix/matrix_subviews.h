@@ -129,9 +129,9 @@ namespace lmat
 	{
 		typedef typename matrix_traits<Mat>::value_type value_type;
 
-		static const int M = meta::nrows<Mat>::value;
-		static const int N = meta::ncols<Mat>::value;
-		static const int L = M < N ? M : N;
+		static const index_t M = meta::nrows<Mat>::value;
+		static const index_t N = meta::ncols<Mat>::value;
+		static const index_t L = M < N ? M : N;
 
 		typedef cref_grid<value_type, L, 1> const_type;
 

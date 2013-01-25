@@ -25,7 +25,7 @@
 		static std::string get() { return #T; } };
 
 #define _LMAT_DEFINE_EXPR_NAME_FOR_REGMAT( TC ) \
-	template<typename T, int M, int N> \
+	template<typename T, index_t M, index_t N> \
 	struct expr_name< TC<T, M, N> > { \
 		static std::string get() { return #TC; } };
 

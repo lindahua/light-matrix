@@ -17,7 +17,7 @@
 
 namespace lmat { namespace internal {
 
-	template<int M, int N, typename ContLevel>
+	template<index_t M, index_t N, typename ContLevel>
 	struct matrix_copy_scheme
 	{
 		const matrix_shape<M, N> shape;
@@ -168,14 +168,14 @@ namespace lmat { namespace internal {
 	 *
 	 ********************************************/
 
-	template<typename T, class DMat, int M, int N>
+	template<typename T, class DMat, index_t M, index_t N>
 	LMAT_ENSURE_INLINE
 	inline void copy(const T *ps, IRegularMatrix<DMat, T>& dmat, const matrix_copy_scheme<M, N, cont_level::whole>& sch)
 	{
 		copy_vec(sch.nelems(), ps, dmat.ptr_data());
 	}
 
-	template<typename T, class DMat, int M, int N>
+	template<typename T, class DMat, index_t M, index_t N>
 	inline void copy(const T *ps, IRegularMatrix<DMat, T>& dmat,
 			const matrix_copy_scheme<M, N, cont_level::percol>& sch)
 	{
@@ -201,7 +201,7 @@ namespace lmat { namespace internal {
 		}
 	}
 
-	template<typename T, class DMat, int M, int N>
+	template<typename T, class DMat, index_t M, index_t N>
 	inline void copy(const T *ps, IRegularMatrix<DMat, T>& dmat,
 			const matrix_copy_scheme<1, N, cont_level::percol>& sch)
 	{
@@ -219,7 +219,7 @@ namespace lmat { namespace internal {
 		}
 	}
 
-	template<typename T, class DMat, int M, int N>
+	template<typename T, class DMat, index_t M, index_t N>
 	inline void copy(const T *ps, IRegularMatrix<DMat, T>& dmat,
 			const matrix_copy_scheme<M, N, cont_level::none>& sch)
 	{
@@ -263,14 +263,14 @@ namespace lmat { namespace internal {
 	 *
 	 ********************************************/
 
-	template<typename T, class SMat, int M, int N>
+	template<typename T, class SMat, index_t M, index_t N>
 	LMAT_ENSURE_INLINE
 	inline void copy(const IRegularMatrix<SMat, T>& smat, T *pd, const matrix_copy_scheme<M, N, cont_level::whole>& sch)
 	{
 		copy_vec(sch.nelems(), smat.ptr_data(), pd);
 	}
 
-	template<typename T, class SMat, int M, int N>
+	template<typename T, class SMat, index_t M, index_t N>
 	inline void copy(const IRegularMatrix<SMat, T>& smat, T *pd,
 			const matrix_copy_scheme<M, N, cont_level::percol>& sch)
 	{
@@ -297,7 +297,7 @@ namespace lmat { namespace internal {
 		}
 	}
 
-	template<typename T, class SMat, int M, int N>
+	template<typename T, class SMat, index_t M, index_t N>
 	inline void copy(const IRegularMatrix<SMat, T>& smat, T *pd,
 			const matrix_copy_scheme<1, N, cont_level::percol>& sch)
 	{
@@ -319,7 +319,7 @@ namespace lmat { namespace internal {
 		}
 	}
 
-	template<typename T, class SMat, int M, int N>
+	template<typename T, class SMat, index_t M, index_t N>
 	inline void copy(const IRegularMatrix<SMat, T>& smat, T *pd,
 			const matrix_copy_scheme<M, N, cont_level::none>& sch)
 	{
@@ -365,7 +365,7 @@ namespace lmat { namespace internal {
 	 *
 	 ********************************************/
 
-	template<typename T, class SMat, class DMat, int M, int N>
+	template<typename T, class SMat, class DMat, index_t M, index_t N>
 	LMAT_ENSURE_INLINE
 	inline void copy(const IRegularMatrix<SMat, T>& smat, IRegularMatrix<DMat, T>& dmat,
 			const matrix_copy_scheme<M, N, cont_level::whole>& sch)
@@ -373,7 +373,7 @@ namespace lmat { namespace internal {
 		copy_vec(sch.nelems(), smat.ptr_data(), dmat.ptr_data());
 	}
 
-	template<typename T, class SMat, class DMat, int M, int N>
+	template<typename T, class SMat, class DMat, index_t M, index_t N>
 	inline void copy(const IRegularMatrix<SMat, T>& smat, IRegularMatrix<DMat, T>& dmat,
 			const matrix_copy_scheme<M, N, cont_level::percol>& sch)
 	{
@@ -400,7 +400,7 @@ namespace lmat { namespace internal {
 	}
 
 
-	template<typename T, class SMat, class DMat, int M, int N>
+	template<typename T, class SMat, class DMat, index_t M, index_t N>
 	inline void copy(const IRegularMatrix<SMat, T>& smat, IRegularMatrix<DMat, T>& dmat,
 			const matrix_copy_scheme<1, N, cont_level::percol>& sch)
 	{
@@ -416,7 +416,7 @@ namespace lmat { namespace internal {
 	}
 
 
-	template<typename T, class SMat, class DMat, int M, int N>
+	template<typename T, class SMat, class DMat, index_t M, index_t N>
 	inline void copy(const IRegularMatrix<SMat, T>& smat, IRegularMatrix<DMat, T>& dmat,
 			const matrix_copy_scheme<M, N, cont_level::none>& sch)
 	{

@@ -37,9 +37,9 @@ namespace lmat
 	{
 		typedef typename internal::map_expr_helper<Args...>::type helper_t;
 
-		static const int num_dimensions = 2;
-		static const int ct_num_rows = helper_t::ct_nrows;
-		static const int ct_num_cols = helper_t::ct_ncols;
+		static const index_t num_dimensions = 2;
+		static const index_t ct_num_rows = helper_t::ct_nrows;
+		static const index_t ct_num_cols = helper_t::ct_ncols;
 
 		static const bool is_readonly = true;
 

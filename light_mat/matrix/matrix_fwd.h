@@ -52,7 +52,7 @@ namespace lmat
 		typedef nil_t value_type;
 	};
 
-	template<typename T, int M, int N, typename Domain>
+	template<typename T, index_t M, index_t N, typename Domain>
 	struct matrix_xpr_traits_base
 	{
 		static const unsigned int num_dimensions = 2;
@@ -65,7 +65,7 @@ namespace lmat
 		typedef Domain domain;
 	};
 
-	template<typename QT, int M, int N, typename Domain>
+	template<typename QT, index_t M, index_t N, typename Domain>
 	struct regular_matrix_traits_base
 	{
 		static const unsigned int num_dimensions = 2;
@@ -109,9 +109,9 @@ namespace lmat
 
 	template<class Mat> class dense_mutable_view;
 
-	template<typename T, int CM, int CN> class inds_expr;
-	template<typename T, int CM, int CN> class subs_i_expr;
-	template<typename T, int CM, int CN> class subs_j_expr;
+	template<typename T, index_t CM, index_t CN> class inds_expr;
+	template<typename T, index_t CM, index_t CN> class subs_i_expr;
+	template<typename T, index_t CM, index_t CN> class subs_j_expr;
 
 	// contiguous levels
 

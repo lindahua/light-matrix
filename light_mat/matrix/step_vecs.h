@@ -25,10 +25,10 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<typename T, int CTRows>
-	class cstep_col: public cref_grid<T, CTRows, 1>
+	template<typename T, index_t CM>
+	class cstep_col: public cref_grid<T, CM, 1>
 	{
-		typedef cref_grid<T, CTRows, 1> base_mat_t;
+		typedef cref_grid<T, CM, 1> base_mat_t;
 
 	public:
 		typedef index_t index_type;
@@ -43,10 +43,10 @@ namespace lmat
 
 	};
 
-	template<typename T, int CTRows>
-	class step_col: public ref_grid<T, CTRows, 1>
+	template<typename T, index_t CM>
+	class step_col: public ref_grid<T, CM, 1>
 	{
-		typedef ref_grid<T, CTRows, 1> base_mat_t;
+		typedef ref_grid<T, CM, 1> base_mat_t;
 
 	public:
 		typedef index_t index_type;
@@ -75,10 +75,10 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<typename T, int CTCols>
-	class cstep_row: public cref_block<T, 1, CTCols>
+	template<typename T, index_t CN>
+	class cstep_row: public cref_block<T, 1, CN>
 	{
-		typedef cref_block<T, 1, CTCols> base_mat_t;
+		typedef cref_block<T, 1, CN> base_mat_t;
 
 	public:
 		typedef index_t index_type;
@@ -92,10 +92,10 @@ namespace lmat
 		: base_mat_t(s) { }
 	};
 
-	template<typename T, int CTCols>
-	class step_row: public ref_block<T, 1, CTCols>
+	template<typename T, index_t CN>
+	class step_row: public ref_block<T, 1, CN>
 	{
-		typedef ref_block<T, 1, CTCols> base_mat_t;
+		typedef ref_block<T, 1, CN> base_mat_t;
 
 	public:
 		typedef index_t index_type;

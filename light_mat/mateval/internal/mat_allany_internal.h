@@ -20,7 +20,7 @@
 namespace lmat { namespace internal {
 
 
-	template<int N, typename T, class Reader>
+	template<index_t N, typename T, class Reader>
 	LMAT_ENSURE_INLINE
 	inline bool all_impl(const dimension<N>& dim, type_<T>, scalar_, const Reader& rd, index_t i=0)
 	{
@@ -35,7 +35,7 @@ namespace lmat { namespace internal {
 	}
 
 
-	template<int N, typename T, typename SKind, class Reader>
+	template<index_t N, typename T, typename SKind, class Reader>
 	LMAT_ENSURE_INLINE
 	inline bool all_impl(const dimension<N>& dim, type_<T>, simd_<SKind>, const Reader& rd)
 	{
@@ -59,7 +59,7 @@ namespace lmat { namespace internal {
 	}
 
 
-	template<int N, typename T, class Reader>
+	template<index_t N, typename T, class Reader>
 	LMAT_ENSURE_INLINE
 	inline bool any_impl(const dimension<N>& dim, type_<T>, scalar_, const Reader& rd, index_t i=0)
 	{
@@ -74,7 +74,7 @@ namespace lmat { namespace internal {
 	}
 
 
-	template<int N, typename T, typename SKind, class Reader>
+	template<index_t N, typename T, typename SKind, class Reader>
 	LMAT_ENSURE_INLINE
 	inline bool any_impl(const dimension<N>& dim, type_<T>, simd_<SKind>, const Reader& rd)
 	{
@@ -98,14 +98,14 @@ namespace lmat { namespace internal {
 	}
 
 
-	template<int M, int N, typename T, typename VT, class Mat, typename U>
+	template<index_t M, index_t N, typename T, typename VT, class Mat, typename U>
 	inline bool all_(const matrix_shape<M, N>& shape, type_<T>, const IEWiseMatrix<Mat, VT>& mat, macc_<linear_, U>)
 	{
 		dimension<M * N> dim(shape.nelems());
 		return all_impl(dim, type_<T>(), U(), make_vec_accessor(U(), in_(mat.derived())));
 	}
 
-	template<int M, int N, typename T, typename VT, class Mat, typename U>
+	template<index_t M, index_t N, typename T, typename VT, class Mat, typename U>
 	inline bool all_(const matrix_shape<M, N>& shape, type_<T>, const IEWiseMatrix<Mat, VT>& mat, macc_<percol_, U>)
 	{
 		if (shape.nelems() > 0)
@@ -125,14 +125,14 @@ namespace lmat { namespace internal {
 	}
 
 
-	template<int M, int N, typename T, typename VT, class Mat, typename U>
+	template<index_t M, index_t N, typename T, typename VT, class Mat, typename U>
 	inline bool any_(const matrix_shape<M, N>& shape, type_<T>, const IEWiseMatrix<Mat, VT>& mat, macc_<linear_, U>)
 	{
 		dimension<M * N> dim(shape.nelems());
 		return any_impl(dim, type_<T>(), U(), make_vec_accessor(U(), in_(mat.derived())));
 	}
 
-	template<int M, int N, typename T, typename VT, class Mat, typename U>
+	template<index_t M, index_t N, typename T, typename VT, class Mat, typename U>
 	inline bool any_(const matrix_shape<M, N>& shape, type_<T>, const IEWiseMatrix<Mat, VT>& mat, macc_<percol_, U>)
 	{
 		if (shape.nelems() > 0)
@@ -152,7 +152,7 @@ namespace lmat { namespace internal {
 	}
 
 
-	template<int M, int N, typename T, class A, class D, typename U>
+	template<index_t M, index_t N, typename T, class A, class D, typename U>
 	inline void colwise_all_(const matrix_shape<M, N>& shape, type_<T>, const A& a, D& d, bool expect_val, U)
 	{
 		const index_t n = a.ncolumns();
@@ -175,7 +175,7 @@ namespace lmat { namespace internal {
 		}
 	}
 
-	template<int M, int N, typename T, class A, class D, typename U>
+	template<index_t M, index_t N, typename T, class A, class D, typename U>
 	inline void colwise_any_(const matrix_shape<M, N>& shape, type_<T>, const A& a, D& d, bool expect_val, U)
 	{
 		const index_t n = a.ncolumns();

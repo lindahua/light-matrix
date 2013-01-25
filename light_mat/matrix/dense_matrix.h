@@ -27,7 +27,7 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<typename T, int CM, int CN>
+	template<typename T, index_t CM, index_t CN>
 	struct matrix_traits<dense_matrix<T, CM, CN> >
 	: public regular_matrix_traits_base<T, CM, CN, cpu_domain>
 	{
@@ -146,7 +146,7 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<typename T, int CM, int CN>
+	template<typename T, index_t CM, index_t CN>
 	class dense_matrix : public regular_mat_base<dense_matrix<T, CM, CN> >
 	{
 	public:
@@ -291,7 +291,7 @@ namespace lmat
 	};
 
 
-	template<typename T, int CM, int CN>
+	template<typename T, index_t CM, index_t CN>
 	LMAT_ENSURE_INLINE
 	inline void swap(dense_matrix<T, CM, CN>& a, dense_matrix<T, CM, CN>& b)
 	{
@@ -305,7 +305,7 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<typename T, int CM>
+	template<typename T, index_t CM>
 	class dense_col : public dense_matrix<T, CM, 1>
 	{
 		typedef dense_matrix<T, CM, 1> base_mat_t;
@@ -352,7 +352,7 @@ namespace lmat
 	};
 
 
-	template<typename T, int CN>
+	template<typename T, index_t CN>
 	class dense_row : public dense_matrix<T, 1, CN>
 	{
 		typedef dense_matrix<T, 1, CN> base_mat_t;

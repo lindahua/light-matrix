@@ -17,7 +17,7 @@
 
 namespace lmat { namespace internal {
 
-	template<int M, int N, typename ContLevel>
+	template<index_t M, index_t N, typename ContLevel>
 	struct matrix_fill_scheme
 	{
 		const matrix_shape<M, N> shape;
@@ -143,14 +143,14 @@ namespace lmat { namespace internal {
 	 *
 	 ******************************************************/
 
-	template<typename T, class DMat, int M, int N>
+	template<typename T, class DMat, index_t M, index_t N>
 	LMAT_ENSURE_INLINE
 	inline void fill(const T& v, IRegularMatrix<DMat, T>& dmat, const matrix_fill_scheme<M, N, cont_level::whole>& sch)
 	{
 		fill_vec(sch.nelems(), dmat.ptr_data(), v);
 	}
 
-	template<typename T, class DMat, int M, int N>
+	template<typename T, class DMat, index_t M, index_t N>
 	inline void fill(const T& v, IRegularMatrix<DMat, T>& dmat,
 			const matrix_fill_scheme<M, N, cont_level::percol>& sch)
 	{
@@ -176,7 +176,7 @@ namespace lmat { namespace internal {
 		}
 	}
 
-	template<typename T, class DMat, int M, int N>
+	template<typename T, class DMat, index_t M, index_t N>
 	inline void fill(const T& v, IRegularMatrix<DMat, T>& dmat,
 			const matrix_fill_scheme<1, N, cont_level::percol>& sch)
 	{
@@ -194,7 +194,7 @@ namespace lmat { namespace internal {
 		}
 	}
 
-	template<typename T, class DMat, int M, int N>
+	template<typename T, class DMat, index_t M, index_t N>
 	inline void fill(const T& v, IRegularMatrix<DMat, T>& dmat,
 			const matrix_fill_scheme<M, N, cont_level::none>& sch)
 	{
@@ -235,14 +235,14 @@ namespace lmat { namespace internal {
 	 *
 	 ******************************************************/
 
-	template<typename T, class DMat, int M, int N>
+	template<typename T, class DMat, index_t M, index_t N>
 	LMAT_ENSURE_INLINE
 	inline void zero(IRegularMatrix<DMat, T>& dmat, const matrix_fill_scheme<M, N, cont_level::whole>& sch)
 	{
 		zero_vec(sch.nelems(), dmat.ptr_data());
 	}
 
-	template<typename T, class DMat, int M, int N>
+	template<typename T, class DMat, index_t M, index_t N>
 	inline void zero(IRegularMatrix<DMat, T>& dmat,
 			const matrix_fill_scheme<M, N, cont_level::percol>& sch)
 	{
@@ -268,7 +268,7 @@ namespace lmat { namespace internal {
 		}
 	}
 
-	template<typename T, class DMat, int M, int N>
+	template<typename T, class DMat, index_t M, index_t N>
 	inline void zero(IRegularMatrix<DMat, T>& dmat,
 			const matrix_fill_scheme<1, N, cont_level::percol>& sch)
 	{
@@ -286,7 +286,7 @@ namespace lmat { namespace internal {
 		}
 	}
 
-	template<typename T, class DMat, int M, int N>
+	template<typename T, class DMat, index_t M, index_t N>
 	inline void zero(IRegularMatrix<DMat, T>& dmat,
 			const matrix_fill_scheme<M, N, cont_level::none>& sch)
 	{
