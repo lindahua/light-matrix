@@ -48,6 +48,65 @@
 	LMAT_DEF_TRIVIAL_SIMDIZE_MAP( Name##_kernel )
 
 
+#define LMAT_DEFINE_AGGREG_SIMD_FOLDKERNEL(StatT, Kernel, NA) \
+		template<typename T> struct StatT##_; \
+		template<typename T, typename Kind> \
+		struct StatT##_<lmat::simd_pack<T, Kind> > : public StatT<lmat::simd_pack<T, Kind> > \
+		{ \
+			static const unsigned int pack_width = lmat::simd_traits<T, Kind>::pack_width; \
+			LMAT_ENSURE_INLINE \
+			StatT##_() { } \
+			LMAT_ENSURE_INLINE \
+			StatT##_(const StatT<lmat::simd_pack<T, Kind> >& s) \
+			: StatT<lmat::simd_pack<T, Kind> >(s) { } \
+		}; \
+		template<typename T> \
+		struct Kernel { \
+			typedef StatT<T> accumulated_type; \
+			typedef T value_type; \
+			LMAT_ENSURE_INLINE \
+			accumulated_type init(LMAT_REPEAT_ARGS_P##NA(const T& x)) const \
+			{ \
+				return accumulated_type(LMAT_REPEAT_ARGS_P##NA(x)); \
+			} \
+			LMAT_ENSURE_INLINE \
+			void operator() (accumulated_type& a, LMAT_REPEAT_ARGS_P##NA(const T& x)) const \
+			{ \
+				a.update(LMAT_REPEAT_ARGS_P##NA(x)); \
+			} \
+			LMAT_ENSURE_INLINE \
+			void operator() (accumulated_type& a, const accumulated_type& b) const \
+			{ \
+				a.update(b); \
+			} \
+		}; \
+		template<typename T, typename Kind> \
+		struct Kernel<lmat::simd_pack<T, Kind> > { \
+			typedef StatT##_<lmat::simd_pack<T, Kind> > accumulated_type; \
+			typedef lmat::simd_pack<T, Kind> value_type; \
+			LMAT_ENSURE_INLINE \
+			accumulated_type init(LMAT_REPEAT_ARGS_P##NA(const value_type& x)) const \
+			{ \
+				return StatT<lmat::simd_pack<T, Kind> >(LMAT_REPEAT_ARGS_P##NA(x)); \
+			} \
+			LMAT_ENSURE_INLINE \
+			void operator() (accumulated_type& a, LMAT_REPEAT_ARGS_P##NA(const value_type& x)) const \
+			{ \
+				a.update(LMAT_REPEAT_ARGS_P##NA(x)); \
+			} \
+			LMAT_ENSURE_INLINE \
+			void operator() (accumulated_type& a, const accumulated_type& b) const \
+			{ \
+				a.update(b); \
+			} \
+			LMAT_ENSURE_INLINE \
+			StatT<T> reduce(const accumulated_type& a) const \
+			{ \
+				return reduce_impl(a); \
+			} \
+		}; \
+
+
 namespace lmat
 {
 
@@ -86,7 +145,7 @@ namespace lmat
 		result_type eval(macc_<linear_, U>, const matrix_shape<CM, CN>& shape, const Wrap&... wrap) const
 		{
 			dimension<CM * CN> dim(shape.nelems());
-			return internal::linear_fold_impl(dim, U(), m_kernel, make_vec_accessor(U(), wrap...));
+			return internal::linear_fold_impl(dim, U(), m_kernel, make_vec_accessor(U(), wrap)...);
 		}
 
 		template<typename U, typename... Wrap>
@@ -94,14 +153,14 @@ namespace lmat
 		result_type eval(macc_<linear_, U>, index_t m, index_t n, const Wrap&... wrap) const
 		{
 			dimension<0> dim(m * n);
-			return internal::linear_fold_impl(dim, U(), m_kernel, make_vec_accessor(U(), wrap...));
+			return internal::linear_fold_impl(dim, U(), m_kernel, make_vec_accessor(U(), wrap)...);
 		}
 
 		template<typename U, index_t CM, index_t CN, typename... Wrap>
 		LMAT_ENSURE_INLINE
 		result_type eval(macc_<percol_, U>, const matrix_shape<CM, CN>& shape, const Wrap&... wrap) const
 		{
-			return internal::percol_fold_impl(shape, U(), m_kernel, make_multicol_accessor(U(), wrap...));
+			return internal::percol_fold_impl(shape, U(), m_kernel, make_multicol_accessor(U(), wrap)...);
 		}
 
 		template<typename U, typename... Wrap>
@@ -109,7 +168,7 @@ namespace lmat
 		result_type eval(macc_<percol_, U>, index_t m, index_t n, const Wrap&... wrap) const
 		{
 			matrix_shape<0,0> shape(m, n);
-			return internal::percol_fold_impl(shape, U(), m_kernel, make_multicol_accessor(U(), wrap...));
+			return internal::percol_fold_impl(shape, U(), m_kernel, make_multicol_accessor(U(), wrap)...);
 		}
 
 		template<index_t CM, index_t CN, typename... Wrap>

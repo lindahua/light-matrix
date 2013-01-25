@@ -29,117 +29,45 @@ namespace lmat
 		T min_value;
 		T max_value;
 
-		LMAT_ENSURE_INLINE
+		minmax_stat() { }
+
+		minmax_stat(const T& x)
+		: min_value(x), max_value(x) { }
+
 		void update(const T& x)
 		{
 			min_value = math::min(min_value, x);
 			max_value = math::max(max_value, x);
 		}
 
-		LMAT_ENSURE_INLINE
-		void update(const minmax_stat& a)
+		void update(const minmax_stat& s)
 		{
-			min_value = math::min(min_value, a.min_value);
-			max_value = math::max(max_value, a.max_value);
-		}
-
-		LMAT_ENSURE_INLINE
-		T distance() const
-		{
-			return max_value - min_value;
+			min_value = math::min(min_value, s.min_value);
+			max_value = math::max(max_value, s.max_value);
 		}
 	};
-
-	template<typename T, typename Kind>
-	struct minmax_stat_pack
-	{
-		typedef simd_pack<T, Kind> pack_t;
-		static const unsigned int pack_width = pack_t::pack_width;
-		pack_t min_pack;
-		pack_t max_pack;
-
-		LMAT_ENSURE_INLINE
-		void update(const pack_t& x)
-		{
-			min_pack = math::min(min_pack, x);
-			max_pack = math::max(max_pack, x);
-		}
-
-		LMAT_ENSURE_INLINE
-		void update(const minmax_stat_pack& a)
-		{
-			min_pack = math::min(min_pack, a.min_pack);
-			max_pack = math::max(max_pack, a.max_pack);
-		}
-	};
-
 
 	template<typename T>
 	LMAT_ENSURE_INLINE
 	inline minmax_stat<T> minmax_empty_value()
 	{
-		T v0 = std::numeric_limits<T>::infinity();
-		T v1 = -std::numeric_limits<T>::infinity();
-		return minmax_stat<T>({v0, v1});
+		minmax_stat<T> s;
+		s.min_value = std::numeric_limits<T>::infinity();
+		s.max_value = - std::numeric_limits<T>::infinity();
+		return s;
 	}
 
-	template<typename T>
-	struct minmax_kernel
-	{
-		typedef T value_type;
-		typedef minmax_stat<T> accumulated_type;
-
-		LMAT_ENSURE_INLINE
-		accumulated_type init(const T& x) const
-		{
-			return accumulated_type({x, x});
-		}
-
-		LMAT_ENSURE_INLINE
-		void operator()(accumulated_type& a, const T& x) const
-		{
-			a.update(x);
-		}
-
-		LMAT_ENSURE_INLINE
-		void operator()(accumulated_type& a, const accumulated_type& x) const
-		{
-			a.update(x);
-		}
-	};
-
 	template<typename T, typename Kind>
-	struct minmax_kernel<simd_pack<T, Kind> >
+	LMAT_ENSURE_INLINE
+	inline minmax_stat<T> reduce_impl(const minmax_stat<simd_pack<T, Kind> >& s)
 	{
-		typedef simd_pack<T, Kind> value_type;
-		typedef minmax_stat_pack<T, Kind> accumulated_type;
+		minmax_stat<T> r;
+		r.min_value = minimum(s.min_value);
+		r.max_value = maximum(s.max_value);
+		return r;
+	}
 
-		LMAT_ENSURE_INLINE
-		accumulated_type init(const value_type& x) const
-		{
-			return accumulated_type({x, x});
-		}
-
-		LMAT_ENSURE_INLINE
-		void operator() (accumulated_type& a, const value_type& x) const
-		{
-			a.update(x);
-		}
-
-		LMAT_ENSURE_INLINE
-		void operator() (accumulated_type& a, const accumulated_type& x) const
-		{
-			a.update(x);
-		}
-
-		LMAT_ENSURE_INLINE
-		minmax_stat<T> reduce(const accumulated_type& a) const
-		{
-			T v0 = minimum(a.min_pack);
-			T v1 = maximum(a.max_pack);
-			return minmax_stat<T>({v0, v1});
-		}
-	};
+	LMAT_DEFINE_AGGREG_SIMD_FOLDKERNEL(minmax_stat, minmax_kernel, 1)
 
 	LMAT_DEF_SIMD_SUPPORT( minmax_kernel )
 
@@ -158,7 +86,6 @@ namespace lmat
 				fold(minmax_kernel<T>())(a.shape(), in_(a)) :
 				minmax_empty_value<T>();
 	}
-
 
 
 	template<typename T, class A, class DMat1, class DMat2>
