@@ -15,6 +15,7 @@
 
 #include <light_mat/matrix/matrix_classes.h>
 #include <light_mat/mateval/ewise_eval.h>
+#include <light_mat/math/functor_base.h>
 
 using namespace lmat;
 using namespace lmat::test;
@@ -91,7 +92,7 @@ void test_linear_accum()
 	for (index_t i = 0; i < m * n; ++i) v_sum += smat[i];
 
 	double r_sum = 10.0;
-	ewise(my_sum_kernel<double>(), U())(shape, in_(smat), sum_to_(r_sum));
+	ewise(my_sum_kernel<double>()).eval(macc_<linear_, U>(), shape, in_(smat), sum_to_(r_sum));
 
 	ASSERT_APPROX(r_sum, v_sum, 1.0e-12);
 
@@ -101,7 +102,7 @@ void test_linear_accum()
 	for (index_t i = 0; i < m * n; ++i) if (v_max < smat[i]) v_max = smat[i];
 
 	double r_max = 0.5;
-	ewise(my_max_kernel<double>(), U())(shape, in_(smat), max_to_(r_max));
+	ewise(my_max_kernel<double>()).eval(macc_<linear_, U>(), shape, in_(smat), max_to_(r_max));
 
 	ASSERT_EQ( v_max, r_max );
 
@@ -111,7 +112,7 @@ void test_linear_accum()
 	for (index_t i = 0; i < m * n; ++i) if (v_min > smat[i]) v_min = smat[i];
 
 	double r_min = 0.5;
-	ewise(my_min_kernel<double>(), U())(shape, in_(smat), min_to_(r_min));
+	ewise(my_min_kernel<double>()).eval(macc_<linear_, U>(), shape, in_(smat), min_to_(r_min));
 
 	ASSERT_EQ( v_min, r_min );
 }
@@ -137,7 +138,7 @@ void test_percol_accum()
 	for (index_t i = 0; i < m * n; ++i) v_sum += smat[i];
 
 	double r_sum = 10.0;
-	percol(ewise(my_sum_kernel<double>(), U()), shape,
+	ewise(my_sum_kernel<double>()).eval(macc_<percol_, U>(), shape,
 			in_(smat), sum_to_(r_sum));
 
 	ASSERT_APPROX(r_sum, v_sum, 1.0e-12);
@@ -148,7 +149,7 @@ void test_percol_accum()
 	for (index_t i = 0; i < m * n; ++i) if (v_max < smat[i]) v_max = smat[i];
 
 	double r_max = 0.5;
-	percol(ewise(my_max_kernel<double>(), U()), shape,
+	ewise(my_max_kernel<double>()).eval(macc_<percol_, U>(), shape,
 			in_(smat), max_to_(r_max));
 
 	ASSERT_EQ( v_max, r_max );
@@ -159,7 +160,7 @@ void test_percol_accum()
 	for (index_t i = 0; i < m * n; ++i) if (v_min > smat[i]) v_min = smat[i];
 
 	double r_min = 0.5;
-	percol(ewise(my_min_kernel<double>(), U()), shape,
+	ewise(my_min_kernel<double>()).eval(macc_<percol_, U>(), shape,
 			in_(smat), min_to_(r_min));
 
 	ASSERT_EQ( v_min, r_min );
@@ -202,7 +203,7 @@ void test_accum_colwise()
 		}
 	}
 
-	percol(ewise(my_sum_kernel<double>(), U()), shape,
+	ewise(my_sum_kernel<double>()).eval(macc_<percol_, U>(), shape,
 			in_(smat), colwise_sum_to_(drow));
 
 	ASSERT_MAT_APPROX( 1, n, drow, rrow, 1.0e-12 );
@@ -224,7 +225,7 @@ void test_accum_colwise()
 		}
 	}
 
-	percol(ewise(my_max_kernel<double>(), U()), shape,
+	ewise(my_max_kernel<double>()).eval(macc_<percol_, U>(), shape,
 			in_(smat), colwise_max_to_(drow));
 
 	ASSERT_MAT_EQ( 1, n, drow, rrow );
@@ -247,7 +248,7 @@ void test_accum_colwise()
 		}
 	}
 
-	percol(ewise(my_min_kernel<double>(), U()), shape,
+	ewise(my_min_kernel<double>()).eval(macc_<percol_, U>(), shape,
 			in_(smat), colwise_min_to_(drow));
 
 	ASSERT_MAT_EQ( 1, n, drow, rrow );
@@ -290,7 +291,7 @@ void test_accum_rowwise()
 		}
 	}
 
-	percol(ewise(my_sum_kernel<double>(), U()), shape,
+	ewise(my_sum_kernel<double>()).eval(macc_<percol_, U>(), shape,
 			in_(smat), rowwise_sum_to_(dcol));
 
 	ASSERT_MAT_APPROX( m, 1, dcol, rcol, 1.0e-12 );
@@ -312,7 +313,7 @@ void test_accum_rowwise()
 		}
 	}
 
-	percol(ewise(my_max_kernel<double>(), U()), shape,
+	ewise(my_max_kernel<double>()).eval(macc_<percol_, U>(), shape,
 			in_(smat), rowwise_max_to_(dcol));
 
 	ASSERT_MAT_EQ( m, 1, dcol, rcol );
@@ -334,7 +335,7 @@ void test_accum_rowwise()
 		}
 	}
 
-	percol(ewise(my_min_kernel<double>(), U()), shape,
+	ewise(my_min_kernel<double>()).eval(macc_<percol_, U>(), shape,
 			in_(smat), rowwise_min_to_(dcol));
 
 	ASSERT_MAT_EQ( m, 1, dcol, rcol );

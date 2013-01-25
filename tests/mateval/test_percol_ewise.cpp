@@ -47,7 +47,7 @@ void test_percol_ewise()
 	copy_kernel<double> cpy_kernel;
 	accum_kernel<double> upd_kernel;
 
-	percol(ewise(cpy_kernel, U()), shape, in_(smat), out_(dmat));
+	ewise(cpy_kernel).eval(macc_<percol_, U>(), shape, in_(smat), out_(dmat));
 
 	ASSERT_MAT_EQ(m, n, smat, dmat);
 
@@ -57,7 +57,7 @@ void test_percol_ewise()
 		for (index_t i = 0; i < m; ++i) rmat(i, j) = smat(i, j) + dmat(i, j);
 	}
 
-	percol(ewise(upd_kernel, U()), shape, in_out_(dmat), in_(smat));
+	ewise(upd_kernel).eval(macc_<percol_, U>(), shape, in_out_(dmat), in_(smat));
 
 	ASSERT_MAT_EQ(m, n, dmat, rmat);
 }
@@ -81,7 +81,7 @@ void test_percol_ewise_single()
 
 	matrix_shape<M, N> shape(m, n);
 
-	percol(ewise(copy_kernel<double>(), U()), shape, const_(v), out_(dmat));
+	ewise(copy_kernel<double>()).eval(macc_<percol_, U>(), shape, const_(v), out_(dmat));
 
 	ASSERT_MAT_EQ(m, n, dmat, rmat);
 }
@@ -114,7 +114,7 @@ void test_percol_ewise_repcol()
 
 	matrix_shape<M, N> shape(m, n);
 
-	percol(ewise(copy_kernel<double>(), U()), shape, repcol_(col), out_(dmat));
+	ewise(copy_kernel<double>()).eval(macc_<percol_, U>(), shape, repcol_(col), out_(dmat));
 
 	ASSERT_MAT_EQ(m, n, dmat, rmat);
 }
@@ -147,7 +147,7 @@ void test_percol_ewise_reprow()
 
 	matrix_shape<M, N> shape(m, n);
 
-	percol(ewise(copy_kernel<double>(), U()), shape, reprow_(row), out_(dmat));
+	ewise(copy_kernel<double>()).eval(macc_<percol_, U>(), shape, reprow_(row), out_(dmat));
 
 	ASSERT_MAT_EQ(m, n, dmat, rmat);
 }

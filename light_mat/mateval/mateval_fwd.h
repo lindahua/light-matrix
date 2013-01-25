@@ -74,7 +74,6 @@ namespace lmat
 	template<typename Kind>
 	struct simd_ { };
 
-	typedef simd_<default_simd_kind> default_access_unit_t;
 
 	// access tags
 

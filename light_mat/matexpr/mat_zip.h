@@ -131,66 +131,6 @@ namespace lmat
 		}
 	};
 
-	namespace internal
-	{
-		template<typename T, typename U, class Expr,
-			class D0, typename E0, class D1, typename E1>
-		LMAT_ENSURE_INLINE
-		inline void unzip_eval(linear_macc<U>,
-				const IEWiseMatrix<Expr, T>& tmat,
-				IRegularMatrix<D0, E0>& emat0, IRegularMatrix<D1, E1>& emat1)
-		{
-			const Expr& t = tmat.derived();
-			D0& e0 = emat0.derived();
-			D1& e1 = emat1.derived();
-
-			ewise(unzip_kernel<T>(), U())(t.shape(), in_(t), out_(e0), out_(e1));
-		}
-
-		template<typename T, typename U, class Expr,
-			class D0, typename E0, class D1, typename E1, class D2, typename E2>
-		LMAT_ENSURE_INLINE
-		inline void unzip_eval(linear_macc<U>,
-				const IEWiseMatrix<Expr, T>& tmat,
-				IRegularMatrix<D0, E0>& emat0, IRegularMatrix<D1, E1>& emat1, IRegularMatrix<D2, E2>& emat2)
-		{
-			const Expr& t = tmat.derived();
-			D0& e0 = emat0.derived();
-			D1& e1 = emat1.derived();
-			D2& e2 = emat2.derived();
-
-			ewise(unzip_kernel<T>(), U())(t.shape(), in_(t), out_(e0), out_(e1), out_(e2));
-		}
-
-		template<typename T, typename U, class Expr,
-			class D0, typename E0, class D1, typename E1>
-		LMAT_ENSURE_INLINE
-		inline void unzip_eval(percol_macc<U>,
-				const IEWiseMatrix<Expr, T>& tmat,
-				IRegularMatrix<D0, E0>& emat0, IRegularMatrix<D1, E1>& emat1)
-		{
-			const Expr& t = tmat.derived();
-			D0& e0 = emat0.derived();
-			D1& e1 = emat1.derived();
-
-			percol(ewise(unzip_kernel<T>(), U()), t.shape(), in_(t), out_(e0), out_(e1));
-		}
-
-		template<typename T, typename U, class Expr,
-			class D0, typename E0, class D1, typename E1, class D2, typename E2>
-		LMAT_ENSURE_INLINE
-		inline void unzip_eval(percol_macc<U>,
-				const IEWiseMatrix<Expr, T>& tmat,
-				IRegularMatrix<D0, E0>& emat0, IRegularMatrix<D1, E1>& emat1, IRegularMatrix<D2, E2>& emat2)
-		{
-			const Expr& t = tmat.derived();
-			D0& e0 = emat0.derived();
-			D1& e1 = emat1.derived();
-			D2& e2 = emat2.derived();
-
-			percol(ewise(unzip_kernel<T>(), U()), t.shape(), in_(t), out_(e0), out_(e1), out_(e2));
-		}
-	}
 
 	template<class S, typename T, class D0, typename E0, class D1, typename E1>
 	inline void unzip(const IEWiseMatrix<S, T>& t,
@@ -202,7 +142,7 @@ namespace lmat
 		e0.require_size(m, n);
 		e1.require_size(m, n);
 
-		internal::unzip_eval(get_preferred_macc_policy(t), t, e0, e1);
+		ewise(unzip_kernel<T>())(t.shape(), in_(t), out_(e0), out_(e1));
 	}
 
 	template<class S, typename T, class D0, typename E0, class D1, typename E1, class D2, typename E2>
@@ -216,7 +156,7 @@ namespace lmat
 		e1.require_size(m, n);
 		e2.require_size(m, n);
 
-		internal::unzip_eval(get_preferred_macc_policy(t), t, e0, e1, e2);
+		ewise(unzip_kernel<T>())(t.shape(), in_(t), out_(e0), out_(e1), out_(e2));
 	}
 
 

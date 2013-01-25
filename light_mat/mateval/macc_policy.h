@@ -20,22 +20,90 @@ namespace lmat
 {
 	// Policies
 
-	template<typename ATag> struct linear_macc { };
-	template<typename ATag> struct percol_macc { };
+	struct linear_ { };
+	struct percol_ { };
+
+	template<typename Acc, typename U> struct macc_ { };
+
+	template<typename U>
+	LMAT_ENSURE_INLINE
+	inline bool use_linear_acc(macc_<linear_, U>)
+	{
+		return true;
+	}
+
+	template<typename U>
+	LMAT_ENSURE_INLINE
+	inline bool use_linear_acc(macc_<percol_, U>)
+	{
+		return false;
+	}
+
+	template<typename Acc, typename U>
+	LMAT_ENSURE_INLINE
+	inline bool use_simd(macc_<Acc, U>)
+	{
+		return false;
+	}
+
+	template<typename Acc, typename Kind>
+	LMAT_ENSURE_INLINE
+	inline bool use_simd(macc_<Acc, simd_<Kind> >)
+	{
+		return true;
+	}
+
 
 	/********************************************
 	 *
-	 *  Linear MACC support
+	 *  Linear Access support
 	 *
 	 ********************************************/
 
-	template<typename Mat>
-	struct supports_linear_macc
+	namespace internal
 	{
-		static const bool value =
-				meta::is_regular_mat<Mat>::value &&
-				meta::supports_linear_index<Mat>::value;
-	};
+		template<typename Mat>
+		struct _matrix_supports_linear_macc :
+		public meta::and_<
+			meta::is_regular_mat<Mat>,
+			meta::supports_linear_index<Mat>
+		> { };
+	}
+
+	template<typename A>
+	struct supports_linear_access
+	: public internal::_matrix_supports_linear_macc<A> { };
+
+	template<typename T, typename ATag>
+	struct supports_linear_access<arg_wrap<T, ATag> > : public meta::false_ { };
+
+	template<typename T>
+	struct supports_linear_access<arg_wrap<T, atags::single> >
+	: public meta::true_ { };
+
+	template<typename A>
+	struct supports_linear_access<arg_wrap<A, atags::in> >
+	: public supports_linear_access<A> { };
+
+	template<typename A>
+	struct supports_linear_access<arg_wrap<A, atags::out> >
+	: public supports_linear_access<A> { };
+
+	template<typename A>
+	struct supports_linear_access<arg_wrap<A, atags::in_out> >
+	: public supports_linear_access<A> { };
+
+	template<typename T>
+	struct supports_linear_access<arg_wrap<T, atags::sum> >
+	: public meta::true_ { };
+
+	template<typename T>
+	struct supports_linear_access<arg_wrap<T, atags::max> >
+	: public meta::true_ { };
+
+	template<typename T>
+	struct supports_linear_access<arg_wrap<T, atags::min> >
+	: public meta::true_ { };
 
 
 	/********************************************
@@ -44,56 +112,45 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<typename T, typename Kind>
-	struct supports_simd_access : public meta::false_ { };
-
-	template<>
-	struct supports_simd_access<float, sse_t> : public meta::true_ { };
-
-	template<>
-	struct supports_simd_access<double, sse_t> : public meta::true_ { };
-
-	template<>
-	struct supports_simd_access<float, avx_t> : public meta::true_ { };
-
-	template<>
-	struct supports_simd_access<double, avx_t> : public meta::true_ { };
+	template<typename A, typename Kind> struct supports_simd;
 
 	namespace internal
 	{
-		template<class Mat, typename Kind, bool IsLinear, bool ESimd>
-		struct regular_mat_supports_simd : public meta::false_ { };
+		template<typename Mat, bool IsRegular, typename Kind>
+		struct _matrix_supports_simd : public meta::false_ { };
 
-		template<class Mat, typename Kind>
-		struct regular_mat_supports_simd<Mat, Kind, true, true>
+		template<typename Mat, typename Kind>
+		struct _matrix_supports_simd<Mat, true, Kind>
 		{
-			typedef typename matrix_traits<Mat>::value_type T;
-			static const unsigned int L = (unsigned int)meta::nelems<Mat>::value;
-			static const unsigned int W = simd_traits<T, Kind>::pack_width;
+			typedef typename meta::value_type_of<Mat>::type VT;
 
-			static const bool value = meta::is_contiguous<Mat>::value && (L % W == 0);
-		};
+			static const bool _bt = supports_simd<VT, Kind>::value;
+			static const bool _bs = meta::is_contiguous<Mat>::value ||
+					(meta::is_percol_contiguous<Mat>::value && !meta::is_row<Mat>::value);
 
-		template<class Mat, typename Kind>
-		struct regular_mat_supports_simd<Mat, Kind, false, true>
-		{
-			typedef typename matrix_traits<Mat>::value_type T;
-			static const unsigned int L = (unsigned int)meta::nrows<Mat>::value;
-			static const unsigned int W = simd_traits<T, Kind>::pack_width;
-
-			static const bool value = meta::is_percol_contiguous<Mat>::value && (L % W == 0);
+			static const bool value = _bt && _bs;
 		};
 	}
 
-	template<typename Mat, typename Kind, bool IsLinear>
+	template<typename A, typename Kind>
 	struct supports_simd
-	{
-		static_assert(meta::is_regular_mat<Mat>::value, "Mat here should be a regular matrix.");
+	: public internal::_matrix_supports_simd<A, meta::is_regular_mat<A>::value, Kind> { };
 
-		typedef typename matrix_traits<Mat>::value_type T;
-		static const bool value = internal::regular_mat_supports_simd<
-				Mat, Kind, IsLinear, supports_simd_access<T, Kind>::value>::value;
-	};
+	template<>
+	struct supports_simd<float, sse_t> : public meta::true_ { };
+
+	template<>
+	struct supports_simd<float, avx_t> : public meta::true_ { };
+
+	template<>
+	struct supports_simd<double, sse_t> : public meta::true_ { };
+
+	template<>
+	struct supports_simd<double, avx_t> : public meta::true_ { };
+
+	template<typename A, typename ATag, typename Kind>
+	struct supports_simd<arg_wrap<A, ATag>, Kind>
+	: public supports_simd<A, Kind> { };
 
 
 	/********************************************
@@ -102,65 +159,99 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<class S>
+	namespace internal
+	{
+		template<class Kernel, typename Kind, bool IsSimdizable>
+		struct _kernel_packwidth
+		{
+			static const unsigned int value = 1;
+		};
+
+		template<class Kernel, typename Kind>
+		struct _kernel_packwidth<Kernel, Kind, true>
+		{
+			typedef typename Kernel::value_type T;
+			static const unsigned int value = simd_traits<T, Kind>::pack_width;
+		};
+
+		template<class Shape, class Kernel, typename... Args>
+		struct _preferred_macc_policy_deriv
+		{
+			static const bool supp_linear =
+					meta::all_<supports_linear_access<Args>...>::value;
+
+			typedef default_simd_kind skind;
+
+			static const bool ker_simdizable = is_simdizable<Kernel, skind>::value;
+
+			static const bool args_supp_simd =
+					meta::all_<supports_simd<Args, skind>...>::value;
+
+			static const bool use_linear = supp_linear;
+
+			static const index_t len = use_linear ?
+					(Shape::ct_nrows * Shape::ct_ncols) : Shape::ct_nrows;
+
+			static const unsigned int pack_width =
+					internal::_kernel_packwidth<Kernel, skind, ker_simdizable>::value;
+
+			static const bool use_simd =
+					ker_simdizable &&
+					args_supp_simd &&
+					((unsigned int)len % pack_width == 0);
+		};
+	}
+
+
+
+	template<class Shape, class Kernel, typename... Args>
 	struct preferred_macc_policy
 	{
-		typedef typename matrix_traits<S>::value_type vtype;
+		// derivation:
 
-		static const bool prefer_linear = supports_linear_macc<S>::value;
+		typedef internal::_preferred_macc_policy_deriv<Shape, Kernel, Args...> _deriv;
 
-		static const bool prefer_simd =
-				supports_simd<S, default_simd_kind, prefer_linear>::value;
+		typedef typename _deriv::skind skind;
+		static const bool use_linear = _deriv::use_linear;
+		static const bool use_simd = _deriv::use_simd;
 
-		typedef typename std::conditional<prefer_simd,
-				simd_<default_simd_kind>,
-				scalar_>::type atag;
+		// result:
 
-		typedef typename std::conditional<prefer_linear,
-				linear_macc<atag>,
-				percol_macc<atag> >::type type;
-	};
+		typedef typename std::conditional<use_linear, linear_, percol_>::type access;
+		typedef typename std::conditional<use_simd, simd_<skind>, scalar_>::type unit;
 
-	template<class S, class D>
-	struct preferred_macc_policy_2
-	{
-		typedef typename meta::common_value_type<S, D>::type vtype;
-
-		static const bool prefer_linear =
-				supports_linear_macc<S>::value &&
-				supports_linear_macc<D>::value;
-
-		static const bool prefer_simd =
-				supports_simd<S, default_simd_kind, prefer_linear>::value &&
-				supports_simd<D, default_simd_kind, prefer_linear>::value;
-
-		typedef typename std::conditional<prefer_simd,
-				simd_<default_simd_kind>,
-				scalar_>::type atag;
-
-		typedef typename std::conditional<prefer_linear,
-				linear_macc<atag>,
-				percol_macc<atag> >::type type;
+		typedef macc_<access, unit> type;
 	};
 
 
-	template<typename T, class A>
-	LMAT_ENSURE_INLINE
-	inline typename preferred_macc_policy<A>::type
-	get_preferred_macc_policy(const IEWiseMatrix<A, T>& a)
+	template<index_t CM, index_t CN, class Kernel, typename... Args>
+	typename preferred_macc_policy<matrix_shape<CM, CN>, Kernel, Args...>::type
+	get_preferred_macc_policy(const matrix_shape<CM, CN>&, const Kernel&, const Args&...)
 	{
-		typedef typename preferred_macc_policy<A>::type policy_t;
+		typedef typename preferred_macc_policy<matrix_shape<CM, CN>, Kernel, Args...>::type policy_t;
 		return policy_t();
 	}
 
-	template<typename T, class A, class B>
-	LMAT_ENSURE_INLINE
-	inline typename preferred_macc_policy_2<A, B>::type
-	get_preferred_macc_policy(const IEWiseMatrix<A, T>& a, const IEWiseMatrix<B, T>& b)
+	template<class Kernel, typename... Args>
+	typename preferred_macc_policy<matrix_shape<0, 0>, Kernel, Args...>::type
+	get_preferred_macc_policy(index_t, index_t, const Kernel&, const Args&...)
 	{
-		typedef typename preferred_macc_policy_2<A, B>::type policy_t;
+		typedef typename preferred_macc_policy<matrix_shape<0, 0>, Kernel, Args...>::type policy_t;
 		return policy_t();
 	}
+
+
+	template<typename T, class Expr, typename Dst>
+	typename preferred_macc_policy<
+		typename meta::common_shape<Expr, Dst>::type, copy_kernel<T>, Expr, Dst>::type
+	get_preferred_expr_macc_policy(const IMatrixXpr<Expr, T>& expr, const IRegularMatrix<Dst, T>& dst)
+	{
+		const Expr& s = expr.derived();
+		const Dst& d = dst.derived();
+
+		return get_preferred_macc_policy(common_shape(s, d), copy_kernel<T>(), s, d);
+	}
+
 
 }
 

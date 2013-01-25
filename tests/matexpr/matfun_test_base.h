@@ -27,20 +27,23 @@ const index_t LDim = 12;
 template<class Expr>
 inline void check_policy(const Expr& expr)
 {
-	typedef preferred_macc_policy<Expr> pmap;
+	typedef typename matrix_traits<Expr>::value_type T;
+	ref_matrix<T> dst(0, expr.nrows(), expr.ncolumns());
+
+	auto policy = get_preferred_expr_macc_policy(expr, dst);
+
 	typedef decltype(expr.tag()) tag_t;
 	typedef default_simd_kind skind;
 
-	typedef typename matrix_traits<Expr>::value_type T;
 	const int pw = (int)simd_traits<T, skind>::pack_width;
-	ASSERT_TRUE( pmap::prefer_linear );
+	ASSERT_TRUE( use_linear_acc(policy) );
 
 	int M = meta::nrows<Expr>::value;
 	int N = meta::ncols<Expr>::value;
 
-	bool use_simd = ((M * N) % pw == 0)
+	bool expect_use_simd = ((M * N) % pw == 0)
 			&& meta::has_simd_support<tag_t, T, skind>::value;
-	ASSERT_EQ( pmap::prefer_simd, use_simd );
+	ASSERT_EQ( use_simd(policy), expect_use_simd );
 }
 
 

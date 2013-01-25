@@ -16,10 +16,10 @@
 #include <light_mat/matrix/matrix_properties.h>
 #include <light_mat/mateval/vec_accessors.h>
 #include <light_mat/mateval/multicol_accessors.h>
+
 #include <light_mat/math/functor_base.h>
 
 namespace lmat { namespace internal {
-
 
 	/********************************************
 	 *
@@ -27,8 +27,9 @@ namespace lmat { namespace internal {
 	 *
 	 ********************************************/
 
-	template<int N, class Kernel, typename... Accessors>
-	inline void linear_ewise_eval(const dimension<N>& dim, scalar_,
+	template<index_t Len, class Kernel, typename... Accessors>
+	inline void _linear_ewise_eval(
+			const dimension<Len>& dim, scalar_,
 			const Kernel& kernel, const Accessors&... accessors)
 	{
 		const index_t len = dim.value();
@@ -41,8 +42,9 @@ namespace lmat { namespace internal {
 		pass(accessors.finalize()...);
 	}
 
-	template<int N, typename SKind, class Kernel, typename... Accessors>
-	inline void linear_ewise_eval(const dimension<N>& dim, simd_<SKind>,
+	template<index_t Len, typename SKind, class Kernel, typename... Accessors>
+	inline void _linear_ewise_eval(
+			const dimension<Len>& dim, simd_<SKind>,
 			const Kernel& kernel, const Accessors&... accessors)
 	{
 		static_assert(is_simdizable<Kernel, SKind>::value, "kernel must be simdizable.");
@@ -120,15 +122,21 @@ namespace lmat { namespace internal {
 	 *
 	 ********************************************/
 
-	template<int N, class VecKernel, typename... MultiColAccessors>
-	inline void percol_eval_a(const dimension<N>& col_dim, const index_t n,
-			const VecKernel& veckernel, const MultiColAccessors&... accs)
+	template<index_t CM, index_t CN, typename U, class Kernel, typename... MultiColAccessors>
+	inline void _percol_ewise_eval(
+			const matrix_shape<CM, CN>& shape, U,
+			const Kernel& kernel, const MultiColAccessors&... accessors)
 	{
+		dimension<CM> coldim(shape.nrows());
+		const index_t n = shape.ncolumns();
+
 		for (index_t j = 0; j < n; ++j)
 		{
-			veckernel.apply(col_dim, accs.col(j)...);
+			_linear_ewise_eval(coldim, U(), kernel, accessors.col(j)...);
 		}
 	}
+
+
 
 } }
 

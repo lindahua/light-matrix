@@ -27,7 +27,7 @@ namespace lmat
 	template<class A, typename T>
 	inline size_t count(const IEWiseMatrix<A, T>& a)
 	{
-		return internal::count_impl<supports_linear_macc<A>::value>::run(a.derived());
+		return internal::count_impl<supports_linear_access<A>::value>::run(a.derived());
 	}
 
 	template<class A, typename T, class D, typename TD>

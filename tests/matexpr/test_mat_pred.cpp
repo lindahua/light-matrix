@@ -202,10 +202,11 @@ MN_CASE( mat_cond_b )
 	double cv = X[0] + Y[0];
 
 	typedef map_expr<ftags::cond_, bmat_t, mat_t, mat_t> expr_t;
-	typedef preferred_macc_policy<expr_t> pmap;
+	ref_matrix<double, M, N> _dst(0, m, n);
+	auto policy = get_preferred_expr_macc_policy(cond(C, X, Y), _dst);
 
-	ASSERT_TRUE( pmap::prefer_linear );
-	ASSERT_FALSE( pmap::prefer_simd );
+	ASSERT_TRUE( use_linear_acc(policy) );
+	ASSERT_FALSE( use_simd(policy) );
 
 	mat_t R1 = cond(C, X, Y);
 	mat_t R1_r(m, n);
@@ -249,13 +250,14 @@ MN_CASE( mat_cond_m )
 	double cv = X[0] + Y[0];
 
 	typedef map_expr<ftags::cond_, map_expr<ftags::eq_, mat_t, mat_t>, mat_t, mat_t> expr_t;
-	typedef preferred_macc_policy<expr_t> pmap;
+	ref_matrix<double, M, N> _dst(0, m, n);
+	auto policy = get_preferred_expr_macc_policy(cond(A == B, X, Y), _dst);
 
 	const int pw = simd_traits<double, default_simd_kind>::pack_width;
-	ASSERT_TRUE( pmap::prefer_linear );
-	bool use_simd = ((M * N) % pw == 0);
+	ASSERT_TRUE( use_linear_acc(policy) );
 
-	ASSERT_EQ( pmap::prefer_simd, use_simd );
+	bool expect_use_simd = ((M * N) % pw == 0);
+	ASSERT_EQ( use_simd(policy), expect_use_simd );
 
 	mat_t R1 = cond(A == B, X, Y);
 	mat_t R1_r(m, n);

@@ -445,21 +445,21 @@ namespace lmat
 	 ********************************************/
 
 	template<typename FTag, typename... Args>
-	struct supports_linear_macc<map_expr<FTag, Args...> >
+	struct supports_linear_access<map_expr<FTag, Args...> >
 	{
 		static const bool value =
 				meta::all_<internal::arg_supp_linear<Args>...>::value;
 	};
 
-	template<typename FTag, typename Kind, bool IsLinear, typename... Args>
-	struct supports_simd<map_expr<FTag, Args...>, Kind, IsLinear>
+	template<typename FTag, typename Kind, typename... Args>
+	struct supports_simd<map_expr<FTag, Args...>, Kind>
 	{
 		typedef typename fun_map<FTag,
 				typename internal::arg_value_type<Args>::type...>::type fun_t;
 
 		static const bool value =
 				is_simdizable<fun_t, Kind>::value &&
-				meta::all_<internal::arg_supp_simd<Args, Kind, IsLinear>...>::value;
+				meta::all_<supports_simd<Args, Kind>...>::value;
 	};
 
 	template<typename FTag, typename... Args, class DMat>
@@ -467,8 +467,9 @@ namespace lmat
 	inline void evaluate(const map_expr<FTag, Args...>& sexpr,
 			IRegularMatrix<DMat, typename internal::map_expr_value<FTag, Args...>::type>& dmat)
 	{
-		evaluate_by_map(sexpr, dmat);
+		macc_evaluate(sexpr, dmat);
 	}
+
 
 }
 

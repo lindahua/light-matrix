@@ -338,43 +338,43 @@ namespace lmat
 	 ********************************************/
 
 	template<typename T, int CM, int CN>
-	struct supports_linear_macc<inds_expr<T, CM, CN> > : public meta::true_ { };
+	struct supports_linear_access<inds_expr<T, CM, CN> > : public meta::true_ { };
 
 	template<typename T, int CM, int CN>
-	struct supports_linear_macc<subs_i_expr<T, CM, CN> > : public meta::false_ { };
+	struct supports_linear_access<subs_i_expr<T, CM, CN> > : public meta::false_ { };
 
 	template<typename T, int CM, int CN>
-	struct supports_linear_macc<subs_j_expr<T, CM, CN> > : public meta::false_ { };
+	struct supports_linear_access<subs_j_expr<T, CM, CN> > : public meta::false_ { };
 
-	template<typename VT, int CM, int CN, typename Kind, bool IsLinear>
-	struct supports_simd<inds_expr<VT, CM, CN>, Kind, IsLinear> : public meta::false_ { };
+	template<typename VT, int CM, int CN, typename Kind>
+	struct supports_simd<inds_expr<VT, CM, CN>, Kind> : public meta::false_ { };
 
-	template<typename VT, int CM, int CN, typename Kind, bool IsLinear>
-	struct supports_simd<subs_i_expr<VT, CM, CN>, Kind, IsLinear> : public meta::false_ { };
+	template<typename VT, int CM, int CN, typename Kind>
+	struct supports_simd<subs_i_expr<VT, CM, CN>, Kind> : public meta::false_ { };
 
-	template<typename VT, int CM, int CN, typename Kind, bool IsLinear>
-	struct supports_simd<subs_j_expr<VT, CM, CN>, Kind, IsLinear> : public meta::false_ { };
+	template<typename VT, int CM, int CN, typename Kind>
+	struct supports_simd<subs_j_expr<VT, CM, CN>, Kind> : public meta::false_ { };
 
 
 	template<typename T, int CM, int CN, class DMat>
 	LMAT_ENSURE_INLINE
 	inline void evaluate(const inds_expr<T, CM, CN>& sexpr, IRegularMatrix<DMat, T>& dmat)
 	{
-		evaluate_by_map(sexpr, dmat);
+		macc_evaluate(sexpr, dmat);
 	}
 
 	template<typename T, int CM, int CN, class DMat>
 	LMAT_ENSURE_INLINE
 	inline void evaluate(const subs_i_expr<T, CM, CN>& sexpr, IRegularMatrix<DMat, T>& dmat)
 	{
-		evaluate_by_map(sexpr, dmat);
+		macc_evaluate(sexpr, dmat);
 	}
 
 	template<typename T, int CM, int CN, class DMat>
 	LMAT_ENSURE_INLINE
 	inline void evaluate(const subs_j_expr<T, CM, CN>& sexpr, IRegularMatrix<DMat, T>& dmat)
 	{
-		evaluate_by_map(sexpr, dmat);
+		macc_evaluate(sexpr, dmat);
 	}
 
 

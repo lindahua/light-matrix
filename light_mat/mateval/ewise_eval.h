@@ -26,15 +26,14 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<class Kernel, typename U>
-	struct vectorized_kernel
+	template<class Kernel>
+	struct ewise_kernel
 	{
 	public:
 		typedef Kernel kernel_type;
-		typedef U unit_type;
 
 		LMAT_ENSURE_INLINE
-		vectorized_kernel(const Kernel& kernel)
+		ewise_kernel(const Kernel& kernel)
 		: m_kernel(kernel) { }
 
 		LMAT_ENSURE_INLINE
@@ -43,51 +42,62 @@ namespace lmat
 			return m_kernel;
 		}
 
-		template<int L, typename... Accessors>
+		template<typename U, typename... Wraps>
 		LMAT_ENSURE_INLINE
-		void apply(const dimension<L>& dim, const Accessors&... accs) const
+		void eval(macc_<linear_, U>, index_t m, index_t n, const Wraps&... wraps) const
 		{
-			internal::linear_ewise_eval(dim, U(), m_kernel, accs...);
+			dimension<0> dim(m * n);
+			internal::_linear_ewise_eval(dim, U(), m_kernel, make_vec_accessor(U(), wraps)...);
 		}
 
-		template<typename... Accessors>
+		template<typename U, index_t CM, index_t CN, typename... Wraps>
 		LMAT_ENSURE_INLINE
-		void apply(index_t len, const Accessors&... accs) const
+		void eval(macc_<linear_, U>, const matrix_shape<CM, CN>& shape, const Wraps&... wraps) const
 		{
-			apply(dimension<0>(len), accs...);
+			dimension<CM * CN> dim(shape.nelems());
+			internal::_linear_ewise_eval(dim, U(), m_kernel, make_vec_accessor(U(), wraps)...);
 		}
 
-		template<int M, int N, typename... Accessors>
+		template<typename U, typename... Wraps>
 		LMAT_ENSURE_INLINE
-		void apply (const matrix_shape<M, N>& shape, const Accessors&... accs) const
+		void eval(macc_<percol_, U>, index_t m, index_t n, const Wraps&... wraps) const
 		{
-			apply(dimension<M * N>(shape.nelems()), accs...);
+			matrix_shape<0, 0> shape(m, n);
+			internal::_percol_ewise_eval(shape, U(), m_kernel, make_multicol_accessor(U(), wraps)...);
+		}
+
+		template<typename U, index_t CM, index_t CN, typename... Wraps>
+		LMAT_ENSURE_INLINE
+		void eval(macc_<percol_, U>, const matrix_shape<CM, CN>& shape, const Wraps&... wraps) const
+		{
+			internal::_percol_ewise_eval(shape, U(), m_kernel, make_multicol_accessor(U(), wraps)...);
 		}
 
 		template<typename... Wraps>
 		LMAT_ENSURE_INLINE
-		void operator() (index_t len, const Wraps&... wraps) const
+		void operator() (index_t m, index_t n, const Wraps&... wraps) const
 		{
-			apply(len, make_vec_accessor(U(), wraps)...);
+			eval(get_preferred_macc_policy(m, n, m_kernel, wraps...), m, n, wraps...);
 		}
 
-		template<int L, typename... Wraps>
+		template<index_t CM, index_t CN, typename... Wraps>
 		LMAT_ENSURE_INLINE
-		void operator() (const dimension<L>& dim, const Wraps&... wraps) const
+		void operator() (const matrix_shape<CM, CN>& shape, const Wraps&... wraps) const
 		{
-			apply(dim, make_vec_accessor(U(), wraps)...);
-		}
-
-		template<int M, int N, typename... Wraps>
-		LMAT_ENSURE_INLINE
-		void operator() (const matrix_shape<M, N>& shape, const Wraps&... wraps) const
-		{
-			apply(shape, make_vec_accessor(U(), wraps)...);
+			eval(get_preferred_macc_policy(shape, m_kernel, wraps...), shape, wraps...);
 		}
 
 	private:
 		const Kernel& m_kernel;
 	};
+
+
+	template<class Kernel>
+	LMAT_ENSURE_INLINE
+	inline ewise_kernel<Kernel> ewise(const Kernel& kernel)
+	{
+		return ewise_kernel<Kernel>(kernel);
+	}
 
 
 	/********************************************
@@ -96,42 +106,15 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	// ewise
-
-	template<class Kernel, typename U>
-	LMAT_ENSURE_INLINE
-	inline vectorized_kernel<Kernel, U>
-	ewise(const Kernel& kernel, U)
-	{
-		return vectorized_kernel<Kernel, U>(kernel);
-	}
-
-
-	template<class Kernel>
-	LMAT_ENSURE_INLINE
-	inline vectorized_kernel<Kernel, default_access_unit_t>
-	ewise(const Kernel& kernel)
-	{
-		return vectorized_kernel<Kernel, default_access_unit_t>(kernel);
-	}
-
 
 	// map
 
-	template<class Fun, typename U>
-	LMAT_ENSURE_INLINE
-	inline vectorized_kernel<map_kernel<Fun>, U>
-	map(const Fun& fun, U)
-	{
-		return ewise(map_kernel<Fun>(fun), U());
-	}
-
 	template<class Fun>
 	LMAT_ENSURE_INLINE
-	inline vectorized_kernel<map_kernel<Fun>, default_access_unit_t>
+	inline ewise_kernel<map_kernel<Fun> >
 	map(const Fun& fun)
 	{
-		return ewise(map_kernel<Fun>(fun), default_access_unit_t());
+		return ewise(map_kernel<Fun>(fun));
 	}
 
 	template<typename T, class DMat, class Fun, typename... Wraps>
@@ -166,61 +149,24 @@ namespace lmat
 	}
 
 
-	// percol
-
-	template<class VecKernel, typename... Wraps>
-	LMAT_ENSURE_INLINE
-	inline void percol(const VecKernel& veckernel, index_t m, index_t n, const Wraps&... wraps)
-	{
-		typedef typename VecKernel::unit_type U;
-		dimension<0> coldim(m);
-		internal::percol_eval_a(coldim, n, veckernel, make_multicol_accessor(U(), wraps)...);
-	}
-
-	template<class VecKernel, int M, int N, typename... Wraps>
-	LMAT_ENSURE_INLINE
-	inline void percol(const VecKernel& veckernel, const matrix_shape<M, N>& shape, const Wraps&... wraps)
-	{
-		typedef typename VecKernel::unit_type U;
-		dimension<M> coldim(shape.nrows());
-		internal::percol_eval_a(coldim, shape.ncolumns(), veckernel, make_multicol_accessor(U(), wraps)...);
-	}
-
-
 	/********************************************
 	 *
 	 *  Generic by-map evaluation
 	 *
 	 ********************************************/
 
-	template<typename T, typename U, class Expr, class DMat>
+	template<typename T, typename Acc, typename U, class Expr, class DMat>
 	LMAT_ENSURE_INLINE
-	inline void evaluate(const IEWiseMatrix<Expr, T>& expr, IRegularMatrix<DMat, T>& dmat, linear_macc<U>)
+	inline void macc_evaluate(const IEWiseMatrix<Expr, T>& s, IRegularMatrix<DMat, T>& d, macc_<Acc, U> policy)
 	{
-		const Expr& s = expr.derived();
-		DMat& d = dmat.derived();
-
-		ewise(copy_kernel<T>(), U())(common_shape(s, d), in_(s), out_(d));
+		ewise(copy_kernel<T>()).eval(policy, common_shape(s.derived(), d.derived()), in_(s), out_(d));
 	}
 
-
-	template<typename T, typename U, class Expr, class DMat>
+	template<typename T, class Expr, class DMat>
 	LMAT_ENSURE_INLINE
-	inline void evaluate(const IEWiseMatrix<Expr, T>& expr, IRegularMatrix<DMat, T>& dmat, percol_macc<U>)
+	inline void macc_evaluate(const IEWiseMatrix<Expr, T>& s, IRegularMatrix<DMat, T>& d)
 	{
-		const Expr& s = expr.derived();
-		DMat& d = dmat.derived();
-
-		percol(ewise(copy_kernel<T>(), U()), common_shape(s, d), in_(s), out_(d));
-	}
-
-
-	template<typename T, class SExpr, class DMat>
-	LMAT_ENSURE_INLINE
-	inline void evaluate_by_map(const IEWiseMatrix<SExpr, T>& sexpr, IRegularMatrix<DMat, T>& dmat)
-	{
-		typedef typename preferred_macc_policy_2<SExpr, DMat>::type policy_t;
-		evaluate(sexpr, dmat, policy_t());
+		ewise(copy_kernel<T>())(common_shape(s.derived(), d.derived()), in_(s), out_(d));
 	}
 
 }

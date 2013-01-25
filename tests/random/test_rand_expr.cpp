@@ -25,11 +25,16 @@ template<class Distr, class RStream, int M, int N>
 inline void check_policy(const rand_expr<Distr, RStream, M, N>& expr)
 {
 	typedef rand_expr<Distr, RStream, M, N> expr_t;
-	bool expect_usimd = is_simdizable<Distr, default_simd_kind>::value;
-	// bool expect_usimd = true;
+	typedef typename Distr::result_type T;
 
-	typedef preferred_macc_policy<expr_t> pmap;
-	ASSERT_EQ( pmap::prefer_simd, expect_usimd );
+	const unsigned int L = (unsigned int)(M * N);
+	const unsigned int W = simd_traits<T, default_simd_kind>::pack_width;
+	bool expect_usimd = is_simdizable<Distr, default_simd_kind>::value && (L % W == 0);
+
+	ref_matrix<T> _dmat(0, expr.nrows(), expr.ncolumns());
+	auto policy = get_preferred_expr_macc_policy(expr, _dmat);
+
+	ASSERT_EQ( use_simd(policy), expect_usimd );
 }
 
 template<class Distr, class RStream, int M, int N>

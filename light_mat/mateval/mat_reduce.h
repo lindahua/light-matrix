@@ -25,43 +25,27 @@
 // basic reduction
 
 #define LMAT_DEFINE_BASIC_FULL_REDUCTION( Name ) \
-	template<typename T, class A, typename U> \
-	LMAT_ENSURE_INLINE \
-	inline T Name(const IEWiseMatrix<A, T>& a, linear_macc<U> policy) { \
-		return a.nelems() > 0 ? \
-				internal::_full_reduce(a.shape(), Name##_folder<T>(), a.derived(), policy) : \
-				internal::empty_values<T>::Name(); } \
-	template<typename T, class A, typename U> \
-	LMAT_ENSURE_INLINE \
-	inline T Name(const IEWiseMatrix<A, T>& a, percol_macc<U> policy) { \
-		return a.nelems() > 0 ? \
-				internal::_full_reduce(a.shape(), Name##_folder<T>(), a.derived(), policy) : \
-				internal::empty_values<T>::Name(); } \
 	template<typename T, class A> \
 	LMAT_ENSURE_INLINE \
 	inline T Name(const IEWiseMatrix<A, T>& a) { \
 		return a.nelems() > 0 ? \
-				internal::_full_reduce(a.shape(), Name##_folder<T>(), a.derived()) : \
+				fold(Name##_kernel<T>())(a.shape(), in_(a)) : \
 				internal::empty_values<T>::Name(); }
 
 #define LMAT_DEFINE_BASIC_COLWISE_REDUCTION( Name ) \
 	template<typename T, class A, class DMat> \
 	inline void colwise_##Name(const IEWiseMatrix<A, T>& a, IRegularMatrix<DMat, T>& dmat) { \
-		typedef typename internal::colwise_reduc_policy<Name##_folder<T>, A, DMat>::atag atag; \
-		auto shape = internal::reduc_get_shape(a); \
+		auto shape = a.shape(); \
 		if (shape.nrows() > 0) { \
-			internal::colwise_fold_impl(internal::reduc_get_shape(a), \
-				atag(), Name##_folder<T>(), dmat.derived(), make_multicol_accessor(atag(), in_(a.derived())) ); } \
+			internal::colwise_fold_impl(shape, Name##_kernel<T>(), dmat, a ); } \
 		else { fill(dmat, internal::empty_values<T>::Name()); } }
 
 #define LMAT_DEFINE_BASIC_ROWWISE_REDUCTION( Name ) \
 	template<typename T, class A, class DMat> \
 	inline void rowwise_##Name(const IEWiseMatrix<A, T>& a, IRegularMatrix<DMat, T>& dmat) { \
-		typedef typename internal::rowwise_reduc_policy<Name##_folder<T>, A, DMat>::atag atag; \
-		auto shape = internal::reduc_get_shape(a); \
+		auto shape = a.shape(); \
 		if (shape.ncolumns() > 0) { \
-			internal::rowwise_fold_impl(shape, atag(), Name##_folder<T>(), dmat.derived(), \
-					make_multicol_accessor(atag(), in_(a.derived())) ); } \
+			internal::rowwise_fold_impl(shape, Name##_kernel<T>(), dmat, a); } \
 		else { \
 			fill(dmat, internal::empty_values<T>::Name()); } }
 
@@ -73,24 +57,14 @@
 	LMAT_ENSURE_INLINE \
 	inline T Name(const IEWiseMatrix<A, T>& a) { \
 		dimension<meta::nelems<A>::value> dim = internal::reduc_get_length(a); \
-		return dim.value() > 0 ? Reduc(TExpr) : EmptyVal; } \
-	template<typename T, class A, typename Policy> \
-	LMAT_ENSURE_INLINE \
-	inline T Name(const IEWiseMatrix<A, T>& a, Policy policy) { \
-		dimension<meta::nelems<A>::value> dim = internal::reduc_get_length(a); \
-		return dim.value() > 0 ? Reduc(TExpr, policy) : EmptyVal; }
+		return dim.value() > 0 ? Reduc(TExpr) : EmptyVal; }
 
 #define LMAT_DEFINE_FULL_REDUCTION_2( Name, Reduc, TExpr, EmptyVal ) \
 	template<typename T, class A, class B> \
 	LMAT_ENSURE_INLINE \
 	inline T Name(const IEWiseMatrix<A, T>& a, const IEWiseMatrix<B, T>& b) { \
 		dimension<meta::common_nelems<A, B>::value> dim = internal::reduc_get_length(a, b); \
-		return dim.value() > 0 ? Reduc(TExpr) : EmptyVal; } \
-	template<typename T, class A, class B, typename Policy> \
-	LMAT_ENSURE_INLINE \
-	inline T Name(const IEWiseMatrix<A, T>& a, const IEWiseMatrix<B, T>& b, Policy policy) { \
-		dimension<meta::common_nelems<A, B>::value> dim = internal::reduc_get_length(a, b); \
-		return dim.value() > 0 ? Reduc(TExpr, policy) : EmptyVal; }
+		return dim.value() > 0 ? Reduc(TExpr) : EmptyVal; }
 
 #define LMAT_DEFINE_COLWISE_REDUCTION_1( Name, Reduc, TExpr, EmptyVal ) \
 	template<typename T, class A, class DMat> \
@@ -165,17 +139,11 @@ namespace lmat
 				internal::empty_values<T>::mean();
 	}
 
-	template<typename T, class A, typename Policy>
-	LMAT_ENSURE_INLINE
-	inline T mean(const IEWiseMatrix<A, T>& a, Policy policy)
-	{
-		dimension<meta::nelems<A>::value> dim = internal::reduc_get_length(a);
-		return dim.value() > 0 ?
-				sum(a, policy) / T(dim.value()) :
-				internal::empty_values<T>::mean();
-	}
 
 	// colwise reduction
+
+	using internal::colwise_fold_getter;
+	using internal::make_colwise_fold_getter;
 
 	LMAT_DEFINE_BASIC_COLWISE_REDUCTION( sum )
 	LMAT_DEFINE_BASIC_COLWISE_REDUCTION( maximum )

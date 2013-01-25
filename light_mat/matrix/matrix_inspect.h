@@ -101,9 +101,11 @@ namespace lmat
 	{
 		dump_indent(out, indent);
 
-		typedef preferred_macc_policy<Expr> pmap;
-		const char *acc_pat = pmap::prefer_linear ? "linear" : "percol";
-		const char* acc_u = pmap::prefer_simd ? "simd" : "scalar";
+		ref_matrix<T> _dst(0, expr.nrows(), expr.ncolumns());
+		auto policy = get_preferred_expr_macc_policy(expr, _dst);
+
+		const char *acc_pat = use_linear_acc(policy) ? "linear" : "percol";
+		const char* acc_u = use_simd(policy) ? "simd" : "scalar";
 
 		out << get_expr_name(expr)
 			<< "["

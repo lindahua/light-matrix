@@ -245,13 +245,13 @@ namespace lmat
 	 ********************************************/
 
 	template<class Distr, class RStream, int CM, int CN>
-	struct supports_linear_macc<rand_expr<Distr, RStream, CM, CN> >
+	struct supports_linear_access<rand_expr<Distr, RStream, CM, CN> >
 	{
 		static const bool value = true;
 	};
 
-	template<class Distr, class RStream, int CM, int CN, typename Kind, bool IsLinear>
-	struct supports_simd<rand_expr<Distr, RStream, CM, CN>, Kind, IsLinear>
+	template<class Distr, class RStream, int CM, int CN, typename Kind>
+	struct supports_simd<rand_expr<Distr, RStream, CM, CN>, Kind>
 	{
 		static const bool value = is_simdizable<Distr, Kind>::value;
 	};
@@ -261,7 +261,7 @@ namespace lmat
 	inline void evaluate(const rand_expr<Distr, RStream, CM, CN>& sexpr,
 			IRegularMatrix<DMat, typename Distr::result_type>& dmat)
 	{
-		evaluate_by_map(sexpr, dmat);
+		macc_evaluate(sexpr, dmat);
 	}
 
 

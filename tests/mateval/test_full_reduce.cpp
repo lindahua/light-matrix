@@ -45,15 +45,7 @@ const index_t max_len = 48;
 			double r0 = emptyval; \
 			for (index_t i = 0; i < k; ++i) UpdateExpr; \
 			double r = Name(sk); \
-			ASSERT_APPROX(r, r0, tol); \
-			double r1 = Name(sk, linear_macc<scalar_>()); \
-			ASSERT_APPROX(r1, r0, tol); \
-			double r2 = Name(sk, linear_macc<simd_tag>()); \
-			ASSERT_APPROX(r2, r0, tol); \
-			double r3 = Name(sk, percol_macc<scalar_>()); \
-			ASSERT_APPROX(r3, r0, tol); \
-			double r4 = Name(sk, percol_macc<simd_tag>()); \
-			ASSERT_APPROX(r4, r0, tol); } }
+			ASSERT_APPROX(r, r0, tol); } }
 
 #define DEF_FULL_REDUC_CASE_2(Name, UpdateExpr, initk, emptyval, tol ) \
 	SIMPLE_CASE( full_##Name ) { \
@@ -67,15 +59,7 @@ const index_t max_len = 48;
 			double r0 = emptyval; \
 			for (index_t i = 0; i < k; ++i) UpdateExpr; \
 			double r = Name(sk1, sk2); \
-			ASSERT_APPROX(r, r0, tol); \
-			double r1 = Name(sk1, sk2, linear_macc<scalar_>()); \
-			ASSERT_APPROX(r1, r0, tol); \
-			double r2 = Name(sk1, sk2, linear_macc<simd_tag>()); \
-			ASSERT_APPROX(r2, r0, tol); \
-			double r3 = Name(sk1, sk2, percol_macc<scalar_>()); \
-			ASSERT_APPROX(r3, r0, tol); \
-			double r4 = Name(sk1, sk2, percol_macc<simd_tag>()); \
-			ASSERT_APPROX(r4, r0, tol); } }
+			ASSERT_APPROX(r, r0, tol);  } }
 
 
 
@@ -97,18 +81,6 @@ SIMPLE_CASE( full_mean )
 		r0 /= k;
 
 		double r = mean(sk);
-		ASSERT_APPROX(r, r0, 1.0e-12);
-
-		r = mean(sk, linear_macc<scalar_>());
-		ASSERT_APPROX(r, r0, 1.0e-12);
-
-		r = mean(sk, linear_macc<simd_tag>());
-		ASSERT_APPROX(r, r0, 1.0e-12);
-
-		r = mean(sk, percol_macc<scalar_>());
-		ASSERT_APPROX(r, r0, 1.0e-12);
-
-		r = mean(sk, percol_macc<simd_tag>());
 		ASSERT_APPROX(r, r0, 1.0e-12);
 	}
 }
@@ -132,18 +104,6 @@ SIMPLE_CASE( full_amean )
 		r0 /= k;
 
 		double r = amean(sk);
-		ASSERT_APPROX(r, r0, 1.0e-12);
-
-		r = amean(sk, linear_macc<scalar_>());
-		ASSERT_APPROX(r, r0, 1.0e-12);
-
-		r = amean(sk, linear_macc<simd_tag>());
-		ASSERT_APPROX(r, r0, 1.0e-12);
-
-		r = amean(sk, percol_macc<scalar_>());
-		ASSERT_APPROX(r, r0, 1.0e-12);
-
-		r = amean(sk, percol_macc<simd_tag>());
 		ASSERT_APPROX(r, r0, 1.0e-12);
 	}
 }
@@ -172,18 +132,6 @@ SIMPLE_CASE( full_diff_amean )
 		r0 /= k;
 
 		double r = diff_amean(sk1, sk2);
-		ASSERT_APPROX(r, r0, tol);
-
-		r = diff_amean(sk1, sk2, linear_macc<scalar_>());
-		ASSERT_APPROX(r, r0, tol);
-
-		r = diff_amean(sk1, sk2, linear_macc<simd_tag>());
-		ASSERT_APPROX(r, r0, tol);
-
-		r = diff_amean(sk1, sk2, percol_macc<scalar_>());
-		ASSERT_APPROX(r, r0, tol);
-
-		r = diff_amean(sk1, sk2, percol_macc<simd_tag>());
 		ASSERT_APPROX(r, r0, tol);
 	}
 }

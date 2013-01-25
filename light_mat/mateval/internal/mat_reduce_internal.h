@@ -18,106 +18,7 @@
 #include <light_mat/math/math_functors.h>
 #include <light_mat/matexpr/mat_arith.h>
 
-namespace lmat {
-
-
-	template<class Folder>
-	struct _parfold_kernel
-	{
-		typedef typename Folder::value_type value_type;
-		Folder folder;
-
-		LMAT_ENSURE_INLINE
-		explicit _parfold_kernel(const Folder& rf) : folder(rf) { }
-
-		LMAT_ENSURE_INLINE
-		void operator() (value_type& a, const value_type& x) const
-		{
-			folder.fold(a, x);
-		}
-	};
-
-	template<class Folder, typename Kind>
-	struct is_simdizable<_parfold_kernel<Folder>, Kind>
-	{
-		static const bool value = is_simdizable<Folder, Kind>::value;
-	};
-
-	template<class Folder, typename Kind>
-	struct simdize_map<_parfold_kernel<Folder>, Kind>
-	{
-		typedef typename simdize_map<Folder, Kind>::type simd_folder_t;
-		typedef _parfold_kernel<simd_folder_t> type;
-
-		LMAT_ENSURE_INLINE
-		static type get(const _parfold_kernel<Folder>& k)
-		{
-			return type(simdize_map<Folder, Kind>::get(k.folder));
-		}
-	};
-
-
-namespace internal {
-
-	/********************************************
-	 *
-	 *  helpers on atag
-	 *
-	 ********************************************/
-
-	template<class Folder, class TExpr>
-	struct full_reduc_policy
-	{
-		static const bool use_linear = supports_linear_macc<TExpr>::value;
-
-		typedef default_simd_kind simd_kind;
-
-		static const bool use_simd =
-				is_simdizable<Folder, simd_kind>::value &&
-				supports_simd<TExpr, simd_kind, use_linear>::value;
-
-		typedef typename std::conditional<use_simd,
-				simd_<simd_kind>,
-				scalar_>::type atag;
-
-		typedef typename std::conditional<use_linear,
-				linear_macc<atag>,
-				percol_macc<atag> >::type type;
-	};
-
-
-	template<class Folder, class TExpr, class DMat>
-	struct colwise_reduc_policy
-	{
-		static_assert(meta::supports_linear_index<DMat>::value,
-				"DMat should support linear indexing.");
-
-		typedef default_simd_kind simd_kind;
-
-		static const bool use_simd = is_simdizable<Folder, simd_kind>::value &&
-			supports_simd<TExpr, simd_kind, false>::value;
-
-		typedef typename std::conditional<use_simd,
-				simd_<simd_kind>,
-				scalar_>::type atag;
-	};
-
-
-	template<class Folder, class TExpr, class DMat>
-	struct rowwise_reduc_policy
-	{
-		static_assert(supports_linear_macc<DMat>::value,
-				"DMat should support linear access.");
-
-		typedef default_simd_kind simd_kind;
-
-		static const bool use_simd = is_simdizable<Folder, simd_kind>::value &&
-			supports_simd<TExpr, simd_kind, false>::value;
-
-		typedef typename std::conditional<use_simd,
-				simd_<simd_kind>,
-				scalar_>::type atag;
-	};
+namespace lmat { namespace internal {
 
 
 	/********************************************
@@ -176,99 +77,181 @@ namespace internal {
 
 	/********************************************
 	 *
-	 *  full reduction implementation
-	 *
-	 ********************************************/
-
-	template<int M, int N, class Folder, class A, typename U>
-	LMAT_ENSURE_INLINE
-	inline typename Folder::value_type
-	_full_reduce(const matrix_shape<M, N>& shape, const Folder& folder,
-			const A& a, linear_macc<U>)
-	{
-		dimension<meta::nelems<A>::value> dim = a.nelems();
-		return fold_impl( dim, U(), folder, make_vec_accessor(U(), in_(a)) );
-	}
-
-	template<int M, int N, class Folder, class A, typename U>
-	inline typename Folder::value_type
-	_full_reduce(const matrix_shape<M, N>& shape, const Folder& folder,
-			const A& a, percol_macc<U>)
-	{
-		typedef typename Folder::value_type T;
-
-		dimension<meta::nrows<A>::value> col_dim = a.nrows();
-		auto rd = make_multicol_accessor(U(), in_(a));
-
-		T r = fold_impl(col_dim, U(), folder, rd.col(0));
-
-		const index_t n = shape.ncolumns();
-		for (index_t j = 1; j < n; ++j)
-		{
-			T rj = fold_impl(col_dim, U(), folder, rd.col(j));
-			folder.fold(r, rj);
-		}
-
-		return r;
-	}
-
-	template<int M, int N, class Folder, class A>
-	LMAT_ENSURE_INLINE
-	inline typename Folder::value_type
-	_full_reduce(const matrix_shape<M, N>& shape, const Folder& folder, const A& a)
-	{
-		typedef typename full_reduc_policy<Folder, A>::type policy_t;
-		return _full_reduce(shape, folder, a, policy_t());
-	}
-
-
-	/********************************************
-	 *
 	 *  vector-wise reduction implementation
 	 *
 	 ********************************************/
 
 	// column wise reduction
 
-	template<int M, int N, typename U, class Folder, class DMat, class MultiColReader>
-	inline void colwise_fold_impl(const matrix_shape<M, N>& shape, U u,
-			const Folder& folder, DMat& dmat, const MultiColReader& rd)
+	template<index_t CM, index_t CN, class FoldKernel, typename... Args>
+	class colwise_fold_getter;
+
+	template<index_t CM, index_t CN, class FoldKernel, typename Arg1>
+	class colwise_fold_getter<CM, CN, FoldKernel, Arg1>
 	{
-		dimension<M> col_dim(shape.nrows());
-		const index_t n = shape.ncolumns();
+	public:
+		typedef fold_policy<FoldKernel, matrix_shape<CM, 1>, Arg1> pmap;
+		typedef typename pmap::unit U;
 
-		LMAT_CHECK_DIMS( n == dmat.nelems() )
+		LMAT_ENSURE_INLINE
+		colwise_fold_getter(const FoldKernel& kernel, const matrix_shape<CM, CN>& shape,
+				const Arg1& arg1)
+		: m_kernel(kernel)
+		, m_coldim(shape.nrows())
+		, m_rd1(make_multicol_accessor(U(), in_(arg1)))
+		{ }
 
-		vecfold_kernel<Folder, U> fker = fold(folder, u);
-
-		for (index_t j = 0; j < n; ++j)
+		LMAT_ENSURE_INLINE
+		typename FoldKernel::accumulated_type operator[] (index_t j) const
 		{
-			dmat[j] = fker.apply(col_dim, rd.col(j));
+			return linear_fold_impl(m_coldim, U(), m_kernel, m_rd1.col(j));
 		}
+
+	private:
+		const FoldKernel& m_kernel;
+		dimension<CM> m_coldim;
+		typename multicol_reader_map<Arg1, U>::type m_rd1;
+	};
+
+
+	template<index_t CM, index_t CN, class FoldKernel, typename Arg1, typename Arg2>
+	class colwise_fold_getter<CM, CN, FoldKernel, Arg1, Arg2>
+	{
+	public:
+		typedef fold_policy<FoldKernel, matrix_shape<CM, 1>, Arg1, Arg2> pmap;
+		typedef typename pmap::unit U;
+
+		LMAT_ENSURE_INLINE
+		colwise_fold_getter(const FoldKernel& kernel, const matrix_shape<CM, CN>& shape,
+				const Arg1& arg1, const Arg2& arg2)
+		: m_kernel(kernel)
+		, m_coldim(shape.nrows())
+		, m_rd1(make_multicol_accessor(U(), in_(arg1)))
+		, m_rd2(make_multicol_accessor(U(), in_(arg2)))
+		{ }
+
+		LMAT_ENSURE_INLINE
+		typename FoldKernel::accumulated_type operator[] (index_t j) const
+		{
+			return linear_fold_impl(m_coldim, U(), m_kernel, m_rd1.col(j), m_rd2.col(j));
+		}
+
+	private:
+		const FoldKernel& m_kernel;
+		dimension<CM> m_coldim;
+		typename multicol_reader_map<Arg1, U>::type m_rd1;
+		typename multicol_reader_map<Arg2, U>::type m_rd2;
+	};
+
+
+	template<index_t CM, index_t CN, class FoldKernel, typename Arg1, typename Arg2, typename Arg3>
+	class colwise_fold_getter<CM, CN, FoldKernel, Arg1, Arg2, Arg3>
+	{
+	public:
+		typedef fold_policy<FoldKernel, matrix_shape<CM, 1>, Arg1, Arg2, Arg3> pmap;
+		typedef typename pmap::unit U;
+
+		LMAT_ENSURE_INLINE
+		colwise_fold_getter(const FoldKernel& kernel, const matrix_shape<CM, CN>& shape,
+				const Arg1& arg1, const Arg2& arg2, const Arg3& arg3)
+		: m_kernel(kernel)
+		, m_coldim(shape.nrows())
+		, m_rd1(make_multicol_accessor(U(), in_(arg1)))
+		, m_rd2(make_multicol_accessor(U(), in_(arg2)))
+		, m_rd3(make_multicol_accessor(U(), in_(arg3)))
+		{ }
+
+		LMAT_ENSURE_INLINE
+		typename FoldKernel::accumulated_type operator[] (index_t j) const
+		{
+			return linear_fold_impl(m_coldim, U(), m_kernel, m_rd1.col(j), m_rd2.col(j), m_rd3.col(j));
+		}
+
+	private:
+		const FoldKernel& m_kernel;
+		dimension<CM> m_coldim;
+		typename multicol_reader_map<Arg1, U>::type m_rd1;
+		typename multicol_reader_map<Arg2, U>::type m_rd2;
+		typename multicol_reader_map<Arg3, U>::type m_rd3;
+	};
+
+
+	template<index_t CM, index_t CN, class FoldKernel, typename Arg1, typename T1>
+	LMAT_ENSURE_INLINE
+	inline colwise_fold_getter<CM, CN, FoldKernel, Arg1>
+	make_colwise_fold_getter(const FoldKernel& kernel, const matrix_shape<CM, CN>& shape,
+			const IEWiseMatrix<Arg1, T1>& arg1)
+	{
+		typedef colwise_fold_getter<CM, CN, FoldKernel, Arg1> type;
+		return type(kernel, shape, arg1.derived());
+	}
+
+	template<index_t CM, index_t CN, class FoldKernel, typename Arg1, typename T1, typename Arg2, typename T2>
+	LMAT_ENSURE_INLINE
+	inline colwise_fold_getter<CM, CN, FoldKernel, Arg1, Arg2>
+	make_colwise_fold_getter(const FoldKernel& kernel, const matrix_shape<CM, CN>& shape,
+			const IEWiseMatrix<Arg1, T1>& arg1,
+			const IEWiseMatrix<Arg2, T2>& arg2)
+	{
+		typedef colwise_fold_getter<CM, CN, FoldKernel, Arg1, Arg2> type;
+		return type(kernel, shape, arg1.derived(), arg2.derived());
+	}
+
+	template<index_t CM, index_t CN, class FoldKernel,
+		typename Arg1, typename T1, typename Arg2, typename T2, typename Arg3, typename T3>
+	LMAT_ENSURE_INLINE
+	inline colwise_fold_getter<CM, CN, FoldKernel, Arg1, Arg2, Arg3>
+	make_colwise_fold_getter(const FoldKernel& kernel, const matrix_shape<CM, CN>& shape,
+			const IEWiseMatrix<Arg1, T1>& arg1,
+			const IEWiseMatrix<Arg2, T2>& arg2,
+			const IEWiseMatrix<Arg3, T2>& arg3)
+	{
+		typedef colwise_fold_getter<CM, CN, FoldKernel, Arg1, Arg2, Arg3> type;
+		return type(kernel, shape, arg1.derived(), arg2.derived(), arg3.derived());
 	}
 
 
+
+	template<index_t CM, index_t CN, class FoldKernel, typename T, class DMat, class TExpr>
+	inline void colwise_fold_impl(const matrix_shape<CM, CN>& shape,
+			const FoldKernel& kernel, IRegularMatrix<DMat, T>& dmat, const IEWiseMatrix<TExpr, T>& texpr)
+	{
+		const index_t n = shape.ncolumns();
+		LMAT_CHECK_DIMS( n == dmat.nelems() )
+
+		auto g = make_colwise_fold_getter(kernel, shape, texpr);
+
+		DMat& d_ = dmat.derived();
+		for (index_t j = 0; j < n; ++j)
+		{
+			d_[j] = g[j];
+		}
+	}
+
 	// row wise reduction
 
-	template<int M, int N, typename U, class Folder, class DMat, class MultiColReader>
-	inline void rowwise_fold_impl(const matrix_shape<M, N>& shape, U u,
-			const Folder& folder, DMat& dmat, const MultiColReader& rd)
+	template<index_t CM, index_t CN, class FoldKernel, typename T, class DMat, class TExpr>
+	inline void rowwise_fold_impl(const matrix_shape<CM, CN>& shape,
+			const FoldKernel& kernel, IRegularMatrix<DMat, T>& dmat, const IEWiseMatrix<TExpr, T>& texpr)
 	{
-		typedef typename matrix_traits<DMat>::value_type T;
-
-		dimension<M> col_dim(shape.nrows());
+		dimension<CM> col_dim(shape.nrows());
 		const index_t n = shape.ncolumns();
 
 		LMAT_CHECK_DIMS( col_dim.value() == dmat.nelems() )
 
-		auto a = make_vec_accessor(u, in_out_(dmat));
+		typedef preferred_macc_policy<matrix_shape<CM, 1>, FoldKernel, DMat, TExpr> pmap;
+		// static_assert(pmap::use_simd, "should use SIMD here");
 
-		internal::linear_ewise_eval(col_dim, u, copy_kernel<T>(), rd.col(0), a);
+		typedef typename pmap::unit U;
 
-		_parfold_kernel<Folder> pfker(folder);
+		auto a = make_vec_accessor(U(), in_out_(dmat));
+		auto rd = make_multicol_accessor(U(), in_(texpr));
+
+		internal::_linear_ewise_eval(col_dim, U(), copy_kernel<T>(), rd.col(0), a);
+
 		for (index_t j = 1; j < n; ++j)
 		{
-			internal::linear_ewise_eval(col_dim, u, pfker, a, rd.col(j));
+			internal::_linear_ewise_eval(col_dim, U(), kernel, a, rd.col(j));
 		}
 	}
 

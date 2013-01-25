@@ -64,7 +64,7 @@ namespace lmat
 	}
 
 	template<class A, typename T>
-	inline typename std::enable_if<supports_linear_macc<A>::value,
+	inline typename std::enable_if<supports_linear_access<A>::value,
 	index_t>::type
 	find_imax(const IEWiseMatrix<A, T>& a)
 	{
@@ -80,7 +80,7 @@ namespace lmat
 	}
 
 	template<class A, typename T>
-	inline typename std::enable_if<supports_linear_macc<A>::value,
+	inline typename std::enable_if<supports_linear_access<A>::value,
 	index_t>::type
 	find_imin(const IEWiseMatrix<A, T>& a)
 	{
@@ -96,7 +96,7 @@ namespace lmat
 	}
 
 	template<class A, typename T>
-	inline typename std::enable_if<supports_linear_macc<A>::value,
+	inline typename std::enable_if<supports_linear_access<A>::value,
 	std::pair<index_t, T> >::type
 	find_max(const IEWiseMatrix<A, T>& a)
 	{
@@ -112,7 +112,7 @@ namespace lmat
 	}
 
 	template<class A, typename T>
-	inline typename std::enable_if<supports_linear_macc<A>::value,
+	inline typename std::enable_if<supports_linear_access<A>::value,
 	std::pair<index_t, T> >::type
 	find_min(const IEWiseMatrix<A, T>& a)
 	{

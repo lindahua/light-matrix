@@ -46,13 +46,13 @@ void test_linear_ewise_cont_cont()
 	copy_kernel<double> cpy_kernel;
 	accum_kernel<double> upd_kernel;
 
-	ewise(cpy_kernel, U())(smat.shape(), in_(smat), out_(dmat));
+	ewise(cpy_kernel).eval(macc_<linear_, U>(), smat.shape(), in_(smat), out_(dmat));
 
 	ASSERT_MAT_EQ(m, n, smat, dmat);
 
 	for (index_t i = 0; i < m * n; ++i) rmat[i] = smat[i] + dmat[i];
 
-	ewise(upd_kernel, U())(smat.shape(), in_out_(dmat), in_(smat));
+	ewise(upd_kernel).eval(macc_<linear_, U>(), smat.shape(), in_out_(dmat), in_(smat));
 
 	ASSERT_MAT_EQ(m, n, dmat, rmat);
 }
@@ -77,13 +77,14 @@ void test_linear_ewise_col()
 	copy_kernel<double> cpy_kernel;
 	accum_kernel<double> upd_kernel;
 
-	ewise(cpy_kernel, U())(m, in_(smat), out_(dmat));
+	matrix_shape<M, 1> shape(m, 1);
+	ewise(cpy_kernel).eval(macc_<linear_, U>(), shape, in_(smat), out_(dmat));
 
 	ASSERT_MAT_EQ(m, 1, smat, dmat);
 
 	for (index_t i = 0; i < m; ++i) rmat[i] = smat[i] + dmat[i];
 
-	ewise(upd_kernel, U())(m, in_out_(dmat), in_(smat));
+	ewise(upd_kernel).eval(macc_<linear_, U>(), shape, in_out_(dmat), in_(smat));
 	ASSERT_MAT_EQ(m, 1, dmat, rmat);
 }
 
@@ -107,13 +108,13 @@ void test_linear_ewise_row()
 	copy_kernel<double> cpy_kernel;
 	accum_kernel<double> upd_kernel;
 
-	ewise(cpy_kernel, U())(n, in_(smat), out_(dmat));
-
+	matrix_shape<1, N> shape(1, n);
+	ewise(cpy_kernel).eval(macc_<linear_, U>(), shape, in_(smat), out_(dmat));
 	ASSERT_MAT_EQ(1, n, smat, dmat);
 
 	for (index_t i = 0; i < n; ++i) rmat[i] = smat[i] + dmat[i];
 
-	ewise(upd_kernel, U())(n, in_out_(dmat), in_(smat));
+	ewise(upd_kernel).eval(macc_<linear_, U>(), shape, in_out_(dmat), in_(smat));
 	ASSERT_MAT_EQ(1, n, dmat, rmat);
 }
 
@@ -134,43 +135,15 @@ void test_linear_ewise_single_cont()
 	dense_matrix<double, M, N> rmat(m, n);
 	fill(rmat, v);
 
-	dimension<M * N> dim(m * n);
+	matrix_shape<M, N> shape(m, n);
 
-	ewise(copy_kernel<double>(), U())(dim, const_(v), out_(dmat));
+	ewise(copy_kernel<double>()).eval(macc_<linear_, U>(), shape, const_(v), out_(dmat));
 
 	ASSERT_MAT_EQ(m, n, dmat, rmat);
 }
 
 
-template<typename U, int M, int N>
-void test_linear_ewise_map()
-{
-	const index_t m = M == 0 ? DM : M;
-	const index_t n = N == 0 ? DN : N;
 
-	dense_matrix<double, M, N> sa(m, n);
-	dense_matrix<double, M, N> sb(m, n);
-	dense_matrix<double, M, N> dst(m, n, zero());
-	dense_matrix<double, M, N> r1(m, n);
-	dense_matrix<double, M, N> r2(m, n);
-
-	for (index_t i = 0; i < m * n; ++i)
-	{
-		sa[i] = double(i + 2);
-		sb[i] = double(i * i + 1);
-
-		r1[i] = math::sqr(sa[i]);
-		r2[i] = sa[i] + sb[i];
-	}
-
-	matrix_shape<M, N> shape(m, n);
-
-	map(sqr_fun<double>(), U())(shape, out_(dst), in_(sa));
-	ASSERT_MAT_EQ( m, n, dst, r1 );
-
-	map(add_fun<double>(), U())(shape, out_(dst), in_(sa), in_(sb));
-	ASSERT_MAT_EQ( m, n, dst, r2 );
-}
 
 
 template<typename U>
@@ -187,6 +160,8 @@ void test_linear_ewise_varysize()
 		s[i] = double(2 * i + 3);
 	}
 
+	map_kernel<sqr_fun<double> > kernel = sqr_fun<double>();
+
 	for (index_t len = 0; len <= 64; ++len)
 	{
 		zero(d);
@@ -195,7 +170,7 @@ void test_linear_ewise_varysize()
 		for (index_t i = 0; i < len; ++i)
 			r[i] = math::sqr(s[i]);
 
-		map(sqr_fun<double>(), U())(len, out_(d), in_(s));
+		ewise(kernel).eval(macc_<linear_, U>(), len, 1, out_(d), in_(s));
 		ASSERT_VEC_EQ( len, d, r );
 	}
 }
@@ -274,26 +249,6 @@ MN_CASE( linear_ewise_avx_single_cont )
 #endif
 
 
-MN_CASE( linear_ewise_scalar_map )
-{
-	test_linear_ewise_map<scalar_, M, N>();
-}
-
-MN_CASE( linear_ewise_sse_map )
-{
-	test_linear_ewise_map<simd_<sse_t>, M, N>();
-}
-
-#ifdef LMAT_HAS_AVX
-
-MN_CASE( linear_ewise_avx_map )
-{
-	test_linear_ewise_map<simd_<avx_t>, M, N>();
-}
-
-#endif
-
-
 SIMPLE_CASE( linear_ewise_varysize_scalar )
 {
 	test_linear_ewise_varysize<scalar_>();
@@ -310,65 +265,6 @@ SIMPLE_CASE( linear_ewise_varysize_avx )
 	test_linear_ewise_varysize<simd_<avx_t> >();
 }
 #endif
-
-
-MN_CASE( linear_ewise_map_to )
-{
-	const index_t m = M == 0 ? DM : M;
-	const index_t n = N == 0 ? DN : N;
-
-	dense_matrix<double, M, N> a(m, n);
-	dense_matrix<double, M, N> s1(m, n);
-	dense_matrix<double, M, N> s2(m, n);
-
-	do_fill_rand( s1.ptr_data(), m * n );
-	do_fill_rand( s2.ptr_data(), m * n );
-
-	matrix_shape<M, N> shape(m, n);
-	dense_matrix<double, M, N> r(m, n);
-
-	for (index_t i = 0; i < m * n; ++i) r[i] = s1[i] + s2[i];
-
-	map_to(a, add_fun<double>(), in_(s1), in_(s2));
-
-	ASSERT_MAT_EQ(m, n, a, r);
-}
-
-
-MN_CASE( linear_ewise_accum_to )
-{
-	const index_t m = M == 0 ? DM : M;
-	const index_t n = N == 0 ? DN : N;
-
-	dense_matrix<double, M, N> a(m, n);
-	dense_matrix<double, M, N> s(m, n);
-	dense_matrix<double, M, N> c(m, n);
-
-	do_fill_rand( a.ptr_data(), m * n );
-	do_fill_rand( s.ptr_data(), m * n );
-	do_fill_rand( c.ptr_data(), m * n );
-
-	double cv = c[0] * 2.0;
-
-	matrix_shape<M, N> shape(m, n);
-	dense_matrix<double, M, N> r(m, n);
-
-	for (index_t i = 0; i < m * n; ++i) r[i] = a[i] + s[i];
-	accum_to(a, s);
-
-	ASSERT_MAT_EQ( m, n, a, r );
-
-	for (index_t i = 0; i < m * n; ++i) r[i] = a[i] + cv * s[i];
-	accum_to(a, cv, s);
-
-	ASSERT_MAT_EQ( m, n, a, r );
-
-	for (index_t i = 0; i < m * n; ++i) r[i] = a[i] + c[i] * s[i];
-	accum_to(a, c, s);
-
-	ASSERT_MAT_EQ(m, n, a, r );
-}
-
 
 
 // Test packs
@@ -443,35 +339,6 @@ AUTO_TPACK( linear_ewise_avx_single_cont )
 
 #endif
 
-
-AUTO_TPACK( linear_ewise_scalar_map )
-{
-	ADD_MN_CASE_3X3( linear_ewise_scalar_map, DM, DN )
-}
-
-AUTO_TPACK( linear_ewise_sse_map )
-{
-	ADD_MN_CASE_3X3( linear_ewise_sse_map, DM, DN )
-}
-
-#ifdef LMAT_HAS_AVX
-
-AUTO_TPACK( linear_ewise_avx_map )
-{
-	ADD_MN_CASE_3X3( linear_ewise_avx_map, DM, DN )
-}
-
-#endif
-
-AUTO_TPACK( linear_ewise_map_to )
-{
-	ADD_MN_CASE_3X3( linear_ewise_map_to, DM, DN )
-}
-
-AUTO_TPACK( linear_ewise_accum_to )
-{
-	ADD_MN_CASE_3X3( linear_ewise_accum_to, DM, DN )
-}
 
 
 AUTO_TPACK( linear_ewise_varysize )

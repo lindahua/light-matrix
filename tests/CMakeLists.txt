@@ -531,6 +531,7 @@ set(MATEVAL_TEST_HS
     
 add_executable(test_linear_ewise ${MATEVAL_TEST_HS} mateval/test_linear_ewise.cpp)    
 add_executable(test_percol_ewise ${MATEVAL_TEST_HS} mateval/test_percol_ewise.cpp)
+add_executable(test_map_and_accum ${MATEVAL_TEST_HS}  mateval/test_map_and_accum.cpp)
 add_executable(test_ewise_accum ${MATEVAL_TEST_HS}  mateval/test_ewise_accum.cpp)
 
 set(MATREDUC_TEST_HS
@@ -540,6 +541,7 @@ set(MATREDUC_TEST_HS
     ${MAP_EXPR_HS_}
     ${MATRIX_REDUC_HS_})
 
+add_executable(test_mat_fold ${MATREDUC_TEST_HS} mateval/test_mat_fold.cpp)
 add_executable(test_full_reduce    ${MATREDUC_TEST_HS} mateval/test_full_reduce.cpp)
 add_executable(test_colwise_reduce ${MATREDUC_TEST_HS} mateval/test_colwise_reduce.cpp)
 add_executable(test_rowwise_reduce ${MATREDUC_TEST_HS} mateval/test_rowwise_reduce.cpp)
@@ -561,7 +563,9 @@ add_executable(test_mat_ordstat ${MATALG_TEST_HS} mateval/test_mat_ordstat.cpp)
 set(LMAT_MATEVAL_TESTS
     test_linear_ewise
 	test_percol_ewise
+	test_map_and_accum
 	test_ewise_accum
+	test_mat_fold
 	test_full_reduce
 	test_colwise_reduce
 	test_rowwise_reduce
@@ -764,7 +768,8 @@ set(TESTS_USING_SVML
     test_cpd_ewise
     test_exponential
     test_normal
-    test_rand_expr)
+    test_rand_expr
+)
 
 foreach (tname ${TESTS_USING_SVML}) 
     set_target_properties(${tname}

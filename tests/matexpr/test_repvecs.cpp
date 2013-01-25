@@ -59,7 +59,7 @@ void test_repcols()
 	ASSERT_MAT_EQ( m, n, dmat, rmat );
 
 	zero(dmat);
-	evaluate_by_map( repcol(scol, dimension<N>(n)), dmat );
+	macc_evaluate( repcol(scol, dimension<N>(n)), dmat );
 	ASSERT_MAT_EQ( m, n, dmat, rmat );
 }
 
@@ -104,7 +104,7 @@ void test_reprows()
 	ASSERT_MAT_EQ( m, n, dmat, rmat );
 
 	zero(dmat);
-	evaluate_by_map( reprow(srow, dimension<M>(m)), dmat );
+	macc_evaluate( reprow(srow, dimension<M>(m)), dmat );
 	ASSERT_MAT_EQ( m, n, dmat, rmat );
 }
 

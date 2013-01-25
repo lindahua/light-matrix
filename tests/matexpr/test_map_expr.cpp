@@ -24,59 +24,66 @@ typedef scalar_ scalar_tag;
 typedef simd_<default_simd_kind> simd_tag;
 
 
-template<class FTag, class A>
-bool my_use_linear(const map_expr<FTag, A>& expr)
+template<class FTag, class A, class Dst>
+bool my_use_linear(const map_expr<FTag, A>& expr, const Dst& dmat)
 {
 	const int M = meta::nrows<A>::value;
 	const int N = meta::ncols<A>::value;
 
-	const bool is_cont = meta::is_contiguous<A>::value;
+	const bool is_cont =
+			meta::is_contiguous<A>::value &&
+			meta::is_contiguous<Dst>::value;
 
 	return is_cont || M == 1 || N == 1;
 }
 
 
-template<class FTag, class A, class B>
-bool my_use_linear(const map_expr<FTag, A, B>& expr)
+template<class FTag, class A, class B, class Dst>
+bool my_use_linear(const map_expr<FTag, A, B>& expr, const Dst& dmat)
 {
 	const int M = meta::common_nrows<A, B>::value;
 	const int N = meta::common_ncols<A, B>::value;
 
 	const bool is_cont =
 			meta::is_contiguous<A>::value &&
-			meta::is_contiguous<B>::value;
+			meta::is_contiguous<B>::value &&
+			meta::is_contiguous<Dst>::value;
 
 	return is_cont || M == 1 || N == 1;
 }
 
 
-template<class FTag, class A>
-bool my_use_simd(const map_expr<FTag, A>& expr)
+template<class FTag, class A, class Dst>
+bool my_use_simd(const map_expr<FTag, A>& expr, const Dst& dmat)
 {
-	bool use_linear = my_use_linear(expr);
+	bool use_linear = my_use_linear(expr, dmat);
 
 	int pw = simd_traits<double, default_simd_kind>::pack_width;
 
 	if (use_linear)
 	{
 		const int L = meta::nelems<A>::value;
-		const bool is_cont = meta::is_contiguous<A>::value;
+		const bool is_cont =
+				meta::is_contiguous<A>::value &&
+				meta::is_contiguous<Dst>::value;
 
 		return is_cont && (L % pw == 0);
 	}
 	else
 	{
 		const int M = meta::nrows<A>::value;
-		const bool is_cont_pc = meta::is_percol_contiguous<A>::value;
+		const bool is_cont_pc =
+				meta::is_percol_contiguous<A>::value &&
+				meta::is_percol_contiguous<Dst>::value;
 
 		return is_cont_pc && (M % pw == 0);
 	}
 }
 
-template<class FTag, class A, class B>
-bool my_use_simd(const map_expr<FTag, A, B>& expr)
+template<class FTag, class A, class B, class Dst>
+bool my_use_simd(const map_expr<FTag, A, B>& expr, const Dst& dmat)
 {
-	bool use_linear = my_use_linear(expr);
+	bool use_linear = my_use_linear(expr, dmat);
 
 	int pw = simd_traits<double, default_simd_kind>::pack_width;
 
@@ -85,7 +92,8 @@ bool my_use_simd(const map_expr<FTag, A, B>& expr)
 		const int L = meta::common_nelems<A, B>::value;
 		const bool is_cont =
 				meta::is_contiguous<A>::value &&
-				meta::is_contiguous<B>::value;
+				meta::is_contiguous<B>::value &&
+				meta::is_contiguous<Dst>::value;
 
 		return is_cont && (L % pw == 0);
 	}
@@ -94,7 +102,8 @@ bool my_use_simd(const map_expr<FTag, A, B>& expr)
 		const int M = meta::common_nrows<A, B>::value;
 		const bool is_cont_pc =
 				meta::is_percol_contiguous<A>::value &&
-				meta::is_percol_contiguous<B>::value;
+				meta::is_percol_contiguous<B>::value &&
+				meta::is_percol_contiguous<Dst>::value;
 
 		return is_cont_pc && (M % pw == 0);
 	}
@@ -132,9 +141,10 @@ void test_mapexpr_1()
 
 	// policy
 
-	typedef preferred_macc_policy<expr_t> pmap;
-	ASSERT_EQ( pmap::prefer_linear, my_use_linear(e) );
-	ASSERT_EQ( pmap::prefer_simd, my_use_simd(e) );
+	auto policy = get_preferred_expr_macc_policy(e, d);
+
+	ASSERT_EQ( use_linear_acc(policy), my_use_linear(e, d) );
+	ASSERT_EQ( use_simd(policy), my_use_simd(e, d) );
 
 	// evaluation
 
@@ -186,9 +196,9 @@ void test_mapexpr_2()
 
 	// policy
 
-	typedef preferred_macc_policy<expr_t> pmap;
-	ASSERT_EQ( pmap::prefer_linear, my_use_linear(e) );
-	ASSERT_EQ( pmap::prefer_simd, my_use_simd(e) );
+	auto policy = get_preferred_expr_macc_policy(e, d);
+	ASSERT_EQ( use_linear_acc(policy), my_use_linear(e, d) );
+	ASSERT_EQ( use_simd(policy), my_use_simd(e, d) );
 
 	// evaluation
 
@@ -352,6 +362,7 @@ DEF_MEXPR_TESTS_1( grid, cont )
 DEF_MEXPR_TESTS_1( grid, bloc )
 DEF_MEXPR_TESTS_1( grid, grid )
 
+
 // Binary expression
 
 #define DEF_MEXPR_TESTS_2( stag1, stag2, dtag ) \
@@ -484,6 +495,5 @@ AUTO_TPACK( compound_map_expr )
 {
 	ADD_MN_CASE_3X3( map_compound_expr, DM, DN )
 }
-
 
 

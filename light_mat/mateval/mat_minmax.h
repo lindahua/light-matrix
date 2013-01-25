@@ -84,56 +84,56 @@ namespace lmat
 	}
 
 	template<typename T>
-	struct minmax_folder
+	struct minmax_kernel
 	{
-		typedef minmax_stat<T> value_type;
+		typedef T value_type;
+		typedef minmax_stat<T> accumulated_type;
 
 		LMAT_ENSURE_INLINE
-		value_type init(const T& x) const
+		accumulated_type init(const T& x) const
 		{
-			return value_type({x, x});
+			return accumulated_type({x, x});
 		}
 
 		LMAT_ENSURE_INLINE
-		void fold(value_type& a, const T& x) const
+		void operator()(accumulated_type& a, const T& x) const
 		{
 			a.update(x);
 		}
 
 		LMAT_ENSURE_INLINE
-		void fold(value_type& a, const value_type& x) const
+		void operator()(accumulated_type& a, const accumulated_type& x) const
 		{
 			a.update(x);
 		}
 	};
 
-
 	template<typename T, typename Kind>
-	struct minmax_pack_folder
+	struct minmax_kernel<simd_pack<T, Kind> >
 	{
-		typedef minmax_stat_pack<T, Kind> value_type;
-		typedef simd_pack<T, Kind> pack_t;
+		typedef simd_pack<T, Kind> value_type;
+		typedef minmax_stat_pack<T, Kind> accumulated_type;
 
 		LMAT_ENSURE_INLINE
-		value_type init(const simd_pack<T, Kind>& x) const
+		accumulated_type init(const value_type& x) const
 		{
-			return value_type({x, x});
+			return accumulated_type({x, x});
 		}
 
 		LMAT_ENSURE_INLINE
-		void fold(value_type& a, const pack_t& x) const
-		{
-			a.update(x);
-		}
-
-		LMAT_ENSURE_INLINE
-		void fold(value_type& a, const value_type& x) const
+		void operator() (accumulated_type& a, const value_type& x) const
 		{
 			a.update(x);
 		}
 
 		LMAT_ENSURE_INLINE
-		minmax_stat<T> reduce(const value_type& a) const
+		void operator() (accumulated_type& a, const accumulated_type& x) const
+		{
+			a.update(x);
+		}
+
+		LMAT_ENSURE_INLINE
+		minmax_stat<T> reduce(const accumulated_type& a) const
 		{
 			T v0 = minimum(a.min_pack);
 			T v1 = maximum(a.max_pack);
@@ -141,19 +141,7 @@ namespace lmat
 		}
 	};
 
-	LMAT_DECL_SIMDIZABLE_ON_REAL( minmax_folder )
-
-	template<typename T, typename Kind>
-	struct simdize_map<minmax_folder<T>, Kind>
-	{
-		typedef minmax_pack_folder<T, Kind> type;
-
-		LMAT_ENSURE_INLINE
-		static type get(const minmax_folder<T>& )
-		{
-			return type();
-		}
-	};
+	LMAT_DEF_SIMD_SUPPORT( minmax_kernel )
 
 
 	/********************************************
@@ -167,27 +155,10 @@ namespace lmat
 	inline minmax_stat<T> minmax(const IEWiseMatrix<A, T>& a)
 	{
 		return a.nelems() > 0 ?
-				internal::_full_reduce(a.shape(), minmax_folder<T>(), a.derived()) :
+				fold(minmax_kernel<T>())(a.shape(), in_(a)) :
 				minmax_empty_value<T>();
 	}
 
-	template<typename T, class A, typename U>
-	LMAT_ENSURE_INLINE
-	inline minmax_stat<T> minmax(const IEWiseMatrix<A, T>& a, linear_macc<U> policy)
-	{
-		return a.nelems() > 0 ?
-				internal::_full_reduce(a.shape(), minmax_folder<T>(), a.derived(), policy) :
-				minmax_empty_value<T>();
-	}
-
-	template<typename T, class A, typename U>
-	LMAT_ENSURE_INLINE
-	inline minmax_stat<T> minmax(const IEWiseMatrix<A, T>& a, percol_macc<U> policy)
-	{
-		return a.nelems() > 0 ?
-				internal::_full_reduce(a.shape(), minmax_folder<T>(), a.derived(), policy) :
-				minmax_empty_value<T>();
-	}
 
 
 	template<typename T, class A, class DMat1, class DMat2>
@@ -199,20 +170,16 @@ namespace lmat
 		const index_t n = a.ncolumns();
 		LMAT_CHECK_DIMS( n == dmat_min.nelems() && n == dmat_max.nelems() )
 
-		typedef minmax_folder<T> folder_t;
-		typedef typename internal::colwise_reduc_policy<folder_t, A, DMat1>::atag atag;
+		auto g = make_colwise_fold_getter(minmax_kernel<T>(), a.shape(), a);
 
-		auto fker = fold(folder_t(), atag());
-		auto rd = make_multicol_accessor(atag(), in_(a.derived()));
-
-		DMat1& dmat_min_ = dmat_min.derived();
-		DMat2& dmat_max_ = dmat_max.derived();
+		DMat1& d1 = dmat_min.derived();
+		DMat2& d2 = dmat_max.derived();
 
 		for (index_t j = 0; j < n; ++j)
 		{
-			auto s = fker.apply(col_dim, rd.col(j));
-			dmat_min_[j] = s.min_value;
-			dmat_max_[j] = s.max_value;
+			auto r = g[j];
+			d1[j] = r.min_value;
+			d2[j] = r.max_value;
 		}
 	}
 

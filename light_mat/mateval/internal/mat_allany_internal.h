@@ -13,6 +13,7 @@
 #ifndef LIGHTMAT_MAT_ALLANY_INTERNAL_H_
 #define LIGHTMAT_MAT_ALLANY_INTERNAL_H_
 
+#include <light_mat/mateval/common_kernels.h>
 #include <light_mat/mateval/macc_policy.h>
 #include <light_mat/simd/simd.h>
 
@@ -98,14 +99,14 @@ namespace lmat { namespace internal {
 
 
 	template<int M, int N, typename T, typename VT, class Mat, typename U>
-	inline bool all_(const matrix_shape<M, N>& shape, type_<T>, const IEWiseMatrix<Mat, VT>& mat, linear_macc<U>)
+	inline bool all_(const matrix_shape<M, N>& shape, type_<T>, const IEWiseMatrix<Mat, VT>& mat, macc_<linear_, U>)
 	{
 		dimension<M * N> dim(shape.nelems());
 		return all_impl(dim, type_<T>(), U(), make_vec_accessor(U(), in_(mat.derived())));
 	}
 
 	template<int M, int N, typename T, typename VT, class Mat, typename U>
-	inline bool all_(const matrix_shape<M, N>& shape, type_<T>, const IEWiseMatrix<Mat, VT>& mat, percol_macc<U>)
+	inline bool all_(const matrix_shape<M, N>& shape, type_<T>, const IEWiseMatrix<Mat, VT>& mat, macc_<percol_, U>)
 	{
 		if (shape.nelems() > 0)
 		{
@@ -125,14 +126,14 @@ namespace lmat { namespace internal {
 
 
 	template<int M, int N, typename T, typename VT, class Mat, typename U>
-	inline bool any_(const matrix_shape<M, N>& shape, type_<T>, const IEWiseMatrix<Mat, VT>& mat, linear_macc<U>)
+	inline bool any_(const matrix_shape<M, N>& shape, type_<T>, const IEWiseMatrix<Mat, VT>& mat, macc_<linear_, U>)
 	{
 		dimension<M * N> dim(shape.nelems());
 		return any_impl(dim, type_<T>(), U(), make_vec_accessor(U(), in_(mat.derived())));
 	}
 
 	template<int M, int N, typename T, typename VT, class Mat, typename U>
-	inline bool any_(const matrix_shape<M, N>& shape, type_<T>, const IEWiseMatrix<Mat, VT>& mat, percol_macc<U>)
+	inline bool any_(const matrix_shape<M, N>& shape, type_<T>, const IEWiseMatrix<Mat, VT>& mat, macc_<percol_, U>)
 	{
 		if (shape.nelems() > 0)
 		{

@@ -23,27 +23,29 @@
 #include <utility>
 
 
-#define LMAT_DEFINE_SIMPLE_FOLDER( Name, InitExpr, FoldExpr, ReducExpr ) \
+#define LMAT_DEFINE_SIMPLE_FOLD_KERNEL( Name, InitExpr, FoldExpr, ReducExpr ) \
 	template<typename T> \
-	struct Name##_folder { \
+	struct Name##_kernel { \
 		typedef T value_type; \
+		typedef T accumulated_type; \
 		LMAT_ENSURE_INLINE \
 		T init(const T& x) const { return InitExpr; } \
 		LMAT_ENSURE_INLINE \
-		void fold(T& a, const T& x) const { FoldExpr; } \
+		void operator()(T& a, const T& x) const { FoldExpr; } \
 	}; \
 	template<typename T, typename Kind> \
-	struct Name##_folder<simd_pack<T, Kind> > { \
+	struct Name##_kernel<simd_pack<T, Kind> > { \
 		typedef simd_pack<T, Kind> value_type; \
+		typedef simd_pack<T, Kind> accumulated_type; \
 		LMAT_ENSURE_INLINE \
-		value_type init(const value_type& x) const { return InitExpr; } \
+		accumulated_type init(const value_type& x) const { return InitExpr; } \
 		LMAT_ENSURE_INLINE \
-		void fold(value_type& a, const value_type& x) const { FoldExpr; } \
+		void operator()(accumulated_type& a, const value_type& x) const { FoldExpr; } \
 		LMAT_ENSURE_INLINE \
-		T reduce(const value_type& a) const { return ReducExpr; } \
+		T reduce(const accumulated_type& a) const { return ReducExpr; } \
 	}; \
-	LMAT_DECL_SIMDIZABLE_ON_REAL( Name##_folder ) \
-	LMAT_DEF_TRIVIAL_SIMDIZE_MAP( Name##_folder )
+	LMAT_DECL_SIMDIZABLE_ON_REAL( Name##_kernel ) \
+	LMAT_DEF_TRIVIAL_SIMDIZE_MAP( Name##_kernel )
 
 
 namespace lmat
@@ -55,65 +57,79 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	LMAT_DEFINE_SIMPLE_FOLDER( sum, x, a += x, sum(a) )
+	LMAT_DEFINE_SIMPLE_FOLD_KERNEL( sum, x, a += x, sum(a) )
 
-	LMAT_DEFINE_SIMPLE_FOLDER( maximum, x, a = math::max(a, x), maximum(a) )
+	LMAT_DEFINE_SIMPLE_FOLD_KERNEL( maximum, x, a = math::max(a, x), maximum(a) )
 
-	LMAT_DEFINE_SIMPLE_FOLDER( minimum, x, a = math::min(a, x), minimum(a) )
+	LMAT_DEFINE_SIMPLE_FOLD_KERNEL( minimum, x, a = math::min(a, x), minimum(a) )
 
 
 
 	/********************************************
 	 *
-	 *  vectorized folding kernel
+	 *  folder on matrices
 	 *
 	 ********************************************/
 
-	template<class Folder, typename U>
-	class vecfold_kernel;
-
-	template<class Folder, typename Kind>
-	class vecfold_kernel<Folder, simd_<Kind> >
+	template<class FoldKernel>
+	class matrix_folder
 	{
-		static_assert(is_simdizable<Folder, Kind>::value, "Folder should supports SIMD");
-
 	public:
-		typedef typename Folder::value_type value_type;
+		typedef typename FoldKernel::accumulated_type result_type;
 
 		LMAT_ENSURE_INLINE
-		vecfold_kernel(const Folder& folder)
-		: m_folder(folder) { }
+		matrix_folder(const FoldKernel& folder)
+		: m_kernel(folder) { }
 
-		template<int N, typename Accessor>
+		template<typename U, index_t CM, index_t CN, typename... Wrap>
 		LMAT_ENSURE_INLINE
-		value_type apply(dimension<N> dim, const Accessor& acc)
+		result_type eval(macc_<linear_, U>, const matrix_shape<CM, CN>& shape, const Wrap&... wrap) const
 		{
-			return internal::fold_impl(dim, simd_<Kind>(), m_folder, acc);
+			dimension<CM * CN> dim(shape.nelems());
+			return internal::linear_fold_impl(dim, U(), m_kernel, make_vec_accessor(U(), wrap...));
 		}
 
-		template<typename Accessor>
+		template<typename U, typename... Wrap>
 		LMAT_ENSURE_INLINE
-		value_type apply(index_t len, const Accessor& acc)
+		result_type eval(macc_<linear_, U>, index_t m, index_t n, const Wrap&... wrap) const
 		{
-			return apply(dimension<0>(len), acc);
+			dimension<0> dim(m * n);
+			return internal::linear_fold_impl(dim, U(), m_kernel, make_vec_accessor(U(), wrap...));
 		}
 
-		template<int N, typename Wrap>
+		template<typename U, index_t CM, index_t CN, typename... Wrap>
 		LMAT_ENSURE_INLINE
-		value_type operator() (dimension<N> dim, const Wrap& wrap)
+		result_type eval(macc_<percol_, U>, const matrix_shape<CM, CN>& shape, const Wrap&... wrap) const
 		{
-			return apply(dim, make_vec_accessor(simd_<Kind>(), wrap));
+			return internal::percol_fold_impl(shape, U(), m_kernel, make_multicol_accessor(U(), wrap...));
 		}
 
-		template<int N, typename Wrap>
+		template<typename U, typename... Wrap>
 		LMAT_ENSURE_INLINE
-		value_type operator() (index_t len, const Wrap& wrap)
+		result_type eval(macc_<percol_, U>, index_t m, index_t n, const Wrap&... wrap) const
 		{
-			return apply(dimension<0>(len), make_vec_accessor(simd_<Kind>(), wrap));
+			matrix_shape<0,0> shape(m, n);
+			return internal::percol_fold_impl(shape, U(), m_kernel, make_multicol_accessor(U(), wrap...));
+		}
+
+		template<index_t CM, index_t CN, typename... Wrap>
+		LMAT_ENSURE_INLINE
+		result_type operator() (const matrix_shape<CM, CN>& shape, const Wrap&... wrap) const
+		{
+			typedef typename internal::fold_policy<FoldKernel, matrix_shape<CM, CN>, Wrap...>::type policy_t;
+			return eval(policy_t(), shape, wrap...);
+		}
+
+		template<typename... Wrap>
+		LMAT_ENSURE_INLINE
+		result_type operator() (index_t m, index_t n, const Wrap&... wrap) const
+		{
+			typedef typename internal::fold_policy<FoldKernel, matrix_shape<0, 0>, Wrap...>::type policy_t;
+			return eval(policy_t(), m, n, wrap...);
 		}
 
 	private:
-		Folder m_folder;
+		FoldKernel m_kernel;
 	};
 
 
@@ -123,20 +139,12 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<class Folder, typename U>
-	LMAT_ENSURE_INLINE
-	inline vecfold_kernel<Folder, U> fold(const Folder& folder, U)
-	{
-		return vecfold_kernel<Folder, U>(folder);
-	}
-
 	template<class Folder>
 	LMAT_ENSURE_INLINE
-	inline vecfold_kernel<Folder, default_access_unit_t> fold(const Folder& folder)
+	inline matrix_folder<Folder> fold(const Folder& folder)
 	{
-		return vecfold_kernel<Folder, default_access_unit_t>(folder);
+		return matrix_folder<Folder>(folder);
 	}
-
 
 }
 

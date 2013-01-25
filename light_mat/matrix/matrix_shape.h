@@ -29,7 +29,7 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<int N>
+	template<index_t N>
 	struct dim_checker
 	{
 		LMAT_ENSURE_INLINE
@@ -54,7 +54,7 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<int N>
+	template<index_t N>
 	class dimension
 	{
 	public:
@@ -97,12 +97,12 @@ namespace lmat
 	 *
 	 ********************************************/
 
-	template<int M, int N>
+	template<index_t M, index_t N>
 	class matrix_shape
 	{
 	public:
-		static const int ct_nrows = M;
-		static const int ct_ncols = N;
+		static const index_t ct_nrows = M;
+		static const index_t ct_ncols = N;
 
 		LMAT_ENSURE_INLINE matrix_shape() { }
 
@@ -128,12 +128,12 @@ namespace lmat
 		}
 	};
 
-	template<int M>
+	template<index_t M>
 	class matrix_shape<M, 0>
 	{
 	public:
-		static const int ct_nrows = M;
-		static const int ct_ncols = 0;
+		static const index_t ct_nrows = M;
+		static const index_t ct_ncols = 0;
 
 		LMAT_ENSURE_INLINE matrix_shape() : m_ncols(0) { }
 
@@ -163,12 +163,12 @@ namespace lmat
 	};
 
 
-	template<int N>
+	template<index_t N>
 	class matrix_shape<0, N>
 	{
 	public:
-		static const int ct_nrows = 0;
-		static const int ct_ncols = N;
+		static const index_t ct_nrows = 0;
+		static const index_t ct_ncols = N;
 
 		LMAT_ENSURE_INLINE matrix_shape() : m_nrows(0) { }
 
@@ -202,8 +202,8 @@ namespace lmat
 	class matrix_shape<0, 0>
 	{
 	public:
-		static const int ct_nrows = 0;
-		static const int ct_ncols = 0;
+		static const index_t ct_nrows = 0;
+		static const index_t ct_ncols = 0;
 
 		LMAT_ENSURE_INLINE matrix_shape() : m_nrows(0), m_ncols(0) { }
 

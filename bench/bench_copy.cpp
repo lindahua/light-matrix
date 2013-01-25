@@ -215,7 +215,8 @@ struct linearscalar_copy
 	void operator() () const
 	{
 		typedef scalar_ tag;
-		ewise(copy_kernel<T>(), tag())(src.nelems(), in_(src), out_(dst));
+		ewise(copy_kernel<T>()).eval(macc_<linear_, tag>(),
+				src.shape(), in_(src), out_(dst));
 	}
 };
 
@@ -242,7 +243,8 @@ struct linearsimd_copy
 	void operator() () const
 	{
 		typedef simd_<default_simd_kind> tag;
-		ewise(copy_kernel<T>(), tag())(src.nelems(), in_(src), out_(dst));
+		ewise(copy_kernel<T>()).eval(macc_<linear_, tag>(),
+				src.shape(), in_(src), out_(dst));
 	}
 };
 
@@ -269,7 +271,8 @@ struct percolscalar_copy
 	void operator() () const
 	{
 		typedef scalar_ tag;
-		percol(ewise(copy_kernel<T>(), tag()), src.shape(), in_(src), out_(dst));
+		ewise(copy_kernel<T>()).eval(macc_<percol_, tag>(),
+				src.shape(), in_(src), out_(dst));
 	}
 };
 
@@ -296,7 +299,8 @@ struct percolsimd_copy
 	void operator() () const
 	{
 		typedef simd_<default_simd_kind> tag;
-		percol(ewise(copy_kernel<T>(), tag()), src.shape(), in_(src), out_(dst));
+		ewise(copy_kernel<T>()).eval(macc_<percol_, tag>(),
+				src.shape(), in_(src), out_(dst));
 	}
 };
 

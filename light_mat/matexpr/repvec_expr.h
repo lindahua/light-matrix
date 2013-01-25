@@ -182,24 +182,24 @@ namespace lmat
 	 ********************************************/
 
 	template<typename Arg, int CN>
-	struct supports_linear_macc<repcol_expr<Arg, CN> >
+	struct supports_linear_access<repcol_expr<Arg, CN> >
 	{
 		static const bool value = false;
 	};
 
 	template<typename Arg, int CM>
-	struct supports_linear_macc<reprow_expr<Arg, CM> >
+	struct supports_linear_access<reprow_expr<Arg, CM> >
 	{
 		static const bool value = false;
 	};
 
-	template<typename Arg, int CN, typename Kind, bool IsLinear>
-	struct supports_simd<repcol_expr<Arg, CN>, Kind, IsLinear>
-	: public supports_simd<Arg, Kind, true> { };
+	template<typename Arg, int CN, typename Kind>
+	struct supports_simd<repcol_expr<Arg, CN>, Kind>
+	: public supports_simd<Arg, Kind> { };
 
-	template<typename Arg, int CM, typename Kind, bool IsLinear>
-	struct supports_simd<reprow_expr<Arg, CM>, Kind, IsLinear>
-	: public supports_simd_access<typename matrix_traits<Arg>::value_type, Kind> { };
+	template<typename Arg, int CM, typename Kind>
+	struct supports_simd<reprow_expr<Arg, CM>, Kind>
+	: public supports_simd<typename matrix_traits<Arg>::value_type, Kind> { };
 
 
 	template<typename Arg, int CN, class DMat>
