@@ -49,7 +49,7 @@ namespace lmat
 
 	template<typename T, class SExpr, class DMat>
 	LMAT_ENSURE_INLINE
-	void evaluate(const IRegularMatrix<SExpr, T>& sexpr, IRegularMatrix<DMat, T>& dmat)
+	inline void evaluate(const IRegularMatrix<SExpr, T>& sexpr, IRegularMatrix<DMat, T>& dmat)
 	{
 		copy(sexpr.derived(), dmat.derived());
 	}
