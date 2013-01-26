@@ -76,6 +76,14 @@ namespace lmat { namespace internal {
 			m_pk.store_a(p);
 		}
 
+		// access
+
+		template<unsigned int I>
+		LMAT_ENSURE_INLINE pack_t broadcast(pos_<I> p) const
+		{
+			return m_pk.broadcast(p);
+		}
+
 		// arithmetics
 
 		LMAT_ENSURE_INLINE svec_impl operator + (const svec_impl& x) const
@@ -186,6 +194,14 @@ namespace lmat { namespace internal {
 		{
 			m_pk0.store_a(p);
 			m_pk1.store_part(siz_<1>(), p + 2);
+		}
+
+		// access
+
+		template<unsigned int I>
+		LMAT_ENSURE_INLINE pack_t broadcast(pos_<I> p) const
+		{
+			return I < 2 ? m_pk0.broadcast(p) : m_pk1.broadcast(pos_<I-2>());
 		}
 
 		// arithmetics
@@ -304,6 +320,14 @@ namespace lmat { namespace internal {
 			m_pk1.store_a(p + 2);
 		}
 
+		// access
+
+		template<unsigned int I>
+		LMAT_ENSURE_INLINE pack_t broadcast(pos_<I> p) const
+		{
+			return I < 2 ? m_pk0.broadcast(p) : m_pk1.broadcast(pos_<I-2>());
+		}
+
 		// arithmetics
 
 		LMAT_ENSURE_INLINE svec_impl operator + (const svec_impl& x) const
@@ -413,6 +437,14 @@ namespace lmat { namespace internal {
 			m_pk.store_part(siz_<2>(), p);
 		}
 
+		// access
+
+		template<unsigned int I>
+		LMAT_ENSURE_INLINE pack_t broadcast(pos_<I> p) const
+		{
+			return m_pk.broadcast(p);
+		}
+
 		// arithmetics
 
 		LMAT_ENSURE_INLINE svec_impl operator + (const svec_impl& x) const
@@ -517,6 +549,14 @@ namespace lmat { namespace internal {
 			m_pk.store_part(siz_<3>(), p);
 		}
 
+		// access
+
+		template<unsigned int I>
+		LMAT_ENSURE_INLINE pack_t broadcast(pos_<I> p) const
+		{
+			return m_pk.broadcast(p);
+		}
+
 		// arithmetics
 
 		LMAT_ENSURE_INLINE svec_impl operator + (const svec_impl& x) const
@@ -619,6 +659,14 @@ namespace lmat { namespace internal {
 		LMAT_ENSURE_INLINE void store_a(T *p) const
 		{
 			m_pk.store_a(p);
+		}
+
+		// access
+
+		template<unsigned int I>
+		LMAT_ENSURE_INLINE pack_t broadcast(pos_<I> p) const
+		{
+			return m_pk.broadcast(p);
 		}
 
 		// arithmetics
@@ -726,6 +774,14 @@ namespace lmat { namespace internal {
 			m_pk.store_part(siz_<2>(), p);
 		}
 
+		// access
+
+		template<unsigned int I>
+		LMAT_ENSURE_INLINE pack_t broadcast(pos_<I> p) const
+		{
+			return m_pk.broadcast(p);
+		}
+
 		// arithmetics
 
 		LMAT_ENSURE_INLINE svec_impl operator + (const svec_impl& x) const
@@ -830,6 +886,14 @@ namespace lmat { namespace internal {
 			m_pk.store_part(siz_<3>(), p);
 		}
 
+		// access
+
+		template<unsigned int I>
+		LMAT_ENSURE_INLINE pack_t broadcast(pos_<I> p) const
+		{
+			return m_pk.broadcast(p);
+		}
+
 		// arithmetics
 
 		LMAT_ENSURE_INLINE svec_impl operator + (const svec_impl& x) const
@@ -932,6 +996,14 @@ namespace lmat { namespace internal {
 		LMAT_ENSURE_INLINE void store_a(T *p) const
 		{
 			m_pk.store_part(siz_<4>(), p);
+		}
+
+		// access
+
+		template<unsigned int I>
+		LMAT_ENSURE_INLINE pack_t broadcast(pos_<I> p) const
+		{
+			return m_pk.broadcast(p);
 		}
 
 		// arithmetics
