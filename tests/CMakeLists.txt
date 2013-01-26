@@ -123,6 +123,11 @@ set(AVX_HS_
     ${INC}/simd/avx_reduce.h
     ${INC}/simd/avx.h) 
     
+set(SIMD_LINALG_HS_
+    ${INC}/simd/internal/simd_sarith.h
+    ${INC}/simd/internal/svec_internal.h
+    ${INC}/simd/simd_vec.h)
+    
 set(SIMD_HS
     ${SIMD_BASE_HS_}
     ${SSE_HS_}
@@ -432,13 +437,25 @@ set(LMAT_AVX_TESTS
     test_avx_reduce)
 endif (ALLOW_AVX)
 
+
+set(SIMD_LINALG_TEST
+    ${COMMON_HS_EX}
+    ${SIMD_BASE_HS_}
+    ${SSE_HS_}
+    ${AVX_HS_}
+    ${SIMD_LINALG_HS_})
+
+add_executable(test_simd_vec ${SIMD_LINALG_TEST} simd/test_simd_vec.cpp)
+
 if (ALLOW_AVX)
 set(LMAT_SIMD_TESTS
     ${LMAT_SSE_TESTS}
-    ${LMAT_AVX_TESTS})
+    ${LMAT_AVX_TESTS}
+    test_simd_vec)
 else (ALLOW_AVX)
 set(LMAT_SIMD_TESTS
-    ${LMAT_SSE_TESTS})
+    ${LMAT_SSE_TESTS}
+    test_simd_vec)
 endif (ALLOW_AVX) 
 
 # math module
