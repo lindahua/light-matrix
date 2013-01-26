@@ -56,14 +56,14 @@ namespace lmat
 
 	template<typename T, typename Kind, index_t Len>
 	LMAT_ENSURE_INLINE
-	T sum(const simd_vec<T, Kind, Len>& vec)
+	inline T sum(const simd_vec<T, Kind, Len>& vec)
 	{
 		return vec._sum();
 	}
 
 	template<typename T, typename Kind, index_t Len>
 	LMAT_ENSURE_INLINE
-	T dot(const simd_vec<T, Kind, Len>& vx, const simd_vec<T, Kind, Len>& vy)
+	inline T dot(const simd_vec<T, Kind, Len>& vx, const simd_vec<T, Kind, Len>& vy)
 	{
 		return vx._dot(vy);
 	}
