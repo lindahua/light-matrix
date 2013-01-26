@@ -69,7 +69,7 @@ namespace lmat { namespace test {
 
 
 #define ASSERT_SIMD_EQ( a, b ) \
-	if (!::lmat::math::test_equal(a, b)) throw ::ltest::assertion_failure(__FILE__, __LINE__, #a " == " #b)
+	if (!::lmat::test_equal(a, b)) throw ::ltest::assertion_failure(__FILE__, __LINE__, #a " == " #b)
 
 #define ASSERT_SIMD_ULP( a, b, dtol ) \
 	if (!::lmat::test::test_simd_ulp(a, b, dtol)) throw ::ltest::assertion_failure(__FILE__, __LINE__, "ULP(" #a ", " #b ") <= " #dtol  )

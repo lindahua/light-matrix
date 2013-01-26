@@ -80,6 +80,9 @@ namespace lmat {
 
 	template<typename T, typename Kind> class simd_pack;
 
+	template<unsigned int N> struct siz_ { };
+	template<unsigned int I> struct pos_ { };
+
 }
 
 

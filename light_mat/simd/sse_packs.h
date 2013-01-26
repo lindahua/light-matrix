@@ -152,7 +152,8 @@ namespace lmat {
 			v = _mm_load_ps(p);
 		}
 
-	    LMAT_ENSURE_INLINE void load_part(unsigned int n, float const * p)
+		template<unsigned int N>
+	    LMAT_ENSURE_INLINE void load_part(siz_<N> n, float const * p)
 	    {
 	    	v = internal::sse_loadpart_f32(n, p);
 	    }
@@ -170,7 +171,8 @@ namespace lmat {
 	    	_mm_store_ps(p, v);
 	    }
 
-	    LMAT_ENSURE_INLINE void store_part(unsigned int n, float *p) const
+	    template<unsigned int N>
+	    LMAT_ENSURE_INLINE void store_part(siz_<N> n, float *p) const
 	    {
 	    	internal::sse_storepart_f32(n, p, v);
 	    }
@@ -183,14 +185,23 @@ namespace lmat {
 	    	return _mm_cvtss_f32(v);
 	    }
 
-	    LMAT_ENSURE_INLINE float extract(unsigned int i) const
+	    template<unsigned int I>
+	    LMAT_ENSURE_INLINE float extract(pos_<I> p) const
 	    {
-	    	return internal::sse_extract_f32(v, i);
+	    	return internal::sse_extract_f32(v, p);
 	    }
 
 	    LMAT_ENSURE_INLINE float operator[] (unsigned int i) const
 	    {
 	    	return e[i];
+	    }
+
+	    // broadcast
+
+	    template<unsigned int I>
+	    LMAT_ENSURE_INLINE simd_pack broadcast(pos_<I> p) const
+	    {
+	    	return internal::sse_broadcast_f32(v, p);
 	    }
 
 
@@ -308,7 +319,8 @@ namespace lmat {
 			v = _mm_load_pd(p);
 		}
 
-	    LMAT_ENSURE_INLINE void load_part(unsigned int n, double const * p)
+		template<unsigned int N>
+	    LMAT_ENSURE_INLINE void load_part(siz_<N> n, double const * p)
 	    {
 	    	v = internal::sse_loadpart_f64(n, p);
 	    }
@@ -325,7 +337,8 @@ namespace lmat {
 	    	_mm_store_pd(p, v);
 	    }
 
-	    LMAT_ENSURE_INLINE void store_part(unsigned int n, double *p) const
+	    template<unsigned int N>
+	    LMAT_ENSURE_INLINE void store_part(siz_<N> n, double *p) const
 	    {
 	    	internal::sse_storepart_f64(n, p, v);
 	    }
@@ -338,14 +351,23 @@ namespace lmat {
 	    	return _mm_cvtsd_f64(v);
 	    }
 
-	    LMAT_ENSURE_INLINE double extract(unsigned int i) const
+	    template<unsigned int I>
+	    LMAT_ENSURE_INLINE double extract(pos_<I> p) const
 	    {
-	    	return internal::sse_extract_f64(v, i);
+	    	return internal::sse_extract_f64(v, p);
 	    }
 
 	    LMAT_ENSURE_INLINE double operator[] (unsigned int i) const
 	    {
 	    	return e[i];
+	    }
+
+	    // broadcast
+
+	    template<unsigned int I>
+	    LMAT_ENSURE_INLINE simd_pack broadcast(pos_<I> p) const
+	    {
+	    	return internal::sse_broadcast_f64(v, p);
 	    }
 
 	}; // SSE f64 pack

@@ -16,7 +16,8 @@
 #include <light_mat/simd/simd_base.h>
 #include <cstdio>
 
-namespace lmat { namespace math {
+namespace lmat
+{
 
 	template<typename T, typename Kind>
 	inline void print_pack(const char *fmt, const simd_pack<T, Kind>& pk)
@@ -107,6 +108,6 @@ namespace lmat { namespace math {
 		return true;
 	}
 
-} }
+}
 
 #endif /* SIMD_DEBUG_H_ */

@@ -126,9 +126,16 @@ namespace lmat {
 	    	return (bool)_mm_cvtsi128_si32(_mm_castps_si128(v));
 	    }
 
-	    LMAT_ENSURE_INLINE bool extract(unsigned int i) const
+	    template<unsigned int I>
+	    LMAT_ENSURE_INLINE bool extract(pos_<I> p) const
 	    {
-	    	return (bool)internal::sse_extract_i32(_mm_castps_si128(v), i);
+	    	union {
+	    		float f;
+	    		uint32_t i;
+	    	} u;
+
+	    	u.f = internal::sse_extract_f32(v, p);
+	    	return static_cast<bool>(u.i);
 	    }
 
 	    LMAT_ENSURE_INLINE bint_type operator[] (unsigned int i) const
@@ -240,9 +247,16 @@ namespace lmat {
 	    	return (bool)_mm_cvtsi128_si64(_mm_castpd_si128(v));
 	    }
 
-	    LMAT_ENSURE_INLINE bool extract(unsigned int i) const
+	    template<unsigned int I>
+	    LMAT_ENSURE_INLINE bool extract(pos_<I> p) const
 	    {
-	    	return (bool)internal::sse_extract_i64(_mm_castpd_si128(v), i);
+	    	union {
+	    		double f;
+	    		uint64_t i;
+	    	} u;
+
+	    	u.f = internal::sse_extract_f64(v, p);
+	    	return static_cast<bool>(u.i);
 	    }
 
 	    LMAT_ENSURE_INLINE bint_type operator[] (unsigned int i) const

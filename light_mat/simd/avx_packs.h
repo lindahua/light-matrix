@@ -158,7 +158,8 @@ namespace lmat
 			v = _mm256_load_ps(p);
 		}
 
-	    LMAT_ENSURE_INLINE void load_part(unsigned int n, const float *p)
+		template<unsigned int N>
+	    LMAT_ENSURE_INLINE void load_part(siz_<N> n, const float *p)
 	    {
 	    	v = _mm256_maskload_ps(p, internal::avx_part_mask_32(n));
 	    }
@@ -175,7 +176,8 @@ namespace lmat
 	    	_mm256_store_ps(p, v);
 	    }
 
-	    LMAT_ENSURE_INLINE void store_part(unsigned int n, float *p) const
+	    template<unsigned int N>
+	    LMAT_ENSURE_INLINE void store_part(siz_<N> n, float *p) const
 	    {
 	    	_mm256_maskstore_ps(p, internal::avx_part_mask_32(n), v);
 	    }
@@ -198,15 +200,25 @@ namespace lmat
 	    	return _mm_cvtss_f32(get_low());
 	    }
 
-	    LMAT_ENSURE_INLINE float extract(unsigned int i) const
+	    template<unsigned int I>
+	    LMAT_ENSURE_INLINE float extract(pos_<I> p) const
 	    {
-	    	return e[i];
+	    	return internal::avx_extract_f32(v, p);
 	    }
 
 	    LMAT_ENSURE_INLINE float operator[] (unsigned int i) const
 	    {
 	    	return e[i];
 	    }
+
+	    // broadcast
+
+	    template<unsigned int I>
+	    LMAT_ENSURE_INLINE simd_pack broadcast(pos_<I> p) const
+	    {
+	    	return internal::avx_broadcast_f32(v, p);
+	    }
+
 
 	}; // AVX f32 pack
 
@@ -326,7 +338,8 @@ namespace lmat
 			v = _mm256_load_pd(p);
 		}
 
-	    LMAT_ENSURE_INLINE void load_part(unsigned int n, const double *p)
+		template<unsigned int N>
+	    LMAT_ENSURE_INLINE void load_part(siz_<N> n, const double *p)
 	    {
 	    	v = _mm256_maskload_pd(p, internal::avx_part_mask_64(n));
 	    }
@@ -343,7 +356,8 @@ namespace lmat
 	    	_mm256_store_pd(p, v);
 	    }
 
-	    LMAT_ENSURE_INLINE void store_part(unsigned int n, double *p) const
+	    template<unsigned int N>
+	    LMAT_ENSURE_INLINE void store_part(siz_<N> n, double *p) const
 	    {
 	    	_mm256_maskstore_pd(p, internal::avx_part_mask_64(n), v);
 	    }
@@ -365,14 +379,23 @@ namespace lmat
 	    	return _mm_cvtsd_f64(get_low());
 	    }
 
-	    LMAT_ENSURE_INLINE double extract(unsigned int i) const
+	    template<unsigned int I>
+	    LMAT_ENSURE_INLINE double extract(pos_<I> p) const
 	    {
-	    	return e[i];
+	    	return internal::avx_extract_f64(v, p);
 	    }
 
 	    LMAT_ENSURE_INLINE double operator[] (unsigned int i) const
 	    {
 	    	return e[i];
+	    }
+
+	    // broadcast
+
+	    template<unsigned int I>
+	    LMAT_ENSURE_INLINE simd_pack broadcast(pos_<I> p) const
+	    {
+	    	return internal::avx_broadcast_f64(v, p);
 	    }
 
 	}; // AVX f64 pack

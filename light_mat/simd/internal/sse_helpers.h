@@ -30,177 +30,159 @@ namespace lmat { namespace internal {
 	// partial load
 
 	LMAT_ENSURE_INLINE
-	inline __m128 sse_loadpart_f32(unsigned int n, const float *p)
+	inline __m128 sse_loadpart_f32(siz_<1>, const float *p)
 	{
-		__m128 v;
-
-        switch (n)
-        {
-        case 1:
-        	v = _mm_load_ss(p);
-        	break;
-        case 2:
-        	v = _mm_castpd_ps(_mm_load_sd((double*)p));
-        	break;
-        case 3:
-        	v = _mm_movelh_ps(
-        		_mm_castpd_ps(_mm_load_sd((double*)p)),
-        		_mm_load_ss(p + 2));
-        	break;
-        case 4:
-        	v = _mm_loadu_ps(p);
-        	break;
-        default:
-        	v = _mm_setzero_ps();
-        	break;
-        }
-
-        return v;
+		return _mm_load_ss(p);
 	}
 
 	LMAT_ENSURE_INLINE
-	inline __m128d sse_loadpart_f64(unsigned int n, const double *p)
+	inline __m128 sse_loadpart_f32(siz_<2>, const float *p)
 	{
-		__m128d v;
+		return _mm_castpd_ps(_mm_load_sd((double*)p));
+	}
 
-        switch (n)
-        {
-        case 1:
-        	v = _mm_load_sd(p);
-        	break;
-        case 2:
-        	v = _mm_loadu_pd(p);
-        	break;
-        default:
-        	v = _mm_setzero_pd();
-        	break;
-        }
+	LMAT_ENSURE_INLINE
+	inline __m128 sse_loadpart_f32(siz_<3>, const float *p)
+	{
+		return _mm_movelh_ps(
+				_mm_castpd_ps(_mm_load_sd((double*)p)), _mm_load_ss(p + 2));
+	}
 
-        return v;
+	LMAT_ENSURE_INLINE
+	inline __m128 sse_loadpart_f32(siz_<4>, const float *p)
+	{
+		return _mm_loadu_ps(p);
+	}
+
+
+	LMAT_ENSURE_INLINE
+	inline __m128d sse_loadpart_f64(siz_<1>, const double *p)
+	{
+		return _mm_load_sd(p);
+	}
+
+
+	LMAT_ENSURE_INLINE
+	inline __m128d sse_loadpart_f64(siz_<2>, const double *p)
+	{
+		return _mm_loadu_pd(p);
 	}
 
 
 	// partial store
 
 	LMAT_ENSURE_INLINE
-	inline void sse_storepart_f32(unsigned int n, float *p, const __m128& v)
+	inline void sse_storepart_f32(siz_<1>, float *p, const __m128& v)
 	{
-        switch (n)
-        {
-        case 1:
-            _mm_store_ss(p, v);
-            break;
-        case 2:
-            _mm_store_sd((double*)p, _mm_castps_pd(v));
-            break;
-        case 3:
-            _mm_store_sd((double*)p, _mm_castps_pd(v));
-            _mm_store_ss(p + 2, _mm_movehl_ps(v, v));
-            break;
-        case 4:
-            _mm_storeu_ps(p, v);
-            break;
-        }
+		_mm_store_ss(p, v);
 	}
 
+	LMAT_ENSURE_INLINE
+	inline void sse_storepart_f32(siz_<2>, float *p, const __m128& v)
+	{
+		_mm_store_sd((double*)p, _mm_castps_pd(v));
+	}
 
 	LMAT_ENSURE_INLINE
-	inline void sse_storepart_f64(unsigned int n, double *p, const __m128d& v)
+	inline void sse_storepart_f32(siz_<3>, float *p, const __m128& v)
 	{
-        switch (n)
-        {
-        case 1:
-            _mm_store_sd(p, v);
-            break;
-        case 2:
-            _mm_storeu_pd(p, v);
-            break;
-        }
+		_mm_store_sd((double*)p, _mm_castps_pd(v));
+		_mm_store_ss(p + 2, _mm_movehl_ps(v, v));
+	}
+
+	LMAT_ENSURE_INLINE
+	inline void sse_storepart_f32(siz_<4>, float *p, const __m128& v)
+	{
+		_mm_storeu_ps(p, v);
+	}
+
+	LMAT_ENSURE_INLINE
+	inline void sse_storepart_f64(siz_<1>, double *p, const __m128d& v)
+	{
+		_mm_store_sd(p, v);
+	}
+
+	LMAT_ENSURE_INLINE
+	inline void sse_storepart_f64(siz_<2>, double *p, const __m128d& v)
+	{
+		_mm_storeu_pd(p, v);
 	}
 
 
 	// extract scalar
 
 	LMAT_ENSURE_INLINE
-	inline float sse_extract_f32(const __m128& v, unsigned int i)
+	inline float sse_extract_f32(const __m128& v, pos_<0> )
 	{
-		float s;
-
-    	switch (i)
-    	{
-    	case 0:
-    		s = _mm_cvtss_f32(v);
-    		break;
-    	case 1:
-    		s = _mm_cvtss_f32(
-    				_mm_castsi128_ps(_mm_srli_si128(_mm_castps_si128(v), 4)));
-    		break;
-    	case 2:
-    		s = _mm_cvtss_f32(
-    				_mm_castsi128_ps(_mm_srli_si128(_mm_castps_si128(v), 8)));
-    		break;
-    	default:
-    		s = _mm_cvtss_f32(
-    				_mm_castsi128_ps(_mm_srli_si128(_mm_castps_si128(v), 12)));
-    		break;
-    	}
-
-    	return s;
+		return _mm_cvtss_f32(v);
 	}
-
 
 	LMAT_ENSURE_INLINE
-	inline double sse_extract_f64(const __m128d& v, unsigned int i)
+	inline float sse_extract_f32(const __m128& v, pos_<1> )
 	{
-    	double s;
-
-    	if (i == 0)
-    		s = _mm_cvtsd_f64(v);
-    	else
-    		s = _mm_cvtsd_f64(
-    				_mm_castsi128_pd(_mm_srli_si128(_mm_castpd_si128(v), 8)));
-
-    	return s;
+		return _mm_cvtss_f32(
+				_mm_castsi128_ps(_mm_srli_si128(_mm_castps_si128(v), 4)));
 	}
-
 
 	LMAT_ENSURE_INLINE
-	inline int32_t sse_extract_i32(const __m128i& v, unsigned int i)
+	inline float sse_extract_f32(const __m128& v, pos_<2> )
 	{
-		int32_t s;
-
-    	switch (i)
-    	{
-    	case 0:
-    		s = _mm_cvtsi128_si32(v);
-    		break;
-    	case 1:
-    		s = _mm_cvtsi128_si32(_mm_srli_si128(v, 4));
-    		break;
-    	case 2:
-    		s = _mm_cvtsi128_si32(_mm_srli_si128(v, 8));
-    		break;
-    	default:
-    		s = _mm_cvtsi128_si32(_mm_srli_si128(v, 12));
-    		break;
-    	}
-
-    	return s;
+		return _mm_cvtss_f32(
+				_mm_castsi128_ps(_mm_srli_si128(_mm_castps_si128(v), 8)));
 	}
-
 
 	LMAT_ENSURE_INLINE
-	inline int64_t sse_extract_i64(const __m128i& v, unsigned int i)
+	inline float sse_extract_f32(const __m128& v, pos_<3> )
 	{
-		int64_t s;
-
-    	if (i == 0)
-    		s = _mm_cvtsi128_si64(v);
-    	else
-    		s = _mm_cvtsi128_si64(_mm_srli_si128(v, 8));
-
-    	return s;
+		return _mm_cvtss_f32(
+				_mm_castsi128_ps(_mm_srli_si128(_mm_castps_si128(v), 12)));
 	}
+
+	LMAT_ENSURE_INLINE
+	inline double sse_extract_f64(const __m128d& v, pos_<0> )
+	{
+		return _mm_cvtsd_f64(v);
+	}
+
+	LMAT_ENSURE_INLINE
+	inline double sse_extract_f64(const __m128d& v, pos_<1> )
+	{
+		return _mm_cvtsd_f64(
+				_mm_castsi128_pd(_mm_srli_si128(_mm_castpd_si128(v), 8)));
+	}
+
+	// broadcasting
+
+    LMAT_ENSURE_INLINE __m128 sse_broadcast_f32(__m128 v, pos_<0>)
+    {
+    	return _mm_shuffle_ps(v, v, 0);
+    }
+
+    LMAT_ENSURE_INLINE __m128 sse_broadcast_f32(__m128 v, pos_<1>)
+    {
+    	return _mm_shuffle_ps(v, v, 0x55);
+    }
+
+    LMAT_ENSURE_INLINE __m128 sse_broadcast_f32(__m128 v, pos_<2>)
+    {
+    	return _mm_shuffle_ps(v, v, 0xaa);
+    }
+
+    LMAT_ENSURE_INLINE __m128 sse_broadcast_f32(__m128 v, pos_<3>)
+    {
+    	return _mm_shuffle_ps(v, v, 0xff);
+    }
+
+    LMAT_ENSURE_INLINE __m128d sse_broadcast_f64(__m128d v, pos_<0>)
+    {
+    	return _mm_unpacklo_pd(v, v);
+    }
+
+    LMAT_ENSURE_INLINE __m128d sse_broadcast_f64(__m128d v, pos_<1>)
+    {
+    	return _mm_unpackhi_pd(v, v);
+    }
+
 
 
 	// conditional operator (SSE2)

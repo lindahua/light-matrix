@@ -145,7 +145,7 @@ T_CASE( sse_bpack_to_scalar )
 }
 
 
-T_CASE( sse_bpack_extracts )
+TI_CASE( sse_bpack_extracts )
 {
 	typedef simd_bpack<T, sse_t> bpack_t;
 	typedef typename bpack_t::bint_type bint;
@@ -156,19 +156,11 @@ T_CASE( sse_bpack_extracts )
 
 	bpack_t pk;
 	elemwise_construct<T>::set(pk, s);
-
-	for (unsigned int i = 0; i < width; ++i)
-	{
-		ASSERT_EQ( pk.extract(i), s[i] );
-	}
+	ASSERT_EQ( pk.extract(pos_<I>()), s[I] );
 
 	for (unsigned i = 0; i < width; ++i) s[i] = (i % 3 == 0);
 	elemwise_construct<T>::set(pk, s);
-
-	for (unsigned int i = 0; i < width; ++i)
-	{
-		ASSERT_EQ( pk.extract(i), s[i] );
-	}
+	ASSERT_EQ( pk.extract(pos_<I>()), s[I] );
 }
 
 
@@ -182,6 +174,13 @@ AUTO_TPACK( sse_bpack_basic )
 AUTO_TPACK( sse_bpack_elems )
 {
 	ADD_T_CASE_FP( sse_bpack_to_scalar )
-	ADD_T_CASE_FP( sse_bpack_extracts )
+
+	ADD_TI_CASE( sse_bpack_extracts, float, 0 )
+	ADD_TI_CASE( sse_bpack_extracts, float, 1 )
+	ADD_TI_CASE( sse_bpack_extracts, float, 2 )
+	ADD_TI_CASE( sse_bpack_extracts, float, 3 )
+
+	ADD_TI_CASE( sse_bpack_extracts, double, 0 )
+	ADD_TI_CASE( sse_bpack_extracts, double, 1 )
 }
 

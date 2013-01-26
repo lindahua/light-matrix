@@ -144,16 +144,16 @@ namespace lmat
 	    	return (bool)_mm_cvtsi128_si32(_mm_castps_si128(get_low()));
 	    }
 
-	    LMAT_ENSURE_INLINE bool extract(unsigned int i) const
+	    template<unsigned int I>
+	    LMAT_ENSURE_INLINE bool extract(pos_<I> p) const
 	    {
-	    	int bi;
+	    	union {
+	    		float f;
+	    		uint32_t i;
+	    	} u;
 
-	    	if (i < 4)
-	    		bi = internal::sse_extract_i32(_mm_castps_si128(get_low()), i);
-	    	else
-	    		bi = internal::sse_extract_i32(_mm_castps_si128(get_high()), i & 3);
-
-	    	return (bool)(bi);
+	    	u.f = internal::avx_extract_f32(v, p);
+	    	return static_cast<bool>(u.i);
 	    }
 
 	    LMAT_ENSURE_INLINE bint_type operator[] (unsigned int i) const
@@ -280,16 +280,16 @@ namespace lmat
 	    	return (bool)_mm_cvtsi128_si64(_mm_castpd_si128(get_low()));
 	    }
 
-	    LMAT_ENSURE_INLINE bool extract(unsigned int i) const
+	    template<unsigned int I>
+	    LMAT_ENSURE_INLINE bool extract(pos_<I> p) const
 	    {
-	    	int64_t bi;
+	    	union {
+	    		double f;
+	    		uint64_t i;
+	    	} u;
 
-	    	if (i < 2)
-	    		bi = internal::sse_extract_i64(_mm_castpd_si128(get_low()), i);
-	    	else
-	    		bi = internal::sse_extract_i64(_mm_castpd_si128(get_high()), i & 1);
-
-	    	return (bool)(bi);
+	    	u.f = internal::avx_extract_f64(v, p);
+	    	return static_cast<bool>(u.i);
 	    }
 
 	    LMAT_ENSURE_INLINE bint_type operator[] (unsigned int i) const

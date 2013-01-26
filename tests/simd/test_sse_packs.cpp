@@ -169,7 +169,7 @@ TI_CASE( sse_pack_load_parts )
 	for (unsigned i = 0; i < width; ++i) src[i] = T(2.4 + i);
 
 	pack_t pk;
-	pk.load_part(I, src);
+	pk.load_part(siz_<I>(), src);
 
 	T r[width];
 	for (unsigned i = 0; i < width; ++i) r[i] = T(0);
@@ -198,7 +198,7 @@ TI_CASE( sse_pack_store_parts )
 	T *dst = dst_base + 1;
 	for (unsigned i = 0; i < width; ++i) dst[i] = v;
 
-	pk.store_part(I, dst);
+	pk.store_part(siz_<I>(), dst);
 	ASSERT_VEC_EQ( width, dst, r );
 }
 
@@ -218,7 +218,7 @@ T_CASE( sse_pack_to_scalar )
 	ASSERT_EQ(v, src[0]);
 }
 
-T_CASE( sse_pack_extracts )
+TI_CASE( sse_pack_extracts )
 {
 	typedef simd_pack<T, sse_t> pack_t;
 	const unsigned int width = pack_t::pack_width;
@@ -229,13 +229,26 @@ T_CASE( sse_pack_extracts )
 	pack_t pk;
 	pk.load_a(src);
 
-	for (unsigned int i = 0; i < width; ++i)
-	{
-		T v = pk.extract(i);
-		ASSERT_EQ(v, src[i]);
-	}
+	T v = pk.extract(pos_<I>());
+	ASSERT_EQ(v, src[I]);
 }
 
+
+TI_CASE( sse_pack_broadcasts )
+{
+	typedef simd_pack<T, sse_t> pack_t;
+	const unsigned int width = pack_t::pack_width;
+
+	LMAT_ALIGN_SSE T src[width];
+	for (unsigned i = 0; i < width; ++i) src[i] = T(2.4 + i);
+
+	pack_t pk0;
+	pk0.load_a(src);
+
+	pack_t pk = pk0.broadcast(pos_<I>());
+
+	ASSERT_SIMD_EQ(pk, src[I]);
+}
 
 
 AUTO_TPACK( sse_basics )
@@ -248,23 +261,19 @@ AUTO_TPACK( sse_basics )
 
 AUTO_TPACK( sse_parts )
 {
-	ADD_TI_CASE( sse_pack_load_parts, float, 0 )
 	ADD_TI_CASE( sse_pack_load_parts, float, 1 )
 	ADD_TI_CASE( sse_pack_load_parts, float, 2 )
 	ADD_TI_CASE( sse_pack_load_parts, float, 3 )
 	ADD_TI_CASE( sse_pack_load_parts, float, 4 )
 
-	ADD_TI_CASE( sse_pack_load_parts, double, 0 )
 	ADD_TI_CASE( sse_pack_load_parts, double, 1 )
 	ADD_TI_CASE( sse_pack_load_parts, double, 2 )
 
-	ADD_TI_CASE( sse_pack_store_parts, float, 0 )
 	ADD_TI_CASE( sse_pack_store_parts, float, 1 )
 	ADD_TI_CASE( sse_pack_store_parts, float, 2 )
 	ADD_TI_CASE( sse_pack_store_parts, float, 3 )
 	ADD_TI_CASE( sse_pack_store_parts, float, 4 )
 
-	ADD_TI_CASE( sse_pack_store_parts, double, 0 )
 	ADD_TI_CASE( sse_pack_store_parts, double, 1 )
 	ADD_TI_CASE( sse_pack_store_parts, double, 2 )
 }
@@ -272,6 +281,27 @@ AUTO_TPACK( sse_parts )
 AUTO_TPACK( sse_elems )
 {
 	ADD_T_CASE_FP( sse_pack_to_scalar )
-	ADD_T_CASE_FP( sse_pack_extracts )
+
+	ADD_TI_CASE( sse_pack_extracts, float, 0 )
+	ADD_TI_CASE( sse_pack_extracts, float, 1 )
+	ADD_TI_CASE( sse_pack_extracts, float, 2 )
+	ADD_TI_CASE( sse_pack_extracts, float, 3 )
+
+	ADD_TI_CASE( sse_pack_extracts, double, 0 )
+	ADD_TI_CASE( sse_pack_extracts, double, 1 )
 }
+
+AUTO_TPACK( sse_broadcast )
+{
+	ADD_TI_CASE( sse_pack_broadcasts, float, 0 )
+	ADD_TI_CASE( sse_pack_broadcasts, float, 1 )
+	ADD_TI_CASE( sse_pack_broadcasts, float, 2 )
+	ADD_TI_CASE( sse_pack_broadcasts, float, 3 )
+
+	ADD_TI_CASE( sse_pack_broadcasts, double, 0 )
+	ADD_TI_CASE( sse_pack_broadcasts, double, 1 )
+}
+
+
+
 
