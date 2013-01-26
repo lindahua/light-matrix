@@ -153,32 +153,38 @@ namespace lmat { namespace internal {
 
 	// broadcasting
 
-    LMAT_ENSURE_INLINE __m128 sse_broadcast_f32(__m128 v, pos_<0>)
+    LMAT_ENSURE_INLINE
+    inline __m128 sse_broadcast_f32(__m128 v, pos_<0>)
     {
     	return _mm_shuffle_ps(v, v, 0);
     }
 
-    LMAT_ENSURE_INLINE __m128 sse_broadcast_f32(__m128 v, pos_<1>)
+    LMAT_ENSURE_INLINE
+    inline __m128 sse_broadcast_f32(__m128 v, pos_<1>)
     {
     	return _mm_shuffle_ps(v, v, 0x55);
     }
 
-    LMAT_ENSURE_INLINE __m128 sse_broadcast_f32(__m128 v, pos_<2>)
+    LMAT_ENSURE_INLINE
+    inline __m128 sse_broadcast_f32(__m128 v, pos_<2>)
     {
     	return _mm_shuffle_ps(v, v, 0xaa);
     }
 
-    LMAT_ENSURE_INLINE __m128 sse_broadcast_f32(__m128 v, pos_<3>)
+    LMAT_ENSURE_INLINE
+    inline __m128 sse_broadcast_f32(__m128 v, pos_<3>)
     {
     	return _mm_shuffle_ps(v, v, 0xff);
     }
 
-    LMAT_ENSURE_INLINE __m128d sse_broadcast_f64(__m128d v, pos_<0>)
+    LMAT_ENSURE_INLINE
+    inline __m128d sse_broadcast_f64(__m128d v, pos_<0>)
     {
     	return _mm_unpacklo_pd(v, v);
     }
 
-    LMAT_ENSURE_INLINE __m128d sse_broadcast_f64(__m128d v, pos_<1>)
+    LMAT_ENSURE_INLINE
+    inline __m128d sse_broadcast_f64(__m128d v, pos_<1>)
     {
     	return _mm_unpackhi_pd(v, v);
     }

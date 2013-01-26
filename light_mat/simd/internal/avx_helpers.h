@@ -184,13 +184,13 @@ namespace lmat { namespace internal {
 	LMAT_ENSURE_INLINE
 	inline double avx_extract_f64(__m256d v, pos_<2> p)
 	{
-		return sse_extract_f64(_mm256_extractf128_ps(v, 1), pos_<0>());
+		return sse_extract_f64(_mm256_extractf128_pd(v, 1), pos_<0>());
 	}
 
 	LMAT_ENSURE_INLINE
 	inline double avx_extract_f64(__m256d v, pos_<3> p)
 	{
-		return sse_extract_f64(_mm256_extractf128_ps(v, 1), pos_<1>());
+		return sse_extract_f64(_mm256_extractf128_pd(v, 1), pos_<1>());
 	}
 
 
@@ -257,28 +257,28 @@ namespace lmat { namespace internal {
 	inline __m256d avx_broadcast_f64(__m256d v, pos_<0> p)
 	{
 		__m256d t = _mm256_unpacklo_pd(v, v);
-		return _mm256_permute2f128_ps(t, t, 0x00);
+		return _mm256_permute2f128_pd(t, t, 0x00);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline __m256d avx_broadcast_f64(__m256d v, pos_<1> p)
 	{
 		__m256d t = _mm256_unpackhi_pd(v, v);
-		return _mm256_permute2f128_ps(t, t, 0x00);
+		return _mm256_permute2f128_pd(t, t, 0x00);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline __m256d avx_broadcast_f64(__m256d v, pos_<2> p)
 	{
 		__m256d t = _mm256_unpacklo_pd(v, v);
-		return _mm256_permute2f128_ps(t, t, 0x11);
+		return _mm256_permute2f128_pd(t, t, 0x11);
 	}
 
 	LMAT_ENSURE_INLINE
 	inline __m256d avx_broadcast_f64(__m256d v, pos_<3> p)
 	{
 		__m256d t = _mm256_unpackhi_pd(v, v);
-		return _mm256_permute2f128_ps(t, t, 0x11);
+		return _mm256_permute2f128_pd(t, t, 0x11);
 	}
 
 
