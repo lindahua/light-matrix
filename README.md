@@ -3,6 +3,9 @@
 **LightMatrix** is a C++ template library for matrix computation, which provides a unique combination of *design-time productivity* and *run-time performance*.
 With this library, user can write codes using a set of friendly APIs (just like in MATLAB). These codes will then be transparently translated to highly optimized routines (at compile-time), through a meta-programming engine. 
 
+**Important Note:** LightMatrix heavily uses new features of the latest C++11 standard, including r-value reference, variadic templates, automatic type inference, and C++11 math. To compile this library, you need to have a compiler with good C++11 support. In particular, this library has been tested on Clang 4.0 (Mac OS X) and GCC 4.7 (Linux)
+
+
 ## Overview
 
 Relying a carefully designed core framework, LightMatrix has a series of nice properties. Here is a brief summary:
